@@ -31,6 +31,9 @@ const LessonPage = async ({
             orderBy: {
               position: 'asc',
             },
+            include: {
+              attachments: true,
+            },
           },
         },
       },
