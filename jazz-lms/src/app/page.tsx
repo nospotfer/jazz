@@ -1,3 +1,4 @@
+// Last updated: 2025-11-26 - Fixed null course handling
 import { Benefits } from '@/components/landing/benefits';
 import { Hero } from '@/components/landing/hero';
 import { Press } from '@/components/landing/press';

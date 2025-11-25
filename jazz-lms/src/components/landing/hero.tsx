@@ -1,4 +1,5 @@
 'use client';
+// Last updated: 2025-11-26 - Fixed null course handling
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/client';
 import axios from 'axios';
