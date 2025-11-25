@@ -9,9 +9,10 @@ export default async function Home() {
       createdAt: 'desc',
     },
   });
+
   return (
     <main>
-      <Hero course={course!} />
+      <Hero course={course} />
       <Press />
       <Benefits />
     </main>

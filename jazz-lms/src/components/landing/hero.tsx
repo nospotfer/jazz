@@ -5,11 +5,13 @@ import axios from 'axios';
 import { Course } from '@prisma/client';
 
 interface HeroProps {
-  course: Course;
+  course: Course | null;
 }
 
 export const Hero = ({ course }: HeroProps) => {
   const handleCheckout = async () => {
+    if (!course) return;
+
     try {
       const supabase = createClient();
       const {
@@ -31,6 +33,7 @@ export const Hero = ({ course }: HeroProps) => {
       console.error('Error creating checkout session:', error);
     }
   };
+
   return (
     <div className="relative isolate pt-14">
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
@@ -45,19 +48,25 @@ export const Hero = ({ course }: HeroProps) => {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-serif">
-            {course.title}
+            {course?.title || 'Welcome to Jazz LMS'}
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            {course.description}
+            {course?.description || 'Start your journey with our premium courses. Check back soon for new content!'}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button onClick={handleCheckout}>Inscríbete ahora</Button>
-            <a
-              href="#"
-              className="text-sm font-semibold leading-6 text-foreground"
-            >
-              Learn more <span aria-hidden="true">→</span>
-            </a>
+            {course ? (
+              <>
+                <Button onClick={handleCheckout}>Inscríbete ahora</Button>
+                <a
+                  href="#"
+                  className="text-sm font-semibold leading-6 text-foreground"
+                >
+                  Learn more <span aria-hidden="true">→</span>
+                </a>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">No courses available yet</p>
+            )}
           </div>
         </div>
       </div>
