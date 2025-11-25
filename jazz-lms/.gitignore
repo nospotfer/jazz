@@ -37,3 +37,6 @@ next-env.d.ts
 
 # output logs
 npm_output.log
+
+# IDE
+.idea/

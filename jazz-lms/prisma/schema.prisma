@@ -1,28 +1,23 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  directUrl    = env("DIRECT_DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Course {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   title       String
   description String?
   imageUrl    String?
   price       Float?
-  isPublished Boolean   @default(false)
+  isPublished Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   chapters    Chapter[]
   purchases   Purchase[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Chapter {
@@ -32,29 +27,27 @@ model Chapter {
   position    Int
   isPublished Boolean  @default(false)
   courseId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons     Lesson[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@unique([courseId, position])
 }
 
 model Lesson {
-  id              String         @id @default(uuid())
-  title           String
-  description     String?
-  videoUrl        String?
-  position        Int
-  isPublished     Boolean        @default(false)
-  chapterId       String
-  chapter         Chapter        @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  attachments     Attachment[]
-  userProgress    UserProgress[]
-
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id           String         @id @default(uuid())
+  title        String
+  description  String?
+  videoUrl     String?
+  position     Int
+  isPublished  Boolean        @default(false)
+  chapterId    String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  attachments  Attachment[]
+  chapter      Chapter        @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  userProgress UserProgress[]
 
   @@unique([chapterId, position])
 }
@@ -64,23 +57,20 @@ model Attachment {
   name      String
   url       String
   lessonId  String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@index([lessonId])
 }
 
 model Purchase {
   id        String   @id @default(uuid())
-  userId    String   // From Supabase Auth
+  userId    String
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@index([courseId])
@@ -91,10 +81,9 @@ model UserProgress {
   userId      String
   lessonId    String
   isCompleted Boolean  @default(false)
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
   @@index([lessonId])
