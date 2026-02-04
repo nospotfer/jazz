@@ -1,6 +1,4 @@
 import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
-import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +8,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Button } from '../ui/button';
 import { LogoutButton } from './logout-button';
+import { UserNavClient } from './user-nav-client';
 
 export const UserNav = async () => {
   const supabase = createClient();
@@ -19,11 +19,7 @@ export const UserNav = async () => {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return (
-      <Link href="/auth">
-        <Button>Login</Button>
-      </Link>
-    );
+    return <UserNavClient user={undefined} />;
   }
 
   return (

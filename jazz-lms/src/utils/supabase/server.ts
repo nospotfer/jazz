@@ -1,12 +1,29 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export function createClient() {
+type MinimalSupabase = {
+  auth: {
+    getUser: () => Promise<{ data: { user: null } }>
+  }
+}
+
+export function createClient(): any {
   const cookieStore = cookies()
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    const stub: MinimalSupabase = {
+      auth: {
+        getUser: async () => ({ data: { user: null } }),
+      },
+    }
+    return stub
+  }
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         async get(name: string) {
