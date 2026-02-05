@@ -13,6 +13,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    ssn: '',
     password: '',
     confirmPassword: '',
   });
@@ -21,60 +22,72 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
 
-  // Validar nome: apenas letras e espaços, sem números
+  // Validate name: only letters and spaces, no numbers
   const validateName = (name: string): string => {
     if (!name.trim()) {
-      return 'Nome completo é obrigatório';
+      return 'Full name is required';
     }
     if (/\d/.test(name)) {
-      return 'O nome não pode conter números';
+      return 'Name cannot contain numbers';
     }
     if (!/^[a-zA-Záéíóúàâêôãõç\s]+$/.test(name)) {
-      return 'O nome deve conter apenas letras e espaços';
+      return 'Name must contain only letters and spaces';
     }
     if (name.trim().split(/\s+/).length < 2) {
-      return 'Digite seu nome completo (mínimo 2 nomes)';
+      return 'Enter your full name (minimum 2 names)';
     }
     return '';
   };
 
-  // Validar email com @
+  // Validate email with @
   const validateEmail = (email: string): string => {
     if (!email.trim()) {
-      return 'Email é obrigatório';
+      return 'Email is required';
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return 'Email inválido (deve conter @)';
+      return 'Invalid email (must contain @)';
     }
     return '';
   };
 
-  // Validar senha
+  // Validate SSN/National ID (XXX-XX-XXXX format)
+  const validateSSN = (ssn: string): string => {
+    if (!ssn.trim()) {
+      return 'SSN/National ID is required';
+    }
+    const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+    if (!ssnRegex.test(ssn)) {
+      return 'Invalid SSN/National ID format (use XXX-XX-XXXX)';
+    }
+    return '';
+  };
+
+  // Validate password
   const validatePassword = (password: string): string => {
     if (!password) {
-      return 'Senha é obrigatória';
+      return 'Password is required';
     }
     if (password.length < 6) {
-      return 'A senha deve ter pelo menos 6 caracteres';
+      return 'Password must have at least 6 characters';
     }
     return '';
   };
 
-  // Validar confirmação de senha
+  // Validate password confirmation
   const validateConfirmPassword = (password: string, confirmPassword: string): string => {
     if (!confirmPassword) {
-      return 'Confirmação de senha é obrigatória';
+      return 'Password confirmation is required';
     }
     if (password !== confirmPassword) {
-      return 'As senhas não conferem';
+      return 'Passwords do not match';
     }
     return '';
   };
 
   const handleClose = () => {
     // Limpar todos os campos ao fechar
-    setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+    setFormData({ fullName: '', email: '', ssn: '', password: '', confirmPassword: '' });
     setErrors({});
     setSuccess(false);
     onClose();
@@ -103,6 +116,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     // Validar todos os campos
     const nameError = validateName(formData.fullName);
     const emailError = validateEmail(formData.email);
+    const ssnError = validateSSN(formData.ssn);
     const passwordError = validatePassword(formData.password);
     const confirmPasswordError = validateConfirmPassword(
       formData.password,
@@ -111,6 +125,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
     if (nameError) newErrors.fullName = nameError;
     if (emailError) newErrors.email = emailError;
+    if (ssnError) newErrors.ssn = ssnError;
     if (passwordError) newErrors.password = passwordError;
     if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError;
 
@@ -124,7 +139,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       // Aqui você pode adicionar a chamada para a API de cadastro
       // Por enquanto, apenas mostramos mensagem de sucesso
       setSuccess(true);
-      setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+      setFormData({ fullName: '', email: '', ssn: '', password: '', confirmPassword: '' });
       setErrors({});
 
       // Fecha o modal após 2 segundos
@@ -154,7 +169,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
           >
             <X className="h-5 w-5 text-gray-600" />
           </button>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">Criar Conta</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">Create Account</h2>
           <div className="w-8" />
         </div>
 
@@ -163,10 +178,10 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
           {success ? (
             <div className="text-center space-y-3">
               <div className="text-green-600 font-semibold">
-                ✓ Cadastro realizado com sucesso!
+                ✓ Account created successfully!
               </div>
               <p className="text-sm text-gray-600">
-                Redirecionando para login...
+                Redirecting to login...
               </p>
             </div>
           ) : (
@@ -180,7 +195,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
               {/* Nome Completo */}
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-gray-700">
-                  Seu nome completo:
+                  Full Name:
                 </label>
                 <input
                   id="fullName"
@@ -188,7 +203,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   type="text"
                   value={formData.fullName}
                   onChange={handleChange}
-                  placeholder="João Silva"
+                  placeholder="John Smith"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                     errors.fullName ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -209,7 +224,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="seu@email.com"
+                  placeholder="your@email.com"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -218,11 +233,30 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   <p className="text-red-600 text-xs mt-1">{errors.email}</p>
                 )}
               </div>
-
+              {/* SSN/National ID */}
+              <div>
+                <label htmlFor="ssn" className="block text-sm font-medium mb-2 text-gray-700">
+                  SSN/National ID:
+                </label>
+                <input
+                  id="ssn"
+                  name="ssn"
+                  type="text"
+                  value={formData.ssn}
+                  onChange={handleChange}
+                  placeholder="XXX-XX-XXXX"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
+                    errors.ssn ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.ssn && (
+                  <p className="text-red-600 text-xs mt-1">{errors.ssn}</p>
+                )}
+              </div>
               {/* Senha */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">
-                  Senha:
+                  Password:
                 </label>
                 <input
                   id="password"
@@ -230,7 +264,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -243,7 +277,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
               {/* Confirmar Senha */}
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-700">
-                  Repita sua senha:
+                  Confirm Password:
                 </label>
                 <input
                   id="confirmPassword"
@@ -251,7 +285,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   type="password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Repita sua senha"
+                  placeholder="Repeat your password"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                     errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -270,14 +304,14 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   className="flex-1"
                   disabled={loading}
                 >
-                  Cancelar
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
                   className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black"
                   disabled={loading}
                 >
-                  {loading ? 'Cadastrando...' : 'Cadastrar'}
+                  {loading ? 'Registering...' : 'Register'}
                 </Button>
               </div>
             </form>
