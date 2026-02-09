@@ -7,6 +7,8 @@ import axios from 'axios';
 import { Course } from '@prisma/client';
 import { useState } from 'react';
 import { Edit2, X } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 
 interface HeroProps {
   course: Course | null;
@@ -77,6 +79,19 @@ export const Hero = ({ course }: HeroProps) => {
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
             {course?.description || 'Start your journey with our premium courses. Check back soon for new content!'}
           </p>
+
+          {/* Central Image - Replace /images/your-image.jpg with your image path */}
+          <div className="mt-8 flex justify-center">
+            <div className="relative w-full max-w-md h-48 rounded-lg overflow-hidden">
+              <Image
+                src="/images/jazz-placeholder.jpg"
+                alt="Jazz Course Image"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
 
           {/* Media Section */}
           <div className="mt-4 flex flex-col items-center justify-center gap-4">
@@ -170,6 +185,24 @@ export const Hero = ({ course }: HeroProps) => {
         isOpen={showSignupModal} 
         onClose={() => setShowSignupModal(false)} 
       />
+
+      {/* Entra en el Mundo del Jazz */}
+      <section className="bg-white py-20 text-center">
+        <div className="container mx-auto px-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-yellow-700 mb-6">
+            Entra en el Mundo del Jazz
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-700 mb-6">
+            Vive una experiencia que cambiará para siempre tu manera de sentir la música.
+          </p>
+          <p className="text-lg sm:text-xl text-gray-700 mb-8">
+            No necesitas ser músico ni experto para disfrutar del jazz. Con este curso aprenderás a comprender su lenguaje, reconocer sus estilos y vivirlo con más intensidad en cada escucha.
+          </p>
+          <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg">
+            Inscríbete ahora
+          </button>
+        </div>
+      </section>
     </div>
   );
 };

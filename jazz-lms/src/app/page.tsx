@@ -1,21 +1,23 @@
-// Last updated: 2025-11-26 - Fixed null course handling
-import { Benefits } from '@/components/landing/benefits';
-import { Hero } from '@/components/landing/hero';
-import { Press } from '@/components/landing/press';
-import { db } from '@/lib/db';
+import { PromoVideo } from '@/components/landing/promo-video';
+import { CourseIntro } from '@/components/landing/course-intro';
+import { Classes } from '@/components/landing/classes';
+import { Press } from '@/components/landing/press-gallery';
+import { JazzCats } from '@/components/landing/jazz-cats';
+import { FAQs } from '@/components/landing/faqs';
+import { FinalCTA } from '@/components/landing/final-cta';
+import { Footer } from '@/components/landing/footer';
 
-export default async function Home() {
-  const course = await db.course.findFirst({
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-
+export default function Home() {
   return (
-    <main>
-      <Hero course={course} />
+    <main className="w-full">
+      <PromoVideo />
+      <CourseIntro />
+      <Classes />
       <Press />
-      <Benefits />
+      <JazzCats />
+      <FAQs />
+      <FinalCTA />
+      <Footer />
     </main>
   );
 }
