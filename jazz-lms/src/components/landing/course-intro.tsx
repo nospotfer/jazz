@@ -11,7 +11,8 @@ export function CourseIntro() {
     <section className="w-full bg-gradient-to-b from-gray-900 to-gray-800 py-16 sm:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left side - Logo and Text */}
+          {/* Left side - Text */}
+
           <div className="flex flex-col items-center lg:items-start">
             <div className="relative w-32 h-32 mb-8">
               <Image
@@ -58,7 +59,7 @@ export function CourseIntro() {
             </button>
           </div>
 
-          {/* Right side - Image placeholder */}
+          {/* Right side - Image */}
           <div className="relative h-96 lg:h-full rounded-lg overflow-hidden">
             <Image
               src="/images/enric_GFPGANv1.4_realesr-general-x4v3.png"

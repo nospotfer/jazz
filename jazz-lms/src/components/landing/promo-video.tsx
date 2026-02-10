@@ -20,7 +20,7 @@ export function PromoVideo() {
   };
 
   return (
-    <section className="relative w-full h-screen bg-black">
+    <section className="relative w-full h-96 bg-black">
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"

@@ -9,7 +9,7 @@ export function JazzCats() {
 
   return (
     <>
-      <section className="w-full bg-gray-800 py-12 sm:py-16 lg:py-20">
+      <section className="w-full bg-black-100 py-12 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-white text-4xl font-bold text-center mb-8">
             Los "Jazz Cats"
@@ -26,8 +26,8 @@ export function JazzCats() {
 
           <div className="relative w-full h-96 mb-8 flex items-center justify-center">
             <Image
-              src="/images/Imagen4.png"
-              alt="Jazz Cats illustration"
+              src="/images/jazzcats.jpg"
+              alt=" Made by pattesdeveloursandco.blogspot.com "
               fill
               className="object-contain"
               quality={90}

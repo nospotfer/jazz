@@ -17,7 +17,7 @@ const press: PressItem[] = [
     fecha: 'La Vanguardia, 4/05/2022',
     descripcion:
       '"Enric Vazquez es la piedra angular de la veterana escena jazzística barcelonesa"',
-    imagen: '/images/Imagen13.png',
+    imagen: '/images/en la prensa1.jpeg',
   },
   {
     titulo: 'Jamboree',
@@ -25,7 +25,7 @@ const press: PressItem[] = [
     fecha: 'La Vanguardia, 19/01/2020',
     descripcion:
       '"La persona que mejor conoce el jazz barcelonés desde los años 60"',
-    imagen: '/images/Imagen15.png',
+    imagen: '/images/en la prensa2.jpeg',
   },
   {
     titulo: 'Guía Iwanowski 101 Barcelona',
@@ -33,13 +33,13 @@ const press: PressItem[] = [
     fecha: '2023, pag. 207',
     descripcion:
       '"Enric Vazquez es el impulso de la popularidad del jazz desde 1958 con publicaciones, emisiones de televisión, conferencias en círculos intelectuales, así como colaboración en la organización del primer festival de jazz de barcelona"',
-    imagen: '/images/Imagen16.png',
+    imagen: '/images/en la prensa3.jpeg',
   },
 ];
 
 export function Press() {
   return (
-    <section className="w-full bg-gray-700 py-12 sm:py-16 lg:py-20">
+    <section className="w-full bg-black py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-white text-4xl font-bold text-center mb-12">
           En la Prensa
