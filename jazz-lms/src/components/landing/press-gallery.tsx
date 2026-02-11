@@ -12,11 +12,11 @@ interface PressItem {
 
 const press: PressItem[] = [
   {
-    titulo: 'Conferencinte en el Círculo del Liceo',
+    titulo: 'Speaker at the Liceo Circle',
     autor: 'E. Llinás',
     fecha: 'La Vanguardia, 4/05/2022',
     descripcion:
-      '"Enric Vazquez es la piedra angular de la veterana escena jazzística barcelonesa"',
+      '"Enric Vazquez is the cornerstone of the veteran Barcelona jazz scene"',
     imagen: '/images/en la prensa1.jpeg',
   },
   {
@@ -24,15 +24,15 @@ const press: PressItem[] = [
     autor: 'J. Sagarra',
     fecha: 'La Vanguardia, 19/01/2020',
     descripcion:
-      '"La persona que mejor conoce el jazz barcelonés desde los años 60"',
+      '"The person who best knows Barcelona jazz since the 60s"',
     imagen: '/images/en la prensa2.jpeg',
   },
   {
-    titulo: 'Guía Iwanowski 101 Barcelona',
+    titulo: 'Iwanowski Guide 101 Barcelona',
     autor: 'K. Sommer',
     fecha: '2023, pag. 207',
     descripcion:
-      '"Enric Vazquez es el impulso de la popularidad del jazz desde 1958 con publicaciones, emisiones de televisión, conferencias en círculos intelectuales, así como colaboración en la organización del primer festival de jazz de barcelona"',
+      '"Enric Vazquez is the driving force behind jazz popularity since 1958 with publications, television broadcasts, lectures in intellectual circles, and collaboration in organizing Barcelona\'s first jazz festival"',
     imagen: '/images/en la prensa3.jpeg',
   },
 ];
@@ -42,7 +42,7 @@ export function Press() {
     <section className="w-full bg-black py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-white text-4xl font-bold text-center mb-12">
-          En la Prensa
+          In the Press
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

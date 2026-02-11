@@ -14,8 +14,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "La Cultura del Jazz",
-  description: "Curso Online con Enric Vazquez Ramonich",
+  title: "Jazz Culture",
+  description: "Online Course with Enric Vazquez Ramonich",
 };
 
 export default function RootLayout({

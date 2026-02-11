@@ -13,7 +13,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    ssn: '',
+    verificationCode: '',
     password: '',
     confirmPassword: '',
   });
@@ -21,8 +21,9 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
 
-  // Validate name: only letters and spaces, no numbers
   const validateName = (name: string): string => {
     if (!name.trim()) {
       return 'Full name is required';
@@ -39,7 +40,6 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     return '';
   };
 
-  // Validate email with @
   const validateEmail = (email: string): string => {
     if (!email.trim()) {
       return 'Email is required';
@@ -51,19 +51,16 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     return '';
   };
 
-  // Validate SSN/National ID (XXX-XX-XXXX format)
-  const validateSSN = (ssn: string): string => {
-    if (!ssn.trim()) {
-      return 'SSN/National ID is required';
+  const validateVerificationCode = (code: string): string => {
+    if (!code.trim()) {
+      return 'Verification code is required';
     }
-    const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
-    if (!ssnRegex.test(ssn)) {
-      return 'Invalid SSN/National ID format (use XXX-XX-XXXX)';
+    if (!/^\d{6}$/.test(code)) {
+      return 'Code must be 6 digits';
     }
     return '';
   };
 
-  // Validate password
   const validatePassword = (password: string): string => {
     if (!password) {
       return 'Password is required';
@@ -74,7 +71,6 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     return '';
   };
 
-  // Validate password confirmation
   const validateConfirmPassword = (password: string, confirmPassword: string): string => {
     if (!confirmPassword) {
       return 'Password confirmation is required';
@@ -86,10 +82,10 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
   };
 
   const handleClose = () => {
-    // Limpar todos os campos ao fechar
-    setFormData({ fullName: '', email: '', ssn: '', password: '', confirmPassword: '' });
+    setFormData({ fullName: '', email: '', verificationCode: '', password: '', confirmPassword: '' });
     setErrors({});
     setSuccess(false);
+    setCodeSent(false);
     onClose();
   };
 
@@ -99,7 +95,6 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       ...prev,
       [name]: value,
     }));
-    // Limpar erro do campo quando o usuário começa a digitar
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -108,15 +103,36 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     }
   };
 
+  const handleSendCode = async () => {
+    const emailError = validateEmail(formData.email);
+    if (emailError) {
+      setErrors((prev) => ({ ...prev, email: emailError }));
+      return;
+    }
+
+    setSendingCode(true);
+    try {
+      // TODO: Integrate with your email verification API
+      console.log('Sending verification code to:', formData.email);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCodeSent(true);
+    } catch (err) {
+      setErrors({
+        submit: err instanceof Error ? err.message : 'Failed to send code',
+      });
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const newErrors: Record<string, string> = {};
 
-    // Validar todos os campos
     const nameError = validateName(formData.fullName);
     const emailError = validateEmail(formData.email);
-    const ssnError = validateSSN(formData.ssn);
+    const codeError = validateVerificationCode(formData.verificationCode);
     const passwordError = validatePassword(formData.password);
     const confirmPasswordError = validateConfirmPassword(
       formData.password,
@@ -125,7 +141,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
     if (nameError) newErrors.fullName = nameError;
     if (emailError) newErrors.email = emailError;
-    if (ssnError) newErrors.ssn = ssnError;
+    if (codeError) newErrors.verificationCode = codeError;
     if (passwordError) newErrors.password = passwordError;
     if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError;
 
@@ -136,19 +152,17 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     }
 
     try {
-      // Aqui você pode adicionar a chamada para a API de cadastro
-      // Por enquanto, apenas mostramos mensagem de sucesso
+      console.log('Signup attempt:', formData);
       setSuccess(true);
-      setFormData({ fullName: '', email: '', ssn: '', password: '', confirmPassword: '' });
+      setFormData({ fullName: '', email: '', verificationCode: '', password: '', confirmPassword: '' });
       setErrors({});
 
-      // Fecha o modal após 2 segundos
       setTimeout(() => {
-        onClose();
+        handleClose();
       }, 2000);
     } catch (err) {
       setErrors({
-        submit: err instanceof Error ? err.message : 'Erro ao cadastrar',
+        submit: err instanceof Error ? err.message : 'Registration failed',
       });
     } finally {
       setLoading(false);
@@ -165,7 +179,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
           <button
             onClick={handleClose}
             className="p-1 hover:bg-gray-100 rounded-md transition"
-            aria-label="Fechar"
+            aria-label="Close"
           >
             <X className="h-5 w-5 text-gray-600" />
           </button>
@@ -192,7 +206,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 </div>
               )}
 
-              {/* Nome Completo */}
+              {/* Full Name */}
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-gray-700">
                   Full Name:
@@ -233,27 +247,43 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   <p className="text-red-600 text-xs mt-1">{errors.email}</p>
                 )}
               </div>
-              {/* SSN/National ID */}
+
+              {/* Verification Code */}
               <div>
-                <label htmlFor="ssn" className="block text-sm font-medium mb-2 text-gray-700">
-                  SSN/National ID:
+                <label htmlFor="verificationCode" className="block text-sm font-medium mb-2 text-gray-700">
+                  Verification Code:
                 </label>
-                <input
-                  id="ssn"
-                  name="ssn"
-                  type="text"
-                  value={formData.ssn}
-                  onChange={handleChange}
-                  placeholder="XXX-XX-XXXX"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
-                    errors.ssn ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.ssn && (
-                  <p className="text-red-600 text-xs mt-1">{errors.ssn}</p>
+                <div className="flex gap-2">
+                  <input
+                    id="verificationCode"
+                    name="verificationCode"
+                    type="text"
+                    value={formData.verificationCode}
+                    onChange={handleChange}
+                    placeholder="6-digit code"
+                    maxLength={6}
+                    className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
+                      errors.verificationCode ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={sendingCode || !formData.email}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 whitespace-nowrap"
+                  >
+                    {sendingCode ? 'Sending...' : codeSent ? 'Resend' : 'Send Code'}
+                  </Button>
+                </div>
+                {codeSent && !errors.verificationCode && (
+                  <p className="text-green-600 text-xs mt-1">Code sent to your email!</p>
+                )}
+                {errors.verificationCode && (
+                  <p className="text-red-600 text-xs mt-1">{errors.verificationCode}</p>
                 )}
               </div>
-              {/* Senha */}
+
+              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">
                   Password:
@@ -274,7 +304,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 )}
               </div>
 
-              {/* Confirmar Senha */}
+              {/* Confirm Password */}
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-700">
                   Confirm Password:
@@ -295,7 +325,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 )}
               </div>
 
-              {/* Botões */}
+              {/* Buttons */}
               <div className="flex gap-3 pt-4">
                 <Button
                   type="button"

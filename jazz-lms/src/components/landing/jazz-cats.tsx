@@ -12,16 +12,11 @@ export function JazzCats() {
       <section className="w-full bg-black-100 py-12 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-white text-4xl font-bold text-center mb-8">
-            Los "Jazz Cats"
+            The "Jazz Cats"
           </h2>
 
-          <p className="text-gray-300 text-center mb-8 leading-relaxed">
-            El término "jazz cat" es una expresión informal que se utiliza en la
-            jerga del jazz para referirse a un músico de jazz o, en un sentido más
-            amplio, a una persona que es un entusiasta y conocedor del género. La
-            palabra "cat" (gato) es una jerga de la época que se usaba para
-            referirse a un hombre, a menudo con un toque de "coolness" o
-            "sabiduria callejera".
+          <p className="text-gray-300 text-center mb-8 leading-relaxed text-base sm:text-lg">
+            The term "jazz cat" is an informal expression used in jazz slang to refer to a jazz musician, or in a broader sense, to a person who is an enthusiast and connoisseur of the genre. The word "cat" is slang from that era that was used to refer to a man, often with a touch of "coolness" or "street wisdom".
           </p>
 
           <div className="relative w-full h-96 mb-8 flex items-center justify-center">
@@ -38,7 +33,7 @@ export function JazzCats() {
             onClick={() => setShowSignupModal(true)}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg"
           >
-            ¡Inscríbete ahora!
+            Sign Up Now!
           </button>
         </div>
       </section>

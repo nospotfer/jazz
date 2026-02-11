@@ -10,39 +10,41 @@ interface FAQItem {
 
 const faqs: FAQItem[] = [
   {
-    pregunta: '¿Cuánto cuesta el curso?',
+    pregunta: 'How much does the course cost?',
     respuesta:
-      'El precio depende de las ofertas activas en Udemy, que lanza promociones frecuentes. A menudo podrás encontrarlo con descuento respecto al precio habitual. Lo mejor es consultar la página del curso para ver el precio actual.',
+      'The price depends on active offers on Udemy, which launches frequent promotions. You can often find it at a discount from the regular price. The best thing is to check the course page to see the current price.',
   },
   {
-    pregunta: '¿Y si me doy cuenta de que el curso no es para mí?',
+    pregunta: 'What if I realize the course is not for me?',
     respuesta:
-      'No pasa nada. Queremos que disfrutes aprendiendo y que la experiencia sea positiva. Si no es lo que esperabas, Udemy ofrece una garantía de reembolso de 30 días, sin riesgo y sin preguntas incómodas.',
+      'No problem. We want you to enjoy learning and have a positive experience. If it\'s not what you expected, Udemy offers a 30-day money-back guarantee, with no risk and no uncomfortable questions.',
   },
   {
-    pregunta: '¿Qué aprenderé en este curso?',
+    pregunta: 'What will I learn in this course?',
     respuesta:
-      'Comenzaremos desde lo esencial para entender qué es el jazz, su historia y su cultura. Conocerás la importancia de la improvisación, aprenderás a reconocer estilos y músicos por su sonido, y descubrirás cómo disfrutar mucho más de los grandes clásicos y de cualquier concierto en vivo.',
+      'We\'ll start from the essentials to understand what jazz is, its history and culture. You\'ll learn the importance of improvisation, learn to recognize styles and musicians by their sound, and discover how to enjoy the great classics and any live concert much more.',
   },
 ];
 
 export function FAQs() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const isExpanded = (index: number) => activeIndex === index || hoveredIndex === index;
 
   return (
-    <section className="w-full bg-gray-900 py-12 sm:py-16 lg:py-20">
+    <section className="w-full bg-black py-12 sm:py-16 lg:py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
             <h2 className="text-yellow-500 text-3xl font-bold mb-8">
-              Preguntas<br />Frecuentes
+              Frequently<br />Asked Questions
             </h2>
             <p className="text-gray-300 mb-6">
-              Si no encuentras la respuesta que buscas, entra en contacto con
-              nosotros mediante el link abajo
+              If you can't find the answer you're looking for, contact us via the link below
             </p>
             <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors">
-              Contacto
+              Contact
             </button>
           </div>
 
@@ -51,6 +53,8 @@ export function FAQs() {
               <div
                 key={index}
                 className="border border-gray-600 rounded-lg overflow-hidden"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
               >
                 <button
                   onClick={() =>
@@ -63,11 +67,11 @@ export function FAQs() {
                   </span>
                   <ChevronDown
                     className={`text-yellow-500 transition-transform ${
-                      activeIndex === index ? 'rotate-180' : ''
+                      isExpanded(index) ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
-                {activeIndex === index && (
+                {isExpanded(index) && (
                   <div className="p-4 bg-gray-700 border-t border-gray-600">
                     <p className="text-gray-300">{faq.respuesta}</p>
                   </div>
