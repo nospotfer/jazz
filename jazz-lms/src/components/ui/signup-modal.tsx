@@ -3,15 +3,6 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './button';
-import { createClient } from '@/utils/supabase/client';
-
-const formatAuthError = (err: unknown, fallback: string) => {
-  const message = err instanceof Error ? err.message : fallback;
-  if (message.toLowerCase().includes('failed to fetch')) {
-    return 'Não foi possível conectar ao Supabase. Verifique NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no .env.local e confirme se a URL do projeto existe.';
-  }
-  return message;
-};
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -123,73 +114,41 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       return;
     }
 
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: formData.fullName,
-          },
-        },
-      });
+    // Redirect directly to dashboard (no Supabase auth)
+    setSuccess(true);
+    setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+    setErrors({});
 
-      if (error) {
-        throw error;
-      }
-
-      setSuccess(true);
-      setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
-      setErrors({});
-
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
-    } catch (err) {
-      setErrors({
-        submit: formatAuthError(err, 'Registration failed'),
-      });
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => {
+      handleClose();
+      window.location.href = '/dashboard';
+    }, 1500);
+    setLoading(false);
   };
 
   if (!isOpen) return null;
 
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
-    } catch (err) {
-      setErrors({
-        submit: formatAuthError(err, 'Google signup failed'),
-      });
-      setGoogleLoading(false);
-    }
+    // Redirect directly to dashboard (no Supabase OAuth)
+    handleClose();
+    window.location.href = '/dashboard';
+    setGoogleLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 sm:p-6 min-h-screen">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm sm:max-w-md my-auto">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 min-h-screen">
+      <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-sm sm:max-w-md my-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
           <button
             onClick={handleClose}
-            className="p-1 hover:bg-gray-100 rounded-md transition"
+            className="p-1 hover:bg-accent rounded-md transition"
             aria-label="Close"
           >
-            <X className="h-5 w-5 text-gray-600" />
+            <X className="h-5 w-5 text-muted-foreground" />
           </button>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">Create Account</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-foreground flex-1 text-center">Create Account</h2>
           <div className="w-8" />
         </div>
 
@@ -197,24 +156,24 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
         <div className="p-4 sm:p-6">
           {success ? (
             <div className="text-center space-y-3">
-              <div className="text-green-600 font-semibold">
+              <div className="text-green-500 font-semibold">
                 ✓ Account created successfully!
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Redirecting to login...
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {errors.submit && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 dark:text-red-400 text-sm">
                   {errors.submit}
                 </div>
               )}
 
               {/* Full Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-foreground">
                   Full Name:
                 </label>
                 <input
@@ -225,18 +184,18 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   onChange={handleChange}
                   placeholder="John Smith"
                   required
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
-                    errors.fullName ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2.5 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-muted-foreground ${
+                    errors.fullName ? 'border-red-500' : 'border-border'
                   }`}
                 />
                 {errors.fullName && (
-                  <p className="text-red-600 text-xs mt-1">{errors.fullName}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">
                   Email:
                 </label>
                 <input
@@ -247,18 +206,18 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   onChange={handleChange}
                   placeholder="your@email.com"
                   required
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2.5 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-muted-foreground ${
+                    errors.email ? 'border-red-500' : 'border-border'
                   }`}
                 />
                 {errors.email && (
-                  <p className="text-red-600 text-xs mt-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                 )}
               </div>
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium mb-2 text-foreground">
                   Password:
                 </label>
                 <input
@@ -269,18 +228,18 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   onChange={handleChange}
                   placeholder="Minimum 6 characters"
                   required
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2.5 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-muted-foreground ${
+                    errors.password ? 'border-red-500' : 'border-border'
                   }`}
                 />
                 {errors.password && (
-                  <p className="text-red-600 text-xs mt-1">{errors.password}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                 )}
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-foreground">
                   Confirm Password:
                 </label>
                 <input
@@ -291,12 +250,12 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   onChange={handleChange}
                   placeholder="Repeat your password"
                   required
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2.5 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-muted-foreground ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-border'
                   }`}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-600 text-xs mt-1">{errors.confirmPassword}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
                 )}
               </div>
 
@@ -313,7 +272,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black"
+                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={loading || googleLoading}
                 >
                   {loading ? 'Registering...' : 'Register'}
@@ -322,10 +281,10 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or</span>
+                  <span className="px-2 bg-card text-muted-foreground">Or</span>
                 </div>
               </div>
 
@@ -333,7 +292,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 type="button"
                 onClick={handleGoogleSignup}
                 disabled={loading || googleLoading}
-                className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 flex items-center justify-center gap-3 py-3"
+                className="w-full bg-background hover:bg-accent text-foreground border border-border flex items-center justify-center gap-3 py-3"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>

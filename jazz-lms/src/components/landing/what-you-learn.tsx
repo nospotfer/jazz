@@ -1,9 +1,15 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
+import { SignupModal } from '@/components/ui/signup-modal';
 
 export function WhatYouLearn() {
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
   return (
-    <section className="bg-gray-50 dark:bg-background text-gray-900 dark:text-white py-20">
-      <div className="container mx-auto px-4">
+    <>
+      <section className="bg-gray-50 dark:bg-background text-gray-900 dark:text-white py-20">
+        <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-12 items-start">
           {/* Left side */}
           <div className="md:w-1/2">
@@ -21,7 +27,10 @@ export function WhatYouLearn() {
               In addition, <span className="font-bold text-gray-900 dark:text-white">you will learn to enjoy the great classics with fresh eyes</span>, understanding their styles, their musical language and why their importance in the history of jazz.
             </p>
             
-            <button className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded transition duration-300">
+            <button
+              onClick={() => setShowSignupModal(true)}
+              className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded transition duration-300"
+            >
               Start Now
             </button>
           </div>
@@ -64,6 +73,11 @@ export function WhatYouLearn() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+      />
+    </>
   );
 }

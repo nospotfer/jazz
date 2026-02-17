@@ -7,19 +7,23 @@ import { JazzCats } from '@/components/landing/jazz-cats';
 import { FAQs } from '@/components/landing/faqs';
 import { FinalCTA } from '@/components/landing/final-cta';
 import { Footer } from '@/components/landing/footer';
+import { Header } from '@/components/layout/header';
 
 export default function Home() {
   return (
-    <main className="w-full">
-      <PromoVideo />
-      <Professor />
-      <WhatYouLearn />
-      <Classes />
-      <Press />
-      <JazzCats />
-      <FAQs />
-      <FinalCTA />
-      <Footer />
-    </main>
+    <>
+      <Header />
+      <main className="w-full">
+        <PromoVideo />
+        <Professor />
+        <WhatYouLearn />
+        <Classes />
+        <Press />
+        <JazzCats />
+        <FAQs />
+        <FinalCTA />
+        <Footer />
+      </main>
+    </>
   );
 }

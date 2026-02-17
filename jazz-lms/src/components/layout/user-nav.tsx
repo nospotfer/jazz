@@ -57,6 +57,22 @@ export const UserNav = async () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="cursor-pointer">
+            🎓 My Dashboard
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/profile" className="cursor-pointer">
+            👤 Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/settings" className="cursor-pointer">
+            ⚙️ Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {isAdmin && (
           <>
             <DropdownMenuItem asChild>

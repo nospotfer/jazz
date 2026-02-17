@@ -6,8 +6,8 @@ import { createClient } from '@/utils/supabase/client';
 export default function AuthPage() {
   const supabase = createClient();
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-black">
-        <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="flex items-center justify-center h-screen bg-background">
+        <div className="w-full max-w-md p-8 space-y-8 bg-card border border-border rounded-xl shadow-lg">
             <Auth
                 supabaseClient={supabase}
                 appearance={{
@@ -38,7 +38,7 @@ export default function AuthPage() {
                       },
                       radii: {
                         borderRadiusButton: '8px',
-                        borderRadiusInput: '8px',
+                        inputBorderRadius: '8px',
                       },
                     },
                   },

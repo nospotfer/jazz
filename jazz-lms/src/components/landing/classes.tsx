@@ -135,7 +135,7 @@ export function Classes() {
           {classes.map((classItem, index) => (
             <div
               key={index}
-              className={`bg-amber-500 p-6 rounded-lg shadow-lg transition-all duration-500 ease-out border-2 hover:shadow-2xl hover:-translate-y-2 ${
+              className={`bg-amber-500 rounded-xl overflow-hidden shadow-lg transition-all duration-500 ease-out border-2 hover:shadow-2xl hover:-translate-y-2 ${
                 isHovered(index)
                   ? 'border-4 border-black dark:border-white'
                   : isSelected(index)
@@ -145,7 +145,7 @@ export function Classes() {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className="relative mb-4 h-72 w-full overflow-hidden rounded-lg border-4 border-black">
+              <div className="relative h-64 w-full overflow-hidden border-b-4 border-black">
                 <Image
                   src={classItem.image}
                   alt={classItem.subtitle}
@@ -154,38 +154,39 @@ export function Classes() {
                   sizes="(min-width: 768px) 33vw, 100vw"
                 />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {classItem.title}
-              </h3>
-              <h4 className="text-lg font-semibold text-black mb-4">
-                {classItem.subtitle}
-              </h4>
-              
-              {/* Description with expand/collapse */}
-              <div className="relative">
-                {!isExpanded(index) ? (
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-black line-clamp-2 text-sm">{classItem.description}</p>
-                    <button
-                      onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                      className="flex-shrink-0 mt-1"
-                      aria-label="Expand description"
-                    >
-                      <ChevronDown className="text-gray-900 h-5 w-5 transition-transform duration-500 ease-out" />
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <p className="text-black mb-4">{classItem.description}</p>
-                    <button
-                      onClick={() => setExpandedIndex(null)}
-                      className="flex items-center justify-center w-full"
-                      aria-label="Collapse description"
-                    >
-                      <ChevronDown className="text-gray-900 h-5 w-5 rotate-180 transition-transform duration-500 ease-out" />
-                    </button>
-                  </div>
-                )}
+              <div className="p-5">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                  {classItem.title}
+                </h3>
+                <h4 className="text-base font-semibold text-black/90 mb-3">
+                  {classItem.subtitle}
+                </h4>
+
+                <div className="relative border-t border-black/25 pt-3">
+                  {!isExpanded(index) ? (
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-black/90 line-clamp-2 text-sm">{classItem.description}</p>
+                      <button
+                        onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                        className="flex-shrink-0 mt-1"
+                        aria-label="Expand description"
+                      >
+                        <ChevronDown className="text-gray-900 h-5 w-5 transition-transform duration-500 ease-out" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-black/90 mb-4 text-sm leading-relaxed">{classItem.description}</p>
+                      <button
+                        onClick={() => setExpandedIndex(null)}
+                        className="flex items-center justify-center w-full"
+                        aria-label="Collapse description"
+                      >
+                        <ChevronDown className="text-gray-900 h-5 w-5 rotate-180 transition-transform duration-500 ease-out" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
