@@ -1,5 +1,6 @@
 import { PromoVideo } from '@/components/landing/promo-video';
 import { Professor } from '@/components/landing/professor';
+import { WhatYouLearn } from '@/components/landing/what-you-learn';
 import { Classes } from '@/components/landing/classes';
 import { Press } from '@/components/landing/press-gallery';
 import { JazzCats } from '@/components/landing/jazz-cats';
@@ -12,6 +13,7 @@ export default function Home() {
     <main className="w-full">
       <PromoVideo />
       <Professor />
+      <WhatYouLearn />
       <Classes />
       <Press />
       <JazzCats />

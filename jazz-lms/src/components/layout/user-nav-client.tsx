@@ -24,7 +24,7 @@ export function UserNavClient({ user }: UserNavClientProps) {
       <>
         <Button 
           onClick={() => setShowLoginModal(true)}
-          className="mr-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold"
+          className="mr-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900 text-gray-900 dark:text-white font-semibold"
         >
           Login
         </Button>

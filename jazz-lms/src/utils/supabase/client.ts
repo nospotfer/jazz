@@ -4,6 +4,9 @@ type MinimalSupabase = {
   auth: {
     getUser: () => Promise<{ data: { user: null } }>
     signOut: () => Promise<{ error: null }>
+    signInWithPassword: () => Promise<{ data: { user: null; session: null }; error: Error }>
+    signUp: () => Promise<{ data: { user: null; session: null }; error: Error }>
+    signInWithOAuth: () => Promise<{ data: null; error: Error }>
   }
 }
 
@@ -17,6 +20,18 @@ export function createClient(): any {
       auth: {
         getUser: async () => ({ data: { user: null } }),
         signOut: async () => ({ error: null }),
+        signInWithPassword: async () => ({
+          data: { user: null, session: null },
+          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+        }),
+        signUp: async () => ({
+          data: { user: null, session: null },
+          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+        }),
+        signInWithOAuth: async () => ({
+          data: null,
+          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+        }),
       },
     }
     return stub

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 type MinimalSupabase = {
   auth: {
     getUser: () => Promise<{ data: { user: null } }>
+    exchangeCodeForSession: () => Promise<{ data: null; error: Error }>
   }
 }
 
@@ -16,6 +17,10 @@ export function createClient(): any {
     const stub: MinimalSupabase = {
       auth: {
         getUser: async () => ({ data: { user: null } }),
+        exchangeCodeForSession: async () => ({
+          data: null,
+          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+        }),
       },
     }
     return stub

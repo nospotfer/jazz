@@ -39,9 +39,9 @@ const press: PressItem[] = [
 
 export function Press() {
   return (
-    <section className="w-full bg-black py-12 sm:py-16 lg:py-20">
+    <section className="w-full bg-gray-100 dark:bg-black py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-white text-4xl font-bold text-center mb-12">
+        <h2 className="text-gray-900 dark:text-white text-4xl font-bold text-center mb-12">
           In the Press
         </h2>
 
@@ -49,7 +49,7 @@ export function Press() {
           {press.map((item, index) => (
             <div
               key={index}
-              className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 dark:border-transparent"
             >
               <div className="relative h-48 w-full">
                 <Image
@@ -61,14 +61,14 @@ export function Press() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-white font-bold text-lg mb-2">
+                <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-2">
                   {item.titulo}
                 </h3>
                 <p className="text-yellow-500 text-sm font-semibold mb-1">
                   {item.autor}
                 </p>
-                <p className="text-gray-400 text-xs mb-3">{item.fecha}</p>
-                <p className="text-gray-300 text-sm italic">"{item.descripcion}"</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mb-3">{item.fecha}</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm italic">"{item.descripcion}"</p>
               </div>
             </div>
           ))}

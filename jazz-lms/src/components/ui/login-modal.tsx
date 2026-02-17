@@ -4,6 +4,15 @@ import { X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './button';
 import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+
+const formatAuthError = (err: unknown, fallback: string) => {
+  const message = err instanceof Error ? err.message : fallback;
+  if (message.toLowerCase().includes('failed to fetch')) {
+    return 'Não foi possível conectar ao Supabase. Verifique NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no .env.local e confirme se a URL do projeto existe.';
+  }
+  return message;
+};
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -11,6 +20,7 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -79,17 +89,22 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }
 
     try {
-      // Aqui você adiciona a chamada para a API de login
-      // Por enquanto, apenas mostramos mensagem de sucesso
-      console.log('Login attempt:', formData);
-      
-      // Simular delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
+        throw error;
+      }
+
       handleClose();
+      router.push('/dashboard');
+      router.refresh();
     } catch (err) {
       setErrors({
-        submit: err instanceof Error ? err.message : 'Login failed',
+        submit: formatAuthError(err, 'Login failed'),
       });
     } finally {
       setLoading(false);
@@ -111,7 +126,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       if (error) throw error;
     } catch (err) {
       setErrors({
-        submit: err instanceof Error ? err.message : 'Google login failed',
+        submit: formatAuthError(err, 'Google login failed'),
       });
       setGoogleLoading(false);
     }
@@ -154,6 +169,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="your@email.com"
+                required
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                   errors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -175,6 +191,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Minimum 6 characters"
+                required
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black placeholder-gray-400 ${
                   errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -198,7 +215,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <Button
                 type="submit"
                 className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black"
-                disabled={loading}
+                disabled={loading || googleLoading}
               >
                 {loading ? 'Logging in...' : 'Login'}
               </Button>

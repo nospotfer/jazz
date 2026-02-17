@@ -124,16 +124,24 @@ export function Classes() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const isExpanded = (index: number) => expandedIndex === index || hoveredIndex === index;
+  const isSelected = (index: number) => expandedIndex === index;
+  const isHovered = (index: number) => hoveredIndex === index;
 
   return (
-    <section className="bg-black-100 text-white py-20">
+    <section className="bg-white dark:bg-background text-gray-900 dark:text-white py-20">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">The Course</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {classes.map((classItem, index) => (
             <div
               key={index}
-              className="bg-amber-500 p-6 rounded-lg shadow-lg transition-all duration-300 border-2 border-white hover:shadow-2xl hover:-translate-y-2"
+              className={`bg-amber-500 p-6 rounded-lg shadow-lg transition-all duration-500 ease-out border-2 hover:shadow-2xl hover:-translate-y-2 ${
+                isHovered(index)
+                  ? 'border-4 border-black dark:border-white'
+                  : isSelected(index)
+                    ? 'border-black/80 dark:border-white'
+                    : 'border-black/30 dark:border-white/40'
+              }`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
@@ -163,7 +171,7 @@ export function Classes() {
                       className="flex-shrink-0 mt-1"
                       aria-label="Expand description"
                     >
-                      <ChevronDown className="text-gray-900 h-5 w-5 transition-transform" />
+                      <ChevronDown className="text-gray-900 h-5 w-5 transition-transform duration-500 ease-out" />
                     </button>
                   </div>
                 ) : (
@@ -174,7 +182,7 @@ export function Classes() {
                       className="flex items-center justify-center w-full"
                       aria-label="Collapse description"
                     >
-                      <ChevronDown className="text-gray-900 h-5 w-5 rotate-180 transition-transform" />
+                      <ChevronDown className="text-gray-900 h-5 w-5 rotate-180 transition-transform duration-500 ease-out" />
                     </button>
                   </div>
                 )}

@@ -8,18 +8,18 @@ export function FinalCTA() {
 
   return (
     <>
-      <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
+      <section className="w-full bg-gray-50 dark:bg-background py-16 sm:py-20 lg:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-yellow-600 text-4xl sm:text-5xl font-bold mb-4">
+          <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold mb-4">
             Don't Wait!
           </h2>
-          <p className="text-gray-800 text-xl mb-8">
+          <p className="text-yellow-600 text-xl mb-8">
             Start your jazz journey today.
           </p>
 
           <button
             onClick={() => setShowSignupModal(true)}
-            className="bg-black hover:bg-gray-900 text-white font-bold py-4 px-12 rounded-lg transition-colors text-xl mb-8"
+            className="bg-yellow-600 hover:bg-yellow-900 text-white font-bold py-4 px-12 rounded-lg transition-colors text-xl mb-8"
           >
             Sign Up Now and Take the First Step!
           </button>

@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { LogoutButton } from './logout-button';
 import { UserNavClient } from './user-nav-client';
+import { getCurrentUser } from '@/lib/admin';
+import Link from 'next/link';
 
 export const UserNav = async () => {
   const supabase = createClient();
@@ -21,6 +23,10 @@ export const UserNav = async () => {
   if (!user) {
     return <UserNavClient user={undefined} />;
   }
+
+  // Verificar se o usuário é admin
+  const dbUser = await getCurrentUser();
+  const isAdmin = dbUser?.role === 'ADMIN';
 
   return (
     <DropdownMenu>
@@ -43,9 +49,24 @@ export const UserNav = async () => {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {isAdmin && (
+              <p className="text-xs font-semibold text-yellow-500 mt-1">
+                🔑 Administrator
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {isAdmin && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="cursor-pointer">
+                🔐 Admin Intranet
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem>
           <LogoutButton />
         </DropdownMenuItem>

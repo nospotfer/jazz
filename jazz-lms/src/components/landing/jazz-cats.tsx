@@ -9,13 +9,13 @@ export function JazzCats() {
 
   return (
     <>
-      <section className="w-full bg-black-100 py-12 sm:py-16 lg:py-20">
+      <section className="w-full bg-gray-50 dark:bg-background py-12 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-white text-4xl font-bold text-center mb-8">
+          <h2 className="text-gray-900 dark:text-white text-4xl font-bold text-center mb-8">
             The "Jazz Cats"
           </h2>
 
-          <p className="text-gray-300 text-center mb-8 leading-relaxed text-base sm:text-lg">
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-8 leading-relaxed text-base sm:text-lg">
             The term "jazz cat" is an informal expression used in jazz slang to refer to a jazz musician, or in a broader sense, to a person who is an enthusiast and connoisseur of the genre. The word "cat" is slang from that era that was used to refer to a man, often with a touch of "coolness" or "street wisdom".
           </p>
 

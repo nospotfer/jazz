@@ -19,7 +19,7 @@ export function PromoVideo() {
   };
 
   return (
-    <section className="w-full bg-black py-8 px-6 sm:px-12 lg:px-24">
+    <section className="w-full bg-gray-100 dark:bg-black py-8 px-6 sm:px-12 lg:px-24">
       <div
         className="relative w-full max-w-6xl mx-auto h-[70vh] rounded-lg overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -96,10 +96,10 @@ export function PromoVideo() {
         <h2 className="text-yellow-600 text-4xl sm:text-5xl lg:text-6xl font-bold italic mb-6">
           Enter the World of Jazz
         </h2>
-        <p className="text-gray-300 text-base sm:text-lg mb-4">
+        <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg mb-4">
           Live an experience that will forever change the way you feel music.
         </p>
-        <p className="text-gray-400 text-sm sm:text-base mb-10 max-w-2xl mx-auto">
+        <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-10 max-w-2xl mx-auto">
           You don&apos;t need to be a musician or an expert to enjoy jazz. With this course you&apos;ll learn to
           understand its language, recognize its styles and live it with more intensity in every listen.
         </p>

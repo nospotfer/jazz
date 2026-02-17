@@ -96,9 +96,9 @@ export const Hero = ({ course }: HeroProps) => {
           {/* Media Section */}
           <div className="mt-4 flex flex-col items-center justify-center gap-4">
             <div className="relative w-full max-w-2xl group">
-              <div className="relative rounded-lg overflow-hidden bg-gray-900 h-[360px] flex items-center justify-center">
+              <div className="relative rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-900 h-[360px] flex items-center justify-center">
                 {isEditing ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 space-y-4 bg-gray-800">
+                    <div className="w-full h-full flex flex-col items-center justify-center p-6 space-y-4 bg-gray-300 dark:bg-gray-800">
                     <input
                       type="text"
                       value={inputValue}
@@ -143,7 +143,7 @@ export const Hero = ({ course }: HeroProps) => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="text-gray-400 text-center">
+                      <div className="text-gray-500 dark:text-gray-400 text-center">
                         <p>Invalid media URL</p>
                         <p className="text-sm">Click edit to add a video or gif</p>
                       </div>
