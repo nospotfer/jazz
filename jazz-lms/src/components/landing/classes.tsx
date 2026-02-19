@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { X, Volume2, VolumeX } from 'lucide-react';
 
 interface ClassItem {
   title: string;
@@ -58,14 +58,14 @@ const classes: ClassItem[] = [
     title: 'Class 7',
     subtitle: 'Jamming & Blowing',
     description:
-      'After a brief reference to the concept\'s origin in Chicago, the class focuses on its consolidation in Kansas City and New York. The importance of this process for defining Jazz Culture is analyzed, with examples. The legendary jams between Lester Young and Coleman Hawkins in Kansas are reviewed in 1934, as well as the famous NBC recording in New York in 1956, with Billie Holiday surrounded by the most prominent musicians of the time. These episodes are studied in detail to understand the relevance of jamming and blowing.',
+      'After a brief reference to the concept\'s origin in Chicago, the class focuses on its consolidation in Kansas City and New York. The importance of this process for defining Jazz Culture is analyzed, with examples. The legendary jams between Lester Young and Coleman Hawkins in Kansas are reviewed in 1934, as well as the famous NBC recording in New York in 1956, with Billie Holiday surrounded by the most prominent musicians of the time.',
     image: '/images/clase7.jpg',
   },
   {
     title: 'Class 8',
     subtitle: 'Composition and Arrangement in Jazz',
     description:
-      'The great jazz composers have never created in abstract, but always thinking of someone concrete. The case of Duke Ellington is examined, who wrote harmony based on the timbre of his soloists, and in some works left no space for improvisation. Also notable within his orchestra is Billy Strayhorn, who delineated the melodic taste of famous alto saxophonist Johnny Hodges, allowing him to complete the composition in performance. The head arrangements of Count Basie\'s orchestra, the role of soloists and riffs are also analyzed. The class concludes with the singular case of Thelonious Monk.',
+      'The great jazz composers have never created in abstract, but always thinking of someone concrete. The case of Duke Ellington is examined, who wrote harmony based on the timbre of his soloists, and in some works left no space for improvisation. Also notable within his orchestra is Billy Strayhorn, who delineated the melodic taste of famous alto saxophonist Johnny Hodges, allowing him to complete the composition in performance.',
     image: '/images/clase8.jpg',
   },
   {
@@ -93,105 +93,172 @@ const classes: ClassItem[] = [
     title: 'Class 12',
     subtitle: 'Improvisation',
     description:
-      'The class begins with the study of improvisation, addressing its form and the reasons for thematic choice as a conditioning factor. Next, the main procedures are analyzed: paraphrase, formulaic, motivic and modal improvisation, along with particular cases of great soloists who don\'t quite fit into these categories. Finally, free improvisation is addressed, examining melodic, harmonic and rhythmic resources in the works of Ornette Coleman, Cecil Taylor, John Coltrane and John Zorn.',
+      'The class begins with the study of improvisation, addressing its form and the reasons for thematic choice as a conditioning factor. Next, the main procedures are analyzed: paraphrase, formulaic, motivic and modal improvisation, along with particular cases of great soloists who don\'t quite fit into these categories. Finally, free improvisation is addressed.',
     image: '/images/clase12.jpg',
   },
   {
     title: 'Class 13',
     subtitle: 'Jazz and Entertainment',
     description:
-      'Although today jazz is considered a unique musical culture with defined values and distinct from popular entertainment, in the 1920s its context was much more diverse. Musicians like Louis Armstrong and Fats Waller worked in a variety of venues: from dance clubs to circuses, minstrel shows and even in the streets. Over time, jazz established itself as an independent musical culture, as evidenced by Armstrong\'s Hot Five and Seven, the 52nd Street scene and Minton\'s Playhouse.',
+      'Although today jazz is considered a unique musical culture with defined values and distinct from popular entertainment, in the 1920s its context was much more diverse. Musicians like Louis Armstrong and Fats Waller worked in a variety of venues: from dance clubs to circuses, minstrel shows and even in the streets. Over time, jazz established itself as an independent musical culture.',
     image: '/images/clase13.jpg',
   },
   {
     title: 'Class 14',
     subtitle: 'Singing Jazz 1',
     description:
-      'Jazz, with its origins in vocal music, has in the vaudeville blues sung by women one of its main predecessors. Louis Armstrong is considered a key figure who influenced future vocalists, and white lyricism and crooning are added as important contributions. The classical period closes with figures such as Bing Crosby, Frank Sinatra and the female singers of Duke Ellington\'s orchestra, who established the voice as just another instrument.',
+      'Jazz, with its origins in vocal music, has in the vaudeville blues sung by women one of its main predecessors. Louis Armstrong is considered a key figure who influenced future vocalists, and white lyricism and crooning are added as important contributions. The classical period closes with figures such as Bing Crosby, Frank Sinatra and the female singers of Duke Ellington\'s orchestra.',
     image: '/images/clase14.jpg',
   },
   {
     title: 'Class 15',
     subtitle: 'Singing Jazz 2',
     description:
-      'The lesson explores the divas of swing, with a focus on Billie Holiday and Ella Fitzgerald, analyzing their style and interaction with other instruments. June Christy serves as an example of the cool movement, characterized by a "passion for seeming dispassionate". The course concludes with Sarah Vaughan, considered the foremost exponent of the point at which the voice is established, without a doubt, as just another instrument in jazz.',
+      'The lesson explores the divas of swing, with a focus on Billie Holiday and Ella Fitzgerald, analyzing their style and interaction with other instruments. June Christy serves as an example of the cool movement, characterized by a "passion for seeming dispassionate". The course concludes with Sarah Vaughan, considered the foremost exponent of the voice as just another instrument in jazz.',
     image: '/images/clase15.jpg',
   },
 ];
+
+function ExpandedCard({
+  classItem,
+  onClose,
+}: {
+  classItem: ClassItem;
+  onClose: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
+      <div
+        className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+          {/* Left - Description */}
+          <div className="p-8 lg:p-10 flex flex-col justify-center overflow-y-auto max-h-[85vh]">
+            <div className="mb-4">
+              <span className="text-yellow-600 text-sm font-bold uppercase tracking-widest">
+                {classItem.title}
+              </span>
+            </div>
+            <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              {classItem.subtitle}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+              {classItem.description}
+            </p>
+          </div>
+
+          {/* Right - Preview Video */}
+          <div className="relative bg-black min-h-[300px] lg:min-h-0">
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            >
+              <source src="/images/videojazz.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+            <div className="absolute bottom-4 left-4 text-white">
+              <p className="text-xs uppercase tracking-widest opacity-70">Class Preview</p>
+              <p className="text-sm font-semibold">{classItem.subtitle}</p>
+            </div>
+            <button
+              onClick={toggleMute}
+              className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Classes() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const isExpanded = (index: number) => expandedIndex === index || hoveredIndex === index;
-  const isSelected = (index: number) => expandedIndex === index;
-  const isHovered = (index: number) => hoveredIndex === index;
-
   return (
-    <section className="bg-white dark:bg-background text-gray-900 dark:text-white py-20">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">The Course</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {classes.map((classItem, index) => (
-            <div
-              key={index}
-              className={`bg-amber-500 rounded-xl overflow-hidden shadow-lg transition-all duration-500 ease-out border-2 hover:shadow-2xl hover:-translate-y-2 ${
-                isHovered(index)
-                  ? 'border-4 border-black dark:border-white'
-                  : isSelected(index)
-                    ? 'border-black/80 dark:border-white'
-                    : 'border-black/30 dark:border-white/40'
-              }`}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className="relative h-64 w-full overflow-hidden border-b-4 border-black">
-                <Image
-                  src={classItem.image}
-                  alt={classItem.subtitle}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {classItem.title}
-                </h3>
-                <h4 className="text-base font-semibold text-black/90 mb-3">
-                  {classItem.subtitle}
-                </h4>
+    <>
+      <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
+          <h2 className="text-4xl sm:text-5xl font-bold text-center mb-4 text-gray-900 dark:text-white">
+            The Course
+          </h2>
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-12 text-sm">
+            Click on any class to see the full description and a preview
+          </p>
 
-                <div className="relative border-t border-black/25 pt-3">
-                  {!isExpanded(index) ? (
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-black/90 line-clamp-2 text-sm">{classItem.description}</p>
-                      <button
-                        onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                        className="flex-shrink-0 mt-1"
-                        aria-label="Expand description"
-                      >
-                        <ChevronDown className="text-gray-900 h-5 w-5 transition-transform duration-500 ease-out" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-black/90 mb-4 text-sm leading-relaxed">{classItem.description}</p>
-                      <button
-                        onClick={() => setExpandedIndex(null)}
-                        className="flex items-center justify-center w-full"
-                        aria-label="Collapse description"
-                      >
-                        <ChevronDown className="text-gray-900 h-5 w-5 rotate-180 transition-transform duration-500 ease-out" />
-                      </button>
-                    </div>
-                  )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {classes.map((classItem, index) => (
+              <button
+                key={index}
+                className={`group relative bg-amber-500 rounded-xl overflow-hidden shadow-md transition-all duration-300 ease-out text-left ${
+                  hoveredIndex === index
+                    ? 'shadow-2xl scale-105 ring-2 ring-yellow-400 z-10'
+                    : 'hover:shadow-lg'
+                }`}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => setExpandedIndex(index)}
+              >
+                {/* Small image thumbnail */}
+                <div className="relative h-24 sm:h-28 w-full overflow-hidden">
+                  <Image
+                    src={classItem.image}
+                    alt={classItem.subtitle}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 </div>
-              </div>
-            </div>
-          ))}
+
+                {/* Title only */}
+                <div className="p-3">
+                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                    {classItem.title}
+                  </h3>
+                  <p className="text-xs text-black/70 mt-0.5 line-clamp-2 leading-snug">
+                    {classItem.subtitle}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-    </section>
+
+      {/* Expanded card modal */}
+      {expandedIndex !== null && (
+        <ExpandedCard
+          classItem={classes[expandedIndex]}
+          onClose={() => setExpandedIndex(null)}
+        />
+      )}
+    </>
   );
 }

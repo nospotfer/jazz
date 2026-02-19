@@ -9,8 +9,8 @@ export function JazzCats() {
 
   return (
     <>
-      <section className="w-full bg-gray-50 dark:bg-background py-12 sm:py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen w-full bg-gray-50 dark:bg-background flex items-center">
+        <div className="w-full max-w-4xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
           <h2 className="text-gray-900 dark:text-white text-4xl font-bold text-center mb-8">
             The "Jazz Cats"
           </h2>
@@ -36,7 +36,7 @@ export function JazzCats() {
             Sign Up Now!
           </button>
         </div>
-      </section>
+      </div>
       <SignupModal
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}

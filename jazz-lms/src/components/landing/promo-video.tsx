@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
-import Image from 'next/image';
+import { Volume2, VolumeX, LogIn } from 'lucide-react';
 import { SignupModal } from '@/components/ui/signup-modal';
 
 export function PromoVideo() {
@@ -19,102 +18,81 @@ export function PromoVideo() {
   };
 
   return (
-    <section className="w-full bg-gray-100 dark:bg-black py-8 px-6 sm:px-12 lg:px-24">
-      <div
-        className="relative w-full max-w-6xl mx-auto h-[70vh] rounded-lg overflow-hidden"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-      {/* Video */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="/images/videojazz.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div className="min-h-screen w-full bg-gray-100 dark:bg-black flex items-center">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
+          {/* Left side - Text & CTA */}
+          <div className="flex flex-col justify-center space-y-8">
+            <div>
+              <p className="text-yellow-600 text-sm sm:text-base uppercase tracking-widest mb-4 font-medium">
+                Curso Online · Con Enric Vazquez Ramonich
+              </p>
+              <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-2">
+                La Cultura
+              </h1>
+              <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-4">
+                del <em className="text-yellow-600">Jazz</em>
+              </h1>
+            </div>
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+            <div className="border-l-4 border-yellow-600 pl-6">
+              <h2 className="text-yellow-600 text-3xl sm:text-4xl font-bold italic mb-4">
+                Enter the World of Jazz
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
+                Live an experience that will forever change the way you feel music.
+                You don&apos;t need to be a musician or an expert to enjoy jazz.
+              </p>
+            </div>
 
-      {/* Logo top-left */}
-      <div className="absolute top-6 left-6 z-10">
-        <Image
-          src="/images/Logo.jpeg"
-          alt="Cultura del Jazz"
-          width={80}
-          height={80}
-          className="rounded"
-        />
-      </div>
+            <button
+              onClick={() => setShowSignupModal(true)}
+              className="flex items-center gap-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
+            >
+              <LogIn className="h-5 w-5" />
+              Sign Up Now
+            </button>
+          </div>
 
-      {/* Content box - right side */}
-      <div className="absolute right-0 top-0 h-full w-full sm:w-3/5 lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 bg-black/30">
-        <p className="text-gray-200 text-sm sm:text-base uppercase tracking-widest mb-8">
-          Enjoy jazz by understanding its language, its essence and its culture.
-        </p>
+          {/* Right side - Promo Video */}
+          <div
+            className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            >
+              <source src="/images/videojazz.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
 
-        <h1 className="text-white text-5xl sm:text-6xl lg:text-7xl font-bold mb-2 leading-tight">
-          La Cultura
-        </h1>
-        <h1 className="text-white text-5xl sm:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
-          del <em>Jazz</em>
-        </h1>
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
-        <h2 className="text-yellow-600 text-3xl sm:text-4xl lg:text-5xl font-light italic mb-12">
-          Curso Online
-        </h2>
-
-        <div className="flex items-center justify-between">
-          <p className="text-white text-sm sm:text-base uppercase tracking-[0.3em]">
-            Con Enric Vazquez Ramonich
-          </p>
-          <div className="text-yellow-500 text-3xl animate-bounce">
-            ↓
+            {/* Mute/Unmute button */}
+            <button
+              onClick={toggleMute}
+              className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </button>
           </div>
         </div>
-      </div>
-
-      {/* Mute/Unmute button - bottom right, visible on hover */}
-      <button
-        onClick={toggleMute}
-        className={`absolute bottom-6 right-6 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}
-        aria-label={isMuted ? 'Unmute' : 'Mute'}
-      >
-        {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-      </button>
-      </div>
-
-      {/* CTA section below video */}
-      <div className="max-w-6xl mx-auto text-center py-16 sm:py-24 px-6">
-        <h2 className="text-yellow-600 text-4xl sm:text-5xl lg:text-6xl font-bold italic mb-6">
-          Enter the World of Jazz
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg mb-4">
-          Live an experience that will forever change the way you feel music.
-        </p>
-        <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-10 max-w-2xl mx-auto">
-          You don&apos;t need to be a musician or an expert to enjoy jazz. With this course you&apos;ll learn to
-          understand its language, recognize its styles and live it with more intensity in every listen.
-        </p>
-        <button
-          onClick={() => setShowSignupModal(true)}
-          className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-16 text-lg transition-colors"
-        >
-          Sign Up Now
-        </button>
       </div>
 
       <SignupModal
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}
       />
-    </section>
+    </div>
   );
 }

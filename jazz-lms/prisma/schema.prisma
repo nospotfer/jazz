@@ -10,7 +10,7 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  role      String   @default("USER") // USER or ADMIN
+  role      String   @default("USER") // USER | SUPER_ADMIN | COURSE_ADMIN | CONTENT_CREATOR | MODERATOR
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

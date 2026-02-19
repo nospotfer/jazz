@@ -1,6 +1,9 @@
 import { db } from '@/lib/db';
+import { requirePermission } from '@/lib/admin';
 
 export default async function AdminStatsPage() {
+  await requirePermission('analytics.read');
+
   const [courses, purchases, users, userProgress] = await Promise.all([
     db.course.findMany({
       include: {
@@ -81,38 +84,38 @@ export default async function AdminStatsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Estatísticas e Relatórios</h1>
-        <p className="text-gray-500 dark:text-gray-400">Análise detalhada do desempenho da plataforma</p>
+        <h1 className="text-3xl font-bold text-jazz-dark dark:text-white mb-2">Estatísticas e Relatórios</h1>
+        <p className="text-muted-foreground">Análise detalhada do desempenho da plataforma</p>
       </div>
 
       {/* KPIs Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-green-100 dark:from-green-900/50 to-white dark:to-gray-900 rounded-lg border border-green-300 dark:border-green-500/30 p-6">
+        <div className="card border-t-green-500">
           <div className="text-3xl mb-2">💰</div>
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+          <div className="text-3xl font-bold text-green-600">
             R$ {totalRevenue.toFixed(2)}
           </div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Receita Total</div>
+          <div className="text-muted-foreground text-sm mt-1">Receita Total</div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-100 dark:from-blue-900/50 to-white dark:to-gray-900 rounded-lg border border-blue-300 dark:border-blue-500/30 p-6">
+        <div className="card border-t-blue-500">
           <div className="text-3xl mb-2">🛒</div>
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{purchases.length}</div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Total de Vendas</div>
+          <div className="text-3xl font-bold text-blue-600">{purchases.length}</div>
+          <div className="text-muted-foreground text-sm mt-1">Total de Vendas</div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-100 dark:from-purple-900/50 to-white dark:to-gray-900 rounded-lg border border-purple-300 dark:border-purple-500/30 p-6">
+        <div className="card border-t-purple-500">
           <div className="text-3xl mb-2">📊</div>
-          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+          <div className="text-3xl font-bold text-purple-600">
             {completionRate.toFixed(1)}%
           </div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Taxa de Conclusão</div>
+          <div className="text-muted-foreground text-sm mt-1">Taxa de Conclusão</div>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-100 dark:from-yellow-900/50 to-white dark:to-gray-900 rounded-lg border border-yellow-300 dark:border-yellow-500/30 p-6">
+        <div className="card">
           <div className="text-3xl mb-2">✅</div>
-          <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{completedLessons}</div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Lições Completadas</div>
+          <div className="text-3xl font-bold text-jazz-accent">{completedLessons}</div>
+          <div className="text-muted-foreground text-sm mt-1">Lições Completadas</div>
         </div>
       </div>
 
@@ -223,7 +226,7 @@ export default async function AdminStatsPage() {
             <div className="flex justify-between text-gray-500 dark:text-gray-400">
               <span>Administradores:</span>
               <span className="text-gray-900 dark:text-white font-semibold">
-                {users.filter((u) => u.role === 'ADMIN').length}
+                {users.filter((u) => u.role !== 'USER').length}
               </span>
             </div>
             <div className="flex justify-between text-gray-500 dark:text-gray-400">

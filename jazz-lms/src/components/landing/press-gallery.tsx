@@ -39,9 +39,9 @@ const press: PressItem[] = [
 
 export function Press() {
   return (
-    <section className="w-full bg-gray-100 dark:bg-black py-12 sm:py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-gray-900 dark:text-white text-4xl font-bold text-center mb-12">
+    <div className="min-h-screen w-full bg-gray-100 dark:bg-black flex items-center">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
+        <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold text-center mb-12">
           In the Press
         </h2>
 
@@ -74,6 +74,6 @@ export function Press() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

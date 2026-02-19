@@ -1,6 +1,9 @@
 import { db } from '@/lib/db';
+import { requirePermission } from '@/lib/admin';
 
 export default async function AdminUsersPage() {
+  await requirePermission('users.read');
+
   const users = await db.user.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -25,60 +28,54 @@ export default async function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Gerenciamento de Usuários</h1>
-        <p className="text-gray-500 dark:text-gray-400">Visualize e gerencie todos os usuários da plataforma</p>
+        <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Gerenciamento de Usuários</h1>
+        <p className="text-sm text-muted-foreground mt-1">Visualize contas, roles e histórico de compras</p>
       </div>
 
-      {/* Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+        <div className="card">
           <div className="text-3xl mb-2">👥</div>
-          <div className="text-3xl font-bold text-yellow-500">{users.length}</div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Total de Usuários</div>
+          <div className="text-3xl font-bold text-jazz-accent">{users.length}</div>
+          <div className="text-sm text-muted-foreground mt-1">Total de Usuários</div>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+        <div className="card">
           <div className="text-3xl mb-2">🔑</div>
-          <div className="text-3xl font-bold text-yellow-500">
-            {users.filter((u) => u.role === 'ADMIN').length}
-          </div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Administradores</div>
+          <div className="text-3xl font-bold text-jazz-accent">{users.filter((u) => u.role !== 'USER').length}</div>
+          <div className="text-sm text-muted-foreground mt-1">Perfis Administrativos</div>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+        <div className="card">
           <div className="text-3xl mb-2">📚</div>
-          <div className="text-3xl font-bold text-yellow-500">
-            {users.filter((u) => u.role === 'USER').length}
-          </div>
-          <div className="text-gray-500 dark:text-gray-400 text-sm mt-1">Usuários Regulares</div>
+          <div className="text-3xl font-bold text-jazz-accent">{users.filter((u) => u.role === 'USER').length}</div>
+          <div className="text-sm text-muted-foreground mt-1">Usuários Regulares</div>
         </div>
       </div>
 
-      {/* Lista de Usuários */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Todos os Usuários</h2>
+      <div className="card p-0 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-muted/40">
+          <h2 className="text-xl font-bold text-jazz-dark dark:text-white">Todos os Usuários</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Cursos
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Cadastro
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+            <tbody>
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                     Nenhum usuário cadastrado ainda
                   </td>
                 </tr>
@@ -86,26 +83,22 @@ export default async function AdminUsersPage() {
                 users.map((user) => {
                   const userCourses = userPurchases[user.id] || [];
                   return (
-                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                    <tr key={user.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white font-medium">{user.email}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{user.id}</div>
+                        <div className="text-sm text-jazz-dark dark:text-white font-medium">{user.email}</div>
+                        <div className="text-xs text-muted-foreground">{user.id}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {user.role === 'ADMIN' ? (
-                          <span className="bg-yellow-500/20 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full">
-                            🔑 ADMIN
-                          </span>
+                        {user.role === 'USER' ? (
+                          <span className="badge-warning">USER</span>
                         ) : (
-                          <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-semibold px-3 py-1 rounded-full">
-                            👤 USER
-                          </span>
+                          <span className="badge-success">{user.role}</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {userCourses.length} curso{userCourses.length !== 1 ? 's' : ''}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {new Date(user.createdAt).toLocaleDateString('pt-BR')}
                       </td>
                     </tr>
@@ -117,18 +110,11 @@ export default async function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Informação importante */}
-      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <span className="text-2xl">⚠️</span>
-          <div>
-            <h3 className="text-yellow-500 font-semibold mb-1">Gerenciamento de Roles</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Para promover um usuário a admin, você precisa atualizar o campo 'role' diretamente no banco de dados.
-              Use o Prisma Studio ou execute: <code className="bg-gray-100 dark:bg-gray-900 px-2 py-1 rounded">npx prisma studio</code>
-            </p>
-          </div>
-        </div>
+      <div className="rounded-lg border border-jazz-accent/30 bg-jazz-accent/10 p-4">
+        <h3 className="text-jazz-dark dark:text-white font-semibold mb-1">Acesso do proprietário</h3>
+        <p className="text-sm text-muted-foreground">
+          O painel administrativo está bloqueado para o e-mail de proprietário definido em ADMIN_OWNER_EMAIL.
+        </p>
       </div>
     </div>
   );

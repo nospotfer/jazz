@@ -8,6 +8,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --color-jazz-dark: #1a1a1a;
+  --color-jazz-light: #fafafa;
+  --color-jazz-accent: #d4af37;
+  --color-burgundy: #8b3a3a;
+  --color-cream: #f5ebe0;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -119,5 +124,65 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-jazz-accent);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c9951f;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 text-white rounded-lg transition-colors font-medium;
+    background-color: var(--color-jazz-accent);
+  }
+
+  .btn-primary:hover {
+    background-color: #c9951f;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+    color: var(--color-jazz-dark);
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium;
+  }
+
+  .card {
+    @apply bg-white dark:bg-card rounded-lg shadow-sm border-t-4 p-6;
+    border-top-color: var(--color-jazz-accent);
+  }
+
+  .badge-success {
+    @apply inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold;
+  }
+
+  .badge-warning {
+    @apply inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold;
+  }
+
+  .badge-danger {
+    @apply inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold;
   }
 }

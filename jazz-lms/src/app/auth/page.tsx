@@ -2,14 +2,21 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClient } from '@/utils/supabase/client';
+import { useMemo } from 'react';
 
 export default function AuthPage() {
   const supabase = createClient();
+  const redirectTo = useMemo(() => {
+    if (typeof window === 'undefined') return undefined;
+    return `${window.location.origin}/auth/callback`;
+  }, []);
+
   return (
     <div className="flex items-center justify-center h-screen bg-background">
         <div className="w-full max-w-md p-8 space-y-8 bg-card border border-border rounded-xl shadow-lg">
             <Auth
                 supabaseClient={supabase}
+                redirectTo={redirectTo}
                 appearance={{
                   theme: ThemeSupa,
                   variables: {
