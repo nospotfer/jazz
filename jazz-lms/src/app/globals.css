@@ -186,3 +186,11 @@
     @apply inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold;
   }
 }
+
+/* Increase font size for auth links (Forgot password, Sign up) */
+[data-supabase-auth-ui_ui-anchor] a,
+.supabase-auth-ui_ui-anchor,
+form a[href],
+form a {
+  font-size: 15px !important;
+}

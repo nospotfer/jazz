@@ -6,6 +6,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -54,9 +55,11 @@ interface DashboardHeaderProps {
       avatar_url?: string;
     };
   };
+  role?: string | null;
+  isAdmin?: boolean;
 }
 
-export function DashboardHeader({ user }: DashboardHeaderProps) {
+export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeaderProps) {
   const router = useRouter();
   const displayName =
     user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
@@ -89,7 +92,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
     setShowUserMenu(false);
     router.push('/');
   };
@@ -236,9 +241,23 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    {isAdmin && (
+                      <p className="text-xs font-semibold text-yellow-500 mt-1">
+                        🔑 {role || 'ADMIN'}
+                      </p>
+                    )}
                   </div>
 
                   <div className="py-1">
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-500 hover:bg-accent transition-colors"
+                      >
+                        🔐 Admin Intranet
+                      </Link>
+                    )}
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setShowUserMenu(false)}

@@ -35,15 +35,29 @@ export async function syncUserWithDatabase() {
       data: {
         id: user.id,
         email: user.email,
+        name: user.user_metadata?.full_name || null,
+        emailVerified: true,
         role: defaultRole,
       },
     });
-  } else if (isOwner && dbUser.role === 'USER') {
-    // Se o dono já existe mas ainda está como USER, promover automaticamente
-    dbUser = await db.user.update({
-      where: { email: user.email },
-      data: { role: 'SUPER_ADMIN' },
-    });
+  } else {
+    // Update name if missing and available from metadata
+    const updates: Record<string, unknown> = {};
+    if (!dbUser.name && user.user_metadata?.full_name) {
+      updates.name = user.user_metadata.full_name;
+    }
+    if (!dbUser.emailVerified) {
+      updates.emailVerified = true;
+    }
+    if (isOwner && dbUser.role === 'USER') {
+      updates.role = 'SUPER_ADMIN';
+    }
+    if (Object.keys(updates).length > 0) {
+      dbUser = await db.user.update({
+        where: { email: user.email },
+        data: updates,
+      });
+    }
   }
 
   return dbUser;

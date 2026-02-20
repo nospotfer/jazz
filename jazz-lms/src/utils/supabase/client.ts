@@ -13,6 +13,7 @@ type MinimalSupabase = {
 export function createClient(): any {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const storage = typeof window !== 'undefined' ? window.sessionStorage : undefined
 
   if (!url || !key) {
     // Return a minimal stub so client-side code won't crash in local dev
@@ -37,5 +38,9 @@ export function createClient(): any {
     return stub
   }
 
-  return createBrowserClient(url, key)
+  return createBrowserClient(url, key, {
+    auth: {
+      storage,
+    },
+  })
 }

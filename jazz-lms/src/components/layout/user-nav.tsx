@@ -13,6 +13,7 @@ import { LogoutButton } from './logout-button';
 import { UserNavClient } from './user-nav-client';
 import { getCurrentUser } from '@/lib/admin';
 import Link from 'next/link';
+import { isAdminRole } from '@/lib/admin/permissions';
 
 export const UserNav = async () => {
   const supabase = createClient();
@@ -26,7 +27,7 @@ export const UserNav = async () => {
 
   // Verificar se o usuário é admin
   const dbUser = await getCurrentUser();
-  const isAdmin = dbUser?.role === 'ADMIN';
+  const isAdmin = isAdminRole(dbUser?.role);
 
   return (
     <DropdownMenu>

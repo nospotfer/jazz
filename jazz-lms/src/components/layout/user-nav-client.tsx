@@ -1,9 +1,5 @@
-'use client';
-
-import { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '../ui/button';
-import { SignupModal } from '../ui/signup-modal';
-import { LoginModal } from '../ui/login-modal';
 
 interface UserNavClientProps {
   user?: {
@@ -16,39 +12,29 @@ interface UserNavClientProps {
 }
 
 export function UserNavClient({ user }: UserNavClientProps) {
-  const [showSignupModal, setShowSignupModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
   if (!user) {
     return (
       <>
-        <Button 
-          onClick={() => setShowLoginModal(true)}
-          className="mr-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900 text-gray-900 dark:text-white font-semibold"
-        >
-          Login
-        </Button>
-        <Button 
-          onClick={() => setShowSignupModal(true)}
-          className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
-        >
-          Register
-        </Button>
-        <LoginModal 
-          isOpen={showLoginModal} 
-          onClose={() => setShowLoginModal(false)} 
-        />
-        <SignupModal 
-          isOpen={showSignupModal} 
-          onClose={() => setShowSignupModal(false)} 
-        />
+        <Link href="/auth">
+          <Button 
+            className="mr-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900 text-gray-900 dark:text-white font-semibold"
+          >
+            Login
+          </Button>
+        </Link>
+        <Link href="/auth?tab=register">
+          <Button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+          >
+            Register
+          </Button>
+        </Link>
       </>
     );
   }
 
   return (
     <div>
-      {/* Aqui você pode adicionar componentes de user logado depois */}
       <span>{user.email}</span>
     </div>
   );

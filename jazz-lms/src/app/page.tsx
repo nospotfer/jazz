@@ -1,3 +1,4 @@
+import { createClient } from '@/utils/supabase/server';
 import { PromoVideo } from '@/components/landing/promo-video';
 import { Professor } from '@/components/landing/professor';
 import { WhatYouLearn } from '@/components/landing/what-you-learn';
@@ -8,7 +9,16 @@ import { FAQFooter } from '@/components/landing/faq-footer';
 import { Header } from '@/components/layout/header';
 import { BoardNavigation } from '@/components/landing/board-navigation';
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    await supabase.auth.signOut();
+  }
+
   return (
     <>
       <Header />
