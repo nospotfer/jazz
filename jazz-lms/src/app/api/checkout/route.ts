@@ -31,12 +31,46 @@ export async function POST(req: Request) {
       return new NextResponse('Not Found', { status: 404 });
     }
 
+    // Check if already purchased
+    const existingPurchase = await db.purchase.findUnique({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: courseId,
+        },
+      },
+    });
+
+    if (existingPurchase) {
+      return new NextResponse('Already purchased', { status: 400 });
+    }
+
+    // Find or create Stripe customer
+    let stripeCustomerId: string;
+    const customers = await stripe.customers.list({
+      email: user.email!,
+      limit: 1,
+    });
+
+    if (customers.data.length > 0) {
+      stripeCustomerId = customers.data[0].id;
+    } else {
+      const customer = await stripe.customers.create({
+        email: user.email!,
+        metadata: {
+          userId: user.id,
+        },
+      });
+      stripeCustomerId = customer.id;
+    }
+
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       {
         price_data: {
-          currency: 'usd',
+          currency: 'eur',
           product_data: {
             name: course.title,
+            description: course.description || undefined,
           },
           unit_amount: Math.round((course.price || 0) * 100),
         },
@@ -45,6 +79,7 @@ export async function POST(req: Request) {
     ];
 
     const session = await stripe.checkout.sessions.create({
+      customer: stripeCustomerId,
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
