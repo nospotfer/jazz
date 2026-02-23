@@ -7,6 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  emailVerified Boolean  @default(false)
+  role          String   @default("USER") // USER | SUPER_ADMIN | COURSE_ADMIN | CONTENT_CREATOR | MODERATOR
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, code])
+}
+
 model Course {
   id          String     @id @default(uuid())
   title       String

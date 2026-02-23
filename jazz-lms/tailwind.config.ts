@@ -23,6 +23,13 @@ const config: Config = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        jazz: {
+          dark: '#1A1A1A',
+          light: '#FAFAFA',
+          accent: '#D4AF37',
+        },
+        burgundy: '#8B3A3A',
+        cream: '#F5EBE0',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

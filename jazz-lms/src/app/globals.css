@@ -8,6 +8,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --color-jazz-dark: #1a1a1a;
+  --color-jazz-light: #fafafa;
+  --color-jazz-accent: #d4af37;
+  --color-burgundy: #8b3a3a;
+  --color-cream: #f5ebe0;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,24 +50,37 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.145 0 0); /* Dark Charcoal */
-  --foreground: oklch(0.985 0 0); /* Warm White */
-  --primary: oklch(0.76 0.15 85); /* Gold/Brass */
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --background: oklch(0.98 0 0); /* Light background */
+  --foreground: oklch(0.145 0 0); /* Dark text */
+  --primary: oklch(0.65 0.16 85); /* Gold/Brass (slightly darker for light bg) */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.93 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.93 0.005 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.93 0.005 0);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.55 0.2 25);
+  --border: oklch(0.88 0 0);
+  --input: oklch(0.88 0 0);
+  --ring: oklch(0.65 0.16 85);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --chart-1: oklch(0.65 0.16 85);
+  --chart-2: oklch(0.6 0.15 160);
+  --chart-3: oklch(0.55 0.15 250);
+  --chart-4: oklch(0.65 0.15 310);
+  --chart-5: oklch(0.7 0.18 30);
+  --sidebar: oklch(0.96 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.65 0.16 85);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.93 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.88 0 0);
+  --sidebar-ring: oklch(0.65 0.16 85);
 }
 
 .dark {
@@ -85,6 +103,19 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
+  --chart-1: oklch(0.76 0.15 85);
+  --chart-2: oklch(0.7 0.15 160);
+  --chart-3: oklch(0.65 0.15 250);
+  --chart-4: oklch(0.75 0.15 310);
+  --chart-5: oklch(0.8 0.18 30);
+  --sidebar: oklch(0.18 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.76 0.15 85);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -94,4 +125,72 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-jazz-accent);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c9951f;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 text-white rounded-lg transition-colors font-medium;
+    background-color: var(--color-jazz-accent);
+  }
+
+  .btn-primary:hover {
+    background-color: #c9951f;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+    color: var(--color-jazz-dark);
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium;
+  }
+
+  .card {
+    @apply bg-white dark:bg-card rounded-lg shadow-sm border-t-4 p-6;
+    border-top-color: var(--color-jazz-accent);
+  }
+
+  .badge-success {
+    @apply inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold;
+  }
+
+  .badge-warning {
+    @apply inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold;
+  }
+
+  .badge-danger {
+    @apply inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold;
+  }
+}
+
+/* Increase font size for auth links (Forgot password, Sign up) */
+[data-supabase-auth-ui_ui-anchor] a,
+.supabase-auth-ui_ui-anchor,
+form a[href],
+form a {
+  font-size: 15px !important;
 }

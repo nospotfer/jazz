@@ -1,67 +1,71 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import { db } from '@/lib/db';
-import { getProgress } from '@/actions/get-progress';
+import { LobbyClient } from '@/components/dashboard/lobby-client';
 
-export default async function DashboardPage() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/auth');
-  }
-
-  const purchases = await db.purchase.findMany({
-    where: {
-      userId: user.id,
+export default function DashboardPage() {
+  // Mock data for development (no Supabase/DB)
+  const purchasedCourses = [
+    {
+      id: 'course-1',
+      title: 'Jazz Fundamentals: History & Theory',
+      description: 'An introduction to jazz music history, key figures, and foundational music theory.',
+      imageUrl: null,
+      progress: 45,
+      totalLessons: 12,
+      chaptersCount: 4,
+      purchased: true,
     },
-    include: {
-      course: true,
+    {
+      id: 'course-2',
+      title: 'Improvisation Techniques',
+      description: 'Learn the art of jazz improvisation with practical exercises and real-world examples.',
+      imageUrl: null,
+      progress: 10,
+      totalLessons: 8,
+      chaptersCount: 3,
+      purchased: true,
     },
-  });
+  ];
 
-  const courses = await Promise.all(
-    purchases.map(async (purchase) => {
-      const progress = await getProgress(user.id, purchase.courseId);
-      return {
-        ...purchase,
-        progress,
-      };
-    })
-  );
+  const availableCourses = [
+    {
+      id: 'course-3',
+      title: 'Advanced Harmony & Composition',
+      description: 'Deep dive into advanced jazz harmony, chord voicings, and composition techniques.',
+      imageUrl: null,
+      price: 49.99,
+      totalLessons: 16,
+      chaptersCount: 5,
+      purchased: false,
+      progress: 0,
+    },
+    {
+      id: 'course-4',
+      title: 'Jazz Piano Masterclass',
+      description: 'Master jazz piano from comping to solo performance with Enric Vazquez.',
+      imageUrl: null,
+      price: 79.99,
+      totalLessons: 20,
+      chaptersCount: 6,
+      purchased: false,
+      progress: 0,
+    },
+    {
+      id: 'course-5',
+      title: 'The Art of Jazz Listening',
+      description: 'Train your ear and develop deep appreciation for jazz music across all eras.',
+      imageUrl: null,
+      price: 29.99,
+      totalLessons: 10,
+      chaptersCount: 3,
+      purchased: false,
+      progress: 0,
+    },
+  ];
 
   return (
-    <div className="container mx-auto py-12">
-      <h1 className="text-4xl font-bold font-serif mb-8">My Learning</h1>
-      {courses.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">You haven't enrolled in any courses yet.</p>
-          <p className="text-sm text-muted-foreground mt-2">Browse our catalog to get started!</p>
-        </div>
-      ) : (
-        <div className="grid gap-8">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="bg-card p-6 rounded-lg shadow-lg"
-            >
-              <h2 className="text-2xl font-semibold mb-4">
-                {course?.course?.title || 'Untitled Course'}
-              </h2>
-              <div className="w-full bg-muted rounded-full h-4">
-                <div
-                  className="bg-primary h-4 rounded-full"
-                  style={{ width: `${course.progress || 0}%` }}
-                ></div>
-              </div>
-              <p className="text-muted-foreground mt-2">{course.progress || 0}% complete</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <LobbyClient
+      userName="Jazz Student"
+      purchasedCourses={purchasedCourses}
+      availableCourses={availableCourses}
+    />
   );
 }

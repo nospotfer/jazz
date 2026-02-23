@@ -1,21 +1,51 @@
-// Last updated: 2025-11-26 - Fixed null course handling
-import { Benefits } from '@/components/landing/benefits';
-import { Hero } from '@/components/landing/hero';
-import { Press } from '@/components/landing/press';
-import { db } from '@/lib/db';
+import { createClient } from '@/utils/supabase/server';
+import { PromoVideo } from '@/components/landing/promo-video';
+import { Professor } from '@/components/landing/professor';
+import { WhatYouLearn } from '@/components/landing/what-you-learn';
+import { Classes } from '@/components/landing/classes';
+import { Press } from '@/components/landing/press-gallery';
+import { JazzCats } from '@/components/landing/jazz-cats';
+import { FAQFooter } from '@/components/landing/faq-footer';
+import { Header } from '@/components/layout/header';
+import { BoardNavigation } from '@/components/landing/board-navigation';
 
 export default async function Home() {
-  const course = await db.course.findFirst({
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    await supabase.auth.signOut();
+  }
 
   return (
-    <main>
-      <Hero course={course} />
-      <Press />
-      <Benefits />
-    </main>
+    <>
+      <Header />
+      <main className="w-full">
+        <section id="board-hero">
+          <PromoVideo />
+        </section>
+        <section id="board-professor">
+          <Professor />
+        </section>
+        <section id="board-learn">
+          <WhatYouLearn />
+        </section>
+        <section id="board-courses">
+          <Classes />
+        </section>
+        <section id="board-press">
+          <Press />
+        </section>
+        <section id="board-jazzcats">
+          <JazzCats />
+        </section>
+        <section id="board-faq">
+          <FAQFooter />
+        </section>
+      </main>
+      <BoardNavigation />
+    </>
   );
 }

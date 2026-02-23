@@ -11,6 +11,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { LogoutButton } from './logout-button';
 import { UserNavClient } from './user-nav-client';
+import { getCurrentUser } from '@/lib/admin';
+import Link from 'next/link';
+import { isAdminRole } from '@/lib/admin/permissions';
 
 export const UserNav = async () => {
   const supabase = createClient();
@@ -21,6 +24,10 @@ export const UserNav = async () => {
   if (!user) {
     return <UserNavClient user={undefined} />;
   }
+
+  // Verificar se o usuário é admin
+  const dbUser = await getCurrentUser();
+  const isAdmin = isAdminRole(dbUser?.role);
 
   return (
     <DropdownMenu>
@@ -43,9 +50,40 @@ export const UserNav = async () => {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {isAdmin && (
+              <p className="text-xs font-semibold text-yellow-500 mt-1">
+                🔑 Administrator
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="cursor-pointer">
+            🎓 My Dashboard
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/profile" className="cursor-pointer">
+            👤 Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/settings" className="cursor-pointer">
+            ⚙️ Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        {isAdmin && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="cursor-pointer">
+                🔐 Admin Intranet
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuItem>
           <LogoutButton />
         </DropdownMenuItem>
