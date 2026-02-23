@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       stripeCustomerId = customer.id;
     }
 
-    const origin = req.headers.get('origin') || 'http://localhost:3000';
+    const origin = req.headers.get('origin') || 'https://culturadeljazz.com';
 
     // Create a Stripe Customer Portal session
     const portalSession = await stripe.billingPortal.sessions.create({
