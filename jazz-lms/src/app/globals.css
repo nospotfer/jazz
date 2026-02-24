@@ -194,3 +194,92 @@ form a[href],
 form a {
   font-size: 15px !important;
 }
+
+/* ─── Course View Animations ──────────────────────────────────────────────── */
+
+/* Confetti falling animation */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(var(--drift, 50px)) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall var(--duration, 3s) ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Draw checkmark animation */
+@keyframes draw-check {
+  0% {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+  }
+  100% {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-check {
+  animation: draw-check 0.6s ease-out 0.2s forwards;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+}
+
+/* Float popup entrance */
+@keyframes float-popup-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.animate-float-popup-in {
+  animation: float-popup-in 0.2s ease-out forwards;
+}
+
+/* Fade scale in (for modals) */
+@keyframes fade-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-scale-in {
+  animation: fade-scale-in 0.3s ease-out forwards;
+}
+
+/* Slow pulse for success checkmark */
+@keyframes pulse-slow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.15;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
