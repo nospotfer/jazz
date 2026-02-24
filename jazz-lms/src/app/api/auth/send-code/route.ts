@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { db } from '@/lib/db';
 import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 export async function POST(request: Request) {
@@ -30,17 +29,6 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
-      );
-    }
-
-    // Check if email is already registered (has password set in Prisma)
-    const existingUser = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
-    if (existingUser && existingUser.emailVerified) {
-      return NextResponse.json(
-        { error: 'This email is already registered. Please sign in instead.' },
-        { status: 409 }
       );
     }
 

@@ -45,10 +45,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if already fully registered in Prisma
-    const existingUser = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Check if already fully registered in Prisma (best effort)
+    let existingUser = null;
+    try {
+      existingUser = await db.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+    } catch (err) {
+      console.warn('Prisma user lookup failed, continuing with Supabase-only checks:', err);
+    }
     if (existingUser && existingUser.emailVerified) {
       return NextResponse.json(
         { error: 'This email is already registered. Please sign in instead.' },
@@ -108,21 +113,25 @@ export async function POST(request: Request) {
     const isOwner = email.toLowerCase() === OWNER_EMAIL;
     const role = isOwner ? 'SUPER_ADMIN' : 'USER';
 
-    await db.user.upsert({
-      where: { email },
-      create: {
-        id: supaUser.id,
-        email,
-        name: fullName,
-        emailVerified: true,
-        role,
-      },
-      update: {
-        name: fullName,
-        emailVerified: true,
-        ...(isOwner && { role: 'SUPER_ADMIN' }),
-      },
-    });
+    try {
+      await db.user.upsert({
+        where: { email },
+        create: {
+          id: supaUser.id,
+          email,
+          name: fullName,
+          emailVerified: true,
+          role,
+        },
+        update: {
+          name: fullName,
+          emailVerified: true,
+          ...(isOwner && { role: 'SUPER_ADMIN' }),
+        },
+      });
+    } catch (err) {
+      console.warn('Prisma upsert failed, account was created in Supabase Auth only:', err);
+    }
 
     return NextResponse.json({
       success: true,
