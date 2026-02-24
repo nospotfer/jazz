@@ -321,23 +321,22 @@ function FloatPopup({ lesson, onClose, isPinned, hasPurchased, onPurchaseClick }
 
 interface CourseViewProps {
   userName: string;
+  hasPurchased: boolean;
+  courseId: string | null;
 }
 
-export function CourseViewClient({ userName }: CourseViewProps) {
-  const [hasPurchased, setHasPurchased] = useState(false);
+export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId }: CourseViewProps) {
+  const [hasPurchased] = useState(initialHasPurchased);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check localStorage for purchase status (simulates backend)
   useEffect(() => {
-    const purchased = localStorage.getItem('jazz-course-purchased');
-    if (purchased === 'true') {
-      setHasPurchased(true);
+    if (window.location.hostname === 'localhost') {
+      localStorage.removeItem('jazz-course-purchased');
+      sessionStorage.removeItem('jazz-course-purchased');
     }
   }, []);
 
@@ -380,37 +379,23 @@ export function CourseViewClient({ userName }: CourseViewProps) {
   }, []);
 
   const handlePurchaseClick = useCallback(async () => {
+    if (!courseId) return;
+
     setIsPurchasing(true);
     try {
-      // Call simulated purchase API
-      const response = await axios.post('/api/simulate-purchase', {
-        courseId: 'jazz-culture-course',
+      const response = await axios.post('/api/checkout', {
+        courseId,
       });
 
-      if (response.data.success) {
-        setIsPurchasing(false);
-        // Show unlock animation
-        setShowUnlockAnimation(true);
+      if (response.data?.url) {
+        window.location.assign(response.data.url);
+        return;
       }
+      setIsPurchasing(false);
     } catch {
       setIsPurchasing(false);
     }
-  }, []);
-
-  const handleUnlockAnimationComplete = useCallback(() => {
-    setShowUnlockAnimation(false);
-    // Save purchase status
-    localStorage.setItem('jazz-course-purchased', 'true');
-    setHasPurchased(true);
-    // Show success modal
-    setTimeout(() => {
-      setShowSuccessModal(true);
-    }, 300);
-  }, []);
-
-  const handleSuccessModalClose = useCallback(() => {
-    setShowSuccessModal(false);
-  }, []);
+  }, [courseId]);
 
   // Get current lessons with backend-controlled lock status
   const lessons = lessonsData.map((lesson) => ({
@@ -627,18 +612,6 @@ export function CourseViewClient({ userName }: CourseViewProps) {
           onPurchaseClick={handlePurchaseClick}
         />
       )}
-
-      {/* Unlock Animation */}
-      <UnlockAnimation
-        isVisible={showUnlockAnimation}
-        onComplete={handleUnlockAnimationComplete}
-      />
-
-      {/* Success Modal */}
-      <PurchaseSuccessModal
-        isVisible={showSuccessModal}
-        onClose={handleSuccessModalClose}
-      />
     </>
   );
 }

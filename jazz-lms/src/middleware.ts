@@ -5,6 +5,13 @@ import { NextResponse } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
+  const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
+
+  if (isLocalhost) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+  }
 
   const pathname = request.nextUrl.pathname
 

@@ -10,9 +10,24 @@ import {
   BookOpen,
   LogOut,
   Settings,
+  Library,
+  ChevronDown,
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+
+interface CourseProgressVideo {
+  lessonId: string;
+  title: string;
+  progressPercent: number;
+  courseId: string;
+}
+
+interface CourseProgressItem {
+  id: string;
+  title: string;
+  videos: CourseProgressVideo[];
+}
 
 const menuItems = [
   {
@@ -156,6 +171,7 @@ function SidebarContent({
             </Link>
           );
         })}
+        <CoursesNavSection />
       </nav>
 
       {/* Footer */}
@@ -168,6 +184,100 @@ function SidebarContent({
           Log out
         </button>
       </div>
+    </div>
+  );
+}
+
+function CoursesNavSection() {
+  const [open, setOpen] = useState(false);
+  const [courses, setCourses] = useState<CourseProgressItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setLoading(true);
+    fetch('/api/dashboard/courses-progress')
+      .then((r) => r.json())
+      .then((data) => {
+        setCourses(data.courses ?? []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [open]);
+
+  return (
+    <div className="mt-1">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
+      >
+        <Library className="h-5 w-5 flex-shrink-0" />
+        <span className="flex-1 text-left">Courses</span>
+        <ChevronDown
+          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div className="mt-1 ml-2 rounded-lg border border-border overflow-hidden">
+          {loading && (
+            <p className="px-3 py-2 text-xs text-muted-foreground">Loading…</p>
+          )}
+
+          {!loading && courses.length === 0 && (
+            <p className="px-3 py-2 text-xs text-muted-foreground">
+              No purchased courses yet.
+            </p>
+          )}
+
+          {!loading &&
+            courses.map((course, ci) => (
+              <div key={course.id}>
+                {/* Course title row */}
+                <div
+                  className={`px-3 py-2 bg-muted/60 ${
+                    ci < courses.length - 1 || course.videos.length > 0
+                      ? 'border-b border-black/70'
+                      : ''
+                  }`}
+                >
+                  <span className="text-xs font-semibold text-foreground tracking-wide uppercase">
+                    {course.title}
+                  </span>
+                </div>
+
+                {/* Video rows */}
+                {course.videos.map((video, vi) => (
+                  <Link
+                    key={video.lessonId}
+                    href={`/courses/${video.courseId}/lessons/${video.lessonId}`}
+                    className={`block px-3 py-2 hover:bg-black/10 dark:hover:bg-white/10 transition-colors ${
+                      vi < course.videos.length - 1 || ci < courses.length - 1
+                        ? 'border-b border-black/70'
+                        : ''
+                    }`}
+                  >
+                    <p className="text-xs text-foreground line-clamp-2 leading-snug">
+                      {video.title}
+                    </p>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <div className="flex-1 bg-muted rounded-full h-1.5">
+                        <div
+                          className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
+                          style={{ width: `${video.progressPercent}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        {video.progressPercent}%
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 }

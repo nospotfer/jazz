@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
+import { isLocalTestRequest } from '@/lib/test-mode';
 
 export async function POST(req: Request) {
   try {
@@ -29,6 +30,13 @@ export async function POST(req: Request) {
 
     if (!course) {
       return new NextResponse('Not Found', { status: 404 });
+    }
+
+    if (isLocalTestRequest(req)) {
+      const origin = req.headers.get('origin') || 'http://localhost:3000';
+      return NextResponse.json({
+        url: `${origin}/courses/${courseId}?success=true&localTest=true`,
+      });
     }
 
     // Check if already purchased

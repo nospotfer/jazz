@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { LESSON_UNIT_PRICE_EUR } from '@/lib/pricing';
+import { isLocalTestRequest } from '@/lib/test-mode';
 
 export async function POST(req: Request) {
   try {
@@ -35,6 +36,13 @@ export async function POST(req: Request) {
 
     if (!lesson || lesson.chapter.courseId !== courseId || !lesson.isPublished) {
       return new NextResponse('Lesson not found', { status: 404 });
+    }
+
+    if (isLocalTestRequest(req)) {
+      const origin = req.headers.get('origin') || 'http://localhost:3000';
+      return NextResponse.json({
+        url: `${origin}/courses/${courseId}/lessons/${lessonId}?success=true&localTest=true`,
+      });
     }
 
     const hasFullCourse = await db.purchase.findUnique({

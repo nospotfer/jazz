@@ -28,6 +28,9 @@ export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientPro
   const watchedVideos = videos.filter((video) => video.isCompleted);
   const inProgressVideos = videos.filter((video) => !video.isCompleted);
   const notStartedVideos = videos.filter((video) => video.progressPercent === 0);
+  const completionRate = videos.length
+    ? Math.round((watchedVideos.length / videos.length) * 100)
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -47,7 +50,7 @@ export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientPro
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Watched</p>
           <p className="mt-1 text-2xl font-bold text-foreground">{watchedVideos.length}</p>
@@ -59,6 +62,14 @@ export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientPro
         <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Not Started</p>
           <p className="mt-1 text-2xl font-bold text-foreground">{notStartedVideos.length}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Total Purchased</p>
+          <p className="mt-1 text-2xl font-bold text-foreground">{videos.length}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Completion Rate</p>
+          <p className="mt-1 text-2xl font-bold text-foreground">{completionRate}%</p>
         </div>
       </div>
 
@@ -160,7 +171,7 @@ function VideoProgressCard({ video }: { video: PurchasedVideoItem }) {
         <div className="mt-4">
           <div className="w-full bg-muted rounded-full h-2">
             <div
-              className="bg-primary h-2 rounded-full transition-all duration-500"
+              className="bg-green-500 h-2 rounded-full transition-all duration-500"
               style={{ width: `${video.progressPercent}%` }}
             />
           </div>
