@@ -11,11 +11,19 @@ export async function PUT(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const { isCompleted } = await req.json();
+    const { isCompleted, progressPercent, minutesRemaining } = await req.json();
 
     if (!user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
+
+    const safeProgressPercent = Number.isFinite(progressPercent)
+      ? Math.max(0, Math.min(100, Number(progressPercent)))
+      : undefined;
+
+    const safeMinutesRemaining = Number.isFinite(minutesRemaining)
+      ? Math.max(0, Math.floor(Number(minutesRemaining)))
+      : undefined;
 
     const userProgress = await db.userProgress.upsert({
       where: {
@@ -26,11 +34,31 @@ export async function PUT(
       },
       update: {
         isCompleted,
+        ...(safeProgressPercent !== undefined && {
+          progressPercent: safeProgressPercent,
+        }),
+        ...(safeMinutesRemaining !== undefined && {
+          minutesRemaining: safeMinutesRemaining,
+        }),
+        ...(isCompleted && {
+          progressPercent: 100,
+          minutesRemaining: 0,
+        }),
       },
       create: {
         userId: user.id,
         lessonId: params.lessonId,
         isCompleted,
+        progressPercent: isCompleted
+          ? 100
+          : safeProgressPercent !== undefined
+          ? safeProgressPercent
+          : 0,
+        minutesRemaining: isCompleted
+          ? 0
+          : safeMinutesRemaining !== undefined
+          ? safeMinutesRemaining
+          : 20,
       },
     });
 

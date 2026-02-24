@@ -9,6 +9,7 @@ import { useConfettiStore } from '@/hooks/use-confetti-store';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 
 interface CoursePlayerProps {
   course: Course & {
@@ -30,8 +31,40 @@ export const CoursePlayer = ({
   lessonId,
 }: CoursePlayerProps) => {
   const [isReady, setIsReady] = useState(false);
+  const [lastSavedPercent, setLastSavedPercent] = useState(0);
   const router = useRouter();
   const confetti = useConfettiStore();
+
+  const onTimeUpdate = async (event: Event) => {
+    const target = event.target as HTMLVideoElement | null;
+
+    if (!target) return;
+
+    const duration = Number.isFinite(target.duration) && target.duration > 0
+      ? target.duration
+      : DEFAULT_LESSON_DURATION_MINUTES * 60;
+
+    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
+    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
+
+    if (percent < 1 || percent >= 100 || percent - lastSavedPercent < 10) {
+      return;
+    }
+
+    setLastSavedPercent(percent);
+
+    try {
+      const minutesRemaining = Math.max(0, Math.ceil((duration - current) / 60));
+
+      await axios.put(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, {
+        isCompleted: false,
+        progressPercent: percent,
+        minutesRemaining,
+      });
+    } catch {
+      // Silent fail for background progress sync
+    }
+  };
 
   const onEnded = async () => {
     try {
@@ -77,6 +110,7 @@ export const CoursePlayer = ({
             accentColor="#d4af37"
             onCanPlay={() => setIsReady(true)}
             onEnded={onEnded}
+            onTimeUpdate={onTimeUpdate}
             autoPlay
           />
         </div>

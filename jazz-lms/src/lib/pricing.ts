@@ -1,0 +1,7 @@
+export const LESSON_UNIT_PRICE_EUR = 9.99;
+export const DEFAULT_FULL_COURSE_PRICE_EUR = 49.99;
+export const DEFAULT_LESSON_DURATION_MINUTES = 20;
+export const DEFAULT_COURSE_LESSON_COUNT = 15;
+
+export const totalSingleLessonsPrice =
+  LESSON_UNIT_PRICE_EUR * DEFAULT_COURSE_LESSON_COUNT;

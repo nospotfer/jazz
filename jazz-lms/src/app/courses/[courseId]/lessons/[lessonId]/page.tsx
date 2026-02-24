@@ -47,9 +47,39 @@ const LessonPage = async ({
   const lesson = course.chapters
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === params.lessonId);
+  const firstLessonId = course.chapters
+    .flatMap((chapter) => chapter.lessons)
+    .at(0)?.id;
+
 
   if (!lesson) {
     return redirect('/dashboard');
+  }
+
+  const hasFullPurchase = await db.purchase.findUnique({
+    where: {
+      userId_courseId: {
+        userId: user.id,
+        courseId: params.courseId,
+      },
+    },
+  });
+
+  const hasLessonPurchase = await db.lessonPurchase.findUnique({
+    where: {
+      userId_lessonId: {
+        userId: user.id,
+        lessonId: params.lessonId,
+      },
+    },
+  });
+
+  const canAccessLesson =
+    lesson.isPublished &&
+    (lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase);
+
+  if (!canAccessLesson) {
+    return redirect(`/courses/${params.courseId}?locked=true`);
   }
 
   return (

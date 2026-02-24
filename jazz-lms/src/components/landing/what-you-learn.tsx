@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import { SignupModal } from '@/components/ui/signup-modal';
 import { Volume2, VolumeX } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function WhatYouLearn() {
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const router = useRouter();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -78,10 +78,10 @@ export function WhatYouLearn() {
               </div>
 
               <button
-                onClick={() => setShowSignupModal(true)}
+                onClick={() => router.push('/auth?tab=register')}
                 className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 hover:shadow-lg w-fit"
               >
-                Start Now
+                Sign Up
               </button>
             </div>
 
@@ -118,11 +118,6 @@ export function WhatYouLearn() {
           </div>
         </div>
       </div>
-
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-      />
     </>
   );
 }

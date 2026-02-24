@@ -1,11 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { SignupModal } from '@/components/ui/signup-modal';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function CourseIntro() {
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const router = useRouter();
 
   return (
     <section className="w-full bg-gradient-to-b from-gray-900 to-gray-800 py-16 sm:py-20 lg:py-24">
@@ -52,10 +51,10 @@ export function CourseIntro() {
             </div>
 
             <button
-              onClick={() => setShowSignupModal(true)}
+              onClick={() => router.push('/auth?tab=register')}
               className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-lg transition-colors text-lg w-full md:w-auto"
             >
-              ¡Inscríbete ahora!
+              Sign Up
             </button>
           </div>
 
@@ -71,7 +70,6 @@ export function CourseIntro() {
           </div>
         </div>
       </div>
-      <SignupModal isOpen={showSignupModal} onClose={() => setShowSignupModal(false)} />
     </section>
   );
 }

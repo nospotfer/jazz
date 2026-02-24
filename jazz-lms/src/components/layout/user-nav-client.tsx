@@ -26,7 +26,7 @@ export function UserNavClient({ user }: UserNavClientProps) {
           <Button 
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
           >
-            Register
+            Sign Up
           </Button>
         </Link>
       </>

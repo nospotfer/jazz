@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { SignupModal } from '@/components/ui/signup-modal';
 import { ContactModal } from '@/components/ui/contact-modal';
 
 interface FAQItem {
@@ -31,7 +30,6 @@ const faqs: FAQItem[] = [
 export function FAQs() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
 
   const isExpanded = (index: number) => activeIndex === index || hoveredIndex === index;
@@ -88,10 +86,6 @@ export function FAQs() {
           </div>
         </div>
       </div>
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-      />
       <ContactModal
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}

@@ -24,8 +24,10 @@ export async function POST(req: Request) {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
+  const purchaseType = session?.metadata?.purchaseType;
   const userId = session?.metadata?.userId;
   const courseId = session?.metadata?.courseId;
+  const lessonId = session?.metadata?.lessonId;
 
   if (event.type === 'checkout.session.completed') {
     if (!userId || !courseId) {
@@ -34,12 +36,41 @@ export async function POST(req: Request) {
       });
     }
 
-    await db.purchase.create({
-      data: {
-        courseId: courseId,
-        userId: userId,
-      },
-    });
+    if (purchaseType === 'lesson') {
+      if (!lessonId) {
+        return new NextResponse(`Webhook Error: Missing lesson metadata`, {
+          status: 400,
+        });
+      }
+
+      await db.lessonPurchase.upsert({
+        where: {
+          userId_lessonId: {
+            userId,
+            lessonId,
+          },
+        },
+        update: {},
+        create: {
+          userId,
+          lessonId,
+        },
+      });
+    } else {
+      await db.purchase.upsert({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId,
+          },
+        },
+        update: {},
+        create: {
+          courseId,
+          userId,
+        },
+      });
+    }
   } else {
     return new NextResponse(
       `Webhook Error: Unhandled event type ${event.type}`,

@@ -1,11 +1,11 @@
 'use client';
 // Last updated: 2025-11-26 - Fixed null course handling
 import { Button } from '@/components/ui/button';
-import { SignupModal } from '@/components/ui/signup-modal';
 import { createClient } from '@/utils/supabase/client';
 import axios from 'axios';
 import { Course } from '@prisma/client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Edit2, X } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
@@ -15,10 +15,10 @@ interface HeroProps {
 }
 
 export const Hero = ({ course }: HeroProps) => {
+  const router = useRouter();
   const [mediaUrl, setMediaUrl] = useState<string>('https://media.giphy.com/media/xT9IgEx8SbQ0teblUQ/giphy.gif');
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(mediaUrl);
-  const [showSignupModal, setShowSignupModal] = useState(false);
 
   const handleCheckout = async () => {
     if (!course) return;
@@ -165,7 +165,7 @@ export const Hero = ({ course }: HeroProps) => {
           <div className="mt-4 flex items-center justify-center gap-x-6">
             {course ? (
               <>
-                <Button onClick={() => setShowSignupModal(true)}>Inscríbete ahora</Button>
+                <Button onClick={() => router.push('/auth?tab=register')}>Sign Up</Button>
                 <a
                   href="#"
                   className="text-sm font-semibold leading-6 text-foreground"
@@ -180,12 +180,6 @@ export const Hero = ({ course }: HeroProps) => {
         </div>
       </div>
 
-      {/* Signup Modal */}
-      <SignupModal 
-        isOpen={showSignupModal} 
-        onClose={() => setShowSignupModal(false)} 
-      />
-
       {/* Entra en el Mundo del Jazz */}
       <section className="bg-white py-20 text-center">
         <div className="container mx-auto px-4">
@@ -198,8 +192,11 @@ export const Hero = ({ course }: HeroProps) => {
           <p className="text-lg sm:text-xl text-gray-700 mb-8">
             No necesitas ser músico ni experto para disfrutar del jazz. Con este curso aprenderás a comprender su lenguaje, reconocer sus estilos y vivirlo con más intensidad en cada escucha.
           </p>
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg">
-            Inscríbete ahora
+          <button
+            onClick={() => router.push('/auth?tab=register')}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg"
+          >
+            Sign Up
           </button>
         </div>
       </section>
