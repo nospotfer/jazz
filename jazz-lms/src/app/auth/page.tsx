@@ -4,10 +4,15 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClient } from '@/utils/supabase/client';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config';
 
 export default function AuthPage() {
   const supabase = createClient();
   const router = useRouter();
+  const hasSupabaseConfig = hasValidSupabasePublicConfig(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
   useEffect(() => {
@@ -239,6 +244,12 @@ export default function AuthPage() {
         </div>
 
         <div className="p-8">
+          {!hasSupabaseConfig && (
+            <p className="mb-4 text-sm text-red-300 bg-red-900/30 border border-red-700/40 rounded-lg px-3 py-2">
+              Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local env.
+            </p>
+          )}
+
           {/* ========== LOGIN TAB ========== */}
           {activeTab === 'login' && (
             <Auth

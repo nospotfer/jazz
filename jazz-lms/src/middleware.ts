@@ -2,16 +2,24 @@ import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
 
   const pathname = request.nextUrl.pathname
 
   if (pathname.startsWith('/dashboard')) {
+    if (!hasSupabaseConfig) {
+      return NextResponse.redirect(new URL('/auth', request.url))
+    }
+
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      url!,
+      anonKey!,
       {
         cookies: {
           getAll() {
@@ -39,9 +47,13 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  if (!hasSupabaseConfig) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url!,
+    anonKey!,
     {
       cookies: {
         getAll() {

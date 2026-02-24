@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -12,7 +13,7 @@ export async function updateSession(request: NextRequest) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   // If Supabase credentials are not set (local dev), skip creating the client
-  if (!url || !key) {
+  if (!hasValidSupabasePublicConfig(url, key)) {
     return response
   }
 

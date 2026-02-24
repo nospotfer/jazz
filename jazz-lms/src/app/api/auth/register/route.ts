@@ -1,12 +1,26 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
+import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
 
 export async function POST(request: Request) {
   try {
     const { email, password, fullName } = await request.json();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!hasValidSupabaseServerConfig(url, anonKey, serviceRoleKey)) {
+      return NextResponse.json(
+        {
+          error:
+            'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY in environment variables.',
+        },
+        { status: 500 }
+      );
+    }
 
     if (!email || !password || !fullName) {
       return NextResponse.json(
@@ -44,8 +58,8 @@ export async function POST(request: Request) {
 
     // Use Supabase Admin to update password on the OTP-created user
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      url!,
+      serviceRoleKey!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 

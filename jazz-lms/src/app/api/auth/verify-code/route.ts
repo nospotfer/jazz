@@ -1,9 +1,23 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 export async function POST(request: Request) {
   try {
     const { email, code } = await request.json();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!hasValidSupabaseServerConfig(url, anonKey, serviceRoleKey)) {
+      return NextResponse.json(
+        {
+          error:
+            'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY in environment variables.',
+        },
+        { status: 500 }
+      );
+    }
 
     if (!email || !code) {
       return NextResponse.json(
@@ -23,8 +37,8 @@ export async function POST(request: Request) {
 
     // Verify OTP via Supabase
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      url!,
+      serviceRoleKey!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
