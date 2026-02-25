@@ -38,13 +38,6 @@ export async function POST(req: Request) {
       return new NextResponse('Lesson not found', { status: 404 });
     }
 
-    if (isLocalTestRequest(req)) {
-      const origin = req.headers.get('origin') || 'http://localhost:3000';
-      return NextResponse.json({
-        url: `${origin}/courses/${courseId}/lessons/${lessonId}?success=true&localTest=true`,
-      });
-    }
-
     const hasFullCourse = await db.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -70,6 +63,18 @@ export async function POST(req: Request) {
 
     if (existingLessonPurchase.length > 0) {
       return new NextResponse('Lesson already purchased', { status: 400 });
+    }
+
+    if (isLocalTestRequest(req)) {
+      await db.$executeRaw`
+        INSERT INTO LessonPurchase (id, userId, lessonId, createdAt, updatedAt)
+        VALUES (${crypto.randomUUID()}, ${user.id}, ${lessonId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `;
+
+      const origin = req.headers.get('origin') || 'http://localhost:3000';
+      return NextResponse.json({
+        url: `${origin}/courses/${courseId}/lessons/${lessonId}?success=true&localTest=true`,
+      });
     }
 
     let stripeCustomerId: string;

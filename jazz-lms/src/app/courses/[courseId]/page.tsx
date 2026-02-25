@@ -1,11 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
-import { headers } from 'next/headers';
 import { CourseEnrollButton } from '@/components/course/course-enroll-button';
 import { BookOpen, Clock, CheckCircle } from 'lucide-react';
 import { LessonEnrollButton } from '@/components/course/lesson-enroll-button';
-import { isLocalhostHost } from '@/lib/test-mode';
 import {
   DEFAULT_FULL_COURSE_PRICE_EUR,
   LESSON_UNIT_PRICE_EUR,
@@ -58,8 +56,6 @@ export default async function CourseDetailPage({
   }
 
   const hasPurchased = course.purchases.length > 0;
-  const hasTestAccess = isLocalhostHost(headers().get('host'));
-  const hasAccess = hasPurchased || hasTestAccess;
   const totalLessons = course.chapters.reduce(
     (acc, chapter) => acc + chapter.lessons.length,
     0
@@ -132,7 +128,7 @@ export default async function CourseDetailPage({
                         <span className="truncate">{lesson.title}</span>
                       </div>
 
-                      {!hasAccess && !(chapterIndex === 0 && lessonIndex === 0) && (
+                      {!hasPurchased && !(chapterIndex === 0 && lessonIndex === 0) && (
                         lesson.lessonPurchases.length > 0 ? (
                           <span className="text-xs px-2 py-1 rounded-md bg-green-500/10 text-green-600 border border-green-600/20">
                             Purchased
@@ -164,21 +160,13 @@ export default async function CourseDetailPage({
                 15 single videos cost €{totalSingleLessonsPrice.toFixed(2)} in total
               </p>
             </div>
-            {!hasAccess ? (
-              <>
-                <CourseEnrollButton
-                  courseId={course.id}
-                  price={course.price || DEFAULT_FULL_COURSE_PRICE_EUR}
-                />
-                <div className="text-xs text-center text-muted-foreground">
-                  Secure payment powered by Stripe
-                </div>
-              </>
-            ) : (
-              <div className="text-xs text-center rounded-lg border border-green-600/20 bg-green-500/10 text-green-600 px-3 py-2">
-                Test mode (localhost): course unlocked for configuration.
-              </div>
-            )}
+            <CourseEnrollButton
+              courseId={course.id}
+              price={course.price || DEFAULT_FULL_COURSE_PRICE_EUR}
+            />
+            <div className="text-xs text-center text-muted-foreground">
+              Secure payment powered by Stripe
+            </div>
           </div>
         </div>
       </div>

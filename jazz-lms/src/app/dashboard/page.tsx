@@ -32,13 +32,15 @@ export default async function DashboardPage() {
       }))
     : false;
 
-  const hasTestAccess = isLocalhostHost(headers().get('host'));
+  const isLocalTestMode =
+    process.env.NODE_ENV !== 'production' && isLocalhostHost(headers().get('host'));
 
   return (
     <CourseViewClient
       userName={user.user_metadata?.full_name || user.email || 'Jazz Student'}
-      hasPurchased={hasPurchased || hasTestAccess}
+      hasPurchased={hasPurchased}
       courseId={course?.id ?? null}
+      isLocalTestMode={isLocalTestMode}
     />
   );
 }

@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  if (pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth')) {
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -38,7 +38,11 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.redirect(new URL('/auth', request.url))
+      if (pathname.startsWith('/dashboard')) {
+        return NextResponse.redirect(new URL('/auth', request.url))
+      }
+    } else if (pathname.startsWith('/auth')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 

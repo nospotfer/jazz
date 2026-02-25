@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { courseId } = await req.json();
+    const { courseId, source } = await req.json();
 
     if (!courseId) {
       return new NextResponse('Bad Request', { status: 400 });
@@ -32,13 +32,6 @@ export async function POST(req: Request) {
       return new NextResponse('Not Found', { status: 404 });
     }
 
-    if (isLocalTestRequest(req)) {
-      const origin = req.headers.get('origin') || 'http://localhost:3000';
-      return NextResponse.json({
-        url: `${origin}/courses/${courseId}?success=true&localTest=true`,
-      });
-    }
-
     // Check if already purchased
     const existingPurchase = await db.purchase.findUnique({
       where: {
@@ -51,6 +44,24 @@ export async function POST(req: Request) {
 
     if (existingPurchase) {
       return new NextResponse('Already purchased', { status: 400 });
+    }
+
+    if (isLocalTestRequest(req)) {
+      await db.purchase.create({
+        data: {
+          userId: user.id,
+          courseId,
+        },
+      });
+
+      const origin = req.headers.get('origin') || 'http://localhost:3000';
+      const successUrl = source === 'dashboard'
+        ? `${origin}/dashboard?purchase=success&source=dashboard&localTest=true`
+        : `${origin}/courses/${courseId}?success=true&localTest=true`;
+
+      return NextResponse.json({
+        url: successUrl,
+      });
     }
 
     // Find or create Stripe customer
@@ -86,16 +97,19 @@ export async function POST(req: Request) {
       },
     ];
 
+    const dashboardSuccessUrl = `${req.headers.get('origin')}/dashboard?purchase=success&source=dashboard`;
+    const dashboardCancelUrl = `${req.headers.get('origin')}/dashboard?purchase=canceled&source=dashboard`;
+    const courseSuccessUrl = `${req.headers.get('origin')}/courses/${courseId}?success=true`;
+    const courseCancelUrl = `${req.headers.get('origin')}/courses/${courseId}?canceled=true`;
+
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
       allow_promotion_codes: true,
-      success_url: `${req.headers.get(
-        'origin'
-      )}/courses/${courseId}?success=true`,
-      cancel_url: `${req.headers.get('origin')}/courses/${courseId}?canceled=true`,
+      success_url: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
+      cancel_url: source === 'dashboard' ? dashboardCancelUrl : courseCancelUrl,
       metadata: {
         purchaseType: 'course',
         courseId: course.id,

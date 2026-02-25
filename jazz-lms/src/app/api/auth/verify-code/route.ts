@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { db } from '@/lib/db';
+
+const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
 
 export async function POST(request: Request) {
   try {
     const { email, code } = await request.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!email || !code) {
+    if (!normalizedEmail || !code) {
       return NextResponse.json(
         { error: 'Email and code are required' },
         { status: 400 }
@@ -29,7 +33,7 @@ export async function POST(request: Request) {
     );
 
     const { error } = await supabase.auth.verifyOtp({
-      email,
+      email: normalizedEmail,
       token: cleanCode,
       type: 'email',
     });
@@ -46,6 +50,43 @@ export async function POST(request: Request) {
         { error: 'Invalid verification code. Please check and try again.' },
         { status: 400 }
       );
+    }
+
+    const { data: userData } = await supabase.auth.admin.listUsers();
+    const supaUser = userData?.users?.find((u) => u.email?.toLowerCase() === normalizedEmail);
+    const fullName =
+      typeof supaUser?.user_metadata?.full_name === 'string' ? supaUser.user_metadata.full_name : null;
+    const role = normalizedEmail === OWNER_EMAIL ? 'SUPER_ADMIN' : 'USER';
+
+    if (supaUser) {
+      const updateData: { emailVerified: boolean; name?: string; role?: string } = {
+        emailVerified: true,
+      };
+
+      if (fullName) {
+        updateData.name = fullName;
+      }
+
+      if (role === 'SUPER_ADMIN') {
+        updateData.role = 'SUPER_ADMIN';
+      }
+
+      await db.user.upsert({
+        where: { email: normalizedEmail },
+        create: {
+          id: supaUser.id,
+          email: normalizedEmail,
+          name: fullName,
+          emailVerified: true,
+          role,
+        },
+        update: updateData,
+      });
+    } else {
+      await db.user.updateMany({
+        where: { email: normalizedEmail },
+        data: { emailVerified: true },
+      });
     }
 
     return NextResponse.json({

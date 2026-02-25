@@ -5,6 +5,8 @@ export function isLocalhostHost(host: string | null | undefined): boolean {
 }
 
 export function isLocalTestRequest(req: Request): boolean {
+  if (process.env.NODE_ENV === 'production') return false;
+
   const hostHeader = req.headers.get('host') || req.headers.get('x-forwarded-host');
   const origin = req.headers.get('origin');
 

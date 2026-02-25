@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Lock, X, Volume2, VolumeX, PlayCircle, Loader2, ShoppingCart } from 'lucide-react';
+import { Lock, X, Volume2, VolumeX, PlayCircle, Loader2, ShoppingCart, RotateCcw } from 'lucide-react';
 import { UnlockAnimation } from './unlock-animation';
 import { PurchaseSuccessModal } from './purchase-success-modal';
 import axios from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // ─── Lesson Data (same as landing page classes) ─────────────────────────────
 
@@ -323,13 +324,19 @@ interface CourseViewProps {
   userName: string;
   hasPurchased: boolean;
   courseId: string | null;
+  isLocalTestMode: boolean;
 }
 
-export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId }: CourseViewProps) {
+export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, isLocalTestMode }: CourseViewProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [hasPurchased] = useState(initialHasPurchased);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isResettingTestState, setIsResettingTestState] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -339,6 +346,16 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       sessionStorage.removeItem('jazz-course-purchased');
     }
   }, []);
+
+  useEffect(() => {
+    const purchaseStatus = searchParams.get('purchase');
+    const source = searchParams.get('source');
+
+    if (purchaseStatus === 'success' && source === 'dashboard' && hasPurchased) {
+      setShowUnlockAnimation(true);
+      router.replace('/dashboard');
+    }
+  }, [searchParams, hasPurchased, router]);
 
   const handleMouseEnter = useCallback((index: number, e: React.MouseEvent) => {
     if (pinnedIndex !== null) return;
@@ -385,6 +402,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     try {
       const response = await axios.post('/api/checkout', {
         courseId,
+        source: 'dashboard',
       });
 
       if (response.data?.url) {
@@ -396,6 +414,27 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       setIsPurchasing(false);
     }
   }, [courseId]);
+
+  const handleUnlockAnimationComplete = useCallback(() => {
+    setShowUnlockAnimation(false);
+    setShowSuccessModal(true);
+  }, []);
+
+  const handleSuccessModalClose = useCallback(() => {
+    setShowSuccessModal(false);
+  }, []);
+
+  const handleResetTestState = useCallback(async () => {
+    if (!isLocalTestMode || isResettingTestState) return;
+
+    setIsResettingTestState(true);
+    try {
+      await axios.post('/api/dev/reset-test-purchases');
+      window.location.reload();
+    } catch {
+      setIsResettingTestState(false);
+    }
+  }, [isLocalTestMode, isResettingTestState]);
 
   // Get current lessons with backend-controlled lock status
   const lessons = lessonsData.map((lesson) => ({
@@ -612,6 +651,33 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           onPurchaseClick={handlePurchaseClick}
         />
       )}
+
+      {isLocalTestMode && (
+        <button
+          type="button"
+          onClick={handleResetTestState}
+          disabled={isResettingTestState}
+          title="Reset local test purchases"
+          aria-label="Reset local test purchases"
+          className="fixed bottom-2 right-2 z-40 h-7 w-7 rounded-full border border-border bg-card/50 text-muted-foreground opacity-25 hover:opacity-70 hover:bg-card transition-all disabled:opacity-20"
+        >
+          {isResettingTestState ? (
+            <Loader2 className="h-3.5 w-3.5 mx-auto animate-spin" />
+          ) : (
+            <RotateCcw className="h-3.5 w-3.5 mx-auto" />
+          )}
+        </button>
+      )}
+
+      <UnlockAnimation
+        isVisible={showUnlockAnimation}
+        onComplete={handleUnlockAnimationComplete}
+      />
+
+      <PurchaseSuccessModal
+        isVisible={showSuccessModal}
+        onClose={handleSuccessModalClose}
+      />
     </>
   );
 }
