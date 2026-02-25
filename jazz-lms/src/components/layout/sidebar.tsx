@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   Menu,
@@ -15,12 +16,15 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
+import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
 interface CourseProgressVideo {
   lessonId: string;
   title: string;
   progressPercent: number;
   courseId: string;
+  position?: number;
 }
 
 interface CourseProgressItem {
@@ -28,24 +32,6 @@ interface CourseProgressItem {
   title: string;
   videos: CourseProgressVideo[];
 }
-
-const menuItems = [
-  {
-    label: 'Lobby',
-    href: '/dashboard',
-    icon: Home,
-  },
-  {
-    label: 'My Courses',
-    href: '/dashboard/courses',
-    icon: BookOpen,
-  },
-  {
-    label: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
-  },
-];
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +67,7 @@ export function Sidebar() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
+        className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
         aria-label="Open menu"
       >
         <Menu className="h-6 w-6 text-foreground" />
@@ -97,7 +83,7 @@ export function Sidebar() {
 
       {/* Sidebar - Mobile (slide in) */}
       <aside
-        className={`fixed top-0 left-0 h-full w-72 bg-card border-r border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 left-0 h-full w-[90vw] max-w-72 bg-card border-r border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -128,13 +114,39 @@ function SidebarContent({
   onClose?: () => void;
   onLogout: () => void;
 }) {
+  const { t } = useDashboardPreferences();
+
+  const menuItems = [
+    {
+      label: t('lobby', 'Lobby'),
+      href: '/dashboard',
+      icon: Home,
+    },
+    {
+      label: t('myCourses', 'My Courses'),
+      href: '/dashboard/courses',
+      icon: BookOpen,
+    },
+    {
+      label: t('settings', 'Settings'),
+      href: '/dashboard/settings',
+      icon: Settings,
+    },
+  ];
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-primary font-bold text-sm">JC</span>
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/40">
+            <Image
+              src="/images/Logo.jpeg"
+              alt="Jazz Culture logo"
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
           </div>
           <span className="font-serif font-bold text-foreground text-lg">
             Jazz Culture
@@ -181,7 +193,7 @@ function SidebarContent({
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors w-full"
         >
           <LogOut className="h-5 w-5" />
-          Log out
+          {t('logOut', 'Log out')}
         </button>
       </div>
     </div>
@@ -189,8 +201,9 @@ function SidebarContent({
 }
 
 function CoursesNavSection() {
+  const { t } = useDashboardPreferences();
   const [open, setOpen] = useState(false);
-  const [courses, setCourses] = useState<CourseProgressItem[]>([]);
+  const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -199,11 +212,35 @@ function CoursesNavSection() {
     fetch('/api/dashboard/courses-progress')
       .then((r) => r.json())
       .then((data) => {
-        setCourses(data.courses ?? []);
+        const nextCourses: CourseProgressItem[] = data.courses ?? [];
+        const flattened = nextCourses.flatMap((course) =>
+          course.videos.map((video) => ({ ...video, courseId: course.id }))
+        );
+        setVideos(flattened);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [open]);
+
+  const canonicalVideos = CANONICAL_JAZZ_CLASSES.map((item) => {
+    const found = videos.find(
+      (video) => video.title.toLowerCase() === item.subtitle.toLowerCase()
+    );
+
+    return {
+      lessonId: found?.lessonId ?? `canonical-${item.classNumber}`,
+      courseId: found?.courseId,
+      progressPercent: found?.progressPercent ?? 0,
+      classLabel: item.classLabel,
+      subtitle: item.subtitle,
+      classNumber: item.classNumber,
+    };
+  }).sort((a, b) => {
+    if (b.progressPercent !== a.progressPercent) {
+      return b.progressPercent - a.progressPercent;
+    }
+    return a.classNumber - b.classNumber;
+  });
 
   return (
     <div className="mt-1">
@@ -213,69 +250,75 @@ function CoursesNavSection() {
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
       >
         <Library className="h-5 w-5 flex-shrink-0" />
-        <span className="flex-1 text-left">Courses</span>
+        <span className="flex-1 text-left">{t('courses', 'Courses')}</span>
         <ChevronDown
           className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
       {open && (
-        <div className="mt-1 ml-2 rounded-lg border border-border overflow-hidden">
+        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60">
           {loading && (
-            <p className="px-3 py-2 text-xs text-muted-foreground">Loading…</p>
+            <p className="px-3 py-2 text-xs text-muted-foreground">{t('loading', 'Loading…')}</p>
           )}
 
-          {!loading && courses.length === 0 && (
-            <p className="px-3 py-2 text-xs text-muted-foreground">
-              No purchased courses yet.
-            </p>
-          )}
-
-          {!loading &&
-            courses.map((course, ci) => (
-              <div key={course.id}>
-                {/* Course title row */}
-                <div
-                  className={`px-3 py-2 bg-muted/60 ${
-                    ci < courses.length - 1 || course.videos.length > 0
-                      ? 'border-b border-black/70'
-                      : ''
-                  }`}
-                >
-                  <span className="text-xs font-semibold text-foreground tracking-wide uppercase">
-                    {course.title}
-                  </span>
-                </div>
-
-                {/* Video rows */}
-                {course.videos.map((video, vi) => (
-                  <Link
-                    key={video.lessonId}
-                    href={`/courses/${video.courseId}/lessons/${video.lessonId}`}
-                    className={`block px-3 py-2 hover:bg-black/10 dark:hover:bg-white/10 transition-colors ${
-                      vi < course.videos.length - 1 || ci < courses.length - 1
-                        ? 'border-b border-black/70'
-                        : ''
-                    }`}
-                  >
-                    <p className="text-xs text-foreground line-clamp-2 leading-snug">
-                      {video.title}
-                    </p>
-                    <div className="mt-1.5 flex items-center gap-2">
-                      <div className="flex-1 bg-muted rounded-full h-1.5">
-                        <div
-                          className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${video.progressPercent}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] text-muted-foreground tabular-nums">
-                        {video.progressPercent}%
-                      </span>
-                    </div>
-                  </Link>
-                ))}
+          {!loading && (
+            <>
+              <div className="px-3 py-2 bg-primary/10 border-b border-primary/40">
+                <span className="text-[11px] font-semibold text-primary tracking-wide uppercase">
+                  {t('introductionToJazzMusic', 'Introduction to Jazz Music')}
+                </span>
               </div>
-            ))}
+              {videos.length === 0 && (
+                <p className="px-3 py-2 text-[11px] text-muted-foreground border-b border-border/60">
+                  {t('noPurchasedCoursesYet', 'No purchased courses yet.')}
+                </p>
+              )}
+              <div className="max-h-[52dvh] lg:max-h-[calc(100dvh-15rem)] overflow-y-auto">
+                {canonicalVideos.map((video, index) => {
+                  const isClickable = Boolean(video.courseId) && !video.lessonId.startsWith('canonical-');
+                  const content = (
+                    <div
+                      className={`px-3 py-2 transition-colors ${
+                        index < canonicalVideos.length - 1 ? 'border-b border-border/60' : ''
+                      } ${isClickable ? 'hover:bg-accent/40' : 'opacity-90'}`}
+                    >
+                      <p className="text-[11px] font-semibold text-foreground leading-snug">
+                        {video.classLabel}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1 leading-snug">
+                        {video.subtitle}
+                      </p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <div className="flex-1 bg-muted rounded-full h-1.5">
+                          <div
+                            className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${video.progressPercent}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground tabular-nums min-w-8 text-right">
+                          {video.progressPercent}%
+                        </span>
+                      </div>
+                    </div>
+                  );
+
+                  if (!isClickable) {
+                    return <div key={video.lessonId}>{content}</div>;
+                  }
+
+                  return (
+                    <Link
+                      key={video.lessonId}
+                      href={`/courses/${video.courseId}/lessons/${video.lessonId}`}
+                    >
+                      {content}
+                    </Link>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

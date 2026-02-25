@@ -2,46 +2,57 @@
 
 import { Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import {
+  useDashboardPreferences,
+  type DashboardLanguage,
+} from '@/components/providers/dashboard-preferences-provider';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const {
+    t,
+    language,
+    setLanguage,
+    notifications,
+    updateNotification,
+  } = useDashboardPreferences();
 
   const themeOptions = [
     {
       value: 'dark',
-      label: 'Dark',
-      description: 'Dark background with light text',
+      label: t('dark', 'Dark'),
+      description: t('darkDesc', 'Dark background with light text'),
       icon: Moon,
     },
     {
       value: 'light',
-      label: 'Light',
-      description: 'Light background with dark text',
+      label: t('light', 'Light'),
+      description: t('lightDesc', 'Light background with dark text'),
       icon: Sun,
     },
     {
       value: 'system',
-      label: 'System',
-      description: 'Follow your system preferences',
+      label: t('system', 'System'),
+      description: t('systemDesc', 'Follow your system preferences'),
       icon: Monitor,
     },
   ];
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">
-          Settings
+        <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+          {t('settingsTitle', 'Settings')}
         </h1>
-        <p className="text-muted-foreground mt-1">
-          Customize your experience
+        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          {t('settingsSubtitle', 'Customize your experience')}
         </p>
       </div>
 
       {/* Appearance */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Appearance
+      <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
+          {t('appearance', 'Appearance')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {themeOptions.map((option) => {
@@ -54,7 +65,7 @@ export default function SettingsPage() {
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
                   isActive
                     ? 'bg-primary/10 border-primary/40 text-primary'
-                    : 'border-border hover:border-primary/20 hover:bg-accent text-muted-foreground'
+                    : 'border-primary/30 hover:border-primary/70 hover:bg-accent text-muted-foreground'
                 }`}
               >
                 <Icon className="h-6 w-6" />
@@ -69,34 +80,51 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Notifications
+      <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
+          {t('notifications', 'Notifications')}
         </h2>
         <div className="space-y-4">
           <ToggleSetting
-            label="Email Notifications"
-            description="Receive updates about new courses and promotions"
-            defaultChecked
+            label={t('emailNotifications', 'Email Notifications')}
+            description={t(
+              'emailNotificationsDesc',
+              'Receive updates about new courses and promotions'
+            )}
+            checked={notifications.emailNotifications}
+            onChange={(value) => updateNotification('emailNotifications', value)}
           />
           <ToggleSetting
-            label="Course Updates"
-            description="Get notified when courses you're enrolled in have new content"
-            defaultChecked
+            label={t('courseUpdates', 'Course Updates')}
+            description={t(
+              'courseUpdatesDesc',
+              "Get notified when courses you're enrolled in have new content"
+            )}
+            checked={notifications.courseUpdates}
+            onChange={(value) => updateNotification('courseUpdates', value)}
           />
           <ToggleSetting
-            label="Progress Reminders"
-            description="Receive reminders to continue your learning"
+            label={t('progressReminders', 'Progress Reminders')}
+            description={t(
+              'progressRemindersDesc',
+              'Receive reminders to continue your learning'
+            )}
+            checked={notifications.progressReminders}
+            onChange={(value) => updateNotification('progressReminders', value)}
           />
         </div>
       </div>
 
       {/* Language */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Language
+      <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
+          {t('language', 'Language')}
         </h2>
-        <select className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50">
+        <select
+          value={language}
+          onChange={(event) => setLanguage(event.target.value as DashboardLanguage)}
+          className="w-full px-3 py-2.5 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
+        >
           <option value="en">English</option>
           <option value="es">Español</option>
           <option value="pt">Português</option>
@@ -110,22 +138,25 @@ export default function SettingsPage() {
 function ToggleSetting({
   label,
   description,
-  defaultChecked = false,
+  checked,
+  onChange,
 }: {
   label: string;
   description: string;
-  defaultChecked?: boolean;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium text-foreground">{label}</p>
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0 pr-1">
+        <p className="text-sm font-medium text-foreground leading-tight">{label}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
       </div>
-      <label className="relative inline-flex items-center cursor-pointer">
+      <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
         <input
           type="checkbox"
-          defaultChecked={defaultChecked}
+          checked={checked}
+          onChange={(event) => onChange(event.target.checked)}
           className="sr-only peer"
         />
         <div className="w-11 h-6 bg-muted peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />

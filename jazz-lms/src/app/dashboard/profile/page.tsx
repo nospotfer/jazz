@@ -68,7 +68,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl font-serif font-bold text-foreground">
           Profile
@@ -80,8 +80,8 @@ export default function ProfilePage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Avatar section */}
-        <div className="bg-card border border-border rounded-xl p-6">
-          <div className="flex items-center gap-4">
+        <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="relative">
               <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center">
                 <User className="h-10 w-10 text-primary" />
@@ -103,7 +103,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Form fields */}
-        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
           <div>
             <label
               htmlFor="fullName"
@@ -178,11 +178,11 @@ export default function ProfilePage() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <Button
             type="submit"
             disabled={loading}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Save className="h-4 w-4 mr-2" />
             {loading ? 'Saving...' : 'Save Changes'}

@@ -213,13 +213,13 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
             onClick={() => clearMessagesForTab('login')}
-            className={`flex-1 py-3.5 text-base font-semibold transition-colors ${
+            className={`flex-1 py-3 text-sm sm:text-base font-semibold transition-colors ${
               activeTab === 'login'
                 ? 'text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card'
                 : 'text-[#9CA3AF] hover:text-white bg-transparent'
@@ -229,7 +229,7 @@ export default function AuthPage() {
           </button>
           <button
             onClick={() => clearMessagesForTab('register')}
-            className={`flex-1 py-3.5 text-base font-semibold transition-colors ${
+            className={`flex-1 py-3 text-sm sm:text-base font-semibold transition-colors ${
               activeTab === 'register'
                 ? 'text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card'
                 : 'text-[#9CA3AF] hover:text-white bg-transparent'
@@ -239,7 +239,7 @@ export default function AuthPage() {
           </button>
         </div>
 
-        <div className="p-8">
+        <div className="p-5 sm:p-8">
           <button
             type="button"
             onClick={handleGoogleAuth}

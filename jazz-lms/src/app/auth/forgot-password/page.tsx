@@ -52,12 +52,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
-        <div className="p-8">
+        <div className="p-5 sm:p-8">
           {!sent ? (
             <>
-              <h1 className="text-2xl font-bold text-white">Reset your password</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Reset your password</h1>
               <p className="text-sm text-[#9CA3AF] mt-2 mb-6">
                 Enter the email associated with your account and we&apos;ll send you a link to reset your password.
               </p>
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/auth?tab=login')}
-                  className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-base font-medium transition-colors"
+                  className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-sm sm:text-base font-medium transition-colors"
                 >
                   Back to Sign In
                 </button>

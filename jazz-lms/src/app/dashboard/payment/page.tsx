@@ -46,7 +46,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl font-serif font-bold text-foreground">
           Payment & Billing
@@ -71,7 +71,7 @@ export default function PaymentPage() {
       </div>
 
       {/* Stripe Customer Portal */}
-      <div className="bg-card border border-border rounded-xl p-6">
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-2">
           Payment Methods
         </h2>
@@ -81,7 +81,7 @@ export default function PaymentPage() {
         <Button
           onClick={handleManagePayments}
           disabled={isPortalLoading}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
         >
           {isPortalLoading ? (
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -93,7 +93,7 @@ export default function PaymentPage() {
       </div>
 
       {/* Purchase History */}
-      <div className="bg-card border border-border rounded-xl p-6">
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Purchase History
         </h2>
@@ -115,7 +115,7 @@ export default function PaymentPage() {
             {purchases.map((purchase) => (
               <div
                 key={purchase.id}
-                className="flex items-center justify-between bg-background border border-border rounded-lg p-4"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-background border border-border rounded-lg p-4"
               >
                 <div>
                   <p className="text-sm font-medium text-foreground">

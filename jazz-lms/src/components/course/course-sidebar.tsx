@@ -12,9 +12,9 @@ interface CourseSidebarProps {
 
 export const CourseSidebar = ({ course, lessonId }: CourseSidebarProps) => {
   return (
-    <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm w-80">
-      <div className="p-8 flex flex-col border-b">
-        <h1 className="font-semibold text-lg">{course.title}</h1>
+    <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col overflow-y-auto shadow-sm max-h-[40dvh] lg:max-h-none lg:h-full">
+      <div className="p-4 sm:p-6 lg:p-8 flex flex-col border-b">
+        <h1 className="font-semibold text-base sm:text-lg break-words">{course.title}</h1>
       </div>
       <div className="flex flex-col w-full">
         {course.chapters.map((chapter) => (

@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { getCurrentUser } from '@/lib/admin';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { redirect } from 'next/navigation';
+import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 
 export default async function DashboardLayout({
   children,
@@ -24,14 +25,16 @@ export default async function DashboardLayout({
   const isAdmin = isAdminRole(role);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="lg:pl-64">
-        <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
-        <main className="p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
+    <DashboardPreferencesProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
+          <main className="p-3 sm:p-6 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </DashboardPreferencesProvider>
   );
 }

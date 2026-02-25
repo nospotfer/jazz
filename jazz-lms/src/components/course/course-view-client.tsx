@@ -7,6 +7,7 @@ import { UnlockAnimation } from './unlock-animation';
 import { PurchaseSuccessModal } from './purchase-success-modal';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
 // ─── Lesson Data (same as landing page classes) ─────────────────────────────
 
@@ -328,6 +329,7 @@ interface CourseViewProps {
 }
 
 export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, isLocalTestMode }: CourseViewProps) {
+  const { t } = useDashboardPreferences();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [hasPurchased] = useState(initialHasPurchased);
@@ -446,20 +448,13 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
 
   return (
     <>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-6 sm:p-8">
-          <div className="relative z-10">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
-              Welcome back, {firstName}!
-            </h1>
-            <p className="text-muted-foreground mt-2 max-w-lg">
-              {hasPurchased
-                ? 'You have full access to all lessons. Enjoy your jazz journey!'
-                : 'Your first class is free. Unlock all 15 lessons to dive deep into Jazz Culture.'}
-            </p>
-          </div>
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
+      <div className="space-y-6 sm:space-y-8">
+        <div className="text-center">
+          <p className="text-white text-sm sm:text-base font-medium tracking-wide">
+            {hasPurchased
+              ? `Welcome, ${firstName}. You have full access to all lessons.`
+              : `Welcome, ${firstName}. Class 1 is unlocked for preview.`}
+          </p>
         </div>
 
         {/* Purchase banner (only if not purchased) */}
@@ -499,19 +494,23 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         )}
 
         {/* Course title */}
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground">
-            The Course
+        <div className="text-center space-y-1.5 sm:space-y-2 px-1 sm:px-0">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-primary/80">
+            Jazz Culture Academy
+          </p>
+          <h2 className="text-[1.75rem] sm:text-4xl font-serif font-bold text-foreground leading-tight">
+            {t('courseClasses', 'The Course')}
           </h2>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <p className="text-muted-foreground text-[13px] sm:text-sm max-w-2xl mx-auto">
             {hasPurchased
-              ? 'Click on any class to see the full description and start watching'
-              : 'Class 1 is free — Click on any class to preview its content'}
+              ? t('clickAnyClassStart', 'Click on any class to see the full description and start watching')
+              : t('classOneFreePreview', 'Class 1 is free — Click on any class to preview its content')}
           </p>
         </div>
 
         {/* Lessons Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="rounded-2xl border border-primary/30 hover:border-primary/60 transition-colors bg-card/40 p-3 sm:p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4">
           {lessons.map((lesson, index) => {
             const isLocked = !lesson.isFree && !hasPurchased;
             
@@ -523,21 +522,21 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                 onMouseLeave={handleMouseLeave}
               >
                 <button
-                  className={`group relative w-full rounded-xl overflow-hidden shadow-md transition-all duration-300 ease-out text-left ${
+                  className={`group relative w-full rounded-2xl overflow-hidden border transition-all duration-300 ease-out text-left ${
                     hoveredIndex === index
-                      ? 'shadow-2xl scale-105 z-10'
-                      : 'hover:shadow-lg'
+                      ? 'shadow-2xl scale-[1.02] z-10'
+                      : 'hover:shadow-xl'
                   } ${
                     hoveredIndex === index && !isLocked
-                      ? 'ring-2 ring-yellow-400'
+                      ? 'ring-2 ring-primary/70 border-primary/70'
                       : hoveredIndex === index && isLocked
-                      ? 'ring-2 ring-yellow-500/50'
-                      : ''
+                      ? 'ring-2 ring-primary/40 border-primary/40'
+                      : 'border-primary/30 hover:border-primary/60'
                   }`}
                   onClick={() => handleCardClick(index)}
                 >
                   {/* Image thumbnail */}
-                  <div className="relative h-24 sm:h-28 w-full overflow-hidden">
+                  <div className="relative h-32 sm:h-40 w-full overflow-hidden">
                     <Image
                       src={lesson.image}
                       alt={lesson.subtitle}
@@ -569,18 +568,18 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                   </div>
 
                   {/* Card body */}
-                  <div className={`p-3 ${isLocked ? 'bg-gray-100 dark:bg-gray-800/80' : 'bg-amber-500'}`}>
+                  <div className={`p-3 sm:p-4 ${isLocked ? 'bg-gray-100 dark:bg-gray-800/80' : 'bg-gradient-to-br from-primary/95 to-primary/75'}`}>
                     <h3 className={`text-sm font-bold leading-tight ${
                       isLocked
                         ? 'text-gray-500 dark:text-gray-400'
-                        : 'text-gray-900'
+                        : 'text-primary-foreground'
                     }`}>
                       {lesson.title}
                     </h3>
                     <p className={`text-xs mt-0.5 line-clamp-2 leading-snug ${
                       isLocked
                         ? 'text-gray-400 dark:text-gray-500'
-                        : 'text-black/70'
+                        : 'text-primary-foreground/85'
                     }`}>
                       {lesson.subtitle}
                     </p>
@@ -611,18 +610,19 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
               </div>
             );
           })}
+          </div>
         </div>
 
         {/* Bottom purchase CTA */}
         {!hasPurchased && (
-          <div className="text-center py-8">
+          <div className="text-center py-6 sm:py-8">
             <p className="text-muted-foreground mb-4 text-sm">
-              Ready to unlock all 15 classes?
+              {t('readyUnlock', 'Ready to unlock all 15 classes?')}
             </p>
             <button
               onClick={handlePurchaseClick}
               disabled={isPurchasing}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 px-10 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center gap-2"
+              className="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 px-6 sm:px-10 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
             >
               {isPurchasing ? (
                 <>

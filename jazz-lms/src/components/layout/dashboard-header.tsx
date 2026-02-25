@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -60,6 +61,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeaderProps) {
+  const { t } = useDashboardPreferences();
   const router = useRouter();
   const displayName =
     user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
@@ -116,7 +118,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
   return (
     <>
       <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 px-3 sm:px-6 lg:px-8">
           {/* Spacer for hamburger on mobile */}
           <div className="w-10 lg:hidden" />
 
@@ -126,14 +128,14 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search courses..."
-                className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                placeholder={t('courses', 'Courses') + '...'}
+                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
 
             {/* ── Notifications bell ── */}
@@ -153,9 +155,9 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
               {/* Dropdown */}
               {showNotifDropdown && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+                    <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notifications')}</h3>
                     {unreadCount > 0 && (
                       <span className="text-xs bg-yellow-400/20 text-yellow-500 font-medium px-2 py-0.5 rounded-full">
                         {unreadCount} new
@@ -166,7 +168,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-6 text-center text-muted-foreground text-sm">
-                        No notifications
+                        {t('noNotifications', 'No notifications')}
                       </div>
                     ) : (
                       notifications.map((notif) => (
@@ -236,7 +238,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
               {/* Dropdown */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-[min(14rem,calc(100vw-1rem))] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">{displayName}</p>

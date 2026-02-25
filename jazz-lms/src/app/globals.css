@@ -122,6 +122,19 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    @apply border-primary/40 transition-colors;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):hover,
+  select:hover,
+  textarea:hover {
+    @apply border-primary/70;
+  }
+
   body {
     @apply bg-background text-foreground;
   }

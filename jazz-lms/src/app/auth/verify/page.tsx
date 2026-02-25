@@ -103,10 +103,10 @@ export default function VerifyCodePage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
-        <div className="p-8 space-y-5">
-          <h1 className="text-2xl font-bold text-white text-center">Verify your email</h1>
+        <div className="p-5 sm:p-8 space-y-5">
+          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">Verify your email</h1>
           <p className="text-sm text-[#9CA3AF] text-center">
             We sent a verification code to your email. Enter it below to activate your account.
           </p>
@@ -165,7 +165,7 @@ export default function VerifyCodePage() {
             </button>
           </form>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <button
               type="button"
               onClick={handleResendCode}

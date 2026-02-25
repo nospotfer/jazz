@@ -101,9 +101,9 @@ export const CoursePlayer = ({
   };
 
   return (
-    <div className="flex h-[calc(100vh-80px)]">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100dvh-80px)] lg:h-[calc(100dvh-80px)]">
       <CourseSidebar course={course} lessonId={lessonId} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <div className="relative aspect-video">
           <MuxPlayer
             playbackId={lesson.videoUrl || ''}
@@ -114,24 +114,25 @@ export const CoursePlayer = ({
             autoPlay
           />
         </div>
-        <div className="p-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold font-serif">{lesson.title}</h2>
-            <div className="flex items-center gap-x-4">
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <h2 className="text-xl sm:text-2xl font-bold font-serif break-words">{lesson.title}</h2>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
               {lesson.attachments.length > 0 && (
                 <a
                   href={lesson.attachments[0].url}
                   target="_blank"
                   rel="noopener noreferrer"
                   download
+                  className="w-full sm:w-auto"
                 >
-                  <Button>
+                  <Button className="w-full sm:w-auto">
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
                   </Button>
                 </a>
               )}
-              <Button onClick={onMarkAsComplete}>
+              <Button onClick={onMarkAsComplete} className="w-full sm:w-auto">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Mark as Complete
               </Button>

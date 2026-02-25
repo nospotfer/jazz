@@ -112,20 +112,20 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded-lg border border-green-700/50 bg-green-900/70 text-green-300 text-sm font-medium shadow-lg">
+        <div className="fixed top-3 left-3 right-3 sm:left-auto sm:right-4 z-50 px-4 py-3 rounded-lg border border-green-700/50 bg-green-900/70 text-green-300 text-sm font-medium shadow-lg">
           {toastMessage}
         </div>
       )}
 
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
-        <div className="p-8 space-y-5">
+        <div className="p-5 sm:p-8 space-y-5">
           {loadingToken ? (
             <div className="text-center text-[#D1D5DB]">Validating reset link...</div>
           ) : !tokenValid ? (
             <div className="space-y-4">
-              <h1 className="text-2xl font-bold text-white">Reset link invalid</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Reset link invalid</h1>
               <p className="text-sm text-[#9CA3AF]">{tokenError}</p>
               <button
                 type="button"
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-bold text-white">Create new password</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Create new password</h1>
 
               <form onSubmit={handleUpdatePassword} className="space-y-4">
                 <div>
