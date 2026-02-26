@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 type MinimalSupabase = {
   auth: {
@@ -13,13 +14,13 @@ export function createClient(): any {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
+  if (!hasValidSupabasePublicConfig(url, key)) {
     const stub: MinimalSupabase = {
       auth: {
         getUser: async () => ({ data: { user: null } }),
         exchangeCodeForSession: async () => ({
           data: null,
-          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+          error: new Error('Supabase is not configured. Set real NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY values (not placeholders).'),
         }),
       },
     }

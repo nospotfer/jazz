@@ -4,6 +4,27 @@
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Create User table (required by auth API routes)
+CREATE TABLE IF NOT EXISTS "User" (
+    "id" TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::TEXT,
+    "email" TEXT NOT NULL UNIQUE,
+    "name" TEXT,
+    "emailVerified" BOOLEAN NOT NULL DEFAULT false,
+    "role" TEXT NOT NULL DEFAULT 'USER',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create EmailVerification table (for email code verification flows)
+CREATE TABLE IF NOT EXISTS "EmailVerification" (
+    "id" TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::TEXT,
+    "email" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create Course table
 CREATE TABLE IF NOT EXISTS "Course" (
     "id" TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::TEXT,
@@ -80,6 +101,7 @@ CREATE TABLE IF NOT EXISTS "UserProgress" (
 );
 
 -- Create indexes for better query performance
+CREATE INDEX IF NOT EXISTS "EmailVerification_email_code_idx" ON "EmailVerification"("email", "code");
 CREATE INDEX IF NOT EXISTS "Attachment_lessonId_idx" ON "Attachment"("lessonId");
 CREATE INDEX IF NOT EXISTS "Purchase_courseId_idx" ON "Purchase"("courseId");
 CREATE INDEX IF NOT EXISTS "UserProgress_lessonId_idx" ON "UserProgress"("lessonId");
@@ -94,6 +116,9 @@ END;
 $$ language 'plpgsql';
 
 -- Create triggers to auto-update updatedAt on all tables
+CREATE TRIGGER update_user_updated_at BEFORE UPDATE ON "User"
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER update_course_updated_at BEFORE UPDATE ON "Course"
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -118,6 +143,6 @@ SELECT
     schemaname
 FROM pg_tables
 WHERE schemaname = 'public'
-    AND tablename IN ('Course', 'Chapter', 'Lesson', 'Attachment', 'Purchase', 'UserProgress')
+    AND tablename IN ('User', 'EmailVerification', 'Course', 'Chapter', 'Lesson', 'Attachment', 'Purchase', 'UserProgress')
 ORDER BY tablename;
 

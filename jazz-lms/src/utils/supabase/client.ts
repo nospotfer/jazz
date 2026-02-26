@@ -1,4 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 type MinimalSupabase = {
   auth: {
@@ -20,7 +21,7 @@ export function createClient(): any {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
+  if (!hasValidSupabasePublicConfig(url, key)) {
     // Return a minimal stub so client-side code won't crash in local dev
     const stub: MinimalSupabase = {
       auth: {
@@ -29,15 +30,15 @@ export function createClient(): any {
         signOut: async () => ({ error: null }),
         signInWithPassword: async () => ({
           data: { user: null, session: null },
-          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+          error: new Error('Supabase is not configured. Set real NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY values (not placeholders).'),
         }),
         signUp: async () => ({
           data: { user: null, session: null },
-          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+          error: new Error('Supabase is not configured. Set real NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY values (not placeholders).'),
         }),
         signInWithOAuth: async () => ({
           data: null,
-          error: new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.'),
+          error: new Error('Supabase is not configured. Set real NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY values (not placeholders).'),
         }),
         resetPasswordForEmail: async () => ({
           data: null,
