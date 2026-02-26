@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     // Create a Stripe Customer Portal session
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: `${origin}/dashboard/payment`,
+      return_url: `${origin}/dashboard/profile`,
     });
 
     return NextResponse.json({ url: portalSession.url });

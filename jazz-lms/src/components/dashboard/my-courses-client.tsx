@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Clock, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { Clock, Lock } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
@@ -20,14 +21,11 @@ export interface PurchasedVideoItem {
 
 interface MyCoursesClientProps {
   videos: PurchasedVideoItem[];
-  singleVideoPrice: number;
 }
 
-export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientProps) {
+export function MyCoursesClient({ videos }: MyCoursesClientProps) {
   const { t } = useDashboardPreferences();
-  const [page, setPage] = useState(0);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(CANONICAL_JAZZ_CLASSES.length / itemsPerPage);
+  const searchParams = useSearchParams();
 
   const byTitle = new Map(
     videos.map((video) => [video.lessonTitle.toLowerCase(), video])
@@ -57,40 +55,56 @@ export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientPro
   const watchedVideos = classes.filter((video) => video.isCompleted);
   const inProgressVideos = classes.filter((video) => video.progressPercent > 0 && video.progressPercent < 100);
   const notStartedVideos = classes.filter((video) => video.progressPercent === 0);
+  const activeView = searchParams.get('view');
+  const filteredClasses =
+    activeView === 'watched'
+      ? watchedVideos
+      : activeView === 'in-progress'
+      ? inProgressVideos
+      : classes;
   const completionRate = classes.length
     ? Math.round((watchedVideos.length / classes.length) * 100)
     : 0;
 
-  const start = page * itemsPerPage;
-  const visibleClasses = classes.slice(start, start + itemsPerPage);
-
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-serif font-bold text-foreground">
-            {t('myCourses', 'My Courses')}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {t('myCoursesSubtitle', '15 real classes, organized in pages of 5')}
-          </p>
-        </div>
-
-        <div className="text-sm text-muted-foreground text-left sm:text-right">
-          <p>Single video price: €{singleVideoPrice.toFixed(2)}</p>
-          <p>Bundle access unlocks all 15 videos.</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-serif font-bold text-foreground">
+          {t('myCourses', 'My Courses')}
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          15 classes — Introduction to Jazz Music
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-        <div className="rounded-xl border border-primary/40 hover:border-primary/70 transition-colors bg-card p-4">
+      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-3 sm:gap-4">
+        <Link
+          href="/dashboard/courses?view=watched"
+          className={`rounded-xl border transition-colors bg-card p-4 block ${
+            activeView === 'watched'
+              ? 'border-primary/80 ring-1 ring-primary/40'
+              : 'border-primary/40 hover:border-primary/70'
+          }`}
+        >
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('watched', 'Watched')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{watchedVideos.length}</p>
-        </div>
-        <div className="rounded-xl border border-primary/40 hover:border-primary/70 transition-colors bg-card p-4">
+        </Link>
+        <Link
+          href="/dashboard/courses?view=in-progress"
+          className={`rounded-xl border transition-colors bg-card p-4 block ${
+            activeView === 'in-progress'
+              ? 'border-primary/80 ring-1 ring-primary/40'
+              : 'border-primary/40 hover:border-primary/70'
+          }`}
+        >
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('inProgress', 'In Progress')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{inProgressVideos.length}</p>
-        </div>
+        </Link>
+      </div>
+
+      <div className="border-t border-white/25" />
+
+      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <div className="rounded-xl border border-primary/40 hover:border-primary/70 transition-colors bg-card p-4">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('notStarted', 'Not Started')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{notStartedVideos.length}</p>
@@ -105,43 +119,28 @@ export function MyCoursesClient({ videos, singleVideoPrice }: MyCoursesClientPro
         </div>
       </div>
 
-      <div className="space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-xl border border-primary/40 hover:border-primary/70 transition-colors bg-card px-4 py-3">
-          <div>
-            <p className="text-sm font-semibold text-foreground">{t('courseClasses', 'Course Classes')}</p>
-            <p className="text-xs text-muted-foreground">{t('showingFivePerPage', 'Showing 5 classes per page in official order')}</p>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {t('page', 'Page')} {page + 1} {t('of', 'of')} {totalPages}
-          </div>
-        </div>
+      <div className="border-t border-white/25" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 sm:gap-4">
-          {visibleClasses.map((video) => (
-            <VideoProgressCard key={video.classNumber} video={video} />
-          ))}
+      {activeView && (
+        <div className="flex items-center justify-between rounded-lg border border-primary/30 bg-card px-3 py-2">
+          <p className="text-xs sm:text-sm text-foreground">
+            {activeView === 'watched'
+              ? 'Showing watched videos'
+              : 'Showing videos in progress'}
+          </p>
+          <Link
+            href="/dashboard/courses"
+            className="text-xs sm:text-sm text-primary hover:text-primary/80 transition-colors"
+          >
+            Show all classes
+          </Link>
         </div>
+      )}
 
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setPage((prev) => Math.max(0, prev - 1))}
-            disabled={page === 0}
-            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-primary/40 hover:border-primary/70 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm text-foreground transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            {t('previous', 'Previous')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setPage((prev) => Math.min(totalPages - 1, prev + 1))}
-            disabled={page >= totalPages - 1}
-            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-primary/40 hover:border-primary/70 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm text-foreground transition-colors"
-          >
-            {t('next', 'Next')}
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+        {filteredClasses.map((video) => (
+          <VideoProgressCard key={video.classNumber} video={video} />
+        ))}
       </div>
     </div>
   );
@@ -165,9 +164,26 @@ function VideoProgressCard({
 }) {
   const { t } = useDashboardPreferences();
   const isClickable = Boolean(video.lessonId && video.courseId);
+  const [showLockedFeedback, setShowLockedFeedback] = useState(false);
+
+  useEffect(() => {
+    if (!showLockedFeedback) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setShowLockedFeedback(false);
+    }, 650);
+
+    return () => window.clearTimeout(timer);
+  }, [showLockedFeedback]);
 
   const card = (
-    <div className="h-full bg-card border border-primary/40 hover:border-primary/70 rounded-xl p-3.5 sm:p-4 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
+    <div className={`h-full bg-card border rounded-xl p-3.5 sm:p-4 hover:shadow-2xl hover:shadow-primary/15 will-change-transform transition-[transform,box-shadow,border-color,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.02] hover:-translate-y-1 ${
+      showLockedFeedback
+        ? 'border-red-500/80 shadow-[0_0_0_1px_rgba(239,68,68,0.65)] animate-locked-shake'
+        : 'border-primary/40 hover:border-primary/70'
+    }`}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-xs font-semibold text-primary/90">{video.classLabel}</p>
@@ -177,15 +193,11 @@ function VideoProgressCard({
         </div>
         <span className={`text-[10px] px-1.5 sm:px-2 py-1 rounded-full border ${
           video.isPurchased
-            ? video.accessType === 'single-video'
-              ? 'bg-blue-500/10 text-blue-600 border-blue-500/20'
-              : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
             : 'bg-muted text-muted-foreground border-border'
         }`}>
           {video.isPurchased
-            ? video.accessType === 'single-video'
-              ? 'Single'
-              : 'Full'
+            ? t('unlocked', 'Unlocked')
             : t('locked', 'Locked')}
         </span>
       </div>
@@ -214,7 +226,16 @@ function VideoProgressCard({
   );
 
   if (!isClickable) {
-    return card;
+    return (
+      <button
+        type="button"
+        onClick={() => setShowLockedFeedback(true)}
+        className="block w-full text-left rounded-xl"
+        aria-label={t('purchaseRequired', 'Purchase required')}
+      >
+        {card}
+      </button>
+    );
   }
 
   return (
@@ -222,7 +243,7 @@ function VideoProgressCard({
       href={`/courses/${video.courseId}/lessons/${video.lessonId}`}
       className="group block"
     >
-      <div className="group-hover:scale-[1.01] transition-transform duration-200">
+      <div className="group-hover:scale-[1.02] group-hover:-translate-y-1 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform">
         {card}
       </div>
     </Link>

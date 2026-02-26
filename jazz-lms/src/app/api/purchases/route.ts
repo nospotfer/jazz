@@ -32,9 +32,11 @@ export async function GET() {
 
     const formatted = purchases.map((p) => ({
       id: p.id,
-      courseTitle: p.course.title,
+      itemType: 'Course',
+      itemTitle: p.course.title,
       amount: p.course.price || 0,
-      date: p.createdAt.toISOString(),
+      createdAt: p.createdAt.toISOString(),
+      currency: 'EUR',
     }));
 
     return NextResponse.json(formatted);

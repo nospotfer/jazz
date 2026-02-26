@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AuthChangeEvent } from '@supabase/supabase-js';
+import { getRandomProfileAvatar } from '@/lib/profile-avatars';
 
 export default function AuthPage() {
   const supabase = useMemo(() => createClient(), []);
@@ -153,6 +154,18 @@ export default function AuthPage() {
       if (signInError) {
         setLoginError(signInError.message || 'Unable to sign in');
         return;
+      }
+
+      const { data: signedInUserData } = await supabase.auth.getUser();
+      const currentMetadata = signedInUserData.user?.user_metadata || {};
+      if (currentMetadata.avatar_mode !== 'fixed') {
+        await supabase.auth.updateUser({
+          data: {
+            ...currentMetadata,
+            avatar_mode: 'random',
+            avatar_url: getRandomProfileAvatar(),
+          },
+        });
       }
 
       if (typeof window !== 'undefined') {

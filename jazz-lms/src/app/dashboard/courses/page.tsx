@@ -4,7 +4,6 @@ import { db } from '@/lib/db';
 import { MyCoursesClient, type PurchasedVideoItem } from '@/components/dashboard/my-courses-client';
 import {
   DEFAULT_LESSON_DURATION_MINUTES,
-  LESSON_UNIT_PRICE_EUR,
 } from '@/lib/pricing';
 
 export default async function MyCoursesPage() {
@@ -123,7 +122,6 @@ export default async function MyCoursesPage() {
   return (
     <MyCoursesClient
       videos={purchasedVideos}
-      singleVideoPrice={LESSON_UNIT_PRICE_EUR}
     />
   );
 }

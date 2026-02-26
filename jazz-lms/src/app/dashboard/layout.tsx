@@ -26,11 +26,11 @@ export default async function DashboardLayout({
 
   return (
     <DashboardPreferencesProvider>
-      <div className="min-h-screen bg-background">
+      <div className="h-[100dvh] overflow-hidden bg-background">
         <Sidebar />
-        <div className="lg:pl-64">
+        <div className="lg:pl-64 h-full flex flex-col">
           <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
-          <main className="p-3 sm:p-6 lg:p-8">
+          <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {children}
           </main>
         </div>

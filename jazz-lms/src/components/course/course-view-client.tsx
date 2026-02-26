@@ -239,7 +239,7 @@ function FloatPopup({ lesson, onClose, isPinned, hasPurchased, onPurchaseClick }
                   className="mt-4 w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="h-5 w-5" />
-                  Unlock All Lessons — €49.99
+                  Unlock Full Course — €29.99
                 </button>
               )}
             </div>
@@ -448,69 +448,37 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
 
   return (
     <>
-      <div className="space-y-6 sm:space-y-8">
-        <div className="text-center">
-          <p className="text-white text-sm sm:text-base font-medium tracking-wide">
-            {hasPurchased
-              ? `Welcome, ${firstName}. You have full access to all lessons.`
-              : `Welcome, ${firstName}. Class 1 is unlocked for preview.`}
-          </p>
-        </div>
+      <div className="space-y-3 sm:space-y-4">
 
-        {/* Purchase banner (only if not purchased) */}
-        {!hasPurchased && (
-          <div className="bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border border-yellow-500/30 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="bg-yellow-500/20 rounded-xl p-3 shrink-0">
-                <Lock className="h-6 w-6 text-yellow-500" />
-              </div>
-              <div>
-                <h3 className="text-lg font-serif font-bold text-foreground">
-                  Unlock Full Course
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Get access to all 15 classes, downloadable materials, and exclusive content.
-                </p>
-              </div>
-            </div>
+        {/* Course title */}
+        <div className="text-center space-y-2 px-1 sm:px-0">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-primary/80">
+            Jazz Culture Academy
+          </p>
+          {!hasPurchased && (
             <button
               onClick={handlePurchaseClick}
               disabled={isPurchasing}
-              className="shrink-0 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center gap-2"
+              className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
             >
               {isPurchasing ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Processing...
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="h-5 w-5" />
-                  Purchase — €49.99
+                  <ShoppingCart className="h-4 w-4" />
+                  Purchase Full Course — €29.99
                 </>
               )}
             </button>
-          </div>
-        )}
-
-        {/* Course title */}
-        <div className="text-center space-y-1.5 sm:space-y-2 px-1 sm:px-0">
-          <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-primary/80">
-            Jazz Culture Academy
-          </p>
-          <h2 className="text-[1.75rem] sm:text-4xl font-serif font-bold text-foreground leading-tight">
-            {t('courseClasses', 'The Course')}
-          </h2>
-          <p className="text-muted-foreground text-[13px] sm:text-sm max-w-2xl mx-auto">
-            {hasPurchased
-              ? t('clickAnyClassStart', 'Click on any class to see the full description and start watching')
-              : t('classOneFreePreview', 'Class 1 is free — Click on any class to preview its content')}
-          </p>
+          )}
         </div>
 
         {/* Lessons Grid */}
-        <div className="rounded-2xl border border-primary/30 hover:border-primary/60 transition-colors bg-card/40 p-3 sm:p-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4">
+        <div className="mt-[2.2dvh] sm:mt-[2.6dvh] rounded-2xl border border-primary/30 hover:border-primary/60 transition-colors bg-card/40 p-3.5 sm:p-4 min-h-[56dvh] lg:min-h-[60dvh]">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-2.5">
           {lessons.map((lesson, index) => {
             const isLocked = !lesson.isFree && !hasPurchased;
             
@@ -522,10 +490,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                 onMouseLeave={handleMouseLeave}
               >
                 <button
-                  className={`group relative w-full rounded-2xl overflow-hidden border transition-all duration-300 ease-out text-left ${
+                  className={`group relative w-full rounded-2xl overflow-hidden border text-left will-change-transform transition-[transform,box-shadow,border-color,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                     hoveredIndex === index
-                      ? 'shadow-2xl scale-[1.02] z-10'
-                      : 'hover:shadow-xl'
+                      ? 'shadow-2xl scale-[1.03] -translate-y-1 z-10'
+                      : 'hover:shadow-xl hover:scale-[1.01] hover:-translate-y-0.5'
                   } ${
                     hoveredIndex === index && !isLocked
                       ? 'ring-2 ring-primary/70 border-primary/70'
@@ -536,7 +504,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                   onClick={() => handleCardClick(index)}
                 >
                   {/* Image thumbnail */}
-                  <div className="relative h-32 sm:h-40 w-full overflow-hidden">
+                  <div className="relative h-[6.5rem] sm:h-[7.5rem] w-full overflow-hidden">
                     <Image
                       src={lesson.image}
                       alt={lesson.subtitle}
@@ -568,15 +536,15 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                   </div>
 
                   {/* Card body */}
-                  <div className={`p-3 sm:p-4 ${isLocked ? 'bg-gray-100 dark:bg-gray-800/80' : 'bg-gradient-to-br from-primary/95 to-primary/75'}`}>
-                    <h3 className={`text-sm font-bold leading-tight ${
+                  <div className={`p-2.5 sm:p-3.5 ${isLocked ? 'bg-gray-100 dark:bg-gray-800/80' : 'bg-gradient-to-br from-primary/95 to-primary/75'}`}>
+                    <h3 className={`text-xs sm:text-sm font-bold leading-tight ${
                       isLocked
                         ? 'text-gray-500 dark:text-gray-400'
                         : 'text-primary-foreground'
                     }`}>
                       {lesson.title}
                     </h3>
-                    <p className={`text-xs mt-0.5 line-clamp-2 leading-snug ${
+                    <p className={`text-[10px] sm:text-xs mt-0.5 line-clamp-2 leading-snug ${
                       isLocked
                         ? 'text-gray-400 dark:text-gray-500'
                         : 'text-primary-foreground/85'
@@ -586,7 +554,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
 
                     {/* Small padlock indicator */}
                     {isLocked && (
-                      <div className="flex items-center gap-1 mt-1.5">
+                      <div className="flex items-center gap-1 mt-1">
                         <Lock className="h-3 w-3 text-yellow-500" />
                         <span className="text-[10px] text-yellow-600 dark:text-yellow-400 font-semibold">
                           Premium
@@ -612,32 +580,6 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           })}
           </div>
         </div>
-
-        {/* Bottom purchase CTA */}
-        {!hasPurchased && (
-          <div className="text-center py-6 sm:py-8">
-            <p className="text-muted-foreground mb-4 text-sm">
-              {t('readyUnlock', 'Ready to unlock all 15 classes?')}
-            </p>
-            <button
-              onClick={handlePurchaseClick}
-              disabled={isPurchasing}
-              className="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 px-6 sm:px-10 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
-            >
-              {isPurchasing ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="h-5 w-5" />
-                  Purchase Full Course — €49.99
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Pinned popup (full-screen modal) */}

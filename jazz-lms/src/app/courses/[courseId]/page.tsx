@@ -3,11 +3,8 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { CourseEnrollButton } from '@/components/course/course-enroll-button';
 import { BookOpen, Clock, CheckCircle } from 'lucide-react';
-import { LessonEnrollButton } from '@/components/course/lesson-enroll-button';
 import {
   DEFAULT_FULL_COURSE_PRICE_EUR,
-  LESSON_UNIT_PRICE_EUR,
-  totalSingleLessonsPrice,
 } from '@/lib/pricing';
 
 export default async function CourseDetailPage({
@@ -40,11 +37,6 @@ export default async function CourseDetailPage({
           lessons: {
             where: { isPublished: true },
             orderBy: { position: 'asc' },
-            include: {
-              lessonPurchases: {
-                where: { userId: user.id },
-              },
-            },
           },
         },
       },
@@ -118,7 +110,7 @@ export default async function CourseDetailPage({
                   </p>
                 </div>
                 <ul className="divide-y divide-border">
-                  {chapter.lessons.map((lesson, lessonIndex) => (
+                  {chapter.lessons.map((lesson) => (
                     <li
                       key={lesson.id}
                       className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground"
@@ -127,20 +119,6 @@ export default async function CourseDetailPage({
                         <CheckCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
                         <span className="truncate">{lesson.title}</span>
                       </div>
-
-                      {!hasPurchased && !(chapterIndex === 0 && lessonIndex === 0) && (
-                        lesson.lessonPurchases.length > 0 ? (
-                          <span className="text-xs px-2 py-1 rounded-md bg-green-500/10 text-green-600 border border-green-600/20">
-                            Purchased
-                          </span>
-                        ) : (
-                          <LessonEnrollButton
-                            courseId={course.id}
-                            lessonId={lesson.id}
-                            price={LESSON_UNIT_PRICE_EUR}
-                          />
-                        )
-                      )}
                     </li>
                   ))}
                 </ul>
@@ -157,7 +135,7 @@ export default async function CourseDetailPage({
                 €{(course.price || DEFAULT_FULL_COURSE_PRICE_EUR).toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                15 single videos cost €{totalSingleLessonsPrice.toFixed(2)} in total
+                Full access to all 15 classes
               </p>
             </div>
             <CourseEnrollButton

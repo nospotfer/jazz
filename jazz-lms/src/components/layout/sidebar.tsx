@@ -95,7 +95,7 @@ export function Sidebar() {
       </aside>
 
       {/* Sidebar - Desktop (always visible) */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:left-0 lg:h-full bg-card border-r border-border z-40">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
           pathname={pathname}
           onLogout={handleLogout}
@@ -164,7 +164,7 @@ function SidebarContent({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 min-h-0 px-4 pt-4 pb-1 space-y-1 flex flex-col">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -183,11 +183,13 @@ function SidebarContent({
             </Link>
           );
         })}
-        <CoursesNavSection />
+        <div className="min-h-0">
+          <CoursesNavSection />
+        </div>
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border">
+      <div className="p-3 border-t border-border">
         <button
           onClick={onLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors w-full"
@@ -207,7 +209,6 @@ function CoursesNavSection() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
     setLoading(true);
     fetch('/api/dashboard/courses-progress')
       .then((r) => r.json())
@@ -220,7 +221,7 @@ function CoursesNavSection() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [open]);
+  }, []);
 
   const canonicalVideos = CANONICAL_JAZZ_CLASSES.map((item) => {
     const found = videos.find(
@@ -257,46 +258,46 @@ function CoursesNavSection() {
       </button>
 
       {open && (
-        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60">
+        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-col max-h-[48dvh] lg:max-h-[54dvh]">
           {loading && (
-            <p className="px-3 py-2 text-xs text-muted-foreground">{t('loading', 'Loading…')}</p>
+            <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
           )}
 
           {!loading && (
             <>
-              <div className="px-3 py-2 bg-primary/10 border-b border-primary/40">
-                <span className="text-[11px] font-semibold text-primary tracking-wide uppercase">
+              <div className="px-2.5 py-1.5 bg-primary/10 border-b border-primary/40">
+                <span className="text-[10px] font-semibold text-primary tracking-wide uppercase">
                   {t('introductionToJazzMusic', 'Introduction to Jazz Music')}
                 </span>
               </div>
               {videos.length === 0 && (
-                <p className="px-3 py-2 text-[11px] text-muted-foreground border-b border-border/60">
+                <p className="px-2.5 py-1.5 text-[10px] text-muted-foreground border-b border-border/60">
                   {t('noPurchasedCoursesYet', 'No purchased courses yet.')}
                 </p>
               )}
-              <div className="max-h-[52dvh] lg:max-h-[calc(100dvh-15rem)] overflow-y-auto">
+              <div className="courses-scroll flex-1 min-h-0 overflow-y-auto pr-1">
                 {canonicalVideos.map((video, index) => {
                   const isClickable = Boolean(video.courseId) && !video.lessonId.startsWith('canonical-');
                   const content = (
                     <div
-                      className={`px-3 py-2 transition-colors ${
+                      className={`px-2.5 py-1.5 transition-colors ${
                         index < canonicalVideos.length - 1 ? 'border-b border-border/60' : ''
                       } ${isClickable ? 'hover:bg-accent/40' : 'opacity-90'}`}
                     >
-                      <p className="text-[11px] font-semibold text-foreground leading-snug">
+                      <p className="text-[10px] font-semibold text-foreground leading-tight">
                         {video.classLabel}
                       </p>
-                      <p className="text-[11px] text-muted-foreground line-clamp-1 leading-snug">
+                      <p className="text-[10px] text-muted-foreground line-clamp-1 leading-tight">
                         {video.subtitle}
                       </p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <div className="flex-1 bg-muted rounded-full h-1.5">
+                      <div className="mt-0.5 flex items-center gap-1.5">
+                        <div className="flex-1 bg-muted rounded-full h-1">
                           <div
-                            className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                            className="bg-primary h-1 rounded-full transition-all duration-500"
                             style={{ width: `${video.progressPercent}%` }}
                           />
                         </div>
-                        <span className="text-[10px] text-muted-foreground tabular-nums min-w-8 text-right">
+                        <span className="text-[9px] text-muted-foreground tabular-nums min-w-7 text-right">
                           {video.progressPercent}%
                         </span>
                       </div>
