@@ -20,6 +20,16 @@ interface LessonItem {
   isFree: boolean; // Controlled by backend; only first lesson is free
 }
 
+interface DashboardCourseProgressItem {
+  id: string;
+  title: string;
+  videos: Array<{
+    lessonId: string;
+    title: string;
+    progressPercent: number;
+  }>;
+}
+
 const lessonsData: LessonItem[] = [
   {
     id: 1,
@@ -169,7 +179,7 @@ interface FloatPopupProps {
   onPurchaseClick: () => void;
 }
 
-function FloatPopup({ lesson, onClose, isPinned, hasPurchased, onPurchaseClick }: FloatPopupProps) {
+function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurchaseClick }: FloatPopupProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -291,7 +301,14 @@ function FloatPopup({ lesson, onClose, isPinned, hasPurchased, onPurchaseClick }
 
   // Floating popup mode (on hover)
   return (
-    <div className="absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 sm:w-80 pointer-events-none animate-float-popup-in">
+    <div
+      className="fixed z-[70] w-72 sm:w-80 pointer-events-none animate-float-popup-in"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y - 12}px`,
+        transform: 'translate(-50%, -100%)',
+      }}
+    >
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-4">
           <span className="text-yellow-600 text-xs font-bold uppercase tracking-widest">
@@ -300,7 +317,7 @@ function FloatPopup({ lesson, onClose, isPinned, hasPurchased, onPurchaseClick }
           <h4 className="text-sm font-bold text-gray-900 dark:text-white mt-1 leading-snug">
             {lesson.subtitle}
           </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-3 leading-relaxed">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
             {lesson.description}
           </p>
           {!lesson.isFree && !hasPurchased && (
@@ -325,10 +342,13 @@ interface CourseViewProps {
   userName: string;
   hasPurchased: boolean;
   courseId: string | null;
+  lessonRoutesByTitle: Record<string, string>;
+  lessonRoutesInOrder: string[];
+  lessonIdsInOrder: string[];
   isLocalTestMode: boolean;
 }
 
-export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, isLocalTestMode }: CourseViewProps) {
+export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, isLocalTestMode }: CourseViewProps) {
   const { t } = useDashboardPreferences();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -340,6 +360,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isResettingTestState, setIsResettingTestState] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [lockedClickPrimedIndex, setLockedClickPrimedIndex] = useState<number | null>(null);
+  const [lockedFeedbackIndex, setLockedFeedbackIndex] = useState<number | null>(null);
+  const [hasSeenPreviewOnce, setHasSeenPreviewOnce] = useState(false);
+  const [progressByLessonId, setProgressByLessonId] = useState<Record<string, number>>({});
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -347,6 +371,34 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       localStorage.removeItem('jazz-course-purchased');
       sessionStorage.removeItem('jazz-course-purchased');
     }
+  }, []);
+
+  useEffect(() => {
+    const previewKey = `jazz-class-preview-seen:${courseId ?? 'default'}`;
+    const seen = window.localStorage.getItem(previewKey) === '1';
+    setHasSeenPreviewOnce(seen);
+  }, [courseId]);
+
+  useEffect(() => {
+    fetch('/api/dashboard/courses-progress')
+      .then((response) => response.json())
+      .then((data) => {
+        const nextCourses: DashboardCourseProgressItem[] = data.courses ?? [];
+        const nextProgress: Record<string, number> = {};
+
+        for (const course of nextCourses) {
+          for (const video of course.videos ?? []) {
+            const key = video.lessonId;
+            const current = nextProgress[key] ?? 0;
+            nextProgress[key] = Math.max(current, video.progressPercent ?? 0);
+          }
+        }
+
+        setProgressByLessonId(nextProgress);
+      })
+      .catch(() => {
+        setProgressByLessonId({});
+      });
   }, []);
 
   useEffect(() => {
@@ -359,7 +411,32 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     }
   }, [searchParams, hasPurchased, router]);
 
+  useEffect(() => {
+    if (lockedClickPrimedIndex === null) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setLockedClickPrimedIndex(null);
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [lockedClickPrimedIndex]);
+
+  useEffect(() => {
+    if (lockedFeedbackIndex === null) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setLockedFeedbackIndex(null);
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [lockedFeedbackIndex]);
+
   const handleMouseEnter = useCallback((index: number, e: React.MouseEvent) => {
+    if (hasPurchased || hasSeenPreviewOnce) return;
     if (pinnedIndex !== null) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     setPopupPosition({ x: rect.left + rect.width / 2, y: rect.top });
@@ -367,7 +444,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     hoverTimerRef.current = setTimeout(() => {
       setHoveredIndex(index);
     }, 200);
-  }, [pinnedIndex]);
+  }, [hasPurchased, hasSeenPreviewOnce, pinnedIndex]);
 
   const handleMouseLeave = useCallback(() => {
     if (pinnedIndex !== null) return;
@@ -376,26 +453,6 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     }
     setHoveredIndex(null);
   }, [pinnedIndex]);
-
-  const handleCardClick = useCallback((index: number) => {
-    const lesson = lessonsData[index];
-    
-    // If free or purchased, you could navigate to lesson player
-    // For now, pin the popup for locked lessons
-    if (!lesson.isFree && !hasPurchased) {
-      setPinnedIndex(index);
-      setHoveredIndex(null);
-    } else {
-      // Pin the popup for free/purchased lessons too (to see full info)
-      setPinnedIndex(index);
-      setHoveredIndex(null);
-    }
-  }, [hasPurchased]);
-
-  const handleClosePopup = useCallback(() => {
-    setPinnedIndex(null);
-    setHoveredIndex(null);
-  }, []);
 
   const handlePurchaseClick = useCallback(async () => {
     if (!courseId) return;
@@ -416,6 +473,66 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       setIsPurchasing(false);
     }
   }, [courseId]);
+
+  const handleCardClick = useCallback((index: number) => {
+    const lesson = lessonsData[index];
+    const lessonRoute = lessonRoutesInOrder[index] || lessonRoutesByTitle[lesson.subtitle.toLowerCase().trim()];
+
+    if (hasPurchased) {
+      if (lessonRoute) {
+        router.push(lessonRoute);
+        return;
+      }
+
+      if (courseId) {
+        router.push(`/courses/${courseId}`);
+      }
+      return;
+    }
+
+    if (!hasSeenPreviewOnce) {
+      const previewKey = `jazz-class-preview-seen:${courseId ?? 'default'}`;
+      window.localStorage.setItem(previewKey, '1');
+      setHasSeenPreviewOnce(true);
+      setLockedClickPrimedIndex(null);
+      setPinnedIndex(index);
+      setHoveredIndex(null);
+      return;
+    }
+
+    if (lesson.isFree && lessonRoute) {
+      router.push(lessonRoute);
+      return;
+    }
+    
+    if (!lesson.isFree && !hasPurchased) {
+      if (lockedClickPrimedIndex === index) {
+        setLockedFeedbackIndex(index);
+        setLockedClickPrimedIndex(null);
+        setPinnedIndex(null);
+        setHoveredIndex(null);
+        return;
+      }
+
+      handlePurchaseClick();
+      return;
+    }
+
+    setLockedClickPrimedIndex(null);
+    if (lessonRoute) {
+      router.push(lessonRoute);
+      return;
+    }
+
+    if (courseId) {
+      router.push(`/courses/${courseId}`);
+    }
+  }, [courseId, hasPurchased, hasSeenPreviewOnce, handlePurchaseClick, lessonRoutesByTitle, lessonRoutesInOrder, lockedClickPrimedIndex, router]);
+
+  const handleClosePopup = useCallback(() => {
+    setPinnedIndex(null);
+    setHoveredIndex(null);
+  }, []);
 
   const handleUnlockAnimationComplete = useCallback(() => {
     setShowUnlockAnimation(false);
@@ -481,6 +598,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-2.5">
           {lessons.map((lesson, index) => {
             const isLocked = !lesson.isFree && !hasPurchased;
+            const mappedLessonId = lessonIdsInOrder[index];
+            const progressPercent = mappedLessonId
+              ? progressByLessonId[mappedLessonId] ?? 0
+              : 0;
             
             return (
               <div
@@ -494,12 +615,13 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                     hoveredIndex === index
                       ? 'shadow-2xl scale-[1.03] -translate-y-1 z-10'
                       : 'hover:shadow-xl hover:scale-[1.01] hover:-translate-y-0.5'
-                  } ${
-                    hoveredIndex === index && !isLocked
+                  } ${lockedFeedbackIndex === index
+                    ? 'border-red-500/80 ring-2 ring-red-500/70 shadow-[0_0_0_1px_rgba(239,68,68,0.65)] animate-locked-shake'
+                    : hoveredIndex === index && !isLocked
                       ? 'ring-2 ring-primary/70 border-primary/70'
                       : hoveredIndex === index && isLocked
                       ? 'ring-2 ring-primary/40 border-primary/40'
-                      : 'border-primary/30 hover:border-primary/60'
+                      : 'border-primary/30 hover:border-primary/60'}
                   }`}
                   onClick={() => handleCardClick(index)}
                 >
@@ -544,13 +666,31 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                     }`}>
                       {lesson.title}
                     </h3>
-                    <p className={`text-[10px] sm:text-xs mt-0.5 line-clamp-2 leading-snug ${
+                    <p className={`text-[10px] sm:text-xs mt-0.5 ${hoveredIndex === index ? 'line-clamp-none' : 'line-clamp-2'} leading-snug ${
                       isLocked
                         ? 'text-gray-400 dark:text-gray-500'
                         : 'text-primary-foreground/85'
                     }`}>
                       {lesson.subtitle}
                     </p>
+
+                    <div className="mt-2">
+                      <div className="w-full bg-muted/70 rounded-full h-1.5">
+                        <div
+                          className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                      <div className="mt-1 flex items-center justify-between text-[10px]">
+                        <span className={isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}>
+                          {progressPercent}% watched
+                        </span>
+                        <span className={`inline-flex items-center gap-1 ${isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}`}>
+                          <Lock className="h-2.5 w-2.5" />
+                          {isLocked ? 'Purchase required' : 'Available'}
+                        </span>
+                      </div>
+                    </div>
 
                     {/* Small padlock indicator */}
                     {isLocked && (
@@ -565,7 +705,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                 </button>
 
                 {/* Float popup on hover */}
-                {hoveredIndex === index && pinnedIndex === null && (
+                {!hasPurchased && !hasSeenPreviewOnce && hoveredIndex === index && pinnedIndex === null && lockedFeedbackIndex !== index && (
                   <FloatPopup
                     lesson={lesson}
                     onClose={handleClosePopup}
@@ -583,7 +723,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       </div>
 
       {/* Pinned popup (full-screen modal) */}
-      {pinnedIndex !== null && (
+      {!hasPurchased && pinnedIndex !== null && (
         <FloatPopup
           lesson={lessons[pinnedIndex]}
           onClose={handleClosePopup}

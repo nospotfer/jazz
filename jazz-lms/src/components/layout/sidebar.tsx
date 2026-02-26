@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
 interface CourseProgressVideo {
@@ -223,25 +222,16 @@ function CoursesNavSection() {
       .catch(() => setLoading(false));
   }, []);
 
-  const canonicalVideos = CANONICAL_JAZZ_CLASSES.map((item) => {
-    const found = videos.find(
-      (video) => video.title.toLowerCase() === item.subtitle.toLowerCase()
-    );
-
-    return {
-      lessonId: found?.lessonId ?? `canonical-${item.classNumber}`,
-      courseId: found?.courseId,
-      progressPercent: found?.progressPercent ?? 0,
-      classLabel: item.classLabel,
-      subtitle: item.subtitle,
-      classNumber: item.classNumber,
-    };
-  }).sort((a, b) => {
-    if (b.progressPercent !== a.progressPercent) {
-      return b.progressPercent - a.progressPercent;
-    }
-    return a.classNumber - b.classNumber;
-  });
+  const primaryCourseId = videos[0]?.courseId;
+  const notesVideos = videos
+    .filter((video) => video.courseId === primaryCourseId)
+    .map((video, index) => ({
+      lessonId: video.lessonId,
+      courseId: video.courseId,
+      classLabel: `Class ${index + 1}`,
+      subtitle: video.title,
+      classNumber: index + 1,
+    }));
 
   return (
     <div className="mt-1">
@@ -251,14 +241,14 @@ function CoursesNavSection() {
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
       >
         <Library className="h-5 w-5 flex-shrink-0" />
-        <span className="flex-1 text-left">{t('courses', 'Courses')}</span>
+        <span className="flex-1 text-left">{t('myNotes', 'My Notes')}</span>
         <ChevronDown
           className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
       {open && (
-        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-col max-h-[48dvh] lg:max-h-[54dvh]">
+        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-col max-h-[52dvh] lg:max-h-[58dvh]">
           {loading && (
             <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
           )}
@@ -266,41 +256,30 @@ function CoursesNavSection() {
           {!loading && (
             <>
               <div className="px-2.5 py-1.5 bg-primary/10 border-b border-primary/40">
-                <span className="text-[10px] font-semibold text-primary tracking-wide uppercase">
+                <span className="text-xs font-semibold text-primary tracking-wide uppercase">
                   {t('introductionToJazzMusic', 'Introduction to Jazz Music')}
                 </span>
               </div>
-              {videos.length === 0 && (
-                <p className="px-2.5 py-1.5 text-[10px] text-muted-foreground border-b border-border/60">
+              {notesVideos.length === 0 && (
+                <p className="px-2.5 py-1.5 text-xs text-muted-foreground border-b border-border/60">
                   {t('noPurchasedCoursesYet', 'No purchased courses yet.')}
                 </p>
               )}
               <div className="courses-scroll flex-1 min-h-0 overflow-y-auto pr-1">
-                {canonicalVideos.map((video, index) => {
-                  const isClickable = Boolean(video.courseId) && !video.lessonId.startsWith('canonical-');
+                {notesVideos.map((video, index) => {
+                  const isClickable = Boolean(video.courseId && video.lessonId);
                   const content = (
                     <div
-                      className={`px-2.5 py-1.5 transition-colors ${
-                        index < canonicalVideos.length - 1 ? 'border-b border-border/60' : ''
+                      className={`px-2.5 py-2.5 transition-colors ${
+                        index < notesVideos.length - 1 ? 'border-b border-border/60' : ''
                       } ${isClickable ? 'hover:bg-accent/40' : 'opacity-90'}`}
                     >
-                      <p className="text-[10px] font-semibold text-foreground leading-tight">
+                      <p className="text-sm font-semibold text-foreground leading-tight">
                         {video.classLabel}
                       </p>
-                      <p className="text-[10px] text-muted-foreground line-clamp-1 leading-tight">
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-tight mt-0.5">
                         {video.subtitle}
                       </p>
-                      <div className="mt-0.5 flex items-center gap-1.5">
-                        <div className="flex-1 bg-muted rounded-full h-1">
-                          <div
-                            className="bg-primary h-1 rounded-full transition-all duration-500"
-                            style={{ width: `${video.progressPercent}%` }}
-                          />
-                        </div>
-                        <span className="text-[9px] text-muted-foreground tabular-nums min-w-7 text-right">
-                          {video.progressPercent}%
-                        </span>
-                      </div>
                     </div>
                   );
 
@@ -311,7 +290,7 @@ function CoursesNavSection() {
                   return (
                     <Link
                       key={video.lessonId}
-                      href={`/courses/${video.courseId}/lessons/${video.lessonId}`}
+                      href={`/dashboard/notes/${video.courseId}/${video.lessonId}`}
                     >
                       {content}
                     </Link>

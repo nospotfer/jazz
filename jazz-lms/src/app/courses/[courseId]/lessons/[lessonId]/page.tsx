@@ -78,13 +78,38 @@ const LessonPage = async ({
     lesson.isPublished &&
     (lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase);
 
+  const userProgress = await db.userProgress.findUnique({
+    where: {
+      userId_lessonId: {
+        userId: user.id,
+        lessonId: params.lessonId,
+      },
+    },
+    select: {
+      isCompleted: true,
+      progressPercent: true,
+    },
+  });
+
+  const initialIsCompleted =
+    Boolean(userProgress?.isCompleted) || (userProgress?.progressPercent ?? 0) >= 100;
+  const initialProgressPercent = initialIsCompleted
+    ? 100
+    : userProgress?.progressPercent ?? 0;
+
   if (!canAccessLesson) {
     return redirect(`/courses/${params.courseId}?locked=true`);
   }
 
   return (
     <div>
-      <CoursePlayer course={course} lesson={lesson} lessonId={params.lessonId} />
+      <CoursePlayer
+        course={course}
+        lesson={lesson}
+        lessonId={params.lessonId}
+        initialIsCompleted={initialIsCompleted}
+        initialProgressPercent={initialProgressPercent}
+      />
     </div>
   );
 };

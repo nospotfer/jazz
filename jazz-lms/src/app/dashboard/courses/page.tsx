@@ -1,12 +1,18 @@
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { MyCoursesClient, type PurchasedVideoItem } from '@/components/dashboard/my-courses-client';
 import {
   DEFAULT_LESSON_DURATION_MINUTES,
 } from '@/lib/pricing';
+import { isLocalhostHost } from '@/lib/test-mode';
 
 export default async function MyCoursesPage() {
+  const headersList = headers();
+  const hostHeader = headersList.get('host') || headersList.get('x-forwarded-host');
+  const isLocalTestMode = process.env.NODE_ENV !== 'production' && isLocalhostHost(hostHeader);
+
   const supabase = createClient();
   const {
     data: { user },
@@ -122,6 +128,7 @@ export default async function MyCoursesPage() {
   return (
     <MyCoursesClient
       videos={purchasedVideos}
+      isLocalTestMode={isLocalTestMode}
     />
   );
 }

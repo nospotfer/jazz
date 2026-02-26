@@ -18,8 +18,45 @@ export default async function DashboardPage() {
   const course = await db.course.findFirst({
     where: { isPublished: true },
     orderBy: { createdAt: 'asc' },
-    select: { id: true },
+    select: {
+      id: true,
+      chapters: {
+        where: { isPublished: true },
+        orderBy: { position: 'asc' },
+        select: {
+          lessons: {
+            where: { isPublished: true },
+            orderBy: { position: 'asc' },
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      },
+    },
   });
+
+  const lessonRoutesByTitle = course
+    ? Object.fromEntries(
+        course.chapters
+          .flatMap((chapter) => chapter.lessons)
+          .map((lesson) => [
+            lesson.title.toLowerCase().trim(),
+            `/courses/${course.id}/lessons/${lesson.id}`,
+          ])
+      )
+    : {};
+
+  const orderedLessons = course
+    ? course.chapters.flatMap((chapter) => chapter.lessons)
+    : [];
+
+  const lessonRoutesInOrder = orderedLessons.map(
+    (lesson) => `/courses/${course?.id}/lessons/${lesson.id}`
+  );
+
+  const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
 
   const hasPurchased = course
     ? !!(await db.purchase.findUnique({
@@ -40,6 +77,9 @@ export default async function DashboardPage() {
       userName={user.user_metadata?.full_name || user.email || 'Jazz Student'}
       hasPurchased={hasPurchased}
       courseId={course?.id ?? null}
+      lessonRoutesByTitle={lessonRoutesByTitle}
+      lessonRoutesInOrder={lessonRoutesInOrder}
+      lessonIdsInOrder={lessonIdsInOrder}
       isLocalTestMode={isLocalTestMode}
     />
   );
