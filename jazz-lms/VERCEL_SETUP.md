@@ -29,7 +29,7 @@ https://your-project-ref.supabase.co
 **Name:** `NEXT_PUBLIC_SUPABASE_ANON_KEY`  
 **Value:** Get from Supabase Dashboard → Settings → API → Project API keys → anon public
 ```
-eyJhbGc...your-anon-key
+your_supabase_anon_key
 ```
 
 ### 3. Database URL (Session Pooler) 🔴 CRITICAL
@@ -50,21 +50,21 @@ postgresql://postgres.your-project-ref:[YOUR-PASSWORD]@aws-0-region.pooler.supab
 **Name:** `STRIPE_SECRET_KEY`  
 **Value:** Get from Stripe Dashboard → Developers → API keys
 ```
-sk_test_your_secret_key_here
+your_stripe_secret_key_here
 ```
 
 ### 5. Stripe Publishable Key
 **Name:** `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
 **Value:** Get from Stripe Dashboard → Developers → API keys
 ```
-pk_test_your_publishable_key_here
+your_stripe_publishable_key_here
 ```
 
 ### 6. Stripe Webhook Secret
 **Name:** `STRIPE_WEBHOOK_SECRET`  
 **Value:** Get from Stripe Dashboard → Developers → Webhooks
 ```
-whsec_your_webhook_secret_here
+your_stripe_webhook_secret_here
 ```
 
 ---

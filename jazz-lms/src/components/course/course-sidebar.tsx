@@ -12,11 +12,11 @@ interface CourseSidebarProps {
 
 export const CourseSidebar = ({ course, lessonId }: CourseSidebarProps) => {
   return (
-    <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm w-80">
-      <div className="p-8 flex flex-col border-b">
-        <h1 className="font-semibold text-lg">{course.title}</h1>
+    <div className="w-full bg-card border border-border rounded-xl flex flex-col overflow-hidden min-h-[240px] lg:min-h-0 lg:h-full">
+      <div className="p-4 sm:p-5 border-b border-border">
+        <h1 className="font-semibold text-base sm:text-lg text-foreground break-words">{course.title}</h1>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full overflow-y-auto">
         {course.chapters.map((chapter) => (
           <CourseSidebarItem
             key={chapter.id}

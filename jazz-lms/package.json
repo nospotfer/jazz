@@ -4,11 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "security:secrets": "bash scripts/precommit-secret-scan.sh --all",
+    "security:staged": "bash scripts/precommit-secret-scan.sh --staged",
+    "hooks:install": "bash scripts/setup-git-hooks.sh",
     "seed": "ts-node prisma/seed.ts",
     "seed:sample": "npx tsx prisma/seed-sample.ts",
+    "prepare": "bash scripts/setup-git-hooks.sh",
     "postinstall": "prisma generate",
     "admin:create": "npx tsx scripts/create-admin.ts",
     "admin:studio": "npx prisma studio"

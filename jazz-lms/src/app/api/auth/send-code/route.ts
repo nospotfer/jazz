@@ -5,6 +5,7 @@ import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -19,16 +20,27 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!email) {
+    if (!normalizedEmail) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
+      );
+    }
+
+    // Check if email is already registered (has password set in Prisma)
+    const existingUser = await db.user.findUnique({
+      where: { email: normalizedEmail },
+    });
+    if (existingUser && existingUser.emailVerified) {
+      return NextResponse.json(
+        { error: 'This email is already registered. Please sign in instead.' },
+        { status: 409 }
       );
     }
 
@@ -41,10 +53,15 @@ export async function POST(request: Request) {
 
     // Also check Supabase Auth for fully registered users (with password)
     const { data: userData } = await supabase.auth.admin.listUsers();
-    const existingSupaUser = userData?.users?.find(
-      (u) => u.email?.toLowerCase() === email.toLowerCase()
-    );
-    if (existingSupaUser?.email_confirmed_at && existingSupaUser?.user_metadata?.full_name) {
+    const existingSupaUser = userData?.users?.find((u) => u.email?.toLowerCase() === normalizedEmail);
+    if (!existingSupaUser) {
+      return NextResponse.json(
+        { error: 'Account not found. Please create your account first.' },
+        { status: 404 }
+      );
+    }
+
+    if (existingSupaUser.email_confirmed_at) {
       return NextResponse.json(
         { error: 'This email is already registered. Please sign in instead.' },
         { status: 409 }
@@ -52,9 +69,9 @@ export async function POST(request: Request) {
     }
 
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: normalizedEmail,
       options: {
-        shouldCreateUser: true,
+        shouldCreateUser: false,
       },
     });
 

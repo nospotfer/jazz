@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { SignupModal } from '@/components/ui/signup-modal';
 import { ContactModal } from '@/components/ui/contact-modal';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface FAQItem {
   pregunta: string;
@@ -40,9 +40,9 @@ const NAV_LINKS = [
 ];
 
 export function FAQFooter() {
+  const router = useRouter();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
 
   const isExpanded = (index: number) => activeIndex === index || hoveredIndex === index;
@@ -162,10 +162,10 @@ export function FAQFooter() {
                 </p>
 
                 <button
-                  onClick={() => setShowSignupModal(true)}
+                  onClick={() => router.push('/auth?tab=register')}
                   className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-12 rounded-lg transition-all duration-300 hover:shadow-xl text-lg mb-6"
                 >
-                  Sign Up Now!
+                  Sign Up
                 </button>
 
                 <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md">
@@ -228,11 +228,6 @@ export function FAQFooter() {
           </div>
         </footer>
       </div>
-
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-      />
       <ContactModal
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}

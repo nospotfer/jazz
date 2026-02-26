@@ -8,6 +8,7 @@ const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').
 export async function POST(request: Request) {
   try {
     const { email, password, fullName } = await request.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!email || !password || !fullName) {
+    if (!normalizedEmail || !password || !fullName) {
       return NextResponse.json(
         { error: 'Email, password and full name are required' },
         { status: 400 }
@@ -31,20 +32,24 @@ export async function POST(request: Request) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
+        { error: 'Password must be at least 8 characters' },
         { status: 400 }
       );
     }
 
+    // Check if already verified in Prisma
+    const existingUser = await db.user.findUnique({
+      where: { email: normalizedEmail },
+    });
     // Check if already fully registered in Prisma (best effort)
     let existingUser = null;
     try {
@@ -71,48 +76,84 @@ export async function POST(request: Request) {
     // Find user by email in Supabase Auth
     const { data: userData } = await supabase.auth.admin.listUsers();
     const supaUser = userData?.users?.find(
-      (u) => u.email?.toLowerCase() === email.toLowerCase()
+      (u) => u.email?.toLowerCase() === normalizedEmail
     );
 
-    if (!supaUser) {
-      return NextResponse.json(
-        { error: 'Please verify your email first' },
-        { status: 400 }
-      );
-    }
-
-    if (!supaUser.email_confirmed_at) {
-      return NextResponse.json(
-        { error: 'Please verify your email code before creating the account' },
-        { status: 400 }
-      );
-    }
-
-    // Check if this Supabase user already has a password (already registered)
-    if (supaUser.user_metadata?.full_name) {
+    if (supaUser?.email_confirmed_at) {
       return NextResponse.json(
         { error: 'This email is already registered. Please sign in instead.' },
         { status: 409 }
       );
     }
 
-    // Set password and metadata on the existing Supabase user
-    const { error: updateError } = await supabase.auth.admin.updateUserById(
-      supaUser.id,
-      {
-        password,
-        user_metadata: { full_name: fullName },
-      }
-    );
+    let userId = supaUser?.id;
 
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 400 });
+    if (!supaUser) {
+      const { data: createdUser, error: createError } = await supabase.auth.admin.createUser({
+        email: normalizedEmail,
+        password,
+        user_metadata: { full_name: fullName.trim() },
+        email_confirm: false,
+      });
+
+      if (createError || !createdUser.user) {
+        return NextResponse.json(
+          { error: createError?.message || 'Failed to create auth user' },
+          { status: 400 }
+        );
+      }
+
+      userId = createdUser.user.id;
+    } else {
+      const { error: updateError } = await supabase.auth.admin.updateUserById(
+        supaUser.id,
+        {
+          password,
+          user_metadata: { full_name: fullName.trim() },
+        }
+      );
+
+      if (updateError) {
+        return NextResponse.json({ error: updateError.message }, { status: 400 });
+      }
+
+      userId = supaUser.id;
     }
 
-    // Create/update user in Prisma DB
-    const isOwner = email.toLowerCase() === OWNER_EMAIL;
+    // Send verification code after account creation/update
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: normalizedEmail,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+
+    if (otpError) {
+      return NextResponse.json(
+        { error: otpError.message || 'Failed to send verification code' },
+        { status: 400 }
+      );
+    }
+
+    // Create/update user in Prisma DB as unverified
+    const isOwner = normalizedEmail === OWNER_EMAIL;
     const role = isOwner ? 'SUPER_ADMIN' : 'USER';
 
+    await db.user.upsert({
+      where: { email: normalizedEmail },
+      create: {
+        id: userId!,
+        email: normalizedEmail,
+        name: fullName.trim(),
+        emailVerified: false,
+        role,
+      },
+      update: {
+        name: fullName.trim(),
+        emailVerified: false,
+        ...(isOwner && { role: 'SUPER_ADMIN' }),
+      },
+    });
     try {
       await db.user.upsert({
         where: { email },
@@ -135,7 +176,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Account created successfully!',
+      message: 'Account created. Enter the verification code sent to your email.',
     });
   } catch (error) {
     console.error('Error registering user:', error);

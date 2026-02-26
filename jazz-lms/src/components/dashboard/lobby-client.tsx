@@ -210,7 +210,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
               </div>
               <div className="w-full bg-muted rounded-full h-1.5">
                 <div
-                  className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                  className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
                   style={{ width: `${course.progress}%` }}
                 />
               </div>

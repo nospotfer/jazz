@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Search, User, FileText, CreditCard, LogOut, X } from 'lucide-react';
+import { Bell, Search, User, Wallet, LogOut, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
+import { resolveProfileAvatar } from '@/lib/profile-avatars';
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -52,6 +54,7 @@ interface DashboardHeaderProps {
     email: string;
     user_metadata: {
       full_name?: string;
+      avatar_mode?: 'random' | 'fixed';
       avatar_url?: string;
     };
   };
@@ -60,10 +63,15 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeaderProps) {
+  const { t } = useDashboardPreferences();
   const router = useRouter();
+  const pathname = usePathname();
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
+    resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
+  );
   const displayName =
     user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-  const avatarUrl = user.user_metadata?.avatar_url;
+  const avatarUrl = currentAvatarUrl;
   const initials = displayName
     .split(' ')
     .map((n: string) => n[0])
@@ -101,6 +109,28 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
   // ── Click outside to close ──────────────────────────────────────
   useEffect(() => {
+    const supabase = createClient();
+
+    const syncAvatarFromSession = async () => {
+      const {
+        data: { user: latestUser },
+      } = await supabase.auth.getUser();
+
+      if (latestUser) {
+        setCurrentAvatarUrl(
+          resolveProfileAvatar(latestUser.id, latestUser.user_metadata?.avatar_url)
+        );
+      }
+    };
+
+    syncAvatarFromSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      syncAvatarFromSession();
+    });
+
     const handleClickOutside = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifDropdown(false);
@@ -110,13 +140,16 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      subscription.unsubscribe();
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   return (
     <>
       <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <div className="relative flex items-center justify-between h-16 px-3 sm:px-6 lg:px-8">
           {/* Spacer for hamburger on mobile */}
           <div className="w-10 lg:hidden" />
 
@@ -126,14 +159,20 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search courses..."
-                className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                placeholder={t('courses', 'Courses') + '...'}
+                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
           </div>
 
+          {pathname === '/dashboard' && (
+            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
+              Welcome, {displayName.split(' ')[0]}.
+            </div>
+          )}
+
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
 
             {/* ── Notifications bell ── */}
@@ -153,9 +192,9 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
               {/* Dropdown */}
               {showNotifDropdown && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+                    <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notifications')}</h3>
                     {unreadCount > 0 && (
                       <span className="text-xs bg-yellow-400/20 text-yellow-500 font-medium px-2 py-0.5 rounded-full">
                         {unreadCount} new
@@ -166,7 +205,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-6 text-center text-muted-foreground text-sm">
-                        No notifications
+                        {t('noNotifications', 'No notifications')}
                       </div>
                     ) : (
                       notifications.map((notif) => (
@@ -236,7 +275,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
               {/* Dropdown */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-[min(14rem,calc(100vw-1rem))] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
@@ -267,20 +306,12 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       Profile
                     </Link>
                     <Link
-                      href="/dashboard/personal-data"
-                      onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
-                    >
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      Personal Data
-                    </Link>
-                    <Link
                       href="/dashboard/payment"
                       onClick={() => setShowUserMenu(false)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
-                      <CreditCard className="h-4 w-4 text-muted-foreground" />
-                      Payment Methods
+                      <Wallet className="h-4 w-4 text-muted-foreground" />
+                      Payment History
                     </Link>
                   </div>
 

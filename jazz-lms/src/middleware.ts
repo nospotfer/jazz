@@ -6,6 +6,17 @@ import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
+  const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
+
+  if (isLocalhost) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+  }
+
+  const pathname = request.nextUrl.pathname
+
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth')) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
@@ -39,7 +50,11 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.redirect(new URL('/auth', request.url))
+      if (pathname.startsWith('/dashboard')) {
+        return NextResponse.redirect(new URL('/auth', request.url))
+      }
+    } else if (pathname.startsWith('/auth')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 

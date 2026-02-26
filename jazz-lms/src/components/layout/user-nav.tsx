@@ -14,9 +14,17 @@ import { UserNavClient } from './user-nav-client';
 import { getCurrentUser } from '@/lib/admin';
 import Link from 'next/link';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { resolveProfileAvatar } from '@/lib/profile-avatars';
 
 export const UserNav = async () => {
   const supabase = createClient();
+
+  try {
+    await supabase.auth.refreshSession();
+  } catch {
+    // Ignore refresh errors and fallback to current session
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -28,13 +36,14 @@ export const UserNav = async () => {
   // Verificar se o usuário é admin
   const dbUser = await getCurrentUser();
   const isAdmin = isAdminRole(dbUser?.role);
+  const avatarUrl = resolveProfileAvatar(user.id, user.user_metadata?.avatar_url);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user.user_metadata.avatar_url} alt="@shadcn" />
+            <AvatarImage src={avatarUrl} alt="User avatar" />
             <AvatarFallback>
               {user.email?.charAt(0).toUpperCase()}
             </AvatarFallback>

@@ -1,0 +1,18 @@
+title = "jazz-lms-gitleaks-config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow documentation placeholders and non-sensitive examples"
+regexes = [
+  '''YOUR_[A-Z0-9_]+''',
+  '''your_[a-z0-9_]+''',
+  '''your-project-ref''',
+  '''\[YOUR-PASSWORD\]''',
+]
+paths = [
+  '''(^|/)docs/.*\.md$''',
+  '''(^|/)VERCEL_SETUP\.md$''',
+  '''(^|/)\.env\.example$''',
+]

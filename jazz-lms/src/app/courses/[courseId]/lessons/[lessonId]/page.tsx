@@ -47,14 +47,69 @@ const LessonPage = async ({
   const lesson = course.chapters
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === params.lessonId);
+  const firstLessonId = course.chapters
+    .flatMap((chapter) => chapter.lessons)
+    .at(0)?.id;
+
 
   if (!lesson) {
     return redirect('/dashboard');
   }
 
+  const hasFullPurchase = await db.purchase.findUnique({
+    where: {
+      userId_courseId: {
+        userId: user.id,
+        courseId: params.courseId,
+      },
+    },
+  });
+
+  const hasLessonPurchase = await db.lessonPurchase.findUnique({
+    where: {
+      userId_lessonId: {
+        userId: user.id,
+        lessonId: params.lessonId,
+      },
+    },
+  });
+
+  const canAccessLesson =
+    lesson.isPublished &&
+    (lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase);
+
+  const userProgress = await db.userProgress.findUnique({
+    where: {
+      userId_lessonId: {
+        userId: user.id,
+        lessonId: params.lessonId,
+      },
+    },
+    select: {
+      isCompleted: true,
+      progressPercent: true,
+    },
+  });
+
+  const initialIsCompleted =
+    Boolean(userProgress?.isCompleted) || (userProgress?.progressPercent ?? 0) >= 100;
+  const initialProgressPercent = initialIsCompleted
+    ? 100
+    : userProgress?.progressPercent ?? 0;
+
+  if (!canAccessLesson) {
+    return redirect(`/courses/${params.courseId}?locked=true`);
+  }
+
   return (
     <div>
-      <CoursePlayer course={course} lesson={lesson} lessonId={params.lessonId} />
+      <CoursePlayer
+        course={course}
+        lesson={lesson}
+        lessonId={params.lessonId}
+        initialIsCompleted={initialIsCompleted}
+        initialProgressPercent={initialProgressPercent}
+      />
     </div>
   );
 };

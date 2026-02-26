@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { SignupModal } from '@/components/ui/signup-modal';
+import { useRouter } from 'next/navigation';
 
 export function FinalCTA() {
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -18,10 +17,10 @@ export function FinalCTA() {
           </p>
 
           <button
-            onClick={() => setShowSignupModal(true)}
+            onClick={() => router.push('/auth?tab=register')}
             className="bg-yellow-600 hover:bg-yellow-900 text-white font-bold py-4 px-12 rounded-lg transition-colors text-xl mb-8"
           >
-            Sign Up Now and Take the First Step!
+            Sign Up
           </button>
 
           <div className="bg-gray-100 rounded-lg p-8 mt-12">
@@ -49,10 +48,6 @@ export function FinalCTA() {
           </div>
         </div>
       </section>
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-      />
     </>
   );
 }

@@ -69,3 +69,7 @@ Add the environment variables from your `.env` file to the Vercel project settin
 ### 4. Deploy
 
 Vercel will automatically build and deploy your application.
+
+## Security
+
+Hardening and operational security checklist: see `SECURITY_HARDENING.md`.

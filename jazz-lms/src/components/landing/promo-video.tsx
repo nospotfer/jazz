@@ -2,12 +2,12 @@
 
 import { useState, useRef } from 'react';
 import { Volume2, VolumeX, LogIn } from 'lucide-react';
-import { SignupModal } from '@/components/ui/signup-modal';
+import { useRouter } from 'next/navigation';
 
 export function PromoVideo() {
+  const router = useRouter();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const toggleMute = () => {
@@ -46,11 +46,11 @@ export function PromoVideo() {
             </div>
 
             <button
-              onClick={() => setShowSignupModal(true)}
+              onClick={() => router.push('/auth?tab=register')}
               className="flex items-center gap-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
             >
               <LogIn className="h-5 w-5" />
-              Sign Up Now
+              Sign Up
             </button>
           </div>
 
@@ -89,10 +89,6 @@ export function PromoVideo() {
         </div>
       </div>
 
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-      />
     </div>
   );
 }

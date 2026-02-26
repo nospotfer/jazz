@@ -510,7 +510,7 @@ if (!courseId) {
 Never hardcode secrets:
 ```typescript
 // ❌ Bad
-const stripe = new Stripe('sk_live_abc123');
+const stripe = new Stripe('YOUR_STRIPE_SECRET_KEY');
 
 // ✅ Good
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
