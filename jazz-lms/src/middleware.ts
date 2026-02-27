@@ -16,12 +16,13 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth')) {
+  if (!pathname.startsWith('/dashboard') && !pathname.startsWith('/auth') && !pathname.startsWith('/admin')) {
+    return response
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
-
-  const pathname = request.nextUrl.pathname
 
   if (pathname.startsWith('/dashboard')) {
     if (!hasSupabaseConfig) {

@@ -9,6 +9,7 @@ import {
   X,
   Home,
   BookOpen,
+  MessageSquare,
   LogOut,
   Settings,
   Library,
@@ -36,18 +37,58 @@ interface CourseProgressItem {
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [pdfCount, setPdfCount] = useState<number | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/dashboard/pdf-count')
-      .then((response) => response.json())
-      .then((data) => {
-        setPdfCount(typeof data.count === 'number' ? data.count : 0);
-      })
-      .catch(() => {
-        setPdfCount(0);
-      });
+    let isMounted = true;
+
+    const loadPdfCount = () => {
+      fetch('/api/dashboard/pdf-count')
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setPdfCount(typeof data.count === 'number' ? data.count : 0);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setPdfCount(0);
+        });
+    };
+
+    loadPdfCount();
+    const intervalId = window.setInterval(loadPdfCount, 20000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUnreadMessages = () => {
+      fetch('/api/messages/unread-count')
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setUnreadMessages(typeof data.count === 'number' ? data.count : 0);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setUnreadMessages(0);
+        });
+    };
+
+    loadUnreadMessages();
+    const intervalId = window.setInterval(loadUnreadMessages, 20000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
   }, []);
 
   // Close sidebar on route change
@@ -102,6 +143,7 @@ export function Sidebar() {
         <SidebarContent
           pathname={pathname}
           pdfCount={pdfCount}
+          unreadMessages={unreadMessages}
           onClose={() => setIsOpen(false)}
           onLogout={handleLogout}
         />
@@ -112,6 +154,7 @@ export function Sidebar() {
         <SidebarContent
           pathname={pathname}
           pdfCount={pdfCount}
+          unreadMessages={unreadMessages}
           onLogout={handleLogout}
         />
       </aside>
@@ -122,11 +165,13 @@ export function Sidebar() {
 function SidebarContent({
   pathname,
   pdfCount,
+  unreadMessages,
   onClose,
   onLogout,
 }: {
   pathname: string;
   pdfCount: number | null;
+  unreadMessages: number | null;
   onClose?: () => void;
   onLogout: () => void;
 }) {
@@ -144,7 +189,12 @@ function SidebarContent({
       icon: BookOpen,
     },
     {
-      label: 'PDF View',
+      label: 'Messages',
+      href: '/dashboard/messages',
+      icon: MessageSquare,
+    },
+    {
+      label: 'Course Notes',
       href: '/dashboard/pdf-view',
       icon: FileText,
     },
@@ -204,6 +254,13 @@ function SidebarContent({
                 }`}>
                   {pdfCount}
                 </span>
+              )}
+              {item.href === '/dashboard/messages' && unreadMessages !== null && unreadMessages > 0 && (
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-yellow-400"
+                  aria-label="Unread messages"
+                  title="New message in inbox"
+                />
               )}
             </Link>
           );

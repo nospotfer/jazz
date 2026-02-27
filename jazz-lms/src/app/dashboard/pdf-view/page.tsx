@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { PdfViewClient } from '@/components/dashboard/pdf-view-client';
+import { isAdminRole } from '@/lib/admin/permissions';
 
 export default async function PdfViewPage() {
   const supabase = createClient();
@@ -12,6 +13,17 @@ export default async function PdfViewPage() {
   if (!user) {
     return redirect('/auth');
   }
+
+  const dbUser = user.email
+    ? await db.user.findUnique({
+        where: { email: user.email },
+        select: { role: true },
+      })
+    : null;
+
+  const professorEmail = (process.env.PROFESSOR_EMAIL || '').trim().toLowerCase();
+  const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
+  const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
   const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
     db.purchase.findMany({
@@ -51,6 +63,7 @@ export default async function PdfViewPage() {
 
     return lessons.flatMap((lesson, index) => {
       const hasAccess =
+        isPrivilegedViewer ||
         lesson.id === firstLessonId ||
         purchasedCourseIds.has(course.id) ||
         purchasedLessonIds.has(lesson.id);

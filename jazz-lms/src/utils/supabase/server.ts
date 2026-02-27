@@ -28,8 +28,8 @@ export function createClient(): any {
   }
 
   return createServerClient(
-    url,
-    key,
+    url!,
+    key!,
     {
       cookies: {
         async get(name: string) {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
+import { isAdminRole } from '@/lib/admin/permissions';
 
 export async function GET() {
   try {
@@ -12,6 +13,17 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ count: 0 }, { status: 401 });
     }
+
+    const dbUser = user.email
+      ? await db.user.findUnique({
+          where: { email: user.email },
+          select: { role: true },
+        })
+      : null;
+
+    const professorEmail = (process.env.PROFESSOR_EMAIL || '').trim().toLowerCase();
+    const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
+    const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
     const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
       db.purchase.findMany({
@@ -52,6 +64,10 @@ export async function GET() {
       const firstLessonId = lessons[0]?.id;
 
       const accessibleAttachments = lessons.reduce((lessonTotal, lesson) => {
+        if (isPrivilegedViewer) {
+          return lessonTotal + lesson.attachments.length;
+        }
+
         const hasAccess =
           lesson.id === firstLessonId ||
           purchasedCourseIds.has(course.id) ||

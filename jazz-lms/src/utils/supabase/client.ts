@@ -68,5 +68,5 @@ export function createClient(): any {
     return stub
   }
 
-  return createBrowserClient(url, key)
+  return createBrowserClient(url!, key!)
 }

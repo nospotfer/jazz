@@ -20,33 +20,6 @@ interface Notification {
   read: boolean;
 }
 
-const initialNotifications: Notification[] = [
-  {
-    id: '1',
-    title: 'New Course Available',
-    preview: 'Advanced Harmony & Composition is now live!',
-    body: 'We are excited to announce our newest course: Advanced Harmony & Composition. Dive deep into jazz harmony, chord voicings, and composition techniques with Enric Vazquez. Enroll now and take your musicianship to the next level!',
-    date: '2 hours ago',
-    read: false,
-  },
-  {
-    id: '2',
-    title: 'Progress Reminder',
-    preview: "You're almost halfway through Jazz Fundamentals.",
-    body: "Great work! You've completed 45% of Jazz Fundamentals: History & Theory. Keep going — consistency is the key to mastering jazz. Log in today and continue your learning journey.",
-    date: '1 day ago',
-    read: false,
-  },
-  {
-    id: '3',
-    title: 'Welcome to Jazz Culture',
-    preview: "Thanks for joining. Here's how to get started.",
-    body: "Welcome to Jazz Culture! We're thrilled to have you. Start by exploring the Lobby to discover courses, visit your Profile to customize your account, and check out Settings to personalize your experience. Happy learning!",
-    date: '3 days ago',
-    read: true,
-  },
-];
-
 // ── Component ───────────────────────────────────────────────────────
 interface DashboardHeaderProps {
   user: {
@@ -80,19 +53,32 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     .slice(0, 2);
 
   // ── Notifications state ─────────────────────────────────────────
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [activeNotif, setActiveNotif] = useState<Notification | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
+  const notifications: Notification[] = unreadMessages > 0
+    ? [
+        {
+          id: 'inbox-unread',
+          title: 'New message in inbox',
+          preview: 'You have unread messages in your inbox.',
+          body: 'New message in inbox',
+          date: 'Now',
+          read: false,
+        },
+      ]
+    : [];
+
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const openNotification = (notif: Notification) => {
-    // Mark as read
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n))
-    );
     setShowNotifDropdown(false);
+    if (notif.id === 'inbox-unread') {
+      router.push('/dashboard/messages');
+      return;
+    }
     setActiveNotif(notif);
   };
 
@@ -143,6 +129,31 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     return () => {
       subscription.unsubscribe();
       document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUnreadMessages = () => {
+      fetch('/api/messages/unread-count')
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setUnreadMessages(typeof data.count === 'number' ? data.count : 0);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setUnreadMessages(0);
+        });
+    };
+
+    loadUnreadMessages();
+    const intervalId = window.setInterval(loadUnreadMessages, 20000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
     };
   }, []);
 
