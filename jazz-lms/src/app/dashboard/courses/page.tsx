@@ -84,6 +84,7 @@ export default async function MyCoursesPage() {
           courseId: purchase.course.id,
           courseTitle: purchase.course.title,
           chapterTitle: chapter.title,
+          classOrder: chapter.position * 1000 + lesson.position,
           progressPercent,
           minutesRemaining,
           isCompleted: progressPercent >= 100,
@@ -110,6 +111,7 @@ export default async function MyCoursesPage() {
         courseId: lesson.chapter.course.id,
         courseTitle: lesson.chapter.course.title,
         chapterTitle: lesson.chapter.title,
+        classOrder: lesson.chapter.position * 1000 + lesson.position,
         progressPercent,
         minutesRemaining,
         isCompleted: progressPercent >= 100,
@@ -120,7 +122,7 @@ export default async function MyCoursesPage() {
 
   const purchasedVideos = Array.from(purchasedVideosMap.values()).sort((a, b) => {
     if (a.courseTitle === b.courseTitle) {
-      return a.lessonTitle.localeCompare(b.lessonTitle);
+      return a.classOrder - b.classOrder;
     }
     return a.courseTitle.localeCompare(b.courseTitle);
   });

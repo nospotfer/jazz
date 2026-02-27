@@ -345,10 +345,11 @@ interface CourseViewProps {
   lessonRoutesByTitle: Record<string, string>;
   lessonRoutesInOrder: string[];
   lessonIdsInOrder: string[];
+  lessonTitlesInOrder: string[];
   isLocalTestMode: boolean;
 }
 
-export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, isLocalTestMode }: CourseViewProps) {
+export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, lessonTitlesInOrder, isLocalTestMode }: CourseViewProps) {
   const { t } = useDashboardPreferences();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -556,8 +557,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   }, [isLocalTestMode, isResettingTestState]);
 
   // Get current lessons with backend-controlled lock status
-  const lessons = lessonsData.map((lesson) => ({
+  const lessons = lessonsData.map((lesson, index) => ({
     ...lesson,
+    title: `Class ${index + 1}`,
+    subtitle: lessonTitlesInOrder[index] || lesson.subtitle,
     isFree: hasPurchased ? true : lesson.isFree,
   }));
 

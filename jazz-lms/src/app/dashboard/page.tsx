@@ -57,6 +57,7 @@ export default async function DashboardPage() {
   );
 
   const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
+  const lessonTitlesInOrder = orderedLessons.map((lesson) => lesson.title);
 
   const hasPurchased = course
     ? !!(await db.purchase.findUnique({
@@ -80,6 +81,7 @@ export default async function DashboardPage() {
       lessonRoutesByTitle={lessonRoutesByTitle}
       lessonRoutesInOrder={lessonRoutesInOrder}
       lessonIdsInOrder={lessonIdsInOrder}
+      lessonTitlesInOrder={lessonTitlesInOrder}
       isLocalTestMode={isLocalTestMode}
     />
   );

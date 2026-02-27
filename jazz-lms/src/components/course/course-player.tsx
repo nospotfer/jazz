@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
+import { getCanonicalJazzClass } from '@/lib/course-lessons';
 
 interface CoursePlayerProps {
   course: Course & {
@@ -44,15 +45,15 @@ export const CoursePlayer = ({
   const confetti = useConfettiStore();
 
   const orderedLessons = useMemo(
-    () =>
-      course.chapters
-        .flatMap((chapter) => chapter.lessons)
-        .sort((a, b) => a.position - b.position),
+    () => course.chapters.flatMap((chapter) => chapter.lessons),
     [course.chapters]
   );
 
   const classIndex = orderedLessons.findIndex((item) => item.id === lessonId);
-  const classLabel = classIndex >= 0 ? `Class ${classIndex + 1}: ${lesson.title}` : lesson.title;
+  const classNumber = classIndex >= 0 ? classIndex + 1 : null;
+  const canonicalClass = classNumber ? getCanonicalJazzClass(classNumber) : undefined;
+  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || 'Lesson';
+  const classLabel = classNumber ? `Class ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
 
   const notesStorageKey = useMemo(
     () => `lesson-notes:${course.id}:${lesson.id}`,

@@ -13,6 +13,7 @@ import {
   Settings,
   Library,
   ChevronDown,
+  FileText,
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -34,8 +35,20 @@ interface CourseProgressItem {
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [pdfCount, setPdfCount] = useState<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/dashboard/pdf-count')
+      .then((response) => response.json())
+      .then((data) => {
+        setPdfCount(typeof data.count === 'number' ? data.count : 0);
+      })
+      .catch(() => {
+        setPdfCount(0);
+      });
+  }, []);
 
   // Close sidebar on route change
   useEffect(() => {
@@ -88,6 +101,7 @@ export function Sidebar() {
       >
         <SidebarContent
           pathname={pathname}
+          pdfCount={pdfCount}
           onClose={() => setIsOpen(false)}
           onLogout={handleLogout}
         />
@@ -97,6 +111,7 @@ export function Sidebar() {
       <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
           pathname={pathname}
+          pdfCount={pdfCount}
           onLogout={handleLogout}
         />
       </aside>
@@ -106,10 +121,12 @@ export function Sidebar() {
 
 function SidebarContent({
   pathname,
+  pdfCount,
   onClose,
   onLogout,
 }: {
   pathname: string;
+  pdfCount: number | null;
   onClose?: () => void;
   onLogout: () => void;
 }) {
@@ -127,9 +144,9 @@ function SidebarContent({
       icon: BookOpen,
     },
     {
-      label: t('settings', 'Settings'),
-      href: '/dashboard/settings',
-      icon: Settings,
+      label: 'PDF View',
+      href: '/dashboard/pdf-view',
+      icon: FileText,
     },
   ];
 
@@ -178,13 +195,33 @@ function SidebarContent({
               }`}
             >
               <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.href === '/dashboard/pdf-view' && pdfCount !== null && (
+                <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                  isActive
+                    ? 'border-primary/40 text-primary'
+                    : 'border-border text-muted-foreground'
+                }`}>
+                  {pdfCount}
+                </span>
+              )}
             </Link>
           );
         })}
         <div className="min-h-0">
           <CoursesNavSection />
         </div>
+        <Link
+          href="/dashboard/settings"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            pathname === '/dashboard/settings'
+              ? 'bg-primary/10 text-primary border border-primary/20'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          }`}
+        >
+          <Settings className={`h-5 w-5 ${pathname === '/dashboard/settings' ? 'text-primary' : ''}`} />
+          {t('settings', 'Settings')}
+        </Link>
       </nav>
 
       {/* Footer */}
