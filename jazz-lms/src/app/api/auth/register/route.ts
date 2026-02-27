@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
+import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
 
@@ -8,6 +9,19 @@ export async function POST(request: Request) {
   try {
     const { email, password, fullName } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!hasValidSupabaseServerConfig(url, anonKey, serviceRoleKey)) {
+      return NextResponse.json(
+        {
+          error:
+            'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY in environment variables.',
+        },
+        { status: 500 }
+      );
+    }
 
     if (!normalizedEmail || !password || !fullName) {
       return NextResponse.json(
@@ -36,6 +50,15 @@ export async function POST(request: Request) {
     const existingUser = await db.user.findUnique({
       where: { email: normalizedEmail },
     });
+    // Check if already fully registered in Prisma (best effort)
+    let existingUser = null;
+    try {
+      existingUser = await db.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+    } catch (err) {
+      console.warn('Prisma user lookup failed, continuing with Supabase-only checks:', err);
+    }
     if (existingUser && existingUser.emailVerified) {
       return NextResponse.json(
         { error: 'This email is already registered. Please sign in instead.' },
@@ -45,8 +68,8 @@ export async function POST(request: Request) {
 
     // Use Supabase Admin to update password on the OTP-created user
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      url!,
+      serviceRoleKey!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
@@ -131,6 +154,25 @@ export async function POST(request: Request) {
         ...(isOwner && { role: 'SUPER_ADMIN' }),
       },
     });
+    try {
+      await db.user.upsert({
+        where: { email },
+        create: {
+          id: supaUser.id,
+          email,
+          name: fullName,
+          emailVerified: true,
+          role,
+        },
+        update: {
+          name: fullName,
+          emailVerified: true,
+          ...(isOwner && { role: 'SUPER_ADMIN' }),
+        },
+      });
+    } catch (err) {
+      console.warn('Prisma upsert failed, account was created in Supabase Auth only:', err);
+    }
 
     return NextResponse.json({
       success: true,
