@@ -9,10 +9,12 @@ import {
   X,
   Home,
   BookOpen,
+  MessageSquare,
   LogOut,
   Settings,
   Library,
   ChevronDown,
+  FileText,
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -34,8 +36,60 @@ interface CourseProgressItem {
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [pdfCount, setPdfCount] = useState<number | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPdfCount = () => {
+      fetch('/api/dashboard/pdf-count')
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setPdfCount(typeof data.count === 'number' ? data.count : 0);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setPdfCount(0);
+        });
+    };
+
+    loadPdfCount();
+    const intervalId = window.setInterval(loadPdfCount, 20000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUnreadMessages = () => {
+      fetch('/api/messages/unread-count')
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setUnreadMessages(typeof data.count === 'number' ? data.count : 0);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setUnreadMessages(0);
+        });
+    };
+
+    loadUnreadMessages();
+    const intervalId = window.setInterval(loadUnreadMessages, 20000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   // Close sidebar on route change
   useEffect(() => {
@@ -88,6 +142,8 @@ export function Sidebar() {
       >
         <SidebarContent
           pathname={pathname}
+          pdfCount={pdfCount}
+          unreadMessages={unreadMessages}
           onClose={() => setIsOpen(false)}
           onLogout={handleLogout}
         />
@@ -97,6 +153,8 @@ export function Sidebar() {
       <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
           pathname={pathname}
+          pdfCount={pdfCount}
+          unreadMessages={unreadMessages}
           onLogout={handleLogout}
         />
       </aside>
@@ -106,10 +164,14 @@ export function Sidebar() {
 
 function SidebarContent({
   pathname,
+  pdfCount,
+  unreadMessages,
   onClose,
   onLogout,
 }: {
   pathname: string;
+  pdfCount: number | null;
+  unreadMessages: number | null;
   onClose?: () => void;
   onLogout: () => void;
 }) {
@@ -127,9 +189,14 @@ function SidebarContent({
       icon: BookOpen,
     },
     {
-      label: t('settings', 'Settings'),
-      href: '/dashboard/settings',
-      icon: Settings,
+      label: 'Messages',
+      href: '/dashboard/messages',
+      icon: MessageSquare,
+    },
+    {
+      label: 'Course Notes',
+      href: '/dashboard/pdf-view',
+      icon: FileText,
     },
   ];
 
@@ -178,13 +245,40 @@ function SidebarContent({
               }`}
             >
               <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.href === '/dashboard/pdf-view' && pdfCount !== null && (
+                <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                  isActive
+                    ? 'border-primary/40 text-primary'
+                    : 'border-border text-muted-foreground'
+                }`}>
+                  {pdfCount}
+                </span>
+              )}
+              {item.href === '/dashboard/messages' && unreadMessages !== null && unreadMessages > 0 && (
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-yellow-400"
+                  aria-label="Unread messages"
+                  title="New message in inbox"
+                />
+              )}
             </Link>
           );
         })}
         <div className="min-h-0">
           <CoursesNavSection />
         </div>
+        <Link
+          href="/dashboard/settings"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            pathname === '/dashboard/settings'
+              ? 'bg-primary/10 text-primary border border-primary/20'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          }`}
+        >
+          <Settings className={`h-5 w-5 ${pathname === '/dashboard/settings' ? 'text-primary' : ''}`} />
+          {t('settings', 'Settings')}
+        </Link>
       </nav>
 
       {/* Footer */}

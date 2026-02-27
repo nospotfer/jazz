@@ -283,57 +283,11 @@ export default function AuthPage() {
             </svg>
             {activeTab === 'register' ? 'Sign up with Google' : 'Sign in with Google'}
           </button>
-        <div className="p-8">
+
           {!hasSupabaseConfig && (
             <p className="mb-4 text-sm text-red-300 bg-red-900/30 border border-red-700/40 rounded-lg px-3 py-2">
               Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local env.
             </p>
-          )}
-
-          {/* ========== LOGIN TAB ========== */}
-          {activeTab === 'login' && (
-            <Auth
-              supabaseClient={supabase}
-              redirectTo={redirectTo}
-              providers={['google']}
-              view="sign_in"
-              showLinks={false}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#FBBF24',
-                      brandAccent: '#F59E0B',
-                      inputBackground: '#1f2937',
-                      inputBorder: '#374151',
-                      inputBorderHover: '#FBBF24',
-                      inputBorderFocus: '#FBBF24',
-                      inputText: '#ffffff',
-                      inputPlaceholder: '#9CA3AF',
-                      messageText: '#D1D5DB',
-                      messageTextDanger: '#FCA5A5',
-                      anchorTextColor: '#FBBF24',
-                      anchorTextHoverColor: '#F59E0B',
-                    },
-                    space: {
-                      inputPadding: '12px',
-                      buttonPadding: '12px',
-                    },
-                    fontSizes: {
-                      baseButtonSize: '16px',
-                      baseInputSize: '16px',
-                      baseLabelSize: '15px',
-                      baseBodySize: '15px',
-                    },
-                    radii: {
-                      borderRadiusButton: '8px',
-                      inputBorderRadius: '8px',
-                    },
-                  },
-                },
-              }}
-            />
           )}
 
           <div className="relative my-5">

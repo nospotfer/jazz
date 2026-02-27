@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
+import { isAdminRole } from '@/lib/admin/permissions';
 
 export interface CourseProgressVideo {
   lessonId: string;
@@ -40,6 +41,54 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const dbUser = user.email
+      ? await db.user.findUnique({
+          where: { email: user.email },
+          select: { role: true },
+        })
+      : null;
+
+    const professorEmail = (process.env.PROFESSOR_EMAIL || '').trim().toLowerCase();
+    const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
+    const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
+
+    if (isPrivilegedViewer) {
+      const publishedCourses = await db.course.findMany({
+        where: { isPublished: true },
+        include: {
+          chapters: {
+            where: { isPublished: true },
+            orderBy: { position: 'asc' },
+            include: {
+              lessons: {
+                where: { isPublished: true },
+                orderBy: { position: 'asc' },
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const courses: CourseProgressItem[] = publishedCourses.map((course) => ({
+        id: course.id,
+        title: course.title,
+        videos: course.chapters.flatMap((chapter) =>
+          chapter.lessons.map((lesson) => ({
+            lessonId: lesson.id,
+            title: lesson.title,
+            progressPercent: 0,
+            courseId: course.id,
+          }))
+        ),
+      }));
+
+      return NextResponse.json({ courses });
     }
 
     const [fullCoursePurchases, rawLessonPurchases, rawProgress] =

@@ -17,7 +17,7 @@ export async function updateSession(request: NextRequest) {
     return response
   }
 
-  const supabase = createServerClient(url, key, {
+  const supabase = createServerClient(url!, key!, {
     cookies: {
       get(name: string) {
         return request.cookies.get(name)?.value

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle2, RotateCcw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 
@@ -17,6 +17,7 @@ export interface PurchasedVideoItem {
   courseId: string;
   courseTitle: string;
   chapterTitle: string;
+  classOrder: number;
   progressPercent: number;
   minutesRemaining: number;
   isCompleted: boolean;
@@ -35,12 +36,16 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [completionAlertPending, setCompletionAlertPending] = useState(false);
 
-  const byTitle = new Map(
-    videos.map((video) => [video.lessonTitle.toLowerCase(), video])
+  const byTitle = new Map(videos.map((video) => [video.lessonTitle.toLowerCase(), video]));
+  const orderedVideos = useMemo(
+    () => [...videos].sort((a, b) => a.classOrder - b.classOrder),
+    [videos]
   );
 
   const classes = CANONICAL_JAZZ_CLASSES.map((item) => {
-    const match = byTitle.get(item.subtitle.toLowerCase());
+    const matchByTitle = byTitle.get(item.subtitle.toLowerCase());
+    const matchByOrder = orderedVideos[item.classNumber - 1];
+    const match = matchByTitle ?? matchByOrder;
     const progress = match?.progressPercent ?? 0;
     const minutesRemaining = match?.minutesRemaining ?? 20;
 
@@ -64,10 +69,13 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
   const inProgressVideos = classes.filter((video) => video.progressPercent > 0 && video.progressPercent < 100);
   const notStartedVideos = classes.filter((video) => video.progressPercent === 0);
   const activeView = searchParams.get('view');
-  const completionRate = classes.length
-    ? Math.round((watchedVideos.length / classes.length) * 100)
+  const totalClasses = CANONICAL_JAZZ_CLASSES.length;
+  const completionRate = totalClasses
+    ? Math.round(((watchedVideos.length / totalClasses) * 100) * 10) / 10
     : 0;
   const effectiveCompletionRate = testCompletionRate ?? completionRate;
+  const formatPercent = (value: number) => `${Math.max(0, Math.min(100, value)).toFixed(1)}%`;
+  const formattedCompletionRate = formatPercent(effectiveCompletionRate);
 
   const completionAttentionActive = effectiveCompletionRate >= 100 && completionAlertPending;
 
@@ -199,7 +207,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
             <span className="absolute -top-1.5 -right-1.5 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-[0_0_0_3px_rgba(250,204,21,0.25)] animate-pulse" />
           )}
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('completionRate', 'Completion Rate')}</p>
-          <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{effectiveCompletionRate}%</p>
+          <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{formattedCompletionRate}</p>
         </Link>
       </div>
 
@@ -233,7 +241,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
                       <p className="text-xs font-semibold text-primary/90">{video.classLabel}</p>
                       <p className="text-sm font-medium text-foreground leading-tight">{video.subtitle}</p>
                     </div>
-                    <span className="text-xs text-muted-foreground">{video.progressPercent}%</span>
+                    <span className="text-xs text-muted-foreground">{formatPercent(video.progressPercent)}</span>
                   </div>
                   <div className="mt-2 w-full bg-muted rounded-full h-2">
                     <div
@@ -252,7 +260,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
         <div className="space-y-3 rounded-xl border border-primary/30 bg-card p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-semibold text-foreground">
-              {selectedView.label} — {effectiveCompletionRate}%
+              {selectedView.label} — {formattedCompletionRate}
             </p>
             <Link
               href="/dashboard/courses"
@@ -285,7 +293,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
                 style={{ width: `${effectiveCompletionRate}%` }}
               />
             </div>
-            <p className="mt-2 text-sm font-medium text-foreground">{effectiveCompletionRate}% completed</p>
+            <p className="mt-2 text-sm font-medium text-foreground">{formattedCompletionRate} completed</p>
           </button>
         </div>
       )}

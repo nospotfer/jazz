@@ -124,3 +124,20 @@ model LessonPurchase {
   @@unique([userId, lessonId])
   @@index([lessonId])
 }
+
+model LessonNote {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  lessonId  String
+  content   String   @default("")
+  isBold    Boolean  @default(false)
+  isItalic  Boolean  @default(false)
+  fontSize  Int      @default(13)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+  @@index([lessonId])
+  @@index([courseId])
+}
