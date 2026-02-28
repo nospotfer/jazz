@@ -52,7 +52,7 @@ const LessonPage = async ({
     .at(0)?.id;
 
 
-  if (!lesson) {
+  if (!lesson || !lesson.isPublished) {
     return redirect('/dashboard');
   }
 
@@ -75,8 +75,10 @@ const LessonPage = async ({
   });
 
   const canAccessLesson =
-    lesson.isPublished &&
-    (lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase);
+    lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase;
+  const isAdminOwner =
+    user.email?.toLowerCase() === (process.env.ADMIN_OWNER_EMAIL ?? '').toLowerCase();
+  const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);
 
   const userProgress = await db.userProgress.findUnique({
     where: {
@@ -109,6 +111,8 @@ const LessonPage = async ({
         lessonId={params.lessonId}
         initialIsCompleted={initialIsCompleted}
         initialProgressPercent={initialProgressPercent}
+        canAccessLesson={canAccessLesson}
+        canAccessAttachments={canAccessAttachments}
       />
     </div>
   );

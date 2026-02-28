@@ -72,6 +72,7 @@ export default async function PdfViewPage() {
 
       return lesson.attachments.map((attachment) => ({
         id: attachment.id,
+        lessonId: lesson.id,
         title: lesson.title,
         classLabel: `Class ${index + 1}`,
         url: attachment.url,

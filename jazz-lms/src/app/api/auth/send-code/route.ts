@@ -3,8 +3,33 @@ import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
 import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
+function hasPlaceholder(value: string | undefined, placeholder: string) {
+  return !value || value.includes(placeholder);
+}
+
 export async function POST(request: Request) {
   try {
+    if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, 'your-project.supabase.co')) {
+      return NextResponse.json(
+        { error: 'Supabase URL is not configured in server environment.' },
+        { status: 500 }
+      );
+    }
+
+    if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'your-anon-key')) {
+      return NextResponse.json(
+        { error: 'Supabase anon key is not configured in server environment.' },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')) {
+      return NextResponse.json(
+        { error: 'SUPABASE_SERVICE_ROLE_KEY is required for email verification flow.' },
+        { status: 500 }
+      );
+    }
+
     const { email } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

@@ -1,10 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FileText } from 'lucide-react';
+import axios from 'axios';
 
 interface PdfItem {
   id: string;
+  lessonId: string;
   title: string;
   classLabel: string;
   url: string;
@@ -16,11 +18,48 @@ interface PdfViewClientProps {
 
 export function PdfViewClient({ items }: PdfViewClientProps) {
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
+  const [signedUrl, setSignedUrl] = useState<string>(items[0]?.url ?? '');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   const selected = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0],
     [items, selectedId]
   );
+
+  const loadSignedUrl = async (item: PdfItem) => {
+    setIsLoading(true);
+    setLoadError('');
+
+    try {
+      const response = await axios.get(
+        `/api/lessons/${item.lessonId}/attachments/${item.id}`,
+        { params: { download: 0 } }
+      );
+
+      setSignedUrl(response.data?.signedUrl || item.url);
+    } catch (error: any) {
+      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
+      setLoadError(message);
+      setSignedUrl(item.url);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSelect = (item: PdfItem) => {
+    setSelectedId(item.id);
+  };
+
+  useEffect(() => {
+    if (!selected) {
+      setSignedUrl('');
+      setLoadError('');
+      return;
+    }
+
+    void loadSignedUrl(selected);
+  }, [selected?.id]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
@@ -49,7 +88,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => handleSelect(item)}
                     className={`w-full text-left rounded-lg border px-3 py-2.5 transition-colors ${
                       active
                         ? 'border-primary/60 bg-primary/10'
@@ -71,11 +110,21 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             </div>
 
             {selected ? (
+              isLoading ? (
+                <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
+                  Loading PDF...
+                </div>
+              ) : loadError && !signedUrl ? (
+                <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground px-4 text-center">
+                  {loadError}
+                </div>
+              ) : (
               <iframe
-                src={selected.url}
+                src={signedUrl || selected.url}
                 title={selected.title}
                 className="w-full h-[calc(72dvh-58px)]"
               />
+              )
             ) : (
               <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
                 Select a PDF

@@ -7,6 +7,9 @@ import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
   const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
 
   if (isLocalhost) {
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
@@ -20,15 +23,14 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
-
-  if (pathname.startsWith('/dashboard')) {
-    if (!hasSupabaseConfig) {
+  if (!hasSupabaseConfig) {
+    if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
       return NextResponse.redirect(new URL('/auth', request.url))
     }
+    return response
+  }
 
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth')) {
     const supabase = createServerClient(
       url!,
       anonKey!,
