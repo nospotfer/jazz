@@ -16,22 +16,6 @@ export interface CourseProgressItem {
   videos: CourseProgressVideo[];
 }
 
-interface RawLessonPurchase {
-  id: string;
-  userId: string;
-  lessonId: string;
-  lessonTitle: string;
-  chapterId: string;
-  courseId: string;
-  courseTitle: string;
-}
-
-interface RawProgress {
-  lessonId: string;
-  isCompleted: number;
-  progressPercent: number;
-}
-
 export async function GET() {
   try {
     const supabase = createClient();
@@ -91,7 +75,7 @@ export async function GET() {
       return NextResponse.json({ courses });
     }
 
-    const [fullCoursePurchases, rawLessonPurchases, rawProgress] =
+    const [fullCoursePurchases, lessonPurchases, userProgress] =
       await Promise.all([
         db.purchase.findMany({
           where: { userId: user.id },
@@ -112,37 +96,49 @@ export async function GET() {
             },
           },
         }),
-        db.$queryRaw<RawLessonPurchase[]>`
-          SELECT
-            lp.id,
-            lp.userId,
-            lp.lessonId,
-            l.title AS lessonTitle,
-            l.chapterId,
-            c.courseId,
-            co.title AS courseTitle
-          FROM LessonPurchase lp
-          JOIN Lesson l ON l.id = lp.lessonId
-          JOIN Chapter c ON c.id = l.chapterId
-          JOIN Course co ON co.id = c.courseId
-          WHERE lp.userId = ${user.id}
-        `,
-        db.$queryRaw<RawProgress[]>`
-          SELECT lessonId, isCompleted, progressPercent
-          FROM UserProgress
-          WHERE userId = ${user.id}
-        `,
+        db.lessonPurchase.findMany({
+          where: { userId: user.id },
+          include: {
+            lesson: {
+              include: {
+                chapter: {
+                  include: {
+                    course: {
+                      select: {
+                        id: true,
+                        title: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }),
+        db.userProgress.findMany({
+          where: { userId: user.id },
+          select: {
+            lessonId: true,
+            isCompleted: true,
+            progressPercent: true,
+          },
+        }),
       ]);
 
-    const progressMap = new Map<string, RawProgress>(
-      rawProgress.map((p) => [p.lessonId, p])
+    const progressMap = new Map<string, { isCompleted: boolean; progressPercent: number }>(
+      userProgress.map((p) => [
+        p.lessonId,
+        {
+          isCompleted: Boolean(p.isCompleted),
+          progressPercent: p.progressPercent ?? 0,
+        },
+      ])
     );
 
     function getPercent(lessonId: string): number {
       const p = progressMap.get(lessonId);
       if (!p) return 0;
-      if (p.isCompleted === 1 || (p.isCompleted as unknown as boolean) === true)
-        return 100;
+      if (p.isCompleted) return 100;
       return p.progressPercent ?? 0;
     }
 
@@ -174,21 +170,22 @@ export async function GET() {
       }
     }
 
-    for (const lp of rawLessonPurchases) {
-      if (!coursesMap.has(lp.courseId)) {
-        coursesMap.set(lp.courseId, {
-          id: lp.courseId,
-          title: lp.courseTitle,
+    for (const lp of lessonPurchases) {
+      const course = lp.lesson.chapter.course;
+      if (!coursesMap.has(course.id)) {
+        coursesMap.set(course.id, {
+          id: course.id,
+          title: course.title,
           videos: [],
         });
       }
-      const courseEntry = coursesMap.get(lp.courseId)!;
+      const courseEntry = coursesMap.get(course.id)!;
       if (courseEntry.videos.some((v) => v.lessonId === lp.lessonId)) continue;
       courseEntry.videos.push({
         lessonId: lp.lessonId,
-        title: lp.lessonTitle,
+        title: lp.lesson.title,
         progressPercent: getPercent(lp.lessonId),
-        courseId: lp.courseId,
+        courseId: course.id,
       });
     }
 
