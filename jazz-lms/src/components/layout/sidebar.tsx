@@ -150,7 +150,7 @@ export function Sidebar() {
       </aside>
 
       {/* Sidebar - Desktop (always visible) */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
+      <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
           pathname={pathname}
           pdfCount={pdfCount}
@@ -300,6 +300,8 @@ function CoursesNavSection() {
   const [open, setOpen] = useState(false);
   const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
+  const [noteContent, setNoteContent] = useState('');
 
   useEffect(() => {
     setLoading(true);
@@ -326,6 +328,38 @@ function CoursesNavSection() {
       subtitle: video.title,
       classNumber: index + 1,
     }));
+
+  useEffect(() => {
+    if (!notesVideos.length) {
+      setSelectedNote(null);
+      setNoteContent('');
+      return;
+    }
+
+    setSelectedNote((current) => {
+      if (current && notesVideos.some((video) => video.courseId === current.courseId && video.lessonId === current.lessonId)) {
+        return current;
+      }
+
+      const first = notesVideos[0];
+      return { courseId: first.courseId, lessonId: first.lessonId };
+    });
+  }, [notesVideos]);
+
+  useEffect(() => {
+    if (!selectedNote) return;
+
+    const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
+    const saved = window.localStorage.getItem(storageKey) || '';
+    setNoteContent(saved);
+  }, [selectedNote]);
+
+  const onChangeSidebarNotes = (value: string) => {
+    setNoteContent(value);
+    if (!selectedNote) return;
+    const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
+    window.localStorage.setItem(storageKey, value);
+  };
 
   return (
     <div className="mt-1">
@@ -362,11 +396,13 @@ function CoursesNavSection() {
               <div className="courses-scroll flex-1 min-h-0 overflow-y-auto pr-1">
                 {notesVideos.map((video, index) => {
                   const isClickable = Boolean(video.courseId && video.lessonId);
+                  const isSelected =
+                    selectedNote?.courseId === video.courseId && selectedNote?.lessonId === video.lessonId;
                   const content = (
                     <div
                       className={`px-2.5 py-2.5 transition-colors ${
                         index < notesVideos.length - 1 ? 'border-b border-border/60' : ''
-                      } ${isClickable ? 'hover:bg-accent/40' : 'opacity-90'}`}
+                      } ${isClickable ? 'hover:bg-accent/40' : 'opacity-90'} ${isSelected ? 'bg-primary/10' : ''}`}
                     >
                       <p className="text-sm font-semibold text-foreground leading-tight">
                         {video.classLabel}
@@ -382,14 +418,27 @@ function CoursesNavSection() {
                   }
 
                   return (
-                    <Link
+                    <button
+                      type="button"
                       key={video.lessonId}
-                      href={`/dashboard/notes/${video.courseId}/${video.lessonId}`}
+                      onClick={() => setSelectedNote({ courseId: video.courseId, lessonId: video.lessonId })}
+                      className="w-full text-left"
                     >
                       {content}
-                    </Link>
+                    </button>
                   );
                 })}
+              </div>
+              <div className="border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
+                <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
+                  Lesson notes
+                </p>
+                <textarea
+                  value={noteContent}
+                  onChange={(event) => onChangeSidebarNotes(event.target.value)}
+                  placeholder="Write notes for selected class..."
+                  className="w-full h-44 resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
               </div>
             </>
           )}
