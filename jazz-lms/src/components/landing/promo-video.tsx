@@ -1,16 +1,56 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import MuxPlayer from '@mux/mux-player-react';
+import axios from 'axios';
 
 export function PromoVideo() {
   const router = useRouter();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+  const playerRef = useRef<any>(null);
+  const [playbackId, setPlaybackId] = useState('');
+  const [playbackToken, setPlaybackToken] = useState('');
+  const [thumbnailToken, setThumbnailToken] = useState('');
+  const [storyboardToken, setStoryboardToken] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
+  const posterUrl = playbackId
+    ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ''}`
+    : '';
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPromoPlayback = async () => {
+      try {
+        const response = await axios.get('/api/mux/promo-playback');
+        if (cancelled) return;
+
+        setPlaybackId(response.data.playbackId || '');
+        setPlaybackToken(response.data.playbackToken || '');
+        setThumbnailToken(response.data.thumbnailToken || '');
+        setStoryboardToken(response.data.storyboardToken || '');
+      } catch {
+        if (cancelled) return;
+      }
+    };
+
+    loadPromoPlayback();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const toggleMute = () => {
+    if (playerRef.current) {
+      playerRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+      return;
+    }
+
     if (videoRef.current) {
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
@@ -60,17 +100,36 @@ export function PromoVideo() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-            >
-              <source src="/images/videojazz.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {playbackId && playbackToken ? (
+              <MuxPlayer
+                ref={playerRef}
+                className="absolute inset-0 w-full h-full"
+                playbackId={playbackId}
+                tokens={{
+                  playback: playbackToken || undefined,
+                  thumbnail: thumbnailToken || undefined,
+                  storyboard: storyboardToken || undefined,
+                }}
+                poster={posterUrl || undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                accentColor="#d4af37"
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              >
+                <source src="/images/videojazz.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
 
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/20 pointer-events-none" />
