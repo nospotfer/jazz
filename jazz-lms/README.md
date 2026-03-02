@@ -50,6 +50,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Stripe Sandbox
+
+Use test mode (no real charges) with `sk_test` / `pk_test` keys.
+
+```bash
+# 1) Validate Stripe sandbox env + auth
+npm run stripe:sandbox:check
+
+# 2) Start app locally
+npm run dev
+
+# 3) Simulate a signed Stripe webhook locally
+npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3001/api/webhooks/stripe --cleanup
+
+# 4) Run full sandbox check in one command (requires app running)
+npm run stripe:sandbox:all
+```
+
 ## Deployment
 
 We recommend deploying this project to [Vercel](https://vercel.com/), the creators of Next.js. Vercel provides a seamless deployment experience for Next.js applications.

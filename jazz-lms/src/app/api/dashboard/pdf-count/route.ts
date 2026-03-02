@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const supabase = createClient();
