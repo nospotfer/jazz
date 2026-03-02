@@ -15,10 +15,10 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { href: '/admin', label: 'Dashboard', permission: 'admin.access' },
-  { href: '/admin/courses', label: 'Courses', permission: 'courses.read' },
-  { href: '/admin/users', label: 'Users', permission: 'users.read' },
-  { href: '/admin/stats', label: 'Analytics', permission: 'analytics.read' },
+  { href: '/admin', label: 'Panel', permission: 'admin.access' },
+  { href: '/admin/courses', label: 'Cursos', permission: 'courses.read' },
+  { href: '/admin/users', label: 'Usuarios', permission: 'users.read' },
+  { href: '/admin/stats', label: 'Analíticas', permission: 'analytics.read' },
 ];
 
 export function AdminSidebar({ role }: AdminSidebarProps) {
@@ -30,7 +30,7 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
     <aside className="w-72 shrink-0 border-r border-border bg-white dark:bg-card min-h-screen">
       <div className="px-6 py-6 border-b border-border">
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Jazz LMS</p>
-        <h1 className="mt-2 text-xl font-bold text-jazz-dark dark:text-white">Admin Dashboard</h1>
+        <h1 className="mt-2 text-xl font-bold text-jazz-dark dark:text-white">Panel de administración</h1>
       </div>
       <nav className="p-4 space-y-2">
         {visibleItems.map((item) => {
@@ -55,7 +55,7 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
           href="/dashboard"
           className="block rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
         >
-          ← Back to platform
+          ← Volver a la plataforma
         </Link>
       </div>
     </aside>

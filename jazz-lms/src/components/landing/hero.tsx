@@ -65,19 +65,19 @@ export const Hero = ({ course }: HeroProps) => {
       <div className="mx-auto max-w-2xl py-4 sm:py-6 lg:py-8">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-muted-foreground ring-1 ring-border hover:ring-primary">
-            A course by Enric Vazquez Ramonich.{' '}
+            Un curso de Enric Vazquez Ramonich.{' '}
             <a href="#" className="font-semibold text-primary">
               <span className="absolute inset-0" aria-hidden="true" />
-              Read more <span aria-hidden="true">&rarr;</span>
+              Leer más <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-serif">
-            {course?.title || 'Welcome to Jazz LMS'}
+            {course?.title || 'Bienvenido a Jazz LMS'}
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            {course?.description || 'Start your journey with our premium courses. Check back soon for new content!'}
+            {course?.description || 'Empieza tu viaje con nuestros cursos premium. ¡Vuelve pronto para ver nuevo contenido!'}
           </p>
 
           {/* Central Image - Replace /images/your-image.jpg with your image path */}
@@ -85,7 +85,7 @@ export const Hero = ({ course }: HeroProps) => {
             <div className="relative w-full max-w-md h-48 rounded-lg overflow-hidden">
               <Image
                 src="/images/jazz-placeholder.jpg"
-                alt="Jazz Course Image"
+                alt="Imagen del curso de jazz"
                 fill
                 className="object-cover"
                 priority
@@ -103,7 +103,7 @@ export const Hero = ({ course }: HeroProps) => {
                       type="text"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
-                      placeholder="Enter video/gif URL (mp4, webm, gif, youtube, vimeo, giphy)"
+                      placeholder="Introduce la URL del video/gif (mp4, webm, gif, youtube, vimeo, giphy)"
                       className="w-full px-4 py-2 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
                     <div className="flex gap-3">
@@ -111,14 +111,14 @@ export const Hero = ({ course }: HeroProps) => {
                         onClick={handleSaveMedia}
                         className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
                       >
-                        Save
+                        Guardar
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant="outline"
                         className="text-white"
                       >
-                        Cancel
+                        Cancelar
                       </Button>
                     </div>
                   </div>
@@ -130,7 +130,7 @@ export const Hero = ({ course }: HeroProps) => {
                           width="100%"
                           height="100%"
                           src={mediaUrl.includes('youtube.com') ? `https://www.youtube.com/embed/${new URL(mediaUrl).searchParams.get('v') || mediaUrl.split('/').pop()}` : mediaUrl}
-                          title="Jazz Course Video"
+                          title="Video del curso de jazz"
                           frameBorder="0"
                           allowFullScreen
                           className="absolute inset-0 w-full h-full"
@@ -139,19 +139,19 @@ export const Hero = ({ course }: HeroProps) => {
                     ) : isGif ? (
                       <img
                         src={mediaUrl}
-                        alt="Jazz Course GIF"
+                        alt="GIF del curso de jazz"
                         className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="text-gray-500 dark:text-gray-400 text-center">
-                        <p>Invalid media URL</p>
-                        <p className="text-sm">Click edit to add a video or gif</p>
+                        <p>URL de contenido no válida</p>
+                        <p className="text-sm">Haz clic en editar para añadir un video o gif</p>
                       </div>
                     )}
                     <button
                       onClick={() => setIsEditing(true)}
                       className="absolute top-4 right-4 p-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                      title="Edit media"
+                      title="Editar contenido"
                     >
                       <Edit2 className="h-5 w-5 text-black" />
                     </button>
@@ -165,16 +165,16 @@ export const Hero = ({ course }: HeroProps) => {
           <div className="mt-4 flex items-center justify-center gap-x-6">
             {course ? (
               <>
-                <Button onClick={() => router.push('/auth?tab=register')}>Sign Up</Button>
+                <Button onClick={() => router.push('/auth?tab=register')}>Regístrate</Button>
                 <a
                   href="#"
                   className="text-sm font-semibold leading-6 text-foreground"
                 >
-                  Learn more <span aria-hidden="true">→</span>
+                  Saber más <span aria-hidden="true">→</span>
                 </a>
               </>
             ) : (
-              <p className="text-sm text-muted-foreground">No courses available yet</p>
+              <p className="text-sm text-muted-foreground">Aún no hay cursos disponibles</p>
             )}
           </div>
         </div>
@@ -196,7 +196,7 @@ export const Hero = ({ course }: HeroProps) => {
             onClick={() => router.push('/auth?tab=register')}
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg"
           >
-            Sign Up
+            Regístrate
           </button>
         </div>
       </section>

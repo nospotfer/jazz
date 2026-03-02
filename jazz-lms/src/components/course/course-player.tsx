@@ -21,7 +21,7 @@ const PdfWorkspaceViewer = dynamic(
     ssr: false,
     loading: () => (
       <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-        Loading PDF preview...
+        Cargando vista previa del PDF...
       </div>
     ),
   }
@@ -101,8 +101,8 @@ export const CoursePlayer = ({
   const classIndex = orderedLessons.findIndex((item) => item.id === lessonId);
   const classNumber = classIndex >= 0 ? classIndex + 1 : null;
   const canonicalClass = classNumber ? getCanonicalJazzClass(classNumber) : undefined;
-  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || 'Lesson';
-  const classLabel = classNumber ? `Class ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
+  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || 'Lección';
+  const classLabel = classNumber ? `Clase ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
 
   const visibleAttachments = useMemo(
     () => lesson.attachments.filter((attachment) => !isAuxiliaryAttachment(attachment.name)),
@@ -205,7 +205,7 @@ export const CoursePlayer = ({
         setPlaybackToken('');
         setThumbnailToken('');
         setStoryboardToken('');
-        setPlaybackError('Unable to load signed playback for this lesson right now.');
+        setPlaybackError('No se puede cargar la reproducción firmada de esta lección ahora mismo.');
       }
     };
 
@@ -246,7 +246,7 @@ export const CoursePlayer = ({
         return data.signedUrl;
       });
     } catch (error: any) {
-      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
+      const message = error?.response?.data?.error || 'No se puede cargar este PDF en este momento.';
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
       if (fallbackAttachment?.url) {
         setSelectedAttachmentId(attachmentId);
@@ -257,7 +257,7 @@ export const CoursePlayer = ({
           return fallbackAttachment.url;
         });
         setPdfError('');
-        toast.info('Loaded PDF using legacy direct URL fallback.');
+        toast.info('PDF cargado usando la URL directa heredada.');
       } else {
         setPdfError(message);
         toast.error(message);
@@ -277,11 +277,11 @@ export const CoursePlayer = ({
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
       if (fallbackAttachment?.url) {
         window.open(fallbackAttachment.url, '_blank', 'noopener,noreferrer');
-        toast.info('Download opened using legacy direct URL fallback.');
+        toast.info('Descarga abierta usando la URL directa heredada.');
         return;
       }
 
-      const message = error?.response?.data?.error || 'Unable to download this PDF right now.';
+      const message = error?.response?.data?.error || 'No se puede descargar este PDF en este momento.';
       toast.error(message);
     }
   };
@@ -301,7 +301,7 @@ export const CoursePlayer = ({
         return;
       }
     } catch {
-      toast.error('Unable to start checkout right now.');
+      toast.error('No se puede iniciar el pago en este momento.');
     } finally {
       setIsPurchasing(false);
     }
@@ -376,10 +376,10 @@ export const CoursePlayer = ({
 
       setIsCompleted(true);
       confetti.onOpen();
-      toast.success('Lesson completed!');
+      toast.success('¡Lección completada!');
       router.refresh();
     } catch {
-      toast.error('Something went wrong');
+      toast.error('Algo salió mal');
     } finally {
       setIsCompleting(false);
     }
@@ -401,10 +401,10 @@ export const CoursePlayer = ({
 
       setIsCompleted(false);
       setLastSavedPercent(0);
-      toast.success('Lesson progress reset.');
+      toast.success('Progreso de la lección restablecido.');
       router.refresh();
     } catch {
-      toast.error('Something went wrong');
+      toast.error('Algo salió mal');
     } finally {
       setIsCompleting(false);
     }
@@ -488,10 +488,10 @@ export const CoursePlayer = ({
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />
                         {isCompleting
-                          ? 'Saving...'
+                          ? 'Guardando...'
                           : isCompleted
-                          ? 'Completed (Click to reset)'
-                          : 'Mark as Complete'}
+                          ? 'Completada (haz clic para reiniciar)'
+                          : 'Marcar como completada'}
                       </Button>
                       <Button
                         type="button"
@@ -502,12 +502,12 @@ export const CoursePlayer = ({
                         {isNotesPanelOpen ? (
                           <>
                             <PanelRightClose className="h-4 w-4 mr-2" />
-                            Hide Apunte
+                            Ocultar apunte
                           </>
                         ) : (
                           <>
                             <PanelRightOpen className="h-4 w-4 mr-2" />
-                            Show Apunte
+                            Mostrar apunte
                           </>
                         )}
                       </Button>
@@ -532,20 +532,20 @@ export const CoursePlayer = ({
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                       {canAccessLesson ? (
                         <p className="text-sm text-muted-foreground">
-                          {playbackError || 'Loading signed lesson video...'}
+                          {playbackError || 'Cargando video de la lección...'}
                         </p>
                       ) : (
                         <div className="max-w-md space-y-3">
                           <div className="mx-auto w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center">
                             <Lock className="h-6 w-6 text-primary" />
                           </div>
-                          <h3 className="text-lg font-semibold text-foreground">This lesson is locked</h3>
+                          <h3 className="text-lg font-semibold text-foreground">Esta lección está bloqueada</h3>
                           <p className="text-sm text-muted-foreground">
-                            Purchase the full course to watch all classes with high-quality Mux playback.
+                            Compra el curso completo para ver todas las clases con reproducción Mux en alta calidad.
                           </p>
                           <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full sm:w-auto">
                             <ShoppingCart className="h-4 w-4 mr-2" />
-                            {isPurchasing ? 'Opening checkout...' : 'Unlock full course'}
+                            {isPurchasing ? 'Abriendo pago...' : 'Desbloquear curso completo'}
                           </Button>
                         </div>
                       )}
@@ -561,16 +561,16 @@ export const CoursePlayer = ({
                 <>
                   <p className="text-base sm:text-lg font-semibold text-primary mb-3 flex items-center gap-2.5">
                     <FileText className="h-5 w-5 text-primary" />
-                    Apunte da Classe
+                    Apunte de la clase
                   </p>
 
                   {!canAccessAttachments ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-                      PDFs are available after purchasing the full course.
+                      Los PDF están disponibles tras comprar el curso completo.
                     </div>
                   ) : visibleAttachments.length === 0 ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-                      Nenhum apunte principal foi encontrado para esta aula.
+                      No se encontró ningún apunte principal para esta clase.
                     </div>
                   ) : (
                     <>
@@ -599,7 +599,7 @@ export const CoursePlayer = ({
                                 disabled={isLoadingPdf}
                               >
                                 <Eye className="h-4 w-4 mr-1.5" />
-                                Preview
+                                Vista previa
                               </Button>
                               <Button
                                 type="button"
@@ -608,7 +608,7 @@ export const CoursePlayer = ({
                                 onClick={() => downloadPdf(attachment.id)}
                               >
                                 <Download className="h-4 w-4 mr-1.5" />
-                                Download
+                                Descargar
                               </Button>
                             </div>
                           </div>
@@ -618,7 +618,7 @@ export const CoursePlayer = ({
                       <div className="mt-3 flex-1 min-h-[420px] rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                         {isLoadingPdf ? (
                           <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-                            Loading PDF preview...
+                            Cargando vista previa del PDF...
                           </div>
                         ) : pdfError ? (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
@@ -628,7 +628,7 @@ export const CoursePlayer = ({
                           <PdfWorkspaceViewer fileUrl={previewUrl} />
                         ) : (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
-                            Select a PDF to preview it here.
+                            Selecciona un PDF para previsualizarlo aquí.
                           </div>
                         )}
                       </div>
@@ -640,23 +640,23 @@ export const CoursePlayer = ({
                   <div>
                     <p className="text-base sm:text-lg font-semibold text-foreground mb-2 flex items-center gap-2.5">
                       <Lock className="h-5 w-5 text-primary" />
-                      Premium access required
+                      Se requiere acceso premium
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      You are inside the lesson area, but video and notes are available only for students who purchased the full course.
+                      Estás dentro del área de la lección, pero el video y los apuntes solo están disponibles para estudiantes que compraron el curso completo.
                     </p>
                   </div>
 
                   <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
-                    <p className="text-sm font-medium text-foreground">What you unlock:</p>
+                    <p className="text-sm font-medium text-foreground">Qué desbloqueas:</p>
                     <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                      <li>• Full access to all 15 classes</li>
-                      <li>• Secure Mux HD playback</li>
-                      <li>• Personal lesson notes</li>
+                      <li>• Acceso completo a las 15 clases</li>
+                      <li>• Reproducción segura en Mux HD</li>
+                      <li>• Apuntes personales por lección</li>
                     </ul>
                     <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full mt-4">
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {isPurchasing ? 'Opening checkout...' : 'Buy now and unlock'}
+                      {isPurchasing ? 'Abriendo pago...' : 'Comprar y desbloquear'}
                     </Button>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export const CoursePlayer = ({
 
           {!isReady && (
             <div className="sr-only" aria-live="polite">
-              Loading lesson player...
+              Cargando reproductor de lección...
             </div>
           )}
         </div>

@@ -23,20 +23,20 @@ export default async function AdminCoursesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Gerenciamento de Cursos</h1>
-          <p className="text-sm text-muted-foreground mt-1">Gerencie cursos, capítulos e lições</p>
+            <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Gestión de cursos</h1>
+            <p className="text-sm text-muted-foreground mt-1">Gestiona cursos, capítulos y lecciones</p>
         </div>
         <Link href="/admin/courses/new" className="btn-primary">
-          ➕ Novo Curso
+            ➕ Nuevo curso
         </Link>
       </div>
 
       <div className="card">
         {courses.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-muted-foreground text-lg">Nenhum curso criado ainda</p>
+              <p className="text-muted-foreground text-lg">Aún no se ha creado ningún curso</p>
             <Link href="/admin/courses/new" className="inline-block mt-4 text-jazz-accent hover:opacity-90 transition">
-              Criar primeiro curso →
+                Crear primer curso →
             </Link>
           </div>
         ) : (
@@ -49,7 +49,7 @@ export default async function AdminCoursesPage() {
                   <th className="px-4 py-3">Estrutura</th>
                   <th className="px-4 py-3">Alunos</th>
                   <th className="px-4 py-3">Preço</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
+                  <th className="px-4 py-3 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -61,7 +61,7 @@ export default async function AdminCoursesPage() {
                     <tr key={course.id}>
                       <td className="px-4 py-3">
                         <div className="font-medium text-jazz-dark dark:text-white">{course.title}</div>
-                        <div className="text-xs text-muted-foreground">{course.description || 'Sem descrição'}</div>
+                        <div className="text-xs text-muted-foreground">{course.description || 'Sin descripción'}</div>
                       </td>
                       <td className="px-4 py-3">
                         {course.isPublished ? (
@@ -71,11 +71,11 @@ export default async function AdminCoursesPage() {
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {course.chapters.length} capítulos / {totalLessons} lições
+                          {course.chapters.length} capítulos / {totalLessons} lecciones
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{totalPurchases}</td>
                       <td className="px-4 py-3 text-sm font-medium text-jazz-dark dark:text-white">
-                        {course.price ? `R$ ${course.price.toFixed(2)}` : 'Grátis'}
+                          {course.price ? `€ ${course.price.toFixed(2)}` : 'Gratis'}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">

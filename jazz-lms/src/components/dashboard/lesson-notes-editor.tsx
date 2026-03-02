@@ -182,7 +182,7 @@ export function LessonNotesEditor({
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-5">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">My Notes</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Mis notas</h1>
         <p className="text-muted-foreground mt-1">
           {classLabel}: {lessonTitle}
         </p>
@@ -260,14 +260,14 @@ export function LessonNotesEditor({
       {isPrivilegedViewer && (
         <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Student Notes</h2>
+            <h2 className="text-lg font-semibold text-foreground">Notas de estudiantes</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Notes saved by students for this class.
+              Notas guardadas por estudiantes para esta clase.
             </p>
           </div>
 
           {studentNotes.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No student notes saved yet.</p>
+            <p className="text-sm text-muted-foreground">Aún no hay notas de estudiantes guardadas.</p>
           ) : (
             <div className="space-y-3">
               {studentNotes.map((note) => (

@@ -61,7 +61,7 @@ export const UserNav = async () => {
             </p>
             {isAdmin && (
               <p className="text-xs font-semibold text-yellow-500 mt-1">
-                🔑 Administrator
+                🔑 Administrador
               </p>
             )}
           </div>
@@ -69,17 +69,17 @@ export const UserNav = async () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="cursor-pointer">
-            🎓 My Dashboard
+            🎓 Mi panel
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/dashboard/profile" className="cursor-pointer">
-            👤 Profile
+            👤 Perfil
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/dashboard/settings" className="cursor-pointer">
-            ⚙️ Settings
+            ⚙️ Configuración
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -87,7 +87,7 @@ export const UserNav = async () => {
           <>
             <DropdownMenuItem asChild>
               <Link href="/admin" className="cursor-pointer">
-                🔐 Admin Intranet
+                🔐 Intranet Admin
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

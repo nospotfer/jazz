@@ -35,16 +35,16 @@ export default function PaymentPage() {
     <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl font-serif font-bold text-foreground">
-          Payment History
+          Historial de pagos
         </h1>
         <p className="text-muted-foreground mt-1">
-          View your payment records with date, time, and amount
+          Consulta tus registros de pago con fecha, hora e importe
         </p>
       </div>
 
       {/* Purchase History */}
       <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Records</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Registros</h2>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
@@ -53,9 +53,9 @@ export default function PaymentPage() {
         ) : purchases.length === 0 ? (
           <div className="text-center py-8">
             <CreditCard className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-muted-foreground">No purchases yet</p>
+            <p className="text-muted-foreground">Aún no hay compras</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              Your payment records will appear here
+              Tus registros de pago aparecerán aquí
             </p>
           </div>
         ) : (

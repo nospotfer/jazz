@@ -41,11 +41,11 @@ export function LobbyClient({
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-6 sm:p-8">
         <div className="relative z-10">
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
-            Welcome back, {firstName}!
+            ¡Bienvenido de nuevo, {firstName}!
           </h1>
           <p className="text-muted-foreground mt-2 max-w-lg">
-            Continue where you left off or explore new courses to expand your
-            jazz knowledge.
+            Continúa donde lo dejaste o explora nuevos cursos para ampliar
+            tu conocimiento del jazz.
           </p>
         </div>
 
@@ -53,17 +53,17 @@ export function LobbyClient({
         <div className="flex flex-wrap gap-4 sm:gap-6 mt-6">
           <StatCard
             icon={<BookOpen className="h-5 w-5" />}
-            label="Enrolled"
+            label="Inscritos"
             value={purchasedCourses.length}
           />
           <StatCard
             icon={<PlayCircle className="h-5 w-5" />}
-            label="In Progress"
+            label="En progreso"
             value={totalInProgress}
           />
           <StatCard
             icon={<TrendingUp className="h-5 w-5" />}
-            label="Completed"
+            label="Completados"
             value={totalCompleted}
           />
         </div>
@@ -78,13 +78,13 @@ export function LobbyClient({
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-serif font-semibold text-foreground">
-              Continue Learning
+              Continuar aprendiendo
             </h2>
             <Link
               href="/dashboard/courses"
               className="text-sm text-primary hover:text-primary/80 transition-colors"
             >
-              View all →
+              Ver todo →
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -100,7 +100,7 @@ export function LobbyClient({
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-serif font-semibold text-foreground">
-              Explore Courses
+              Explorar cursos
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -116,10 +116,10 @@ export function LobbyClient({
         <div className="text-center py-16">
           <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-foreground">
-            No courses available yet
+            Aún no hay cursos disponibles
           </h2>
           <p className="text-muted-foreground mt-2">
-            New courses are coming soon. Stay tuned!
+            Próximamente habrá nuevos cursos. ¡Estate atento!
           </p>
         </div>
       )}
@@ -171,7 +171,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           )}
           {course.purchased && (
             <div className="absolute top-2 right-2 bg-primary/90 text-primary-foreground text-xs font-bold px-2 py-1 rounded-md">
-              Enrolled
+              Inscrito
             </div>
           )}
         </div>
@@ -191,11 +191,11 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <BookOpen className="h-3.5 w-3.5" />
-              {course.chaptersCount} chapters
+              {course.chaptersCount} capítulos
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {course.totalLessons} lessons
+              {course.totalLessons} lecciones
             </span>
           </div>
 
@@ -203,7 +203,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           {course.purchased && (
             <div className="mt-3">
               <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Progress</span>
+                <span className="text-muted-foreground">Progreso</span>
                 <span className="font-medium text-primary">
                   {course.progress}%
                 </span>

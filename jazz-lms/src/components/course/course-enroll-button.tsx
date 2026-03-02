@@ -28,7 +28,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       // Redirect to Stripe Checkout
       window.location.assign(response.data.url);
     } catch {
-      toast.error('Something went wrong. Please try again.');
+      toast.error('Algo salió mal. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +46,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       ) : (
         <>
           <ShoppingCart className="h-5 w-5 mr-2" />
-          {price === 0 ? 'Enroll for Free' : 'Purchase Course'}
+          {price === 0 ? 'Inscribirse gratis' : 'Comprar curso'}
         </>
       )}
     </Button>

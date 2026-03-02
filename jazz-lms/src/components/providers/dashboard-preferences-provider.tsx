@@ -30,7 +30,7 @@ interface DashboardPreferencesContextValue {
 const STORAGE_KEY = 'jazz-dashboard-preferences-v1';
 
 const defaultState: DashboardPreferencesState = {
-  language: 'en',
+  language: 'es',
   notifications: {
     emailNotifications: true,
     courseUpdates: true,

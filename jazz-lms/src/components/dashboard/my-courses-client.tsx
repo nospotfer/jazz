@@ -111,27 +111,27 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
 
   const viewConfig: Record<string, { label: string; count: number; videos: typeof classes }> = {
     watched: {
-      label: t('watched', 'Watched'),
+      label: t('watched', 'Vistas'),
       count: watchedVideos.length,
       videos: watchedVideos,
     },
     'in-progress': {
-      label: t('inProgress', 'In Progress'),
+      label: t('inProgress', 'En progreso'),
       count: inProgressVideos.length,
       videos: inProgressVideos,
     },
     'not-started': {
-      label: t('notStarted', 'Not Started'),
+      label: t('notStarted', 'Sin empezar'),
       count: notStartedVideos.length,
       videos: notStartedVideos,
     },
     total: {
-      label: t('totalClasses', 'Total Classes'),
+      label: t('totalClasses', 'Total de clases'),
       count: classes.length,
       videos: classes,
     },
     completion: {
-      label: t('completionRate', 'Completion Rate'),
+      label: t('completionRate', 'Tasa de finalización'),
       count: effectiveCompletionRate,
       videos: [],
     },
@@ -143,10 +143,10 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
     <div className="space-y-6">
       <div className="relative inline-block">
         <h1 className="text-2xl font-serif font-bold text-foreground">
-          {t('myCourses', 'My Courses')}
+          {t('myCourses', 'Mis cursos')}
         </h1>
         <p className="text-muted-foreground mt-1">
-          15 classes — Introduction to Jazz Music
+          15 clases — Introducción a la música jazz
         </p>
       </div>
 
@@ -159,7 +159,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               : 'border-primary/40 hover:border-primary/70'
           }`}
         >
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('watched', 'Watched')}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('watched', 'Vistas')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{watchedVideos.length}</p>
         </Link>
         <Link
@@ -170,7 +170,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               : 'border-primary/40 hover:border-primary/70'
           }`}
         >
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('inProgress', 'In Progress')}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('inProgress', 'En progreso')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{inProgressVideos.length}</p>
         </Link>
         <Link
@@ -181,7 +181,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               : 'border-primary/40 hover:border-primary/70'
           }`}
         >
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('notStarted', 'Not Started')}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('notStarted', 'Sin empezar')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{notStartedVideos.length}</p>
         </Link>
         <Link
@@ -192,7 +192,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               : 'border-primary/40 hover:border-primary/70'
           }`}
         >
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('totalClasses', 'Total Classes')}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('totalClasses', 'Total de clases')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{classes.length}</p>
         </Link>
         <Link
@@ -206,7 +206,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
           {completionAttentionActive && (
             <span className="absolute -top-1.5 -right-1.5 h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-[0_0_0_3px_rgba(250,204,21,0.25)] animate-pulse" />
           )}
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('completionRate', 'Completion Rate')}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('completionRate', 'Tasa de finalización')}</p>
           <p className="mt-1 text-xl sm:text-2xl font-bold text-foreground">{formattedCompletionRate}</p>
         </Link>
       </div>
@@ -223,12 +223,12 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               href="/dashboard/courses"
               className="text-xs sm:text-sm text-primary hover:text-primary/80 transition-colors"
             >
-              Close
+              Cerrar
             </Link>
           </div>
 
           {selectedView.videos.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No videos in this selection yet.</p>
+            <p className="text-xs text-muted-foreground">Aún no hay videos en esta selección.</p>
           ) : (
             <div className="space-y-2.5">
               {selectedView.videos.map((video) => (
@@ -266,7 +266,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
               href="/dashboard/courses"
               className="text-xs sm:text-sm text-primary hover:text-primary/80 transition-colors"
             >
-              Close
+              Cerrar
             </Link>
           </div>
 
@@ -284,16 +284,16 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
                   : 'border-emerald-500/70 bg-emerald-500/10 hover:bg-emerald-500/15'
                 : 'border-primary/30 bg-card/60'
             }`}
-            aria-label="Course completion progress"
+            aria-label="Progreso de finalización del curso"
           >
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Course Progress</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Progreso del curso</p>
             <div className="w-full bg-muted rounded-full h-5 overflow-hidden">
               <div
                 className="bg-emerald-500 h-5 rounded-full transition-all duration-700"
                 style={{ width: `${effectiveCompletionRate}%` }}
               />
             </div>
-            <p className="mt-2 text-sm font-medium text-foreground">{formattedCompletionRate} completed</p>
+            <p className="mt-2 text-sm font-medium text-foreground">{formattedCompletionRate} completado</p>
           </button>
         </div>
       )}
@@ -315,13 +315,13 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
           >
             <div className="text-center">
               <div className="text-5xl leading-none">🎷</div>
-              <p className="mt-4 text-xl font-serif font-bold text-foreground">Congratulations!</p>
+              <p className="mt-4 text-xl font-serif font-bold text-foreground">¡Felicidades!</p>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                You completed the full Jazz course. You can now confidently discuss jazz with friends, family, and everyone around you.
+                Completaste el curso completo de jazz. Ahora puedes hablar de jazz con confianza con amigos, familia y quienes te rodean.
               </p>
               <div className="mt-4 flex flex-col items-center gap-1 text-emerald-500">
                 <CheckCircle2 className="h-7 w-7" />
-                <span className="text-xs font-medium uppercase tracking-wide">Course Verified</span>
+                <span className="text-xs font-medium uppercase tracking-wide">Curso completado</span>
               </div>
 
               <button
@@ -335,7 +335,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
                 }}
                 className="mt-6 inline-flex items-center justify-center rounded-lg bg-emerald-500 text-black font-semibold px-4 py-2 hover:bg-emerald-400 transition-colors"
               >
-                Continue
+                Continuar
               </button>
             </div>
           </div>
@@ -352,8 +352,8 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
             window.localStorage.setItem(COMPLETION_ALERT_KEY, '1');
             window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
           }}
-          title="Complete course progress for local testing"
-          aria-label="Complete course progress for local testing"
+          title="Completar progreso del curso para pruebas locales"
+          aria-label="Completar progreso del curso para pruebas locales"
           className="fixed bottom-2 right-2 z-40 h-7 w-7 rounded-full border border-border bg-card/50 text-muted-foreground opacity-25 hover:opacity-70 hover:bg-card transition-all"
         >
           <RotateCcw className="h-3.5 w-3.5 mx-auto" />

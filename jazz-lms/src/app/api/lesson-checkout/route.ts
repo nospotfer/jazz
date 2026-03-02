@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
-// Individual lesson purchases are no longer available.
-// The course is sold as a complete package.
+// La compra individual de lecciones ya no está disponible.
+// El curso se vende como paquete completo.
 export async function POST() {
   return new NextResponse(
-    'Individual lesson purchases are no longer available. Please purchase the full course.',
+    'La compra individual de lecciones ya no está disponible. Compra el curso completo.',
     { status: 410 }
   );
 }

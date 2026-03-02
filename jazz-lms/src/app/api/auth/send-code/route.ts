@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     });
     if (existingUser && existingUser.emailVerified) {
       return NextResponse.json(
-        { error: 'This email is already registered. Please sign in instead.' },
+        { error: 'Este correo ya está registrado. Inicia sesión en su lugar.' },
         { status: 409 }
       );
     }
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
 
     if (existingSupaUser.email_confirmed_at) {
       return NextResponse.json(
-        { error: 'This email is already registered. Please sign in instead.' },
+        { error: 'Este correo ya está registrado. Inicia sesión en su lugar.' },
         { status: 409 }
       );
     }
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       if (isRateLimit) {
         return NextResponse.json(
           {
-            error: 'Too many attempts. Please wait a few minutes and try again.',
+            error: 'Demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
             retryAfterSeconds: 120,
           },
           { status: 429 }
@@ -119,12 +119,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Verification code sent to your email',
+      message: 'Código de verificación enviado a tu correo',
     });
   } catch (error) {
     console.error('Error sending verification code:', error);
     return NextResponse.json(
-      { error: 'Failed to send verification code' },
+      { error: 'No se pudo enviar el código de verificación' },
       { status: 500 }
     );
   }

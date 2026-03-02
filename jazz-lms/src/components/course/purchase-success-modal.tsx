@@ -108,7 +108,7 @@ export function PurchaseSuccessModal({ isVisible, onClose }: PurchaseSuccessModa
             onClick={onClose}
             className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40"
           >
-            Start Learning
+            Empezar a aprender
           </button>
         </div>
       </div>

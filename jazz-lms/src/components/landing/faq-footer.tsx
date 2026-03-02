@@ -13,28 +13,28 @@ interface FAQItem {
 
 const faqs: FAQItem[] = [
   {
-    pregunta: 'How much does the course cost?',
+    pregunta: '¿Cuánto cuesta el curso?',
     respuesta:
-      'The price depends on active offers on Udemy, which launches frequent promotions. You can often find it at a discount from the regular price. The best thing is to check the course page to see the current price.',
+      'El precio depende de las ofertas activas en Udemy, que lanza promociones frecuentes. A menudo puedes encontrarlo con descuento respecto al precio regular. Lo mejor es revisar la página del curso para ver el precio actual.',
   },
   {
-    pregunta: 'What if I realize the course is not for me?',
+    pregunta: '¿Qué pasa si me doy cuenta de que el curso no es para mí?',
     respuesta:
-      "No problem. We want you to enjoy learning and have a positive experience. If it's not what you expected, Udemy offers a 30-day money-back guarantee, with no risk and no uncomfortable questions.",
+      'No hay problema. Queremos que disfrutes aprendiendo y tengas una experiencia positiva. Si no es lo que esperabas, Udemy ofrece una garantía de devolución de 30 días, sin riesgo y sin preguntas incómodas.',
   },
   {
-    pregunta: 'What will I learn in this course?',
+    pregunta: '¿Qué aprenderé en este curso?',
     respuesta:
-      "We'll start from the essentials to understand what jazz is, its history and culture. You'll learn the importance of improvisation, learn to recognize styles and musicians by their sound, and discover how to enjoy the great classics and any live concert much more.",
+      'Comenzaremos desde lo esencial para entender qué es el jazz, su historia y su cultura. Aprenderás la importancia de la improvisación, a reconocer estilos y músicos por su sonido, y a disfrutar mucho más de los grandes clásicos y de cualquier concierto en vivo.',
   },
 ];
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#board-hero' },
-  { label: 'Professor', href: '#board-professor' },
-  { label: 'Learn', href: '#board-learn' },
-  { label: 'Courses', href: '#board-courses' },
-  { label: 'Press', href: '#board-press' },
+  { label: 'Inicio', href: '#board-hero' },
+  { label: 'Profesor', href: '#board-professor' },
+  { label: 'Aprender', href: '#board-learn' },
+  { label: 'Cursos', href: '#board-courses' },
+  { label: 'Prensa', href: '#board-press' },
   { label: 'Jazz Cats', href: '#board-jazzcats' },
   { label: 'FAQ', href: '#board-faq' },
 ];
@@ -73,10 +73,10 @@ export function FAQFooter() {
               <div className="flex flex-col justify-center">
                 {/* FAQ Section */}
                 <h2 className="text-yellow-500 text-3xl lg:text-4xl font-bold mb-6">
-                  Frequently Asked Questions
+                  Preguntas frecuentes
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                  If you can&apos;t find the answer you&apos;re looking for, contact us below.
+                  Si no encuentras la respuesta que buscas, contáctanos aquí abajo.
                 </p>
 
                 <div className="space-y-3 mb-10">
@@ -115,61 +115,61 @@ export function FAQFooter() {
                   onClick={() => setShowContactModal(true)}
                   className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors duration-300 w-fit mb-10"
                 >
-                  Contact Us
+                  Contáctanos
                 </button>
 
                 {/* What will I be able to do section */}
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 lg:p-8">
                   <h3 className="text-gray-900 dark:text-white text-xl lg:text-2xl font-bold mb-5">
-                    What will I be able to do after completing it?
+                    ¿Qué podré hacer después de completarlo?
                   </h3>
                   <ul className="space-y-3">
                     <li className="flex items-start">
                       <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
                       <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Go to a jazz club and enjoy the experience with a fresh perspective.
+                        Ir a un club de jazz y disfrutar la experiencia con una nueva perspectiva.
                       </span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
                       <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Listen to the great classics and understand why they are fundamental.
+                        Escuchar los grandes clásicos y entender por qué son fundamentales.
                       </span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
                       <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Recognize styles, eras and musicians by their &quot;sound&quot;.
+                        Reconocer estilos, épocas y músicos por su &quot;sonido&quot;.
                       </span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
                       <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Feel part of jazz culture, understanding its language and creative freedom.
+                        Sentirte parte de la cultura del jazz, comprendiendo su lenguaje y libertad creativa.
                       </span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              {/* Right side - Sign Up CTA */}
+              {/* Lado derecho - CTA de registro */}
               <div className="flex flex-col justify-center items-center text-center lg:pl-8">
                 <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold mb-4">
-                  Don&apos;t Wait!
+                  ¡No esperes más!
                 </h2>
                 <p className="text-yellow-600 text-xl mb-8">
-                  Start your jazz journey today.
+                  Empieza hoy tu viaje por el jazz.
                 </p>
 
                 <button
                   onClick={() => router.push('/auth?tab=register')}
                   className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-12 rounded-lg transition-all duration-300 hover:shadow-xl text-lg mb-6"
                 >
-                  Sign Up
+                  Regístrate
                 </button>
 
                 <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md">
-                  Join thousands of jazz enthusiasts who are already part of this unique experience.
+                  Únete a miles de amantes del jazz que ya forman parte de esta experiencia única.
                 </p>
               </div>
             </div>
@@ -213,7 +213,7 @@ export function FAQFooter() {
               <button
                 onClick={scrollToTop}
                 className="flex items-center gap-2 text-yellow-500 hover:text-yellow-400 transition-colors group"
-                aria-label="Back to top"
+                aria-label="Volver arriba"
               >
                 <span className="text-xs uppercase tracking-widest">Top</span>
                 <ChevronUp className="h-5 w-5 group-hover:-translate-y-1 transition-transform" />

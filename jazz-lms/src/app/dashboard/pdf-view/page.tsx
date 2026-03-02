@@ -74,7 +74,7 @@ export default async function PdfViewPage() {
         id: attachment.id,
         lessonId: lesson.id,
         title: lesson.title,
-        classLabel: `Class ${index + 1}`,
+        classLabel: `Clase ${index + 1}`,
         url: attachment.url,
       }));
     });

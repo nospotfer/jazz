@@ -147,7 +147,7 @@ export default async function LessonNotesPage({
     <LessonNotesEditor
       courseId={params.courseId}
       lessonId={params.lessonId}
-      classLabel={`Class ${lessonIndex + 1}`}
+      classLabel={`Clase ${lessonIndex + 1}`}
       lessonTitle={lesson.title}
       isPrivilegedViewer={isPrivilegedViewer}
       studentNotes={notesForViewer}

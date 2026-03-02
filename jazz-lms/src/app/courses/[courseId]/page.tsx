@@ -79,11 +79,11 @@ export default async function CourseDetailPage({
           <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <BookOpen className="h-4 w-4" />
-              {course.chapters.length} chapter{course.chapters.length !== 1 ? 's' : ''}
+              {course.chapters.length} capítulo{course.chapters.length !== 1 ? 's' : ''}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {totalLessons} lesson{totalLessons !== 1 ? 's' : ''}
+              {totalLessons} lección{totalLessons !== 1 ? 'es' : ''}
             </span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default async function CourseDetailPage({
         {/* Course content */}
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-xl font-serif font-semibold text-foreground">
-            Course Content
+            Contenido del curso
           </h2>
           <div className="space-y-4">
             {course.chapters.map((chapter, chapterIndex) => (
@@ -103,10 +103,10 @@ export default async function CourseDetailPage({
               >
                 <div className="px-4 py-3 bg-muted/50 border-b border-border">
                   <h3 className="font-semibold text-foreground">
-                    Chapter {chapterIndex + 1}: {chapter.title}
+                    Capítulo {chapterIndex + 1}: {chapter.title}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {chapter.lessons.length} lesson{chapter.lessons.length !== 1 ? 's' : ''}
+                    {chapter.lessons.length} lección{chapter.lessons.length !== 1 ? 'es' : ''}
                   </p>
                 </div>
                 <ul className="divide-y divide-border">
@@ -135,7 +135,7 @@ export default async function CourseDetailPage({
                 €{(course.price || DEFAULT_FULL_COURSE_PRICE_EUR).toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Full access to all 15 classes
+                Acceso completo a las 15 clases
               </p>
             </div>
             <CourseEnrollButton
@@ -143,7 +143,7 @@ export default async function CourseDetailPage({
               price={course.price || DEFAULT_FULL_COURSE_PRICE_EUR}
             />
             <div className="text-xs text-center text-muted-foreground">
-              Secure payment powered by Stripe
+              Pago seguro gestionado por Stripe
             </div>
           </div>
         </div>
