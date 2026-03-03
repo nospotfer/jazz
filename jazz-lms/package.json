@@ -16,6 +16,8 @@
     "postinstall": "prisma generate && node scripts/sync-pdf-worker.mjs",
     "admin:create": "npx tsx scripts/create-admin.ts",
     "admin:studio": "npx prisma studio",
+    "check:integrations": "npx tsx scripts/check-integrations.ts",
+    "deploy:prod": "bash scripts/deploy-production.sh",
     "mux:apply": "npx tsx scripts/apply-mux-playback-ids.ts",
     "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts",
     "stripe:sandbox:check": "node scripts/stripe-sandbox-check.mjs",

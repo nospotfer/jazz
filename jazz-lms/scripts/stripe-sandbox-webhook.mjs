@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const API_VERSION = '2024-06-20';
-const DEFAULT_WEBHOOK_URL = 'http://localhost:3001/api/webhooks/stripe';
+const DEFAULT_WEBHOOK_URL = 'http://localhost:3000/api/webhooks/stripe';
 const REQUIRED_ENV = ['DATABASE_URL', 'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'];
 
 const __filename = fileURLToPath(import.meta.url);

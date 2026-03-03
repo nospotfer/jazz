@@ -190,28 +190,42 @@ async function main() {
   );
 
   const bucket = process.env.SUPABASE_STORAGE_BUCKET as string;
-  const firstAttachment = lessons.flatMap((lesson) => lesson.attachments).at(0);
+  const allAttachments = lessons.flatMap((lesson) => lesson.attachments);
 
-  if (!firstAttachment) {
+  if (allAttachments.length === 0) {
     throw new Error('No attachment found to validate Supabase storage');
   }
+  let supabaseStorageOk = false;
+  let lastSupabaseError = 'Unknown Supabase storage validation error';
 
-  const storagePath = extractStoragePath(firstAttachment.url, bucket);
-  if (!storagePath || storagePath.includes('token=')) {
-    throw new Error('Attachment storage path is invalid');
+  for (const attachment of allAttachments.slice(0, 25)) {
+    const storagePath = extractStoragePath(attachment.url, bucket);
+    if (!storagePath || storagePath.includes('token=')) {
+      lastSupabaseError = 'Attachment storage path is invalid';
+      continue;
+    }
+
+    const { data: signedData, error: signedError } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(storagePath, 300);
+
+    if (signedError || !signedData?.signedUrl) {
+      lastSupabaseError = `Supabase signed URL failed for ${storagePath}: ${signedError?.message || 'no URL returned'}`;
+      continue;
+    }
+
+    const fileResponse = await fetch(signedData.signedUrl, { method: 'HEAD' });
+    if (!fileResponse.ok) {
+      lastSupabaseError = `Supabase file HEAD failed for ${storagePath}: HTTP ${fileResponse.status}`;
+      continue;
+    }
+
+    supabaseStorageOk = true;
+    break;
   }
 
-  const { data: signedData, error: signedError } = await supabase.storage
-    .from(bucket)
-    .createSignedUrl(storagePath, 300);
-
-  if (signedError || !signedData?.signedUrl) {
-    throw new Error(`Supabase signed URL failed: ${signedError?.message || 'no URL returned'}`);
-  }
-
-  const fileResponse = await fetch(signedData.signedUrl, { method: 'HEAD' });
-  if (!fileResponse.ok) {
-    throw new Error(`Supabase file HEAD failed: HTTP ${fileResponse.status}`);
+  if (!supabaseStorageOk) {
+    throw new Error(lastSupabaseError);
   }
 
   console.log('CHECKUP_OK');

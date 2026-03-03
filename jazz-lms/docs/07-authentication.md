@@ -488,15 +488,34 @@ user.created_at               // When account was created
 
 ### 2. OAuth Redirect URLs
 
-In your OAuth provider settings (e.g., GitHub), add:
-- **Development**: `http://localhost:3000/auth/callback`
-- **Production**: `https://your-domain.com/auth/callback`
+For this project, configure URLs in **two places**:
+
+#### A) Supabase Dashboard (Authentication → URL Configuration)
+
+- **Site URL (development)**: `http://localhost:3000`
+- **Additional Redirect URLs**:
+  - `http://localhost:3000/auth/callback`
+  - `https://your-domain.com/auth/callback`
+  - `https://*.vercel.app/auth/callback`
+
+#### B) Google Cloud Console (OAuth Client)
+
+- **Authorized JavaScript origins**:
+  - `https://feavujcllgbzlvdvkkxx.supabase.co`
+- **Authorized redirect URIs**:
+  - `https://feavujcllgbzlvdvkkxx.supabase.co/auth/v1/callback`
+
+Important:
+- Google redirects to Supabase first (`/auth/v1/callback`).
+- Supabase then redirects to your app (`/auth/callback`).
+- URLs must match exactly (`http` vs `https`, ports, trailing slashes).
 
 ### 3. Environment Variables
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ---

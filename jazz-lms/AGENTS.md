@@ -8,7 +8,7 @@ Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 
 
 - **Auth**: Supabase handles authentication. Two client factories exist: `src/utils/supabase/server.ts` (Server Components/API routes) and `src/utils/supabase/client.ts` (Client Components). Both return safe stubs when env vars are missing so local dev doesn't crash.
 - **Database**: Prisma with SQLite. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models: `User`, `Course → Chapter → Lesson → Attachment`, `Purchase`, `UserProgress`.
-- **Admin system**: Role-based via `User.role` field (string: `"USER"` | `"ADMIN"`). Guard helpers in `src/lib/admin.ts` (`requireAdmin()` redirects non-admins). Admin pages under `src/app/admin/` are layout-protected.
+- **Admin system**: Role-based via `User.role` field (string: `"USER" | "SUPER_ADMIN" | "COURSE_ADMIN" | "CONTENT_CREATOR" | "MODERATOR"`). Guard helpers in `src/lib/admin.ts` (`requireAdmin()`/`requirePermission()`). Admin pages under `src/app/admin/` are layout-protected.
 - **User sync**: On auth callback (`src/app/auth/callback/route.ts`), `syncUserWithDatabase()` from `src/lib/sync-user.ts` creates a Prisma `User` record matching the Supabase user.
 - **Payments**: Stripe checkout in `src/app/api/checkout/route.ts`. Webhook at `src/app/api/webhooks/stripe/route.ts` creates `Purchase` records on `checkout.session.completed`.
 
@@ -31,6 +31,7 @@ npm run seed         # Seed database (ts-node prisma/seed.ts)
 npm run seed:sample  # Sample data (npx tsx prisma/seed-sample.ts)
 npm run admin:create # Create admin user (needs ADMIN_EMAIL env var)
 npm run admin:studio # Open Prisma Studio
+npm run check:integrations # Validate Mux + Supabase storage + env
 npx prisma migrate dev --name <name>  # Apply migrations
 npx prisma generate  # Regenerate Prisma Client after schema changes
 ```
@@ -48,7 +49,7 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 
 ## Gotchas
 
-- **SQLite has no enums**: `User.role` is a `String` with `@default("USER")`, not a Prisma enum. Compare with `"ADMIN"` string literal.
+- **Role field is string-based**: `User.role` is a `String` with `@default("USER")`, not a Prisma enum. Use constants from `src/lib/admin/permissions.ts`.
 - **Prisma Client must be regenerated** after any `schema.prisma` change: run `npx prisma generate`.
 - **Middleware runs on all routes** (except static/image/favicon). Session refresh happens via `src/utils/supabase/middleware.ts`.
 - **No test framework** is configured. No test runner or test files exist.

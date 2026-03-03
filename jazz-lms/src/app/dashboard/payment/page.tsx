@@ -70,12 +70,12 @@ export default function PaymentPage() {
                     {purchase.itemTitle}
                   </p>
                   <p className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 mt-0.5">
-                    <span>{purchase.itemType}</span>
+                    <span>{purchase.itemType === 'Course' ? 'Curso' : purchase.itemType}</span>
                     <span>
-                      {new Date(purchase.createdAt).toLocaleDateString('pt-BR')}
+                      {new Date(purchase.createdAt).toLocaleDateString('es-ES')}
                     </span>
                     <span>
-                      {new Date(purchase.createdAt).toLocaleTimeString('pt-BR', {
+                      {new Date(purchase.createdAt).toLocaleTimeString('es-ES', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}

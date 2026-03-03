@@ -10,18 +10,13 @@ npx prisma migrate dev --name add_user_table
 npx prisma generate
 ```
 
-### 2️⃣ Configurar Seu Email como Admin
+### 2️⃣ Configurar seu admin por variável de ambiente
 
-Edite o arquivo `scripts/create-admin.ts` e substitua o email padrão pelo seu:
-
-```typescript
-const adminEmail = 'SEU-EMAIL@EXEMPLO.COM';  // ← Altere aqui!
-```
-
-Ou defina como variável de ambiente:
+Defina o email e a role de admin (modelo oficial por roles):
 
 ```bash
 export ADMIN_EMAIL="seu-email@exemplo.com"
+export ADMIN_ROLE="SUPER_ADMIN"
 ```
 
 ### 3️⃣ Criar o Usuário Admin
@@ -65,7 +60,7 @@ Consulte [ADMIN_SETUP.md](./ADMIN_SETUP.md) para documentação detalhada.
 
 ## ⚠️ IMPORTANTE
 
-O email configurado como ADMIN deve ser **exatamente o mesmo** que você usa para fazer login no Supabase!
+O email configurado em `ADMIN_EMAIL` deve ser **exatamente o mesmo** que você usa para fazer login no Supabase.
 
 ---
 

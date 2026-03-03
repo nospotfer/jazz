@@ -2,6 +2,18 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const VALID_ADMIN_ROLES = ['SUPER_ADMIN', 'COURSE_ADMIN', 'CONTENT_CREATOR', 'MODERATOR'] as const;
+
+function resolveAdminRole() {
+  const requestedRole = (process.env.ADMIN_ROLE || 'SUPER_ADMIN').trim().toUpperCase();
+  if (!VALID_ADMIN_ROLES.includes(requestedRole as (typeof VALID_ADMIN_ROLES)[number])) {
+    throw new Error(
+      `Invalid ADMIN_ROLE: ${requestedRole}. Valid roles: ${VALID_ADMIN_ROLES.join(', ')}`
+    );
+  }
+  return requestedRole;
+}
+
 async function main() {
   console.log('🔧 Criando usuário administrador...\n');
 
@@ -10,17 +22,18 @@ async function main() {
   
   // Você pode pegar o ID do seu usuário no Supabase Dashboard
   const adminId = process.env.ADMIN_USER_ID || 'admin-' + Date.now();
+  const adminRole = resolveAdminRole();
 
   try {
     const admin = await prisma.user.upsert({
       where: { email: adminEmail },
       update: {
-        role: 'ADMIN',
+        role: adminRole,
       },
       create: {
         id: adminId,
         email: adminEmail,
-        role: 'ADMIN',
+        role: adminRole,
       },
     });
 

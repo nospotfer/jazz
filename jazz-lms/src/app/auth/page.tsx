@@ -20,11 +20,27 @@ export default function AuthPage() {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
-    if (params.get('tab') === 'register') {
+    const tabParam = params.get('tab');
+    const flowParam = params.get('flow');
+    const oauthError = params.get('oauth_error');
+
+    if (tabParam === 'register' || flowParam === 'register') {
       setActiveTab('register');
     }
     if (urlEmail) {
       setLoginEmail(urlEmail);
+    }
+
+    if (oauthError) {
+      const targetTab: 'login' | 'register' = flowParam === 'register' ? 'register' : 'login';
+      const message = oauthError.trim() || 'No se pudo iniciar con Google. Inténtalo de nuevo.';
+
+      setActiveTab(targetTab);
+      if (targetTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
     }
   }, []);
 
@@ -83,10 +99,15 @@ export default function AuthPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const redirectTo = useMemo(() => {
     if (typeof window === 'undefined') return undefined;
-    return `${window.location.origin}/auth/callback`;
+    const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    const baseUrl = configuredAppUrl && /^https?:\/\//i.test(configuredAppUrl)
+      ? configuredAppUrl.replace(/\/+$/, '')
+      : window.location.origin;
+    return `${baseUrl}/auth/callback`;
   }, []);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -193,12 +214,49 @@ export default function AuthPage() {
   const handleGoogleAuth = async () => {
     setLoginError('');
     setRegisterError('');
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo,
-      },
-    });
+
+    if (!hasSupabaseConfig) {
+      const message = 'La autenticación con Google no está configurada en este entorno.';
+      if (activeTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
+      return;
+    }
+
+    setGoogleLoading(true);
+
+    try {
+      const callbackUrl = redirectTo ? `${redirectTo}?flow=${activeTab}` : undefined;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: callbackUrl,
+          queryParams: {
+            prompt: activeTab === 'register' ? 'consent' : 'select_account',
+          },
+        },
+      });
+
+      if (error) {
+        const message = error.message || 'No se pudo iniciar con Google';
+        if (activeTab === 'register') {
+          setRegisterError(message);
+        } else {
+          setLoginError(message);
+        }
+      }
+    } catch {
+      const message = 'No se pudo iniciar con Google. Inténtalo de nuevo.';
+      if (activeTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const inputClasses =
@@ -261,6 +319,7 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={handleGoogleAuth}
+            disabled={googleLoading || !hasSupabaseConfig}
             className="w-full flex items-center justify-center gap-3 py-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg text-base transition-colors border border-gray-300"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -281,7 +340,11 @@ export default function AuthPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {activeTab === 'register' ? 'Registrarse con Google' : 'Iniciar sesión con Google'}
+            {googleLoading
+              ? 'Redirigiendo a Google...'
+              : activeTab === 'register'
+                ? 'Registrarse con Google'
+                : 'Iniciar sesión con Google'}
           </button>
 
           {!hasSupabaseConfig && (

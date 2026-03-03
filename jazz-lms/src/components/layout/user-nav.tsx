@@ -87,7 +87,7 @@ export const UserNav = async () => {
           <>
             <DropdownMenuItem asChild>
               <Link href="/admin" className="cursor-pointer">
-                🔐 Intranet Admin
+                🔐 Panel de administración
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

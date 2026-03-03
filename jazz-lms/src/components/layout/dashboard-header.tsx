@@ -305,7 +305,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-500 hover:bg-accent transition-colors"
                       >
-                        🔐 Intranet Admin
+                        🔐 Panel de administración
                       </Link>
                     )}
                     <Link

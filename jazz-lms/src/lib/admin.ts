@@ -94,20 +94,13 @@ export async function isAdmin(): Promise<boolean> {
     return false;
   }
 
-  const isOwner = isOwnerEmail(ctx.dbUser.email);
-  const roleAllowed = isAdminRole(ctx.dbUser.role);
-
-  return isOwner && roleAllowed;
+  return isAdminRole(ctx.dbUser.role);
 }
 
 export async function can(permission: Parameters<typeof hasPermission>[1]): Promise<boolean> {
   const ctx = await getAuthContext();
 
   if (!ctx) {
-    return false;
-  }
-
-  if (!isOwnerEmail(ctx.dbUser.email)) {
     return false;
   }
 
