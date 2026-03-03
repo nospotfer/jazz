@@ -8,7 +8,7 @@ async function main() {
       data: {
         title: 'La Cultura del Jazz',
         description: 'Curso Online con Enric Vazquez Ramonich',
-        price: 99.99,
+        price: 29.99,
         chapters: {
           create: [
             {

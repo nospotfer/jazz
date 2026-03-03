@@ -4,15 +4,12 @@ import { Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import {
   useDashboardPreferences,
-  type DashboardLanguage,
 } from '@/components/providers/dashboard-preferences-provider';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const {
     t,
-    language,
-    setLanguage,
     notifications,
     updateNotification,
   } = useDashboardPreferences();
@@ -120,16 +117,9 @@ export default function SettingsPage() {
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
           {t('language', 'Idioma')}
         </h2>
-        <select
-          value={language}
-          onChange={(event) => setLanguage(event.target.value as DashboardLanguage)}
-          className="w-full px-3 py-2.5 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
-        >
-          <option value="en">Inglés</option>
-          <option value="es">Español</option>
-          <option value="pt">Português</option>
-          <option value="fr">Français</option>
-        </select>
+        <div className="w-full px-3 py-2.5 bg-background border border-primary/40 rounded-lg text-foreground">
+          Español (predeterminado)
+        </div>
       </div>
     </div>
   );

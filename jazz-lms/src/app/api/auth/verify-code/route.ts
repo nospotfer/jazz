@@ -13,21 +13,21 @@ export async function POST(request: Request) {
   try {
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, 'your-project.supabase.co')) {
       return NextResponse.json(
-        { error: 'Supabase URL is not configured in server environment.' },
+        { error: 'La URL de Supabase no está configurada en el entorno del servidor.' },
         { status: 500 }
       );
     }
 
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'your-anon-key')) {
       return NextResponse.json(
-        { error: 'Supabase anon key is not configured in server environment.' },
+        { error: 'La clave pública de Supabase no está configurada en el entorno del servidor.' },
         { status: 500 }
       );
     }
 
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')) {
       return NextResponse.json(
-        { error: 'SUPABASE_SERVICE_ROLE_KEY is required for email verification flow.' },
+        { error: 'SUPABASE_SERVICE_ROLE_KEY es obligatoria para la verificación por correo.' },
         { status: 500 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY in environment variables.',
+            'La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.',
         },
         { status: 500 }
       );
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     if (!normalizedEmail || !code) {
       return NextResponse.json(
-        { error: 'Email and code are required' },
+        { error: 'El correo y el código son obligatorios.' },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     const cleanCode = code.replace(/\D/g, '');
     if (cleanCode.length < 6) {
       return NextResponse.json(
-        { error: 'Invalid verification code format' },
+        { error: 'El formato del código de verificación es inválido.' },
         { status: 400 }
       );
     }
@@ -81,12 +81,12 @@ export async function POST(request: Request) {
       const msg = error.message?.toLowerCase() || '';
       if (msg.includes('expired')) {
         return NextResponse.json(
-          { error: 'Verification code has expired. Please request a new one.' },
+          { error: 'El código de verificación ha expirado. Solicita uno nuevo.' },
           { status: 400 }
         );
       }
       return NextResponse.json(
-        { error: 'Invalid verification code. Please check and try again.' },
+        { error: 'El código de verificación es inválido. Revísalo e inténtalo de nuevo.' },
         { status: 400 }
       );
     }
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error verifying code:', error);
     return NextResponse.json(
-      { error: 'Failed to verify code' },
+      { error: 'No se pudo verificar el código.' },
       { status: 500 }
     );
   }

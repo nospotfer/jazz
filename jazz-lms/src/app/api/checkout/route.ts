@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { isLocalTestRequest } from '@/lib/test-mode';
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 
 export const runtime = 'nodejs';
 
@@ -17,17 +18,17 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse('No autorizado', { status: 401 });
     }
 
     if (!user.email) {
-      return new NextResponse('User email is required', { status: 400 });
+      return new NextResponse('El correo del usuario es obligatorio', { status: 400 });
     }
 
     const { courseId, source } = await req.json();
 
     if (!courseId) {
-      return new NextResponse('Bad Request', { status: 400 });
+      return new NextResponse('Solicitud inválida', { status: 400 });
     }
 
     const course = await db.course.findUnique({
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     });
 
     if (!course) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse('Curso no encontrado', { status: 404 });
     }
 
     // Check if already purchased
@@ -51,11 +52,12 @@ export async function POST(req: Request) {
     });
 
     if (existingPurchase) {
-      return new NextResponse('Already purchased', { status: 400 });
+      return new NextResponse('El curso ya fue comprado', { status: 400 });
     }
 
-    const numericPrice = Number(course.price ?? 0);
-    const isFreeCourse = !Number.isFinite(numericPrice) || numericPrice <= 0;
+    const configuredPrice = Number(course.price ?? 0);
+    const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
+    const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
 
     if (isFreeCourse) {
       await db.purchase.create({
@@ -147,6 +149,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.log('[CHECKOUT_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Error interno del servidor', { status: 500 });
   }
 }

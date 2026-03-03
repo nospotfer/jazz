@@ -48,6 +48,7 @@ export default async function CourseDetailPage({
   }
 
   const hasPurchased = course.purchases.length > 0;
+  const displayPrice = course.price && course.price > 0 ? DEFAULT_FULL_COURSE_PRICE_EUR : 0;
   const totalLessons = course.chapters.reduce(
     (acc, chapter) => acc + chapter.lessons.length,
     0
@@ -132,7 +133,7 @@ export default async function CourseDetailPage({
           <div className="sticky top-8 bg-card border border-border rounded-xl p-6 space-y-4">
             <div className="text-center">
               <p className="text-3xl font-bold text-primary">
-                €{(course.price || DEFAULT_FULL_COURSE_PRICE_EUR).toFixed(2)}
+                €{displayPrice.toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 Acceso completo a las 15 clases
@@ -140,7 +141,7 @@ export default async function CourseDetailPage({
             </div>
             <CourseEnrollButton
               courseId={course.id}
-              price={course.price || DEFAULT_FULL_COURSE_PRICE_EUR}
+              price={displayPrice}
             />
             <div className="text-xs text-center text-muted-foreground">
               Pago seguro gestionado por Stripe

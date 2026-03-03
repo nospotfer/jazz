@@ -13,21 +13,21 @@ export async function POST(request: Request) {
   try {
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, 'your-project.supabase.co')) {
       return NextResponse.json(
-        { error: 'Supabase URL is not configured in server environment.' },
+        { error: 'La URL de Supabase no está configurada en el entorno del servidor.' },
         { status: 500 }
       );
     }
 
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'your-anon-key')) {
       return NextResponse.json(
-        { error: 'Supabase anon key is not configured in server environment.' },
+        { error: 'La clave pública de Supabase no está configurada en el entorno del servidor.' },
         { status: 500 }
       );
     }
 
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')) {
       return NextResponse.json(
-        { error: 'SUPABASE_SERVICE_ROLE_KEY is required for registration flow.' },
+        { error: 'SUPABASE_SERVICE_ROLE_KEY es obligatoria para el flujo de registro.' },
         { status: 500 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY in environment variables.',
+            'La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.',
         },
         { status: 500 }
       );
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     if (!normalizedEmail || !password || !fullName) {
       return NextResponse.json(
-        { error: 'Email, password and full name are required' },
+        { error: 'Correo, contraseña y nombre completo son obligatorios.' },
         { status: 400 }
       );
     }
@@ -59,14 +59,14 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
-        { error: 'Invalid email format' },
+        { error: 'El formato del correo es inválido.' },
         { status: 400 }
       );
     }
 
     if (password.length < 8) {
       return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
+        { error: 'La contraseña debe tener al menos 8 caracteres.' },
         { status: 400 }
       );
     }
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
 
       if (createError || !createdUser.user) {
         return NextResponse.json(
-          { error: createError?.message || 'Failed to create auth user' },
+          { error: createError?.message || 'No se pudo crear el usuario de autenticación.' },
           { status: 400 }
         );
       }
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
 
     if (otpError) {
       return NextResponse.json(
-        { error: otpError.message || 'Failed to send verification code' },
+        { error: otpError.message || 'No se pudo enviar el código de verificación.' },
         { status: 400 }
       );
     }

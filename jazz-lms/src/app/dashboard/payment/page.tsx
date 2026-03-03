@@ -6,7 +6,7 @@ import axios from 'axios';
 
 interface PurchaseRecord {
   id: string;
-  itemType: 'Course';
+  itemType: 'Curso';
   itemTitle: string;
   amount: number;
   createdAt: string;
@@ -70,7 +70,7 @@ export default function PaymentPage() {
                     {purchase.itemTitle}
                   </p>
                   <p className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 mt-0.5">
-                    <span>{purchase.itemType === 'Course' ? 'Curso' : purchase.itemType}</span>
+                    <span>{purchase.itemType}</span>
                     <span>
                       {new Date(purchase.createdAt).toLocaleDateString('es-ES')}
                     </span>

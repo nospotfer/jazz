@@ -17,6 +17,7 @@
     "admin:create": "npx tsx scripts/create-admin.ts",
     "admin:studio": "npx prisma studio",
     "check:integrations": "npx tsx scripts/check-integrations.ts",
+    "course:price:fix": "npx tsx scripts/fix-course-price.ts",
     "deploy:prod": "bash scripts/deploy-production.sh",
     "mux:apply": "npx tsx scripts/apply-mux-playback-ids.ts",
     "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts",

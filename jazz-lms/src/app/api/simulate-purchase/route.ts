@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       courseId,
       userId: 'simulated-user',
       status: 'completed',
-      amount: 49.99,
+      amount: 29.99,
       currency: 'EUR',
       createdAt: new Date().toISOString(),
     };
