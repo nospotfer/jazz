@@ -4,7 +4,7 @@ const features = [
   {
     name: 'Acceso de por vida',
     description:
-      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
+      'Aprende los fundamentos del jazz y entiende su evolución cultural y musical.',
     icon: BookOpen,
   },
   {
@@ -27,14 +27,14 @@ export const Benefits = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-primary">
-            Learn something new
+            Aprende algo nuevo
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-serif">
-            Everything you need to learn about Jazz
+            Todo lo que necesitas para aprender sobre jazz
           </p>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores
-            impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis
+            Descubre los conceptos esenciales, los estilos más importantes y
+            una forma clara de escuchar y disfrutar el jazz en profundidad.
             ratione.
           </p>
         </div>

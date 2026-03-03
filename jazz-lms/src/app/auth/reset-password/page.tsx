@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
         if (authCode) {
           const { error: codeError } = await supabase.auth.exchangeCodeForSession(authCode);
           if (codeError) {
-            setTokenError('This reset link is invalid or expired. Request a new one.');
+            setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
             setTokenValid(false);
             setLoadingToken(false);
             return;
@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
             });
 
             if (sessionError) {
-              setTokenError('This reset link is invalid or expired. Request a new one.');
+              setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
               setTokenValid(false);
               setLoadingToken(false);
               return;
@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
 
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
-          setTokenError('This reset link is invalid or expired. Request a new one.');
+          setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
           setTokenValid(false);
           setLoadingToken(false);
           return;
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
 
         setTokenValid(true);
       } catch {
-        setTokenError('Unable to validate reset link. Request a new one.');
+        setTokenError('No se pudo validar el enlace de restablecimiento. Solicita uno nuevo.');
         setTokenValid(false);
       } finally {
         setLoadingToken(false);
@@ -84,7 +84,7 @@ export default function ResetPasswordPage() {
     e.preventDefault();
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError('La contraseña debe tener al menos 8 caracteres');
       return;
     }
 
@@ -94,18 +94,18 @@ export default function ResetPasswordPage() {
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
-        setError(updateError.message || 'Unable to update password');
+        setError(updateError.message || 'No se pudo actualizar la contraseña');
         return;
       }
 
-      setToastMessage('Password updated successfully!');
+      setToastMessage('¡Contraseña actualizada con éxito!');
 
       setTimeout(async () => {
         await supabase.auth.signOut();
         router.replace('/auth?tab=login');
       }, 1200);
     } catch {
-      setError('Unable to update password');
+      setError('No se pudo actualizar la contraseña');
     } finally {
       setSaving(false);
     }
@@ -122,41 +122,41 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
         <div className="p-5 sm:p-8 space-y-5">
           {loadingToken ? (
-            <div className="text-center text-[#D1D5DB]">Validating reset link...</div>
+            <div className="text-center text-[#D1D5DB]">Validando enlace de restablecimiento...</div>
           ) : !tokenValid ? (
             <div className="space-y-4">
-              <h1 className="text-xl sm:text-2xl font-bold text-white">Reset link invalid</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Enlace de restablecimiento inválido</h1>
               <p className="text-sm text-[#9CA3AF]">{tokenError}</p>
               <button
                 type="button"
                 onClick={() => router.push('/auth/forgot-password')}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base transition-colors"
               >
-                Request new link
+                Solicitar nuevo enlace
               </button>
               <button
                 type="button"
                 onClick={() => router.push('/auth?tab=login')}
                 className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-base font-medium transition-colors"
               >
-                Back to Sign In
+                Volver a iniciar sesión
               </button>
             </div>
           ) : (
             <>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">Create new password</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Crear nueva contraseña</h1>
 
               <form onSubmit={handleUpdatePassword} className="space-y-4">
                 <div>
                   <label htmlFor="newPassword" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
-                    New Password
+                    Nueva contraseña
                   </label>
 
                   <div className="relative">
                     <input
                       id="newPassword"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Your new password"
+                      placeholder="Tu nueva contraseña"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className={`${inputClasses} pr-11`}
@@ -168,7 +168,7 @@ export default function ResetPasswordPage() {
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                     >
                       {showPassword ? (
                         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -186,7 +186,7 @@ export default function ResetPasswordPage() {
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#9CA3AF] mt-1.5">Minimum 8 characters</p>
+                  <p className="text-xs text-[#9CA3AF] mt-1.5">Mínimo 8 caracteres</p>
                 </div>
 
                 {error && (
@@ -200,7 +200,7 @@ export default function ResetPasswordPage() {
                   disabled={saving}
                   className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {saving ? 'Updating...' : 'Update Password'}
+                  {saving ? 'Actualizando...' : 'Actualizar contraseña'}
                 </button>
               </form>
             </>

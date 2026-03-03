@@ -22,7 +22,7 @@ async function main() {
       description:
         'Discover the fundamentals of jazz music, from its rich history to essential theory. Perfect for beginners and enthusiasts looking to deepen their understanding of this iconic genre.',
       imageUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800',
-      price: 49.99,
+      price: 29.99,
       isPublished: true,
     },
   });

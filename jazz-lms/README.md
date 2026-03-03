@@ -25,6 +25,7 @@ Create a `.env` file in the root of the project and add the following environmen
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 DATABASE_URL="postgresql://user:password@host:port/database"
 
 # Stripe
@@ -49,6 +50,49 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Google OAuth URLs (Required)
+
+For Google login/register to work, configure both Supabase and Google Console URLs exactly.
+
+### Supabase Dashboard
+
+Go to **Authentication → URL Configuration** and set:
+
+- **Site URL (dev):** `http://localhost:3000`
+- **Additional Redirect URLs:**
+	- `http://localhost:3000/auth/callback`
+	- `https://your-domain.com/auth/callback`
+	- `https://*.vercel.app/auth/callback`
+
+### Google Cloud Console
+
+Go to **APIs & Services → Credentials → OAuth 2.0 Client IDs** and set:
+
+- **Authorized JavaScript origins:**
+	- `https://feavujcllgbzlvdvkkxx.supabase.co`
+- **Authorized redirect URIs:**
+	- `https://feavujcllgbzlvdvkkxx.supabase.co/auth/v1/callback`
+
+> Note: For Supabase OAuth providers, Google redirects back to Supabase (`/auth/v1/callback`), and Supabase then redirects to your app callback (`/auth/callback`).
+
+## Stripe Sandbox
+
+Use test mode (no real charges) with `sk_test` / `pk_test` keys.
+
+```bash
+# 1) Validate Stripe sandbox env + auth
+npm run stripe:sandbox:check
+
+# 2) Start app locally
+npm run dev
+
+# 3) Simulate a signed Stripe webhook locally
+npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3000/api/webhooks/stripe --cleanup
+
+# 4) Run full sandbox check in one command (requires app running)
+npm run stripe:sandbox:all
+```
 
 ## Deployment
 

@@ -4,15 +4,12 @@ import { Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import {
   useDashboardPreferences,
-  type DashboardLanguage,
 } from '@/components/providers/dashboard-preferences-provider';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const {
     t,
-    language,
-    setLanguage,
     notifications,
     updateNotification,
   } = useDashboardPreferences();
@@ -20,20 +17,20 @@ export default function SettingsPage() {
   const themeOptions = [
     {
       value: 'dark',
-      label: t('dark', 'Dark'),
-      description: t('darkDesc', 'Dark background with light text'),
+      label: t('dark', 'Oscuro'),
+      description: t('darkDesc', 'Fondo oscuro con texto claro'),
       icon: Moon,
     },
     {
       value: 'light',
-      label: t('light', 'Light'),
-      description: t('lightDesc', 'Light background with dark text'),
+      label: t('light', 'Claro'),
+      description: t('lightDesc', 'Fondo claro con texto oscuro'),
       icon: Sun,
     },
     {
       value: 'system',
-      label: t('system', 'System'),
-      description: t('systemDesc', 'Follow your system preferences'),
+      label: t('system', 'Sistema'),
+      description: t('systemDesc', 'Seguir preferencias del sistema'),
       icon: Monitor,
     },
   ];
@@ -42,17 +39,17 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
-          {t('settingsTitle', 'Settings')}
+          {t('settingsTitle', 'Configuración')}
         </h1>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          {t('settingsSubtitle', 'Customize your experience')}
+          {t('settingsSubtitle', 'Personaliza tu experiencia')}
         </p>
       </div>
 
       {/* Appearance */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('appearance', 'Appearance')}
+          {t('appearance', 'Apariencia')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {themeOptions.map((option) => {
@@ -82,32 +79,32 @@ export default function SettingsPage() {
       {/* Notifications */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('notifications', 'Notifications')}
+          {t('notifications', 'Notificaciones')}
         </h2>
         <div className="space-y-4">
           <ToggleSetting
-            label={t('emailNotifications', 'Email Notifications')}
+            label={t('emailNotifications', 'Notificaciones por correo')}
             description={t(
               'emailNotificationsDesc',
-              'Receive updates about new courses and promotions'
+              'Recibe novedades sobre nuevos cursos y promociones'
             )}
             checked={notifications.emailNotifications}
             onChange={(value) => updateNotification('emailNotifications', value)}
           />
           <ToggleSetting
-            label={t('courseUpdates', 'Course Updates')}
+            label={t('courseUpdates', 'Actualizaciones del curso')}
             description={t(
               'courseUpdatesDesc',
-              "Get notified when courses you're enrolled in have new content"
+              'Recibe avisos cuando tus cursos tengan contenido nuevo'
             )}
             checked={notifications.courseUpdates}
             onChange={(value) => updateNotification('courseUpdates', value)}
           />
           <ToggleSetting
-            label={t('progressReminders', 'Progress Reminders')}
+            label={t('progressReminders', 'Recordatorios de progreso')}
             description={t(
               'progressRemindersDesc',
-              'Receive reminders to continue your learning'
+              'Recibe recordatorios para continuar aprendiendo'
             )}
             checked={notifications.progressReminders}
             onChange={(value) => updateNotification('progressReminders', value)}
@@ -118,18 +115,11 @@ export default function SettingsPage() {
       {/* Language */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('language', 'Language')}
+          {t('language', 'Idioma')}
         </h2>
-        <select
-          value={language}
-          onChange={(event) => setLanguage(event.target.value as DashboardLanguage)}
-          className="w-full px-3 py-2.5 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
-        >
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="pt">Português</option>
-          <option value="fr">Français</option>
-        </select>
+        <div className="w-full px-3 py-2.5 bg-background border border-primary/40 rounded-lg text-foreground">
+          Español (predeterminado)
+        </div>
       </div>
     </div>
   );

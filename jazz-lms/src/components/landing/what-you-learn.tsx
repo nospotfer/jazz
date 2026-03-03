@@ -25,23 +25,23 @@ export function WhatYouLearn() {
             {/* Left side - Text content */}
             <div className="flex flex-col justify-center">
               <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-amber-600">
-                What You&apos;ll Learn
+                Lo que aprenderás
               </h2>
 
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                This course is designed so that you not only listen to jazz,{' '}
+                Este curso está diseñado para que no solo escuches jazz,{' '}
                 <span className="font-bold text-gray-900 dark:text-white">
-                  but you live it and feel it
-                </span>. You will discover its true essence, its history and the elements that make it unique and emotional.
+                  sino que lo vivas y lo sientas
+                </span>. Descubrirás su verdadera esencia, su historia y los elementos que lo hacen único y emocional.
               </p>
 
               <div className="space-y-6 mb-8">
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-amber-600 mt-2.5 flex-shrink-0" />
                   <div>
-                    <h3 className="text-lg font-bold text-amber-600 mb-1">Jazz as independent culture</h3>
+                    <h3 className="text-lg font-bold text-amber-600 mb-1">El jazz como cultura independiente</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                      Understand that jazz is its own musical culture that has profoundly influenced all modern popular music.
+                      Comprende que el jazz es una cultura musical propia que ha influido profundamente en toda la música popular moderna.
                     </p>
                   </div>
                 </div>
@@ -49,9 +49,9 @@ export function WhatYouLearn() {
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-amber-600 mt-2.5 flex-shrink-0" />
                   <div>
-                    <h3 className="text-lg font-bold text-amber-600 mb-1">Improvisation as original creation</h3>
+                    <h3 className="text-lg font-bold text-amber-600 mb-1">Improvisación como creación original</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                      Learn how improvisation becomes the jazz musician&apos;s authorship in each performance.
+                      Aprende cómo la improvisación se convierte en la autoría del músico de jazz en cada interpretación.
                     </p>
                   </div>
                 </div>
@@ -59,9 +59,9 @@ export function WhatYouLearn() {
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-amber-600 mt-2.5 flex-shrink-0" />
                   <div>
-                    <h3 className="text-lg font-bold text-amber-600 mb-1">The musician&apos;s personal &quot;Sound&quot;</h3>
+                    <h3 className="text-lg font-bold text-amber-600 mb-1">El &quot;sonido&quot; personal del músico</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                      Discover how to identify a musician by their unique sound, timbre, color and artistic personality.
+                      Descubre cómo identificar a un músico por su sonido único, timbre, color y personalidad artística.
                     </p>
                   </div>
                 </div>
@@ -69,9 +69,9 @@ export function WhatYouLearn() {
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-amber-600 mt-2.5 flex-shrink-0" />
                   <div>
-                    <h3 className="text-lg font-bold text-amber-600 mb-1">Creative freedom &amp; collaborative composition</h3>
+                    <h3 className="text-lg font-bold text-amber-600 mb-1">Libertad creativa y composición colaborativa</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                      Understand how jazz integrates diverse sonorities and combines composition with improvisation.
+                      Entiende cómo el jazz integra sonoridades diversas y combina composición con improvisación.
                     </p>
                   </div>
                 </div>
@@ -81,7 +81,7 @@ export function WhatYouLearn() {
                 onClick={() => router.push('/auth?tab=register')}
                 className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 hover:shadow-lg w-fit"
               >
-                Sign Up
+                Regístrate
               </button>
             </div>
 
@@ -100,7 +100,7 @@ export function WhatYouLearn() {
                 playsInline
               >
                 <source src="/images/videojazz.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
+                Tu navegador no soporta la etiqueta de video.
               </video>
 
               <div className="absolute inset-0 bg-black/10 pointer-events-none" />
@@ -110,7 +110,7 @@ export function WhatYouLearn() {
                 className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
                   isHovered ? 'opacity-100' : 'opacity-0'
                 }`}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
+                aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
               >
                 {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
               </button>

@@ -3,6 +3,8 @@
 ## Overview
 Your Supabase database is **IPv6-only**, which means Vercel (IPv4-only platform) must use the **Session Pooler** to connect.
 
+> For full go-live (including Mux, PDFs, admin roles and messaging), use: `PRODUCTION_GO_LIVE_CHECKLIST.md`.
+
 ---
 
 ## Required Environment Variables
@@ -16,7 +18,7 @@ Your Supabase database is **IPv6-only**, which means Vercel (IPv4-only platform)
 
 ---
 
-## Variables to Add (6 total):
+## Variables to Add (core 6 for app/auth/checkout):
 
 ### 1. Supabase URL
 **Name:** `NEXT_PUBLIC_SUPABASE_URL`  

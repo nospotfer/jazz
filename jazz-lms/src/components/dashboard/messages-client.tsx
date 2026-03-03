@@ -62,7 +62,7 @@ export function MessagesClient() {
         current && nextThreads.some((thread) => thread.id === current) ? current : null
       );
     } catch {
-      toast.error('Could not load conversations.');
+      toast.error('No se pudieron cargar las conversaciones.');
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export function MessagesClient() {
       setMessages(response.data.messages || []);
       setProfessorEmail(String(response.data.professorEmail || professorEmail));
     } catch {
-      toast.error('Could not load this conversation.');
+      toast.error('No se pudo cargar esta conversación.');
     }
   };
 
@@ -97,7 +97,7 @@ export function MessagesClient() {
 
     submitLockRef.current = true;
     setIsSending(true);
-    setSendStatus('Sending...');
+    setSendStatus('Enviando...');
     try {
       const response = await axios.post('/api/messages', {
         subject,
@@ -106,7 +106,7 @@ export function MessagesClient() {
 
       const createdThreadId = String(response.data?.id || '');
       const createdAt = String(response.data?.createdAt || new Date().toISOString());
-      const normalizedSubject = subject.trim() || 'General message';
+      const normalizedSubject = subject.trim() || 'Mensaje general';
       const pendingMessageBody = newMessage;
 
       if (createdThreadId) {
@@ -148,7 +148,7 @@ export function MessagesClient() {
             threadId: createdThreadId,
             senderId: 'me',
             senderEmail: 'you',
-            senderName: 'You',
+            senderName: 'Tú',
             senderRole: 'student',
             body: pendingMessageBody,
             createdAt,
@@ -162,18 +162,18 @@ export function MessagesClient() {
       if (createdThreadId) {
         loadThreadMessages(createdThreadId);
       }
-      setSendStatus('Sent now');
+      setSendStatus('Enviado');
       const createdNewThread = Boolean(response.data?.createdNewThread);
       toast.success(
         createdNewThread
-          ? 'Sent. New conversation created in Inbox.'
-          : 'Sent. Message added to existing conversation.'
+          ? 'Enviado. Se creó una nueva conversación en la bandeja.'
+          : 'Enviado. El mensaje se añadió a la conversación existente.'
       );
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? String(error.response?.data || 'Could not send message.')
-        : 'Could not send message.';
-      setSendStatus('Failed to send');
+        ? String(error.response?.data || 'No se pudo enviar el mensaje.')
+        : 'No se pudo enviar el mensaje.';
+      setSendStatus('Error al enviar');
       toast.error(message);
     } finally {
       setIsSending(false);
@@ -187,7 +187,7 @@ export function MessagesClient() {
 
     submitLockRef.current = true;
     setIsSending(true);
-    setSendStatus('Sending...');
+    setSendStatus('Enviando...');
     try {
       const optimisticCreatedAt = new Date().toISOString();
       const optimisticBody = replyText;
@@ -199,7 +199,7 @@ export function MessagesClient() {
           threadId: selectedThreadId,
           senderId: 'me',
           senderEmail: 'you',
-          senderName: 'You',
+            senderName: 'Tú',
           senderRole: isProfessor ? 'professor' : 'student',
           body: optimisticBody,
           createdAt: optimisticCreatedAt,
@@ -225,13 +225,13 @@ export function MessagesClient() {
       setReplyText('');
       loadThreadMessages(selectedThreadId);
       loadThreads();
-      setSendStatus('Sent now');
-      toast.success('Reply sent successfully.');
+      setSendStatus('Enviado');
+      toast.success('Respuesta enviada correctamente.');
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? String(error.response?.data || 'Could not send reply.')
-        : 'Could not send reply.';
-      setSendStatus('Failed to send');
+        ? String(error.response?.data || 'No se pudo enviar la respuesta.')
+        : 'No se pudo enviar la respuesta.';
+      setSendStatus('Error al enviar');
       toast.error(message);
     } finally {
       setIsSending(false);
@@ -248,11 +248,11 @@ export function MessagesClient() {
   return (
     <div className="max-w-[1300px] mx-auto space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Messages</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Mensajes</h1>
         <p className="text-muted-foreground mt-1">
           {isProfessor
-            ? 'Inbox — reply to student messages directly from the platform.'
-            : 'Send questions to Professor Enric Vázquez.'}
+            ? 'Bandeja — responde a los mensajes de estudiantes directamente desde la plataforma.'
+            : 'Envía preguntas al Profesor Enric Vázquez.'}
         </p>
       </div>
 
@@ -260,14 +260,14 @@ export function MessagesClient() {
         <aside className="rounded-xl border border-border bg-card p-3 space-y-3">
           <div className="flex items-center gap-2 px-1">
             <Mail className="h-4 w-4 text-primary" />
-            <p className="text-sm font-medium text-foreground">Inbox Conversations</p>
+            <p className="text-sm font-medium text-foreground">Conversaciones de la bandeja</p>
           </div>
 
           {loading ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">Loading…</div>
+            <div className="py-8 text-center text-muted-foreground text-sm">Cargando…</div>
           ) : threads.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground text-sm">
-              No messages yet.
+              Aún no hay mensajes.
             </div>
           ) : (
             <div className="space-y-2 max-h-[62dvh] overflow-y-auto pr-1">
@@ -286,14 +286,14 @@ export function MessagesClient() {
                     <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                       {isProfessor
                         ? `${thread.studentEmail} • ID: ${thread.studentId}`
-                        : (thread.lastMessage || 'No messages')}
+                        : (thread.lastMessage || 'Sin mensajes')}
                     </p>
                     <p className="text-[11px] text-muted-foreground/70 mt-1">
                       {new Date(thread.updatedAt).toLocaleString('pt-BR')}
                     </p>
                     {thread.unreadCount > 0 && (
                       <span className="inline-flex mt-1 text-[11px] px-1.5 py-0.5 rounded-full border border-primary/40 text-primary">
-                        {thread.unreadCount} unread
+                        {thread.unreadCount} sin leer
                       </span>
                     )}
                   </button>
@@ -306,25 +306,25 @@ export function MessagesClient() {
         <section className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
           {!isProfessor && !selectedThread && (
             <form onSubmit={handleCreateThread} className="space-y-2.5 border border-border rounded-lg p-3">
-              <p className="text-sm font-semibold text-foreground">Compose</p>
+              <p className="text-sm font-semibold text-foreground">Redactar</p>
               <input
                 type="text"
                 value={subject}
                 onChange={(event) => setSubject(event.target.value)}
-                placeholder="Subject (optional)"
+                placeholder="Asunto (opcional)"
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
               />
               <textarea
                 value={newMessage}
                 onChange={(event) => setNewMessage(event.target.value)}
-                placeholder="Write your message to Professor Enric Vázquez..."
+                placeholder="Escribe tu mensaje al Profesor Enric Vázquez..."
                 className="w-full min-h-[110px] rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground resize-y"
               />
               <Button type="submit" disabled={isSending || !newMessage.trim()}>
                 {isSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                Send
+                Enviar
               </Button>
-              {sendStatus && <p className="text-xs text-muted-foreground">Status: {sendStatus}</p>}
+              {sendStatus && <p className="text-xs text-muted-foreground">Estado: {sendStatus}</p>}
             </form>
           )}
 
@@ -335,7 +335,7 @@ export function MessagesClient() {
                   <p className="text-base font-semibold text-foreground">{selectedThread.subject}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {isProfessor
-                      ? `Student: ${selectedThread.studentEmail} • ID: ${selectedThread.studentId}`
+                      ? `Estudiante: ${selectedThread.studentEmail} • ID: ${selectedThread.studentId}`
                       : 'Professor Enric Vázquez'}
                   </p>
                 </div>
@@ -345,7 +345,7 @@ export function MessagesClient() {
                     variant="ghost"
                     size="icon"
                     onClick={handleCloseConversation}
-                    aria-label="Close conversation"
+                    aria-label="Cerrar conversación"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -357,7 +357,7 @@ export function MessagesClient() {
                   return (
                     <div key={message.id} className="rounded-lg border border-border bg-background px-3 py-2.5">
                       <p className="text-xs text-muted-foreground mb-1">
-                        {message.senderRole === 'professor' ? 'Professor Enric Vázquez' : (message.senderName || message.senderEmail)} •{' '}
+                        {message.senderRole === 'professor' ? 'Profesor Enric Vázquez' : (message.senderName || message.senderEmail)} •{' '}
                         {new Date(message.createdAt).toLocaleString('pt-BR')}
                       </p>
                       <p className="text-sm text-foreground whitespace-pre-wrap">{message.body}</p>
@@ -370,20 +370,20 @@ export function MessagesClient() {
                 <textarea
                   value={replyText}
                   onChange={(event) => setReplyText(event.target.value)}
-                  placeholder={isProfessor ? 'Reply as Professor Enric Vázquez...' : 'Write your reply...'}
+                  placeholder={isProfessor ? 'Responder como Profesor Enric Vázquez...' : 'Escribe tu respuesta...'}
                   className="w-full min-h-[90px] rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground resize-y"
                 />
                 <Button type="submit" disabled={isSending || !replyText.trim()}>
                   {isSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                  Reply
+                  Responder
                 </Button>
               </form>
             </>
           ) : !isProfessor ? null : (
             <div className="py-14 text-center text-muted-foreground text-sm">
               {isProfessor
-                ? 'Select a conversation from Inbox to open the chat.'
-                : 'Select a conversation from Inbox to open the chat.'}
+                ? 'Selecciona una conversación de la bandeja para abrir el chat.'
+                : 'Selecciona una conversación de la bandeja para abrir el chat.'}
             </div>
           )}
         </section>

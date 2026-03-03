@@ -16,7 +16,7 @@ export const LogoutButton = () => {
       className="flex items-center w-full text-left"
     >
       <LogOut className="mr-2 h-4 w-4" />
-      <span>Log out</span>
+      <span>Cerrar sesión</span>
     </button>
   );
 };

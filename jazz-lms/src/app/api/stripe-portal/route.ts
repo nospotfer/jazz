@@ -3,8 +3,12 @@ import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   try {
+    const origin = req.headers.get('origin') || 'http://localhost:3000';
+
     const supabase = createClient();
     const {
       data: { user },
@@ -12,6 +16,10 @@ export async function POST(req: Request) {
 
     if (!user) {
       return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    if (!user.email) {
+      return new NextResponse('User email is required', { status: 400 });
     }
 
     // Look up or retrieve Stripe customer ID
@@ -23,7 +31,7 @@ export async function POST(req: Request) {
 
     // Search for existing Stripe customer by email
     const customers = await stripe.customers.list({
-      email: user.email!,
+      email: user.email,
       limit: 1,
     });
 
@@ -32,7 +40,7 @@ export async function POST(req: Request) {
     } else {
       // Create a new Stripe customer
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: user.email,
         name: dbUser?.name || undefined,
         metadata: {
           userId: user.id,
@@ -40,8 +48,6 @@ export async function POST(req: Request) {
       });
       stripeCustomerId = customer.id;
     }
-
-    const origin = req.headers.get('origin') || 'https://culturadeljazz.com';
 
     // Create a Stripe Customer Portal session
     const portalSession = await stripe.billingPortal.sessions.create({

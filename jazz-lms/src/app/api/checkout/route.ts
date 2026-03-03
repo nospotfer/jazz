@@ -4,22 +4,31 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { isLocalTestRequest } from '@/lib/test-mode';
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
+
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
+    const origin = req.headers.get('origin') || 'http://localhost:3000';
+
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse('No autorizado', { status: 401 });
+    }
+
+    if (!user.email) {
+      return new NextResponse('El correo del usuario es obligatorio', { status: 400 });
     }
 
     const { courseId, source } = await req.json();
 
     if (!courseId) {
-      return new NextResponse('Bad Request', { status: 400 });
+      return new NextResponse('Solicitud inválida', { status: 400 });
     }
 
     const course = await db.course.findUnique({
@@ -29,7 +38,7 @@ export async function POST(req: Request) {
     });
 
     if (!course) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse('Curso no encontrado', { status: 404 });
     }
 
     // Check if already purchased
@@ -43,7 +52,28 @@ export async function POST(req: Request) {
     });
 
     if (existingPurchase) {
-      return new NextResponse('Already purchased', { status: 400 });
+      return new NextResponse('El curso ya fue comprado', { status: 400 });
+    }
+
+    const configuredPrice = Number(course.price ?? 0);
+    const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
+    const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
+
+    if (isFreeCourse) {
+      await db.purchase.create({
+        data: {
+          userId: user.id,
+          courseId,
+        },
+      });
+
+      const successUrl = source === 'dashboard'
+        ? `${origin}/dashboard?purchase=success&source=dashboard&free=true`
+        : `${origin}/courses/${courseId}?success=true&free=true`;
+
+      return NextResponse.json({
+        url: successUrl,
+      });
     }
 
     if (isLocalTestRequest(req)) {
@@ -54,7 +84,6 @@ export async function POST(req: Request) {
         },
       });
 
-      const origin = req.headers.get('origin') || 'http://localhost:3000';
       const successUrl = source === 'dashboard'
         ? `${origin}/dashboard?purchase=success&source=dashboard&localTest=true`
         : `${origin}/courses/${courseId}?success=true&localTest=true`;
@@ -67,7 +96,7 @@ export async function POST(req: Request) {
     // Find or create Stripe customer
     let stripeCustomerId: string;
     const customers = await stripe.customers.list({
-      email: user.email!,
+      email: user.email,
       limit: 1,
     });
 
@@ -75,7 +104,7 @@ export async function POST(req: Request) {
       stripeCustomerId = customers.data[0].id;
     } else {
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: user.email,
         metadata: {
           userId: user.id,
         },
@@ -91,16 +120,16 @@ export async function POST(req: Request) {
             name: course.title,
             description: course.description || undefined,
           },
-          unit_amount: Math.round((course.price || 0) * 100),
+          unit_amount: Math.round(numericPrice * 100),
         },
         quantity: 1,
       },
     ];
 
-    const dashboardSuccessUrl = `${req.headers.get('origin')}/dashboard?purchase=success&source=dashboard`;
-    const dashboardCancelUrl = `${req.headers.get('origin')}/dashboard?purchase=canceled&source=dashboard`;
-    const courseSuccessUrl = `${req.headers.get('origin')}/courses/${courseId}?success=true`;
-    const courseCancelUrl = `${req.headers.get('origin')}/courses/${courseId}?canceled=true`;
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard`;
+    const dashboardCancelUrl = `${origin}/dashboard?purchase=canceled&source=dashboard`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true`;
+    const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
 
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
@@ -120,6 +149,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.log('[CHECKOUT_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Error interno del servidor', { status: 500 });
   }
 }

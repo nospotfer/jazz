@@ -128,13 +128,13 @@ export async function POST(req: Request) {
 
     await notifyStudentByEmail(
       thread.studentEmail,
-      `Professor replied: ${thread.subject}`,
-      `Professor Enric Vázquez replied to your inbox message:\n\n${textBody}\n\nOpen your student inbox to continue the conversation.`
+      `El profesor respondió: ${thread.subject}`,
+      `El profesor Enric Vázquez respondió a tu mensaje en la bandeja:\n\n${textBody}\n\nAbre tu bandeja de estudiante para continuar la conversación.`
     );
 
     return NextResponse.json({ ok: true, threadId: thread.id, studentId: thread.studentId });
   } catch (error) {
     console.error('[messages:email-webhook]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Error interno del servidor', { status: 500 });
   }
 }

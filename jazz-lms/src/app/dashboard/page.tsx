@@ -15,27 +15,49 @@ export default async function DashboardPage() {
     return redirect('/auth');
   }
 
-  const course = await db.course.findFirst({
-    where: { isPublished: true },
-    orderBy: { createdAt: 'asc' },
-    select: {
-      id: true,
-      chapters: {
-        where: { isPublished: true },
-        orderBy: { position: 'asc' },
-        select: {
-          lessons: {
-            where: { isPublished: true },
-            orderBy: { position: 'asc' },
-            select: {
-              id: true,
-              title: true,
+  let course: {
+    id: string;
+    chapters: { lessons: { id: string; title: string }[] }[];
+  } | null = null;
+
+  let hasPurchased = false;
+
+  try {
+    course = await db.course.findFirst({
+      where: { isPublished: true },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        chapters: {
+          where: { isPublished: true },
+          orderBy: { position: 'asc' },
+          select: {
+            lessons: {
+              where: { isPublished: true },
+              orderBy: { position: 'asc' },
+              select: {
+                id: true,
+                title: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+
+    hasPurchased = course
+      ? !!(await db.purchase.findUnique({
+          where: {
+            userId_courseId: {
+              userId: user.id,
+              courseId: course.id,
+            },
+          },
+        }))
+      : false;
+  } catch (error) {
+    console.error('[dashboard] Database unavailable. Rendering fallback state.', error);
+  }
 
   const lessonRoutesByTitle = course
     ? Object.fromEntries(
@@ -59,23 +81,12 @@ export default async function DashboardPage() {
   const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
   const lessonTitlesInOrder = orderedLessons.map((lesson) => lesson.title);
 
-  const hasPurchased = course
-    ? !!(await db.purchase.findUnique({
-        where: {
-          userId_courseId: {
-            userId: user.id,
-            courseId: course.id,
-          },
-        },
-      }))
-    : false;
-
   const isLocalTestMode =
     process.env.NODE_ENV !== 'production' && isLocalhostHost(headers().get('host'));
 
   return (
     <CourseViewClient
-      userName={user.user_metadata?.full_name || user.email || 'Jazz Student'}
+      userName={user.user_metadata?.full_name || user.email || 'Estudiante de Jazz'}
       hasPurchased={hasPurchased}
       courseId={course?.id ?? null}
       lessonRoutesByTitle={lessonRoutesByTitle}

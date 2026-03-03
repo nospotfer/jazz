@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(normalizedEmail)) {
-      setError('Enter a valid email');
+      setError('Introduce un correo válido');
       return;
     }
 
@@ -57,20 +57,20 @@ export default function ForgotPasswordPage() {
         <div className="p-5 sm:p-8">
           {!sent ? (
             <>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">Reset your password</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">Restablece tu contraseña</h1>
               <p className="text-sm text-[#9CA3AF] mt-2 mb-6">
-                Enter the email associated with your account and we&apos;ll send you a link to reset your password.
+                Introduce el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
-                    Email
+                    Correo
                   </label>
                   <input
                     id="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="tu@correo.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={inputClasses}
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
                   disabled={loading}
                   className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {loading ? 'Sending...' : 'Send Reset Link'}
+                  {loading ? 'Enviando...' : 'Enviar enlace de restablecimiento'}
                 </button>
 
                 <button
@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
                   onClick={() => router.push('/auth?tab=login')}
                   className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-sm sm:text-base font-medium transition-colors"
                 >
-                  Back to Sign In
+                  Volver a iniciar sesión
                 </button>
               </form>
             </>
@@ -111,9 +111,9 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-white">Check your inbox!</h2>
+                <h2 className="text-2xl font-bold text-white">¡Revisa tu bandeja de entrada!</h2>
                 <p className="text-sm text-[#9CA3AF] mt-2">
-                  If an account exists for that email, we have sent a password reset link. Please check your spam folder just in case.
+                  Si existe una cuenta con ese correo, hemos enviado un enlace para restablecer la contraseña. Revisa también la carpeta de spam por si acaso.
                 </p>
               </div>
 
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
                 onClick={() => router.push('/auth?tab=login')}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base transition-colors"
               >
-                Back to Sign In
+                Volver a iniciar sesión
               </button>
             </div>
           )}
