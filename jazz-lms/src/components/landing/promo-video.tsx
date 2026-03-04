@@ -128,6 +128,7 @@ export function PromoVideo() {
               >
                 <source src="/images/videojazz.mp4" type="video/mp4" />
                 Tu navegador no soporta la etiqueta de video.
+                Your browser does not support the video tag.
               </video>
             )}
 

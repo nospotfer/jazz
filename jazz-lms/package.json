@@ -24,6 +24,8 @@
     "stripe:sandbox:check": "node scripts/stripe-sandbox-check.mjs",
     "stripe:sandbox:webhook": "node scripts/stripe-sandbox-webhook.mjs",
     "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook"
+    "mux:apply": "npx tsx scripts/apply-mux-playback-ids.ts",
+    "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts"
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.9.0",

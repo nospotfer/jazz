@@ -432,11 +432,13 @@ function CoursesNavSection() {
               <div className="border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
                 <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
                   Notas de la lección
+                  Lesson notes
                 </p>
                 <textarea
                   value={noteContent}
                   onChange={(event) => onChangeSidebarNotes(event.target.value)}
                   placeholder="Escribe notas para la clase seleccionada..."
+                  placeholder="Write notes for selected class..."
                   className="w-full h-44 resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>

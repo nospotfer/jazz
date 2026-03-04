@@ -22,6 +22,7 @@ const PdfWorkspaceViewer = dynamic(
     loading: () => (
       <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
         Cargando vista previa del PDF...
+        Loading PDF preview...
       </div>
     ),
   }
@@ -206,6 +207,7 @@ export const CoursePlayer = ({
         setThumbnailToken('');
         setStoryboardToken('');
         setPlaybackError('No se puede cargar la reproducción firmada de esta lección ahora mismo.');
+        setPlaybackError('Unable to load signed playback for this lesson right now.');
       }
     };
 
@@ -247,6 +249,7 @@ export const CoursePlayer = ({
       });
     } catch (error: any) {
       const message = error?.response?.data?.error || 'No se puede cargar este PDF en este momento.';
+      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
       if (fallbackAttachment?.url) {
         setSelectedAttachmentId(attachmentId);
@@ -258,6 +261,7 @@ export const CoursePlayer = ({
         });
         setPdfError('');
         toast.info('PDF cargado usando la URL directa heredada.');
+        toast.info('Loaded PDF using legacy direct URL fallback.');
       } else {
         setPdfError(message);
         toast.error(message);
@@ -282,6 +286,11 @@ export const CoursePlayer = ({
       }
 
       const message = error?.response?.data?.error || 'No se puede descargar este PDF en este momento.';
+        toast.info('Download opened using legacy direct URL fallback.');
+        return;
+      }
+
+      const message = error?.response?.data?.error || 'Unable to download this PDF right now.';
       toast.error(message);
     }
   };
@@ -302,6 +311,7 @@ export const CoursePlayer = ({
       }
     } catch {
       toast.error('No se puede iniciar el pago en este momento.');
+      toast.error('Unable to start checkout right now.');
     } finally {
       setIsPurchasing(false);
     }
@@ -492,6 +502,10 @@ export const CoursePlayer = ({
                           : isCompleted
                           ? 'Completada (haz clic para reiniciar)'
                           : 'Marcar como completada'}
+                          ? 'Saving...'
+                          : isCompleted
+                          ? 'Completed (Click to reset)'
+                          : 'Mark as Complete'}
                       </Button>
                       <Button
                         type="button"
@@ -503,11 +517,13 @@ export const CoursePlayer = ({
                           <>
                             <PanelRightClose className="h-4 w-4 mr-2" />
                             Ocultar apunte
+                            Hide Apunte
                           </>
                         ) : (
                           <>
                             <PanelRightOpen className="h-4 w-4 mr-2" />
                             Mostrar apunte
+                            Show Apunte
                           </>
                         )}
                       </Button>
@@ -533,6 +549,7 @@ export const CoursePlayer = ({
                       {canAccessLesson ? (
                         <p className="text-sm text-muted-foreground">
                           {playbackError || 'Cargando video de la lección...'}
+                          {playbackError || 'Loading signed lesson video...'}
                         </p>
                       ) : (
                         <div className="max-w-md space-y-3">
@@ -546,6 +563,13 @@ export const CoursePlayer = ({
                           <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full sm:w-auto">
                             <ShoppingCart className="h-4 w-4 mr-2" />
                             {isPurchasing ? 'Abriendo pago...' : 'Desbloquear curso completo'}
+                          <h3 className="text-lg font-semibold text-foreground">This lesson is locked</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Purchase the full course to watch all classes with high-quality Mux playback.
+                          </p>
+                          <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full sm:w-auto">
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            {isPurchasing ? 'Opening checkout...' : 'Unlock full course'}
                           </Button>
                         </div>
                       )}
@@ -562,6 +586,7 @@ export const CoursePlayer = ({
                   <p className="text-base sm:text-lg font-semibold text-primary mb-3 flex items-center gap-2.5">
                     <FileText className="h-5 w-5 text-primary" />
                     Apunte de la clase
+                    Apunte da Classe
                   </p>
 
                   {!canAccessAttachments ? (
@@ -571,6 +596,11 @@ export const CoursePlayer = ({
                   ) : visibleAttachments.length === 0 ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
                       No se encontró ningún apunte principal para esta clase.
+                      PDFs are available after purchasing the full course.
+                    </div>
+                  ) : visibleAttachments.length === 0 ? (
+                    <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
+                      Nenhum apunte principal foi encontrado para esta aula.
                     </div>
                   ) : (
                     <>
@@ -600,6 +630,7 @@ export const CoursePlayer = ({
                               >
                                 <Eye className="h-4 w-4 mr-1.5" />
                                 Vista previa
+                                Preview
                               </Button>
                               <Button
                                 type="button"
@@ -609,6 +640,7 @@ export const CoursePlayer = ({
                               >
                                 <Download className="h-4 w-4 mr-1.5" />
                                 Descargar
+                                Download
                               </Button>
                             </div>
                           </div>
@@ -619,6 +651,7 @@ export const CoursePlayer = ({
                         {isLoadingPdf ? (
                           <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
                             Cargando vista previa del PDF...
+                            Loading PDF preview...
                           </div>
                         ) : pdfError ? (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
@@ -629,6 +662,7 @@ export const CoursePlayer = ({
                         ) : (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
                             Selecciona un PDF para previsualizarlo aquí.
+                            Select a PDF to preview it here.
                           </div>
                         )}
                       </div>
@@ -644,6 +678,10 @@ export const CoursePlayer = ({
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Estás dentro del área de la lección, pero el video y los apuntes solo están disponibles para estudiantes que compraron el curso completo.
+                      Premium access required
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      You are inside the lesson area, but video and notes are available only for students who purchased the full course.
                     </p>
                   </div>
 
@@ -657,6 +695,15 @@ export const CoursePlayer = ({
                     <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full mt-4">
                       <ShoppingCart className="h-4 w-4 mr-2" />
                       {isPurchasing ? 'Abriendo pago...' : 'Comprar y desbloquear'}
+                    <p className="text-sm font-medium text-foreground">What you unlock:</p>
+                    <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                      <li>• Full access to all 15 classes</li>
+                      <li>• Secure Mux HD playback</li>
+                      <li>• Personal lesson notes</li>
+                    </ul>
+                    <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full mt-4">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      {isPurchasing ? 'Opening checkout...' : 'Buy now and unlock'}
                     </Button>
                   </div>
                 </div>

@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, 'your-project.supabase.co')) {
       return NextResponse.json(
         { error: 'La URL de Supabase no está configurada en el entorno del servidor.' },
+        { error: 'Supabase URL is not configured in server environment.' },
         { status: 500 }
       );
     }
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'your-anon-key')) {
       return NextResponse.json(
         { error: 'La clave pública de Supabase no está configurada en el entorno del servidor.' },
+        { error: 'Supabase anon key is not configured in server environment.' },
         { status: 500 }
       );
     }
@@ -28,6 +30,7 @@ export async function POST(request: Request) {
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')) {
       return NextResponse.json(
         { error: 'SUPABASE_SERVICE_ROLE_KEY es obligatoria para la verificación por correo.' },
+        { error: 'SUPABASE_SERVICE_ROLE_KEY is required for email verification flow.' },
         { status: 500 }
       );
     }

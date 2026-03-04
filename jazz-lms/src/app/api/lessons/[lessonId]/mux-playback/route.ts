@@ -97,6 +97,7 @@ export async function GET(
       const tokenErrorMessage = tokenError instanceof Error
         ? tokenError.message
         : 'No se puede crear el token de reproducción de Mux.';
+        : 'Unable to create Mux playback token.';
 
       console.error('[MUX_PLAYBACK_TOKEN_ERROR]', tokenErrorMessage);
 

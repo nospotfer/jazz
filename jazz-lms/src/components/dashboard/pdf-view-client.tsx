@@ -40,6 +40,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       setSignedUrl(response.data?.signedUrl || item.url);
     } catch (error: any) {
       const message = error?.response?.data?.error || 'No se puede cargar este PDF ahora mismo.';
+      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
       setLoadError(message);
       setSignedUrl(item.url);
     } finally {
@@ -113,6 +114,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
               isLoading ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
                   Cargando PDF...
+                  Loading PDF...
                 </div>
               ) : loadError && !signedUrl ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground px-4 text-center">
