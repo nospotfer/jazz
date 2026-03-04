@@ -3,6 +3,8 @@ generator client {
 }
 
 datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   provider  = "postgresql"
   url       = env("DATABASE_URL")
 }
@@ -57,18 +59,18 @@ model Chapter {
 }
 
 model Lesson {
-  id           String         @id @default(uuid())
-  title        String
-  description  String?
-  videoUrl     String?
-  position     Int
-  isPublished  Boolean        @default(false)
-  chapterId    String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  attachments  Attachment[]
-  chapter      Chapter        @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  userProgress UserProgress[]
+  id              String           @id @default(uuid())
+  title           String
+  description     String?
+  videoUrl        String?
+  position        Int
+  isPublished     Boolean          @default(false)
+  chapterId       String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  attachments     Attachment[]
+  chapter         Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  userProgress    UserProgress[]
   lessonPurchases LessonPurchase[]
 
   @@unique([chapterId, position])
@@ -99,15 +101,15 @@ model Purchase {
 }
 
 model UserProgress {
-  id          String   @id @default(uuid())
-  userId      String
-  lessonId    String
-  isCompleted Boolean  @default(false)
-  progressPercent Int  @default(0)
-  minutesRemaining Int @default(20)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  id               String   @id @default(uuid())
+  userId           String
+  lessonId         String
+  isCompleted      Boolean  @default(false)
+  progressPercent  Int      @default(0)
+  minutesRemaining Int      @default(20)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lesson           Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
   @@index([lessonId])

@@ -4,6 +4,8 @@ import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { ensureLessonNotesTable } from '@/lib/lesson-notes';
 
+export const dynamic = 'force-dynamic';
+
 interface RawLessonNote {
   userId: string;
   courseId: string;

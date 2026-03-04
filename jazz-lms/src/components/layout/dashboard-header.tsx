@@ -43,7 +43,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
   );
   const displayName =
-    user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+    user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario';
   const avatarUrl = currentAvatarUrl;
   const initials = displayName
     .split(' ')
@@ -62,10 +62,10 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     ? [
         {
           id: 'inbox-unread',
-          title: 'New message in inbox',
-          preview: 'You have unread messages in your inbox.',
-          body: 'New message in inbox',
-          date: 'Now',
+          title: 'Nuevo mensaje en la bandeja',
+          preview: 'Tienes mensajes sin leer en tu bandeja.',
+          body: 'Nuevo mensaje en la bandeja',
+          date: 'Ahora',
           read: false,
         },
       ]
@@ -170,7 +170,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder={t('courses', 'Courses') + '...'}
+                placeholder={t('courses', 'Cursos') + '...'}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
@@ -178,7 +178,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
           {pathname === '/dashboard' && (
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
-              Welcome, {displayName.split(' ')[0]}.
+              Bienvenido, {displayName.split(' ')[0]}.
             </div>
           )}
 
@@ -205,10 +205,10 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               {showNotifDropdown && (
                 <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notifications')}</h3>
+                    <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notificaciones')}</h3>
                     {unreadCount > 0 && (
                       <span className="text-xs bg-yellow-400/20 text-yellow-500 font-medium px-2 py-0.5 rounded-full">
-                        {unreadCount} new
+                        {unreadCount} nuevas
                       </span>
                     )}
                   </div>
@@ -216,7 +216,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-6 text-center text-muted-foreground text-sm">
-                        {t('noNotifications', 'No notifications')}
+                        {t('noNotifications', 'Sin notificaciones')}
                       </div>
                     ) : (
                       notifications.map((notif) => (
@@ -305,7 +305,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-500 hover:bg-accent transition-colors"
                       >
-                        🔐 Admin Intranet
+                        🔐 Panel de administración
                       </Link>
                     )}
                     <Link
@@ -314,7 +314,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <User className="h-4 w-4 text-muted-foreground" />
-                      Profile
+                      Perfil
                     </Link>
                     <Link
                       href="/dashboard/payment"
@@ -322,7 +322,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <Wallet className="h-4 w-4 text-muted-foreground" />
-                      Payment History
+                      Historial de pagos
                     </Link>
                   </div>
 
@@ -332,7 +332,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors w-full"
                     >
                       <LogOut className="h-4 w-4" />
-                      Log out
+                      Cerrar sesión
                     </button>
                   </div>
                 </div>
@@ -360,7 +360,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               <button
                 onClick={() => setActiveNotif(null)}
                 className="p-1 hover:bg-accent rounded-md transition"
-                aria-label="Close"
+                aria-label="Cerrar"
               >
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>
@@ -382,7 +382,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                 onClick={() => setActiveNotif(null)}
                 className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                Close
+                Cerrar
               </button>
             </div>
           </div>

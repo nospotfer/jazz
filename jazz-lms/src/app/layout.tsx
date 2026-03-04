@@ -14,8 +14,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Jazz Culture",
-  description: "Online Course with Enric Vazquez Ramonich",
+  title: "La Cultura del Jazz",
+  description: "Curso online con Enric Vázquez Ramonich",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${playfairDisplay.variable} ${inter.variable} font-sans antialiased`}
       >

@@ -23,19 +23,19 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [success, setSuccess] = useState(false);
 
   const messageTypes = [
-    { value: 'question', label: 'Question' },
-    { value: 'doubt', label: 'Doubt' },
-    { value: 'inquiry', label: 'Inquiry' },
-    { value: 'help-request', label: 'Help Request' },
+    { value: 'question', label: 'Pregunta' },
+    { value: 'doubt', label: 'Duda' },
+    { value: 'inquiry', label: 'Consulta' },
+    { value: 'help-request', label: 'Solicitud de ayuda' },
   ];
 
   const validateEmail = (email: string): string => {
     if (!email.trim()) {
-      return 'Email is required';
+      return 'El correo es obligatorio';
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return 'Invalid email format';
+      return 'Formato de correo inválido';
     }
     return '';
   };
@@ -44,13 +44,13 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.messageType) {
-      newErrors.messageType = 'Please select a message type';
+      newErrors.messageType = 'Selecciona un tipo de mensaje';
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = 'El mensaje es obligatorio';
     } else if (formData.message.length > 1000) {
-      newErrors.message = 'Message must not exceed 1000 characters';
+      newErrors.message = 'El mensaje no debe superar los 1000 caracteres';
     }
 
     const emailError = validateEmail(formData.email);
@@ -94,7 +94,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     try {
       // TODO: Integrate with your backend API to send the message
       // For now, just simulate the submission
-      console.log('Contact form submitted:', formData);
+      console.log('Formulario de contacto enviado:', formData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -108,7 +108,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }, 2000);
     } catch (err) {
       setErrors({
-        submit: err instanceof Error ? err.message : 'Failed to send message',
+        submit: err instanceof Error ? err.message : 'No se pudo enviar el mensaje',
       });
     } finally {
       setLoading(false);
@@ -125,11 +125,11 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           <button
             onClick={handleClose}
             className="p-1 hover:bg-gray-100 rounded-md transition"
-            aria-label="Close"
+            aria-label="Cerrar"
           >
             <X className="h-5 w-5 text-gray-600" />
           </button>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">Contact Us</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">Contáctanos</h2>
           <div className="w-8" />
         </div>
 
@@ -138,10 +138,10 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           {success ? (
             <div className="text-center space-y-3">
               <div className="text-green-600 font-semibold">
-                ✓ Message sent successfully!
+                ✓ ¡Mensaje enviado correctamente!
               </div>
               <p className="text-sm text-gray-600">
-                We'll get back to you shortly at {formData.email}
+                Te responderemos pronto a {formData.email}
               </p>
             </div>
           ) : (
@@ -155,7 +155,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Message Type */}
               <div>
                 <label htmlFor="messageType" className="block text-sm font-medium mb-2 text-gray-700">
-                  Message Type: <span className="text-red-500">*</span>
+                  Tipo de mensaje: <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="messageType"
@@ -166,7 +166,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     errors.messageType ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
-                  <option value="">Select a type...</option>
+                  <option value="">Selecciona un tipo...</option>
                   {messageTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
@@ -181,7 +181,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Message */}
               <div>
                 <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-700">
-                  Message: <span className="text-red-500">*</span>
+                  Mensaje: <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -189,14 +189,14 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   value={formData.message}
                   onChange={handleChange}
                   maxLength={1000}
-                  placeholder="Type your message here..."
+                  placeholder="Escribe tu mensaje aquí..."
                   rows={5}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-900 placeholder-gray-400 resize-none ${
                     errors.message ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
                 <div className="flex items-center justify-between mt-1">
-                  <p className="text-gray-600 text-xs">{formData.message.length}/1000 characters</p>
+                  <p className="text-gray-600 text-xs">{formData.message.length}/1000 caracteres</p>
                   {errors.message && (
                     <p className="text-red-600 text-xs">{errors.message}</p>
                   )}
@@ -206,7 +206,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
-                  Your Email: <span className="text-red-500">*</span>
+                  Tu correo: <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="email"
@@ -214,7 +214,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="your@email.com"
+                  placeholder="tu@correo.com"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-900 placeholder-gray-400 ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -227,7 +227,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Admin Email Notice */}
               <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
                 <p className="text-xs text-gray-600">
-                  Your message will be sent to: <span className="font-semibold text-gray-900">admin@neurofactory.net</span>
+                  Tu mensaje se enviará a: <span className="font-semibold text-gray-900">admin@neurofactory.net</span>
                 </p>
               </div>
 
@@ -240,14 +240,14 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   className="flex-1"
                   disabled={loading}
                 >
-                  Cancel
+                  Cancelar
                 </Button>
                 <Button
                   type="submit"
                   className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black"
                   disabled={loading}
                 >
-                  {loading ? 'Sending...' : 'Send Message'}
+                  {loading ? 'Enviando...' : 'Enviar mensaje'}
                 </Button>
               </div>
             </form>

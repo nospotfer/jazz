@@ -54,7 +54,7 @@ export function CourseIntro() {
               onClick={() => router.push('/auth?tab=register')}
               className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-lg transition-colors text-lg w-full md:w-auto"
             >
-              Sign Up
+              Regístrate
             </button>
           </div>
 

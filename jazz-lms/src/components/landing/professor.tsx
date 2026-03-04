@@ -20,7 +20,7 @@ export function Professor() {
                 Enric Vázquez Ramonich
               </p>
               <p className="text-gray-300 text-xs">
-                Image provided by the Harlem Jazz Museum, NY
+                Imagen proporcionada por el Harlem Jazz Museum, NY
               </p>
             </div>
           </div>
@@ -29,35 +29,35 @@ export function Professor() {
           <div className="bg-gray-900 dark:bg-gray-900 rounded-r-2xl p-8 lg:p-12 flex flex-col justify-center shadow-2xl">
             <div className="border-b-2 border-yellow-600 pb-6 mb-8">
               <h2 className="text-yellow-500 text-4xl lg:text-5xl font-bold">
-                Know Your Professor
+                Conoce a tu profesor
               </h2>
             </div>
 
             <div className="space-y-6">
               <p className="text-gray-200 text-base lg:text-lg leading-relaxed">
-                Few people can say they have lived jazz from within for more than 60 years.{' '}
-                <span className="text-yellow-500 font-semibold">Enric Vázquez Ramonich</span> is a
-                co-founder of the mythical Jamboree Jazz Club and the Jubilee Jazz Club, and has
-                shared the stage and conversations with legends such as{' '}
-                <span className="text-yellow-500/80 italic">Bill Evans, Chet Baker, or Art Blakey</span>.
+                Pocas personas pueden decir que han vivido el jazz desde dentro durante más de 60 años.{' '}
+                <span className="text-yellow-500 font-semibold">Enric Vázquez Ramonich</span> es
+                cofundador del mítico Jamboree Jazz Club y del Jubilee Jazz Club, y ha
+                compartido escenario y conversaciones con leyendas como{' '}
+                <span className="text-yellow-500/80 italic">Bill Evans, Chet Baker o Art Blakey</span>.
               </p>
               <p className="text-gray-300 text-base lg:text-lg leading-relaxed">
-                He has presented radio and television programs, written in specialized media, and
-                participated in reference works such as the Universal Guide to Modern Jazz. He is also
-                the author of the first chapters of the History of Jazz for the Generalitat de Catalunya.
+                Ha presentado programas de radio y televisión, escrito en medios especializados y
+                participado en obras de referencia como la Guía Universal del Jazz Moderno. También es
+                autor de los primeros capítulos de la Historia del Jazz para la Generalitat de Catalunya.
               </p>
               <p className="text-gray-300 text-base lg:text-lg leading-relaxed">
-                Now, all that experience and passion are condensed in{' '}
-                <span className="text-white font-bold">&quot;Jazz Culture&quot;</span>, a course designed
-                so that, even if you&apos;ve never played an instrument, you can understand, feel and
-                enjoy jazz as if you had always been part of it.
+                Ahora, toda esa experiencia y pasión se condensan en{' '}
+                <span className="text-white font-bold">&quot;Cultura del Jazz&quot;</span>, un curso diseñado
+                para que, incluso si nunca has tocado un instrumento, puedas entender, sentir y
+                disfrutar el jazz como si siempre hubieras formado parte de él.
               </p>
             </div>
 
             <div className="mt-8 flex items-center gap-3">
               <div className="h-1 w-12 bg-yellow-600 rounded-full" />
               <span className="text-yellow-600 text-sm font-semibold uppercase tracking-widest">
-                60+ years of jazz experience
+                Más de 60 años de experiencia en jazz
               </span>
             </div>
           </div>

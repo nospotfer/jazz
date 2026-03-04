@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const supabase = createClient();
@@ -10,7 +12,7 @@ export async function GET() {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse('No autorizado', { status: 401 });
     }
 
     const purchases = await db.purchase.findMany({
@@ -32,7 +34,7 @@ export async function GET() {
 
     const formatted = purchases.map((p) => ({
       id: p.id,
-      itemType: 'Course',
+      itemType: 'Curso',
       itemTitle: p.course.title,
       amount: p.course.price || 0,
       createdAt: p.createdAt.toISOString(),
@@ -42,6 +44,6 @@ export async function GET() {
     return NextResponse.json(formatted);
   } catch (error) {
     console.log('[PURCHASES_GET_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Error interno del servidor', { status: 500 });
   }
 }

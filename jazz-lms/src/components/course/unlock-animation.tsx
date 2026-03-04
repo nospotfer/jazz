@@ -236,7 +236,7 @@ export function UnlockAnimation({ isVisible, onComplete }: UnlockAnimationProps)
               : 'opacity-0 translate-y-4'
           }`}
         >
-          Unlocked!
+          ¡Desbloqueado!
         </p>
       </div>
     </div>

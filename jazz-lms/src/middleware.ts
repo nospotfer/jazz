@@ -90,10 +90,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const ownerEmail = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase()
-  const userEmail = user?.email?.toLowerCase()
-
-  if (!userEmail || userEmail !== ownerEmail) {
+  if (!user?.email) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

@@ -11,19 +11,19 @@ interface FAQItem {
 
 const faqs: FAQItem[] = [
   {
-    pregunta: 'How much does the course cost?',
+    pregunta: '¿Cuánto cuesta el curso?',
     respuesta:
-      'The price depends on active offers on Udemy, which launches frequent promotions. You can often find it at a discount from the regular price. The best thing is to check the course page to see the current price.',
+      'El precio depende de las ofertas activas en Udemy, que lanza promociones frecuentes. A menudo puedes encontrarlo con descuento respecto al precio regular. Lo mejor es revisar la página del curso para ver el precio actual.',
   },
   {
-    pregunta: 'What if I realize the course is not for me?',
+    pregunta: '¿Qué pasa si me doy cuenta de que el curso no es para mí?',
     respuesta:
-      'No problem. We want you to enjoy learning and have a positive experience. If it\'s not what you expected, Udemy offers a 30-day money-back guarantee, with no risk and no uncomfortable questions.',
+      'No hay problema. Queremos que disfrutes aprendiendo y tengas una experiencia positiva. Si no es lo que esperabas, Udemy ofrece una garantía de devolución de 30 días, sin riesgo y sin preguntas incómodas.',
   },
   {
-    pregunta: 'What will I learn in this course?',
+    pregunta: '¿Qué aprenderé en este curso?',
     respuesta:
-      'We\'ll start from the essentials to understand what jazz is, its history and culture. You\'ll learn the importance of improvisation, learn to recognize styles and musicians by their sound, and discover how to enjoy the great classics and any live concert much more.',
+      'Comenzaremos desde lo esencial para entender qué es el jazz, su historia y su cultura. Aprenderás la importancia de la improvisación, a reconocer estilos y músicos por su sonido, y a disfrutar mucho más de los grandes clásicos y de cualquier concierto en vivo.',
   },
 ];
 
@@ -43,7 +43,7 @@ export function FAQs() {
               Frequently<br />Asked Questions
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              If you can't find the answer you're looking for, contact us via the link below
+              Si no encuentras la respuesta que buscas, contáctanos desde el enlace de abajo
             </p>
             <button
               onClick={() => setShowContactModal(true)}

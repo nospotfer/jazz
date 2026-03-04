@@ -77,11 +77,11 @@ export function PromoVideo() {
 
             <div className="border-l-4 border-yellow-600 pl-6">
               <h2 className="text-yellow-600 text-3xl sm:text-4xl font-bold italic mb-4">
-                Enter the World of Jazz
+                Entra en el mundo del jazz
               </h2>
               <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
-                Live an experience that will forever change the way you feel music.
-                You don&apos;t need to be a musician or an expert to enjoy jazz.
+                Vive una experiencia que cambiará para siempre tu forma de sentir la música.
+                No necesitas ser músico ni experto para disfrutar el jazz.
               </p>
             </div>
 
@@ -90,7 +90,7 @@ export function PromoVideo() {
               className="flex items-center gap-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
             >
               <LogIn className="h-5 w-5" />
-              Sign Up
+              Regístrate
             </button>
           </div>
 
@@ -127,6 +127,7 @@ export function PromoVideo() {
                 playsInline
               >
                 <source src="/images/videojazz.mp4" type="video/mp4" />
+                Tu navegador no soporta la etiqueta de video.
                 Your browser does not support the video tag.
               </video>
             )}
@@ -140,7 +141,7 @@ export function PromoVideo() {
               className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               }`}
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
             >
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
             </button>

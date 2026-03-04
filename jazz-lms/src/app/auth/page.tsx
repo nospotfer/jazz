@@ -20,11 +20,27 @@ export default function AuthPage() {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
-    if (params.get('tab') === 'register') {
+    const tabParam = params.get('tab');
+    const flowParam = params.get('flow');
+    const oauthError = params.get('oauth_error');
+
+    if (tabParam === 'register' || flowParam === 'register') {
       setActiveTab('register');
     }
     if (urlEmail) {
       setLoginEmail(urlEmail);
+    }
+
+    if (oauthError) {
+      const targetTab: 'login' | 'register' = flowParam === 'register' ? 'register' : 'login';
+      const message = oauthError.trim() || 'No se pudo iniciar con Google. Inténtalo de nuevo.';
+
+      setActiveTab(targetTab);
+      if (targetTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
     }
   }, []);
 
@@ -83,10 +99,15 @@ export default function AuthPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const redirectTo = useMemo(() => {
     if (typeof window === 'undefined') return undefined;
-    return `${window.location.origin}/auth/callback`;
+    const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    const baseUrl = configuredAppUrl && /^https?:\/\//i.test(configuredAppUrl)
+      ? configuredAppUrl.replace(/\/+$/, '')
+      : window.location.origin;
+    return `${baseUrl}/auth/callback`;
   }, []);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,15 +117,15 @@ export default function AuthPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!fullName.trim()) {
-      setRegisterError('Full name is required');
+      setRegisterError('El nombre completo es obligatorio');
       return;
     }
     if (!emailRegex.test(normalizedEmail)) {
-      setRegisterError('Enter a valid email');
+      setRegisterError('Introduce un correo válido');
       return;
     }
     if (registerPassword.length < 8) {
-      setRegisterError('Password must be at least 8 characters');
+      setRegisterError('La contraseña debe tener al menos 8 caracteres');
       return;
     }
 
@@ -125,14 +146,14 @@ export default function AuthPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setRegisterError(data.error || 'Registration failed');
+        setRegisterError(data.error || 'El registro falló');
         return;
       }
 
-      setRegisterMessage(data.message || 'Account created. Verify your email code to continue.');
+      setRegisterMessage(data.message || 'Cuenta creada. Verifica el código enviado a tu correo para continuar.');
       router.push(`/auth/verify?email=${encodeURIComponent(normalizedEmail)}`);
     } catch {
-      setRegisterError('Registration failed. Please try again.');
+      setRegisterError('El registro falló. Inténtalo de nuevo.');
     } finally {
       setRegisterLoading(false);
     }
@@ -143,7 +164,7 @@ export default function AuthPage() {
 
     const normalizedEmail = loginEmail.trim().toLowerCase();
     if (!normalizedEmail || !loginPassword) {
-      setLoginError('Email and password are required');
+      setLoginError('Correo y contraseña son obligatorios');
       return;
     }
 
@@ -157,7 +178,7 @@ export default function AuthPage() {
       });
 
       if (signInError) {
-        setLoginError(signInError.message || 'Unable to sign in');
+        setLoginError(signInError.message || 'No se pudo iniciar sesión');
         return;
       }
 
@@ -184,7 +205,7 @@ export default function AuthPage() {
       router.replace('/dashboard');
       router.refresh();
     } catch {
-      setLoginError('Unable to sign in. Please try again.');
+      setLoginError('No se pudo iniciar sesión. Inténtalo de nuevo.');
     } finally {
       setLoginLoading(false);
     }
@@ -193,12 +214,49 @@ export default function AuthPage() {
   const handleGoogleAuth = async () => {
     setLoginError('');
     setRegisterError('');
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo,
-      },
-    });
+
+    if (!hasSupabaseConfig) {
+      const message = 'La autenticación con Google no está configurada en este entorno.';
+      if (activeTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
+      return;
+    }
+
+    setGoogleLoading(true);
+
+    try {
+      const callbackUrl = redirectTo ? `${redirectTo}?flow=${activeTab}` : undefined;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: callbackUrl,
+          queryParams: {
+            prompt: activeTab === 'register' ? 'consent' : 'select_account',
+          },
+        },
+      });
+
+      if (error) {
+        const message = error.message || 'No se pudo iniciar con Google';
+        if (activeTab === 'register') {
+          setRegisterError(message);
+        } else {
+          setLoginError(message);
+        }
+      }
+    } catch {
+      const message = 'No se pudo iniciar con Google. Inténtalo de nuevo.';
+      if (activeTab === 'register') {
+        setRegisterError(message);
+      } else {
+        setLoginError(message);
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const inputClasses =
@@ -243,7 +301,7 @@ export default function AuthPage() {
                 : 'text-[#9CA3AF] hover:text-white bg-transparent'
             }`}
           >
-            Sign In
+            Iniciar sesión
           </button>
           <button
             onClick={() => clearMessagesForTab('register')}
@@ -253,7 +311,7 @@ export default function AuthPage() {
                 : 'text-[#9CA3AF] hover:text-white bg-transparent'
             }`}
           >
-            Sign Up
+            Registrarse
           </button>
         </div>
 
@@ -261,6 +319,7 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={handleGoogleAuth}
+            disabled={googleLoading || !hasSupabaseConfig}
             className="w-full flex items-center justify-center gap-3 py-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg text-base transition-colors border border-gray-300"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -281,12 +340,16 @@ export default function AuthPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {activeTab === 'register' ? 'Sign up with Google' : 'Sign in with Google'}
+            {googleLoading
+              ? 'Redirigiendo a Google...'
+              : activeTab === 'register'
+                ? 'Registrarse con Google'
+                : 'Iniciar sesión con Google'}
           </button>
 
           {!hasSupabaseConfig && (
             <p className="mb-4 text-sm text-red-300 bg-red-900/30 border border-red-700/40 rounded-lg px-3 py-2">
-              Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local env.
+              La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.
             </p>
           )}
 
@@ -295,7 +358,7 @@ export default function AuthPage() {
               <div className="w-full border-t border-[#374151]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-card text-[#9CA3AF]">Or</span>
+              <span className="px-3 bg-card text-[#9CA3AF]">O</span>
             </div>
           </div>
 
@@ -303,12 +366,12 @@ export default function AuthPage() {
             <form onSubmit={handleRegister} className="space-y-5">
               <div>
                 <label htmlFor="fullName" className={labelClasses}>
-                  Full Name
+                  Nombre completo
                 </label>
                 <input
                   id="fullName"
                   type="text"
-                  placeholder="Your full name"
+                  placeholder="Tu nombre completo"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className={inputClasses}
@@ -318,12 +381,12 @@ export default function AuthPage() {
 
               <div>
                 <label htmlFor="registerEmail" className={labelClasses}>
-                  Email
+                  Correo
                 </label>
                 <input
                   id="registerEmail"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="tu@correo.com"
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
                   className={inputClasses}
@@ -333,13 +396,13 @@ export default function AuthPage() {
 
               <div>
                 <label htmlFor="registerPassword" className={labelClasses}>
-                  Password
+                  Contraseña
                 </label>
                 <div className="relative">
                   <input
                     id="registerPassword"
                     type={showRegisterPassword ? 'text' : 'password'}
-                    placeholder="Your password"
+                    placeholder="Tu contraseña"
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     className={`${inputClasses} pr-11`}
@@ -350,12 +413,12 @@ export default function AuthPage() {
                     type="button"
                     onClick={() => setShowRegisterPassword((prev) => !prev)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
-                    aria-label={showRegisterPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showRegisterPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     <PasswordToggleIcon visible={showRegisterPassword} />
                   </button>
                 </div>
-                <p className={helperClasses}>Minimum 8 characters</p>
+                <p className={helperClasses}>Mínimo 8 caracteres</p>
               </div>
 
               {registerError && (
@@ -374,17 +437,17 @@ export default function AuthPage() {
                 disabled={registerLoading}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {registerLoading ? 'Creating account...' : 'Create Account'}
+                {registerLoading ? 'Creando cuenta...' : 'Crear cuenta'}
               </button>
 
               <p className="text-center text-[#9CA3AF] text-sm mt-3">
-                Already have an account?{' '}
+                ¿Ya tienes una cuenta?{' '}
                 <button
                   type="button"
                   onClick={() => clearMessagesForTab('login')}
                   className="text-[#FBBF24] hover:text-[#F59E0B] font-medium"
                 >
-                  Sign in
+                  Inicia sesión
                 </button>
               </p>
             </form>
@@ -392,12 +455,12 @@ export default function AuthPage() {
             <form onSubmit={handleSignIn} className="space-y-5">
               <div>
                 <label htmlFor="loginEmail" className={labelClasses}>
-                  Email
+                  Correo
                 </label>
                 <input
                   id="loginEmail"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="tu@correo.com"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   className={inputClasses}
@@ -408,14 +471,14 @@ export default function AuthPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label htmlFor="loginPassword" className="block text-sm font-medium text-[#D1D5DB]">
-                    Password
+                    Contraseña
                   </label>
                   <button
                     type="button"
                     onClick={() => router.push(`/auth/forgot-password${loginEmail ? `?email=${encodeURIComponent(loginEmail.trim())}` : ''}`)}
                     className="text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors"
                   >
-                    Forgot password?
+                    ¿Olvidaste tu contraseña?
                   </button>
                 </div>
 
@@ -423,7 +486,7 @@ export default function AuthPage() {
                   <input
                     id="loginPassword"
                     type={showLoginPassword ? 'text' : 'password'}
-                    placeholder="Your password"
+                    placeholder="Tu contraseña"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     className={`${inputClasses} pr-11`}
@@ -433,7 +496,7 @@ export default function AuthPage() {
                     type="button"
                     onClick={() => setShowLoginPassword((prev) => !prev)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
-                    aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showLoginPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     <PasswordToggleIcon visible={showLoginPassword} />
                   </button>
@@ -447,7 +510,7 @@ export default function AuthPage() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 rounded border-[#4B5563] bg-[#1f2937] text-[#FBBF24] focus:ring-[#FBBF24]"
                 />
-                Remember me
+                Recordarme
               </label>
 
               {loginError && (
@@ -461,17 +524,17 @@ export default function AuthPage() {
                 disabled={loginLoading}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loginLoading ? 'Signing in...' : 'Sign In'}
+                {loginLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
               </button>
 
               <p className="text-center text-[#9CA3AF] text-sm mt-3">
-                Don't have an account?{' '}
+                ¿No tienes una cuenta?{' '}
                 <button
                   type="button"
                   onClick={() => clearMessagesForTab('register')}
                   className="text-[#FBBF24] hover:text-[#F59E0B] font-medium"
                 >
-                  Sign up
+                  Regístrate
                 </button>
               </p>
             </form>

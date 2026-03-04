@@ -121,7 +121,7 @@ export function Sidebar() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
-        aria-label="Open menu"
+        aria-label="Abrir menú"
       >
         <Menu className="h-6 w-6 text-foreground" />
       </button>
@@ -184,17 +184,17 @@ function SidebarContent({
       icon: Home,
     },
     {
-      label: t('myCourses', 'My Courses'),
+      label: t('myCourses', 'Mis cursos'),
       href: '/dashboard/courses',
       icon: BookOpen,
     },
     {
-      label: 'Messages',
+      label: 'Mensajes',
       href: '/dashboard/messages',
       icon: MessageSquare,
     },
     {
-      label: 'Course Notes',
+      label: 'Notas del curso',
       href: '/dashboard/pdf-view',
       icon: FileText,
     },
@@ -208,21 +208,21 @@ function SidebarContent({
           <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/40">
             <Image
               src="/images/Logo.jpeg"
-              alt="Jazz Culture logo"
+              alt="Logo de La Cultura del Jazz"
               fill
               className="object-cover"
               sizes="32px"
             />
           </div>
           <span className="font-serif font-bold text-foreground text-lg">
-            Jazz Culture
+            La Cultura del Jazz
           </span>
         </Link>
         {onClose && (
           <button
             onClick={onClose}
             className="p-1 rounded-md hover:bg-accent transition-colors"
-            aria-label="Close menu"
+            aria-label="Cerrar menú"
           >
             <X className="h-5 w-5 text-muted-foreground" />
           </button>
@@ -258,8 +258,8 @@ function SidebarContent({
               {item.href === '/dashboard/messages' && unreadMessages !== null && unreadMessages > 0 && (
                 <span
                   className="h-2.5 w-2.5 rounded-full bg-yellow-400"
-                  aria-label="Unread messages"
-                  title="New message in inbox"
+                  aria-label="Mensajes no leídos"
+                  title="Nuevo mensaje en la bandeja"
                 />
               )}
             </Link>
@@ -277,7 +277,7 @@ function SidebarContent({
           }`}
         >
           <Settings className={`h-5 w-5 ${pathname === '/dashboard/settings' ? 'text-primary' : ''}`} />
-          {t('settings', 'Settings')}
+          {t('settings', 'Configuración')}
         </Link>
       </nav>
 
@@ -288,7 +288,7 @@ function SidebarContent({
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors w-full"
         >
           <LogOut className="h-5 w-5" />
-          {t('logOut', 'Log out')}
+          {t('logOut', 'Cerrar sesión')}
         </button>
       </div>
     </div>
@@ -324,7 +324,7 @@ function CoursesNavSection() {
     .map((video, index) => ({
       lessonId: video.lessonId,
       courseId: video.courseId,
-      classLabel: `Class ${index + 1}`,
+      classLabel: `Clase ${index + 1}`,
       subtitle: video.title,
       classNumber: index + 1,
     }));
@@ -369,7 +369,7 @@ function CoursesNavSection() {
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
       >
         <Library className="h-5 w-5 flex-shrink-0" />
-        <span className="flex-1 text-left">{t('myNotes', 'My Notes')}</span>
+        <span className="flex-1 text-left">{t('myNotes', 'Mis notas')}</span>
         <ChevronDown
           className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
@@ -378,19 +378,19 @@ function CoursesNavSection() {
       {open && (
         <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-col max-h-[52dvh] lg:max-h-[58dvh]">
           {loading && (
-            <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
+            <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Cargando…')}</p>
           )}
 
           {!loading && (
             <>
               <div className="px-2.5 py-1.5 bg-primary/10 border-b border-primary/40">
                 <span className="text-xs font-semibold text-primary tracking-wide uppercase">
-                  {t('introductionToJazzMusic', 'Introduction to Jazz Music')}
+                  {t('introductionToJazzMusic', 'Introducción a la música jazz')}
                 </span>
               </div>
               {notesVideos.length === 0 && (
                 <p className="px-2.5 py-1.5 text-xs text-muted-foreground border-b border-border/60">
-                  {t('noPurchasedCoursesYet', 'No purchased courses yet.')}
+                  {t('noPurchasedCoursesYet', 'Aún no hay cursos comprados.')}
                 </p>
               )}
               <div className="courses-scroll flex-1 min-h-0 overflow-y-auto pr-1">
@@ -431,11 +431,13 @@ function CoursesNavSection() {
               </div>
               <div className="border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
                 <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
+                  Notas de la lección
                   Lesson notes
                 </p>
                 <textarea
                   value={noteContent}
                   onChange={(event) => onChangeSidebarNotes(event.target.value)}
+                  placeholder="Escribe notas para la clase seleccionada..."
                   placeholder="Write notes for selected class..."
                   className="w-full h-44 resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />

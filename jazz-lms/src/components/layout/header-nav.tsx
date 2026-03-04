@@ -1,11 +1,11 @@
 'use client';
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#board-hero' },
-  { label: 'Professor', href: '#board-professor' },
-  { label: 'Learn', href: '#board-learn' },
-  { label: 'Courses', href: '#board-courses' },
-  { label: 'Press', href: '#board-press' },
+  { label: 'Inicio', href: '#board-hero' },
+  { label: 'Profesor', href: '#board-professor' },
+  { label: 'Aprender', href: '#board-learn' },
+  { label: 'Cursos', href: '#board-courses' },
+  { label: 'Prensa', href: '#board-press' },
   { label: 'Jazz Cats', href: '#board-jazzcats' },
   { label: 'FAQ', href: '#board-faq' },
 ];

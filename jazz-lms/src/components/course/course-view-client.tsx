@@ -33,139 +33,157 @@ interface DashboardCourseProgressItem {
 const lessonsData: LessonItem[] = [
   {
     id: 1,
-    title: 'Class 1',
-    subtitle: 'Introduction to Jazz Culture',
+    title: 'Clase 1',
+    subtitle: 'Introducción a la cultura del jazz',
     description:
-      'This first class presents a general introduction to Jazz Culture. It covers its historical and social origins, as well as the elements that distinguish it from other musical traditions. Rather than a detailed analysis, the purpose is to offer a panoramic view that allows recognizing the aesthetic and cultural foundations upon which Jazz will develop, preparing the ground to understand its later evolution.',
+      'Esta primera clase presenta una introducción general a la cultura del jazz, sus orígenes históricos y sociales, y los elementos que la distinguen de otras tradiciones musicales.',
     image: '/images/clase1.jpg',
     isFree: true,
   },
   {
     id: 2,
-    title: 'Class 2',
-    subtitle: 'The Language of Jazz 1: Sonic Heterogeneity',
+    title: 'Clase 2',
+    subtitle: 'El lenguaje del jazz 1: heterogeneidad sonora',
     description:
-      'After the introduction to Jazz Culture in Class 1, we address sonic heterogeneity here. In the personalization of sound, an aesthetic principle of beauty can emerge through diverse sonorities, which breaks with the criteria of purity common in classical and popular music.',
+      'Tras la introducción inicial, abordamos la heterogeneidad sonora y cómo la personalización del sonido rompe con la idea de pureza presente en otras músicas.',
     image: '/images/clase2.jpg',
     isFree: false,
   },
   {
     id: 3,
-    title: 'Class 3',
-    subtitle: 'The Language of Jazz 2: The Antecedents',
+    title: 'Clase 3',
+    subtitle: 'El lenguaje del jazz 2: antecedentes',
     description:
-      'We consider the antecedents of African influence that emerged after the American Civil War. We focus on Spiritual Song or Gospel and the Blues, with direct examples of their impact on Jazz.',
+      'Revisamos los antecedentes afroamericanos surgidos tras la Guerra Civil y su influencia en el jazz a través del gospel y el blues.',
     image: '/images/clase3.jpg',
     isFree: false,
   },
   {
     id: 4,
-    title: 'Class 4',
-    subtitle: 'The Language of Jazz 3: Improvisation',
+    title: 'Clase 4',
+    subtitle: 'El lenguaje del jazz 3: improvisación',
     description:
-      'Since improvisation is a central issue in language, we review the thematic forms whose characteristics relate to and partly predetermine improvisation, whether in the paraphrase, formulaic, motivic or modal variants.',
+      'La improvisación se estudia como eje central del lenguaje del jazz, analizando formas y recursos como la paráfrasis, lo motívico y lo modal.',
     image: '/images/clase4.jpg',
     isFree: false,
   },
   {
     id: 5,
-    title: 'Class 5',
-    subtitle: 'A Decisive Antecedent: Ragtime',
+    title: 'Clase 5',
+    subtitle: 'Un antecedente decisivo: ragtime',
     description:
-      'After addressing its probable origin, its development on piano and in the orchestra, as well as its treatment by classical music composers, the study focuses on the transgression of pianist Jelly Roll Morton.',
+      'Exploramos el ragtime, su desarrollo y su transición hacia el nacimiento del jazz de Nueva Orleans.',
     image: '/images/clase5.jpg',
     isFree: false,
   },
   {
     id: 6,
-    title: 'Class 6',
-    subtitle: 'The Language of Jazz 4: Rhythm',
+    title: 'Clase 6',
+    subtitle: 'El lenguaje del jazz 4: ritmo',
     description:
-      'The rhythm in early jazz and the roles of the rhythm section instruments are analyzed. With the abandonment of ragtime influence, the four beats sound more uniformly.',
+      'Analizamos el ritmo en el jazz temprano y la evolución de la sección rítmica hasta el bop.',
     image: '/images/clase6.jpg',
     isFree: false,
   },
   {
     id: 7,
-    title: 'Class 7',
-    subtitle: 'Jamming & Blowing',
+    title: 'Clase 7',
+    subtitle: 'Jamming y blowing',
     description:
-      'After a brief reference to the concept\'s origin in Chicago, the class focuses on its consolidation in Kansas City and New York. The importance of this process for defining Jazz Culture is analyzed.',
+      'Estudiamos las jam sessions y su importancia para consolidar la cultura del jazz en ciudades clave como Kansas City y Nueva York.',
     image: '/images/clase7.jpg',
     isFree: false,
   },
   {
     id: 8,
-    title: 'Class 8',
-    subtitle: 'Composition and Arrangement in Jazz',
+    title: 'Clase 8',
+    subtitle: 'Composición y arreglos en jazz',
     description:
-      'The great jazz composers have never created in abstract, but always thinking of someone concrete. The case of Duke Ellington is examined, who wrote harmony based on the timbre of his soloists.',
+      'Vemos cómo los grandes compositores de jazz escribían pensando en músicos concretos y en sus timbres personales.',
     image: '/images/clase8.jpg',
     isFree: false,
   },
   {
     id: 9,
-    title: 'Class 9',
-    subtitle: 'From Marching Bands to the First Jazz Groups',
+    title: 'Clase 9',
+    subtitle: 'De las marching bands a los primeros grupos de jazz',
     description:
-      'The initial formations are presented, from the marching bands of New Orleans to the first groups of Louis Armstrong. We analyze how these groups shaped the sound of early jazz.',
+      'Recorremos las primeras formaciones, desde Nueva Orleans hasta los grupos que definieron el primer sonido del jazz.',
     image: '/images/clase9.jpg',
     isFree: false,
   },
   {
     id: 10,
-    title: 'Class 10',
-    subtitle: 'Swing and Classic Combos',
+    title: 'Clase 10',
+    subtitle: 'Swing y combos clásicos',
     description:
-      'The class focuses on the great orchestras of the swing era, with figures such as Benny Goodman and the Hot Club of France Quintet. The importance of instrumental sections is studied.',
+      'Nos enfocamos en las grandes orquestas de la era swing y en su papel para expandir el jazz internacionalmente.',
     image: '/images/clase10.jpg',
     isFree: false,
   },
   {
     id: 11,
-    title: 'Class 11',
-    subtitle: 'Modern Combos and Rhythm Section Instruments',
+    title: 'Clase 11',
+    subtitle: 'Combos modernos e instrumentos de sección rítmica',
     description:
-      'We address the evolution towards bop combos, hard bop and modal jazz, analyzing their flexibility and role in musical innovation.',
+      'Abordamos la evolución hacia el bop, hard bop y jazz modal, junto con la función de cada instrumento rítmico.',
     image: '/images/clase11.jpg',
     isFree: false,
   },
   {
     id: 12,
-    title: 'Class 12',
-    subtitle: 'Improvisation',
+    title: 'Clase 12',
+    subtitle: 'Improvisación',
     description:
-      'The class begins with the study of improvisation, addressing its form and the reasons for thematic choice as a conditioning factor. Next, the main procedures are analyzed.',
+      'Profundizamos en los principales procedimientos improvisatorios y en su aplicación por grandes solistas.',
     image: '/images/clase12.jpg',
     isFree: false,
   },
   {
     id: 13,
-    title: 'Class 13',
-    subtitle: 'Jazz and Entertainment',
+    title: 'Clase 13',
+    subtitle: 'Jazz y entretenimiento',
     description:
-      'Although today jazz is considered a unique musical culture with defined values and distinct from popular entertainment, in the 1920s its context was much more diverse.',
+      'Analizamos cómo el jazz pasó de convivir con otros espectáculos populares a consolidarse como cultura musical independiente.',
     image: '/images/clase13.jpg',
     isFree: false,
   },
   {
     id: 14,
-    title: 'Class 14',
-    subtitle: 'Singing Jazz 1',
+    title: 'Clase 14',
+    subtitle: 'Canto jazz 1',
     description:
-      'Jazz, with its origins in vocal music, has in the vaudeville blues sung by women one of its main predecessors. Louis Armstrong is considered a key figure who influenced future vocalists.',
+      'Estudiamos las raíces vocales del jazz y las figuras clave que marcaron su desarrollo en el período clásico.',
     image: '/images/clase14.jpg',
     isFree: false,
   },
   {
     id: 15,
-    title: 'Class 15',
-    subtitle: 'Singing Jazz 2',
+    title: 'Clase 15',
+    subtitle: 'Canto jazz 2',
     description:
-      'The lesson explores the divas of swing, with a focus on Billie Holiday and Ella Fitzgerald, analyzing their style and interaction with other instruments.',
+      'Cerramos con las grandes voces del swing y su impacto en la evolución del canto jazzístico.',
     image: '/images/clase15.jpg',
     isFree: false,
   },
+];
+
+const lessonsDescriptionsEs = [
+  'Introducción general a la cultura del jazz, su origen histórico y sus bases estéticas.',
+  'La heterogeneidad sonora y la personalización del sonido como rasgo esencial del jazz.',
+  'Antecedentes afroamericanos: gospel y blues como raíces fundamentales del lenguaje jazzístico.',
+  'La improvisación y sus formas principales dentro del repertorio del jazz.',
+  'Ragtime como antecedente clave y su relación con el surgimiento del jazz temprano.',
+  'Evolución del ritmo y de la sección rítmica desde el jazz temprano hasta el bop.',
+  'La cultura de las jam sessions y su impacto en la consolidación del jazz moderno.',
+  'Composición y arreglos pensados para timbres y personalidades musicales concretas.',
+  'De las marching bands a las primeras formaciones que definieron el sonido del jazz.',
+  'El swing y los combos clásicos en la expansión internacional del género.',
+  'Combos modernos y nuevas funciones instrumentales en el hard bop y el jazz modal.',
+  'Procedimientos improvisatorios: paráfrasis, fórmula, motivo, modalidad y libertad.',
+  'Relación entre jazz y entretenimiento en su proceso de consolidación cultural.',
+  'El canto jazzístico en su primera etapa y sus principales referentes históricos.',
+  'Grandes voces del swing y su influencia en la evolución de la voz como instrumento.',
 ];
 
 // ─── Float Popup Component ──────────────────────────────────────────────────
@@ -204,7 +222,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-            aria-label="Close"
+            aria-label="Cerrar"
           >
             <X className="h-5 w-5" />
           </button>
@@ -230,10 +248,10 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
                   <Lock className="h-5 w-5 text-yellow-500 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-                      Premium Content
+                      Contenido premium
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Purchase the course to unlock this lesson
+                      Compra el curso para desbloquear esta lección
                     </p>
                   </div>
                 </div>
@@ -249,7 +267,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
                   className="mt-4 w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="h-5 w-5" />
-                  Unlock Full Course — €29.99
+                  Desbloquear curso completo — €29.99
                 </button>
               )}
             </div>
@@ -280,14 +298,14 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
               )}
 
               <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-xs uppercase tracking-widest opacity-70">Class Preview</p>
+                <p className="text-xs uppercase tracking-widest opacity-70">Vista previa de clase</p>
                 <p className="text-sm font-semibold">{lesson.subtitle}</p>
               </div>
               {(lesson.isFree || hasPurchased) && (
                 <button
                   onClick={toggleMute}
                   className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
                 >
                   {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                 </button>
@@ -323,7 +341,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
           {!lesson.isFree && !hasPurchased && (
             <div className="flex items-center gap-2 mt-3 text-yellow-600 dark:text-yellow-400">
               <Lock className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Premium — Click to learn more</span>
+              <span className="text-xs font-semibold">Premium — Haz clic para saber más</span>
             </div>
           )}
         </div>
@@ -559,8 +577,9 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   // Get current lessons with backend-controlled lock status
   const lessons = lessonsData.map((lesson, index) => ({
     ...lesson,
-    title: `Class ${index + 1}`,
+    title: `Clase ${index + 1}`,
     subtitle: lessonTitlesInOrder[index] || lesson.subtitle,
+    description: lessonsDescriptionsEs[index] || lesson.description,
     isFree: hasPurchased ? true : lesson.isFree,
   }));
 
@@ -573,7 +592,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         {/* Course title */}
         <div className="text-center space-y-2 px-1 sm:px-0">
           <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-primary/80">
-            Jazz Culture Academy
+            Academia Cultura del Jazz
           </p>
           {!hasPurchased && (
             <button
@@ -584,12 +603,12 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
               {isPurchasing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Processing...
+                  Procesando...
                 </>
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4" />
-                  Purchase Full Course — €29.99
+                  Comprar curso completo — €29.99
                 </>
               )}
             </button>
@@ -686,11 +705,11 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                       </div>
                       <div className="mt-1 flex items-center justify-between text-[10px]">
                         <span className={isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}>
-                          {progressPercent}% watched
+                          {progressPercent}% visto
                         </span>
                         <span className={`inline-flex items-center gap-1 ${isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}`}>
                           <Lock className="h-2.5 w-2.5" />
-                          {isLocked ? 'Purchase required' : 'Available'}
+                          {isLocked ? 'Compra requerida' : 'Disponible'}
                         </span>
                       </div>
                     </div>
@@ -742,8 +761,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           type="button"
           onClick={handleResetTestState}
           disabled={isResettingTestState}
-          title="Reset local test purchases"
-          aria-label="Reset local test purchases"
+          title="Restablecer compras de prueba locales"
+          aria-label="Restablecer compras de prueba locales"
           className="fixed bottom-2 right-2 z-40 h-7 w-7 rounded-full border border-border bg-card/50 text-muted-foreground opacity-25 hover:opacity-70 hover:bg-card transition-all disabled:opacity-20"
         >
           {isResettingTestState ? (

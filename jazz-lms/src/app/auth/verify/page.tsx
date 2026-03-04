@@ -33,7 +33,7 @@ export default function VerifyCodePage() {
 
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail || code.trim().length < 6) {
-      setError('Enter a valid email and verification code');
+      setError('Introduce un correo y un código de verificación válidos');
       return;
     }
 
@@ -53,16 +53,16 @@ export default function VerifyCodePage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Invalid verification code');
+        setError(data.error || 'Código de verificación inválido');
         return;
       }
 
-      setMessage('Email verified successfully! Redirecting to sign in...');
+      setMessage('¡Correo verificado correctamente! Redirigiendo al inicio de sesión...');
       setTimeout(() => {
         router.push(`/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}`);
       }, 1200);
     } catch {
-      setError('Failed to verify code');
+      setError('No se pudo verificar el código');
     } finally {
       setSubmitting(false);
     }
@@ -73,7 +73,7 @@ export default function VerifyCodePage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(normalizedEmail)) {
-      setError('Enter a valid email to resend the code');
+      setError('Introduce un correo válido para reenviar el código');
       return;
     }
 
@@ -90,13 +90,13 @@ export default function VerifyCodePage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Failed to resend code');
+        setError(data.error || 'No se pudo reenviar el código');
         return;
       }
 
-      setMessage('A new verification code was sent to your email.');
+      setMessage('Se envió un nuevo código de verificación a tu correo.');
     } catch {
-      setError('Failed to resend code');
+      setError('No se pudo reenviar el código');
     } finally {
       setResending(false);
     }
@@ -106,15 +106,15 @@ export default function VerifyCodePage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
         <div className="p-5 sm:p-8 space-y-5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">Verify your email</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">Verifica tu correo</h1>
           <p className="text-sm text-[#9CA3AF] text-center">
-            We sent a verification code to your email. Enter it below to activate your account.
+            Te enviamos un código de verificación a tu correo. Introdúcelo abajo para activar tu cuenta.
           </p>
 
           <form onSubmit={handleVerify} className="space-y-4">
             <div>
               <label htmlFor="verifyEmail" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
-                Email
+                Correo
               </label>
               <input
                 id="verifyEmail"
@@ -122,14 +122,14 @@ export default function VerifyCodePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={inputClasses}
-                placeholder="your@email.com"
+                placeholder="tu@correo.com"
                 required
               />
             </div>
 
             <div>
               <label htmlFor="verifyCode" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
-                Verification code
+                Código de verificación
               </label>
               <input
                 id="verifyCode"
@@ -139,7 +139,7 @@ export default function VerifyCodePage() {
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                 className={inputClasses}
-                placeholder="Enter code"
+                placeholder="Introduce el código"
                 minLength={6}
                 required
               />
@@ -161,7 +161,7 @@ export default function VerifyCodePage() {
               disabled={submitting}
               className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? 'Verifying...' : 'Verify Code'}
+              {submitting ? 'Verificando...' : 'Verificar código'}
             </button>
           </form>
 
@@ -172,14 +172,14 @@ export default function VerifyCodePage() {
               disabled={resending}
               className="text-sm text-[#FBBF24] hover:text-[#F59E0B] disabled:opacity-70 transition-colors"
             >
-              {resending ? 'Sending...' : 'Resend code'}
+              {resending ? 'Enviando...' : 'Reenviar código'}
             </button>
             <button
               type="button"
               onClick={() => router.push('/auth?tab=login')}
               className="text-sm text-[#9CA3AF] hover:text-white transition-colors"
             >
-              Back to Sign In
+              Volver a iniciar sesión
             </button>
           </div>
         </div>

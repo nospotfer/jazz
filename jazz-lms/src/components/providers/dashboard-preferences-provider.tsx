@@ -30,7 +30,7 @@ interface DashboardPreferencesContextValue {
 const STORAGE_KEY = 'jazz-dashboard-preferences-v1';
 
 const defaultState: DashboardPreferencesState = {
-  language: 'en',
+  language: 'es',
   notifications: {
     emailNotifications: true,
     courseUpdates: true,
@@ -196,7 +196,7 @@ export function DashboardPreferencesProvider({
       if (raw) {
         const parsed = JSON.parse(raw) as DashboardPreferencesState;
         setState({
-          language: parsed.language ?? defaultState.language,
+          language: 'es',
           notifications: {
             ...defaultState.notifications,
             ...(parsed.notifications ?? {}),
@@ -222,7 +222,7 @@ export function DashboardPreferencesProvider({
   const value = useMemo<DashboardPreferencesContextValue>(
     () => ({
       language: state.language,
-      setLanguage: (language) => setState((prev) => ({ ...prev, language })),
+      setLanguage: () => setState((prev) => ({ ...prev, language: 'es' })),
       notifications: state.notifications,
       setNotifications: (notifications) => setState((prev) => ({ ...prev, notifications })),
       updateNotification: (key, value) =>
@@ -233,7 +233,7 @@ export function DashboardPreferencesProvider({
             [key]: value,
           },
         })),
-      t: (key, fallback) => translations[state.language]?.[key] ?? fallback,
+      t: (key, fallback) => translations.es[key] ?? fallback,
     }),
     [state]
   );

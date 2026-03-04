@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { ensureMessagingTables } from '@/lib/messages-db';
 
+export const dynamic = 'force-dynamic';
+
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
   'enric.vazquez@upc.edu'

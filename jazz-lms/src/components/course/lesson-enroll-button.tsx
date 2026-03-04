@@ -29,7 +29,7 @@ export function LessonEnrollButton({
 
       window.location.assign(response.data.url);
     } catch {
-      toast.error('Could not start lesson checkout. Please try again.');
+      toast.error('No se pudo iniciar el pago de la lección. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +48,7 @@ export function LessonEnrollButton({
       ) : (
         <>
           <PlayCircle className="h-3.5 w-3.5 mr-1" />
-          Buy video €{price.toFixed(2)}
+          Comprar video €{price.toFixed(2)}
         </>
       )}
     </Button>

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isLocalTestRequest } from '@/lib/test-mode';
 
 /**
  * Simulated purchase endpoint for localhost testing.
@@ -10,6 +11,10 @@ import { NextResponse } from 'next/server';
  */
 export async function POST(req: Request) {
   try {
+    if (!isLocalTestRequest(req)) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+
     const { courseId } = await req.json();
 
     if (!courseId) {
@@ -26,7 +31,7 @@ export async function POST(req: Request) {
       courseId,
       userId: 'simulated-user',
       status: 'completed',
-      amount: 49.99,
+      amount: 29.99,
       currency: 'EUR',
       createdAt: new Date().toISOString(),
     };
@@ -46,8 +51,12 @@ export async function POST(req: Request) {
  * GET endpoint to check purchase/lock status for a course.
  * Returns which lessons are accessible (backend-controlled).
  */
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    if (!isLocalTestRequest(req)) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+
     // In production: check Purchase table for userId + courseId
     // For localhost: return status based on localStorage flag (sent as query param)
     return NextResponse.json({

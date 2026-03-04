@@ -31,42 +31,57 @@ async function getAuthContext(): Promise<AuthContext | null> {
   const isOwner = isOwnerEmail(user.email);
   const desiredRole = isOwner ? 'SUPER_ADMIN' : 'USER';
 
-  let dbUser = await db.user.findUnique({
-    where: {
-      email: user.email,
-    },
-  });
+  try {
+    let dbUser = await db.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
 
-  if (!dbUser) {
-    dbUser = await db.user.create({
-      data: {
+    if (!dbUser) {
+      dbUser = await db.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          role: desiredRole,
+        },
+      });
+    } else if (isOwner && dbUser.role === 'USER') {
+      dbUser = await db.user.update({
+        where: {
+          email: user.email,
+        },
+        data: {
+          role: 'SUPER_ADMIN',
+        },
+      });
+    }
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      dbUser: {
+        id: dbUser.id,
+        email: dbUser.email,
+        role: dbUser.role,
+      },
+    };
+  } catch (error) {
+    console.error('[admin:getAuthContext] Database unavailable. Falling back to Supabase-only context.', error);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      dbUser: {
         id: user.id,
         email: user.email,
         role: desiredRole,
       },
-    });
-  } else if (isOwner && dbUser.role === 'USER') {
-    dbUser = await db.user.update({
-      where: {
-        email: user.email,
-      },
-      data: {
-        role: 'SUPER_ADMIN',
-      },
-    });
+    };
   }
-
-  return {
-    user: {
-      id: user.id,
-      email: user.email,
-    },
-    dbUser: {
-      id: dbUser.id,
-      email: dbUser.email,
-      role: dbUser.role,
-    },
-  };
 }
 
 function isOwnerEmail(email: string) {
@@ -79,20 +94,13 @@ export async function isAdmin(): Promise<boolean> {
     return false;
   }
 
-  const isOwner = isOwnerEmail(ctx.dbUser.email);
-  const roleAllowed = isAdminRole(ctx.dbUser.role);
-
-  return isOwner && roleAllowed;
+  return isAdminRole(ctx.dbUser.role);
 }
 
 export async function can(permission: Parameters<typeof hasPermission>[1]): Promise<boolean> {
   const ctx = await getAuthContext();
 
   if (!ctx) {
-    return false;
-  }
-
-  if (!isOwnerEmail(ctx.dbUser.email)) {
     return false;
   }
 

@@ -112,7 +112,7 @@ export default function ProfilePage() {
       if (error) throw error;
       router.refresh();
     } catch {
-      alert('Failed to update avatar');
+      alert('No se pudo actualizar el avatar');
     }
   };
 
@@ -142,7 +142,7 @@ export default function ProfilePage() {
       router.refresh();
       setTimeout(() => setSuccess(false), 3000);
     } catch {
-      alert('Failed to update profile');
+      alert('No se pudo actualizar el perfil');
     } finally {
       setLoading(false);
     }
@@ -154,7 +154,7 @@ export default function ProfilePage() {
       const res = await axios.post('/api/stripe-portal');
       window.location.assign(res.data.url);
     } catch {
-      alert('Unable to open payment portal. Please try again later.');
+      alert('No se pudo abrir el portal de pagos. Inténtalo más tarde.');
       setIsPortalLoading(false);
     }
   };
@@ -162,9 +162,9 @@ export default function ProfilePage() {
   return (
     <div className="max-w-[1200px] mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Profile</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Perfil</h1>
         <p className="text-muted-foreground mt-1">
-          Manage your profile, personal details, and avatar preferences
+          Gestiona tu perfil, datos personales y preferencias de avatar
         </p>
       </div>
 
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                   <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-muted">
                     <Image
                       src={avatarUrl}
-                      alt="Profile avatar"
+                      alt="Avatar de perfil"
                       width={96}
                       height={96}
                       className="w-full h-full object-cover"
@@ -192,11 +192,11 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Profile Icon</p>
+                  <p className="font-medium text-foreground">Icono de perfil</p>
                   <p className="text-sm text-muted-foreground">
                     {avatarMode === 'random'
-                      ? 'Random mode: changes at each login'
-                      : 'Fixed mode: stays until you change it'}
+                      ? 'Modo aleatorio: cambia en cada inicio de sesión'
+                      : 'Modo fijo: se mantiene hasta que lo cambies'}
                   </p>
                 </div>
               </div>
@@ -209,20 +209,20 @@ export default function ProfilePage() {
                 className="w-full sm:w-auto sm:min-w-[220px] bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? 'Guardando...' : 'Guardar cambios'}
               </Button>
               {success && (
-                <span className="text-sm text-green-500 font-medium text-center">Profile updated successfully!</span>
+                <span className="text-sm text-green-500 font-medium text-center">¡Perfil actualizado correctamente!</span>
               )}
             </div>
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Profile Information</h2>
+            <h2 className="text-lg font-semibold text-foreground">Información del perfil</h2>
 
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-1.5">
-                Full Name
+                Nombre completo
               </label>
               <input
                 id="fullName"
@@ -231,13 +231,13 @@ export default function ProfilePage() {
                 value={formData.fullName}
                 onChange={handleChange}
                 className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                placeholder="Your full name"
+                placeholder="Tu nombre completo"
               />
             </div>
 
             <div>
               <label htmlFor="headline" className="block text-sm font-medium text-foreground mb-1.5">
-                Headline
+                Titular
               </label>
               <input
                 id="headline"
@@ -252,7 +252,7 @@ export default function ProfilePage() {
 
             <div>
               <label htmlFor="bio" className="block text-sm font-medium text-foreground mb-1.5">
-                Bio
+                Biografía
               </label>
               <textarea
                 id="bio"
@@ -261,12 +261,12 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 rows={3}
                 className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 resize-none"
-                placeholder="Tell us about yourself..."
+                placeholder="Cuéntanos sobre ti..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Correo</label>
               <input
                 type="email"
                 value={email}
@@ -280,13 +280,13 @@ export default function ProfilePage() {
             <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Phone className="h-5 w-5 text-primary" />
-                Contact & Personal Data
+                Contacto y datos personales
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1.5">
-                    Phone
+                    Teléfono
                   </label>
                   <input
                     id="phone"
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                 <div>
                   <label htmlFor="dateOfBirth" className="block text-sm font-medium text-foreground mb-1.5">
                     <Calendar className="h-4 w-4 inline mr-1" />
-                    Date of Birth
+                    Fecha de nacimiento
                   </label>
                   <input
                     id="dateOfBirth"
@@ -317,7 +317,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-foreground mb-1.5">
-                    City
+                    Ciudad
                   </label>
                   <input
                     id="city"
@@ -326,12 +326,12 @@ export default function ProfilePage() {
                     value={formData.city}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                    placeholder="City"
+                    placeholder="Ciudad"
                   />
                 </div>
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-foreground mb-1.5">
-                    Country
+                    País
                   </label>
                   <input
                     id="country"
@@ -340,7 +340,7 @@ export default function ProfilePage() {
                     value={formData.country}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                    placeholder="Country"
+                    placeholder="País"
                   />
                 </div>
               </div>
@@ -349,10 +349,10 @@ export default function ProfilePage() {
             <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-2">
                 <CreditCard className="h-5 w-5 text-primary" />
-                Payment Methods
+                Métodos de pago
               </h2>
               <p className="text-sm text-muted-foreground mb-4">
-                Manage your cards and billing details through our secure Stripe portal.
+                Gestiona tus tarjetas y datos de facturación en nuestro portal seguro de Stripe.
               </p>
               <Button
                 type="button"
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                 ) : (
                   <Wallet className="h-4 w-4 mr-2" />
                 )}
-                Manage Payment Methods
+                Gestionar métodos de pago
               </Button>
             </div>
           </div>
@@ -383,8 +383,8 @@ export default function ProfilePage() {
             onClick={(event) => event.stopPropagation()}
           >
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Choose your avatar style</h2>
-              <p className="text-sm text-muted-foreground">Pick a fixed icon or keep random mode.</p>
+              <h2 className="text-lg font-semibold text-foreground">Elige tu estilo de avatar</h2>
+              <p className="text-sm text-muted-foreground">Selecciona un icono fijo o mantén el modo aleatorio.</p>
             </div>
 
             <button
@@ -401,7 +401,7 @@ export default function ProfilePage() {
             >
               <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <Shuffle className="h-4 w-4" />
-                Random avatar on each login
+                Avatar aleatorio en cada inicio de sesión
               </span>
               {draftAvatarMode === 'random' && <Check className="h-4 w-4 text-primary" />}
             </button>
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                   >
                     <Image
                       src={option}
-                      alt="Avatar option"
+                      alt="Opción de avatar"
                       width={80}
                       height={80}
                       className="w-full h-auto rounded-md"
@@ -441,10 +441,10 @@ export default function ProfilePage() {
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setPickerOpen(false)}>
-                Cancel
+                Cancelar
               </Button>
               <Button type="button" onClick={confirmAvatarSelection}>
-                Confirm Avatar
+                Confirmar avatar
               </Button>
             </div>
           </div>

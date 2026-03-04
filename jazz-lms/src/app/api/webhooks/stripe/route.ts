@@ -4,9 +4,24 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = (await headers()).get('Stripe-Signature') as string;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!signature) {
+    return new NextResponse('Webhook Error: Missing Stripe-Signature header', {
+      status: 400,
+    });
+  }
+
+  if (!webhookSecret) {
+    return new NextResponse('Webhook Error: Missing STRIPE_WEBHOOK_SECRET', {
+      status: 500,
+    });
+  }
 
   let event: Stripe.Event;
 
@@ -14,7 +29,7 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      webhookSecret
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
