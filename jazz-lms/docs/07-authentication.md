@@ -492,10 +492,10 @@ For this project, configure URLs in **two places**:
 
 #### A) Supabase Dashboard (Authentication → URL Configuration)
 
-- **Site URL (development)**: `http://localhost:3000`
+- **Site URL (development)**: `http://localhost:3001`
 - **Additional Redirect URLs**:
-  - `http://localhost:3000/auth/callback`
-  - `https://your-domain.com/auth/callback`
+  - `http://localhost:3001/auth/callback`
+  - `https://jazz-lms.vercel.app/auth/callback`
   - `https://*.vercel.app/auth/callback`
 
 #### B) Google Cloud Console (OAuth Client)
@@ -515,7 +515,7 @@ Important:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3001
 ```
 
 ---

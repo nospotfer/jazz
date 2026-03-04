@@ -49,7 +49,7 @@ npm run seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
 
 ## Google OAuth URLs (Required)
 
@@ -59,10 +59,10 @@ For Google login/register to work, configure both Supabase and Google Console UR
 
 Go to **Authentication → URL Configuration** and set:
 
-- **Site URL (dev):** `http://localhost:3000`
+- **Site URL (dev):** `http://localhost:3001`
 - **Additional Redirect URLs:**
-	- `http://localhost:3000/auth/callback`
-	- `https://your-domain.com/auth/callback`
+	- `http://localhost:3001/auth/callback`
+	- `https://jazz-lms.vercel.app/auth/callback`
 	- `https://*.vercel.app/auth/callback`
 
 ### Google Cloud Console
@@ -88,7 +88,7 @@ npm run stripe:sandbox:check
 npm run dev
 
 # 3) Simulate a signed Stripe webhook locally
-npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3000/api/webhooks/stripe --cleanup
+npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3001/api/webhooks/stripe --cleanup
 
 # 4) Run full sandbox check in one command (requires app running)
 npm run stripe:sandbox:all
