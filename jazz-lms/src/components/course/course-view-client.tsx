@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Lock, X, Volume2, VolumeX, PlayCircle, Loader2, ShoppingCart, RotateCcw } from 'lucide-react';
+import { Lock, X, PlayCircle, Loader2, ShoppingCart, RotateCcw } from 'lucide-react';
 import { UnlockAnimation } from './unlock-animation';
 import { PurchaseSuccessModal } from './purchase-success-modal';
 import axios from 'axios';
@@ -198,16 +198,6 @@ interface FloatPopupProps {
 }
 
 function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurchaseClick }: FloatPopupProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
   if (isPinned) {
     // Full-screen modal mode (like landing page ExpandedCard)
     return (
@@ -272,20 +262,17 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
               )}
             </div>
 
-            {/* Right - Preview Video (blurred for locked) */}
+            {/* Right - Preview Visual (blurred for locked) */}
             <div className="relative bg-black min-h-[300px] lg:min-h-0">
-              <video
-                ref={videoRef}
+              <Image
+                src={lesson.image}
+                alt={lesson.subtitle}
+                fill
                 className={`absolute inset-0 w-full h-full object-cover ${
                   !lesson.isFree && !hasPurchased ? 'blur-md' : ''
                 }`}
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src="/images/videojazz.mp4" type="video/mp4" />
-              </video>
+                sizes="(min-width: 1024px) 50vw, 100vw"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
 
               {/* Lock overlay for premium content */}
@@ -301,15 +288,6 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
                 <p className="text-xs uppercase tracking-widest opacity-70">Vista previa de clase</p>
                 <p className="text-sm font-semibold">{lesson.subtitle}</p>
               </div>
-              {(lesson.isFree || hasPurchased) && (
-                <button
-                  onClick={toggleMute}
-                  className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-                  aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </button>
-              )}
             </div>
           </div>
         </div>

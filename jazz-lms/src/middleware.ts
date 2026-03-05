@@ -18,8 +18,11 @@ export async function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname
+  const isAuthResetPasswordPath = pathname.startsWith('/auth/reset-password')
 
-  if (!pathname.startsWith('/dashboard') && !pathname.startsWith('/auth') && !pathname.startsWith('/admin')) {
+  const isRootPath = pathname === '/'
+
+  if (!isRootPath && !pathname.startsWith('/dashboard') && !pathname.startsWith('/auth') && !pathname.startsWith('/admin')) {
     return response
   }
 
@@ -30,7 +33,7 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth')) {
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth') || isRootPath) {
     const supabase = createServerClient(
       url!,
       anonKey!,
@@ -56,7 +59,7 @@ export async function middleware(request: NextRequest) {
       if (pathname.startsWith('/dashboard')) {
         return NextResponse.redirect(new URL('/auth', request.url))
       }
-    } else if (pathname.startsWith('/auth')) {
+    } else if ((pathname.startsWith('/auth') && !isAuthResetPasswordPath) || isRootPath) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }

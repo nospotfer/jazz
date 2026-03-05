@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import MuxPlayer from '@mux/mux-player-react';
-import axios from 'axios';
 
 export function PromoVideo() {
   const router = useRouter();
@@ -15,25 +14,32 @@ export function PromoVideo() {
   const [playbackToken, setPlaybackToken] = useState('');
   const [thumbnailToken, setThumbnailToken] = useState('');
   const [storyboardToken, setStoryboardToken] = useState('');
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [muxRuntimeError, setMuxRuntimeError] = useState('');
   const posterUrl = playbackId
     ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ''}`
     : '';
+  const hasMuxPlayback = Boolean(playbackId && playbackToken && !muxRuntimeError);
 
   useEffect(() => {
     let cancelled = false;
 
     const loadPromoPlayback = async () => {
       try {
-        const response = await axios.get('/api/mux/promo-playback');
+        const response = await fetch('/api/mux/promo-playback', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Promo playback request failed');
+        }
+        const data = await response.json();
         if (cancelled) return;
 
-        setPlaybackId(response.data.playbackId || '');
-        setPlaybackToken(response.data.playbackToken || '');
-        setThumbnailToken(response.data.thumbnailToken || '');
-        setStoryboardToken(response.data.storyboardToken || '');
+        setPlaybackId(data.playbackId || '');
+        setPlaybackToken(data.playbackToken || '');
+        setThumbnailToken(data.thumbnailToken || '');
+        setStoryboardToken(data.storyboardToken || '');
+        setMuxRuntimeError('');
       } catch {
         if (cancelled) return;
+        setMuxRuntimeError('Unable to load signed promo playback.');
       }
     };
 
@@ -45,16 +51,9 @@ export function PromoVideo() {
   }, []);
 
   const toggleMute = () => {
-    if (playerRef.current) {
-      playerRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-      return;
-    }
-
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
+    if (!playerRef.current) return;
+    playerRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
   };
 
   return (
@@ -100,7 +99,7 @@ export function PromoVideo() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            {playbackId && playbackToken ? (
+            {hasMuxPlayback ? (
               <MuxPlayer
                 ref={playerRef}
                 className="absolute inset-0 w-full h-full"
@@ -116,19 +115,18 @@ export function PromoVideo() {
                 loop
                 playsInline
                 accentColor="#d4af37"
+                onError={() => {
+                  setMuxRuntimeError('No se pudo cargar el video promocional de Mux.');
+                }}
               />
+            ) : muxRuntimeError ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-black text-white text-center px-6">
+                <p className="text-sm sm:text-base text-red-300">{muxRuntimeError}</p>
+              </div>
             ) : (
-              <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src="/images/videojazz.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              <div className="absolute inset-0 flex items-center justify-center bg-black text-white text-center px-6">
+                <p className="text-sm sm:text-base text-gray-300">Cargando video promocional...</p>
+              </div>
             )}
 
             {/* Dark overlay */}
@@ -137,9 +135,10 @@ export function PromoVideo() {
             {/* Mute/Unmute button */}
             <button
               onClick={toggleMute}
+              disabled={!hasMuxPlayback}
               className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
-              }`}
+              } ${!hasMuxPlayback ? 'cursor-not-allowed opacity-40' : ''}`}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}

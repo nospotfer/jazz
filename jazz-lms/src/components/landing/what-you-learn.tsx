@@ -1,21 +1,11 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 export function WhatYouLearn() {
   const router = useRouter();
-  const [isMuted, setIsMuted] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
 
   return (
     <>
@@ -85,35 +75,18 @@ export function WhatYouLearn() {
               </button>
             </div>
 
-            {/* Right side - Video */}
-            <div
-              className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl bg-black"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              <video
-                ref={videoRef}
+            {/* Right side - Visual */}
+            <div className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl bg-black">
+              <Image
+                src="/images/clase1.jpg"
+                alt="Vista previa del curso de jazz"
+                fill
+                priority={false}
                 className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src="/images/videojazz.mp4" type="video/mp4" />
-                Tu navegador no soporta la etiqueta de video.
-              </video>
+                sizes="(min-width: 1024px) 50vw, 100vw"
+              />
 
-              <div className="absolute inset-0 bg-black/10 pointer-events-none" />
-
-              <button
-                onClick={toggleMute}
-                className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
-                  isHovered ? 'opacity-100' : 'opacity-0'
-                }`}
-                aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
-              >
-                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-              </button>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
             </div>
           </div>
         </div>

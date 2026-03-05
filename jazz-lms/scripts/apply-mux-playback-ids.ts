@@ -17,7 +17,7 @@ const LESSON_PLAYBACK_IDS = [
   'zq5RceaZeZwfAEOzV99P0200ZauD73mZVbJClXXCosVS00',
   'zdh5Ck5ECKeEcEXHYMd5O9aewYpYfxu01s3902FmYG02Ko',
   'CfwA3JmMRlPRSJ6KhKRC8F4dk3RudX8ygJCwf5R4Idc',
-  'fQNep01k00VSgz01Blo24d7EBm8jB8YpwUa43HiYNxkOXk',
+  'CfwA3JmMRlPRSJ6KhKRC8F4dk3RudX8ygJCwf5R4Idc',
 ];
 
 async function main() {

@@ -40,12 +40,20 @@ export default function ForgotPasswordPage() {
     setError('');
 
     try {
-      await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
+
+      if (resetError) {
+        setError('No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.');
+        setSent(false);
+        return;
+      }
+
       setSent(true);
     } catch {
-      setSent(true);
+      setError('No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.');
+      setSent(false);
     } finally {
       setLoading(false);
     }

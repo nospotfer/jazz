@@ -82,6 +82,7 @@ export const CoursePlayer = ({
   const [thumbnailToken, setThumbnailToken] = useState('');
   const [storyboardToken, setStoryboardToken] = useState('');
   const [playbackError, setPlaybackError] = useState('');
+  const [muxRuntimeError, setMuxRuntimeError] = useState('');
   const [selectedAttachmentId, setSelectedAttachmentId] = useState<string | null>(
     lesson.attachments[0]?.id ?? null
   );
@@ -114,7 +115,7 @@ export const CoursePlayer = ({
     [visibleAttachments, selectedAttachmentId]
   );
   const effectivePlaybackId = playbackId || extractMuxPlaybackId(lesson.videoUrl);
-  const canRenderMuxPlayer = Boolean(canAccessLesson && effectivePlaybackId && playbackToken);
+  const canRenderMuxPlayer = Boolean(canAccessLesson && effectivePlaybackId && playbackToken && !muxRuntimeError);
   const muxTokens = useMemo(() => {
     const hasAnyToken = Boolean(playbackToken || thumbnailToken || storyboardToken);
     if (!hasAnyToken) {
@@ -174,10 +175,12 @@ export const CoursePlayer = ({
         setThumbnailToken('');
         setStoryboardToken('');
         setPlaybackError('');
+        setMuxRuntimeError('');
         return;
       }
 
       setPlaybackError('');
+      setMuxRuntimeError('');
 
       try {
         const response = await axios.get(`/api/lessons/${lesson.id}/mux-playback`);
@@ -525,6 +528,9 @@ export const CoursePlayer = ({
                       onCanPlay={() => setIsReady(true)}
                       onEnded={(event) => onEnded(event as unknown as Event)}
                       onTimeUpdate={onTimeUpdate}
+                      onError={() => {
+                        setMuxRuntimeError('Mux rejected the playback token. Check local MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY pair.');
+                      }}
                       autoPlay
                       playsInline
                     />
@@ -532,7 +538,7 @@ export const CoursePlayer = ({
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                       {canAccessLesson ? (
                         <p className="text-sm text-muted-foreground">
-                          {playbackError || 'Loading signed lesson video...'}
+                          {playbackError || muxRuntimeError || 'Loading signed lesson video...'}
                         </p>
                       ) : (
                         <div className="max-w-md space-y-3">
