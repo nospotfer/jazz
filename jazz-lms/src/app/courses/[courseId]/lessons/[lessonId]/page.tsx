@@ -47,9 +47,6 @@ const LessonPage = async ({
   const lesson = course.chapters
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === params.lessonId);
-  const firstLessonId = course.chapters
-    .flatMap((chapter) => chapter.lessons)
-    .at(0)?.id;
 
 
   if (!lesson || !lesson.isPublished) {
@@ -75,7 +72,7 @@ const LessonPage = async ({
   });
 
   const canAccessLesson =
-    lesson.id === firstLessonId || !!hasFullPurchase || !!hasLessonPurchase;
+    !!hasFullPurchase || !!hasLessonPurchase;
   const isAdminOwner =
     user.email?.toLowerCase() === (process.env.ADMIN_OWNER_EMAIL ?? '').toLowerCase();
   const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);

@@ -18,23 +18,23 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const [deletedPurchases, deletedProgress] = await db.$transaction([
+    const [deletedPurchases, deletedProgress, deletedLessonPurchases] = await db.$transaction([
       db.purchase.deleteMany({
         where: { userId: user.id },
       }),
       db.userProgress.deleteMany({
         where: { userId: user.id },
       }),
-      db.$executeRaw`
-        DELETE FROM LessonPurchase
-        WHERE userId = ${user.id}
-      `,
+      db.lessonPurchase.deleteMany({
+        where: { userId: user.id },
+      }),
     ]);
 
     return NextResponse.json({
       ok: true,
       deletedPurchases: deletedPurchases.count,
       deletedProgress: deletedProgress.count,
+      deletedLessonPurchases: deletedLessonPurchases.count,
     });
   } catch (error) {
     console.error('[DEV_RESET_TEST_PURCHASES_ERROR]', error);

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, RotateCcw } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
@@ -26,13 +26,11 @@ export interface PurchasedVideoItem {
 
 interface MyCoursesClientProps {
   videos: PurchasedVideoItem[];
-  isLocalTestMode?: boolean;
 }
 
-export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesClientProps) {
+export function MyCoursesClient({ videos }: MyCoursesClientProps) {
   const { t } = useDashboardPreferences();
   const searchParams = useSearchParams();
-  const [testCompletionRate, setTestCompletionRate] = useState<number | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [completionAlertPending, setCompletionAlertPending] = useState(false);
 
@@ -73,7 +71,7 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
   const completionRate = totalClasses
     ? Math.round(((watchedVideos.length / totalClasses) * 100) * 10) / 10
     : 0;
-  const effectiveCompletionRate = testCompletionRate ?? completionRate;
+  const effectiveCompletionRate = completionRate;
   const formatPercent = (value: number) => `${Math.max(0, Math.min(100, value)).toFixed(1)}%`;
   const formattedCompletionRate = formatPercent(effectiveCompletionRate);
 
@@ -342,23 +340,6 @@ export function MyCoursesClient({ videos, isLocalTestMode = false }: MyCoursesCl
         </div>
       )}
 
-      {isLocalTestMode && (
-        <button
-          type="button"
-          onClick={() => {
-            setTestCompletionRate(100);
-            setCompletionAlertPending(true);
-            window.localStorage.removeItem(COMPLETION_ALERT_ACK_KEY);
-            window.localStorage.setItem(COMPLETION_ALERT_KEY, '1');
-            window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
-          }}
-          title="Completar progreso del curso para pruebas locales"
-          aria-label="Completar progreso del curso para pruebas locales"
-          className="fixed bottom-2 right-2 z-40 h-7 w-7 rounded-full border border-border bg-card/50 text-muted-foreground opacity-25 hover:opacity-70 hover:bg-card transition-all"
-        >
-          <RotateCcw className="h-3.5 w-3.5 mx-auto" />
-        </button>
-      )}
     </div>
   );
 }

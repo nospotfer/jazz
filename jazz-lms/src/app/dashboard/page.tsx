@@ -2,10 +2,17 @@ import { redirect } from 'next/navigation';
 import { CourseViewClient } from '@/components/course/course-view-client';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { headers } from 'next/headers';
-import { isLocalhostHost } from '@/lib/test-mode';
+import { stripe } from '@/lib/stripe';
 
-export default async function DashboardPage() {
+type DashboardPageProps = {
+  searchParams?: {
+    purchase?: string | string[];
+    source?: string | string[];
+    session_id?: string | string[];
+  };
+};
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const supabase = createClient();
   const {
     data: { user },
@@ -13,6 +20,48 @@ export default async function DashboardPage() {
 
   if (!user) {
     return redirect('/auth');
+  }
+
+  const purchaseStatus = Array.isArray(searchParams?.purchase)
+    ? searchParams?.purchase[0]
+    : searchParams?.purchase;
+  const purchaseSource = Array.isArray(searchParams?.source)
+    ? searchParams?.source[0]
+    : searchParams?.source;
+  const sessionId = Array.isArray(searchParams?.session_id)
+    ? searchParams?.session_id[0]
+    : searchParams?.session_id;
+
+  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      const sessionUserId = session.metadata?.userId;
+      const sessionCourseId = session.metadata?.courseId;
+      const sessionPurchaseType = session.metadata?.purchaseType;
+
+      if (
+        session.payment_status === 'paid' &&
+        sessionUserId === user.id &&
+        sessionPurchaseType === 'course' &&
+        sessionCourseId
+      ) {
+        await db.purchase.upsert({
+          where: {
+            userId_courseId: {
+              userId: user.id,
+              courseId: sessionCourseId,
+            },
+          },
+          update: {},
+          create: {
+            userId: user.id,
+            courseId: sessionCourseId,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('[dashboard] Unable to confirm Stripe checkout session.', error);
+    }
   }
 
   let course: {
@@ -81,9 +130,6 @@ export default async function DashboardPage() {
   const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
   const lessonTitlesInOrder = orderedLessons.map((lesson) => lesson.title);
 
-  const isLocalTestMode =
-    process.env.NODE_ENV !== 'production' && isLocalhostHost(headers().get('host'));
-
   return (
     <CourseViewClient
       userName={user.user_metadata?.full_name || user.email || 'Estudiante de Jazz'}
@@ -93,7 +139,6 @@ export default async function DashboardPage() {
       lessonRoutesInOrder={lessonRoutesInOrder}
       lessonIdsInOrder={lessonIdsInOrder}
       lessonTitlesInOrder={lessonTitlesInOrder}
-      isLocalTestMode={isLocalTestMode}
     />
   );
 }

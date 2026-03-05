@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Lock, X, PlayCircle, Loader2, ShoppingCart, RotateCcw } from 'lucide-react';
+import { Lock, X, PlayCircle, Loader2, ShoppingCart } from 'lucide-react';
 import { UnlockAnimation } from './unlock-animation';
 import { PurchaseSuccessModal } from './purchase-success-modal';
 import axios from 'axios';
@@ -342,10 +342,9 @@ interface CourseViewProps {
   lessonRoutesInOrder: string[];
   lessonIdsInOrder: string[];
   lessonTitlesInOrder: string[];
-  isLocalTestMode: boolean;
 }
 
-export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, lessonTitlesInOrder, isLocalTestMode }: CourseViewProps) {
+export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, lessonTitlesInOrder }: CourseViewProps) {
   const { t } = useDashboardPreferences();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -355,20 +354,12 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isResettingTestState, setIsResettingTestState] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [lockedClickPrimedIndex, setLockedClickPrimedIndex] = useState<number | null>(null);
   const [lockedFeedbackIndex, setLockedFeedbackIndex] = useState<number | null>(null);
   const [hasSeenPreviewOnce, setHasSeenPreviewOnce] = useState(false);
   const [progressByLessonId, setProgressByLessonId] = useState<Record<string, number>>({});
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (window.location.hostname === 'localhost') {
-      localStorage.removeItem('jazz-course-purchased');
-      sessionStorage.removeItem('jazz-course-purchased');
-    }
-  }, []);
 
   useEffect(() => {
     const previewKey = `jazz-class-preview-seen:${courseId ?? 'default'}`;
@@ -497,12 +488,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       return;
     }
 
-    if (lesson.isFree && lessonRoute) {
-      router.push(lessonRoute);
-      return;
-    }
-    
-    if (!lesson.isFree && !hasPurchased) {
+    if (!hasPurchased) {
       if (lockedClickPrimedIndex === index) {
         setLockedFeedbackIndex(index);
         setLockedClickPrimedIndex(null);
@@ -540,25 +526,13 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     setShowSuccessModal(false);
   }, []);
 
-  const handleResetTestState = useCallback(async () => {
-    if (!isLocalTestMode || isResettingTestState) return;
-
-    setIsResettingTestState(true);
-    try {
-      await axios.post('/api/dev/reset-test-purchases');
-      window.location.reload();
-    } catch {
-      setIsResettingTestState(false);
-    }
-  }, [isLocalTestMode, isResettingTestState]);
-
   // Get current lessons with backend-controlled lock status
   const lessons = lessonsData.map((lesson, index) => ({
     ...lesson,
     title: `Clase ${index + 1}`,
     subtitle: lessonTitlesInOrder[index] || lesson.subtitle,
     description: lessonsDescriptionsEs[index] || lesson.description,
-    isFree: hasPurchased ? true : lesson.isFree,
+    isFree: hasPurchased,
   }));
 
   const firstName = userName.split(' ')[0];
@@ -732,23 +706,6 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           hasPurchased={hasPurchased}
           onPurchaseClick={handlePurchaseClick}
         />
-      )}
-
-      {isLocalTestMode && (
-        <button
-          type="button"
-          onClick={handleResetTestState}
-          disabled={isResettingTestState}
-          title="Restablecer compras de prueba locales"
-          aria-label="Restablecer compras de prueba locales"
-          className="fixed bottom-2 right-2 z-40 h-7 w-7 rounded-full border border-border bg-card/50 text-muted-foreground opacity-25 hover:opacity-70 hover:bg-card transition-all disabled:opacity-20"
-        >
-          {isResettingTestState ? (
-            <Loader2 className="h-3.5 w-3.5 mx-auto animate-spin" />
-          ) : (
-            <RotateCcw className="h-3.5 w-3.5 mx-auto" />
-          )}
-        </button>
       )}
 
       <UnlockAnimation

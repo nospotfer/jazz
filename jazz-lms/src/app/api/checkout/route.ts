@@ -3,7 +3,6 @@ import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
-import { isLocalTestRequest } from '@/lib/test-mode';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 
 export const runtime = 'nodejs';
@@ -76,23 +75,6 @@ export async function POST(req: Request) {
       });
     }
 
-    if (isLocalTestRequest(req)) {
-      await db.purchase.create({
-        data: {
-          userId: user.id,
-          courseId,
-        },
-      });
-
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&localTest=true`
-        : `${origin}/courses/${courseId}?success=true&localTest=true`;
-
-      return NextResponse.json({
-        url: successUrl,
-      });
-    }
-
     // Find or create Stripe customer
     let stripeCustomerId: string;
     const customers = await stripe.customers.list({
@@ -126,9 +108,9 @@ export async function POST(req: Request) {
       },
     ];
 
-    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard`;
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&session_id={CHECKOUT_SESSION_ID}`;
     const dashboardCancelUrl = `${origin}/dashboard?purchase=canceled&source=dashboard`;
-    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&session_id={CHECKOUT_SESSION_ID}`;
     const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
 
     const session = await stripe.checkout.sessions.create({
