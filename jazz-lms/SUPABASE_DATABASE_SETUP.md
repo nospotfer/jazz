@@ -137,9 +137,10 @@ If you still can't connect from your local machine:
 
 After creating the tables:
 1. ✅ Tables are created in Supabase
-2. ✅ You can deploy to Vercel (make sure environment variables are set!)
-3. ✅ Your application should work on Vercel
-4. ⚠️ For local development, you may need to adjust network settings or use Supabase's connection pooling
+2. ✅ Apply Security Advisor hardening from [SUPABASE_SECURITY_ADVISOR_FIX.md](SUPABASE_SECURITY_ADVISOR_FIX.md)
+3. ✅ You can deploy to Vercel (make sure environment variables are set!)
+4. ✅ Your application should work on Vercel
+5. ⚠️ For local development, you may need to adjust network settings or use Supabase's connection pooling
 
 ---
 

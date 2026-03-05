@@ -39,7 +39,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
 
       setSignedUrl(response.data?.signedUrl || item.url);
     } catch (error: any) {
-      const message = error?.response?.data?.error || 'No se puede cargar este PDF ahora mismo.';
       const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
       setLoadError(message);
       setSignedUrl(item.url);
@@ -65,18 +64,18 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Vista PDF</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">PDF View</h1>
         <p className="text-muted-foreground mt-1">
-          Acceso rápido a los PDFs de las lecciones dentro de tu panel
+          Easy access to lesson PDFs inside your dashboard
         </p>
       </div>
 
       {items.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-10 text-center">
           <FileText className="h-10 w-10 text-primary mx-auto mb-3" />
-          <p className="text-foreground font-medium">Aún no hay PDFs disponibles</p>
+          <p className="text-foreground font-medium">No PDFs available yet</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Los PDFs de las lecciones aparecerán aquí cuando se añadan.
+            Lesson PDFs will appear here when they are added.
           </p>
         </div>
       ) : (
@@ -113,7 +112,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             {selected ? (
               isLoading ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
-                  Cargando PDF...
                   Loading PDF...
                 </div>
               ) : loadError && !signedUrl ? (
@@ -129,7 +127,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
               )
             ) : (
               <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
-                Selecciona un PDF
+                Select a PDF
               </div>
             )}
           </div>

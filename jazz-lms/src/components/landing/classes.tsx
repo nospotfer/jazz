@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState, useRef } from 'react';
-import { X, Volume2, VolumeX } from 'lucide-react';
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
 
 interface ClassItem {
   title: string;
@@ -126,16 +126,6 @@ function ExpandedCard({
   classItem: ClassItem;
   onClose: () => void;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
       <div
@@ -166,30 +156,20 @@ function ExpandedCard({
             </p>
           </div>
 
-          {/* Right - Preview Video */}
+          {/* Right - Preview Visual */}
           <div className="relative bg-black min-h-[300px] lg:min-h-0">
-            <video
-              ref={videoRef}
+            <Image
+              src={classItem.image}
+              alt={classItem.subtitle}
+              fill
               className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-            >
-              <source src="/images/videojazz.mp4" type="video/mp4" />
-            </video>
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
             <div className="absolute bottom-4 left-4 text-white">
               <p className="text-xs uppercase tracking-widest opacity-70">Vista previa de clase</p>
               <p className="text-sm font-semibold">{classItem.subtitle}</p>
             </div>
-            <button
-              onClick={toggleMute}
-              className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-              aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
-            >
-              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-            </button>
           </div>
         </div>
       </div>

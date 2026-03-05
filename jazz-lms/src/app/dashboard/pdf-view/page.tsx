@@ -4,6 +4,18 @@ import { db } from '@/lib/db';
 import { PdfViewClient } from '@/components/dashboard/pdf-view-client';
 import { isAdminRole } from '@/lib/admin/permissions';
 
+function isAuxiliaryAttachment(name: string) {
+  return /auxiliar|auxiliares|auxiliary|support/i.test(name);
+}
+
+function getClassNumberFromAttachment(pathOrName: string) {
+  const match = pathOrName.match(/clase\s*(\d{1,2})/i);
+  if (!match) return null;
+
+  const value = Number(match[1]);
+  return Number.isInteger(value) ? value : null;
+}
+
 export default async function PdfViewPage() {
   const supabase = createClient();
   const {
@@ -57,7 +69,8 @@ export default async function PdfViewPage() {
   const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
   const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
-  const items = publishedCourses.flatMap((course) => {
+  const items = publishedCourses
+    .flatMap((course) => {
     const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
     const firstLessonId = lessons[0]?.id;
 
@@ -70,15 +83,30 @@ export default async function PdfViewPage() {
 
       if (!hasAccess) return [];
 
-      return lesson.attachments.map((attachment) => ({
-        id: attachment.id,
-        lessonId: lesson.id,
-        title: lesson.title,
-        classLabel: `Clase ${index + 1}`,
-        url: attachment.url,
-      }));
+      return lesson.attachments.map((attachment) => {
+        const isAuxiliary = isAuxiliaryAttachment(attachment.name);
+        const classNumber = getClassNumberFromAttachment(attachment.url) ?? index + 1;
+
+        return {
+          id: attachment.id,
+          lessonId: lesson.id,
+          title: isAuxiliary ? attachment.name : lesson.title,
+          classLabel: isAuxiliary ? 'Apuntes Auxiliares' : `Clase ${classNumber}`,
+          url: attachment.url,
+          classNumber,
+          isAuxiliary,
+        };
+      });
     });
-  });
+  })
+    .sort((a, b) => {
+      if (a.isAuxiliary !== b.isAuxiliary) {
+        return a.isAuxiliary ? 1 : -1;
+      }
+
+      return a.classNumber - b.classNumber;
+    })
+    .map(({ classNumber, isAuxiliary, ...item }) => item);
 
   return <PdfViewClient items={items} />;
 }

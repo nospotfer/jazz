@@ -8,6 +8,8 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const origin = requestUrl.origin
   const flow = requestUrl.searchParams.get('flow') === 'register' ? 'register' : 'login'
+  const nextPathRaw = requestUrl.searchParams.get('next')
+  const nextPath = nextPathRaw && nextPathRaw.startsWith('/') ? nextPathRaw : '/dashboard'
 
   const authErrorRedirect = (message: string) =>
     NextResponse.redirect(
@@ -65,5 +67,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${origin}/dashboard`)
+  return NextResponse.redirect(`${origin}${nextPath}`)
 }

@@ -23,8 +23,10 @@ export default function ResetPasswordPage() {
       try {
         const query = new URLSearchParams(window.location.search);
         const authCode = query.get('code');
+        let hasRecoveryCredential = false;
 
         if (authCode) {
+          hasRecoveryCredential = true;
           const { error: codeError } = await supabase.auth.exchangeCodeForSession(authCode);
           if (codeError) {
             setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
@@ -39,8 +41,17 @@ export default function ResetPasswordPage() {
 
           const accessToken = hash.get('access_token');
           const refreshToken = hash.get('refresh_token');
+          const hashErrorDescription = hash.get('error_description');
+
+          if (hashErrorDescription) {
+            setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
+            setTokenValid(false);
+            setLoadingToken(false);
+            return;
+          }
 
           if (accessToken && refreshToken) {
+            hasRecoveryCredential = true;
             const { error: sessionError } = await supabase.auth.setSession({
               access_token: accessToken,
               refresh_token: refreshToken,
@@ -55,6 +66,13 @@ export default function ResetPasswordPage() {
 
             window.history.replaceState({}, '', window.location.pathname + window.location.search);
           }
+        }
+
+        if (!hasRecoveryCredential) {
+          setTokenError('Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.');
+          setTokenValid(false);
+          setLoadingToken(false);
+          return;
         }
 
         const { data } = await supabase.auth.getSession();

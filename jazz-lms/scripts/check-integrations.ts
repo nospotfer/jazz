@@ -226,28 +226,6 @@ async function main() {
 
   if (!supabaseStorageOk) {
     throw new Error(lastSupabaseError);
-  const firstAttachment = lessons.flatMap((lesson) => lesson.attachments).at(0);
-
-  if (!firstAttachment) {
-    throw new Error('No attachment found to validate Supabase storage');
-  }
-
-  const storagePath = extractStoragePath(firstAttachment.url, bucket);
-  if (!storagePath || storagePath.includes('token=')) {
-    throw new Error('Attachment storage path is invalid');
-  }
-
-  const { data: signedData, error: signedError } = await supabase.storage
-    .from(bucket)
-    .createSignedUrl(storagePath, 300);
-
-  if (signedError || !signedData?.signedUrl) {
-    throw new Error(`Supabase signed URL failed: ${signedError?.message || 'no URL returned'}`);
-  }
-
-  const fileResponse = await fetch(signedData.signedUrl, { method: 'HEAD' });
-  if (!fileResponse.ok) {
-    throw new Error(`Supabase file HEAD failed: HTTP ${fileResponse.status}`);
   }
 
   console.log('CHECKUP_OK');

@@ -103,11 +103,7 @@ export default function AuthPage() {
 
   const redirectTo = useMemo(() => {
     if (typeof window === 'undefined') return undefined;
-    const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-    const baseUrl = configuredAppUrl && /^https?:\/\//i.test(configuredAppUrl)
-      ? configuredAppUrl.replace(/\/+$/, '')
-      : window.location.origin;
-    return `${baseUrl}/auth/callback`;
+    return `${window.location.origin}/auth/callback`;
   }, []);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -228,13 +224,13 @@ export default function AuthPage() {
     setGoogleLoading(true);
 
     try {
-      const callbackUrl = redirectTo ? `${redirectTo}?flow=${activeTab}` : undefined;
+      const callbackUrl = redirectTo;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: callbackUrl,
           queryParams: {
-            prompt: activeTab === 'register' ? 'consent' : 'select_account',
+            prompt: 'select_account',
           },
         },
       });
