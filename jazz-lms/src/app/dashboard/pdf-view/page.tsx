@@ -72,12 +72,10 @@ export default async function PdfViewPage() {
   const items = publishedCourses
     .flatMap((course) => {
     const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
-    const firstLessonId = lessons[0]?.id;
 
     return lessons.flatMap((lesson, index) => {
       const hasAccess =
         isPrivilegedViewer ||
-        lesson.id === firstLessonId ||
         purchasedCourseIds.has(course.id) ||
         purchasedLessonIds.has(lesson.id);
 

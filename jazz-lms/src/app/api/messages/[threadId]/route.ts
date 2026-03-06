@@ -35,13 +35,16 @@ type LastMessageRow = {
 
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
-  'enric.vazquez@upc.edu'
+  'culturadeljazz@gmail.com'
 ).toLowerCase();
 
 async function notifyByEmail(to: string, subject: string, body: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) return;
+  if (!apiKey || !from) {
+    console.warn('[messages:thread:notifyByEmail] Missing RESEND_API_KEY or RESEND_FROM_EMAIL');
+    return;
+  }
 
   try {
     const resend = new Resend(apiKey);
@@ -51,8 +54,8 @@ async function notifyByEmail(to: string, subject: string, body: string) {
       subject,
       text: body,
     });
-  } catch {
-    // Silent fail
+  } catch (error) {
+    console.error('[messages:thread:notifyByEmail] Email delivery failed', error);
   }
 }
 
@@ -228,8 +231,8 @@ export async function POST(
 
     await notifyByEmail(
       recipient,
-      `New reply: ${thread.subject}`,
-      `From: ${senderLabel}\n\n${message}`
+      `New reply: ${thread.subject} [Thread:${thread.id}]`,
+      `From: ${senderLabel}\nThread ID: ${thread.id}\n\n${message}\n\nIMPORTANT: Keep [Thread:${thread.id}] in the subject when replying so the message is attached to the correct conversation.`
     );
 
     return NextResponse.json({ ok: true, createdAt: now });

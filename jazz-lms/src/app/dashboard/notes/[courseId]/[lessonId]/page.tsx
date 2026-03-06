@@ -135,7 +135,6 @@ export default async function LessonNotesPage({
 
   const canAccessNotes =
     isPrivilegedViewer ||
-    lesson.id === firstLessonId ||
     !!hasFullPurchase ||
     !!hasLessonPurchase;
 

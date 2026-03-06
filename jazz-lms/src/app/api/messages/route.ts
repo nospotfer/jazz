@@ -32,19 +32,23 @@ type LastMessageRow = {
 
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
-  'enric.vazquez@upc.edu'
+  'culturadeljazz@gmail.com'
 ).toLowerCase();
 
 async function notifyProfessor(params: {
   subject: string;
   body: string;
   fromEmail: string;
+  studentName: string;
   threadId: string;
   studentId: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) return;
+  if (!apiKey || !from) {
+    console.warn('[messages:notifyProfessor] Missing RESEND_API_KEY or RESEND_FROM_EMAIL');
+    return;
+  }
 
   try {
     const resend = new Resend(apiKey);
@@ -52,10 +56,10 @@ async function notifyProfessor(params: {
       from,
       to: professorEmail,
       subject: `${params.subject} [Thread:${params.threadId}]`,
-      text: `From: ${params.fromEmail}\nStudent ID: ${params.studentId}\nThread ID: ${params.threadId}\n\n${params.body}\n\nIMPORTANT: Keep [Thread:${params.threadId}] in the subject when replying so the message is attached to the correct conversation.`,
+      text: `From: ${params.fromEmail}\nStudent Name: ${params.studentName}\nStudent ID: ${params.studentId}\nThread ID: ${params.threadId}\n\n${params.body}\n\nIMPORTANT: Keep [Thread:${params.threadId}] in the subject when replying so the message is attached to the correct conversation.`,
     });
-  } catch {
-    // Silent fail: in-app messaging keeps working
+  } catch (error) {
+    console.error('[messages:notifyProfessor] Email delivery failed', error);
   }
 }
 
@@ -331,6 +335,7 @@ export async function POST(req: Request) {
       subject: `New student message: ${normalizedSubject}`,
       body: message,
       fromEmail: user.email,
+      studentName: safeStudentName || user.email,
       threadId,
       studentId: safeStudentId,
     });

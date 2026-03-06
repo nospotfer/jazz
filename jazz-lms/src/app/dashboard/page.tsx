@@ -22,6 +22,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     return redirect('/auth');
   }
 
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      await db.$transaction([
+        db.purchase.deleteMany({ where: { userId: user.id } }),
+        db.lessonPurchase.deleteMany({ where: { userId: user.id } }),
+        db.userProgress.deleteMany({ where: { userId: user.id } }),
+      ]);
+    } catch (error) {
+      console.error('[dashboard] Failed to reset local test purchases.', error);
+    }
+  }
+
   const purchaseStatus = Array.isArray(searchParams?.purchase)
     ? searchParams?.purchase[0]
     : searchParams?.purchase;

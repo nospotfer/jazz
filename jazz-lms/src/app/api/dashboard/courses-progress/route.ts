@@ -40,6 +40,17 @@ export async function GET() {
     const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
     const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
+    if (!isPrivilegedViewer) {
+      const hasFullPurchase = await db.purchase.findFirst({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+
+      if (!hasFullPurchase) {
+        return NextResponse.json({ courses: [] });
+      }
+    }
+
     if (isPrivilegedViewer) {
       const publishedCourses = await db.course.findMany({
         where: { isPublished: true },

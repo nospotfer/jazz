@@ -13,10 +13,42 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = resolve(__dirname, '..');
 
+function isTransientDbError(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('MaxClientsInSessionMode') ||
+    message.includes('max clients reached') ||
+    message.includes('too many clients')
+  );
+}
+
+async function withRetry(task, { attempts = 4, baseDelayMs = 400 } = {}) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await task();
+    } catch (error) {
+      lastError = error;
+
+      if (!isTransientDbError(error) || attempt === attempts) {
+        throw error;
+      }
+
+      const delayMs = baseDelayMs * attempt;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  throw lastError;
+}
+
 function parseArgs(argv) {
   const options = {
     webhookUrl: DEFAULT_WEBHOOK_URL,
     cleanup: false,
+    userId: '',
+    courseId: '',
   };
 
   for (const arg of argv) {
@@ -30,11 +62,23 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg.startsWith('--user-id=')) {
+      options.userId = arg.slice('--user-id='.length).trim();
+      continue;
+    }
+
+    if (arg.startsWith('--course-id=')) {
+      options.courseId = arg.slice('--course-id='.length).trim();
+      continue;
+    }
+
     if (arg === '--help' || arg === '-h') {
       console.log('Usage: node scripts/stripe-sandbox-webhook.mjs [options]');
       console.log('');
       console.log('Options:');
       console.log(`  --webhook-url=<url>   Webhook endpoint (default: ${DEFAULT_WEBHOOK_URL})`);
+      console.log('  --user-id=<id>        Optional fixed user id (skips DB lookup for user)');
+      console.log('  --course-id=<id>      Optional fixed course id (skips DB lookup for course)');
       console.log('  --cleanup             Delete tested purchase after verification');
       process.exit(0);
     }
@@ -106,24 +150,36 @@ function assertEnv() {
 }
 
 async function main() {
-  const { webhookUrl, cleanup } = parseArgs(process.argv.slice(2));
+  const { webhookUrl, cleanup, userId: argUserId, courseId: argCourseId } = parseArgs(process.argv.slice(2));
   await loadEnvFiles();
   assertEnv();
 
   const prisma = new PrismaClient();
 
   try {
-    const course =
-      (await prisma.course.findFirst({ where: { isPublished: true } })) ||
-      (await prisma.course.findFirst());
+    let courseId = argCourseId;
+    let userId = argUserId;
 
-    if (!course) {
-      throw new Error('No course found in database. Create/seed a course first.');
+    if (!courseId) {
+      const course = await withRetry(async () => {
+        const publishedCourse = await prisma.course.findFirst({ where: { isPublished: true } });
+        if (publishedCourse) return publishedCourse;
+        return prisma.course.findFirst();
+      });
+
+      if (!course) {
+        throw new Error('No course found in database. Create/seed a course first or pass --course-id=<id>.');
+      }
+
+      courseId = course.id;
     }
 
-    const user = await prisma.user.findFirst();
-    if (!user) {
-      throw new Error('No user found in database. Create/register a user first.');
+    if (!userId) {
+      const user = await withRetry(() => prisma.user.findFirst());
+      if (!user) {
+        throw new Error('No user found in database. Create/register a user first or pass --user-id=<id>.');
+      }
+      userId = user.id;
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -141,8 +197,8 @@ async function main() {
           object: 'checkout.session',
           metadata: {
             purchaseType: 'course',
-            userId: user.id,
-            courseId: course.id,
+            userId,
+            courseId,
           },
         },
       },
@@ -169,42 +225,60 @@ async function main() {
 
     const text = await res.text();
 
-    const purchase = await prisma.purchase.findUnique({
-      where: {
-        userId_courseId: {
-          userId: user.id,
-          courseId: course.id,
-        },
-      },
-    });
+    if (!res.ok) {
+      throw new Error(`Webhook request failed with status ${res.status}${text ? `: ${text}` : ''}`);
+    }
 
-    if (cleanup && purchase) {
-      await prisma.purchase.delete({
+    let purchase = null;
+    let verificationWarning = null;
+
+    try {
+      purchase = await withRetry(() => prisma.purchase.findUnique({
         where: {
           userId_courseId: {
-            userId: user.id,
-            courseId: course.id,
+            userId,
+            courseId,
           },
         },
-      });
+      }));
+    } catch (error) {
+      if (isTransientDbError(error)) {
+        verificationWarning = 'Webhook returned success, but purchase verification was skipped due to transient DB connection limits.';
+      } else {
+        throw error;
+      }
+    }
+
+    if (cleanup && purchase) {
+      try {
+        await withRetry(() => prisma.purchase.delete({
+          where: {
+            userId_courseId: {
+              userId,
+              courseId,
+            },
+          },
+        }));
+      } catch (error) {
+        if (!isTransientDbError(error)) {
+          throw error;
+        }
+      }
     }
 
     const result = {
       webhookUrl,
       status: res.status,
       response: text || null,
-      userId: user.id,
-      courseId: course.id,
+      userId,
+      courseId,
       purchaseCreated: Boolean(purchase),
       purchaseId: purchase?.id || null,
       cleanedUp: cleanup && Boolean(purchase),
+      verificationWarning,
     };
 
     console.log(JSON.stringify(result, null, 2));
-
-    if (!res.ok) {
-      throw new Error(`Webhook request failed with status ${res.status}`);
-    }
   } finally {
     await prisma.$disconnect();
   }

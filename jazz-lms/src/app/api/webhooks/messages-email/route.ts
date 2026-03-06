@@ -6,7 +6,7 @@ import { Resend } from 'resend';
 
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
-  'enric.vazquez@upc.edu'
+  'culturadeljazz@gmail.com'
 ).toLowerCase();
 
 function normalizeEmail(raw: string) {
@@ -18,6 +18,9 @@ function extractThreadId(input: string) {
   const tokenMatch = input.match(/\[Thread:([0-9a-fA-F-]{36})\]/);
   if (tokenMatch?.[1]) return tokenMatch[1];
 
+  const compactTokenMatch = input.match(/Thread[:\s]*([0-9a-fA-F-]{36})/i);
+  if (compactTokenMatch?.[1]) return compactTokenMatch[1];
+
   const lineMatch = input.match(/Thread\s*ID\s*:\s*([0-9a-fA-F-]{36})/i);
   if (lineMatch?.[1]) return lineMatch[1];
 
@@ -27,7 +30,10 @@ function extractThreadId(input: string) {
 async function notifyStudentByEmail(to: string, subject: string, body: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) return;
+  if (!apiKey || !from) {
+    console.warn('[messages:email-webhook:notifyStudent] Missing RESEND_API_KEY or RESEND_FROM_EMAIL');
+    return;
+  }
 
   try {
     const resend = new Resend(apiKey);
@@ -37,8 +43,8 @@ async function notifyStudentByEmail(to: string, subject: string, body: string) {
       subject,
       text: body,
     });
-  } catch {
-    // Silent fail
+  } catch (error) {
+    console.error('[messages:email-webhook:notifyStudent] Email delivery failed', error);
   }
 }
 

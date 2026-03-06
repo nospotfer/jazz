@@ -357,7 +357,9 @@ export function MessagesClient() {
                   return (
                     <div key={message.id} className="rounded-lg border border-border bg-background px-3 py-2.5">
                       <p className="text-xs text-muted-foreground mb-1">
-                        {message.senderRole === 'professor' ? 'Profesor Enric Vázquez' : (message.senderName || message.senderEmail)} •{' '}
+                        {message.senderRole === 'professor'
+                          ? `Professor Enric Vázquez (${message.senderEmail})`
+                          : (message.senderName || message.senderEmail)} •{' '}
                         {new Date(message.createdAt).toLocaleString('pt-BR')}
                       </p>
                       <p className="text-sm text-foreground whitespace-pre-wrap">{message.body}</p>

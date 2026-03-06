@@ -27,6 +27,17 @@ export async function GET() {
     const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
     const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
+    if (!isPrivilegedViewer) {
+      const hasFullPurchase = await db.purchase.findFirst({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+
+      if (!hasFullPurchase) {
+        return NextResponse.json({ count: 0 });
+      }
+    }
+
     const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
       db.purchase.findMany({
         where: { userId: user.id },
@@ -63,7 +74,6 @@ export async function GET() {
 
     const count = publishedCourses.reduce((total, course) => {
       const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
-      const firstLessonId = lessons[0]?.id;
 
       const accessibleAttachments = lessons.reduce((lessonTotal, lesson) => {
         if (isPrivilegedViewer) {
@@ -71,7 +81,6 @@ export async function GET() {
         }
 
         const hasAccess =
-          lesson.id === firstLessonId ||
           purchasedCourseIds.has(course.id) ||
           purchasedLessonIds.has(lesson.id);
 

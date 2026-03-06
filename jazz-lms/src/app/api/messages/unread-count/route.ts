@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
-  'enric.vazquez@upc.edu'
+  'culturadeljazz@gmail.com'
 ).toLowerCase();
 
 export async function GET() {
