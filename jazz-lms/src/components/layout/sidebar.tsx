@@ -11,7 +11,6 @@ import {
   BookOpen,
   MessageSquare,
   LogOut,
-  Settings,
   Library,
   ChevronDown,
   FileText,
@@ -19,6 +18,7 @@ import {
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
+import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
 
 interface CourseProgressVideo {
   lessonId: string;
@@ -189,12 +189,12 @@ function SidebarContent({
       icon: BookOpen,
     },
     {
-      label: 'Messages',
+      label: t('messages', 'Messages'),
       href: '/dashboard/messages',
       icon: MessageSquare,
     },
     {
-      label: 'Course Notes',
+      label: t('courseNotes', 'Course Notes'),
       href: '/dashboard/pdf-view',
       icon: FileText,
     },
@@ -265,20 +265,9 @@ function SidebarContent({
             </Link>
           );
         })}
-        <div className="min-h-0">
+        <div className="flex-1 min-h-0">
           <CoursesNavSection />
         </div>
-        <Link
-          href="/dashboard/settings"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-            pathname === '/dashboard/settings'
-              ? 'bg-primary/10 text-primary border border-primary/20'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          }`}
-        >
-          <Settings className={`h-5 w-5 ${pathname === '/dashboard/settings' ? 'text-primary' : ''}`} />
-          {t('settings', 'Settings')}
-        </Link>
       </nav>
 
       {/* Footer */}
@@ -296,7 +285,7 @@ function SidebarContent({
 }
 
 function CoursesNavSection() {
-  const { t } = useDashboardPreferences();
+  const { t, language } = useDashboardPreferences();
   const [open, setOpen] = useState(false);
   const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -324,8 +313,8 @@ function CoursesNavSection() {
     .map((video, index) => ({
       lessonId: video.lessonId,
       courseId: video.courseId,
-      classLabel: `Class ${index + 1}`,
-      subtitle: video.title,
+      classLabel: `${t('classLabel', 'Class')} ${index + 1}`,
+      subtitle: getLocalizedJazzSubtitle(index + 1, language) || video.title,
       classNumber: index + 1,
     }));
 
@@ -362,7 +351,7 @@ function CoursesNavSection() {
   };
 
   return (
-    <div className="mt-1">
+    <div className="mt-1 flex h-full min-h-0 flex-col">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
@@ -376,7 +365,7 @@ function CoursesNavSection() {
       </button>
 
       {open && (
-        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-col max-h-[52dvh] lg:max-h-[58dvh]">
+        <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-1 min-h-0 flex-col">
           {loading && (
             <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
           )}
@@ -431,13 +420,13 @@ function CoursesNavSection() {
               </div>
               <div className="border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
                 <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
-                  Lesson notes
+                  {t('lessonNotes', 'Lesson notes')}
                 </p>
                 <textarea
                   value={noteContent}
                   onChange={(event) => onChangeSidebarNotes(event.target.value)}
-                  placeholder="Write notes for selected class..."
-                  className="w-full h-44 resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
+                  className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </>

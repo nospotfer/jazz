@@ -1,9 +1,13 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { LessonNotesEditor } from '@/components/dashboard/lesson-notes-editor';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { ensureLessonNotesTable } from '@/lib/lesson-notes';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
+import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 
 interface RawLessonNote {
   userId: string;
@@ -52,6 +56,9 @@ export default async function LessonNotesPage({
     return redirect('/dashboard');
   }
 
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+
   const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
   const lessonIndex = orderedLessons.findIndex((lesson) => lesson.id === params.lessonId);
 
@@ -61,6 +68,21 @@ export default async function LessonNotesPage({
 
   const lesson = orderedLessons[lessonIndex];
   const firstLessonId = orderedLessons[0]?.id;
+
+  const translationBundle = await getCourseTranslationBundle({
+    language,
+    courseIds: [course.id],
+    chapterIds: course.chapters.map((chapter) => chapter.id),
+    lessonIds: orderedLessons.map((item) => item.id),
+  });
+
+  const localizedLessonTitle = resolveLessonTitle(
+    translationBundle.lessons,
+    lesson.id,
+    lesson.title,
+    language,
+    lessonIndex + 1
+  );
 
   const [hasFullPurchase, hasLessonPurchase] = await Promise.all([
     db.purchase.findUnique({
@@ -146,8 +168,8 @@ export default async function LessonNotesPage({
     <LessonNotesEditor
       courseId={params.courseId}
       lessonId={params.lessonId}
-      classLabel={`Clase ${lessonIndex + 1}`}
-      lessonTitle={lesson.title}
+      classLabel={getLocalizedJazzClassLabel(lessonIndex + 1, language)}
+      lessonTitle={localizedLessonTitle}
       isPrivilegedViewer={isPrivilegedViewer}
       studentNotes={notesForViewer}
     />

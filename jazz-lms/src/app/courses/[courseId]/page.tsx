@@ -8,6 +8,7 @@ import {
   DEFAULT_FULL_COURSE_PRICE_EUR,
 } from '@/lib/pricing';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
 export default async function CourseDetailPage({
   params,
@@ -100,6 +101,22 @@ export default async function CourseDetailPage({
     (acc, chapter) => acc + chapter.lessons.length,
     0
   );
+  const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
+  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+
+  const translationBundle = await getCourseTranslationBundle({
+    language,
+    courseIds: [course.id],
+    chapterIds: course.chapters.map((chapter) => chapter.id),
+    lessonIds: orderedLessons.map((lesson) => lesson.id),
+  });
+
+  const localizedCourse = resolveCourseText(
+    translationBundle.courses,
+    course.id,
+    course.title,
+    course.description
+  );
 
   // If already purchased, redirect to first lesson
   if (hasPurchased) {
@@ -117,11 +134,11 @@ export default async function CourseDetailPage({
       <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-12 sm:py-16">
           <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground">
-            {course.title}
+            {localizedCourse.title}
           </h1>
-          {course.description && (
+          {localizedCourse.description && (
             <p className="text-lg text-muted-foreground mt-4 max-w-2xl">
-              {course.description}
+              {localizedCourse.description}
             </p>
           )}
           <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
@@ -144,14 +161,22 @@ export default async function CourseDetailPage({
             {copy.contentTitle}
           </h2>
           <div className="space-y-4">
-            {course.chapters.map((chapter, chapterIndex) => (
+            {course.chapters.map((chapter, chapterIndex) => {
+              const localizedChapter = resolveCourseText(
+                translationBundle.chapters,
+                chapter.id,
+                chapter.title,
+                chapter.description
+              );
+
+              return (
               <div
                 key={chapter.id}
                 className="bg-card border border-border rounded-xl overflow-hidden"
               >
                 <div className="px-4 py-3 bg-muted/50 border-b border-border">
                   <h3 className="font-semibold text-foreground">
-                    {copy.chapterLabel} {chapterIndex + 1}: {chapter.title}
+                    {copy.chapterLabel} {chapterIndex + 1}: {localizedChapter.title}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {chapter.lessons.length} {chapter.lessons.length !== 1 ? copy.lessonPlural : copy.lesson}
@@ -165,13 +190,22 @@ export default async function CourseDetailPage({
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <CheckCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
-                        <span className="truncate">{lesson.title}</span>
+                        <span className="truncate">
+                          {resolveLessonTitle(
+                            translationBundle.lessons,
+                            lesson.id,
+                            lesson.title,
+                            language,
+                            lessonClassById.get(lesson.id)
+                          )}
+                        </span>
                       </div>
                     </li>
                   ))}
                 </ul>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

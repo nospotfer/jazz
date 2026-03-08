@@ -6,6 +6,7 @@ import { db } from '@/lib/db';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { cookies } from 'next/headers';
 import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
 
 export const runtime = 'nodejs';
 
@@ -20,8 +21,17 @@ export async function POST(req: Request) {
   };
 
   try {
+    const payload = await req.json();
+    const { courseId, source, language } = payload ?? {};
+
+    if (!courseId) {
+      return new NextResponse(copy.invalidRequest, { status: 400 });
+    }
+
     const cookieStore = await cookies();
-    const selectedLanguage = normalizeLanguage(cookieStore.get('jazz_lang')?.value);
+    const selectedLanguage = typeof language === 'string' && language.trim().length > 0
+      ? normalizeLanguage(language)
+      : normalizeLanguage(cookieStore.get('jazz_lang')?.value);
     const stripeLocale = languageToStripeLocale(selectedLanguage);
     copy = {
       es: {
@@ -72,12 +82,6 @@ export async function POST(req: Request) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
-    const { courseId, source } = await req.json();
-
-    if (!courseId) {
-      return new NextResponse(copy.invalidRequest, { status: 400 });
-    }
-
     const course = await db.course.findUnique({
       where: {
         id: courseId,
@@ -105,6 +109,19 @@ export async function POST(req: Request) {
     const configuredPrice = Number(course.price ?? 0);
     const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
+
+    const translationBundle = await getCourseTranslationBundle({
+      language: selectedLanguage,
+      courseIds: [course.id],
+      chapterIds: [],
+      lessonIds: [],
+    });
+    const localizedCourse = resolveCourseText(
+      translationBundle.courses,
+      course.id,
+      course.title,
+      course.description
+    );
 
     if (isFreeCourse) {
       await db.purchase.create({
@@ -147,8 +164,8 @@ export async function POST(req: Request) {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: course.title,
-            description: course.description || undefined,
+            name: localizedCourse.title,
+            description: localizedCourse.description || undefined,
           },
           unit_amount: Math.round(numericPrice * 100),
         },

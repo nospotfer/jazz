@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { SupportedLanguage } from '@/lib/language';
 
 interface ConfettiPiece {
   id: number;
@@ -17,6 +18,7 @@ interface ConfettiPiece {
 interface UnlockAnimationProps {
   isVisible: boolean;
   onComplete: () => void;
+  language: SupportedLanguage;
 }
 
 const CONFETTI_COLORS = [
@@ -44,9 +46,16 @@ function generateConfetti(count: number): ConfettiPiece[] {
   }));
 }
 
-export function UnlockAnimation({ isVisible, onComplete }: UnlockAnimationProps) {
+export function UnlockAnimation({ isVisible, onComplete, language }: UnlockAnimationProps) {
   const [phase, setPhase] = useState<'key-insert' | 'turning' | 'opening' | 'confetti' | 'done'>('key-insert');
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
+
+  const copy = {
+    es: { unlocked: '¡Desbloqueado!' },
+    en: { unlocked: 'Unlocked!' },
+    fr: { unlocked: 'Déverrouillé !' },
+    pt: { unlocked: 'Desbloqueado!' },
+  }[language];
 
   const startAnimation = useCallback(() => {
     setPhase('key-insert');
@@ -236,7 +245,7 @@ export function UnlockAnimation({ isVisible, onComplete }: UnlockAnimationProps)
               : 'opacity-0 translate-y-4'
           }`}
         >
-          ¡Desbloqueado!
+          {copy.unlocked}
         </p>
       </div>
     </div>

@@ -1,9 +1,23 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { FileText } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { FileText, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
+import { getCanonicalJazzClass, getLocalizedJazzClassLabel } from '@/lib/course-lessons';
+
+const PdfWorkspaceViewer = dynamic(
+  () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full flex items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    ),
+  }
+);
 
 interface PdfItem {
   id: string;
@@ -11,6 +25,8 @@ interface PdfItem {
   title: string;
   classLabel: string;
   url: string;
+  classNumber?: number;
+  isAuxiliary?: boolean;
 }
 
 interface PdfViewClientProps {
@@ -28,6 +44,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Los PDFs aparecerán aquí cuando se agreguen.',
       loadingPdf: 'Cargando PDF...',
       selectPdf: 'Selecciona un PDF',
+      auxiliaryLabel: 'Apuntes Auxiliares',
+      auxiliaryTitle: 'Apunte auxiliar',
     },
     en: {
       loadPdfError: 'Unable to load this PDF right now.',
@@ -37,6 +55,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Lesson PDFs will appear here when they are added.',
       loadingPdf: 'Loading PDF...',
       selectPdf: 'Select a PDF',
+      auxiliaryLabel: 'Auxiliary Notes',
+      auxiliaryTitle: 'Auxiliary note',
     },
     fr: {
       loadPdfError: 'Impossible de charger ce PDF pour le moment.',
@@ -46,6 +66,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Les PDF des leçons apparaîtront ici lorsqu’ils seront ajoutés.',
       loadingPdf: 'Chargement du PDF...',
       selectPdf: 'Sélectionnez un PDF',
+      auxiliaryLabel: 'Notes auxiliaires',
+      auxiliaryTitle: 'Note auxiliaire',
     },
     pt: {
       loadPdfError: 'Não foi possível carregar este PDF agora.',
@@ -55,6 +77,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Os PDFs das aulas aparecerão aqui quando forem adicionados.',
       loadingPdf: 'Carregando PDF...',
       selectPdf: 'Selecione um PDF',
+      auxiliaryLabel: 'Notas auxiliares',
+      auxiliaryTitle: 'Nota auxiliar',
     },
   }[language];
 
@@ -66,6 +90,41 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   const selected = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0],
     [items, selectedId]
+  );
+
+  const localizedItems = useMemo(() => {
+    let auxiliaryIndex = 0;
+
+    return items.map((item) => {
+      const isAuxiliary = Boolean(item.isAuxiliary);
+      const classNumber = item.classNumber ?? null;
+
+      if (isAuxiliary) {
+        auxiliaryIndex += 1;
+        return {
+          ...item,
+          displayClassLabel: copy.auxiliaryLabel,
+          displayTitle: `${copy.auxiliaryTitle} ${auxiliaryIndex}`,
+        };
+      }
+
+      const canonicalClass = classNumber ? getCanonicalJazzClass(classNumber) : undefined;
+      const displayClassLabel = classNumber
+        ? getLocalizedJazzClassLabel(classNumber, language)
+        : item.classLabel;
+      const displayTitle = canonicalClass?.subtitles[language] || item.title;
+
+      return {
+        ...item,
+        displayClassLabel,
+        displayTitle,
+      };
+    });
+  }, [items, language, copy.auxiliaryLabel, copy.auxiliaryTitle]);
+
+  const selectedLocalized = useMemo(
+    () => localizedItems.find((item) => item.id === selected?.id) ?? null,
+    [localizedItems, selected?.id]
   );
 
   const loadSignedUrl = async (item: PdfItem) => {
@@ -123,8 +182,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
         <div className="grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-4">
           <aside className="rounded-xl border border-border bg-card p-3">
             <div className="space-y-2 max-h-[72dvh] overflow-y-auto pr-1">
-              {items.map((item) => {
-                const active = selected?.id === item.id;
+              {localizedItems.map((item) => {
+                const active = selectedLocalized?.id === item.id;
                 return (
                   <button
                     key={item.id}
@@ -136,8 +195,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
                         : 'border-border hover:bg-accent/40'
                     }`}
                   >
-                    <p className="text-xs font-semibold text-primary/90">{item.classLabel}</p>
-                    <p className="text-sm text-foreground leading-tight mt-0.5">{item.title}</p>
+                    <p className="text-xs font-semibold text-primary/90">{item.displayClassLabel}</p>
+                    <p className="text-sm text-foreground leading-tight mt-0.5">{item.displayTitle}</p>
                   </button>
                 );
               })}
@@ -146,11 +205,11 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
 
           <div className="rounded-xl border border-border bg-card overflow-hidden min-h-[72dvh]">
             <div className="px-4 py-3 border-b border-border bg-card/80">
-              <p className="text-sm font-medium text-foreground">{selected?.classLabel}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{selected?.title}</p>
+              <p className="text-sm font-medium text-foreground">{selectedLocalized?.displayClassLabel}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{selectedLocalized?.displayTitle}</p>
             </div>
 
-            {selected ? (
+            {selectedLocalized ? (
               isLoading ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
                   {copy.loadingPdf}
@@ -160,11 +219,9 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
                   {loadError}
                 </div>
               ) : (
-              <iframe
-                src={signedUrl || selected.url}
-                title={selected.title}
-                className="w-full h-[calc(72dvh-58px)]"
-              />
+                <div className="h-[calc(72dvh-58px)]">
+                  <PdfWorkspaceViewer fileUrl={signedUrl || selectedLocalized.url} />
+                </div>
               )
             ) : (
               <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">

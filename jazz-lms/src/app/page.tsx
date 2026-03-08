@@ -27,26 +27,26 @@ export default async function Home() {
   return (
     <>
       <Header />
-      <main className="w-full">
-        <section id="board-hero">
+      <main className="w-full snap-y snap-mandatory">
+        <section id="board-hero" className="snap-start scroll-mt-14">
           <PromoVideo />
         </section>
-        <section id="board-professor">
+        <section id="board-professor" className="snap-start scroll-mt-14">
           <Professor />
         </section>
-        <section id="board-learn">
+        <section id="board-learn" className="snap-start scroll-mt-14">
           <WhatYouLearn />
         </section>
-        <section id="board-courses">
+        <section id="board-courses" className="snap-start scroll-mt-14">
           <Classes />
         </section>
-        <section id="board-press">
+        <section id="board-press" className="snap-start scroll-mt-14">
           <Press />
         </section>
-        <section id="board-jazzcats">
+        <section id="board-jazzcats" className="snap-start scroll-mt-14">
           <JazzCats />
         </section>
-        <section id="board-faq">
+        <section id="board-faq" className="snap-start scroll-mt-14">
           <FAQFooter />
         </section>
       </main>

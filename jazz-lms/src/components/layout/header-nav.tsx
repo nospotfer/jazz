@@ -59,7 +59,7 @@ export function HeaderNav() {
           key={link.href}
           href={link.href}
           onClick={(e) => scrollToSection(e, link.href)}
-          className="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-500 px-2 py-1 rounded transition-colors duration-200"
+          className="text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[var(--color-jazz-title-accent)] px-2 py-1 rounded transition-colors duration-200"
         >
           {link.label}
         </a>

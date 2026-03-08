@@ -1,7 +1,10 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { CoursePlayer } from '@/components/course/course-player';
 import { db } from '@/lib/db';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
 const LessonPage = async ({
   params,
@@ -44,7 +47,38 @@ const LessonPage = async ({
     return redirect('/dashboard');
   }
 
-  const lesson = course.chapters
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
+  const lessonClassById = new Map(orderedLessons.map((item, index) => [item.id, index + 1]));
+
+  const translationBundle = await getCourseTranslationBundle({
+    language,
+    courseIds: [course.id],
+    chapterIds: course.chapters.map((chapter) => chapter.id),
+    lessonIds: orderedLessons.map((item) => item.id),
+  });
+
+  const localizedCourse = {
+    ...course,
+    ...resolveCourseText(translationBundle.courses, course.id, course.title, course.description),
+    chapters: course.chapters.map((chapter) => ({
+      ...chapter,
+      ...resolveCourseText(translationBundle.chapters, chapter.id, chapter.title, chapter.description),
+      lessons: chapter.lessons.map((item) => ({
+        ...item,
+        title: resolveLessonTitle(
+          translationBundle.lessons,
+          item.id,
+          item.title,
+          language,
+          lessonClassById.get(item.id)
+        ),
+      })),
+    })),
+  };
+
+  const lesson = localizedCourse.chapters
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === params.lessonId);
 
@@ -103,7 +137,7 @@ const LessonPage = async ({
   return (
     <div>
       <CoursePlayer
-        course={course}
+        course={localizedCourse}
         lesson={lesson}
         lessonId={params.lessonId}
         initialIsCompleted={initialIsCompleted}

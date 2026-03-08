@@ -199,68 +199,66 @@ export function FAQFooter() {
   return (
     <>
       <div className="min-h-screen w-full bg-white dark:bg-black flex flex-col">
-        {/* Main content area */}
         <div className="flex-1 flex items-center">
-          <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-              {/* Left side - FAQ + What you'll be able to do */}
-              <div className="flex flex-col justify-center">
-                {/* FAQ Section */}
-                <h2 className="text-yellow-500 text-3xl lg:text-4xl font-bold mb-6">
+          <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-8 lg:py-10">
+            <div className="space-y-8 lg:space-y-10">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10 items-start">
+                <div>
+                  <h2 className="title-accent text-3xl lg:text-4xl font-bold mb-4">
                   {copy.faqTitle}
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                  {copy.faqSubtitle}
-                </p>
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-5 text-sm">
+                    {copy.faqSubtitle}
+                  </p>
 
-                <div className="space-y-3 mb-10">
-                  {localizedFaqs.map((faq, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onMouseLeave={() => setHoveredIndex(null)}
-                    >
-                      <button
-                        onClick={() =>
-                          setActiveIndex(activeIndex === index ? null : index)
-                        }
-                        className="w-full flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+                  <div className="space-y-3">
+                    {localizedFaqs.map((faq, index) => (
+                      <div
+                        key={index}
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
                       >
-                        <span className="text-gray-900 dark:text-white font-semibold text-left text-sm">
-                          {faq.pregunta}
-                        </span>
-                        <ChevronDown
-                          className={`text-yellow-500 transition-transform duration-300 flex-shrink-0 ml-2 ${
-                            isExpanded(index) ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </button>
-                      {isExpanded(index) && (
-                        <div className="p-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-300 dark:border-gray-600">
-                          <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.respuesta}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                        <button
+                          onClick={() =>
+                            setActiveIndex(activeIndex === index ? null : index)
+                          }
+                          className="w-full flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+                        >
+                          <span className="text-gray-900 dark:text-white font-semibold text-left text-sm">
+                            {faq.pregunta}
+                          </span>
+                          <ChevronDown
+                            className={`title-accent transition-transform duration-300 flex-shrink-0 ml-2 ${
+                              isExpanded(index) ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+                        {isExpanded(index) && (
+                          <div className="p-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-300 dark:border-gray-600">
+                            <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.respuesta}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setShowContactModal(true)}
+                    className="cta-highlight py-3 px-6 rounded-lg transition-colors duration-300 w-fit mt-6"
+                  >
+                    {copy.contact}
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => setShowContactModal(true)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors duration-300 w-fit mb-10"
-                >
-                  {copy.contact}
-                </button>
-
-                {/* What will I be able to do section */}
-                <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 lg:p-8">
-                  <h3 className="text-gray-900 dark:text-white text-xl lg:text-2xl font-bold mb-5">
+                <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 lg:p-8 h-full">
+                  <h3 className="text-gray-900 dark:text-white text-2xl font-bold mb-5">
                     {copy.afterTitle}
                   </h3>
                   <ul className="space-y-3">
                     {copy.afterItems.map((item) => (
                       <li key={item} className="flex items-start">
-                        <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
+                        <span className="title-accent mr-3 font-bold text-lg">&#10003;</span>
                         <span className="text-gray-700 dark:text-gray-300 text-sm">{item}</span>
                       </li>
                     ))}
@@ -268,23 +266,22 @@ export function FAQFooter() {
                 </div>
               </div>
 
-              {/* Lado derecho - CTA de registro */}
-              <div className="flex flex-col justify-center items-center text-center lg:pl-8">
-                <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold mb-4">
+              <div className="rounded-2xl border border-[var(--color-jazz-title-accent)]/35 bg-gray-50/70 dark:bg-gray-900/60 p-8 lg:p-10 text-center">
+                <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold mb-3">
                   {copy.ctaTitle}
                 </h2>
-                <p className="text-yellow-600 text-xl mb-8">
+                <p className="title-accent text-xl mb-7">
                   {copy.ctaSubtitle}
                 </p>
 
                 <button
                   onClick={() => router.push('/auth?tab=register')}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-12 rounded-lg transition-all duration-300 hover:shadow-xl text-lg mb-6"
+                  className="cta-highlight py-4 px-12 rounded-lg transition-all duration-300 hover:shadow-xl text-lg mb-5"
                 >
                   {copy.cta}
                 </button>
 
-                <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md">
+                <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xl mx-auto">
                   {copy.ctaFoot}
                 </p>
               </div>
@@ -318,7 +315,7 @@ export function FAQFooter() {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => scrollToSection(e, link.href)}
-                    className="text-gray-400 hover:text-yellow-500 text-xs sm:text-sm transition-colors"
+                    className="text-gray-400 hover:text-[var(--color-jazz-title-accent)] text-xs sm:text-sm transition-colors"
                   >
                     {link.label}
                   </a>
@@ -328,7 +325,7 @@ export function FAQFooter() {
               {/* Back to top */}
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-2 text-yellow-500 hover:text-yellow-400 transition-colors group"
+                className="flex items-center gap-2 title-accent hover:text-[var(--color-jazz-cta)] transition-colors group"
                 aria-label={copy.topAria}
               >
                 <span className="text-xs uppercase tracking-widest">{copy.topLabel}</span>

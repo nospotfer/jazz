@@ -54,7 +54,7 @@ export function JazzCats() {
 
           <button
             onClick={() => router.push('/auth?tab=register')}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors text-lg"
+            className="w-full cta-highlight py-3 px-6 rounded-lg transition-colors text-lg"
           >
             {copy.cta}
           </button>

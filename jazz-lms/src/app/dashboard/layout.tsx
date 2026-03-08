@@ -26,22 +26,19 @@ export default async function DashboardLayout({
   const role = dbUser?.role ?? null;
   const isAdmin = isAdminRole(role);
 
-  const firstCourse = await db.course.findFirst({
-    where: { isPublished: true },
-    orderBy: { createdAt: 'asc' },
-    select: { id: true },
-  });
+  const [firstCourse, anyFullCoursePurchase] = await Promise.all([
+    db.course.findFirst({
+      where: { isPublished: true },
+      orderBy: { createdAt: 'asc' },
+      select: { id: true },
+    }),
+    db.purchase.findFirst({
+      where: { userId: user.id },
+      select: { id: true },
+    }),
+  ]);
 
-  const hasPaidCourse = firstCourse
-    ? !!(await db.purchase.findUnique({
-        where: {
-          userId_courseId: {
-            userId: user.id,
-            courseId: firstCourse.id,
-          },
-        },
-      }))
-    : false;
+  const hasPaidCourse = Boolean(anyFullCoursePurchase);
 
   return (
     <DashboardPreferencesProvider>

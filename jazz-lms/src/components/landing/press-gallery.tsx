@@ -103,7 +103,7 @@ export function Press() {
                 <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-2">
                   {item.titulo}
                 </h3>
-                <p className="text-yellow-500 text-sm font-semibold mb-1">
+                <p className="title-accent text-sm font-semibold mb-1">
                   {item.autor}
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-xs mb-3">{item.fecha}</p>

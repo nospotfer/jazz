@@ -2,22 +2,107 @@ import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 import { syncUserWithDatabase } from '@/lib/sync-user'
 import { getRandomProfileAvatar } from '@/lib/profile-avatars'
+import { normalizeLanguage } from '@/lib/language'
+
+function normalizeBaseOrigin(value?: string | null): string | null {
+  if (!value) return null
+
+  try {
+    const url = new URL(value)
+    return `${url.protocol}//${url.host}`
+  } catch {
+    return null
+  }
+}
+
+function isLocalOrigin(origin?: string | null): boolean {
+  if (!origin) return false
+
+  try {
+    const { hostname } = new URL(origin)
+    return hostname === 'localhost' || hostname === '127.0.0.1'
+  } catch {
+    return false
+  }
+}
+
+function resolveServerAppOrigin(requestOrigin: string): string {
+  const isDevelopment = process.env.NODE_ENV !== 'production'
+  const configuredOrigin = normalizeBaseOrigin(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL)
+
+  if (isDevelopment) {
+    if (isLocalOrigin(requestOrigin)) {
+      return requestOrigin
+    }
+
+    if (isLocalOrigin(configuredOrigin)) {
+      return configuredOrigin
+    }
+
+    return 'http://localhost:3000'
+  }
+
+  return configuredOrigin || requestOrigin
+}
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const origin = requestUrl.origin
+  const origin = resolveServerAppOrigin(requestUrl.origin)
+  const configuredOrigin = normalizeBaseOrigin(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL)
   const flow = requestUrl.searchParams.get('flow') === 'register' ? 'register' : 'login'
+  const selectedLanguage = normalizeLanguage(requestUrl.searchParams.get('lang'))
   const nextPathRaw = requestUrl.searchParams.get('next')
   const nextPath = nextPathRaw && nextPathRaw.startsWith('/') ? nextPathRaw : '/dashboard'
 
-  const authErrorRedirect = (message: string) =>
-    NextResponse.redirect(
-      `${origin}/auth?flow=${flow}&oauth_error=${encodeURIComponent(message)}`
-    )
+  if (process.env.NODE_ENV !== 'production' && configuredOrigin && !isLocalOrigin(configuredOrigin)) {
+    console.warn('[auth/callback] APP_URL or NEXT_PUBLIC_APP_URL is not localhost in development. Ignoring configured origin for callback redirect.', {
+      configuredOrigin,
+      requestOrigin: requestUrl.origin,
+      resolvedOrigin: origin,
+    })
+  }
+
+  const copy = {
+    es: {
+      missingCode: 'No se recibió el código de autenticación de Google.',
+      exchangeFailed: 'No se pudo completar el acceso con Google. Inténtalo de nuevo.',
+      userLoadFailed: 'No se pudo recuperar tu cuenta después del login con Google.',
+    },
+    en: {
+      missingCode: 'Google authentication code was not received.',
+      exchangeFailed: 'Unable to complete Google sign-in. Please try again.',
+      userLoadFailed: 'Unable to load your account after Google sign-in.',
+    },
+    fr: {
+      missingCode: 'Le code d’authentification Google n’a pas été reçu.',
+      exchangeFailed: 'Impossible de terminer la connexion Google. Réessayez.',
+      userLoadFailed: 'Impossible de récupérer votre compte après la connexion Google.',
+    },
+    pt: {
+      missingCode: 'O código de autenticação do Google não foi recebido.',
+      exchangeFailed: 'Não foi possível concluir o login com Google. Tente novamente.',
+      userLoadFailed: 'Não foi possível carregar sua conta após o login com Google.',
+    },
+  }[selectedLanguage]
+
+  const withLanguageCookie = (response: NextResponse) => {
+    response.cookies.set('jazz_lang', selectedLanguage, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'lax',
+    })
+
+    return response
+  }
+
+  const authErrorRedirect = (message: string) => {
+    const target = `${origin}/auth?flow=${flow}&lang=${selectedLanguage}&oauth_error=${encodeURIComponent(message)}`
+    return withLanguageCookie(NextResponse.redirect(target))
+  }
 
   if (!code) {
-    return authErrorRedirect('No se recibió el código de autenticación de Google.')
+    return authErrorRedirect(copy.missingCode)
   }
 
   const supabase = createClient()
@@ -32,7 +117,7 @@ export async function GET(request: Request) {
 
   if (exchangeError) {
     console.error('Error exchanging auth code for session:', exchangeError)
-    return authErrorRedirect('No se pudo completar el acceso con Google. Inténtalo de nuevo.')
+    return authErrorRedirect(copy.exchangeFailed)
   }
 
   const {
@@ -42,7 +127,7 @@ export async function GET(request: Request) {
 
   if (userError || !user) {
     console.error('Error loading authenticated user after OAuth:', userError)
-    return authErrorRedirect('No se pudo recuperar tu cuenta después del login con Google.')
+    return authErrorRedirect(copy.userLoadFailed)
   }
 
   if (user.user_metadata?.avatar_mode !== 'fixed') {
@@ -67,5 +152,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${origin}${nextPath}`)
+  return withLanguageCookie(NextResponse.redirect(`${origin}${nextPath}`))
 }

@@ -59,7 +59,7 @@ export function BoardNavigation() {
       {!isFirstBoard && (
         <button
           onClick={() => scrollToBoard('prev')}
-          className="group bg-yellow-600/90 hover:bg-yellow-500 text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110"
+          className="group bg-[var(--color-jazz-cta)]/90 hover:bg-[var(--color-jazz-cta)] text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110"
           aria-label={labels.prev}
         >
           <ChevronUp className="h-6 w-6 group-hover:-translate-y-0.5 transition-transform" />
@@ -68,7 +68,7 @@ export function BoardNavigation() {
       {!isLastBoard && (
         <button
           onClick={() => scrollToBoard('next')}
-          className="group bg-yellow-600/90 hover:bg-yellow-500 text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 animate-bounce"
+          className="group bg-[var(--color-jazz-cta)]/90 hover:bg-[var(--color-jazz-cta)] text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 animate-bounce"
           aria-label={labels.next}
         >
           <ChevronDown className="h-6 w-6 group-hover:translate-y-0.5 transition-transform" />

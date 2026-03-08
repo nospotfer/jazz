@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/providers/language-provider';
@@ -32,7 +31,6 @@ export function WhatYouLearn() {
         },
       ],
       cta: 'Regístrate',
-      imageAlt: 'Vista previa del curso de jazz',
     },
     en: {
       title: 'What you will learn',
@@ -57,7 +55,6 @@ export function WhatYouLearn() {
         },
       ],
       cta: 'Sign up',
-      imageAlt: 'Preview of the jazz course',
     },
     fr: {
       title: 'Ce que vous apprendrez',
@@ -82,7 +79,6 @@ export function WhatYouLearn() {
         },
       ],
       cta: 'S’inscrire',
-      imageAlt: 'Aperçu du cours de jazz',
     },
     pt: {
       title: 'O que você vai aprender',
@@ -107,7 +103,6 @@ export function WhatYouLearn() {
         },
       ],
       cta: 'Cadastrar',
-      imageAlt: 'Prévia do curso de jazz',
     },
   }[language];
 
@@ -115,10 +110,9 @@ export function WhatYouLearn() {
     <>
       <div className="min-h-screen w-full bg-gray-50 dark:bg-background flex items-center">
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center min-h-[80vh]">
-            {/* Left side - Text content */}
-            <div className="flex flex-col justify-center">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-amber-600">
+          <div className="min-h-[80vh] flex items-center">
+            <div className="flex flex-col justify-center max-w-3xl">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-8 title-accent">
                 {copy.title}
               </h2>
 
@@ -129,9 +123,9 @@ export function WhatYouLearn() {
               <div className="space-y-6 mb-8">
                 {copy.points.map((point) => (
                   <div key={point.title} className="flex items-start gap-4">
-                    <div className="w-2 h-2 rounded-full bg-amber-600 mt-2.5 flex-shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[var(--color-jazz-title-accent)] mt-2.5 flex-shrink-0" />
                     <div>
-                      <h3 className="text-lg font-bold text-amber-600 mb-1">{point.title}</h3>
+                      <h3 className="text-lg font-bold title-accent mb-1">{point.title}</h3>
                       <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                         {point.desc}
                       </p>
@@ -142,24 +136,10 @@ export function WhatYouLearn() {
 
               <button
                 onClick={() => router.push('/auth?tab=register')}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 hover:shadow-lg w-fit"
+                className="cta-highlight py-3 px-8 rounded-lg transition-all duration-300 hover:shadow-lg w-fit"
               >
                 {copy.cta}
               </button>
-            </div>
-
-            {/* Right side - Visual */}
-            <div className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl bg-black">
-              <Image
-                src="/images/clase1.jpg"
-                alt={copy.imageAlt}
-                fill
-                priority={false}
-                className="absolute inset-0 w-full h-full object-cover"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
             </div>
           </div>
         </div>

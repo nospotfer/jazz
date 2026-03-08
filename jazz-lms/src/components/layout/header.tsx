@@ -7,7 +7,7 @@ import { LanguageSelector } from '@/components/language-selector';
 
 export const Header = () => {
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur border-b border-yellow-500">
+    <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur border-b border-[var(--color-jazz-title-accent)]/80">
       <div className="w-full flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
           <div className="relative w-9 h-9">

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock, ShoppingCart } from 'lucide-react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface DashboardPaywallWrapperProps {
   hasPaidCourse: boolean;
@@ -14,7 +15,35 @@ interface DashboardPaywallWrapperProps {
 
 export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: DashboardPaywallWrapperProps) {
   const pathname = usePathname();
+  const { language } = useLanguage();
   const [isPurchasing, setIsPurchasing] = useState(false);
+
+  const copy = {
+    es: {
+      title: 'Área bloqueada',
+      description: 'Para acceder a esta área necesitas realizar el pago del curso completo.',
+      processing: 'Procesando...',
+      payFullCourse: 'Pagar curso completo',
+    },
+    en: {
+      title: 'Locked area',
+      description: 'To access this area, you need to purchase the full course.',
+      processing: 'Processing...',
+      payFullCourse: 'Pay full course',
+    },
+    fr: {
+      title: 'Zone bloquée',
+      description: 'Pour accéder à cette zone, vous devez acheter le cours complet.',
+      processing: 'Traitement...',
+      payFullCourse: 'Payer le cours complet',
+    },
+    pt: {
+      title: 'Área bloqueada',
+      description: 'Para acessar esta área, você precisa comprar o curso completo.',
+      processing: 'Processando...',
+      payFullCourse: 'Pagar curso completo',
+    },
+  }[language];
 
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;
@@ -32,6 +61,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
       const response = await axios.post('/api/checkout', {
         courseId,
         source: 'dashboard',
+        language,
       });
 
       if (response.data?.url) {
@@ -58,11 +88,11 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
             </div>
 
             <h2 className="text-xl font-serif font-bold text-foreground">
-              Área bloqueada
+              {copy.title}
             </h2>
 
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Para acceder a esta área necesitas realizar el pago del curso completo.
+              {copy.description}
             </p>
 
             <Button
@@ -73,12 +103,12 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
               {isPurchasing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Procesando...
+                  {copy.processing}
                 </>
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  Pagar curso completo
+                  {copy.payFullCourse}
                 </>
               )}
             </Button>

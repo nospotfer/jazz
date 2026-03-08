@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Search, User, Wallet, LogOut, X } from 'lucide-react';
+import { Bell, Search, User, Wallet, LogOut, X, Settings } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -186,6 +186,14 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
           {/* Right side */}
           <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
+            <Link
+              href="/dashboard/settings"
+              aria-label={t('settings', 'Settings')}
+              title={t('settings', 'Settings')}
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
+            >
+              <Settings className="h-5 w-5 text-muted-foreground" />
+            </Link>
             <LanguageSelector />
 
             {/* ── Notifications bell ── */}

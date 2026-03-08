@@ -2,14 +2,43 @@
 
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { SupportedLanguage } from '@/lib/language';
 
 interface PurchaseSuccessModalProps {
   isVisible: boolean;
   onClose: () => void;
+  language: SupportedLanguage;
 }
 
-export function PurchaseSuccessModal({ isVisible, onClose }: PurchaseSuccessModalProps) {
+export function PurchaseSuccessModal({ isVisible, onClose, language }: PurchaseSuccessModalProps) {
   const [showContent, setShowContent] = useState(false);
+
+  const copy = {
+    es: {
+      close: 'Cerrar',
+      title: 'Gracias por ser parte de este musical',
+      subtitle: 'Ahora tienes acceso a todo el contenido del sitio',
+      cta: 'Empezar a aprender',
+    },
+    en: {
+      close: 'Close',
+      title: 'Thank you for being part of this musical journey',
+      subtitle: 'You now have access to all site content',
+      cta: 'Start learning',
+    },
+    fr: {
+      close: 'Fermer',
+      title: 'Merci de faire partie de cette aventure musicale',
+      subtitle: 'Vous avez maintenant accès à tout le contenu du site',
+      cta: 'Commencer à apprendre',
+    },
+    pt: {
+      close: 'Fechar',
+      title: 'Obrigado por fazer parte desta jornada musical',
+      subtitle: 'Agora você tem acesso a todo o conteúdo do site',
+      cta: 'Começar a aprender',
+    },
+  }[language];
 
   useEffect(() => {
     if (isVisible) {
@@ -40,7 +69,7 @@ export function PurchaseSuccessModal({ isVisible, onClose }: PurchaseSuccessModa
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 text-gray-600 dark:text-gray-300 p-2 rounded-full transition-colors"
-          aria-label="Close"
+          aria-label={copy.close}
         >
           <X className="h-4 w-4" />
         </button>
@@ -90,10 +119,10 @@ export function PurchaseSuccessModal({ isVisible, onClose }: PurchaseSuccessModa
 
           {/* Message */}
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 dark:text-white mb-3">
-            Thank you for being part of this musical
+            {copy.title}
           </h2>
           <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-            Now you have access to all the site&apos;s content
+            {copy.subtitle}
           </p>
 
           {/* Divider with music note */}
@@ -108,7 +137,7 @@ export function PurchaseSuccessModal({ isVisible, onClose }: PurchaseSuccessModa
             onClick={onClose}
             className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40"
           >
-            Empezar a aprender
+            {copy.cta}
           </button>
         </div>
       </div>

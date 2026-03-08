@@ -35,7 +35,7 @@ export function UserNavClient({ user }: UserNavClientProps) {
         </Link>
         <Link href="/auth?tab=register">
           <Button 
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+            className="cta-highlight"
           >
             {copy.signUp}
           </Button>

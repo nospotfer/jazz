@@ -1,7 +1,7 @@
 'use client';
 import MuxPlayer from '@mux/mux-player-react';
 import { Button } from '../ui/button';
-import { CheckCircle, Download, Music2, Youtube, NotebookPen, Lock, ShoppingCart, FileText, Eye, PanelRightClose, PanelRightOpen } from 'lucide-react';
+import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -15,6 +15,10 @@ import { DashboardPreferencesProvider } from '@/components/providers/dashboard-p
 import { getCanonicalJazzClass } from '@/lib/course-lessons';
 import { extractMuxPlaybackId } from '@/lib/mux-playback';
 import { useLanguage } from '@/components/providers/language-provider';
+import { languageToHtmlLang } from '@/lib/language';
+import type MuxPlayerElement from '@mux/mux-player';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageSelector } from '@/components/language-selector';
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
@@ -64,6 +68,36 @@ function getAttachmentDisplayName(name: string, classNumber: number | null, note
   return simplified;
 }
 
+type MusicPlatform = 'spotify' | 'apple' | 'amazon' | 'youtube';
+
+function PlatformIcon({ platform }: { platform: MusicPlatform }) {
+  if (platform === 'spotify') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'apple') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M16.6 12.6c0-2 1.6-3 1.7-3.1-1-.6-2.5-.7-3.5-.1-.9.5-1.6.6-2.2.6-.6 0-1.3-.1-2.1-.6-1.1-.6-2.8-.4-3.8.7-1.6 1.8-1.3 5.2.7 8.1.9 1.3 2 2.7 3.5 2.6.7 0 1.2-.2 2-.2s1.2.2 2 .2c1.5 0 2.4-1.3 3.3-2.6.7-1.1 1-2.1 1-2.2-.1 0-2.6-1-2.6-3.4Zm-2.5-7.4c.7-.8 1.2-1.9 1-3-.9.1-2 .6-2.7 1.4-.7.7-1.3 1.9-1.1 3 .9.1 2-.5 2.8-1.4Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'amazon') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M5.5 16.6c3.2 2.1 8.2 2.3 11.8.6.5-.2 1 .3.5.7-3.9 2.8-9.8 2.9-13 .9-.4-.3 0-1 .7-.7Zm12.8-.9c-.4-.5-2.6-.2-3.6-.1-.3 0-.4-.2-.1-.5 1.8-1.3 4.8-.9 5.1-.5.3.3-.1 3.2-1.8 4.5-.3.2-.5.1-.4-.2.4-1 .9-3.2.8-3.2ZM9.5 11.7c0-1.8 1.3-2.7 3.2-2.7.6 0 1.1.1 1.6.3v-.4c0-.8-.6-1.2-1.5-1.2-.7 0-1.4.2-2.1.5l-.5-1.5c.9-.4 1.9-.7 3-.7 2.2 0 3.4 1 3.4 3v3.3c0 .6.1 1 .4 1.4v.2h-2.1c-.2-.2-.3-.5-.4-.8-.6.6-1.3 1-2.2 1-1.6 0-2.8-.9-2.8-2.4Zm4.8-.5v-.5c-.4-.2-.8-.2-1.3-.2-1 0-1.6.4-1.6 1.1 0 .6.5 1 1.3 1 .9 0 1.6-.5 1.6-1.4Z" />
+      </svg>
+    );
+  }
+
+  return <Youtube className="h-4 w-4" />;
+}
+
 export const CoursePlayer = ({
   course,
   lesson,
@@ -86,9 +120,17 @@ export const CoursePlayer = ({
       openingCheckout: 'Abriendo pago...',
       unlockFullCourse: 'Desbloquear curso completo',
       classNote: 'Apunte de clase',
-      preview: 'Vista previa',
       download: 'Descargar',
       selectPdf: 'Selecciona un PDF para previsualizarlo aquí.',
+      toggleNotesTooltip: 'Mostrar u ocultar apuntes',
+      completeTooltip: 'Marcar como completada',
+      hidePdfAction: 'Ocultar PDF',
+      showPdfAction: 'Mostrar PDF',
+      completeAction: 'Concluir',
+      musicSpotify: 'Abrir en Spotify',
+      musicApple: 'Abrir en Apple Music',
+      musicAmazon: 'Abrir en Amazon Music',
+      musicYouTube: 'Abrir en YouTube',
       loadingPlayer: 'Cargando reproductor de la lección...',
       unableSignedPlayback: 'No se pudo cargar el playback firmado de esta lección en este momento.',
       unableLoadPdf: 'No se pudo cargar este PDF en este momento.',
@@ -125,9 +167,17 @@ export const CoursePlayer = ({
       openingCheckout: 'Opening checkout...',
       unlockFullCourse: 'Unlock full course',
       classNote: 'Class notes',
-      preview: 'Preview',
       download: 'Download',
       selectPdf: 'Select a PDF to preview it here.',
+      toggleNotesTooltip: 'Show or hide notes panel',
+      completeTooltip: 'Mark lesson as complete',
+      hidePdfAction: 'Hide PDF',
+      showPdfAction: 'Show PDF',
+      completeAction: 'Complete',
+      musicSpotify: 'Open in Spotify',
+      musicApple: 'Open in Apple Music',
+      musicAmazon: 'Open in Amazon Music',
+      musicYouTube: 'Open in YouTube',
       loadingPlayer: 'Loading lesson player...',
       unableSignedPlayback: 'Unable to load signed playback for this lesson right now.',
       unableLoadPdf: 'Unable to load this PDF right now.',
@@ -164,9 +214,17 @@ export const CoursePlayer = ({
       openingCheckout: 'Ouverture du paiement...',
       unlockFullCourse: 'Débloquer le cours complet',
       classNote: 'Notes du cours',
-      preview: 'Aperçu',
       download: 'Télécharger',
       selectPdf: 'Sélectionnez un PDF pour l’aperçu ici.',
+      toggleNotesTooltip: 'Afficher ou masquer les notes',
+      completeTooltip: 'Marquer la leçon comme terminée',
+      hidePdfAction: 'Masquer PDF',
+      showPdfAction: 'Afficher PDF',
+      completeAction: 'Valider',
+      musicSpotify: 'Ouvrir dans Spotify',
+      musicApple: 'Ouvrir dans Apple Music',
+      musicAmazon: 'Ouvrir dans Amazon Music',
+      musicYouTube: 'Ouvrir dans YouTube',
       loadingPlayer: 'Chargement du lecteur de leçon...',
       unableSignedPlayback: 'Impossible de charger la lecture sécurisée de cette leçon pour le moment.',
       unableLoadPdf: 'Impossible de charger ce PDF pour le moment.',
@@ -203,9 +261,17 @@ export const CoursePlayer = ({
       openingCheckout: 'Abrindo checkout...',
       unlockFullCourse: 'Desbloquear curso completo',
       classNote: 'Anotações da aula',
-      preview: 'Pré-visualizar',
       download: 'Baixar',
       selectPdf: 'Selecione um PDF para pré-visualizá-lo aqui.',
+      toggleNotesTooltip: 'Mostrar ou ocultar anotações',
+      completeTooltip: 'Marcar aula como concluída',
+      hidePdfAction: 'Ocultar PDF',
+      showPdfAction: 'Mostrar PDF',
+      completeAction: 'Concluir',
+      musicSpotify: 'Abrir no Spotify',
+      musicApple: 'Abrir no Apple Music',
+      musicAmazon: 'Abrir no Amazon Music',
+      musicYouTube: 'Abrir no YouTube',
       loadingPlayer: 'Carregando player da aula...',
       unableSignedPlayback: 'Não foi possível carregar o playback assinado desta aula agora.',
       unableLoadPdf: 'Não foi possível carregar este PDF agora.',
@@ -252,6 +318,8 @@ export const CoursePlayer = ({
   const [pdfError, setPdfError] = useState('');
   const [isNotesPanelOpen, setIsNotesPanelOpen] = useState(true);
   const previewUrlRef = useRef('');
+  const muxContainerRef = useRef<HTMLDivElement | null>(null);
+  const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
   const router = useRouter();
   const confetti = useConfettiStore();
 
@@ -263,7 +331,8 @@ export const CoursePlayer = ({
   const classIndex = orderedLessons.findIndex((item) => item.id === lessonId);
   const classNumber = classIndex >= 0 ? classIndex + 1 : null;
   const canonicalClass = classNumber ? getCanonicalJazzClass(classNumber) : undefined;
-  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || copy.lessonFallback;
+  const canonicalSubtitle = canonicalClass?.subtitles[language];
+  const lessonDisplayTitle = canonicalSubtitle || lesson.title || canonicalClass?.subtitle || copy.lessonFallback;
   const classLabel = classNumber ? `${copy.classPrefix} ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
 
   const visibleAttachments = useMemo(
@@ -302,9 +371,109 @@ export const CoursePlayer = ({
     return `${baseUrl}&token=${encodeURIComponent(thumbnailToken)}`;
   }, [effectivePlaybackId, thumbnailToken]);
 
+  const muxTooltipMap = useMemo(() => {
+    if (language === 'pt') {
+      return {
+        Play: 'Reproduzir',
+        Pause: 'Pausar',
+        Mute: 'Silenciar',
+        Unmute: 'Ativar som',
+        Volume: 'Volume',
+        Settings: 'Configurações',
+        Captions: 'Legendas',
+        'Enter Fullscreen': 'Tela cheia',
+        'Exit Fullscreen': 'Sair da tela cheia',
+        'Seek Backward': 'Voltar',
+        'Seek Forward': 'Avançar',
+      } as Record<string, string>;
+    }
+
+    if (language === 'es') {
+      return {
+        Play: 'Reproducir',
+        Pause: 'Pausar',
+        Mute: 'Silenciar',
+        Unmute: 'Activar sonido',
+        Volume: 'Volumen',
+        Settings: 'Configuración',
+        Captions: 'Subtítulos',
+        'Enter Fullscreen': 'Pantalla completa',
+        'Exit Fullscreen': 'Salir de pantalla completa',
+        'Seek Backward': 'Retroceder',
+        'Seek Forward': 'Avanzar',
+      } as Record<string, string>;
+    }
+
+    if (language === 'fr') {
+      return {
+        Play: 'Lire',
+        Pause: 'Pause',
+        Mute: 'Couper le son',
+        Unmute: 'Activer le son',
+        Volume: 'Volume',
+        Settings: 'Paramètres',
+        Captions: 'Sous-titres',
+        'Enter Fullscreen': 'Plein écran',
+        'Exit Fullscreen': 'Quitter le plein écran',
+        'Seek Backward': 'Reculer',
+        'Seek Forward': 'Avancer',
+      } as Record<string, string>;
+    }
+
+    return {} as Record<string, string>;
+  }, [language]);
+
   useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (!muxPlayerRef.current) {
+      return;
+    }
+
+    muxPlayerRef.current.setAttribute('lang', languageToHtmlLang(language));
+  }, [language]);
+
+  useEffect(() => {
+    if (language === 'en') {
+      return;
+    }
+
+    const root = muxContainerRef.current;
+    if (!root) {
+      return;
+    }
+
+    const localizeMuxAttrs = () => {
+      const elements = root.querySelectorAll<HTMLElement>('[title], [aria-label]');
+      elements.forEach((element) => {
+        const title = element.getAttribute('title');
+        if (title && muxTooltipMap[title]) {
+          element.setAttribute('title', muxTooltipMap[title]);
+        }
+
+        const ariaLabel = element.getAttribute('aria-label');
+        if (ariaLabel && muxTooltipMap[ariaLabel]) {
+          element.setAttribute('aria-label', muxTooltipMap[ariaLabel]);
+        }
+      });
+    };
+
+    localizeMuxAttrs();
+    const observer = new MutationObserver(() => {
+      localizeMuxAttrs();
+    });
+
+    observer.observe(root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['title', 'aria-label'],
+    });
+
+    return () => observer.disconnect();
+  }, [language, muxTooltipMap]);
 
   useEffect(() => {
     setSelectedAttachmentId(visibleAttachments[0]?.id ?? null);
@@ -458,6 +627,7 @@ export const CoursePlayer = ({
       const response = await axios.post('/api/checkout', {
         courseId: course.id,
         source: 'dashboard',
+        language,
       });
 
       if (response.data?.url) {
@@ -476,18 +646,34 @@ export const CoursePlayer = ({
     {
       label: 'Spotify',
       href: `https://open.spotify.com/search/${musicSearch}`,
+      tooltip: copy.musicSpotify,
+      platform: 'spotify' as const,
+      colorClass: 'text-emerald-500',
+      tooltipClass: 'from-emerald-500 to-emerald-400',
     },
     {
       label: 'Apple Music',
       href: `https://music.apple.com/search?term=${musicSearch}`,
+      tooltip: copy.musicApple,
+      platform: 'apple' as const,
+      colorClass: 'text-rose-500',
+      tooltipClass: 'from-rose-500 to-orange-400',
     },
     {
       label: 'Amazon Music',
       href: `https://music.amazon.com/search/${musicSearch}`,
+      tooltip: copy.musicAmazon,
+      platform: 'amazon' as const,
+      colorClass: 'text-sky-500',
+      tooltipClass: 'from-sky-500 to-indigo-500',
     },
     {
       label: 'YouTube',
       href: `https://www.youtube.com/results?search_query=${musicSearch}`,
+      tooltip: copy.musicYouTube,
+      platform: 'youtube' as const,
+      colorClass: 'text-red-500',
+      tooltipClass: 'from-red-500 to-rose-500',
     },
   ];
 
@@ -618,69 +804,80 @@ export const CoursePlayer = ({
       <div className="h-[100dvh] overflow-hidden bg-background">
         <Sidebar />
 
-        <div className="lg:pl-56 h-full overflow-hidden p-3 sm:p-4 lg:p-6">
-          <div className={`mx-auto h-full grid grid-cols-1 gap-4 lg:gap-5 min-h-0 ${isNotesPanelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-1'}`}>
+        <div className="lg:pl-56 h-full overflow-hidden p-2 sm:p-3 lg:p-4">
+          <div className={`mx-auto h-full grid grid-cols-1 gap-3 lg:gap-4 min-h-0 ${isNotesPanelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-1'}`}>
             <div className="min-w-0 min-h-0 flex flex-col gap-4">
               <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
-                <div className="p-4 sm:p-5 border-b-2 border-primary/45 bg-gradient-to-r from-primary/10 to-transparent">
-                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                    <h2 className="text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight lg:flex-1 lg:pr-4">
+                <div className="p-3 sm:p-4 border-b-2 border-primary/45 bg-gradient-to-r from-primary/10 to-transparent">
+                  <div className="flex flex-col gap-2">
+                    <h2 className="text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
                       {classLabel}
                     </h2>
-                    <div className="flex flex-wrap items-center gap-2 lg:justify-end lg:max-w-[62%]">
-                      {musicLinks.map((platform) => (
-                        <a
-                          key={platform.label}
-                          href={platform.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary/40 bg-background/90 hover:bg-accent text-sm text-foreground transition-colors"
+                    <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                        <ThemeToggle />
+                        <LanguageSelector />
+                        {musicLinks.map((platform) => (
+                          <a
+                            key={platform.label}
+                            href={platform.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={platform.tooltip}
+                            aria-label={platform.tooltip}
+                            className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
+                          >
+                            <span className={platform.colorClass}>
+                              <PlatformIcon platform={platform.platform} />
+                            </span>
+                            <span className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${platform.tooltipClass}`}>
+                              {platform.tooltip}
+                            </span>
+                          </a>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() => setIsNotesPanelOpen((current) => !current)}
+                          title={copy.toggleNotesTooltip}
+                          aria-label={copy.toggleNotesTooltip}
+                          className="relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border border-primary/40 bg-background/95 px-2.5 text-[11px] font-semibold text-foreground transition-colors hover:bg-accent"
                         >
-                          {platform.label === 'YouTube' ? (
-                            <Youtube className="h-4 w-4 text-primary" />
+                          {isNotesPanelOpen ? (
+                            <PanelRightClose className="h-4 w-4" />
                           ) : (
-                            <Music2 className="h-4 w-4 text-primary" />
+                            <PanelRightOpen className="h-4 w-4" />
                           )}
-                          <span>{platform.label}</span>
-                        </a>
-                      ))}
-                      <Button
-                        type="button"
-                        onClick={onMarkAsComplete}
-                        disabled={isCompleting || !canAccessLesson}
-                        className="shrink-0"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        {isCompleting
-                          ? copy.saving
-                          : isCompleted
-                          ? copy.completedReset
-                          : copy.markComplete}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsNotesPanelOpen((current) => !current)}
-                        className="shrink-0"
-                      >
-                        {isNotesPanelOpen ? (
-                          <>
-                            <PanelRightClose className="h-4 w-4 mr-2" />
-                            {copy.hideNotes}
-                          </>
-                        ) : (
-                          <>
-                            <PanelRightOpen className="h-4 w-4 mr-2" />
-                            {copy.showNotes}
-                          </>
-                        )}
-                      </Button>
+                          <span>{isNotesPanelOpen ? copy.hidePdfAction : copy.showPdfAction}</span>
+                          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-amber-500 to-yellow-400 px-2 py-1 text-[10px] font-semibold text-black opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
+                            {copy.toggleNotesTooltip}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onMarkAsComplete}
+                          disabled={isCompleting || !canAccessLesson}
+                          title={copy.completeTooltip}
+                          aria-label={copy.completeTooltip}
+                          className="relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border border-primary/40 bg-background/95 px-2.5 text-[11px] font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                          <span>{copy.completeAction}</span>
+                          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-amber-500 to-yellow-400 px-2 py-1 text-[10px] font-semibold text-black opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
+                            {isCompleting
+                              ? copy.saving
+                              : isCompleted
+                              ? copy.completedReset
+                              : copy.completeTooltip}
+                          </span>
+                        </button>
                     </div>
                   </div>
                 </div>
-                <div className="relative flex-1 min-h-[360px] bg-black border border-primary/50 dark:border-primary/70 rounded-b-xl overflow-hidden">
+                <div ref={muxContainerRef} className="relative flex-1 min-h-0 bg-black border border-primary/50 dark:border-primary/70 rounded-b-xl overflow-hidden">
                   {canRenderMuxPlayer ? (
                     <MuxPlayer
+                      ref={muxPlayerRef}
                       className="absolute inset-0 h-full w-full"
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
@@ -723,13 +920,15 @@ export const CoursePlayer = ({
             </div>
 
             {isNotesPanelOpen ? (
-            <aside className="bg-card border-2 border-primary/55 rounded-xl p-4 sm:p-5 flex flex-col min-h-0 h-full overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)]">
+            <aside className="bg-card border-2 border-primary/55 rounded-xl p-3 sm:p-4 flex flex-col min-h-0 h-full overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)]">
               {canAccessLesson ? (
                 <>
-                  <p className="text-base sm:text-lg font-semibold text-primary mb-3 flex items-center gap-2.5">
-                    <FileText className="h-5 w-5 text-primary" />
-                    {copy.classNote}
-                  </p>
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <p className="text-base sm:text-lg font-semibold text-primary flex items-center gap-2.5 truncate">
+                      <FileText className="h-5 w-5 text-primary" />
+                      {copy.classNote}
+                    </p>
+                  </div>
 
                   {!canAccessAttachments ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
@@ -741,48 +940,30 @@ export const CoursePlayer = ({
                     </div>
                   ) : (
                     <>
-                      <div className="space-y-2 max-h-44 overflow-auto pr-1">
+                      <div className="space-y-2 max-h-40 overflow-auto pr-1">
                         {visibleAttachments.map((attachment) => (
                           <div
                             key={attachment.id}
+                            onClick={() => openPdfPreview(attachment.id)}
                             className={`rounded-lg border p-2.5 ${
                               selectedAttachmentId === attachment.id
                                 ? 'border-primary/50 bg-primary/5'
-                                : 'border-border bg-background'
+                                : 'border-border bg-background hover:bg-accent/40 cursor-pointer'
                             }`}
                           >
-                            <p
-                              className="text-sm font-medium text-foreground truncate"
-                              title={getAttachmentDisplayName(attachment.name, classNumber)}
-                            >
-                              {getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
-                            </p>
-                            <div className="mt-2 flex gap-2">
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => openPdfPreview(attachment.id)}
-                                disabled={isLoadingPdf}
+                            <div className="flex items-center justify-between gap-2">
+                              <p
+                                className="text-sm font-medium text-foreground truncate"
+                                title={getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
                               >
-                                <Eye className="h-4 w-4 mr-1.5" />
-                                {copy.preview}
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => downloadPdf(attachment.id)}
-                              >
-                                <Download className="h-4 w-4 mr-1.5" />
-                                {copy.download}
-                              </Button>
+                                {getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
+                              </p>
                             </div>
                           </div>
                         ))}
                       </div>
 
-                      <div className="mt-3 flex-1 min-h-[420px] rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
+                      <div className="mt-2 flex-1 min-h-0 rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                         {isLoadingPdf ? (
                           <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
                             {copy.loadingPdfPreview}

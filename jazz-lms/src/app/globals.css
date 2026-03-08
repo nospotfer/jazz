@@ -14,6 +14,8 @@
   --color-jazz-dark: #1a1a1a;
   --color-jazz-light: #fafafa;
   --color-jazz-accent: #d4af37;
+  --color-jazz-cta: var(--jazz-cta);
+  --color-jazz-title-accent: var(--jazz-title-accent);
   --color-burgundy: #8b3a3a;
   --color-cream: #f5ebe0;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -84,6 +86,8 @@
   --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: oklch(0.65 0.16 85);
+  --jazz-cta: #f2b705;
+  --jazz-title-accent: #d79b1a;
 }
 
 .dark {
@@ -119,6 +123,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --jazz-cta: #f2b705;
+  --jazz-title-accent: #d79b1a;
 }
 
 @layer base {
@@ -164,6 +170,19 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #c9951f;
   }
+
+  .pdf-download-emphasis {
+    border-radius: 8px !important;
+    background: color-mix(in oklab, var(--color-jazz-cta) 25%, transparent) !important;
+    color: color-mix(in oklab, var(--color-jazz-title-accent) 85%, black) !important;
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-jazz-title-accent) 45%, transparent);
+    transition: all 120ms ease;
+  }
+
+  .pdf-download-emphasis:hover {
+    background: color-mix(in oklab, var(--color-jazz-cta) 45%, transparent) !important;
+    transform: translateY(-1px);
+  }
 }
 
 @layer components {
@@ -174,6 +193,23 @@
 
   .btn-primary:hover {
     background-color: #c9951f;
+  }
+
+  .cta-highlight {
+    @apply text-black font-bold transition-colors;
+    background-color: var(--color-jazz-cta);
+  }
+
+  .cta-highlight:hover {
+    background-color: color-mix(in oklab, var(--color-jazz-cta) 88%, black);
+  }
+
+  .title-accent {
+    color: var(--color-jazz-title-accent);
+  }
+
+  .title-accent-border {
+    border-color: var(--color-jazz-title-accent);
   }
 
   .btn-secondary {

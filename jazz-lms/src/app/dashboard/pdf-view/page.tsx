@@ -1,8 +1,12 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { PdfViewClient } from '@/components/dashboard/pdf-view-client';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
+import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 
 function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
@@ -18,6 +22,8 @@ function getClassNumberFromAttachment(pathOrName: string) {
 
 export default async function PdfViewPage() {
   const supabase = createClient();
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -69,6 +75,25 @@ export default async function PdfViewPage() {
   const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
   const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
+  const orderedLessons = publishedCourses.flatMap((course) =>
+    course.chapters.flatMap((chapter) => chapter.lessons)
+  );
+  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+
+  const translationBundle = await getCourseTranslationBundle({
+    language,
+    courseIds: publishedCourses.map((course) => course.id),
+    chapterIds: publishedCourses.flatMap((course) => course.chapters.map((chapter) => chapter.id)),
+    lessonIds: orderedLessons.map((lesson) => lesson.id),
+  });
+
+  const auxiliaryLabel = {
+    es: 'Apuntes Auxiliares',
+    en: 'Auxiliary Notes',
+    fr: 'Notes auxiliaires',
+    pt: 'Notas auxiliares',
+  }[language];
+
   const items = publishedCourses
     .flatMap((course) => {
     const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
@@ -84,14 +109,23 @@ export default async function PdfViewPage() {
       return lesson.attachments.map((attachment) => {
         const isAuxiliary = isAuxiliaryAttachment(attachment.name);
         const classNumber = getClassNumberFromAttachment(attachment.url) ?? index + 1;
+        const resolvedClassNumber = lessonClassById.get(lesson.id) ?? classNumber;
 
         return {
           id: attachment.id,
           lessonId: lesson.id,
-          title: isAuxiliary ? attachment.name : lesson.title,
-          classLabel: isAuxiliary ? 'Apuntes Auxiliares' : `Clase ${classNumber}`,
+          title: isAuxiliary
+            ? attachment.name
+            : resolveLessonTitle(
+                translationBundle.lessons,
+                lesson.id,
+                lesson.title,
+                language,
+                resolvedClassNumber
+              ),
+          classLabel: isAuxiliary ? auxiliaryLabel : getLocalizedJazzClassLabel(resolvedClassNumber, language),
           url: attachment.url,
-          classNumber,
+          classNumber: resolvedClassNumber,
           isAuxiliary,
         };
       });

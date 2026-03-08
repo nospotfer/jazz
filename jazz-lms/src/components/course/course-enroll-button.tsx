@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface CourseEnrollButtonProps {
   courseId: string;
@@ -12,7 +13,31 @@ interface CourseEnrollButtonProps {
 }
 
 export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps) {
+  const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
+
+  const copy = {
+    es: {
+      somethingWrong: 'Algo salió mal. Inténtalo de nuevo.',
+      enrollFree: 'Inscribirse gratis',
+      buyCourse: 'Comprar curso',
+    },
+    en: {
+      somethingWrong: 'Something went wrong. Please try again.',
+      enrollFree: 'Enroll for free',
+      buyCourse: 'Buy course',
+    },
+    fr: {
+      somethingWrong: 'Une erreur est survenue. Réessayez.',
+      enrollFree: 'S’inscrire gratuitement',
+      buyCourse: 'Acheter le cours',
+    },
+    pt: {
+      somethingWrong: 'Algo deu errado. Tente novamente.',
+      enrollFree: 'Inscrever-se grátis',
+      buyCourse: 'Comprar curso',
+    },
+  }[language];
 
   const onClick = async () => {
     try {
@@ -23,12 +48,12 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         // For now redirect to checkout still
       }
 
-      const response = await axios.post('/api/checkout', { courseId });
+      const response = await axios.post('/api/checkout', { courseId, language });
 
       // Redirect to Stripe Checkout
       window.location.assign(response.data.url);
     } catch {
-      toast.error('Algo salió mal. Inténtalo de nuevo.');
+      toast.error(copy.somethingWrong);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +71,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       ) : (
         <>
           <ShoppingCart className="h-5 w-5 mr-2" />
-          {price === 0 ? 'Inscribirse gratis' : 'Comprar curso'}
+          {price === 0 ? copy.enrollFree : copy.buyCourse}
         </>
       )}
     </Button>

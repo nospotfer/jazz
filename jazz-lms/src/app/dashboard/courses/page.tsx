@@ -1,13 +1,18 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { MyCoursesClient, type PurchasedVideoItem } from '@/components/dashboard/my-courses-client';
 import {
   DEFAULT_LESSON_DURATION_MINUTES,
 } from '@/lib/pricing';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
 export default async function MyCoursesPage() {
   const supabase = createClient();
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -59,6 +64,34 @@ export default async function MyCoursesPage() {
     userProgress.map((p) => [p.lessonId, p])
   );
 
+  const fullCourses = fullCoursePurchases.map((purchase) => purchase.course);
+  const allChapters = fullCourses.flatMap((course) => course.chapters);
+  const allLessons = allChapters.flatMap((chapter) => chapter.lessons);
+
+  const translationBundle = await getCourseTranslationBundle({
+    language,
+    courseIds: Array.from(new Set([
+      ...fullCourses.map((course) => course.id),
+      ...singleLessonPurchases.map((item) => item.lesson.chapter.course.id),
+    ])),
+    chapterIds: Array.from(new Set([
+      ...allChapters.map((chapter) => chapter.id),
+      ...singleLessonPurchases.map((item) => item.lesson.chapter.id),
+    ])),
+    lessonIds: Array.from(new Set([
+      ...allLessons.map((lesson) => lesson.id),
+      ...singleLessonPurchases.map((item) => item.lesson.id),
+    ])),
+  });
+
+  const lessonClassById = new Map<string, number>();
+  for (const course of fullCourses) {
+    const orderedCourseLessons = course.chapters.flatMap((chapter) => chapter.lessons);
+    orderedCourseLessons.forEach((lesson, index) => {
+      lessonClassById.set(lesson.id, index + 1);
+    });
+  }
+
   const purchasedVideosMap = new Map<string, PurchasedVideoItem>();
 
   for (const purchase of fullCoursePurchases) {
@@ -74,10 +107,26 @@ export default async function MyCoursesPage() {
 
         purchasedVideosMap.set(lesson.id, {
           lessonId: lesson.id,
-          lessonTitle: lesson.title,
+          lessonTitle: resolveLessonTitle(
+            translationBundle.lessons,
+            lesson.id,
+            lesson.title,
+            language,
+            lessonClassById.get(lesson.id)
+          ),
           courseId: purchase.course.id,
-          courseTitle: purchase.course.title,
-          chapterTitle: chapter.title,
+          courseTitle: resolveCourseText(
+            translationBundle.courses,
+            purchase.course.id,
+            purchase.course.title,
+            purchase.course.description
+          ).title,
+          chapterTitle: resolveCourseText(
+            translationBundle.chapters,
+            chapter.id,
+            chapter.title,
+            chapter.description
+          ).title,
           classOrder: chapter.position * 1000 + lesson.position,
           progressPercent,
           minutesRemaining,
@@ -101,10 +150,26 @@ export default async function MyCoursesPage() {
     if (!purchasedVideosMap.has(lesson.id)) {
       purchasedVideosMap.set(lesson.id, {
         lessonId: lesson.id,
-        lessonTitle: lesson.title,
+        lessonTitle: resolveLessonTitle(
+          translationBundle.lessons,
+          lesson.id,
+          lesson.title,
+          language,
+          lessonClassById.get(lesson.id) ?? lesson.position
+        ),
         courseId: lesson.chapter.course.id,
-        courseTitle: lesson.chapter.course.title,
-        chapterTitle: lesson.chapter.title,
+        courseTitle: resolveCourseText(
+          translationBundle.courses,
+          lesson.chapter.course.id,
+          lesson.chapter.course.title,
+          lesson.chapter.course.description
+        ).title,
+        chapterTitle: resolveCourseText(
+          translationBundle.chapters,
+          lesson.chapter.id,
+          lesson.chapter.title,
+          lesson.chapter.description
+        ).title,
         classOrder: lesson.chapter.position * 1000 + lesson.position,
         progressPercent,
         minutesRemaining,

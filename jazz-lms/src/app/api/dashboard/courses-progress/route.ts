@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +23,8 @@ export interface CourseProgressItem {
 
 export async function GET() {
   try {
+    const cookieStore = await cookies();
+    const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
     const supabase = createClient();
     const {
       data: { user },
@@ -72,13 +77,35 @@ export async function GET() {
         },
       });
 
+      const orderedLessons = publishedCourses.flatMap((course) =>
+        course.chapters.flatMap((chapter) => chapter.lessons)
+      );
+      const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+      const translationBundle = await getCourseTranslationBundle({
+        language,
+        courseIds: publishedCourses.map((course) => course.id),
+        chapterIds: publishedCourses.flatMap((course) => course.chapters.map((chapter) => chapter.id)),
+        lessonIds: orderedLessons.map((lesson) => lesson.id),
+      });
+
       const courses: CourseProgressItem[] = publishedCourses.map((course) => ({
         id: course.id,
-        title: course.title,
+        title: resolveCourseText(
+          translationBundle.courses,
+          course.id,
+          course.title,
+          course.description
+        ).title,
         videos: course.chapters.flatMap((chapter) =>
           chapter.lessons.map((lesson) => ({
             lessonId: lesson.id,
-            title: lesson.title,
+            title: resolveLessonTitle(
+              translationBundle.lessons,
+              lesson.id,
+              lesson.title,
+              language,
+              lessonClassById.get(lesson.id)
+            ),
             progressPercent: 0,
             courseId: course.id,
           }))
@@ -138,6 +165,26 @@ export async function GET() {
         }),
       ]);
 
+    const orderedLessons = fullCoursePurchases.flatMap((purchase) =>
+      purchase.course.chapters.flatMap((chapter) => chapter.lessons)
+    );
+    const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+    const translationBundle = await getCourseTranslationBundle({
+      language,
+      courseIds: Array.from(new Set([
+        ...fullCoursePurchases.map((purchase) => purchase.course.id),
+        ...lessonPurchases.map((purchase) => purchase.lesson.chapter.course.id),
+      ])),
+      chapterIds: Array.from(new Set([
+        ...fullCoursePurchases.flatMap((purchase) => purchase.course.chapters.map((chapter) => chapter.id)),
+        ...lessonPurchases.map((purchase) => purchase.lesson.chapter.id),
+      ])),
+      lessonIds: Array.from(new Set([
+        ...orderedLessons.map((lesson) => lesson.id),
+        ...lessonPurchases.map((purchase) => purchase.lesson.id),
+      ])),
+    });
+
     const progressMap = new Map<string, { isCompleted: boolean; progressPercent: number }>(
       userProgress.map((p) => [
         p.lessonId,
@@ -162,7 +209,12 @@ export async function GET() {
       if (!coursesMap.has(course.id)) {
         coursesMap.set(course.id, {
           id: course.id,
-          title: course.title,
+          title: resolveCourseText(
+            translationBundle.courses,
+            course.id,
+            course.title,
+            course.description
+          ).title,
           videos: [],
         });
       }
@@ -174,7 +226,13 @@ export async function GET() {
           if (existingIds.has(lesson.id)) continue;
           courseEntry.videos.push({
             lessonId: lesson.id,
-            title: lesson.title,
+            title: resolveLessonTitle(
+              translationBundle.lessons,
+              lesson.id,
+              lesson.title,
+              language,
+              lessonClassById.get(lesson.id)
+            ),
             progressPercent: getPercent(lesson.id),
             courseId: course.id,
           });
@@ -188,7 +246,12 @@ export async function GET() {
       if (!coursesMap.has(course.id)) {
         coursesMap.set(course.id, {
           id: course.id,
-          title: course.title,
+          title: resolveCourseText(
+            translationBundle.courses,
+            course.id,
+            course.title,
+            null
+          ).title,
           videos: [],
         });
       }
@@ -196,7 +259,13 @@ export async function GET() {
       if (courseEntry.videos.some((v) => v.lessonId === lp.lessonId)) continue;
       courseEntry.videos.push({
         lessonId: lp.lessonId,
-        title: lp.lesson.title,
+        title: resolveLessonTitle(
+          translationBundle.lessons,
+          lp.lesson.id,
+          lp.lesson.title,
+          language,
+          lessonClassById.get(lp.lesson.id) ?? lp.lesson.position
+        ),
         progressPercent: getPercent(lp.lessonId),
         courseId: course.id,
       });

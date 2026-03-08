@@ -1,8 +1,11 @@
 import { redirect } from 'next/navigation';
 import { CourseViewClient } from '@/components/course/course-view-client';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 
 type DashboardPageProps = {
   searchParams?: {
@@ -14,24 +17,14 @@ type DashboardPageProps = {
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const supabase = createClient();
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
     return redirect('/auth');
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    try {
-      await db.$transaction([
-        db.purchase.deleteMany({ where: { userId: user.id } }),
-        db.lessonPurchase.deleteMany({ where: { userId: user.id } }),
-        db.userProgress.deleteMany({ where: { userId: user.id } }),
-      ]);
-    } catch (error) {
-      console.error('[dashboard] Failed to reset local test purchases.', error);
-    }
   }
 
   const purchaseStatus = Array.isArray(searchParams?.purchase)
@@ -43,6 +36,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const sessionId = Array.isArray(searchParams?.session_id)
     ? searchParams?.session_id[0]
     : searchParams?.session_id;
+
+  let shouldReloadUnlockedDashboard = false;
 
   if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
     try {
@@ -70,15 +65,20 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             courseId: sessionCourseId,
           },
         });
+        shouldReloadUnlockedDashboard = true;
       }
     } catch (error) {
       console.error('[dashboard] Unable to confirm Stripe checkout session.', error);
     }
   }
 
+  if (shouldReloadUnlockedDashboard) {
+    return redirect('/dashboard?purchase=success&source=dashboard');
+  }
+
   let course: {
     id: string;
-    chapters: { lessons: { id: string; title: string }[] }[];
+    chapters: { id: string; lessons: { id: string; title: string }[] }[];
   } | null = null;
 
   let hasPurchased = false;
@@ -93,6 +93,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           where: { isPublished: true },
           orderBy: { position: 'asc' },
           select: {
+            id: true,
             lessons: {
               where: { isPublished: true },
               orderBy: { position: 'asc' },
@@ -106,16 +107,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       },
     });
 
-    hasPurchased = course
-      ? !!(await db.purchase.findUnique({
-          where: {
-            userId_courseId: {
-              userId: user.id,
-              courseId: course.id,
-            },
-          },
-        }))
-      : false;
+    hasPurchased = !!(await db.purchase.findFirst({
+      where: {
+        userId: user.id,
+      },
+      select: { id: true },
+    }));
   } catch (error) {
     console.error('[dashboard] Database unavailable. Rendering fallback state.', error);
   }
@@ -134,13 +131,33 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const orderedLessons = course
     ? course.chapters.flatMap((chapter) => chapter.lessons)
     : [];
+  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+
+  const translationBundle = course
+    ? await getCourseTranslationBundle({
+        language,
+        courseIds: [course.id],
+        chapterIds: course.chapters.map((chapter) => chapter.id),
+        lessonIds: orderedLessons.map((lesson) => lesson.id),
+      })
+    : null;
 
   const lessonRoutesInOrder = orderedLessons.map(
     (lesson) => `/courses/${course?.id}/lessons/${lesson.id}`
   );
 
   const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
-  const lessonTitlesInOrder = orderedLessons.map((lesson) => lesson.title);
+  const lessonTitlesInOrder = orderedLessons.map((lesson) =>
+    translationBundle
+      ? resolveLessonTitle(
+          translationBundle.lessons,
+          lesson.id,
+          lesson.title,
+          language,
+          lessonClassById.get(lesson.id)
+        )
+      : lesson.title
+  );
 
   return (
     <CourseViewClient

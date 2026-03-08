@@ -6,6 +6,48 @@ import type { AuthChangeEvent } from '@supabase/supabase-js';
 import { getRandomProfileAvatar } from '@/lib/profile-avatars';
 import { hasValidSupabasePublicConfig } from '@/lib/supabase-config';
 import { useLanguage } from '@/components/providers/language-provider';
+import { languageToHtmlLang } from '@/lib/language';
+
+function normalizeBaseOrigin(value?: string | null): string | null {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return null;
+  }
+}
+
+function isLocalOrigin(origin?: string | null): boolean {
+  if (!origin) return false;
+
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+}
+
+function resolveClientAppOrigin(currentOrigin: string): string {
+  const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+
+  if (isDevelopment) {
+    if (isLocalOrigin(currentOrigin)) {
+      return currentOrigin;
+    }
+
+    if (isLocalOrigin(configuredOrigin)) {
+      return configuredOrigin;
+    }
+
+    return 'http://localhost:3000';
+  }
+
+  return configuredOrigin || currentOrigin;
+}
 
 export default function AuthPage() {
   const supabase = useMemo(() => createClient(), []);
@@ -268,7 +310,36 @@ export default function AuthPage() {
 
   const redirectTo = useMemo(() => {
     if (typeof window === 'undefined') return undefined;
-    return `${window.location.origin}/auth/callback`;
+    const appOrigin = resolveClientAppOrigin(window.location.origin);
+    const callbackUrl = new URL('/auth/callback', appOrigin);
+    callbackUrl.searchParams.set('flow', activeTab);
+    callbackUrl.searchParams.set('lang', language);
+    return callbackUrl.toString();
+  }, [activeTab, language]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    if (typeof window === 'undefined') return;
+
+    const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
+    const runtimeOrigin = window.location.origin;
+    const resolvedOrigin = resolveClientAppOrigin(runtimeOrigin);
+
+    if (configuredOrigin && !isLocalOrigin(configuredOrigin)) {
+      console.warn('[auth] NEXT_PUBLIC_APP_URL is not localhost in development. Falling back to a local runtime origin.', {
+        configuredOrigin,
+        runtimeOrigin,
+        resolvedOrigin,
+      });
+      return;
+    }
+
+    if (runtimeOrigin !== resolvedOrigin) {
+      console.info('[auth] OAuth callback origin normalized in development.', {
+        runtimeOrigin,
+        resolvedOrigin,
+      });
+    }
   }, []);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -396,6 +467,8 @@ export default function AuthPage() {
           redirectTo: callbackUrl,
           queryParams: {
             prompt: 'select_account',
+            hl: languageToHtmlLang(language),
+            ui_locales: languageToHtmlLang(language),
           },
         },
       });

@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum LanguageCode {
+  es
+  en
+  fr
+  pt
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -39,6 +46,7 @@ model Course {
   updatedAt   DateTime   @updatedAt
   chapters    Chapter[]
   purchases   Purchase[]
+  translations CourseTranslation[]
 }
 
 model Chapter {
@@ -52,6 +60,7 @@ model Chapter {
   updatedAt   DateTime @updatedAt
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons     Lesson[]
+  translations ChapterTranslation[]
 
   @@unique([courseId, position])
 }
@@ -70,8 +79,51 @@ model Lesson {
   chapter         Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   userProgress    UserProgress[]
   lessonPurchases LessonPurchase[]
+  translations    LessonTranslation[]
 
   @@unique([chapterId, position])
+}
+
+model CourseTranslation {
+  id          String       @id @default(uuid())
+  courseId    String
+  language    LanguageCode
+  title       String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, language])
+  @@index([language])
+}
+
+model ChapterTranslation {
+  id          String       @id @default(uuid())
+  chapterId   String
+  language    LanguageCode
+  title       String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  chapter     Chapter      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, language])
+  @@index([language])
+}
+
+model LessonTranslation {
+  id          String       @id @default(uuid())
+  lessonId    String
+  language    LanguageCode
+  title       String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lesson      Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, language])
+  @@index([language])
 }
 
 model Attachment {

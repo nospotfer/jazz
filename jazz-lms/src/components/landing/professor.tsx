@@ -66,8 +66,8 @@ export function Professor() {
 
           {/* Right side - Text */}
           <div className="bg-gray-900 dark:bg-gray-900 rounded-r-2xl p-8 lg:p-12 flex flex-col justify-center shadow-2xl">
-            <div className="border-b-2 border-yellow-600 pb-6 mb-8">
-              <h2 className="text-yellow-500 text-4xl lg:text-5xl font-bold">
+            <div className="border-b-2 title-accent-border pb-6 mb-8">
+              <h2 className="title-accent text-4xl lg:text-5xl font-bold">
                 {copy.title}
               </h2>
             </div>
@@ -85,8 +85,8 @@ export function Professor() {
             </div>
 
             <div className="mt-8 flex items-center gap-3">
-              <div className="h-1 w-12 bg-yellow-600 rounded-full" />
-              <span className="text-yellow-600 text-sm font-semibold uppercase tracking-widest">
+              <div className="h-1 w-12 bg-[var(--color-jazz-title-accent)] rounded-full" />
+              <span className="title-accent text-sm font-semibold uppercase tracking-widest">
                 {copy.badge}
               </span>
             </div>

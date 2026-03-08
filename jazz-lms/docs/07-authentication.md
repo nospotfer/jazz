@@ -492,9 +492,9 @@ For this project, configure URLs in **two places**:
 
 #### A) Supabase Dashboard (Authentication → URL Configuration)
 
-- **Site URL (development)**: `http://localhost:3001`
+- **Site URL (development)**: `http://localhost:3000`
 - **Additional Redirect URLs**:
-  - `http://localhost:3001/auth/callback`
+  - `http://localhost:3000/auth/callback`
   - `https://jazz-lms.vercel.app/auth/callback`
   - `https://*.vercel.app/auth/callback`
 
@@ -515,7 +515,8 @@ Important:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_APP_URL=http://localhost:3001
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+APP_URL=http://localhost:3000
 ```
 
 ---
@@ -568,6 +569,20 @@ OAuth callbacks require HTTPS. Vercel handles this automatically.
 ### "OAuth redirect not working"
 - Verify redirect URL in provider settings
 - Check that URL matches exactly (including http vs https)
+
+### "Google login in localhost redirects to production domain"
+- If dev and prod share the same Supabase project, check **Authentication → URL Configuration** first.
+- For local testing, set **Site URL** to `http://localhost:3000`.
+- Ensure **Additional Redirect URLs** contains at least:
+  - `http://localhost:3000/auth/callback`
+  - `http://localhost:3001/auth/callback` (only if you actually run on port 3001)
+- Keep production callback URLs as additional entries, but do not leave Site URL pointing to production while validating localhost OAuth.
+- Confirm local runtime env uses localhost:
+  - `NEXT_PUBLIC_APP_URL=http://localhost:3000`
+  - `APP_URL=http://localhost:3000`
+- If you export env vars in shell/IDE, verify they are not overriding `.env.local` with production values.
+- In browser DevTools, inspect the OAuth authorize request and verify `redirect_to=http://localhost:3000/auth/callback` (or your active local port).
+- Retry in an incognito window to avoid stale OAuth state/cookies.
 
 ### "Session expired immediately"
 - Middleware might not be configured correctly
