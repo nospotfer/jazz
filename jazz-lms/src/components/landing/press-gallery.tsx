@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface PressItem {
   titulo: string;
@@ -38,15 +39,53 @@ const press: PressItem[] = [
 ];
 
 export function Press() {
+  const { language } = useLanguage();
+
+  const titleByLanguage = {
+    es: 'En la prensa',
+    en: 'In the press',
+    fr: 'Dans la presse',
+    pt: 'Na imprensa',
+  }[language];
+
+  const localizedPress = press.map((item, index) => {
+    if (language === 'es') {
+      return item;
+    }
+
+    const localizedByLanguage = {
+      en: {
+        title: `Press feature ${index + 1}`,
+        desc: 'Featured mention highlighting Enric Vázquez’s role in jazz culture and education.',
+      },
+      fr: {
+        title: `Article de presse ${index + 1}`,
+        desc: 'Mention mise en avant soulignant le rôle d’Enric Vázquez dans la culture et la pédagogie du jazz.',
+      },
+      pt: {
+        title: `Destaque na imprensa ${index + 1}`,
+        desc: 'Citação em destaque sobre o papel de Enric Vázquez na cultura e no ensino do jazz.',
+      },
+    };
+
+    const current = localizedByLanguage[language as 'en' | 'fr' | 'pt'];
+
+    return {
+      ...item,
+      titulo: current.title,
+      descripcion: current.desc,
+    };
+  });
+
   return (
     <div className="min-h-screen w-full bg-gray-100 dark:bg-black flex items-center">
       <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
         <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold text-center mb-12">
-          En la prensa
+          {titleByLanguage}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {press.map((item, index) => (
+          {localizedPress.map((item, index) => (
             <div
               key={index}
               className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 dark:border-transparent"

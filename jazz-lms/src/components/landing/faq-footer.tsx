@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ContactModal } from '@/components/ui/contact-modal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface FAQItem {
   pregunta: string;
@@ -41,9 +42,142 @@ const NAV_LINKS = [
 
 export function FAQFooter() {
   const router = useRouter();
+  const { language } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [showContactModal, setShowContactModal] = useState(false);
+
+  const copy = {
+    es: {
+      faqTitle: 'Preguntas frecuentes',
+      faqSubtitle: 'Si no encuentras la respuesta que buscas, contáctanos aquí abajo.',
+      contact: 'Contáctanos',
+      afterTitle: '¿Qué podré hacer después de completarlo?',
+      afterItems: [
+        'Ir a un club de jazz y disfrutar la experiencia con una nueva perspectiva.',
+        'Escuchar los grandes clásicos y entender por qué son fundamentales.',
+        'Reconocer estilos, épocas y músicos por su "sonido".',
+        'Sentirte parte de la cultura del jazz, comprendiendo su lenguaje y libertad creativa.',
+      ],
+      ctaTitle: '¡No esperes más!',
+      ctaSubtitle: 'Empieza hoy tu viaje por el jazz.',
+      cta: 'Regístrate',
+      ctaFoot: 'Únete a miles de amantes del jazz que ya forman parte de esta experiencia única.',
+      nav: ['Inicio', 'Profesor', 'Aprender', 'Cursos', 'Prensa', 'Jazz Cats', 'FAQ'],
+      topLabel: 'Top',
+      topAria: 'Volver arriba',
+    },
+    en: {
+      faqTitle: 'Frequently asked questions',
+      faqSubtitle: 'If you cannot find the answer you need, contact us below.',
+      contact: 'Contact us',
+      afterTitle: 'What will I be able to do after completing it?',
+      afterItems: [
+        'Go to a jazz club and enjoy the experience from a new perspective.',
+        'Listen to great classics and understand why they are essential.',
+        'Recognize styles, eras, and musicians by their "sound".',
+        'Feel part of jazz culture by understanding its language and creative freedom.',
+      ],
+      ctaTitle: 'Do not wait any longer!',
+      ctaSubtitle: 'Start your jazz journey today.',
+      cta: 'Sign up',
+      ctaFoot: 'Join thousands of jazz lovers already part of this unique experience.',
+      nav: ['Home', 'Professor', 'Learn', 'Courses', 'Press', 'Jazz Cats', 'FAQ'],
+      topLabel: 'Top',
+      topAria: 'Back to top',
+    },
+    fr: {
+      faqTitle: 'Questions fréquentes',
+      faqSubtitle: 'Si vous ne trouvez pas la réponse, contactez-nous ci-dessous.',
+      contact: 'Nous contacter',
+      afterTitle: 'Que pourrai-je faire après l’avoir terminé ?',
+      afterItems: [
+        'Aller dans un club de jazz et vivre l’expérience avec un nouveau regard.',
+        'Écouter les grands classiques et comprendre pourquoi ils sont fondamentaux.',
+        'Reconnaître les styles, les époques et les musiciens par leur "son".',
+        'Vous sentir partie prenante de la culture jazz en comprenant son langage et sa liberté créative.',
+      ],
+      ctaTitle: 'N’attendez plus !',
+      ctaSubtitle: 'Commencez votre voyage jazz dès aujourd’hui.',
+      cta: 'S’inscrire',
+      ctaFoot: 'Rejoignez des milliers de passionnés de jazz déjà dans cette expérience unique.',
+      nav: ['Accueil', 'Professeur', 'Apprendre', 'Cours', 'Presse', 'Jazz Cats', 'FAQ'],
+      topLabel: 'Top',
+      topAria: 'Retour en haut',
+    },
+    pt: {
+      faqTitle: 'Perguntas frequentes',
+      faqSubtitle: 'Se você não encontrar a resposta, entre em contato abaixo.',
+      contact: 'Fale conosco',
+      afterTitle: 'O que poderei fazer depois de concluir?',
+      afterItems: [
+        'Ir a um clube de jazz e curtir a experiência com uma nova perspectiva.',
+        'Ouvir os grandes clássicos e entender por que são fundamentais.',
+        'Reconhecer estilos, épocas e músicos pelo "som".',
+        'Sentir-se parte da cultura do jazz, entendendo sua linguagem e liberdade criativa.',
+      ],
+      ctaTitle: 'Não espere mais!',
+      ctaSubtitle: 'Comece hoje sua jornada no jazz.',
+      cta: 'Cadastrar',
+      ctaFoot: 'Junte-se a milhares de amantes de jazz que já fazem parte desta experiência única.',
+      nav: ['Início', 'Professor', 'Aprender', 'Cursos', 'Imprensa', 'Jazz Cats', 'FAQ'],
+      topLabel: 'Topo',
+      topAria: 'Voltar ao topo',
+    },
+  }[language];
+
+  const localizedFaqs =
+    language === 'es'
+      ? faqs
+      : [
+          {
+            pregunta:
+              language === 'en'
+                ? 'How much does the course cost?'
+                : language === 'fr'
+                  ? 'Combien coûte le cours ?'
+                  : 'Quanto custa o curso?',
+            respuesta:
+              language === 'en'
+                ? 'Pricing may vary according to active promotions. Check the course page for the current amount.'
+                : language === 'fr'
+                  ? 'Le prix peut varier selon les promotions actives. Consultez la page du cours pour le montant actuel.'
+                  : 'O preço pode variar conforme promoções ativas. Confira a página do curso para o valor atual.',
+          },
+          {
+            pregunta:
+              language === 'en'
+                ? 'What if I realize this course is not for me?'
+                : language === 'fr'
+                  ? 'Et si je constate que ce cours n’est pas pour moi ?'
+                  : 'E se eu perceber que este curso não é para mim?',
+            respuesta:
+              language === 'en'
+                ? 'You can use the platform refund policies when available. We want your learning experience to be positive.'
+                : language === 'fr'
+                  ? 'Vous pouvez utiliser les politiques de remboursement de la plateforme lorsque disponibles. Nous voulons que votre expérience soit positive.'
+                  : 'Você pode usar as políticas de reembolso da plataforma quando disponíveis. Queremos que sua experiência seja positiva.',
+          },
+          {
+            pregunta:
+              language === 'en'
+                ? 'What will I learn in this course?'
+                : language === 'fr'
+                  ? 'Que vais-je apprendre dans ce cours ?'
+                  : 'O que vou aprender neste curso?',
+            respuesta:
+              language === 'en'
+                ? 'You will learn jazz fundamentals, history, improvisation, listening, and practical understanding of key styles and artists.'
+                : language === 'fr'
+                  ? 'Vous apprendrez les fondamentaux du jazz, son histoire, l’improvisation, l’écoute et la compréhension pratique des styles et artistes clés.'
+                  : 'Você vai aprender fundamentos do jazz, história, improvisação, escuta e compreensão prática dos principais estilos e artistas.',
+          },
+        ];
+
+  const localizedNavLinks = NAV_LINKS.map((link, index) => ({
+    ...link,
+    label: copy.nav[index] || link.label,
+  }));
 
   const isExpanded = (index: number) => activeIndex === index || hoveredIndex === index;
 
@@ -73,14 +207,14 @@ export function FAQFooter() {
               <div className="flex flex-col justify-center">
                 {/* FAQ Section */}
                 <h2 className="text-yellow-500 text-3xl lg:text-4xl font-bold mb-6">
-                  Preguntas frecuentes
+                  {copy.faqTitle}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                  Si no encuentras la respuesta que buscas, contáctanos aquí abajo.
+                  {copy.faqSubtitle}
                 </p>
 
                 <div className="space-y-3 mb-10">
-                  {faqs.map((faq, index) => (
+                  {localizedFaqs.map((faq, index) => (
                     <div
                       key={index}
                       className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden"
@@ -115,39 +249,21 @@ export function FAQFooter() {
                   onClick={() => setShowContactModal(true)}
                   className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg transition-colors duration-300 w-fit mb-10"
                 >
-                  Contáctanos
+                  {copy.contact}
                 </button>
 
                 {/* What will I be able to do section */}
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 lg:p-8">
                   <h3 className="text-gray-900 dark:text-white text-xl lg:text-2xl font-bold mb-5">
-                    ¿Qué podré hacer después de completarlo?
+                    {copy.afterTitle}
                   </h3>
                   <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Ir a un club de jazz y disfrutar la experiencia con una nueva perspectiva.
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Escuchar los grandes clásicos y entender por qué son fundamentales.
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Reconocer estilos, épocas y músicos por su &quot;sonido&quot;.
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">
-                        Sentirte parte de la cultura del jazz, comprendiendo su lenguaje y libertad creativa.
-                      </span>
-                    </li>
+                    {copy.afterItems.map((item) => (
+                      <li key={item} className="flex items-start">
+                        <span className="text-yellow-600 mr-3 font-bold text-lg">&#10003;</span>
+                        <span className="text-gray-700 dark:text-gray-300 text-sm">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -155,21 +271,21 @@ export function FAQFooter() {
               {/* Lado derecho - CTA de registro */}
               <div className="flex flex-col justify-center items-center text-center lg:pl-8">
                 <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold mb-4">
-                  ¡No esperes más!
+                  {copy.ctaTitle}
                 </h2>
                 <p className="text-yellow-600 text-xl mb-8">
-                  Empieza hoy tu viaje por el jazz.
+                  {copy.ctaSubtitle}
                 </p>
 
                 <button
                   onClick={() => router.push('/auth?tab=register')}
                   className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-12 rounded-lg transition-all duration-300 hover:shadow-xl text-lg mb-6"
                 >
-                  Regístrate
+                  {copy.cta}
                 </button>
 
                 <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md">
-                  Únete a miles de amantes del jazz que ya forman parte de esta experiencia única.
+                  {copy.ctaFoot}
                 </p>
               </div>
             </div>
@@ -197,7 +313,7 @@ export function FAQFooter() {
 
               {/* Quick navigation links */}
               <nav className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-                {NAV_LINKS.map((link) => (
+                {localizedNavLinks.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
@@ -213,9 +329,9 @@ export function FAQFooter() {
               <button
                 onClick={scrollToTop}
                 className="flex items-center gap-2 text-yellow-500 hover:text-yellow-400 transition-colors group"
-                aria-label="Volver arriba"
+                aria-label={copy.topAria}
               >
-                <span className="text-xs uppercase tracking-widest">Top</span>
+                <span className="text-xs uppercase tracking-widest">{copy.topLabel}</span>
                 <ChevronUp className="h-5 w-5 group-hover:-translate-y-1 transition-transform" />
               </button>
             </div>

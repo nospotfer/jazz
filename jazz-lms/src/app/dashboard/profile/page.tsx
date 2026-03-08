@@ -8,6 +8,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { getRandomProfileAvatar, PROFILE_AVATAR_OPTIONS } from '@/lib/profile-avatars';
 import axios from 'axios';
+import { useLanguage } from '@/components/providers/language-provider';
 
 type AvatarMode = 'random' | 'fixed';
 
@@ -33,6 +34,165 @@ const EMPTY_PROFILE_FORM: ProfileFormData = {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      avatarUpdateError: 'No se pudo actualizar el avatar',
+      profileUpdateError: 'No se pudo actualizar el perfil',
+      paymentsPortalError: 'No se pudo abrir el portal de pagos. Inténtalo más tarde.',
+      title: 'Perfil',
+      subtitle: 'Gestiona tu perfil, datos personales y preferencias de avatar',
+      profileIcon: 'Icono de perfil',
+      randomModeDesc: 'Modo aleatorio: cambia en cada inicio de sesión',
+      fixedModeDesc: 'Modo fijo: se mantiene hasta que lo cambies',
+      saving: 'Guardando...',
+      saveChanges: 'Guardar cambios',
+      profileUpdated: '¡Perfil actualizado correctamente!',
+      profileInfo: 'Información del perfil',
+      fullName: 'Nombre completo',
+      fullNamePlaceholder: 'Tu nombre completo',
+      headline: 'Titular',
+      bio: 'Biografía',
+      bioPlaceholder: 'Cuéntanos sobre ti...',
+      email: 'Correo',
+      contactData: 'Contacto y datos personales',
+      phone: 'Teléfono',
+      birthDate: 'Fecha de nacimiento',
+      city: 'Ciudad',
+      cityPlaceholder: 'Ciudad',
+      country: 'País',
+      countryPlaceholder: 'País',
+      paymentMethods: 'Métodos de pago',
+      paymentMethodsDesc: 'Gestiona tus tarjetas y datos de facturación en nuestro portal seguro de Stripe.',
+      managePaymentMethods: 'Gestionar métodos de pago',
+      chooseAvatarStyle: 'Elige tu estilo de avatar',
+      chooseAvatarDesc: 'Selecciona un icono fijo o mantén el modo aleatorio.',
+      randomAvatarOption: 'Avatar aleatorio en cada inicio de sesión',
+      avatarOptionAlt: 'Opción de avatar',
+      profileAvatarAlt: 'Avatar de perfil',
+      headlinePlaceholder: 'Aprendiz de jazz, músico, educador...',
+      phonePlaceholder: '+34 600 000 000',
+      cancel: 'Cancelar',
+      confirmAvatar: 'Confirmar avatar',
+    },
+    en: {
+      avatarUpdateError: 'Unable to update avatar',
+      profileUpdateError: 'Unable to update profile',
+      paymentsPortalError: 'Unable to open the payment portal. Please try again later.',
+      title: 'Profile',
+      subtitle: 'Manage your profile, personal data, and avatar preferences',
+      profileIcon: 'Profile icon',
+      randomModeDesc: 'Random mode: changes on each sign-in',
+      fixedModeDesc: 'Fixed mode: stays until you change it',
+      saving: 'Saving...',
+      saveChanges: 'Save changes',
+      profileUpdated: 'Profile updated successfully!',
+      profileInfo: 'Profile information',
+      fullName: 'Full name',
+      fullNamePlaceholder: 'Your full name',
+      headline: 'Headline',
+      bio: 'Biography',
+      bioPlaceholder: 'Tell us about yourself...',
+      email: 'Email',
+      contactData: 'Contact and personal data',
+      phone: 'Phone',
+      birthDate: 'Date of birth',
+      city: 'City',
+      cityPlaceholder: 'City',
+      country: 'Country',
+      countryPlaceholder: 'Country',
+      paymentMethods: 'Payment methods',
+      paymentMethodsDesc: 'Manage your cards and billing details in our secure Stripe portal.',
+      managePaymentMethods: 'Manage payment methods',
+      chooseAvatarStyle: 'Choose your avatar style',
+      chooseAvatarDesc: 'Select a fixed icon or keep random mode.',
+      randomAvatarOption: 'Random avatar at each sign-in',
+      avatarOptionAlt: 'Avatar option',
+      profileAvatarAlt: 'Profile avatar',
+      headlinePlaceholder: 'Jazz learner, musician, educator...',
+      phonePlaceholder: '+1 555 123 4567',
+      cancel: 'Cancel',
+      confirmAvatar: 'Confirm avatar',
+    },
+    fr: {
+      avatarUpdateError: 'Impossible de mettre à jour l’avatar',
+      profileUpdateError: 'Impossible de mettre à jour le profil',
+      paymentsPortalError: 'Impossible d’ouvrir le portail de paiement. Réessayez plus tard.',
+      title: 'Profil',
+      subtitle: 'Gérez votre profil, vos données personnelles et vos préférences d’avatar',
+      profileIcon: 'Icône de profil',
+      randomModeDesc: 'Mode aléatoire : change à chaque connexion',
+      fixedModeDesc: 'Mode fixe : reste identique jusqu’à modification',
+      saving: 'Enregistrement...',
+      saveChanges: 'Enregistrer les modifications',
+      profileUpdated: 'Profil mis à jour avec succès !',
+      profileInfo: 'Informations du profil',
+      fullName: 'Nom complet',
+      fullNamePlaceholder: 'Votre nom complet',
+      headline: 'Titre',
+      bio: 'Biographie',
+      bioPlaceholder: 'Parlez-nous de vous...',
+      email: 'E-mail',
+      contactData: 'Contact et données personnelles',
+      phone: 'Téléphone',
+      birthDate: 'Date de naissance',
+      city: 'Ville',
+      cityPlaceholder: 'Ville',
+      country: 'Pays',
+      countryPlaceholder: 'Pays',
+      paymentMethods: 'Moyens de paiement',
+      paymentMethodsDesc: 'Gérez vos cartes et données de facturation dans notre portail Stripe sécurisé.',
+      managePaymentMethods: 'Gérer les moyens de paiement',
+      chooseAvatarStyle: 'Choisissez votre style d’avatar',
+      chooseAvatarDesc: 'Sélectionnez une icône fixe ou conservez le mode aléatoire.',
+      randomAvatarOption: 'Avatar aléatoire à chaque connexion',
+      avatarOptionAlt: 'Option d’avatar',
+      profileAvatarAlt: 'Avatar de profil',
+      headlinePlaceholder: 'Passionné de jazz, musicien, enseignant...',
+      phonePlaceholder: '+33 6 12 34 56 78',
+      cancel: 'Annuler',
+      confirmAvatar: 'Confirmer l’avatar',
+    },
+    pt: {
+      avatarUpdateError: 'Não foi possível atualizar o avatar',
+      profileUpdateError: 'Não foi possível atualizar o perfil',
+      paymentsPortalError: 'Não foi possível abrir o portal de pagamentos. Tente novamente mais tarde.',
+      title: 'Perfil',
+      subtitle: 'Gerencie seu perfil, dados pessoais e preferências de avatar',
+      profileIcon: 'Ícone de perfil',
+      randomModeDesc: 'Modo aleatório: muda a cada login',
+      fixedModeDesc: 'Modo fixo: permanece até você alterar',
+      saving: 'Salvando...',
+      saveChanges: 'Salvar alterações',
+      profileUpdated: 'Perfil atualizado com sucesso!',
+      profileInfo: 'Informações do perfil',
+      fullName: 'Nome completo',
+      fullNamePlaceholder: 'Seu nome completo',
+      headline: 'Título',
+      bio: 'Biografia',
+      bioPlaceholder: 'Conte-nos sobre você...',
+      email: 'E-mail',
+      contactData: 'Contato e dados pessoais',
+      phone: 'Telefone',
+      birthDate: 'Data de nascimento',
+      city: 'Cidade',
+      cityPlaceholder: 'Cidade',
+      country: 'País',
+      countryPlaceholder: 'País',
+      paymentMethods: 'Métodos de pagamento',
+      paymentMethodsDesc: 'Gerencie seus cartões e dados de cobrança em nosso portal seguro do Stripe.',
+      managePaymentMethods: 'Gerenciar métodos de pagamento',
+      chooseAvatarStyle: 'Escolha seu estilo de avatar',
+      chooseAvatarDesc: 'Selecione um ícone fixo ou mantenha o modo aleatório.',
+      randomAvatarOption: 'Avatar aleatório em cada login',
+      avatarOptionAlt: 'Opção de avatar',
+      profileAvatarAlt: 'Avatar de perfil',
+      headlinePlaceholder: 'Aprendiz de jazz, músico, educador...',
+      phonePlaceholder: '+55 11 99999-9999',
+      cancel: 'Cancelar',
+      confirmAvatar: 'Confirmar avatar',
+    },
+  }[language];
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
@@ -112,7 +272,7 @@ export default function ProfilePage() {
       if (error) throw error;
       router.refresh();
     } catch {
-      alert('No se pudo actualizar el avatar');
+      alert(copy.avatarUpdateError);
     }
   };
 
@@ -142,7 +302,7 @@ export default function ProfilePage() {
       router.refresh();
       setTimeout(() => setSuccess(false), 3000);
     } catch {
-      alert('No se pudo actualizar el perfil');
+      alert(copy.profileUpdateError);
     } finally {
       setLoading(false);
     }
@@ -154,7 +314,7 @@ export default function ProfilePage() {
       const res = await axios.post('/api/stripe-portal');
       window.location.assign(res.data.url);
     } catch {
-      alert('No se pudo abrir el portal de pagos. Inténtalo más tarde.');
+      alert(copy.paymentsPortalError);
       setIsPortalLoading(false);
     }
   };
@@ -162,9 +322,9 @@ export default function ProfilePage() {
   return (
     <div className="max-w-[1200px] mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Perfil</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">{copy.title}</h1>
         <p className="text-muted-foreground mt-1">
-          Gestiona tu perfil, datos personales y preferencias de avatar
+          {copy.subtitle}
         </p>
       </div>
 
@@ -177,7 +337,7 @@ export default function ProfilePage() {
                   <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-muted">
                     <Image
                       src={avatarUrl}
-                      alt="Avatar de perfil"
+                      alt={copy.profileAvatarAlt}
                       width={96}
                       height={96}
                       className="w-full h-full object-cover"
@@ -192,11 +352,11 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Icono de perfil</p>
+                  <p className="font-medium text-foreground">{copy.profileIcon}</p>
                   <p className="text-sm text-muted-foreground">
                     {avatarMode === 'random'
-                      ? 'Modo aleatorio: cambia en cada inicio de sesión'
-                      : 'Modo fijo: se mantiene hasta que lo cambies'}
+                      ? copy.randomModeDesc
+                      : copy.fixedModeDesc}
                   </p>
                 </div>
               </div>
@@ -209,20 +369,20 @@ export default function ProfilePage() {
                 className="w-full sm:w-auto sm:min-w-[220px] bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Guardando...' : 'Guardar cambios'}
+                {loading ? copy.saving : copy.saveChanges}
               </Button>
               {success && (
-                <span className="text-sm text-green-500 font-medium text-center">¡Perfil actualizado correctamente!</span>
+                <span className="text-sm text-green-500 font-medium text-center">{copy.profileUpdated}</span>
               )}
             </div>
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Información del perfil</h2>
+            <h2 className="text-lg font-semibold text-foreground">{copy.profileInfo}</h2>
 
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-1.5">
-                Nombre completo
+                {copy.fullName}
               </label>
               <input
                 id="fullName"
@@ -231,13 +391,13 @@ export default function ProfilePage() {
                 value={formData.fullName}
                 onChange={handleChange}
                 className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                placeholder="Tu nombre completo"
+                placeholder={copy.fullNamePlaceholder}
               />
             </div>
 
             <div>
               <label htmlFor="headline" className="block text-sm font-medium text-foreground mb-1.5">
-                Titular
+                {copy.headline}
               </label>
               <input
                 id="headline"
@@ -246,13 +406,13 @@ export default function ProfilePage() {
                 value={formData.headline}
                 onChange={handleChange}
                 className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                placeholder="Jazz learner, musician, educator..."
+                placeholder={copy.headlinePlaceholder}
               />
             </div>
 
             <div>
               <label htmlFor="bio" className="block text-sm font-medium text-foreground mb-1.5">
-                Biografía
+                {copy.bio}
               </label>
               <textarea
                 id="bio"
@@ -261,12 +421,12 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 rows={3}
                 className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 resize-none"
-                placeholder="Cuéntanos sobre ti..."
+                placeholder={copy.bioPlaceholder}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Correo</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{copy.email}</label>
               <input
                 type="email"
                 value={email}
@@ -280,13 +440,13 @@ export default function ProfilePage() {
             <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Phone className="h-5 w-5 text-primary" />
-                Contacto y datos personales
+                {copy.contactData}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1.5">
-                    Teléfono
+                    {copy.phone}
                   </label>
                   <input
                     id="phone"
@@ -295,13 +455,13 @@ export default function ProfilePage() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                    placeholder="+55 11 99999-9999"
+                    placeholder={copy.phonePlaceholder}
                   />
                 </div>
                 <div>
                   <label htmlFor="dateOfBirth" className="block text-sm font-medium text-foreground mb-1.5">
                     <Calendar className="h-4 w-4 inline mr-1" />
-                    Fecha de nacimiento
+                    {copy.birthDate}
                   </label>
                   <input
                     id="dateOfBirth"
@@ -317,7 +477,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-foreground mb-1.5">
-                    Ciudad
+                    {copy.city}
                   </label>
                   <input
                     id="city"
@@ -326,12 +486,12 @@ export default function ProfilePage() {
                     value={formData.city}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                    placeholder="Ciudad"
+                    placeholder={copy.cityPlaceholder}
                   />
                 </div>
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-foreground mb-1.5">
-                    País
+                    {copy.country}
                   </label>
                   <input
                     id="country"
@@ -340,7 +500,7 @@ export default function ProfilePage() {
                     value={formData.country}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                    placeholder="País"
+                    placeholder={copy.countryPlaceholder}
                   />
                 </div>
               </div>
@@ -349,10 +509,10 @@ export default function ProfilePage() {
             <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-2">
                 <CreditCard className="h-5 w-5 text-primary" />
-                Métodos de pago
+                {copy.paymentMethods}
               </h2>
               <p className="text-sm text-muted-foreground mb-4">
-                Gestiona tus tarjetas y datos de facturación en nuestro portal seguro de Stripe.
+                {copy.paymentMethodsDesc}
               </p>
               <Button
                 type="button"
@@ -365,7 +525,7 @@ export default function ProfilePage() {
                 ) : (
                   <Wallet className="h-4 w-4 mr-2" />
                 )}
-                Gestionar métodos de pago
+                {copy.managePaymentMethods}
               </Button>
             </div>
           </div>
@@ -383,8 +543,8 @@ export default function ProfilePage() {
             onClick={(event) => event.stopPropagation()}
           >
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Elige tu estilo de avatar</h2>
-              <p className="text-sm text-muted-foreground">Selecciona un icono fijo o mantén el modo aleatorio.</p>
+              <h2 className="text-lg font-semibold text-foreground">{copy.chooseAvatarStyle}</h2>
+              <p className="text-sm text-muted-foreground">{copy.chooseAvatarDesc}</p>
             </div>
 
             <button
@@ -401,7 +561,7 @@ export default function ProfilePage() {
             >
               <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <Shuffle className="h-4 w-4" />
-                Avatar aleatorio en cada inicio de sesión
+                {copy.randomAvatarOption}
               </span>
               {draftAvatarMode === 'random' && <Check className="h-4 w-4 text-primary" />}
             </button>
@@ -424,7 +584,7 @@ export default function ProfilePage() {
                   >
                     <Image
                       src={option}
-                      alt="Opción de avatar"
+                      alt={copy.avatarOptionAlt}
                       width={80}
                       height={80}
                       className="w-full h-auto rounded-md"
@@ -441,10 +601,10 @@ export default function ProfilePage() {
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setPickerOpen(false)}>
-                Cancelar
+                {copy.cancel}
               </Button>
               <Button type="button" onClick={confirmAvatarSelection}>
-                Confirmar avatar
+                {copy.confirmAvatar}
               </Button>
             </div>
           </div>

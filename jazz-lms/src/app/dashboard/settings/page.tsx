@@ -10,9 +10,18 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const {
     t,
+    language,
+    setLanguage,
     notifications,
     updateNotification,
   } = useDashboardPreferences();
+
+  const languageOptions: Array<{ value: 'es' | 'en' | 'fr' | 'pt'; label: string }> = [
+    { value: 'es', label: 'Español' },
+    { value: 'en', label: 'English' },
+    { value: 'fr', label: 'Français' },
+    { value: 'pt', label: 'Português (Brasil)' },
+  ];
 
   const themeOptions = [
     {
@@ -117,8 +126,24 @@ export default function SettingsPage() {
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
           {t('language', 'Idioma')}
         </h2>
-        <div className="w-full px-3 py-2.5 bg-background border border-primary/40 rounded-lg text-foreground">
-          Español (predeterminado)
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {languageOptions.map((option) => {
+            const isActive = option.value === language;
+
+            return (
+              <button
+                key={option.value}
+                onClick={() => setLanguage(option.value)}
+                className={`px-3 py-2.5 rounded-lg border text-sm transition-colors ${
+                  isActive
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-background border-primary/40 text-foreground hover:border-primary/70'
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { UserNav } from './user-nav';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { HeaderNav } from './header-nav';
+import { LanguageSelector } from '@/components/language-selector';
 
 export const Header = () => {
   return (
@@ -26,6 +27,7 @@ export const Header = () => {
 
         <div className="flex items-center space-x-3">
           <ThemeToggle />
+          <LanguageSelector />
           <UserNav />
         </div>
       </div>

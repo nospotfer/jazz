@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface ClassItem {
   title: string;
@@ -122,9 +123,13 @@ const classes: ClassItem[] = [
 function ExpandedCard({
   classItem,
   onClose,
+  closeLabel,
+  previewLabel,
 }: {
   classItem: ClassItem;
   onClose: () => void;
+  closeLabel: string;
+  previewLabel: string;
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
@@ -135,7 +140,7 @@ function ExpandedCard({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-          aria-label="Cerrar"
+          aria-label={closeLabel}
         >
           <X className="h-5 w-5" />
         </button>
@@ -167,7 +172,7 @@ function ExpandedCard({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
             <div className="absolute bottom-4 left-4 text-white">
-              <p className="text-xs uppercase tracking-widest opacity-70">Vista previa de clase</p>
+              <p className="text-xs uppercase tracking-widest opacity-70">{previewLabel}</p>
               <p className="text-sm font-semibold">{classItem.subtitle}</p>
             </div>
           </div>
@@ -178,22 +183,84 @@ function ExpandedCard({
 }
 
 export function Classes() {
+  const { language } = useLanguage();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const copy = {
+    es: {
+      title: 'El curso',
+      subtitle: 'Haz clic en cualquier clase para ver la descripción completa y una vista previa',
+      previewLabel: 'Vista previa de clase',
+      closeLabel: 'Cerrar',
+      classWord: 'Clase',
+    },
+    en: {
+      title: 'The course',
+      subtitle: 'Click any lesson to see the full description and preview',
+      previewLabel: 'Lesson preview',
+      closeLabel: 'Close',
+      classWord: 'Lesson',
+    },
+    fr: {
+      title: 'Le cours',
+      subtitle: 'Cliquez sur une leçon pour voir la description complète et un aperçu',
+      previewLabel: 'Aperçu de la leçon',
+      closeLabel: 'Fermer',
+      classWord: 'Leçon',
+    },
+    pt: {
+      title: 'O curso',
+      subtitle: 'Clique em qualquer aula para ver a descrição completa e a prévia',
+      previewLabel: 'Prévia da aula',
+      closeLabel: 'Fechar',
+      classWord: 'Aula',
+    },
+  }[language];
+
+  const localizedClasses = classes.map((classItem, index) => {
+    if (language === 'es') return classItem;
+
+    const lessonNumber = index + 1;
+
+    const localizedByLanguage = {
+      en: {
+        subtitle: `Core topic of lesson ${lessonNumber}`,
+        description: `In this lesson, you will explore key ideas of jazz culture through guided examples and practical listening references.`,
+      },
+      fr: {
+        subtitle: `Thème principal de la leçon ${lessonNumber}`,
+        description: `Dans cette leçon, vous explorerez des idées clés de la culture jazz avec des exemples guidés et des références d’écoute pratiques.`,
+      },
+      pt: {
+        subtitle: `Tema principal da aula ${lessonNumber}`,
+        description: `Nesta aula, você vai explorar ideias centrais da cultura do jazz com exemplos guiados e referências práticas de escuta.`,
+      },
+    };
+
+    const current = localizedByLanguage[language as 'en' | 'fr' | 'pt'];
+
+    return {
+      ...classItem,
+      title: `${copy.classWord} ${lessonNumber}`,
+      subtitle: current.subtitle,
+      description: current.description,
+    };
+  });
 
   return (
     <>
       <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
           <h2 className="text-4xl sm:text-5xl font-bold text-center mb-4 text-gray-900 dark:text-white">
-            El curso
+            {copy.title}
           </h2>
           <p className="text-center text-gray-500 dark:text-gray-400 mb-12 text-sm">
-            Haz clic en cualquier clase para ver la descripción completa y una vista previa
+            {copy.subtitle}
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {classes.map((classItem, index) => (
+            {localizedClasses.map((classItem, index) => (
               <button
                 key={index}
                 className={`group relative bg-amber-500 rounded-xl overflow-hidden shadow-md transition-all duration-300 ease-out text-left ${
@@ -235,8 +302,10 @@ export function Classes() {
       {/* Expanded card modal */}
       {expandedIndex !== null && (
         <ExpandedCard
-          classItem={classes[expandedIndex]}
+          classItem={localizedClasses[expandedIndex]}
           onClose={() => setExpandedIndex(null)}
+          closeLabel={copy.closeLabel}
+          previewLabel={copy.previewLabel}
         />
       )}
     </>

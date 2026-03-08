@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 export type DashboardLanguage = 'en' | 'pt' | 'es' | 'fr';
 
@@ -11,7 +12,6 @@ interface NotificationSettings {
 }
 
 interface DashboardPreferencesState {
-  language: DashboardLanguage;
   notifications: NotificationSettings;
 }
 
@@ -30,7 +30,6 @@ interface DashboardPreferencesContextValue {
 const STORAGE_KEY = 'jazz-dashboard-preferences-v1';
 
 const defaultState: DashboardPreferencesState = {
-  language: 'es',
   notifications: {
     emailNotifications: true,
     courseUpdates: true,
@@ -39,7 +38,62 @@ const defaultState: DashboardPreferencesState = {
 };
 
 const translations: Record<DashboardLanguage, Record<string, string>> = {
-  en: {},
+  en: {
+    lobby: 'Lobby',
+    myCourses: 'My Courses',
+    settings: 'Settings',
+    courses: 'Courses',
+    logOut: 'Log out',
+    loading: 'Loading…',
+    noNotifications: 'No notifications',
+    noPurchasedCoursesYet: 'No purchased courses yet.',
+    settingsTitle: 'Settings',
+    settingsSubtitle: 'Customize your experience',
+    appearance: 'Appearance',
+    notifications: 'Notifications',
+    language: 'Language',
+    dark: 'Dark',
+    light: 'Light',
+    system: 'System',
+    darkDesc: 'Dark background with light text',
+    lightDesc: 'Light background with dark text',
+    systemDesc: 'Follow system preferences',
+    emailNotifications: 'Email notifications',
+    emailNotificationsDesc: 'Get updates about new courses and promotions',
+    courseUpdates: 'Course updates',
+    courseUpdatesDesc: 'Get notified when your courses have new content',
+    progressReminders: 'Progress reminders',
+    progressRemindersDesc: 'Receive reminders to keep learning',
+    myCoursesSubtitle: '15 real classes, organized in pages of 5',
+    watched: 'Watched',
+    inProgress: 'In progress',
+    notStarted: 'Not started',
+    totalClasses: 'Total classes',
+    completionRate: 'Completion rate',
+    courseClasses: 'Course classes',
+    showingFivePerPage: 'Showing 5 classes per page in official order',
+    page: 'Page',
+    of: 'of',
+    previous: 'Previous',
+    next: 'Next',
+    locked: 'Locked',
+    purchaseRequired: 'Purchase required',
+    minLeft: 'min left',
+    introductionToJazzMusic: 'Introduction to Jazz Music',
+    clickAnyClassStart: 'Click any class to see the full description and start watching',
+    classOneFreePreview: 'Class 1 is free — Click any class to preview content',
+    readyUnlock: 'Ready to unlock all 15 classes?',
+    welcomeShort: 'Welcome,',
+    inboxNewMessageTitle: 'New inbox message',
+    inboxNewMessagePreview: 'You have unread messages in your inbox.',
+    now: 'Now',
+    newItems: 'new',
+    adminPanel: 'Admin panel',
+    profile: 'Profile',
+    paymentHistory: 'Payment history',
+    close: 'Close',
+    userFallback: 'User',
+  },
   pt: {
     lobby: 'Lobby',
     myCourses: 'Meus Cursos',
@@ -85,6 +139,16 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
     clickAnyClassStart: 'Clique em qualquer aula para ver a descrição completa e começar a assistir',
     classOneFreePreview: 'A aula 1 é grátis — Clique em qualquer aula para visualizar o conteúdo',
     readyUnlock: 'Pronto para desbloquear as 15 aulas?',
+    welcomeShort: 'Bem-vindo,',
+    inboxNewMessageTitle: 'Nova mensagem na caixa de entrada',
+    inboxNewMessagePreview: 'Você tem mensagens não lidas na sua caixa de entrada.',
+    now: 'Agora',
+    newItems: 'novas',
+    adminPanel: 'Painel de administração',
+    profile: 'Perfil',
+    paymentHistory: 'Histórico de pagamentos',
+    close: 'Fechar',
+    userFallback: 'Usuário',
   },
   es: {
     lobby: 'Lobby',
@@ -131,6 +195,16 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
     clickAnyClassStart: 'Haz clic en cualquier clase para ver la descripción completa y empezar a mirar',
     classOneFreePreview: 'La clase 1 es gratis — Haz clic en cualquier clase para previsualizar su contenido',
     readyUnlock: '¿Listo para desbloquear las 15 clases?',
+    welcomeShort: 'Bienvenido,',
+    inboxNewMessageTitle: 'Nuevo mensaje en la bandeja',
+    inboxNewMessagePreview: 'Tienes mensajes sin leer en tu bandeja.',
+    now: 'Ahora',
+    newItems: 'nuevas',
+    adminPanel: 'Panel de administración',
+    profile: 'Perfil',
+    paymentHistory: 'Historial de pagos',
+    close: 'Cerrar',
+    userFallback: 'Usuario',
   },
   fr: {
     lobby: 'Accueil',
@@ -177,6 +251,16 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
     clickAnyClassStart: 'Cliquez sur une classe pour voir la description complète et commencer à regarder',
     classOneFreePreview: 'La classe 1 est gratuite — Cliquez sur une classe pour prévisualiser son contenu',
     readyUnlock: 'Prêt à débloquer les 15 classes ?',
+    welcomeShort: 'Bienvenue,',
+    inboxNewMessageTitle: 'Nouveau message dans la boîte de réception',
+    inboxNewMessagePreview: 'Vous avez des messages non lus dans votre boîte de réception.',
+    now: 'Maintenant',
+    newItems: 'nouveaux',
+    adminPanel: 'Panneau d’administration',
+    profile: 'Profil',
+    paymentHistory: 'Historique des paiements',
+    close: 'Fermer',
+    userFallback: 'Utilisateur',
   },
 };
 
@@ -196,7 +280,6 @@ export function DashboardPreferencesProvider({
       if (raw) {
         const parsed = JSON.parse(raw) as DashboardPreferencesState;
         setState({
-          language: 'es',
           notifications: {
             ...defaultState.notifications,
             ...(parsed.notifications ?? {}),
@@ -215,14 +298,12 @@ export function DashboardPreferencesProvider({
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state, isReady]);
 
-  useEffect(() => {
-    document.documentElement.lang = state.language;
-  }, [state.language]);
+  const { language, setLanguage } = useLanguage();
 
   const value = useMemo<DashboardPreferencesContextValue>(
     () => ({
-      language: state.language,
-      setLanguage: () => setState((prev) => ({ ...prev, language: 'es' })),
+      language,
+      setLanguage,
       notifications: state.notifications,
       setNotifications: (notifications) => setState((prev) => ({ ...prev, notifications })),
       updateNotification: (key, value) =>
@@ -233,9 +314,9 @@ export function DashboardPreferencesProvider({
             [key]: value,
           },
         })),
-      t: (key, fallback) => translations.es[key] ?? fallback,
+      t: (key, fallback) => translations[language][key] ?? fallback,
     }),
-    [state]
+    [language, setLanguage, state]
   );
 
   return (

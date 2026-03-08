@@ -1,17 +1,64 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { CourseEnrollButton } from '@/components/course/course-enroll-button';
 import { BookOpen, Clock, CheckCircle } from 'lucide-react';
 import {
   DEFAULT_FULL_COURSE_PRICE_EUR,
 } from '@/lib/pricing';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 
 export default async function CourseDetailPage({
   params,
 }: {
   params: { courseId: string };
 }) {
+  const cookieStore = cookies();
+  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const copy = {
+    es: {
+      chapter: 'capítulo',
+      chapterPlural: 'capítulos',
+      lesson: 'lección',
+      lessonPlural: 'lecciones',
+      contentTitle: 'Contenido del curso',
+      chapterLabel: 'Capítulo',
+      fullAccess: 'Acceso completo a las 15 clases',
+      securePayment: 'Pago seguro gestionado por Stripe',
+    },
+    en: {
+      chapter: 'chapter',
+      chapterPlural: 'chapters',
+      lesson: 'lesson',
+      lessonPlural: 'lessons',
+      contentTitle: 'Course content',
+      chapterLabel: 'Chapter',
+      fullAccess: 'Full access to all 15 classes',
+      securePayment: 'Secure payment handled by Stripe',
+    },
+    fr: {
+      chapter: 'chapitre',
+      chapterPlural: 'chapitres',
+      lesson: 'leçon',
+      lessonPlural: 'leçons',
+      contentTitle: 'Contenu du cours',
+      chapterLabel: 'Chapitre',
+      fullAccess: 'Accès complet aux 15 cours',
+      securePayment: 'Paiement sécurisé géré par Stripe',
+    },
+    pt: {
+      chapter: 'capítulo',
+      chapterPlural: 'capítulos',
+      lesson: 'aula',
+      lessonPlural: 'aulas',
+      contentTitle: 'Conteúdo do curso',
+      chapterLabel: 'Capítulo',
+      fullAccess: 'Acesso completo às 15 aulas',
+      securePayment: 'Pagamento seguro processado pelo Stripe',
+    },
+  }[language];
+
   const supabase = createClient();
   const {
     data: { user },
@@ -80,11 +127,11 @@ export default async function CourseDetailPage({
           <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <BookOpen className="h-4 w-4" />
-              {course.chapters.length} capítulo{course.chapters.length !== 1 ? 's' : ''}
+              {course.chapters.length} {course.chapters.length !== 1 ? copy.chapterPlural : copy.chapter}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {totalLessons} lección{totalLessons !== 1 ? 'es' : ''}
+              {totalLessons} {totalLessons !== 1 ? copy.lessonPlural : copy.lesson}
             </span>
           </div>
         </div>
@@ -94,7 +141,7 @@ export default async function CourseDetailPage({
         {/* Course content */}
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-xl font-serif font-semibold text-foreground">
-            Contenido del curso
+            {copy.contentTitle}
           </h2>
           <div className="space-y-4">
             {course.chapters.map((chapter, chapterIndex) => (
@@ -104,10 +151,10 @@ export default async function CourseDetailPage({
               >
                 <div className="px-4 py-3 bg-muted/50 border-b border-border">
                   <h3 className="font-semibold text-foreground">
-                    Capítulo {chapterIndex + 1}: {chapter.title}
+                    {copy.chapterLabel} {chapterIndex + 1}: {chapter.title}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {chapter.lessons.length} lección{chapter.lessons.length !== 1 ? 'es' : ''}
+                    {chapter.lessons.length} {chapter.lessons.length !== 1 ? copy.lessonPlural : copy.lesson}
                   </p>
                 </div>
                 <ul className="divide-y divide-border">
@@ -136,7 +183,7 @@ export default async function CourseDetailPage({
                 €{displayPrice.toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Acceso completo a las 15 clases
+                {copy.fullAccess}
               </p>
             </div>
             <CourseEnrollButton
@@ -144,7 +191,7 @@ export default async function CourseDetailPage({
               price={displayPrice}
             />
             <div className="text-xs text-center text-muted-foreground">
-              Pago seguro gestionado por Stripe
+              {copy.securePayment}
             </div>
           </div>
         </div>

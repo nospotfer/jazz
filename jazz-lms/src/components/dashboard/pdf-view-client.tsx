@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FileText } from 'lucide-react';
 import axios from 'axios';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface PdfItem {
   id: string;
@@ -17,6 +18,46 @@ interface PdfViewClientProps {
 }
 
 export function PdfViewClient({ items }: PdfViewClientProps) {
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      loadPdfError: 'No se puede cargar este PDF ahora mismo.',
+      title: 'Vista de PDFs',
+      subtitle: 'Acceso rápido a los PDFs de las clases dentro de tu panel',
+      noPdfsTitle: 'Aún no hay PDFs disponibles',
+      noPdfsDesc: 'Los PDFs aparecerán aquí cuando se agreguen.',
+      loadingPdf: 'Cargando PDF...',
+      selectPdf: 'Selecciona un PDF',
+    },
+    en: {
+      loadPdfError: 'Unable to load this PDF right now.',
+      title: 'PDF View',
+      subtitle: 'Quick access to lesson PDFs inside your dashboard',
+      noPdfsTitle: 'No PDFs available yet',
+      noPdfsDesc: 'Lesson PDFs will appear here when they are added.',
+      loadingPdf: 'Loading PDF...',
+      selectPdf: 'Select a PDF',
+    },
+    fr: {
+      loadPdfError: 'Impossible de charger ce PDF pour le moment.',
+      title: 'Vue PDF',
+      subtitle: 'Accès rapide aux PDF des leçons dans votre tableau de bord',
+      noPdfsTitle: 'Aucun PDF disponible pour le moment',
+      noPdfsDesc: 'Les PDF des leçons apparaîtront ici lorsqu’ils seront ajoutés.',
+      loadingPdf: 'Chargement du PDF...',
+      selectPdf: 'Sélectionnez un PDF',
+    },
+    pt: {
+      loadPdfError: 'Não foi possível carregar este PDF agora.',
+      title: 'Visualização de PDFs',
+      subtitle: 'Acesso rápido aos PDFs das aulas dentro do seu painel',
+      noPdfsTitle: 'Ainda não há PDFs disponíveis',
+      noPdfsDesc: 'Os PDFs das aulas aparecerão aqui quando forem adicionados.',
+      loadingPdf: 'Carregando PDF...',
+      selectPdf: 'Selecione um PDF',
+    },
+  }[language];
+
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   const [signedUrl, setSignedUrl] = useState<string>(items[0]?.url ?? '');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +80,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
 
       setSignedUrl(response.data?.signedUrl || item.url);
     } catch (error: any) {
-      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
+      const message = error?.response?.data?.error || copy.loadPdfError;
       setLoadError(message);
       setSignedUrl(item.url);
     } finally {
@@ -64,18 +105,18 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">PDF View</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">{copy.title}</h1>
         <p className="text-muted-foreground mt-1">
-          Easy access to lesson PDFs inside your dashboard
+          {copy.subtitle}
         </p>
       </div>
 
       {items.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-10 text-center">
           <FileText className="h-10 w-10 text-primary mx-auto mb-3" />
-          <p className="text-foreground font-medium">No PDFs available yet</p>
+          <p className="text-foreground font-medium">{copy.noPdfsTitle}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Lesson PDFs will appear here when they are added.
+            {copy.noPdfsDesc}
           </p>
         </div>
       ) : (
@@ -112,7 +153,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             {selected ? (
               isLoading ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
-                  Loading PDF...
+                  {copy.loadingPdf}
                 </div>
               ) : loadError && !signedUrl ? (
                 <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground px-4 text-center">
@@ -127,7 +168,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
               )
             ) : (
               <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
-                Select a PDF
+                {copy.selectPdf}
               </div>
             )}
           </div>

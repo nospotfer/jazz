@@ -14,14 +14,15 @@ import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 import { getCanonicalJazzClass } from '@/lib/course-lessons';
 import { extractMuxPlaybackId } from '@/lib/mux-playback';
+import { useLanguage } from '@/components/providers/language-provider';
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
   {
     ssr: false,
     loading: () => (
-      <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-        Loading PDF preview...
+      <div className="h-full flex items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     ),
   }
@@ -49,7 +50,7 @@ function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
 }
 
-function getAttachmentDisplayName(name: string, classNumber: number | null) {
+function getAttachmentDisplayName(name: string, classNumber: number | null, noteLabel: string) {
   const withoutExtension = name.replace(/\.pdf$/i, '').trim();
   const simplified = withoutExtension
     .replace(/^apuntes?\s*(auxiliares?)?\s*\d*\s*[-–—:]\s*/i, '')
@@ -57,7 +58,7 @@ function getAttachmentDisplayName(name: string, classNumber: number | null) {
     .trim();
 
   if (!simplified) {
-    return classNumber ? `Apunte da Classe ${classNumber}` : 'Apunte da Classe';
+    return classNumber ? `${noteLabel} ${classNumber}` : noteLabel;
   }
 
   return simplified;
@@ -72,6 +73,166 @@ export const CoursePlayer = ({
   canAccessLesson,
   canAccessAttachments,
 }: CoursePlayerProps) => {
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      lessonFallback: 'Lección',
+      classPrefix: 'Clase',
+      saving: 'Guardando...',
+      completedReset: 'Completada (clic para reiniciar)',
+      markComplete: 'Marcar como completada',
+      hideNotes: 'Ocultar apunte',
+      showNotes: 'Mostrar apunte',
+      openingCheckout: 'Abriendo pago...',
+      unlockFullCourse: 'Desbloquear curso completo',
+      classNote: 'Apunte de clase',
+      preview: 'Vista previa',
+      download: 'Descargar',
+      selectPdf: 'Selecciona un PDF para previsualizarlo aquí.',
+      loadingPlayer: 'Cargando reproductor de la lección...',
+      unableSignedPlayback: 'No se pudo cargar el playback firmado de esta lección en este momento.',
+      unableLoadPdf: 'No se pudo cargar este PDF en este momento.',
+      loadedLegacyPdf: 'PDF cargado con la URL directa heredada.',
+      loadedLegacyDownload: 'Descarga abierta usando URL directa heredada.',
+      unableDownloadPdf: 'No se pudo descargar este PDF en este momento.',
+      unableCheckout: 'No se pudo iniciar el pago en este momento.',
+      lessonCompleted: '¡Lección completada!',
+      somethingWrong: 'Algo salió mal',
+      lessonReset: 'El progreso de la lección se reinició.',
+      loadingSignedVideo: 'Cargando video firmado de la lección...',
+      muxTokenError: 'Mux rechazó el token de reproducción. Verifica MUX_SIGNING_KEY_ID y MUX_SIGNING_PRIVATE_KEY.',
+      lessonLockedTitle: 'Esta lección está bloqueada',
+      lessonLockedDesc: 'Compra el curso completo para ver todas las clases con reproducción Mux en alta calidad.',
+      pdfAfterPurchase: 'Los PDFs estarán disponibles después de comprar el curso completo.',
+      noMainNotes: 'No se encontraron apuntes principales para esta lección.',
+      loadingPdfPreview: 'Cargando vista previa del PDF...',
+      premiumAccessRequired: 'Se requiere acceso premium',
+      lessonAreaLockedDesc: 'Estás dentro del área de la lección, pero el video y los apuntes solo están disponibles para estudiantes con el curso completo.',
+      whatYouUnlock: 'Qué desbloqueas:',
+      unlockAllClasses: 'Acceso completo a las 15 clases',
+      unlockMuxPlayback: 'Reproducción Mux HD segura',
+      unlockNotes: 'Apuntes personales por lección',
+      buyNowUnlock: 'Comprar ahora y desbloquear',
+    },
+    en: {
+      lessonFallback: 'Lesson',
+      classPrefix: 'Class',
+      saving: 'Saving...',
+      completedReset: 'Completed (Click to reset)',
+      markComplete: 'Mark as Complete',
+      hideNotes: 'Hide notes',
+      showNotes: 'Show notes',
+      openingCheckout: 'Opening checkout...',
+      unlockFullCourse: 'Unlock full course',
+      classNote: 'Class notes',
+      preview: 'Preview',
+      download: 'Download',
+      selectPdf: 'Select a PDF to preview it here.',
+      loadingPlayer: 'Loading lesson player...',
+      unableSignedPlayback: 'Unable to load signed playback for this lesson right now.',
+      unableLoadPdf: 'Unable to load this PDF right now.',
+      loadedLegacyPdf: 'Loaded PDF using legacy direct URL fallback.',
+      loadedLegacyDownload: 'Download opened using legacy direct URL fallback.',
+      unableDownloadPdf: 'Unable to download this PDF right now.',
+      unableCheckout: 'Unable to start checkout right now.',
+      lessonCompleted: 'Lesson completed!',
+      somethingWrong: 'Something went wrong',
+      lessonReset: 'Lesson progress reset.',
+      loadingSignedVideo: 'Loading signed lesson video...',
+      muxTokenError: 'Mux rejected the playback token. Check MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY.',
+      lessonLockedTitle: 'This lesson is locked',
+      lessonLockedDesc: 'Purchase the full course to watch all classes with high-quality Mux playback.',
+      pdfAfterPurchase: 'PDFs are available after purchasing the full course.',
+      noMainNotes: 'No main notes were found for this lesson.',
+      loadingPdfPreview: 'Loading PDF preview...',
+      premiumAccessRequired: 'Premium access required',
+      lessonAreaLockedDesc: 'You are inside the lesson area, but video and notes are available only for students who purchased the full course.',
+      whatYouUnlock: 'What you unlock:',
+      unlockAllClasses: 'Full access to all 15 classes',
+      unlockMuxPlayback: 'Secure Mux HD playback',
+      unlockNotes: 'Personal lesson notes',
+      buyNowUnlock: 'Buy now and unlock',
+    },
+    fr: {
+      lessonFallback: 'Leçon',
+      classPrefix: 'Cours',
+      saving: 'Enregistrement...',
+      completedReset: 'Terminée (cliquez pour réinitialiser)',
+      markComplete: 'Marquer comme terminée',
+      hideNotes: 'Masquer les notes',
+      showNotes: 'Afficher les notes',
+      openingCheckout: 'Ouverture du paiement...',
+      unlockFullCourse: 'Débloquer le cours complet',
+      classNote: 'Notes du cours',
+      preview: 'Aperçu',
+      download: 'Télécharger',
+      selectPdf: 'Sélectionnez un PDF pour l’aperçu ici.',
+      loadingPlayer: 'Chargement du lecteur de leçon...',
+      unableSignedPlayback: 'Impossible de charger la lecture sécurisée de cette leçon pour le moment.',
+      unableLoadPdf: 'Impossible de charger ce PDF pour le moment.',
+      loadedLegacyPdf: 'PDF chargé via URL directe héritée.',
+      loadedLegacyDownload: 'Téléchargement ouvert via URL directe héritée.',
+      unableDownloadPdf: 'Impossible de télécharger ce PDF pour le moment.',
+      unableCheckout: 'Impossible de démarrer le paiement pour le moment.',
+      lessonCompleted: 'Leçon terminée !',
+      somethingWrong: 'Une erreur est survenue',
+      lessonReset: 'Progression de la leçon réinitialisée.',
+      loadingSignedVideo: 'Chargement de la vidéo sécurisée de la leçon...',
+      muxTokenError: 'Mux a rejeté le token de lecture. Vérifiez MUX_SIGNING_KEY_ID et MUX_SIGNING_PRIVATE_KEY.',
+      lessonLockedTitle: 'Cette leçon est verrouillée',
+      lessonLockedDesc: 'Achetez le cours complet pour regarder toutes les leçons avec une lecture Mux HD.',
+      pdfAfterPurchase: 'Les PDF sont disponibles après l’achat du cours complet.',
+      noMainNotes: 'Aucune note principale trouvée pour cette leçon.',
+      loadingPdfPreview: 'Chargement de l’aperçu PDF...',
+      premiumAccessRequired: 'Accès premium requis',
+      lessonAreaLockedDesc: 'Vous êtes dans la zone de leçon, mais la vidéo et les notes sont disponibles uniquement pour les étudiants ayant acheté le cours complet.',
+      whatYouUnlock: 'Ce que vous débloquez :',
+      unlockAllClasses: 'Accès complet aux 15 cours',
+      unlockMuxPlayback: 'Lecture Mux HD sécurisée',
+      unlockNotes: 'Notes de cours personnelles',
+      buyNowUnlock: 'Acheter et débloquer',
+    },
+    pt: {
+      lessonFallback: 'Aula',
+      classPrefix: 'Aula',
+      saving: 'Salvando...',
+      completedReset: 'Concluída (clique para redefinir)',
+      markComplete: 'Marcar como concluída',
+      hideNotes: 'Ocultar anotações',
+      showNotes: 'Mostrar anotações',
+      openingCheckout: 'Abrindo checkout...',
+      unlockFullCourse: 'Desbloquear curso completo',
+      classNote: 'Anotações da aula',
+      preview: 'Pré-visualizar',
+      download: 'Baixar',
+      selectPdf: 'Selecione um PDF para pré-visualizá-lo aqui.',
+      loadingPlayer: 'Carregando player da aula...',
+      unableSignedPlayback: 'Não foi possível carregar o playback assinado desta aula agora.',
+      unableLoadPdf: 'Não foi possível carregar este PDF agora.',
+      loadedLegacyPdf: 'PDF carregado usando URL direta legada.',
+      loadedLegacyDownload: 'Download aberto usando URL direta legada.',
+      unableDownloadPdf: 'Não foi possível baixar este PDF agora.',
+      unableCheckout: 'Não foi possível iniciar o checkout agora.',
+      lessonCompleted: 'Aula concluída!',
+      somethingWrong: 'Algo deu errado',
+      lessonReset: 'Progresso da aula redefinido.',
+      loadingSignedVideo: 'Carregando vídeo assinado da aula...',
+      muxTokenError: 'O Mux rejeitou o token de reprodução. Verifique MUX_SIGNING_KEY_ID e MUX_SIGNING_PRIVATE_KEY.',
+      lessonLockedTitle: 'Esta aula está bloqueada',
+      lessonLockedDesc: 'Compre o curso completo para assistir a todas as aulas com reprodução Mux em alta qualidade.',
+      pdfAfterPurchase: 'Os PDFs ficam disponíveis após comprar o curso completo.',
+      noMainNotes: 'Nenhuma anotação principal foi encontrada para esta aula.',
+      loadingPdfPreview: 'Carregando prévia do PDF...',
+      premiumAccessRequired: 'Acesso premium necessário',
+      lessonAreaLockedDesc: 'Você está na área da aula, mas vídeo e anotações estão disponíveis apenas para alunos com o curso completo.',
+      whatYouUnlock: 'O que você desbloqueia:',
+      unlockAllClasses: 'Acesso completo às 15 aulas',
+      unlockMuxPlayback: 'Reprodução Mux HD segura',
+      unlockNotes: 'Anotações pessoais por aula',
+      buyNowUnlock: 'Comprar e desbloquear',
+    },
+  }[language];
+
   const [isReady, setIsReady] = useState(false);
   const [lastSavedPercent, setLastSavedPercent] = useState(initialProgressPercent);
   const [isCompleting, setIsCompleting] = useState(false);
@@ -102,8 +263,8 @@ export const CoursePlayer = ({
   const classIndex = orderedLessons.findIndex((item) => item.id === lessonId);
   const classNumber = classIndex >= 0 ? classIndex + 1 : null;
   const canonicalClass = classNumber ? getCanonicalJazzClass(classNumber) : undefined;
-  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || 'Lesson';
-  const classLabel = classNumber ? `Class ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
+  const lessonDisplayTitle = lesson.title || canonicalClass?.subtitle || copy.lessonFallback;
+  const classLabel = classNumber ? `${copy.classPrefix} ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
 
   const visibleAttachments = useMemo(
     () => lesson.attachments.filter((attachment) => !isAuxiliaryAttachment(attachment.name)),
@@ -208,7 +369,7 @@ export const CoursePlayer = ({
         setPlaybackToken('');
         setThumbnailToken('');
         setStoryboardToken('');
-        setPlaybackError('Unable to load signed playback for this lesson right now.');
+        setPlaybackError(copy.unableSignedPlayback);
       }
     };
 
@@ -249,7 +410,7 @@ export const CoursePlayer = ({
         return data.signedUrl;
       });
     } catch (error: any) {
-      const message = error?.response?.data?.error || 'Unable to load this PDF right now.';
+      const message = error?.response?.data?.error || copy.unableLoadPdf;
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
       if (fallbackAttachment?.url) {
         setSelectedAttachmentId(attachmentId);
@@ -260,7 +421,7 @@ export const CoursePlayer = ({
           return fallbackAttachment.url;
         });
         setPdfError('');
-        toast.info('Loaded PDF using legacy direct URL fallback.');
+        toast.info(copy.loadedLegacyPdf);
       } else {
         setPdfError(message);
         toast.error(message);
@@ -280,11 +441,11 @@ export const CoursePlayer = ({
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
       if (fallbackAttachment?.url) {
         window.open(fallbackAttachment.url, '_blank', 'noopener,noreferrer');
-        toast.info('Download opened using legacy direct URL fallback.');
+        toast.info(copy.loadedLegacyDownload);
         return;
       }
 
-      const message = error?.response?.data?.error || 'Unable to download this PDF right now.';
+      const message = error?.response?.data?.error || copy.unableDownloadPdf;
       toast.error(message);
     }
   };
@@ -304,7 +465,7 @@ export const CoursePlayer = ({
         return;
       }
     } catch {
-      toast.error('Unable to start checkout right now.');
+      toast.error(copy.unableCheckout);
     } finally {
       setIsPurchasing(false);
     }
@@ -379,10 +540,10 @@ export const CoursePlayer = ({
 
       setIsCompleted(true);
       confetti.onOpen();
-      toast.success('Lesson completed!');
+      toast.success(copy.lessonCompleted);
       router.refresh();
     } catch {
-      toast.error('Something went wrong');
+      toast.error(copy.somethingWrong);
     } finally {
       setIsCompleting(false);
     }
@@ -404,10 +565,10 @@ export const CoursePlayer = ({
 
       setIsCompleted(false);
       setLastSavedPercent(0);
-      toast.success('Lesson progress reset.');
+      toast.success(copy.lessonReset);
       router.refresh();
     } catch {
-      toast.error('Something went wrong');
+      toast.error(copy.somethingWrong);
     } finally {
       setIsCompleting(false);
     }
@@ -491,10 +652,10 @@ export const CoursePlayer = ({
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />
                         {isCompleting
-                          ? 'Saving...'
+                          ? copy.saving
                           : isCompleted
-                          ? 'Completed (Click to reset)'
-                          : 'Mark as Complete'}
+                          ? copy.completedReset
+                          : copy.markComplete}
                       </Button>
                       <Button
                         type="button"
@@ -505,19 +666,19 @@ export const CoursePlayer = ({
                         {isNotesPanelOpen ? (
                           <>
                             <PanelRightClose className="h-4 w-4 mr-2" />
-                            Hide Apunte
+                            {copy.hideNotes}
                           </>
                         ) : (
                           <>
                             <PanelRightOpen className="h-4 w-4 mr-2" />
-                            Show Apunte
+                            {copy.showNotes}
                           </>
                         )}
                       </Button>
                     </div>
                   </div>
                 </div>
-                <div className="relative flex-1 min-h-[360px] bg-black">
+                <div className="relative flex-1 min-h-[360px] bg-black border border-primary/50 dark:border-primary/70 rounded-b-xl overflow-hidden">
                   {canRenderMuxPlayer ? (
                     <MuxPlayer
                       className="absolute inset-0 h-full w-full"
@@ -529,7 +690,7 @@ export const CoursePlayer = ({
                       onEnded={(event) => onEnded(event as unknown as Event)}
                       onTimeUpdate={onTimeUpdate}
                       onError={() => {
-                        setMuxRuntimeError('Mux rejected the playback token. Check local MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY pair.');
+                        setMuxRuntimeError(copy.muxTokenError);
                       }}
                       autoPlay
                       playsInline
@@ -538,20 +699,20 @@ export const CoursePlayer = ({
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                       {canAccessLesson ? (
                         <p className="text-sm text-muted-foreground">
-                          {playbackError || muxRuntimeError || 'Loading signed lesson video...'}
+                          {playbackError || muxRuntimeError || copy.loadingSignedVideo}
                         </p>
                       ) : (
                         <div className="max-w-md space-y-3">
                           <div className="mx-auto w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center">
                             <Lock className="h-6 w-6 text-primary" />
                           </div>
-                          <h3 className="text-lg font-semibold text-foreground">This lesson is locked</h3>
+                          <h3 className="text-lg font-semibold text-foreground">{copy.lessonLockedTitle}</h3>
                           <p className="text-sm text-muted-foreground">
-                            Purchase the full course to watch all classes with high-quality Mux playback.
+                            {copy.lessonLockedDesc}
                           </p>
                           <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full sm:w-auto">
                             <ShoppingCart className="h-4 w-4 mr-2" />
-                            {isPurchasing ? 'Opening checkout...' : 'Unlock full course'}
+                            {isPurchasing ? copy.openingCheckout : copy.unlockFullCourse}
                           </Button>
                         </div>
                       )}
@@ -567,16 +728,16 @@ export const CoursePlayer = ({
                 <>
                   <p className="text-base sm:text-lg font-semibold text-primary mb-3 flex items-center gap-2.5">
                     <FileText className="h-5 w-5 text-primary" />
-                    Apunte da Classe
+                    {copy.classNote}
                   </p>
 
                   {!canAccessAttachments ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-                      PDFs are available after purchasing the full course.
+                      {copy.pdfAfterPurchase}
                     </div>
                   ) : visibleAttachments.length === 0 ? (
                     <div className="flex-1 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-                      Nenhum apunte principal foi encontrado para esta aula.
+                      {copy.noMainNotes}
                     </div>
                   ) : (
                     <>
@@ -594,7 +755,7 @@ export const CoursePlayer = ({
                               className="text-sm font-medium text-foreground truncate"
                               title={getAttachmentDisplayName(attachment.name, classNumber)}
                             >
-                              {getAttachmentDisplayName(attachment.name, classNumber)}
+                              {getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
                             </p>
                             <div className="mt-2 flex gap-2">
                               <Button
@@ -605,7 +766,7 @@ export const CoursePlayer = ({
                                 disabled={isLoadingPdf}
                               >
                                 <Eye className="h-4 w-4 mr-1.5" />
-                                Preview
+                                {copy.preview}
                               </Button>
                               <Button
                                 type="button"
@@ -614,7 +775,7 @@ export const CoursePlayer = ({
                                 onClick={() => downloadPdf(attachment.id)}
                               >
                                 <Download className="h-4 w-4 mr-1.5" />
-                                Download
+                                {copy.download}
                               </Button>
                             </div>
                           </div>
@@ -624,7 +785,7 @@ export const CoursePlayer = ({
                       <div className="mt-3 flex-1 min-h-[420px] rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                         {isLoadingPdf ? (
                           <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-                            Loading PDF preview...
+                            {copy.loadingPdfPreview}
                           </div>
                         ) : pdfError ? (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
@@ -634,7 +795,7 @@ export const CoursePlayer = ({
                           <PdfWorkspaceViewer fileUrl={previewUrl} />
                         ) : (
                           <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
-                            Select a PDF to preview it here.
+                            {copy.selectPdf}
                           </div>
                         )}
                       </div>
@@ -646,23 +807,23 @@ export const CoursePlayer = ({
                   <div>
                     <p className="text-base sm:text-lg font-semibold text-foreground mb-2 flex items-center gap-2.5">
                       <Lock className="h-5 w-5 text-primary" />
-                      Premium access required
+                      {copy.premiumAccessRequired}
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      You are inside the lesson area, but video and notes are available only for students who purchased the full course.
+                      {copy.lessonAreaLockedDesc}
                     </p>
                   </div>
 
                   <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
-                    <p className="text-sm font-medium text-foreground">What you unlock:</p>
+                    <p className="text-sm font-medium text-foreground">{copy.whatYouUnlock}</p>
                     <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                      <li>• Full access to all 15 classes</li>
-                      <li>• Secure Mux HD playback</li>
-                      <li>• Personal lesson notes</li>
+                      <li>• {copy.unlockAllClasses}</li>
+                      <li>• {copy.unlockMuxPlayback}</li>
+                      <li>• {copy.unlockNotes}</li>
                     </ul>
                     <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full mt-4">
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {isPurchasing ? 'Opening checkout...' : 'Buy now and unlock'}
+                      {isPurchasing ? copy.openingCheckout : copy.buyNowUnlock}
                     </Button>
                   </div>
                 </div>
@@ -673,7 +834,7 @@ export const CoursePlayer = ({
 
           {!isReady && (
             <div className="sr-only" aria-live="polite">
-              Loading lesson player...
+              {copy.loadingPlayer}
             </div>
           )}
         </div>

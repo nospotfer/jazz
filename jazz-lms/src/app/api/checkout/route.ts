@@ -4,11 +4,59 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
+import { cookies } from 'next/headers';
+import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
+  let copy = {
+    unauthorized: 'No autorizado',
+    emailRequired: 'El correo del usuario es obligatorio',
+    invalidRequest: 'Solicitud inválida',
+    courseNotFound: 'Curso no encontrado',
+    alreadyPurchased: 'El curso ya fue comprado',
+    internalError: 'Error interno del servidor',
+  };
+
   try {
+    const cookieStore = await cookies();
+    const selectedLanguage = normalizeLanguage(cookieStore.get('jazz_lang')?.value);
+    const stripeLocale = languageToStripeLocale(selectedLanguage);
+    copy = {
+      es: {
+        unauthorized: 'No autorizado',
+        emailRequired: 'El correo del usuario es obligatorio',
+        invalidRequest: 'Solicitud inválida',
+        courseNotFound: 'Curso no encontrado',
+        alreadyPurchased: 'El curso ya fue comprado',
+        internalError: 'Error interno del servidor',
+      },
+      en: {
+        unauthorized: 'Unauthorized',
+        emailRequired: 'User email is required',
+        invalidRequest: 'Invalid request',
+        courseNotFound: 'Course not found',
+        alreadyPurchased: 'Course already purchased',
+        internalError: 'Internal server error',
+      },
+      fr: {
+        unauthorized: 'Non autorisé',
+        emailRequired: 'L’e-mail utilisateur est obligatoire',
+        invalidRequest: 'Requête invalide',
+        courseNotFound: 'Cours introuvable',
+        alreadyPurchased: 'Le cours a déjà été acheté',
+        internalError: 'Erreur interne du serveur',
+      },
+      pt: {
+        unauthorized: 'Não autorizado',
+        emailRequired: 'O e-mail do usuário é obrigatório',
+        invalidRequest: 'Solicitação inválida',
+        courseNotFound: 'Curso não encontrado',
+        alreadyPurchased: 'O curso já foi comprado',
+        internalError: 'Erro interno do servidor',
+      },
+    }[selectedLanguage];
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
     const supabase = createClient();
@@ -17,17 +65,17 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return new NextResponse('No autorizado', { status: 401 });
+      return new NextResponse(copy.unauthorized, { status: 401 });
     }
 
     if (!user.email) {
-      return new NextResponse('El correo del usuario es obligatorio', { status: 400 });
+      return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
     const { courseId, source } = await req.json();
 
     if (!courseId) {
-      return new NextResponse('Solicitud inválida', { status: 400 });
+      return new NextResponse(copy.invalidRequest, { status: 400 });
     }
 
     const course = await db.course.findUnique({
@@ -37,7 +85,7 @@ export async function POST(req: Request) {
     });
 
     if (!course) {
-      return new NextResponse('Curso no encontrado', { status: 404 });
+      return new NextResponse(copy.courseNotFound, { status: 404 });
     }
 
     // Check if already purchased
@@ -51,7 +99,7 @@ export async function POST(req: Request) {
     });
 
     if (existingPurchase) {
-      return new NextResponse('El curso ya fue comprado', { status: 400 });
+      return new NextResponse(copy.alreadyPurchased, { status: 400 });
     }
 
     const configuredPrice = Number(course.price ?? 0);
@@ -116,6 +164,7 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ['card'],
+      locale: stripeLocale,
       line_items,
       mode: 'payment',
       allow_promotion_codes: true,
@@ -131,6 +180,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.log('[CHECKOUT_ERROR]', error);
-    return new NextResponse('Error interno del servidor', { status: 500 });
+    return new NextResponse(copy.internalError, { status: 500 });
   }
 }

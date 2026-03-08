@@ -168,23 +168,147 @@ const lessonsData: LessonItem[] = [
   },
 ];
 
-const lessonsDescriptionsEs = [
-  'Introducción general a la cultura del jazz, su origen histórico y sus bases estéticas.',
-  'La heterogeneidad sonora y la personalización del sonido como rasgo esencial del jazz.',
-  'Antecedentes afroamericanos: gospel y blues como raíces fundamentales del lenguaje jazzístico.',
-  'La improvisación y sus formas principales dentro del repertorio del jazz.',
-  'Ragtime como antecedente clave y su relación con el surgimiento del jazz temprano.',
-  'Evolución del ritmo y de la sección rítmica desde el jazz temprano hasta el bop.',
-  'La cultura de las jam sessions y su impacto en la consolidación del jazz moderno.',
-  'Composición y arreglos pensados para timbres y personalidades musicales concretas.',
-  'De las marching bands a las primeras formaciones que definieron el sonido del jazz.',
-  'El swing y los combos clásicos en la expansión internacional del género.',
-  'Combos modernos y nuevas funciones instrumentales en el hard bop y el jazz modal.',
-  'Procedimientos improvisatorios: paráfrasis, fórmula, motivo, modalidad y libertad.',
-  'Relación entre jazz y entretenimiento en su proceso de consolidación cultural.',
-  'El canto jazzístico en su primera etapa y sus principales referentes históricos.',
-  'Grandes voces del swing y su influencia en la evolución de la voz como instrumento.',
-];
+const LESSON_SUBTITLES: Record<'es' | 'en' | 'fr' | 'pt', string[]> = {
+  es: [
+    'Introducción a la cultura del jazz',
+    'El lenguaje del jazz 1: heterogeneidad sonora',
+    'El lenguaje del jazz 2: antecedentes',
+    'El lenguaje del jazz 3: improvisación',
+    'Un antecedente decisivo: ragtime',
+    'El lenguaje del jazz 4: ritmo',
+    'Jamming y blowing',
+    'Composición y arreglos en jazz',
+    'De las marching bands a los primeros grupos de jazz',
+    'Swing y combos clásicos',
+    'Combos modernos e instrumentos de sección rítmica',
+    'Improvisación',
+    'Jazz y entretenimiento',
+    'Canto jazz 1',
+    'Canto jazz 2',
+  ],
+  en: [
+    'Introduction to jazz culture',
+    'The language of jazz 1: sonic heterogeneity',
+    'The language of jazz 2: roots',
+    'The language of jazz 3: improvisation',
+    'A decisive precursor: ragtime',
+    'The language of jazz 4: rhythm',
+    'Jamming and blowing',
+    'Composition and arrangements in jazz',
+    'From marching bands to early jazz groups',
+    'Swing and classic combos',
+    'Modern combos and rhythm-section instruments',
+    'Improvisation',
+    'Jazz and entertainment',
+    'Jazz singing 1',
+    'Jazz singing 2',
+  ],
+  fr: [
+    'Introduction à la culture du jazz',
+    'Le langage du jazz 1 : hétérogénéité sonore',
+    'Le langage du jazz 2 : antécédents',
+    'Le langage du jazz 3 : improvisation',
+    'Un antécédent décisif : le ragtime',
+    'Le langage du jazz 4 : rythme',
+    'Jamming et blowing',
+    'Composition et arrangements en jazz',
+    'Des marching bands aux premiers groupes de jazz',
+    'Swing et combos classiques',
+    'Combos modernes et instruments de section rythmique',
+    'Improvisation',
+    'Jazz et divertissement',
+    'Chant jazz 1',
+    'Chant jazz 2',
+  ],
+  pt: [
+    'Introdução à cultura do jazz',
+    'A linguagem do jazz 1: heterogeneidade sonora',
+    'A linguagem do jazz 2: antecedentes',
+    'A linguagem do jazz 3: improvisação',
+    'Um antecedente decisivo: ragtime',
+    'A linguagem do jazz 4: ritmo',
+    'Jamming e blowing',
+    'Composição e arranjos no jazz',
+    'Das marching bands aos primeiros grupos de jazz',
+    'Swing e combos clássicos',
+    'Combos modernos e instrumentos da seção rítmica',
+    'Improvisação',
+    'Jazz e entretenimento',
+    'Canto jazz 1',
+    'Canto jazz 2',
+  ],
+};
+
+const LESSON_DESCRIPTIONS: Record<'es' | 'en' | 'fr' | 'pt', string[]> = {
+  es: [
+    'Introducción general a la cultura del jazz, su origen histórico y sus bases estéticas.',
+    'La heterogeneidad sonora y la personalización del sonido como rasgo esencial del jazz.',
+    'Antecedentes afroamericanos: gospel y blues como raíces fundamentales del lenguaje jazzístico.',
+    'La improvisación y sus formas principales dentro del repertorio del jazz.',
+    'Ragtime como antecedente clave y su relación con el surgimiento del jazz temprano.',
+    'Evolución del ritmo y de la sección rítmica desde el jazz temprano hasta el bop.',
+    'La cultura de las jam sessions y su impacto en la consolidación del jazz moderno.',
+    'Composición y arreglos pensados para timbres y personalidades musicales concretas.',
+    'De las marching bands a las primeras formaciones que definieron el sonido del jazz.',
+    'El swing y los combos clásicos en la expansión internacional del género.',
+    'Combos modernos y nuevas funciones instrumentales en el hard bop y el jazz modal.',
+    'Procedimientos improvisatorios: paráfrasis, fórmula, motivo, modalidad y libertad.',
+    'Relación entre jazz y entretenimiento en su proceso de consolidación cultural.',
+    'El canto jazzístico en su primera etapa y sus principales referentes históricos.',
+    'Grandes voces del swing y su influencia en la evolución de la voz como instrumento.',
+  ],
+  en: [
+    'A broad introduction to jazz culture, its historical roots, and core aesthetic principles.',
+    'How sonic diversity and personal tone shape the identity of jazz language.',
+    'African American roots: gospel and blues as key foundations of jazz expression.',
+    'Improvisation as a central pillar of jazz, including its main approaches and forms.',
+    'Ragtime as a key precursor and its link to the rise of early jazz.',
+    'The evolution of rhythm and the rhythm section from early jazz to bebop.',
+    'Jam-session culture and its role in consolidating modern jazz practice.',
+    'Composition and arranging focused on specific timbres and performer identities.',
+    'From marching bands to the first ensembles that defined the early jazz sound.',
+    'Swing and classic combos in the international expansion of the genre.',
+    'Modern combos and new instrumental roles in hard bop and modal jazz.',
+    'Improvisational tools: paraphrase, patterns, motifs, modality, and freedom.',
+    'Jazz and entertainment in the genre’s broader cultural consolidation.',
+    'Early stages of jazz singing and its leading historical references.',
+    'Major swing voices and their impact on the voice as an instrument.',
+  ],
+  fr: [
+    'Introduction générale à la culture du jazz, à ses origines historiques et à ses bases esthétiques.',
+    'L’hétérogénéité sonore et la personnalisation du son comme marque essentielle du jazz.',
+    'Racines afro-américaines : gospel et blues comme fondements du langage jazzistique.',
+    'L’improvisation comme axe central du jazz et ses formes principales.',
+    'Le ragtime comme antécédent clé et son lien avec la naissance du jazz ancien.',
+    'Évolution du rythme et de la section rythmique du jazz ancien au bebop.',
+    'La culture des jam sessions et son impact sur le jazz moderne.',
+    'Composition et arrangements pensés pour des timbres et personnalités musicales précises.',
+    'Des marching bands aux premières formations qui ont défini le son du jazz.',
+    'Le swing et les combos classiques dans l’expansion internationale du genre.',
+    'Combos modernes et nouveaux rôles instrumentaux dans le hard bop et le jazz modal.',
+    'Procédés d’improvisation : paraphrase, formules, motifs, modalité et liberté.',
+    'Le lien entre jazz et divertissement dans sa consolidation culturelle.',
+    'Le chant jazz à ses débuts et ses principales figures historiques.',
+    'Grandes voix du swing et influence sur l’évolution de la voix comme instrument.',
+  ],
+  pt: [
+    'Introdução geral à cultura do jazz, às suas origens históricas e bases estéticas.',
+    'A heterogeneidade sonora e a personalização do timbre como marca essencial do jazz.',
+    'Raízes afro-americanas: gospel e blues como fundamentos da linguagem jazzística.',
+    'A improvisação como eixo central do jazz e suas principais formas.',
+    'O ragtime como antecedente-chave e sua relação com o nascimento do jazz inicial.',
+    'Evolução do ritmo e da seção rítmica do jazz inicial ao bebop.',
+    'A cultura das jam sessions e seu impacto na consolidação do jazz moderno.',
+    'Composição e arranjos pensados para timbres e personalidades musicais específicas.',
+    'Das marching bands às primeiras formações que definiram o som do jazz.',
+    'Swing e combos clássicos na expansão internacional do gênero.',
+    'Combos modernos e novas funções instrumentais no hard bop e no jazz modal.',
+    'Procedimentos de improvisação: paráfrase, fórmulas, motivo, modalidade e liberdade.',
+    'Relação entre jazz e entretenimento no processo de consolidação cultural.',
+    'O canto jazz em sua primeira fase e seus principais referenciais históricos.',
+    'Grandes vozes do swing e sua influência na evolução da voz como instrumento.',
+  ],
+};
 
 // ─── Float Popup Component ──────────────────────────────────────────────────
 
@@ -195,9 +319,17 @@ interface FloatPopupProps {
   position: { x: number; y: number };
   hasPurchased: boolean;
   onPurchaseClick: () => void;
+  copy: {
+    close: string;
+    premiumContent: string;
+    unlockLessonHint: string;
+    buyFullCourse: string;
+    classPreview: string;
+    premiumClickHint: string;
+  };
 }
 
-function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurchaseClick }: FloatPopupProps) {
+function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurchaseClick, copy }: FloatPopupProps) {
   if (isPinned) {
     // Full-screen modal mode (like landing page ExpandedCard)
     return (
@@ -212,7 +344,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-            aria-label="Cerrar"
+            aria-label={copy.close}
           >
             <X className="h-5 w-5" />
           </button>
@@ -238,10 +370,10 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
                   <Lock className="h-5 w-5 text-yellow-500 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-                      Contenido premium
+                      {copy.premiumContent}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Compra el curso para desbloquear esta lección
+                      {copy.unlockLessonHint}
                     </p>
                   </div>
                 </div>
@@ -257,7 +389,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
                   className="mt-4 w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="h-5 w-5" />
-                  Desbloquear curso completo — €29.99
+                  {copy.buyFullCourse}
                 </button>
               )}
             </div>
@@ -285,7 +417,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
               )}
 
               <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-xs uppercase tracking-widest opacity-70">Vista previa de clase</p>
+                <p className="text-xs uppercase tracking-widest opacity-70">{copy.classPreview}</p>
                 <p className="text-sm font-semibold">{lesson.subtitle}</p>
               </div>
             </div>
@@ -319,7 +451,7 @@ function FloatPopup({ lesson, onClose, isPinned, position, hasPurchased, onPurch
           {!lesson.isFree && !hasPurchased && (
             <div className="flex items-center gap-2 mt-3 text-yellow-600 dark:text-yellow-400">
               <Lock className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Premium — Haz clic para saber más</span>
+              <span className="text-xs font-semibold">{copy.premiumClickHint}</span>
             </div>
           )}
         </div>
@@ -345,7 +477,69 @@ interface CourseViewProps {
 }
 
 export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, courseId, lessonRoutesByTitle, lessonRoutesInOrder, lessonIdsInOrder, lessonTitlesInOrder }: CourseViewProps) {
-  const { t } = useDashboardPreferences();
+  const { t, language } = useDashboardPreferences();
+  const copy = {
+    es: {
+      classPrefix: 'Clase',
+      processing: 'Procesando...',
+      buyFullCourse: 'Comprar curso completo — €29.99',
+      watched: 'visto',
+      purchaseRequired: 'Compra requerida',
+      available: 'Disponible',
+      premium: 'Premium',
+      close: 'Cerrar',
+      premiumContent: 'Contenido premium',
+      unlockLessonHint: 'Compra el curso para desbloquear esta lección',
+      classPreview: 'Vista previa de clase',
+      premiumClickHint: 'Premium — Haz clic para saber más',
+      academyTitle: 'Academia Cultura del Jazz',
+    },
+    en: {
+      classPrefix: 'Class',
+      processing: 'Processing...',
+      buyFullCourse: 'Buy full course — €29.99',
+      watched: 'watched',
+      purchaseRequired: 'Purchase required',
+      available: 'Available',
+      premium: 'Premium',
+      close: 'Close',
+      premiumContent: 'Premium content',
+      unlockLessonHint: 'Purchase the course to unlock this lesson',
+      classPreview: 'Class preview',
+      premiumClickHint: 'Premium — Click to learn more',
+      academyTitle: 'Jazz Culture Academy',
+    },
+    fr: {
+      classPrefix: 'Cours',
+      processing: 'Traitement...',
+      buyFullCourse: 'Acheter le cours complet — €29.99',
+      watched: 'vu',
+      purchaseRequired: 'Achat requis',
+      available: 'Disponible',
+      premium: 'Premium',
+      close: 'Fermer',
+      premiumContent: 'Contenu premium',
+      unlockLessonHint: 'Achetez le cours pour débloquer cette leçon',
+      classPreview: 'Aperçu du cours',
+      premiumClickHint: 'Premium — Cliquez pour en savoir plus',
+      academyTitle: 'Académie Culture du Jazz',
+    },
+    pt: {
+      classPrefix: 'Aula',
+      processing: 'Processando...',
+      buyFullCourse: 'Comprar curso completo — €29.99',
+      watched: 'assistido',
+      purchaseRequired: 'Compra necessária',
+      available: 'Disponível',
+      premium: 'Premium',
+      close: 'Fechar',
+      premiumContent: 'Conteúdo premium',
+      unlockLessonHint: 'Compre o curso para desbloquear esta aula',
+      classPreview: 'Prévia da aula',
+      premiumClickHint: 'Premium — Clique para saber mais',
+      academyTitle: 'Academia Cultura do Jazz',
+    },
+  }[language];
   const router = useRouter();
   const searchParams = useSearchParams();
   const [hasPurchased] = useState(initialHasPurchased);
@@ -529,9 +723,9 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   // Get current lessons with backend-controlled lock status
   const lessons = lessonsData.map((lesson, index) => ({
     ...lesson,
-    title: `Clase ${index + 1}`,
-    subtitle: lessonTitlesInOrder[index] || lesson.subtitle,
-    description: lessonsDescriptionsEs[index] || lesson.description,
+    title: `${copy.classPrefix} ${index + 1}`,
+    subtitle: lessonTitlesInOrder[index] || LESSON_SUBTITLES[language][index] || lesson.subtitle,
+    description: LESSON_DESCRIPTIONS[language][index] || lesson.description,
     isFree: hasPurchased,
   }));
 
@@ -544,7 +738,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         {/* Course title */}
         <div className="text-center space-y-2 px-1 sm:px-0">
           <p className="text-[11px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-primary/80">
-            Academia Cultura del Jazz
+            {copy.academyTitle}
           </p>
           {!hasPurchased && (
             <button
@@ -555,12 +749,12 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
               {isPurchasing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Procesando...
+                  {copy.processing}
                 </>
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4" />
-                  Comprar curso completo — €29.99
+                  {copy.buyFullCourse}
                 </>
               )}
             </button>
@@ -657,11 +851,11 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                       </div>
                       <div className="mt-1 flex items-center justify-between text-[10px]">
                         <span className={isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}>
-                          {progressPercent}% visto
+                          {progressPercent}% {copy.watched}
                         </span>
                         <span className={`inline-flex items-center gap-1 ${isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}`}>
                           <Lock className="h-2.5 w-2.5" />
-                          {isLocked ? 'Compra requerida' : 'Disponible'}
+                          {isLocked ? copy.purchaseRequired : copy.available}
                         </span>
                       </div>
                     </div>
@@ -671,7 +865,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                       <div className="flex items-center gap-1 mt-1">
                         <Lock className="h-3 w-3 text-yellow-500" />
                         <span className="text-[10px] text-yellow-600 dark:text-yellow-400 font-semibold">
-                          Premium
+                          {copy.premium}
                         </span>
                       </div>
                     )}
@@ -687,6 +881,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                     position={popupPosition}
                     hasPurchased={hasPurchased}
                     onPurchaseClick={handlePurchaseClick}
+                    copy={copy}
                   />
                 )}
               </div>
@@ -705,6 +900,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           position={popupPosition}
           hasPurchased={hasPurchased}
           onPurchaseClick={handlePurchaseClick}
+          copy={copy}
         />
       )}
 

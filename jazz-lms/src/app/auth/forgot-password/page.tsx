@@ -3,10 +3,66 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { useLanguage } from '@/components/providers/language-provider';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      invalidEmail: 'Introduce un correo válido',
+      requestFailed: 'No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.',
+      title: 'Restablece tu contraseña',
+      subtitle: 'Introduce el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.',
+      email: 'Correo',
+      emailPlaceholder: 'tu@correo.com',
+      sending: 'Enviando...',
+      sendResetLink: 'Enviar enlace de restablecimiento',
+      backToLogin: 'Volver a iniciar sesión',
+      inboxTitle: '¡Revisa tu bandeja de entrada!',
+      inboxDesc: 'Si existe una cuenta con ese correo, hemos enviado un enlace para restablecer la contraseña. Revisa también la carpeta de spam por si acaso.',
+    },
+    en: {
+      invalidEmail: 'Enter a valid email',
+      requestFailed: 'Unable to send the link right now. Please try again in a few minutes.',
+      title: 'Reset your password',
+      subtitle: 'Enter the email linked to your account and we’ll send you a password reset link.',
+      email: 'Email',
+      emailPlaceholder: 'you@email.com',
+      sending: 'Sending...',
+      sendResetLink: 'Send reset link',
+      backToLogin: 'Back to sign in',
+      inboxTitle: 'Check your inbox!',
+      inboxDesc: 'If an account exists for that email, we sent a password reset link. Please also check your spam folder.',
+    },
+    fr: {
+      invalidEmail: 'Entrez une adresse e-mail valide',
+      requestFailed: 'Impossible d’envoyer le lien pour le moment. Réessayez dans quelques minutes.',
+      title: 'Réinitialisez votre mot de passe',
+      subtitle: 'Entrez l’e-mail associé à votre compte et nous vous enverrons un lien de réinitialisation.',
+      email: 'E-mail',
+      emailPlaceholder: 'vous@email.com',
+      sending: 'Envoi...',
+      sendResetLink: 'Envoyer le lien de réinitialisation',
+      backToLogin: 'Retour à la connexion',
+      inboxTitle: 'Vérifiez votre boîte de réception !',
+      inboxDesc: 'Si un compte existe avec cet e-mail, nous avons envoyé un lien de réinitialisation. Vérifiez aussi votre dossier spam.',
+    },
+    pt: {
+      invalidEmail: 'Digite um e-mail válido',
+      requestFailed: 'Não foi possível enviar o link agora. Tente novamente em alguns minutos.',
+      title: 'Redefina sua senha',
+      subtitle: 'Digite o e-mail associado à sua conta e enviaremos um link para redefinir sua senha.',
+      email: 'E-mail',
+      emailPlaceholder: 'voce@email.com',
+      sending: 'Enviando...',
+      sendResetLink: 'Enviar link de redefinição',
+      backToLogin: 'Voltar ao login',
+      inboxTitle: 'Confira sua caixa de entrada!',
+      inboxDesc: 'Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha. Confira também a pasta de spam.',
+    },
+  }[language];
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +88,7 @@ export default function ForgotPasswordPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(normalizedEmail)) {
-      setError('Introduce un correo válido');
+      setError(copy.invalidEmail);
       return;
     }
 
@@ -45,14 +101,14 @@ export default function ForgotPasswordPage() {
       });
 
       if (resetError) {
-        setError('No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.');
+        setError(copy.requestFailed);
         setSent(false);
         return;
       }
 
       setSent(true);
     } catch {
-      setError('No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.');
+      setError(copy.requestFailed);
       setSent(false);
     } finally {
       setLoading(false);
@@ -65,20 +121,20 @@ export default function ForgotPasswordPage() {
         <div className="p-5 sm:p-8">
           {!sent ? (
             <>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">Restablece tu contraseña</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white">{copy.title}</h1>
               <p className="text-sm text-[#9CA3AF] mt-2 mb-6">
-                Introduce el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.
+                {copy.subtitle}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
-                    Correo
+                    {copy.email}
                   </label>
                   <input
                     id="email"
                     type="email"
-                    placeholder="tu@correo.com"
+                    placeholder={copy.emailPlaceholder}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={inputClasses}
@@ -97,7 +153,7 @@ export default function ForgotPasswordPage() {
                   disabled={loading}
                   className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {loading ? 'Enviando...' : 'Enviar enlace de restablecimiento'}
+                  {loading ? copy.sending : copy.sendResetLink}
                 </button>
 
                 <button
@@ -105,7 +161,7 @@ export default function ForgotPasswordPage() {
                   onClick={() => router.push('/auth?tab=login')}
                   className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-sm sm:text-base font-medium transition-colors"
                 >
-                  Volver a iniciar sesión
+                  {copy.backToLogin}
                 </button>
               </form>
             </>
@@ -119,9 +175,9 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-white">¡Revisa tu bandeja de entrada!</h2>
+                <h2 className="text-2xl font-bold text-white">{copy.inboxTitle}</h2>
                 <p className="text-sm text-[#9CA3AF] mt-2">
-                  Si existe una cuenta con ese correo, hemos enviado un enlace para restablecer la contraseña. Revisa también la carpeta de spam por si acaso.
+                  {copy.inboxDesc}
                 </p>
               </div>
 
@@ -130,7 +186,7 @@ export default function ForgotPasswordPage() {
                 onClick={() => router.push('/auth?tab=login')}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base transition-colors"
               >
-                Volver a iniciar sesión
+                {copy.backToLogin}
               </button>
             </div>
           )}

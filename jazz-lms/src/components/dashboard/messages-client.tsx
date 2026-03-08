@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Loader2, Mail, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useLanguage } from '@/components/providers/language-provider';
 
 type Thread = {
   id: string;
@@ -31,6 +32,151 @@ type Message = {
 };
 
 export function MessagesClient() {
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      loadThreadsError: 'No se pudieron cargar las conversaciones.',
+      loadThreadError: 'No se pudo cargar esta conversación.',
+      sending: 'Enviando...',
+      sent: 'Enviado',
+      generalMessage: 'Mensaje general',
+      you: 'Tú',
+      createdThreadToast: 'Enviado. Se creó una nueva conversación en la bandeja.',
+      appendedThreadToast: 'Enviado. El mensaje se añadió a la conversación existente.',
+      sendMessageError: 'No se pudo enviar el mensaje.',
+      sendFailed: 'Error al enviar',
+      replySent: 'Respuesta enviada correctamente.',
+      replyError: 'No se pudo enviar la respuesta.',
+      title: 'Mensajes',
+      professorSubtitle: 'Bandeja — responde a los mensajes de estudiantes directamente desde la plataforma.',
+      studentSubtitle: 'Envía preguntas al Profesor Enric Vázquez.',
+      inboxConversations: 'Conversaciones de la bandeja',
+      loading: 'Cargando…',
+      noMessagesYet: 'Aún no hay mensajes.',
+      noMessages: 'Sin mensajes',
+      unread: 'sin leer',
+      compose: 'Redactar',
+      subjectOptional: 'Asunto (opcional)',
+      writeToProfessor: 'Escribe tu mensaje al Profesor Enric Vázquez...',
+      send: 'Enviar',
+      status: 'Estado',
+      student: 'Estudiante',
+      idLabel: 'ID',
+      professorName: 'Profesor Enric Vázquez',
+      closeConversation: 'Cerrar conversación',
+      replyAsProfessor: 'Responder como Profesor Enric Vázquez...',
+      replyPlaceholder: 'Escribe tu respuesta...',
+      reply: 'Responder',
+      selectConversation: 'Selecciona una conversación de la bandeja para abrir el chat.',
+    },
+    en: {
+      loadThreadsError: 'Unable to load conversations.',
+      loadThreadError: 'Unable to load this conversation.',
+      sending: 'Sending...',
+      sent: 'Sent',
+      generalMessage: 'General message',
+      you: 'You',
+      createdThreadToast: 'Sent. A new thread was created in the inbox.',
+      appendedThreadToast: 'Sent. Your message was added to the existing thread.',
+      sendMessageError: 'Unable to send the message.',
+      sendFailed: 'Send failed',
+      replySent: 'Reply sent successfully.',
+      replyError: 'Unable to send the reply.',
+      title: 'Messages',
+      professorSubtitle: 'Inbox — reply to student messages directly from the platform.',
+      studentSubtitle: 'Send questions to Professor Enric Vázquez.',
+      inboxConversations: 'Inbox conversations',
+      loading: 'Loading…',
+      noMessagesYet: 'No messages yet.',
+      noMessages: 'No messages',
+      unread: 'unread',
+      compose: 'Compose',
+      subjectOptional: 'Subject (optional)',
+      writeToProfessor: 'Write your message to Professor Enric Vázquez...',
+      send: 'Send',
+      status: 'Status',
+      student: 'Student',
+      idLabel: 'ID',
+      professorName: 'Professor Enric Vázquez',
+      closeConversation: 'Close conversation',
+      replyAsProfessor: 'Reply as Professor Enric Vázquez...',
+      replyPlaceholder: 'Write your reply...',
+      reply: 'Reply',
+      selectConversation: 'Select a conversation from the inbox to open the chat.',
+    },
+    fr: {
+      loadThreadsError: 'Impossible de charger les conversations.',
+      loadThreadError: 'Impossible de charger cette conversation.',
+      sending: 'Envoi...',
+      sent: 'Envoyé',
+      generalMessage: 'Message général',
+      you: 'Vous',
+      createdThreadToast: 'Envoyé. Une nouvelle conversation a été créée dans la boîte de réception.',
+      appendedThreadToast: 'Envoyé. Le message a été ajouté à la conversation existante.',
+      sendMessageError: 'Impossible d’envoyer le message.',
+      sendFailed: 'Échec de l’envoi',
+      replySent: 'Réponse envoyée avec succès.',
+      replyError: 'Impossible d’envoyer la réponse.',
+      title: 'Messages',
+      professorSubtitle: 'Boîte de réception — répondez aux messages des étudiants directement depuis la plateforme.',
+      studentSubtitle: 'Envoyez vos questions au professeur Enric Vázquez.',
+      inboxConversations: 'Conversations de la boîte de réception',
+      loading: 'Chargement…',
+      noMessagesYet: 'Aucun message pour le moment.',
+      noMessages: 'Aucun message',
+      unread: 'non lus',
+      compose: 'Rédiger',
+      subjectOptional: 'Objet (facultatif)',
+      writeToProfessor: 'Écrivez votre message au professeur Enric Vázquez...',
+      send: 'Envoyer',
+      status: 'Statut',
+      student: 'Étudiant',
+      idLabel: 'ID',
+      professorName: 'Professeur Enric Vázquez',
+      closeConversation: 'Fermer la conversation',
+      replyAsProfessor: 'Répondre en tant que professeur Enric Vázquez...',
+      replyPlaceholder: 'Écrivez votre réponse...',
+      reply: 'Répondre',
+      selectConversation: 'Sélectionnez une conversation dans la boîte de réception pour ouvrir le chat.',
+    },
+    pt: {
+      loadThreadsError: 'Não foi possível carregar as conversas.',
+      loadThreadError: 'Não foi possível carregar esta conversa.',
+      sending: 'Enviando...',
+      sent: 'Enviado',
+      generalMessage: 'Mensagem geral',
+      you: 'Você',
+      createdThreadToast: 'Enviado. Uma nova conversa foi criada na caixa de entrada.',
+      appendedThreadToast: 'Enviado. A mensagem foi adicionada à conversa existente.',
+      sendMessageError: 'Não foi possível enviar a mensagem.',
+      sendFailed: 'Erro ao enviar',
+      replySent: 'Resposta enviada com sucesso.',
+      replyError: 'Não foi possível enviar a resposta.',
+      title: 'Mensagens',
+      professorSubtitle: 'Caixa de entrada — responda às mensagens dos alunos diretamente pela plataforma.',
+      studentSubtitle: 'Envie perguntas ao Professor Enric Vázquez.',
+      inboxConversations: 'Conversas da caixa de entrada',
+      loading: 'Carregando…',
+      noMessagesYet: 'Ainda não há mensagens.',
+      noMessages: 'Sem mensagens',
+      unread: 'não lidas',
+      compose: 'Escrever',
+      subjectOptional: 'Assunto (opcional)',
+      writeToProfessor: 'Escreva sua mensagem ao Professor Enric Vázquez...',
+      send: 'Enviar',
+      status: 'Status',
+      student: 'Aluno',
+      idLabel: 'ID',
+      professorName: 'Professor Enric Vázquez',
+      closeConversation: 'Fechar conversa',
+      replyAsProfessor: 'Responder como Professor Enric Vázquez...',
+      replyPlaceholder: 'Escreva sua resposta...',
+      reply: 'Responder',
+      selectConversation: 'Selecione uma conversa da caixa de entrada para abrir o chat.',
+    },
+  }[language];
+  const dateLocale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US';
+
   const [loading, setLoading] = useState(true);
   const [isProfessor, setIsProfessor] = useState(false);
   const [professorEmail, setProfessorEmail] = useState('');
@@ -62,7 +208,7 @@ export function MessagesClient() {
         current && nextThreads.some((thread) => thread.id === current) ? current : null
       );
     } catch {
-      toast.error('No se pudieron cargar las conversaciones.');
+      toast.error(copy.loadThreadsError);
     } finally {
       setLoading(false);
     }
@@ -74,7 +220,7 @@ export function MessagesClient() {
       setMessages(response.data.messages || []);
       setProfessorEmail(String(response.data.professorEmail || professorEmail));
     } catch {
-      toast.error('No se pudo cargar esta conversación.');
+      toast.error(copy.loadThreadError);
     }
   };
 
@@ -97,7 +243,7 @@ export function MessagesClient() {
 
     submitLockRef.current = true;
     setIsSending(true);
-    setSendStatus('Enviando...');
+    setSendStatus(copy.sending);
     try {
       const response = await axios.post('/api/messages', {
         subject,
@@ -106,7 +252,7 @@ export function MessagesClient() {
 
       const createdThreadId = String(response.data?.id || '');
       const createdAt = String(response.data?.createdAt || new Date().toISOString());
-      const normalizedSubject = subject.trim() || 'Mensaje general';
+      const normalizedSubject = subject.trim() || copy.generalMessage;
       const pendingMessageBody = newMessage;
 
       if (createdThreadId) {
@@ -148,7 +294,7 @@ export function MessagesClient() {
             threadId: createdThreadId,
             senderId: 'me',
             senderEmail: 'you',
-            senderName: 'Tú',
+            senderName: copy.you,
             senderRole: 'student',
             body: pendingMessageBody,
             createdAt,
@@ -162,18 +308,18 @@ export function MessagesClient() {
       if (createdThreadId) {
         loadThreadMessages(createdThreadId);
       }
-      setSendStatus('Enviado');
+      setSendStatus(copy.sent);
       const createdNewThread = Boolean(response.data?.createdNewThread);
       toast.success(
         createdNewThread
-          ? 'Enviado. Se creó una nueva conversación en la bandeja.'
-          : 'Enviado. El mensaje se añadió a la conversación existente.'
+          ? copy.createdThreadToast
+          : copy.appendedThreadToast
       );
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? String(error.response?.data || 'No se pudo enviar el mensaje.')
-        : 'No se pudo enviar el mensaje.';
-      setSendStatus('Error al enviar');
+        ? String(error.response?.data || copy.sendMessageError)
+        : copy.sendMessageError;
+      setSendStatus(copy.sendFailed);
       toast.error(message);
     } finally {
       setIsSending(false);
@@ -187,7 +333,7 @@ export function MessagesClient() {
 
     submitLockRef.current = true;
     setIsSending(true);
-    setSendStatus('Enviando...');
+    setSendStatus(copy.sending);
     try {
       const optimisticCreatedAt = new Date().toISOString();
       const optimisticBody = replyText;
@@ -199,7 +345,7 @@ export function MessagesClient() {
           threadId: selectedThreadId,
           senderId: 'me',
           senderEmail: 'you',
-            senderName: 'Tú',
+            senderName: copy.you,
           senderRole: isProfessor ? 'professor' : 'student',
           body: optimisticBody,
           createdAt: optimisticCreatedAt,
@@ -225,13 +371,13 @@ export function MessagesClient() {
       setReplyText('');
       loadThreadMessages(selectedThreadId);
       loadThreads();
-      setSendStatus('Enviado');
-      toast.success('Respuesta enviada correctamente.');
+      setSendStatus(copy.sent);
+      toast.success(copy.replySent);
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? String(error.response?.data || 'No se pudo enviar la respuesta.')
-        : 'No se pudo enviar la respuesta.';
-      setSendStatus('Error al enviar');
+        ? String(error.response?.data || copy.replyError)
+        : copy.replyError;
+      setSendStatus(copy.sendFailed);
       toast.error(message);
     } finally {
       setIsSending(false);
@@ -248,11 +394,11 @@ export function MessagesClient() {
   return (
     <div className="max-w-[1300px] mx-auto space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Mensajes</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">{copy.title}</h1>
         <p className="text-muted-foreground mt-1">
           {isProfessor
-            ? 'Bandeja — responde a los mensajes de estudiantes directamente desde la plataforma.'
-            : 'Envía preguntas al Profesor Enric Vázquez.'}
+            ? copy.professorSubtitle
+            : copy.studentSubtitle}
         </p>
       </div>
 
@@ -260,14 +406,14 @@ export function MessagesClient() {
         <aside className="rounded-xl border border-border bg-card p-3 space-y-3">
           <div className="flex items-center gap-2 px-1">
             <Mail className="h-4 w-4 text-primary" />
-            <p className="text-sm font-medium text-foreground">Conversaciones de la bandeja</p>
+            <p className="text-sm font-medium text-foreground">{copy.inboxConversations}</p>
           </div>
 
           {loading ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">Cargando…</div>
+            <div className="py-8 text-center text-muted-foreground text-sm">{copy.loading}</div>
           ) : threads.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground text-sm">
-              Aún no hay mensajes.
+              {copy.noMessagesYet}
             </div>
           ) : (
             <div className="space-y-2 max-h-[62dvh] overflow-y-auto pr-1">
@@ -285,15 +431,15 @@ export function MessagesClient() {
                     <p className="text-sm font-semibold text-foreground line-clamp-1">{thread.subject}</p>
                     <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                       {isProfessor
-                        ? `${thread.studentEmail} • ID: ${thread.studentId}`
-                        : (thread.lastMessage || 'Sin mensajes')}
+                        ? `${thread.studentEmail} • ${copy.idLabel}: ${thread.studentId}`
+                        : (thread.lastMessage || copy.noMessages)}
                     </p>
                     <p className="text-[11px] text-muted-foreground/70 mt-1">
-                      {new Date(thread.updatedAt).toLocaleString('pt-BR')}
+                      {new Date(thread.updatedAt).toLocaleString(dateLocale)}
                     </p>
                     {thread.unreadCount > 0 && (
                       <span className="inline-flex mt-1 text-[11px] px-1.5 py-0.5 rounded-full border border-primary/40 text-primary">
-                        {thread.unreadCount} sin leer
+                        {thread.unreadCount} {copy.unread}
                       </span>
                     )}
                   </button>
@@ -306,25 +452,25 @@ export function MessagesClient() {
         <section className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
           {!isProfessor && !selectedThread && (
             <form onSubmit={handleCreateThread} className="space-y-2.5 border border-border rounded-lg p-3">
-              <p className="text-sm font-semibold text-foreground">Redactar</p>
+              <p className="text-sm font-semibold text-foreground">{copy.compose}</p>
               <input
                 type="text"
                 value={subject}
                 onChange={(event) => setSubject(event.target.value)}
-                placeholder="Asunto (opcional)"
+                placeholder={copy.subjectOptional}
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
               />
               <textarea
                 value={newMessage}
                 onChange={(event) => setNewMessage(event.target.value)}
-                placeholder="Escribe tu mensaje al Profesor Enric Vázquez..."
+                placeholder={copy.writeToProfessor}
                 className="w-full min-h-[110px] rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground resize-y"
               />
               <Button type="submit" disabled={isSending || !newMessage.trim()}>
                 {isSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                Enviar
+                {copy.send}
               </Button>
-              {sendStatus && <p className="text-xs text-muted-foreground">Estado: {sendStatus}</p>}
+              {sendStatus && <p className="text-xs text-muted-foreground">{copy.status}: {sendStatus}</p>}
             </form>
           )}
 
@@ -335,8 +481,8 @@ export function MessagesClient() {
                   <p className="text-base font-semibold text-foreground">{selectedThread.subject}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {isProfessor
-                      ? `Estudiante: ${selectedThread.studentEmail} • ID: ${selectedThread.studentId}`
-                      : 'Professor Enric Vázquez'}
+                      ? `${copy.student}: ${selectedThread.studentEmail} • ${copy.idLabel}: ${selectedThread.studentId}`
+                      : copy.professorName}
                   </p>
                 </div>
                 {!isProfessor && (
@@ -345,7 +491,7 @@ export function MessagesClient() {
                     variant="ghost"
                     size="icon"
                     onClick={handleCloseConversation}
-                    aria-label="Cerrar conversación"
+                    aria-label={copy.closeConversation}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -357,10 +503,8 @@ export function MessagesClient() {
                   return (
                     <div key={message.id} className="rounded-lg border border-border bg-background px-3 py-2.5">
                       <p className="text-xs text-muted-foreground mb-1">
-                        {message.senderRole === 'professor'
-                          ? `Professor Enric Vázquez (${message.senderEmail})`
-                          : (message.senderName || message.senderEmail)} •{' '}
-                        {new Date(message.createdAt).toLocaleString('pt-BR')}
+                        {message.senderRole === 'professor' ? copy.professorName : (message.senderName || message.senderEmail)} •{' '}
+                        {new Date(message.createdAt).toLocaleString(dateLocale)}
                       </p>
                       <p className="text-sm text-foreground whitespace-pre-wrap">{message.body}</p>
                     </div>
@@ -372,20 +516,18 @@ export function MessagesClient() {
                 <textarea
                   value={replyText}
                   onChange={(event) => setReplyText(event.target.value)}
-                  placeholder={isProfessor ? 'Responder como Profesor Enric Vázquez...' : 'Escribe tu respuesta...'}
+                  placeholder={isProfessor ? copy.replyAsProfessor : copy.replyPlaceholder}
                   className="w-full min-h-[90px] rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground resize-y"
                 />
                 <Button type="submit" disabled={isSending || !replyText.trim()}>
                   {isSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
-                  Responder
+                  {copy.reply}
                 </Button>
               </form>
             </>
           ) : !isProfessor ? null : (
             <div className="py-14 text-center text-muted-foreground text-sm">
-              {isProfessor
-                ? 'Selecciona una conversación de la bandeja para abrir el chat.'
-                : 'Selecciona una conversación de la bandeja para abrir el chat.'}
+              {copy.selectConversation}
             </div>
           )}
         </section>

@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 const BOARD_IDS = [
   'board-hero',
@@ -14,7 +15,15 @@ const BOARD_IDS = [
 ];
 
 export function BoardNavigation() {
+  const { language } = useLanguage();
   const [currentBoard, setCurrentBoard] = useState(0);
+
+  const labels = {
+    es: { prev: 'Tablero anterior', next: 'Siguiente tablero' },
+    en: { prev: 'Previous section', next: 'Next section' },
+    fr: { prev: 'Section précédente', next: 'Section suivante' },
+    pt: { prev: 'Seção anterior', next: 'Próxima seção' },
+  }[language];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +60,7 @@ export function BoardNavigation() {
         <button
           onClick={() => scrollToBoard('prev')}
           className="group bg-yellow-600/90 hover:bg-yellow-500 text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110"
-          aria-label="Tablero anterior"
+          aria-label={labels.prev}
         >
           <ChevronUp className="h-6 w-6 group-hover:-translate-y-0.5 transition-transform" />
         </button>
@@ -60,7 +69,7 @@ export function BoardNavigation() {
         <button
           onClick={() => scrollToBoard('next')}
           className="group bg-yellow-600/90 hover:bg-yellow-500 text-black p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 animate-bounce"
-          aria-label="Siguiente tablero"
+          aria-label={labels.next}
         >
           <ChevronDown className="h-6 w-6 group-hover:translate-y-0.5 transition-transform" />
         </button>

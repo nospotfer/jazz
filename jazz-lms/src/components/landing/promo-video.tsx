@@ -4,9 +4,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import MuxPlayer from '@mux/mux-player-react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 export function PromoVideo() {
   const router = useRouter();
+  const { language } = useLanguage();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const playerRef = useRef<any>(null);
@@ -19,6 +21,60 @@ export function PromoVideo() {
     ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ''}`
     : '';
   const hasMuxPlayback = Boolean(playbackId && playbackToken && !muxRuntimeError);
+  const copy = {
+    es: {
+      pretitle: 'Curso Online · Con Enric Vazquez Ramonich',
+      titleTop: 'La Cultura',
+      titleBottomPrefix: 'del',
+      subtitle: 'Entra en el mundo del jazz',
+      paragraph:
+        'Vive una experiencia que cambiará para siempre tu forma de sentir la música. No necesitas ser músico ni experto para disfrutar el jazz.',
+      cta: 'Regístrate',
+      muxError: 'No se pudo cargar el video promocional de Mux.',
+      loading: 'Cargando video promocional...',
+      mute: 'Silenciar',
+      unmute: 'Activar sonido',
+    },
+    en: {
+      pretitle: 'Online Course · With Enric Vazquez Ramonich',
+      titleTop: 'The Culture',
+      titleBottomPrefix: 'of',
+      subtitle: 'Enter the world of jazz',
+      paragraph:
+        'Live an experience that will forever change the way you feel music. You do not need to be a musician or an expert to enjoy jazz.',
+      cta: 'Sign Up',
+      muxError: 'Unable to load the Mux promo video.',
+      loading: 'Loading promo video...',
+      mute: 'Mute',
+      unmute: 'Unmute',
+    },
+    fr: {
+      pretitle: 'Cours en ligne · Avec Enric Vazquez Ramonich',
+      titleTop: 'La Culture',
+      titleBottomPrefix: 'du',
+      subtitle: 'Entrez dans le monde du jazz',
+      paragraph:
+        'Vivez une expérience qui changera à jamais votre façon de ressentir la musique. Vous n’avez pas besoin d’être musicien ou expert pour apprécier le jazz.',
+      cta: 'S’inscrire',
+      muxError: 'Impossible de charger la vidéo promo Mux.',
+      loading: 'Chargement de la vidéo promo...',
+      mute: 'Couper le son',
+      unmute: 'Activer le son',
+    },
+    pt: {
+      pretitle: 'Curso Online · Com Enric Vazquez Ramonich',
+      titleTop: 'A Cultura',
+      titleBottomPrefix: 'do',
+      subtitle: 'Entre no mundo do jazz',
+      paragraph:
+        'Viva uma experiência que vai mudar para sempre a forma como você sente a música. Você não precisa ser músico nem especialista para curtir jazz.',
+      cta: 'Cadastrar',
+      muxError: 'Não foi possível carregar o vídeo promocional do Mux.',
+      loading: 'Carregando vídeo promocional...',
+      mute: 'Silenciar',
+      unmute: 'Ativar som',
+    },
+  }[language];
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +95,7 @@ export function PromoVideo() {
         setMuxRuntimeError('');
       } catch {
         if (cancelled) return;
-        setMuxRuntimeError('Unable to load signed promo playback.');
+        setMuxRuntimeError(copy.muxError);
       }
     };
 
@@ -64,23 +120,22 @@ export function PromoVideo() {
           <div className="flex flex-col justify-center space-y-8">
             <div>
               <p className="text-yellow-600 text-sm sm:text-base uppercase tracking-widest mb-4 font-medium">
-                Curso Online · Con Enric Vazquez Ramonich
+                {copy.pretitle}
               </p>
               <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-2">
-                La Cultura
+                {copy.titleTop}
               </h1>
               <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-4">
-                del <em className="text-yellow-600">Jazz</em>
+                {copy.titleBottomPrefix} <em className="text-yellow-600">Jazz</em>
               </h1>
             </div>
 
             <div className="border-l-4 border-yellow-600 pl-6">
               <h2 className="text-yellow-600 text-3xl sm:text-4xl font-bold italic mb-4">
-                Enter the World of Jazz
+                {copy.subtitle}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
-                Live an experience that will forever change the way you feel music.
-                You don&apos;t need to be a musician or an expert to enjoy jazz.
+                {copy.paragraph}
               </p>
             </div>
 
@@ -89,13 +144,13 @@ export function PromoVideo() {
               className="flex items-center gap-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
             >
               <LogIn className="h-5 w-5" />
-              Sign Up
+              {copy.cta}
             </button>
           </div>
 
           {/* Right side - Promo Video */}
           <div
-            className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl"
+            className="relative w-full aspect-[16/10] lg:aspect-auto lg:h-[70vh] rounded-xl overflow-hidden shadow-2xl border border-yellow-600/50 dark:border-yellow-500/70"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -116,7 +171,7 @@ export function PromoVideo() {
                 playsInline
                 accentColor="#d4af37"
                 onError={() => {
-                  setMuxRuntimeError('No se pudo cargar el video promocional de Mux.');
+                  setMuxRuntimeError(copy.muxError);
                 }}
               />
             ) : muxRuntimeError ? (
@@ -125,7 +180,7 @@ export function PromoVideo() {
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-black text-white text-center px-6">
-                <p className="text-sm sm:text-base text-gray-300">Cargando video promocional...</p>
+                <p className="text-sm sm:text-base text-gray-300">{copy.loading}</p>
               </div>
             )}
 
@@ -139,7 +194,7 @@ export function PromoVideo() {
               className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               } ${!hasMuxPlayback ? 'cursor-not-allowed opacity-40' : ''}`}
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              aria-label={isMuted ? copy.unmute : copy.mute}
             >
               {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
             </button>

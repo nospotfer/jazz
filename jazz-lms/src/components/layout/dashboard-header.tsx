@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { resolveProfileAvatar } from '@/lib/profile-avatars';
+import { LanguageSelector } from '@/components/language-selector';
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -43,7 +44,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
   );
   const displayName =
-    user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario';
+    user.user_metadata?.full_name || user.email?.split('@')[0] || t('userFallback', 'Usuario');
   const avatarUrl = currentAvatarUrl;
   const initials = displayName
     .split(' ')
@@ -62,10 +63,10 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
     ? [
         {
           id: 'inbox-unread',
-          title: 'Nuevo mensaje en la bandeja',
-          preview: 'Tienes mensajes sin leer en tu bandeja.',
-          body: 'Nuevo mensaje en la bandeja',
-          date: 'Ahora',
+          title: t('inboxNewMessageTitle', 'Nuevo mensaje en la bandeja'),
+          preview: t('inboxNewMessagePreview', 'Tienes mensajes sin leer en tu bandeja.'),
+          body: t('inboxNewMessageTitle', 'Nuevo mensaje en la bandeja'),
+          date: t('now', 'Ahora'),
           read: false,
         },
       ]
@@ -178,13 +179,14 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
           {pathname === '/dashboard' && (
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
-              Bienvenido, {displayName.split(' ')[0]}.
+              {t('welcomeShort', 'Bienvenido,')} {displayName.split(' ')[0]}.
             </div>
           )}
 
           {/* Right side */}
           <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
+            <LanguageSelector />
 
             {/* ── Notifications bell ── */}
             <div className="relative" ref={notifRef}>
@@ -208,7 +210,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                     <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notificaciones')}</h3>
                     {unreadCount > 0 && (
                       <span className="text-xs bg-yellow-400/20 text-yellow-500 font-medium px-2 py-0.5 rounded-full">
-                        {unreadCount} nuevas
+                        {unreadCount} {t('newItems', 'nuevas')}
                       </span>
                     )}
                   </div>
@@ -293,7 +295,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                     {isAdmin && (
                       <p className="text-xs font-semibold text-yellow-500 mt-1">
-                        🔑 {role || 'ADMIN'}
+                        🔑 {role || t('adminPanel', 'Admin')}
                       </p>
                     )}
                   </div>
@@ -305,7 +307,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-500 hover:bg-accent transition-colors"
                       >
-                        🔐 Panel de administración
+                        🔐 {t('adminPanel', 'Panel de administración')}
                       </Link>
                     )}
                     <Link
@@ -314,7 +316,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <User className="h-4 w-4 text-muted-foreground" />
-                      Perfil
+                      {t('profile', 'Perfil')}
                     </Link>
                     <Link
                       href="/dashboard/payment"
@@ -322,7 +324,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <Wallet className="h-4 w-4 text-muted-foreground" />
-                      Historial de pagos
+                      {t('paymentHistory', 'Historial de pagos')}
                     </Link>
                   </div>
 
@@ -332,7 +334,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors w-full"
                     >
                       <LogOut className="h-4 w-4" />
-                      Cerrar sesión
+                      {t('logOut', 'Cerrar sesión')}
                     </button>
                   </div>
                 </div>
@@ -360,7 +362,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
               <button
                 onClick={() => setActiveNotif(null)}
                 className="p-1 hover:bg-accent rounded-md transition"
-                aria-label="Cerrar"
+                aria-label={t('close', 'Cerrar')}
               >
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>
@@ -382,7 +384,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                 onClick={() => setActiveNotif(null)}
                 className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                Cerrar
+                {t('close', 'Cerrar')}
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { BookOpen, Clock, PlayCircle, TrendingUp } from 'lucide-react';
+import { useLanguage } from '@/components/providers/language-provider';
 
 interface CourseCard {
   id: string;
@@ -27,6 +28,74 @@ export function LobbyClient({
   purchasedCourses,
   availableCourses,
 }: LobbyClientProps) {
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      welcome: '¡Bienvenido de nuevo,',
+      subtitle: 'Continúa donde lo dejaste o explora nuevos cursos para ampliar tu conocimiento del jazz.',
+      enrolled: 'Inscritos',
+      inProgress: 'En progreso',
+      completed: 'Completados',
+      continueLearning: 'Continuar aprendiendo',
+      seeAll: 'Ver todo',
+      exploreCourses: 'Explorar cursos',
+      noCoursesTitle: 'Aún no hay cursos disponibles',
+      noCoursesDesc: 'Próximamente habrá nuevos cursos. ¡Estate atento!',
+      enrolledBadge: 'Inscrito',
+      chapters: 'capítulos',
+      lessons: 'lecciones',
+      progress: 'Progreso',
+    },
+    en: {
+      welcome: 'Welcome back,',
+      subtitle: 'Continue where you left off or explore new courses to expand your jazz knowledge.',
+      enrolled: 'Enrolled',
+      inProgress: 'In progress',
+      completed: 'Completed',
+      continueLearning: 'Continue learning',
+      seeAll: 'See all',
+      exploreCourses: 'Explore courses',
+      noCoursesTitle: 'No courses available yet',
+      noCoursesDesc: 'New courses will be available soon. Stay tuned!',
+      enrolledBadge: 'Enrolled',
+      chapters: 'chapters',
+      lessons: 'lessons',
+      progress: 'Progress',
+    },
+    fr: {
+      welcome: 'Bon retour,',
+      subtitle: 'Reprenez où vous vous êtes arrêté ou explorez de nouveaux cours pour approfondir vos connaissances du jazz.',
+      enrolled: 'Inscrit',
+      inProgress: 'En cours',
+      completed: 'Terminés',
+      continueLearning: 'Continuer à apprendre',
+      seeAll: 'Voir tout',
+      exploreCourses: 'Explorer les cours',
+      noCoursesTitle: 'Aucun cours disponible pour le moment',
+      noCoursesDesc: 'De nouveaux cours seront bientôt disponibles. Restez à l’écoute !',
+      enrolledBadge: 'Inscrit',
+      chapters: 'chapitres',
+      lessons: 'leçons',
+      progress: 'Progression',
+    },
+    pt: {
+      welcome: 'Bem-vindo de volta,',
+      subtitle: 'Continue de onde parou ou explore novos cursos para ampliar seu conhecimento em jazz.',
+      enrolled: 'Inscritos',
+      inProgress: 'Em progresso',
+      completed: 'Concluídos',
+      continueLearning: 'Continuar aprendendo',
+      seeAll: 'Ver tudo',
+      exploreCourses: 'Explorar cursos',
+      noCoursesTitle: 'Ainda não há cursos disponíveis',
+      noCoursesDesc: 'Novos cursos estarão disponíveis em breve. Fique atento!',
+      enrolledBadge: 'Inscrito',
+      chapters: 'capítulos',
+      lessons: 'aulas',
+      progress: 'Progresso',
+    },
+  }[language];
+
   const firstName = userName.split(' ')[0];
   const totalInProgress = purchasedCourses.filter(
     (c) => c.progress > 0 && c.progress < 100
@@ -41,11 +110,10 @@ export function LobbyClient({
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-6 sm:p-8">
         <div className="relative z-10">
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
-            ¡Bienvenido de nuevo, {firstName}!
+            {copy.welcome} {firstName}!
           </h1>
           <p className="text-muted-foreground mt-2 max-w-lg">
-            Continúa donde lo dejaste o explora nuevos cursos para ampliar
-            tu conocimiento del jazz.
+            {copy.subtitle}
           </p>
         </div>
 
@@ -53,17 +121,17 @@ export function LobbyClient({
         <div className="flex flex-wrap gap-4 sm:gap-6 mt-6">
           <StatCard
             icon={<BookOpen className="h-5 w-5" />}
-            label="Inscritos"
+            label={copy.enrolled}
             value={purchasedCourses.length}
           />
           <StatCard
             icon={<PlayCircle className="h-5 w-5" />}
-            label="En progreso"
+            label={copy.inProgress}
             value={totalInProgress}
           />
           <StatCard
             icon={<TrendingUp className="h-5 w-5" />}
-            label="Completados"
+            label={copy.completed}
             value={totalCompleted}
           />
         </div>
@@ -78,13 +146,13 @@ export function LobbyClient({
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-serif font-semibold text-foreground">
-              Continuar aprendiendo
+              {copy.continueLearning}
             </h2>
             <Link
               href="/dashboard/courses"
               className="text-sm text-primary hover:text-primary/80 transition-colors"
             >
-              Ver todo →
+              {copy.seeAll} →
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -100,7 +168,7 @@ export function LobbyClient({
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-serif font-semibold text-foreground">
-              Explorar cursos
+              {copy.exploreCourses}
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -116,10 +184,10 @@ export function LobbyClient({
         <div className="text-center py-16">
           <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-foreground">
-            Aún no hay cursos disponibles
+            {copy.noCoursesTitle}
           </h2>
           <p className="text-muted-foreground mt-2">
-            Próximamente habrá nuevos cursos. ¡Estate atento!
+            {copy.noCoursesDesc}
           </p>
         </div>
       )}
@@ -148,6 +216,14 @@ function StatCard({
 }
 
 function CourseCardComponent({ course }: { course: CourseCard }) {
+  const { language } = useLanguage();
+  const copy = {
+    es: { enrolledBadge: 'Inscrito', chapters: 'capítulos', lessons: 'lecciones', progress: 'Progreso' },
+    en: { enrolledBadge: 'Enrolled', chapters: 'chapters', lessons: 'lessons', progress: 'Progress' },
+    fr: { enrolledBadge: 'Inscrit', chapters: 'chapitres', lessons: 'leçons', progress: 'Progression' },
+    pt: { enrolledBadge: 'Inscrito', chapters: 'capítulos', lessons: 'aulas', progress: 'Progresso' },
+  }[language];
+
   const href = course.purchased
     ? `/courses/${course.id}/lessons/${course.id}`
     : `/courses/${course.id}`;
@@ -171,7 +247,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           )}
           {course.purchased && (
             <div className="absolute top-2 right-2 bg-primary/90 text-primary-foreground text-xs font-bold px-2 py-1 rounded-md">
-              Inscrito
+              {copy.enrolledBadge}
             </div>
           )}
         </div>
@@ -191,11 +267,11 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <BookOpen className="h-3.5 w-3.5" />
-              {course.chaptersCount} capítulos
+              {course.chaptersCount} {copy.chapters}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {course.totalLessons} lecciones
+              {course.totalLessons} {copy.lessons}
             </span>
           </div>
 
@@ -203,7 +279,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
           {course.purchased && (
             <div className="mt-3">
               <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Progreso</span>
+                <span className="text-muted-foreground">{copy.progress}</span>
                 <span className="font-medium text-primary">
                   {course.progress}%
                 </span>
