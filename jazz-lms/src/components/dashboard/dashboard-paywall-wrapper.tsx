@@ -6,6 +6,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/components/providers/language-provider';
+import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
 
 interface DashboardPaywallWrapperProps {
   hasPaidCourse: boolean;
@@ -17,6 +18,8 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const pathname = usePathname();
   const { language } = useLanguage();
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
 
   const copy = {
     es: {
@@ -24,24 +27,28 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
       description: 'Para acceder a esta área necesitas realizar el pago del curso completo.',
       processing: 'Procesando...',
       payFullCourse: 'Pagar curso completo',
+      chooseMethod: 'Elegir método de pago',
     },
     en: {
       title: 'Locked area',
       description: 'To access this area, you need to purchase the full course.',
       processing: 'Processing...',
       payFullCourse: 'Pay full course',
+      chooseMethod: 'Choose payment method',
     },
     fr: {
       title: 'Zone bloquée',
       description: 'Pour accéder à cette zone, vous devez acheter le cours complet.',
       processing: 'Traitement...',
       payFullCourse: 'Payer le cours complet',
+      chooseMethod: 'Choisir le moyen de paiement',
     },
     pt: {
       title: 'Área bloqueada',
       description: 'Para acessar esta área, você precisa comprar o curso completo.',
       processing: 'Processando...',
       payFullCourse: 'Pagar curso completo',
+      chooseMethod: 'Escolher método de pagamento',
     },
   }[language];
 
@@ -53,15 +60,17 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
 
   const showPaywall = !hasPaidCourse && isLockedRoute;
 
-  const handlePurchase = async () => {
+  const handlePurchase = async (paymentMethod: PaymentMethod) => {
     if (!courseId || isPurchasing) return;
 
     try {
       setIsPurchasing(true);
+      setPaymentError('');
       const response = await axios.post('/api/checkout', {
         courseId,
         source: 'dashboard',
         language,
+        paymentMethod,
       });
 
       if (response.data?.url) {
@@ -69,7 +78,10 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         return;
       }
       setIsPurchasing(false);
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
+        setPaymentError(error.response.data);
+      }
       setIsPurchasing(false);
     }
   };
@@ -94,9 +106,8 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
             <p className="text-sm text-muted-foreground leading-relaxed">
               {copy.description}
             </p>
-
             <Button
-              onClick={handlePurchase}
+              onClick={() => setIsMethodModalOpen(true)}
               disabled={isPurchasing || !courseId}
               className="w-full"
             >
@@ -108,13 +119,31 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  {copy.payFullCourse}
+                  {copy.chooseMethod}
                 </>
               )}
             </Button>
+            {paymentError ? (
+              <p className="text-xs text-destructive">{paymentError}</p>
+            ) : null}
           </div>
         </div>
       )}
+
+      <PaymentMethodModal
+        isOpen={isMethodModalOpen}
+        isLoading={isPurchasing}
+        language={language}
+        errorMessage={paymentError}
+        onClose={() => {
+          if (!isPurchasing) {
+            setIsMethodModalOpen(false);
+          }
+        }}
+        onConfirm={(method) => {
+          void handlePurchase(method);
+        }}
+      />
     </div>
   );
 }

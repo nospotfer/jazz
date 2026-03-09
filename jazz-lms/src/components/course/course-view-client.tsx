@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzDescription, getLocalizedJazzSubtitle } from '@/lib/course-lessons';
+import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
 
 // ─── Lesson Data (same as landing page classes) ─────────────────────────────
 
@@ -496,6 +497,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Clase',
       processing: 'Procesando...',
       buyFullCourse: 'Comprar curso completo — €29.99',
+      chooseMethod: 'Elegir método de pago',
       watched: 'visto',
       purchaseRequired: 'Compra requerida',
       available: 'Disponible',
@@ -512,6 +514,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Class',
       processing: 'Processing...',
       buyFullCourse: 'Buy full course — €29.99',
+      chooseMethod: 'Choose payment method',
       watched: 'watched',
       purchaseRequired: 'Purchase required',
       available: 'Available',
@@ -528,6 +531,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Cours',
       processing: 'Traitement...',
       buyFullCourse: 'Acheter le cours complet — €29.99',
+      chooseMethod: 'Choisir le moyen de paiement',
       watched: 'vu',
       purchaseRequired: 'Achat requis',
       available: 'Disponible',
@@ -544,6 +548,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Aula',
       processing: 'Processando...',
       buyFullCourse: 'Comprar curso completo — €29.99',
+      chooseMethod: 'Escolher método de pagamento',
       watched: 'assistido',
       purchaseRequired: 'Compra necessária',
       available: 'Disponível',
@@ -567,6 +572,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [progressByLessonId, setProgressByLessonId] = useState<Record<string, number>>({});
+  const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -620,15 +627,17 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     setHoveredIndex(null);
   }, [pinnedIndex]);
 
-  const handlePurchaseClick = useCallback(async () => {
+  const handlePurchaseClick = useCallback(async (paymentMethod: PaymentMethod) => {
     if (!courseId) return;
 
     setIsPurchasing(true);
+    setPaymentError('');
     try {
       const response = await axios.post('/api/checkout', {
         courseId,
         source: 'dashboard',
         language,
+        paymentMethod,
       });
 
       if (response.data?.url) {
@@ -636,7 +645,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         return;
       }
       setIsPurchasing(false);
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
+        setPaymentError(error.response.data);
+      }
       setIsPurchasing(false);
     }
   }, [courseId, language]);
@@ -696,23 +708,31 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
             {copy.academyTitle}
           </p>
           {!hasPurchased && (
-            <button
-              onClick={handlePurchaseClick}
-              disabled={isPurchasing}
-              className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
-            >
-              {isPurchasing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {copy.processing}
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="h-4 w-4" />
-                  {copy.buyFullCourse}
-                </>
-              )}
-            </button>
+            <div className="mx-auto w-full max-w-sm space-y-2">
+              <button
+                onClick={() => {
+                  setPaymentError('');
+                  setIsMethodModalOpen(true);
+                }}
+                disabled={isPurchasing}
+                className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
+              >
+                {isPurchasing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {copy.processing}
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="h-4 w-4" />
+                    {copy.buyFullCourse}
+                  </>
+                )}
+              </button>
+              {paymentError ? (
+                <p className="text-xs text-destructive text-left">{paymentError}</p>
+              ) : null}
+            </div>
           )}
         </div>
 
@@ -833,7 +853,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                     isPinned={false}
                     position={popupPosition}
                     hasPurchased={hasPurchased}
-                    onPurchaseClick={handlePurchaseClick}
+                    onPurchaseClick={() => {
+                      setPaymentError('');
+                      setIsMethodModalOpen(true);
+                    }}
                     copy={copy}
                   />
                 )}
@@ -852,7 +875,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           isPinned={true}
           position={popupPosition}
           hasPurchased={hasPurchased}
-          onPurchaseClick={handlePurchaseClick}
+          onPurchaseClick={() => {
+            setPaymentError('');
+            setIsMethodModalOpen(true);
+          }}
           copy={copy}
         />
       )}
@@ -867,6 +893,21 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         isVisible={showSuccessModal}
         onClose={handleSuccessModalClose}
         language={language}
+      />
+
+      <PaymentMethodModal
+        isOpen={isMethodModalOpen}
+        isLoading={isPurchasing}
+        language={language}
+        errorMessage={paymentError}
+        onClose={() => {
+          if (!isPurchasing) {
+            setIsMethodModalOpen(false);
+          }
+        }}
+        onConfirm={(method) => {
+          void handlePurchaseClick(method);
+        }}
       />
     </>
   );

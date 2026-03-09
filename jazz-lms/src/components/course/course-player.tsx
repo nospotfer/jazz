@@ -19,6 +19,7 @@ import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSelector } from '@/components/language-selector';
+import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
@@ -119,6 +120,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar apunte',
       openingCheckout: 'Abriendo pago...',
       unlockFullCourse: 'Desbloquear curso completo',
+      chooseMethod: 'Elegir método de pago',
       classNote: 'Apunte de clase',
       download: 'Descargar',
       selectPdf: 'Selecciona un PDF para previsualizarlo aquí.',
@@ -166,6 +168,7 @@ export const CoursePlayer = ({
       showNotes: 'Show notes',
       openingCheckout: 'Opening checkout...',
       unlockFullCourse: 'Unlock full course',
+      chooseMethod: 'Choose payment method',
       classNote: 'Class notes',
       download: 'Download',
       selectPdf: 'Select a PDF to preview it here.',
@@ -213,6 +216,7 @@ export const CoursePlayer = ({
       showNotes: 'Afficher les notes',
       openingCheckout: 'Ouverture du paiement...',
       unlockFullCourse: 'Débloquer le cours complet',
+      chooseMethod: 'Choisir le moyen de paiement',
       classNote: 'Notes du cours',
       download: 'Télécharger',
       selectPdf: 'Sélectionnez un PDF pour l’aperçu ici.',
@@ -260,6 +264,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar anotações',
       openingCheckout: 'Abrindo checkout...',
       unlockFullCourse: 'Desbloquear curso completo',
+      chooseMethod: 'Escolher método de pagamento',
       classNote: 'Anotações da aula',
       download: 'Baixar',
       selectPdf: 'Selecione um PDF para pré-visualizá-lo aqui.',
@@ -304,6 +309,8 @@ export const CoursePlayer = ({
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const [playbackId, setPlaybackId] = useState('');
   const [playbackToken, setPlaybackToken] = useState('');
   const [thumbnailToken, setThumbnailToken] = useState('');
@@ -619,23 +626,30 @@ export const CoursePlayer = ({
     }
   };
 
-  const handlePurchaseClick = async () => {
+  const handlePurchaseClick = async (paymentMethod: PaymentMethod) => {
     if (isPurchasing) return;
 
     setIsPurchasing(true);
+    setPaymentError('');
     try {
       const response = await axios.post('/api/checkout', {
         courseId: course.id,
         source: 'dashboard',
         language,
+        paymentMethod,
       });
 
       if (response.data?.url) {
         window.location.assign(response.data.url);
         return;
       }
-    } catch {
-      toast.error(copy.unableCheckout);
+    } catch (error) {
+      if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
+        setPaymentError(error.response.data);
+        toast.error(error.response.data);
+      } else {
+        toast.error(copy.unableCheckout);
+      }
     } finally {
       setIsPurchasing(false);
     }
@@ -907,10 +921,20 @@ export const CoursePlayer = ({
                           <p className="text-sm text-muted-foreground">
                             {copy.lessonLockedDesc}
                           </p>
-                          <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full sm:w-auto">
+                          <Button
+                            onClick={() => {
+                              setPaymentError('');
+                              setIsMethodModalOpen(true);
+                            }}
+                            disabled={isPurchasing}
+                            className="w-full sm:w-auto"
+                          >
                             <ShoppingCart className="h-4 w-4 mr-2" />
-                            {isPurchasing ? copy.openingCheckout : copy.unlockFullCourse}
+                            {isPurchasing ? copy.openingCheckout : copy.chooseMethod}
                           </Button>
+                          {paymentError ? (
+                            <p className="text-xs text-destructive">{paymentError}</p>
+                          ) : null}
                         </div>
                       )}
                     </div>
@@ -1002,10 +1026,20 @@ export const CoursePlayer = ({
                       <li>• {copy.unlockMuxPlayback}</li>
                       <li>• {copy.unlockNotes}</li>
                     </ul>
-                    <Button onClick={handlePurchaseClick} disabled={isPurchasing} className="w-full mt-4">
+                    <Button
+                      onClick={() => {
+                        setPaymentError('');
+                        setIsMethodModalOpen(true);
+                      }}
+                      disabled={isPurchasing}
+                      className="w-full mt-4"
+                    >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {isPurchasing ? copy.openingCheckout : copy.buyNowUnlock}
+                      {isPurchasing ? copy.openingCheckout : copy.chooseMethod}
                     </Button>
+                    {paymentError ? (
+                      <p className="mt-2 text-xs text-destructive">{paymentError}</p>
+                    ) : null}
                   </div>
                 </div>
               )}
@@ -1020,6 +1054,21 @@ export const CoursePlayer = ({
           )}
         </div>
       </div>
+
+      <PaymentMethodModal
+        isOpen={isMethodModalOpen}
+        isLoading={isPurchasing}
+        language={language}
+        errorMessage={paymentError}
+        onClose={() => {
+          if (!isPurchasing) {
+            setIsMethodModalOpen(false);
+          }
+        }}
+        onConfirm={(method) => {
+          void handlePurchaseClick(method);
+        }}
+      />
     </DashboardPreferencesProvider>
   );
 };

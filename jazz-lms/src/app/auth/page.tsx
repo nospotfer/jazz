@@ -39,7 +39,7 @@ function resolveClientAppOrigin(currentOrigin: string): string {
       return currentOrigin;
     }
 
-    if (isLocalOrigin(configuredOrigin)) {
+    if (configuredOrigin && isLocalOrigin(configuredOrigin)) {
       return configuredOrigin;
     }
 
