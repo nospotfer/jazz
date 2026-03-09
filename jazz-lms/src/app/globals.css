@@ -412,3 +412,62 @@ form a {
   background: color-mix(in oklch, var(--primary) 92%, transparent);
 }
 
+@keyframes payment-tunnel-select {
+  0% {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+  35% {
+    opacity: 0.52;
+    transform: scale(0.93);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+
+.payment-tunnel-select {
+  position: absolute;
+  inset: -20%;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--primary) 30%, transparent) 0%,
+    color-mix(in oklch, var(--primary) 13%, transparent) 38%,
+    transparent 72%
+  );
+  animation: payment-tunnel-select 460ms cubic-bezier(0.2, 0.8, 0.2, 1) 1;
+}
+
+@keyframes payment-selected-sheen {
+  0% {
+    transform: translateX(-145%) skewX(-22deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.22;
+  }
+  55% {
+    opacity: 0.14;
+  }
+  100% {
+    transform: translateX(165%) skewX(-22deg);
+    opacity: 0;
+  }
+}
+
+.payment-selected-sheen {
+  position: absolute;
+  inset: -6%;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 40%,
+    color-mix(in oklch, var(--primary) 24%, white) 50%,
+    transparent 60%
+  );
+  animation: payment-selected-sheen 2.2s ease-in-out infinite;
+}
+

@@ -35,7 +35,7 @@ function resolveServerAppOrigin(requestOrigin: string): string {
       return requestOrigin
     }
 
-    if (isLocalOrigin(configuredOrigin)) {
+    if (configuredOrigin && isLocalOrigin(configuredOrigin)) {
       return configuredOrigin
     }
 
