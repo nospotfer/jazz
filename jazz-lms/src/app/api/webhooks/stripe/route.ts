@@ -7,6 +7,12 @@ import { db } from '@/lib/db';
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
+  if (!stripe) {
+    return new NextResponse('Webhook temporarily disabled: Stripe is not configured', {
+      status: 503,
+    });
+  }
+
   const body = await req.text();
   const signature = (await headers()).get('Stripe-Signature') as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

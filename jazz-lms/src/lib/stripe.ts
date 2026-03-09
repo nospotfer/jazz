@@ -1,29 +1,28 @@
 import Stripe from 'stripe';
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY?.trim();
 const nodeEnv = process.env.NODE_ENV;
 const vercelEnv = process.env.VERCEL_ENV;
 
-if (!stripeSecretKey) {
-  throw new Error('Missing STRIPE_SECRET_KEY environment variable');
-}
+const isTestKey = Boolean(stripeSecretKey?.startsWith('sk_test_'));
+const isLiveKey = Boolean(stripeSecretKey?.startsWith('sk_live_'));
+const hasValidStripeKey = Boolean(stripeSecretKey) && (isTestKey || isLiveKey);
 
-const isTestKey = stripeSecretKey.startsWith('sk_test_');
-const isLiveKey = stripeSecretKey.startsWith('sk_live_');
-
-if (!isTestKey && !isLiveKey) {
-  throw new Error('Invalid STRIPE_SECRET_KEY format. Expected sk_test_... or sk_live_...');
+if (!hasValidStripeKey) {
+  console.warn('[stripe] Stripe disabled: missing or invalid STRIPE_SECRET_KEY. Payment routes will return unavailable.');
 }
 
 if (nodeEnv === 'development' && isLiveKey) {
-  throw new Error('Unsafe Stripe configuration: local development must use a test key (sk_test_...).');
+  console.warn('[stripe] Development is using a live Stripe key. Consider switching to sk_test_ for local sandbox tests.');
 }
 
 if (vercelEnv === 'production' && isTestKey) {
-  throw new Error('Unsafe Stripe configuration: production deployment must use a live key (sk_live_...).');
+  console.warn('[stripe] Production is using a test Stripe key. Live payments are disabled until sk_live_ is configured.');
 }
 
-export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-06-20',
-  typescript: true,
-});
+export const stripe = hasValidStripeKey
+  ? new Stripe(stripeSecretKey as string, {
+      apiVersion: '2024-06-20',
+      typescript: true,
+    })
+  : null;

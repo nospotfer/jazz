@@ -39,7 +39,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   let shouldReloadUnlockedDashboard = false;
 
-  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
+  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId && stripe) {
     try {
       const session = await stripe.checkout.sessions.retrieve(sessionId);
       const sessionUserId = session.metadata?.userId;

@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     invalidRequest: 'Solicitud inválida',
     courseNotFound: 'Curso no encontrado',
     alreadyPurchased: 'El curso ya fue comprado',
+    paymentsUnavailable: 'Pagos temporalmente no disponibles',
     paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
     internalError: 'Error interno del servidor',
   };
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
         invalidRequest: 'Solicitud inválida',
         courseNotFound: 'Curso no encontrado',
         alreadyPurchased: 'El curso ya fue comprado',
+        paymentsUnavailable: 'Pagos temporalmente no disponibles',
         paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
         internalError: 'Error interno del servidor',
       },
@@ -75,6 +77,7 @@ export async function POST(req: Request) {
         invalidRequest: 'Invalid request',
         courseNotFound: 'Course not found',
         alreadyPurchased: 'Course already purchased',
+        paymentsUnavailable: 'Payments are temporarily unavailable',
         paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
         internalError: 'Internal server error',
       },
@@ -84,6 +87,7 @@ export async function POST(req: Request) {
         invalidRequest: 'Requête invalide',
         courseNotFound: 'Cours introuvable',
         alreadyPurchased: 'Le cours a déjà été acheté',
+        paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
         paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
         internalError: 'Erreur interne du serveur',
       },
@@ -93,6 +97,7 @@ export async function POST(req: Request) {
         invalidRequest: 'Solicitação inválida',
         courseNotFound: 'Curso não encontrado',
         alreadyPurchased: 'O curso já foi comprado',
+        paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
         paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
         internalError: 'Erro interno do servidor',
       },
@@ -168,6 +173,10 @@ export async function POST(req: Request) {
       return NextResponse.json({
         url: successUrl,
       });
+    }
+
+    if (!stripe) {
+      return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
     // Find or create Stripe customer
