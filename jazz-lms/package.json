@@ -7,6 +7,15 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "test:security": "vitest run tests/security",
+    "test:regression": "vitest run tests/regression",
+    "test:system": "vitest run tests/system",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "security:secrets": "bash scripts/precommit-secret-scan.sh --all",
     "security:staged": "bash scripts/precommit-secret-scan.sh --staged",
     "hooks:install": "bash scripts/setup-git-hooks.sh",
@@ -61,9 +70,11 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.0.4",
     "@tailwindcss/postcss": "4.1.17",
+    "@playwright/test": "^1.52.0",
     "@types/node": "20.14.13",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "globals": "^16.5.0",
@@ -71,6 +82,7 @@
     "tailwindcss": "4.0.0-beta.10",
     "ts-node": "10.9.2",
     "tw-animate-css": "^1.4.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^2.1.9"
   }
 }
