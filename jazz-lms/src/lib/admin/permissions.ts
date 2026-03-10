@@ -17,6 +17,8 @@ export type Permission =
   | 'users.update'
   | 'users.assign_role'
   | 'analytics.read'
+  | 'vouchers.read'
+  | 'vouchers.update'
   | 'settings.read'
   | 'settings.update';
 
@@ -31,6 +33,8 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     'users.update',
     'users.assign_role',
     'analytics.read',
+    'vouchers.read',
+    'vouchers.update',
     'settings.read',
     'settings.update',
   ],

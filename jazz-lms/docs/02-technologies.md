@@ -433,7 +433,7 @@ Accessible, unstyled UI components:
 | Supabase over Firebase | Open-source, PostgreSQL, great auth |
 | Prisma over raw SQL | Type-safe queries, easy migrations |
 | Mux over YouTube | Professional streaming, no ads |
-| Stripe over PayPal | Better developer experience, more features |
+| Stripe as processor (with PayPal/Bizum via Checkout) | Single integration with broader method coverage |
 | Vercel over AWS | Simpler deployment, optimized for Next.js |
 | Tailwind over CSS-in-JS | Faster development, smaller bundle |
 
