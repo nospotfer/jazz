@@ -7,29 +7,9 @@ import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { cookies } from 'next/headers';
 import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
+import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
 
 export const runtime = 'nodejs';
-
-type SupportedPaymentMethod = 'card' | 'paypal' | 'bizum';
-
-const supportedPaymentMethods = new Set<SupportedPaymentMethod>(['card', 'paypal', 'bizum']);
-
-function isSupportedPaymentMethod(value: unknown): value is SupportedPaymentMethod {
-  return typeof value === 'string' && supportedPaymentMethods.has(value as SupportedPaymentMethod);
-}
-
-function isUnsupportedPaymentMethodStripeError(error: Stripe.errors.StripeInvalidRequestError): boolean {
-  const param = (error.param || '').toLowerCase();
-  const message = (error.message || '').toLowerCase();
-
-  return (
-    param.includes('payment_method_types') ||
-    param.includes('automatic_payment_methods') ||
-    message.includes('payment method') ||
-    message.includes('unsupported') ||
-    message.includes('not available')
-  );
-}
 
 export async function POST(req: Request) {
   let copy = {

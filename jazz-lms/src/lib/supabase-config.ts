@@ -7,7 +7,11 @@ function isPlaceholder(value?: string) {
 }
 
 export function hasValidSupabasePublicConfig(url?: string, anonKey?: string) {
-  return Boolean(url && anonKey && !isPlaceholder(url) && !isPlaceholder(anonKey));
+  if (isPlaceholder(url) || isPlaceholder(anonKey)) {
+    return false;
+  }
+
+  return Boolean(url && anonKey);
 }
 
 export function hasValidSupabaseServerConfig(
@@ -16,5 +20,9 @@ export function hasValidSupabaseServerConfig(
   serviceRoleKey?: string
 ) {
   if (!hasValidSupabasePublicConfig(url, anonKey)) return false;
-  return Boolean(serviceRoleKey && !isPlaceholder(serviceRoleKey));
+  if (isPlaceholder(serviceRoleKey)) {
+    return false;
+  }
+
+  return Boolean(serviceRoleKey);
 }
