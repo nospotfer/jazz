@@ -19,6 +19,7 @@ const MENU_ITEMS: MenuItem[] = [
   { href: '/admin/courses', label: 'Cursos', permission: 'courses.read' },
   { href: '/admin/users', label: 'Usuarios', permission: 'users.read' },
   { href: '/admin/stats', label: 'Analíticas', permission: 'analytics.read' },
+  { href: '/admin/vouchers', label: 'Vouchers', permission: 'vouchers.read' },
 ];
 
 export function AdminSidebar({ role }: AdminSidebarProps) {
@@ -34,7 +35,10 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
       </div>
       <nav className="p-4 space-y-2">
         {visibleItems.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active =
+            item.href === '/admin'
+              ? pathname === '/admin'
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}

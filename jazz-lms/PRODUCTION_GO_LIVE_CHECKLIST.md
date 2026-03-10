@@ -83,8 +83,11 @@ Critério de aceite:
 ### 5.1 Dashboard Stripe
 - [ ] Chaves corretas (produção: `sk_live` e `pk_live`)
 - [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/stripe`
-- [ ] Evento `checkout.session.completed` ativo
+- [ ] Eventos ativos: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`
 - [ ] `STRIPE_WEBHOOK_SECRET` atualizado no Vercel
+- [ ] PayPal habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
+- [ ] Bizum habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
+- [ ] Fluxos PayPal e Bizum testados em sandbox e validados em produção
 
 ### 5.2 Fluxo funcional
 - [ ] Usuário sem compra não acessa aulas bloqueadas

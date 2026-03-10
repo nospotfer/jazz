@@ -14,6 +14,12 @@ enum LanguageCode {
   pt
 }
 
+enum VoucherType {
+  FREE_ACCESS
+  DISCOUNT_PERCENT
+  DISCOUNT_FIXED
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -46,6 +52,7 @@ model Course {
   updatedAt   DateTime   @updatedAt
   chapters    Chapter[]
   purchases   Purchase[]
+  vouchers    VoucherCode[]
   translations CourseTranslation[]
 }
 
@@ -139,15 +146,98 @@ model Attachment {
 }
 
 model Purchase {
-  id        String   @id @default(uuid())
-  userId    String
-  courseId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id             String           @id @default(uuid())
+  userId         String
+  courseId       String
+  voucherId      String?
+  originalPrice  Float?
+  finalPrice     Float?
+  discountAmount Float?
+  stripeSessionId String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  voucher        VoucherCode?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  discount       DiscountApplied?
+  redemption     VoucherRedemption?
 
   @@unique([userId, courseId])
   @@index([courseId])
+  @@index([voucherId])
+  @@index([stripeSessionId])
+}
+
+model VoucherBatch {
+  id         String        @id @default(uuid())
+  name       String?
+  codePrefix String?
+  quantity   Int           @default(0)
+  createdBy  String?
+  metadata   Json?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  vouchers   VoucherCode[]
+
+  @@index([createdAt])
+}
+
+model VoucherCode {
+  id              String              @id @default(uuid())
+  code            String              @unique
+  type            VoucherType
+  discountPercent Float?
+  discountAmount  Float?
+  minOrderValue   Float?
+  courseId        String?
+  batchId         String?
+  maxUses         Int?
+  currentUses     Int                 @default(0)
+  maxUsesPerUser  Int                 @default(1)
+  isActive        Boolean             @default(true)
+  expiresAt       DateTime?
+  metadata        Json?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  course          Course?             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  batch           VoucherBatch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  redemptions     VoucherRedemption[]
+  discountsApplied DiscountApplied[]
+  purchases       Purchase[]
+
+  @@index([code])
+  @@index([isActive, expiresAt])
+  @@index([courseId])
+  @@index([batchId])
+}
+
+model VoucherRedemption {
+  id           String      @id @default(uuid())
+  voucherId    String
+  userId       String
+  purchaseId   String?     @unique
+  redeemedAt   DateTime    @default(now())
+  voucher      VoucherCode @relation(fields: [voucherId], references: [id], onDelete: Cascade)
+  purchase     Purchase?   @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+
+  @@index([voucherId, userId])
+  @@index([userId])
+  @@index([voucherId])
+  @@index([purchaseId])
+}
+
+model DiscountApplied {
+  id             String      @id @default(uuid())
+  purchaseId     String      @unique
+  voucherId      String?
+  originalPrice  Float
+  discountAmount Float
+  finalPrice     Float
+  createdAt      DateTime    @default(now())
+  purchase       Purchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  voucher        VoucherCode? @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+
+  @@index([purchaseId])
+  @@index([voucherId])
 }
 
 model UserProgress {
