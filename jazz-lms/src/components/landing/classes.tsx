@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { ArrowLeft, Lock, X } from 'lucide-react';
+import { ArrowLeft, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { getLocalizedJazzDescription, getLocalizedJazzSubtitle } from '@/lib/course-lessons';
@@ -160,24 +160,15 @@ function ExpandedCard({
         className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors"
-          aria-label={closeLabel}
-        >
-          <X className="h-5 w-5" />
-        </button>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           <div className="p-8 lg:p-10 flex flex-col justify-center overflow-y-auto max-h-[85vh]">
             <Button
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="w-fit px-0 mb-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+              className="w-fit mb-6 px-4 py-2 text-base font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="h-5 w-5 mr-2.5" />
               {backLabel}
             </Button>
 

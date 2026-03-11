@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   courseFindUnique: vi.fn(),
   purchaseFindUnique: vi.fn(),
-  purchaseCreate: vi.fn(),
+  purchaseUpsert: vi.fn(),
   purchaseFindMany: vi.fn(),
   purchaseFindFirst: vi.fn(),
   findUser: vi.fn(),
@@ -34,12 +34,17 @@ vi.mock('@/lib/db', () => ({
     course: { findUnique: mocks.courseFindUnique, findMany: mocks.findCourses },
     purchase: {
       findUnique: mocks.purchaseFindUnique,
-      create: mocks.purchaseCreate,
+      upsert: mocks.purchaseUpsert,
       findMany: mocks.purchaseFindMany,
       findFirst: mocks.purchaseFindFirst,
     },
     user: { findUnique: mocks.findUser },
     lessonPurchase: { findMany: mocks.findLessonPurchases },
+    $transaction: async (callback: (tx: any) => Promise<any>) => callback({
+      purchase: {
+        upsert: mocks.purchaseUpsert,
+      },
+    }),
   },
 }));
 
@@ -88,7 +93,7 @@ describe('Functional: Free course purchase flow', () => {
       isPublished: true,
     });
     mocks.purchaseFindUnique.mockResolvedValue(null);
-    mocks.purchaseCreate.mockResolvedValue({ id: 'p-new' });
+    mocks.purchaseUpsert.mockResolvedValue({ id: 'p-new' });
 
     const { POST } = await import('@/app/api/checkout/route');
     const req = new Request('http://localhost:3000/api/checkout', {
@@ -102,9 +107,7 @@ describe('Functional: Free course purchase flow', () => {
 
     // Step 1: Purchase created successfully
     expect(res.status).toBe(200);
-    expect(mocks.purchaseCreate).toHaveBeenCalledWith({
-      data: { userId, courseId },
-    });
+    expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
     // Step 2: Redirect to dashboard with success
     expect(body.url).toContain('/dashboard');
     expect(body.url).toContain('purchase=success');

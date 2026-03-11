@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 
 export const runtime = 'nodejs';
 
@@ -23,9 +24,50 @@ export async function PATCH(
     }
 
     const prisma = db as any;
+    const currentVoucher = await prisma.voucherCode.findUnique({
+      where: { id: params.voucherId },
+      select: {
+        id: true,
+        code: true,
+        type: true,
+        discountPercent: true,
+        discountAmount: true,
+        minOrderValue: true,
+        maxUses: true,
+        isActive: true,
+        expiresAt: true,
+        metadata: true,
+      },
+    });
+
+    if (!currentVoucher) {
+      return NextResponse.json(
+        { success: false, error: 'Not found', message: 'Voucher no encontrado.' },
+        { status: 404 }
+      );
+    }
+
+    const stripeMetadata = await syncVoucherPromotionCode(
+      {
+        ...currentVoucher,
+        isActive,
+      },
+      {
+        desiredActive: isActive,
+        createIfMissing: true,
+      }
+    );
+
+    if (!stripeMetadata) {
+      throw new Error(`Stripe sync returned empty metadata for voucher ${currentVoucher.code}.`);
+    }
+
     const voucher = await prisma.voucherCode.update({
       where: { id: params.voucherId },
-      data: { isActive },
+      data: {
+        isActive,
+        metadata: mergeStripeVoucherMetadata(currentVoucher.metadata, stripeMetadata),
+      },
       select: {
         id: true,
         code: true,

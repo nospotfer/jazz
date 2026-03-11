@@ -32,7 +32,8 @@
     "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts",
     "stripe:sandbox:check": "node scripts/stripe-sandbox-check.mjs",
     "stripe:sandbox:webhook": "node scripts/stripe-sandbox-webhook.mjs",
-    "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook"
+    "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook",
+    "vouchers:stripe:sync": "npx tsx scripts/sync-vouchers-to-stripe.ts"
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.9.0",

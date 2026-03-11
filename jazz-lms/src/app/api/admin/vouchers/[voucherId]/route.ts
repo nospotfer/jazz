@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 
 export const runtime = 'nodejs';
 
@@ -80,6 +81,105 @@ export async function GET(
     console.error('[ADMIN_VOUCHER_DETAIL_ERROR]', error);
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao carregar voucher.' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { voucherId: string } }
+) {
+  try {
+    const auth = await ensureAdminApiPermission('vouchers.update');
+    if (!auth.ok) {
+      return auth.response;
+    }
+
+    const prisma = db as any;
+    const voucher = await prisma.voucherCode.findUnique({
+      where: { id: params.voucherId },
+      select: {
+        id: true,
+        code: true,
+        type: true,
+        discountPercent: true,
+        discountAmount: true,
+        minOrderValue: true,
+        maxUses: true,
+        isActive: true,
+        expiresAt: true,
+        metadata: true,
+        batchId: true,
+        currentUses: true,
+        _count: {
+          select: {
+            redemptions: true,
+          },
+        },
+      },
+    });
+
+    if (!voucher) {
+      return NextResponse.json(
+        { success: false, error: 'Not found', message: 'Voucher no encontrado.' },
+        { status: 404 }
+      );
+    }
+
+    if (voucher.currentUses > 0 || voucher._count.redemptions > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Conflict',
+          message: `No se puede eliminar ${voucher.code} porque ya fue usado.`,
+        },
+        { status: 409 }
+      );
+    }
+
+    await syncVoucherPromotionCode(voucher, {
+      desiredActive: false,
+      createIfMissing: false,
+    });
+
+    const result = await prisma.$transaction(async (tx: any) => {
+      await tx.voucherCode.delete({
+        where: { id: voucher.id },
+      });
+
+      if (voucher.batchId) {
+        const batchCount = await tx.voucherCode.count({
+          where: {
+            batchId: voucher.batchId,
+          },
+        });
+
+        await tx.voucherBatch.update({
+          where: {
+            id: voucher.batchId,
+          },
+          data: {
+            quantity: batchCount,
+          },
+        });
+      }
+
+      return {
+        status: 'deleted' as const,
+        code: voucher.code,
+      };
+    });
+
+    return NextResponse.json({
+      success: true,
+      deletedCount: 1,
+      message: `Voucher ${result.code} eliminado.`,
+    });
+  } catch (error) {
+    console.error('[ADMIN_VOUCHER_DELETE_ERROR]', error);
+    return NextResponse.json(
+      { success: false, error: 'Server error', message: 'Error al eliminar voucher.' },
       { status: 500 }
     );
   }

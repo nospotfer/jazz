@@ -4,7 +4,7 @@ const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   courseFindUnique: vi.fn(),
   purchaseFindUnique: vi.fn(),
-  purchaseCreate: vi.fn(),
+  purchaseUpsert: vi.fn(),
   cookies: vi.fn(),
   normalizeLanguage: vi.fn(),
   languageToStripeLocale: vi.fn(),
@@ -25,8 +25,13 @@ vi.mock('@/lib/db', () => ({
     course: { findUnique: mocks.courseFindUnique },
     purchase: {
       findUnique: mocks.purchaseFindUnique,
-      create: mocks.purchaseCreate,
+      upsert: mocks.purchaseUpsert,
     },
+    $transaction: async (callback: (tx: any) => Promise<any>) => callback({
+      purchase: {
+        upsert: mocks.purchaseUpsert,
+      },
+    }),
   },
 }));
 
@@ -83,6 +88,18 @@ describe('POST /api/checkout', () => {
     expect(res.status).toBe(400);
   });
 
+  test('returns 400 when voucher code is sent to checkout API payload', async () => {
+    const { POST } = await import('@/app/api/checkout/route');
+    const req = new Request('http://localhost:3000/api/checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
+      body: JSON.stringify({ courseId: 'c1', voucherCode: 'PROMO100' }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+  });
+
   test('returns 401 when user is not authenticated', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
@@ -132,7 +149,7 @@ describe('POST /api/checkout', () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Curso', description: '', price: 0 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
-    mocks.purchaseCreate.mockResolvedValue({ id: 'p1' });
+    mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
     const req = new Request('http://localhost:3000/api/checkout', {
@@ -146,7 +163,7 @@ describe('POST /api/checkout', () => {
 
     expect(res.status).toBe(200);
     expect(body.url).toContain('/dashboard?purchase=success');
-    expect(mocks.purchaseCreate).toHaveBeenCalledTimes(1);
+    expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
   });
 
   test('returns 503 when stripe is not configured for paid course', async () => {
@@ -183,7 +200,7 @@ describe('POST /api/checkout', () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Curso', description: '', price: 0 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
-    mocks.purchaseCreate.mockResolvedValue({ id: 'p1' });
+    mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
     const req = new Request('http://localhost:3000/api/checkout', {
