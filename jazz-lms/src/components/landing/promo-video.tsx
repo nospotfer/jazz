@@ -20,7 +20,7 @@ export function PromoVideo() {
   const posterUrl = playbackId
     ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ''}`
     : '';
-  const hasMuxPlayback = Boolean(playbackId && playbackToken && !muxRuntimeError);
+  const hasMuxPlayback = Boolean(playbackId && !muxRuntimeError);
   const copy = {
     es: {
       pretitle: 'Curso Online · Con Enric Vazquez Ramonich',
@@ -159,11 +159,15 @@ export function PromoVideo() {
                 ref={playerRef}
                 className="absolute inset-0 w-full h-full"
                 playbackId={playbackId}
-                tokens={{
-                  playback: playbackToken || undefined,
-                  thumbnail: thumbnailToken || undefined,
-                  storyboard: storyboardToken || undefined,
-                }}
+                {...(playbackToken
+                  ? {
+                      tokens: {
+                        playback: playbackToken || undefined,
+                        thumbnail: thumbnailToken || undefined,
+                        storyboard: storyboardToken || undefined,
+                      },
+                    }
+                  : {})}
                 poster={posterUrl || undefined}
                 autoPlay
                 muted
