@@ -27,15 +27,45 @@ describe('POST /api/webhooks/stripe', () => {
     vi.doMock('@/lib/stripe', () => ({
       stripe: overrides ?? {
         webhooks: { constructEvent: vi.fn() },
+        checkout: {
+          sessions: {
+            retrieve: vi.fn().mockResolvedValue({
+              id: 'cs_test_1',
+              amount_subtotal: 2999,
+              amount_total: 2999,
+              total_details: {
+                amount_discount: 0,
+                breakdown: {
+                  discounts: [],
+                },
+              },
+            }),
+          },
+        },
       },
     }));
   }
 
   function mockDb(purchaseUpsert = vi.fn(), lessonPurchaseUpsert = vi.fn()) {
+    const tx = {
+      purchase: { upsert: purchaseUpsert },
+      voucherRedemption: {
+        findFirst: vi.fn().mockResolvedValue(null),
+        create: vi.fn().mockResolvedValue({ id: 'vr1' }),
+      },
+      voucherCode: {
+        findUnique: vi.fn().mockResolvedValue(null),
+        update: vi.fn().mockResolvedValue({ id: 'v1' }),
+      },
+      discountApplied: {
+        upsert: vi.fn().mockResolvedValue({ id: 'd1' }),
+      },
+    };
+
     vi.doMock('@/lib/db', () => ({
       db: {
-        purchase: { upsert: purchaseUpsert },
         lessonPurchase: { upsert: lessonPurchaseUpsert },
+        $transaction: async (callback: (innerTx: typeof tx) => Promise<unknown>) => callback(tx),
       },
     }));
   }
@@ -104,8 +134,28 @@ describe('POST /api/webhooks/stripe', () => {
         webhooks: {
           constructEvent: vi.fn(() => ({
             type: 'checkout.session.completed',
-            data: { object: { metadata: { userId: 'u1', courseId: 'c1', purchaseType: 'course' } } },
+            data: {
+              object: {
+                id: 'cs_test_1',
+                metadata: { userId: 'u1', courseId: 'c1', purchaseType: 'course' },
+              },
+            },
           })),
+        },
+        checkout: {
+          sessions: {
+            retrieve: vi.fn().mockResolvedValue({
+              id: 'cs_test_1',
+              amount_subtotal: 2999,
+              amount_total: 2999,
+              total_details: {
+                amount_discount: 0,
+                breakdown: {
+                  discounts: [],
+                },
+              },
+            }),
+          },
         },
       },
     }));

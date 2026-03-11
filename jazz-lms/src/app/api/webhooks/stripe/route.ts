@@ -78,18 +78,126 @@ export async function POST(req: Request) {
         },
       });
     } else {
-      await db.purchase.upsert({
-        where: {
-          userId_courseId: {
-            userId,
-            courseId,
+      const prisma = db as any;
+
+      const hydratedSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: [
+          'total_details.breakdown.discounts.discount.promotion_code',
+          'total_details.breakdown.discounts.discount.coupon',
+        ],
+      });
+
+      const subtotalAmount = (hydratedSession.amount_subtotal ?? 0) / 100;
+      const totalAmount = (hydratedSession.amount_total ?? 0) / 100;
+      const amountDiscount = (hydratedSession.total_details?.amount_discount ?? 0) / 100;
+
+      const breakdownDiscounts = hydratedSession.total_details?.breakdown?.discounts ?? [];
+      const appliedPromotionCode = breakdownDiscounts
+        .map((entry) => {
+          const promotionCode = entry.discount.promotion_code;
+          if (!promotionCode) {
+            return null;
+          }
+
+          if (typeof promotionCode === 'string') {
+            return null;
+          }
+
+          return promotionCode.code;
+        })
+        .find((value): value is string => typeof value === 'string' && value.trim().length > 0);
+
+      const normalizedPromotionCode = appliedPromotionCode?.trim().toUpperCase() || null;
+      const mappedVoucher = normalizedPromotionCode
+        ? await prisma.voucherCode.findUnique({
+            where: {
+              code: normalizedPromotionCode,
+            },
+            select: {
+              id: true,
+            },
+          })
+        : null;
+
+      const voucherId = mappedVoucher?.id ?? null;
+      const originalPrice = Number.isFinite(subtotalAmount) ? Number(subtotalAmount.toFixed(2)) : 0;
+      const discountAmount = Number.isFinite(amountDiscount) ? Number(amountDiscount.toFixed(2)) : 0;
+      const finalPrice = Number.isFinite(totalAmount) ? Number(totalAmount.toFixed(2)) : 0;
+
+      await prisma.$transaction(async (tx: any) => {
+        const purchase = await tx.purchase.upsert({
+          where: {
+            userId_courseId: {
+              userId,
+              courseId,
+            },
           },
-        },
-        update: {},
-        create: {
-          courseId,
-          userId,
-        },
+          update: {
+            stripeSessionId: session.id,
+            voucherId,
+            originalPrice,
+            finalPrice,
+            discountAmount,
+          },
+          create: {
+            courseId,
+            userId,
+            stripeSessionId: session.id,
+            voucherId,
+            originalPrice,
+            finalPrice,
+            discountAmount,
+          },
+        });
+
+        if (voucherId) {
+          const redemption = await tx.voucherRedemption.findFirst({
+            where: {
+              purchaseId: purchase.id,
+            },
+            select: {
+              id: true,
+            },
+          });
+
+          if (!redemption) {
+            await tx.voucherRedemption.create({
+              data: {
+                voucherId,
+                userId,
+                purchaseId: purchase.id,
+              },
+            });
+
+            await tx.voucherCode.update({
+              where: { id: voucherId },
+              data: {
+                currentUses: {
+                  increment: 1,
+                },
+              },
+            });
+          }
+
+          await tx.discountApplied.upsert({
+            where: {
+              purchaseId: purchase.id,
+            },
+            update: {
+              voucherId,
+              originalPrice: Number.isFinite(originalPrice) ? originalPrice : 0,
+              discountAmount: Number.isFinite(discountAmount) ? discountAmount : 0,
+              finalPrice: Number.isFinite(finalPrice) ? finalPrice : 0,
+            },
+            create: {
+              purchaseId: purchase.id,
+              voucherId,
+              originalPrice: Number.isFinite(originalPrice) ? originalPrice : 0,
+              discountAmount: Number.isFinite(discountAmount) ? discountAmount : 0,
+              finalPrice: Number.isFinite(finalPrice) ? finalPrice : 0,
+            },
+          });
+        }
       });
     }
   } else {

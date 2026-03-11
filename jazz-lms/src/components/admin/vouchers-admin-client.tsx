@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
@@ -25,8 +25,14 @@ type VoucherItem = {
   createdAt: string;
   course: { id: string; title: string } | null;
   _count: { redemptions: number };
-  periodTag: 'este_mes' | 'ultimo_mes' | 'este_trimestre';
-  batchName: string;
+  batch: { id: string; name: string | null; codePrefix: string | null; createdAt: string } | null;
+};
+
+type VoucherStats = {
+  total: number;
+  active: number;
+  used: number;
+  expired: number;
 };
 
 type Props = {
@@ -34,221 +40,461 @@ type Props = {
 };
 
 export function VouchersAdminClient({ courses }: Props) {
+  const quickDiscounts = [10, 20, 30, 50, 100] as const;
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
-  const [period, setPeriod] = useState<'all' | 'este_mes' | 'ultimo_mes' | 'este_trimestre'>('all');
-  const [selectedVoucherId, setSelectedVoucherId] = useState<string | null>(null);
+  const [usage, setUsage] = useState<'all' | 'used' | 'unused'>('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [vouchers, setVouchers] = useState<VoucherItem[]>([]);
+  const [stats, setStats] = useState<VoucherStats>({ total: 0, active: 0, used: 0, expired: 0 });
+  const [lastGeneratedCodes, setLastGeneratedCodes] = useState<string[]>([]);
+  const [selectedVoucherIds, setSelectedVoucherIds] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     type: 'DISCOUNT_PERCENT',
     courseId: '',
-    count: '20',
-    discountPercent: '10',
+    count: '1',
+    discountPercent: '20',
     discountAmount: '',
-    minOrderValue: '',
+    minOrderValue: '0',
     maxUses: '1',
     maxUsesPerUser: '1',
     expiresInDays: '',
-    prefix: 'EVENTO',
-    batchName: 'Campaña Primavera',
+    prefix: 'TEST',
+    batchName: '',
   });
 
-  const placeholderVouchers = useMemo<VoucherItem[]>(() => {
-    const primaryCourse = courses[0] ?? null;
-    const secondaryCourse = courses[1] ?? primaryCourse ?? null;
+  const buildQuery = useCallback(() => {
+    const params = new URLSearchParams();
+    if (status !== 'all') {
+      params.set('status', status);
+    }
+    if (usage !== 'all') {
+      params.set('usage', usage);
+    }
+    if (search.trim()) {
+      params.set('search', search.trim());
+    }
+    return params.toString();
+  }, [search, status, usage]);
 
-    return [
-      {
-        id: 'placeholder-1',
-        code: 'EVENTO-ABRIL-001',
-        type: 'DISCOUNT_PERCENT',
-        discountPercent: 20,
-        discountAmount: null,
-        minOrderValue: 30,
-        maxUses: 1,
-        currentUses: 0,
-        maxUsesPerUser: 1,
-        isActive: true,
-        expiresAt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        course: primaryCourse ? { id: primaryCourse.id, title: primaryCourse.title } : null,
-        _count: { redemptions: 0 },
-        periodTag: 'este_mes',
-        batchName: 'Campaña Primavera',
-      },
-      {
-        id: 'placeholder-2',
-        code: 'EVENTO-ABRIL-002',
-        type: 'FREE_ACCESS',
-        discountPercent: null,
-        discountAmount: null,
-        minOrderValue: null,
-        maxUses: 1,
-        currentUses: 1,
-        maxUsesPerUser: 1,
-        isActive: true,
-        expiresAt: null,
-        createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-        course: secondaryCourse ? { id: secondaryCourse.id, title: secondaryCourse.title } : null,
-        _count: { redemptions: 1 },
-        periodTag: 'este_mes',
-        batchName: 'Campaña Primavera',
-      },
-      {
-        id: 'placeholder-3',
-        code: 'VIP-MARZO-010',
-        type: 'DISCOUNT_FIXED',
-        discountPercent: null,
-        discountAmount: 15,
-        minOrderValue: 60,
-        maxUses: 3,
-        currentUses: 2,
-        maxUsesPerUser: 1,
-        isActive: true,
-        expiresAt: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-        course: null,
-        _count: { redemptions: 2 },
-        periodTag: 'ultimo_mes',
-        batchName: 'Acción VIP',
-      },
-      {
-        id: 'placeholder-4',
-        code: 'INACTIVO-001',
-        type: 'DISCOUNT_PERCENT',
-        discountPercent: 10,
-        discountAmount: null,
-        minOrderValue: null,
-        maxUses: 20,
-        currentUses: 0,
-        maxUsesPerUser: 1,
-        isActive: false,
-        expiresAt: null,
-        createdAt: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
-        course: primaryCourse ? { id: primaryCourse.id, title: primaryCourse.title } : null,
-        _count: { redemptions: 0 },
-        periodTag: 'este_trimestre',
-        batchName: 'Pruebas Internas',
-      },
-      {
-        id: 'placeholder-5',
-        code: 'EXP-ENERO-005',
-        type: 'DISCOUNT_PERCENT',
-        discountPercent: 25,
-        discountAmount: null,
-        minOrderValue: 20,
-        maxUses: 10,
-        currentUses: 4,
-        maxUsesPerUser: 1,
-        isActive: true,
-        expiresAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 80 * 24 * 60 * 60 * 1000).toISOString(),
-        course: null,
-        _count: { redemptions: 4 },
-        periodTag: 'este_trimestre',
-        batchName: 'Campaña Q1',
-      },
-    ];
-  }, [courses]);
+  const loadVouchers = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const query = buildQuery();
+      const response = await fetch(`/api/admin/vouchers${query ? `?${query}` : ''}`, {
+        method: 'GET',
+        cache: 'no-store',
+      });
 
-  const vouchers = useMemo(() => {
-    return placeholderVouchers.filter((voucher) => {
-      const matchesSearch =
-        search.trim().length === 0 || voucher.code.toLowerCase().includes(search.toLowerCase());
+      if (!response.ok) {
+        throw new Error('No se pudieron cargar los vouchers.');
+      }
 
-      const expired = voucher.expiresAt ? new Date(voucher.expiresAt) < new Date() : false;
-      const matchesStatus =
-        status === 'all'
-          ? true
-          : status === 'active'
-            ? voucher.isActive && !expired
-            : status === 'inactive'
-              ? !voucher.isActive
-              : expired;
+      const data = await response.json();
+      const list: VoucherItem[] = Array.isArray(data.vouchers) ? data.vouchers : [];
 
-      const matchesPeriod = period === 'all' ? true : voucher.periodTag === period;
+      setVouchers(list);
+      setSelectedVoucherIds((prev) => prev.filter((id) => list.some((voucher) => voucher.id === id)));
+      setStats({
+        total: Number(data.stats?.total || 0),
+        active: Number(data.stats?.active || 0),
+        used: Number(data.stats?.used || 0),
+        expired: Number(data.stats?.expired || 0),
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al cargar vouchers.');
+      setVouchers([]);
+      setStats({ total: 0, active: 0, used: 0, expired: 0 });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [buildQuery]);
 
-      return matchesSearch && matchesStatus && matchesPeriod;
-    });
-  }, [placeholderVouchers, search, status, period]);
+  useEffect(() => {
+    void loadVouchers();
+  }, [loadVouchers]);
 
-  const stats = useMemo(() => {
-    const active = placeholderVouchers.filter((voucher) => voucher.isActive).length;
-    const used = placeholderVouchers.filter((voucher) => voucher.currentUses > 0).length;
-    const expired = placeholderVouchers.filter(
-      (voucher) => voucher.expiresAt && new Date(voucher.expiresAt) < new Date()
-    ).length;
+  const handleGenerate = async () => {
+    setIsGenerating(true);
 
-    return {
-      total: placeholderVouchers.length,
-      active,
-      used,
-      expired,
-    };
-  }, [placeholderVouchers]);
+    try {
+      const payload = {
+        type: form.type,
+        courseId: form.courseId || null,
+        count: Number(form.count || 1),
+        discountPercent: form.type === 'DISCOUNT_PERCENT' ? Number(form.discountPercent || 0) : null,
+        discountAmount: form.type === 'DISCOUNT_FIXED' ? Number(form.discountAmount || 0) : null,
+        minOrderValue: Number(form.minOrderValue || 0),
+        maxUses: Number(form.maxUses || 1),
+        maxUsesPerUser: Number(form.maxUsesPerUser || 1),
+        expiresInDays: form.expiresInDays ? Number(form.expiresInDays) : null,
+        prefix: form.prefix,
+        batchName: form.batchName || null,
+      };
 
-  const selectedVoucher = useMemo(
-    () => placeholderVouchers.find((voucher) => voucher.id === selectedVoucherId) ?? null,
-    [placeholderVouchers, selectedVoucherId]
-  );
+      const response = await fetch('/api/admin/vouchers/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-  const handleGenerate = () => {
-    toast.info('Placeholder listo: la generación real de vouchers se conectará en la siguiente fase.');
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudo crear el lote.');
+      }
+
+      const createdCodes: string[] = Array.isArray(data.vouchers)
+        ? data.vouchers.map((voucher: { code: string }) => voucher.code)
+        : [];
+
+      setLastGeneratedCodes(createdCodes);
+      toast.success(`Lote creado: ${Number(data.created || 0)} voucher(s).`);
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo crear el lote.';
+      toast.error(message);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const triggerPlaceholderAction = (actionName: string) => {
-    toast.info(`Acción de placeholder: ${actionName}.`);
+  const handleQuickBatch = async (discountPercent: number) => {
+    setIsGenerating(true);
+
+    const codeBase = `CDJLMS${discountPercent}`;
+
+    try {
+      const response = await fetch('/api/admin/vouchers/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'DISCOUNT_PERCENT',
+          courseId: form.courseId || null,
+          count: 5,
+          discountPercent,
+          discountAmount: null,
+          minOrderValue: Number(form.minOrderValue || 0),
+          maxUses: Number(form.maxUses || 1),
+          maxUsesPerUser: Number(form.maxUsesPerUser || 1),
+          expiresInDays: form.expiresInDays ? Number(form.expiresInDays) : null,
+          prefix: form.prefix,
+          batchName: codeBase,
+          deterministicBaseCode: codeBase,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudo crear el lote rápido.');
+      }
+
+      const createdCodes: string[] = Array.isArray(data.vouchers)
+        ? data.vouchers.map((voucher: { code: string }) => voucher.code)
+        : [];
+
+      setLastGeneratedCodes(createdCodes);
+      toast.success(`Atajo ${discountPercent}%: 5 vouchers creados.`);
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo crear el lote rápido.';
+      toast.error(message);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleToggleVoucher = async (voucher: VoucherItem) => {
+    try {
+      const response = await fetch(`/api/admin/vouchers/${voucher.id}/toggle`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isActive: !voucher.isActive }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudo cambiar el estado.');
+      }
+
+      toast.success(voucher.isActive ? 'Voucher desactivado.' : 'Voucher activado.');
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo cambiar el estado.';
+      toast.error(message);
+    }
+  };
+
+  const toggleVoucherSelection = (voucherId: string) => {
+    setSelectedVoucherIds((prev) =>
+      prev.includes(voucherId) ? prev.filter((id) => id !== voucherId) : [...prev, voucherId]
+    );
+  };
+
+  const toggleAllVisible = () => {
+    const visibleIds = sortedVouchers.map((voucher) => voucher.id);
+    const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedVoucherIds.includes(id));
+
+    if (allSelected) {
+      setSelectedVoucherIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
+      return;
+    }
+
+    setSelectedVoucherIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
+  };
+
+  const handleDeleteVoucher = async (voucher: VoucherItem) => {
+    const confirmed = window.confirm(`¿Eliminar voucher ${voucher.code}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/admin/vouchers/${voucher.id}`, {
+        method: 'DELETE',
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudo eliminar el voucher.');
+      }
+
+      setSelectedVoucherIds((prev) => prev.filter((id) => id !== voucher.id));
+      toast.success(data.message || 'Voucher eliminado.');
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo eliminar el voucher.';
+      toast.error(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!selectedVoucherIds.length) {
+      toast.info('Selecciona al menos un voucher.');
+      return;
+    }
+
+    const confirmed = window.confirm(`¿Eliminar ${selectedVoucherIds.length} voucher(s) seleccionados?`);
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/admin/vouchers/bulk-delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          voucherIds: selectedVoucherIds,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudieron eliminar los vouchers seleccionados.');
+      }
+
+      setSelectedVoucherIds([]);
+      toast.success(data.message || 'Eliminación completada.');
+      if (Array.isArray(data.blockedCodes) && data.blockedCodes.length > 0) {
+        toast.info(`No eliminados por uso: ${data.blockedCodes.join(', ')}`);
+      }
+      await loadVouchers();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'No se pudieron eliminar los vouchers seleccionados.';
+      toast.error(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteBatch = async (batchId: string, batchName: string | null) => {
+    const label = batchName || batchId;
+    const confirmed = window.confirm(`¿Eliminar lote ${label}? Se borrarán solo vouchers sin uso.`);
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/admin/vouchers/bulk-delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ batchId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'No se pudo eliminar el lote.');
+      }
+
+      setSelectedVoucherIds([]);
+      toast.success(data.message || 'Lote procesado.');
+      if (Array.isArray(data.blockedCodes) && data.blockedCodes.length > 0) {
+        toast.info(`No eliminados por uso: ${data.blockedCodes.join(', ')}`);
+      }
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo eliminar el lote.';
+      toast.error(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const query = status === 'all' ? '' : `?status=${status}`;
+      const response = await fetch(`/api/admin/vouchers/export${query}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error('No se pudo exportar el CSV.');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `vouchers-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast.success('CSV exportado.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo exportar el CSV.';
+      toast.error(message);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setStatus('all');
+    setUsage('all');
+  };
+
+  const copyLastGeneratedCodes = async () => {
+    if (!lastGeneratedCodes.length) {
+      toast.info('Todavía no hay códigos nuevos para copiar.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(lastGeneratedCodes.join('\n'));
+      toast.success('Códigos copiados al portapapeles.');
+    } catch {
+      toast.error('No se pudo copiar al portapapeles.');
+    }
   };
 
   const statusLabel = useMemo(() => {
     return `Total: ${stats.total} · Activos: ${stats.active} · Usados: ${stats.used} · Expirados: ${stats.expired}`;
   }, [stats]);
 
+  const sortedVouchers = useMemo(() => {
+    return [...vouchers].sort((a, b) => {
+      const aPercent =
+        a.type === 'DISCOUNT_PERCENT' ? (a.discountPercent ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
+      const bPercent =
+        b.type === 'DISCOUNT_PERCENT' ? (b.discountPercent ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
+
+      if (aPercent !== bPercent) {
+        return aPercent - bPercent;
+      }
+
+      return a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  }, [vouchers]);
+
+  const allVisibleSelected =
+    sortedVouchers.length > 0 && sortedVouchers.every((voucher) => selectedVoucherIds.includes(voucher.id));
+
   return (
     <div className="space-y-8 pb-4">
       <div>
         <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Vouchers</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Interfaz de administración lista para integrar generación, activación y canje de vouchers.
+          Panel simple para crear, activar y probar descuentos en el sandbox.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="card border-t-green-500">
-          <p className="text-xs text-muted-foreground">Total de vouchers</p>
-          <p className="text-3xl font-bold mt-2">{stats.total}</p>
+      <div className="card">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold">Información general</h2>
+            <p className="text-xs text-muted-foreground mt-1">{statusLabel}</p>
+          </div>
+          <Button variant="secondary" onClick={clearFilters}>
+            Limpiar filtros
+          </Button>
         </div>
-        <div className="card border-t-blue-500">
-          <p className="text-xs text-muted-foreground">Vouchers activos</p>
-          <p className="text-3xl font-bold mt-2">{stats.active}</p>
-        </div>
-        <div className="card border-t-purple-500">
-          <p className="text-xs text-muted-foreground">Vouchers usados</p>
-          <p className="text-3xl font-bold mt-2">{stats.used}</p>
-        </div>
-        <div className="card border-t-yellow-500">
-          <p className="text-xs text-muted-foreground">Vouchers expirados</p>
-          <p className="text-3xl font-bold mt-2">{stats.expired}</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
+          <div className="rounded-md border border-border p-4">
+            <p className="text-xs text-muted-foreground">Total de vouchers</p>
+            <p className="text-3xl font-bold mt-2">{stats.total}</p>
+          </div>
+          <div className="rounded-md border border-border p-4">
+            <p className="text-xs text-muted-foreground">Vouchers activos</p>
+            <p className="text-3xl font-bold mt-2">{stats.active}</p>
+          </div>
+          <div className="rounded-md border border-border p-4">
+            <p className="text-xs text-muted-foreground">Vouchers usados</p>
+            <p className="text-3xl font-bold mt-2">{stats.used}</p>
+          </div>
+          <div className="rounded-md border border-border p-4">
+            <p className="text-xs text-muted-foreground">Vouchers expirados</p>
+            <p className="text-3xl font-bold mt-2">{stats.expired}</p>
+          </div>
         </div>
       </div>
 
       <div className="card space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-semibold">Crear lote de vouchers</h2>
-          <p className="text-xs text-muted-foreground">Formulario visual listo (modo placeholder)</p>
+          <p className="text-xs text-muted-foreground">Solo campos esenciales para pruebas rápidas.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground">Tipo de voucher</label>
+            <label className="text-xs text-muted-foreground">Tipo</label>
             <select
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={form.type}
-              onChange={(event) => setForm((prev) => ({ ...prev, type: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  type: event.target.value,
+                  discountAmount: event.target.value === 'DISCOUNT_FIXED' ? prev.discountAmount : '',
+                }))
+              }
             >
-              <option value="FREE_ACCESS">FREE_ACCESS</option>
-              <option value="DISCOUNT_PERCENT">DISCOUNT_PERCENT</option>
-              <option value="DISCOUNT_FIXED">DISCOUNT_FIXED</option>
+              <option value="DISCOUNT_PERCENT">Descuento (%)</option>
+              <option value="DISCOUNT_FIXED">Descuento fijo (€)</option>
+              <option value="FREE_ACCESS">Acceso gratis</option>
             </select>
           </div>
 
@@ -269,7 +515,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Cantidad</label>
+            <label className="text-xs text-muted-foreground">Cantidad de códigos</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               type="number"
@@ -313,7 +559,7 @@ export function VouchersAdminClient({ courses }: Props) {
           ) : null}
 
           <div>
-            <label className="text-xs text-muted-foreground">Pedido mínimo (€)</label>
+            <label className="text-xs text-muted-foreground">Compra mínima (€)</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               type="number"
@@ -325,7 +571,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Límite total</label>
+            <label className="text-xs text-muted-foreground">Usos por código</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               type="number"
@@ -336,7 +582,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Límite por usuario</label>
+            <label className="text-xs text-muted-foreground">Usos por persona</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               type="number"
@@ -361,7 +607,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Prefijo</label>
+            <label className="text-xs text-muted-foreground">Prefijo del código</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={form.prefix}
@@ -370,7 +616,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Nombre del lote</label>
+            <label className="text-xs text-muted-foreground">Nombre del lote (opcional)</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={form.batchName}
@@ -379,54 +625,98 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button onClick={handleGenerate}>
-            Crear lote (placeholder)
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button onClick={handleGenerate} disabled={isGenerating}>
+            {isGenerating ? 'Creando...' : 'Crear lote'}
           </Button>
-          <Button variant="secondary" onClick={() => triggerPlaceholderAction('Exportar CSV')}>
-            Exportar CSV (placeholder)
+          <Button variant="secondary" onClick={copyLastGeneratedCodes}>
+            Copiar últimos códigos
           </Button>
-          <Button variant="secondary" onClick={() => triggerPlaceholderAction('Copiar códigos del lote')}>
-            Copiar códigos (placeholder)
-          </Button>
+        </div>
+
+        <div className="rounded-md border border-border p-3">
+          <p className="text-xs text-muted-foreground mb-2">Atajos rápidos (crea 5 vouchers por botón)</p>
+          <div className="flex flex-wrap gap-2">
+            {quickDiscounts.map((value) => (
+              <Button
+                key={value}
+                size="sm"
+                variant="secondary"
+                disabled={isGenerating}
+                onClick={() => void handleQuickBatch(value)}
+              >
+                {value}%
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">
-        <div className="card space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl font-semibold">Vouchers configurados</h2>
-              <p className="text-xs text-muted-foreground">{statusLabel}</p>
-            </div>
-            <div className="flex gap-2">
-              <input
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                placeholder="Buscar por código"
-                value={search}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
-              />
-            </div>
+      <div className="card space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold">Vouchers configurados</h2>
+            <p className="text-xs text-muted-foreground">Listado simple con acciones básicas.</p>
           </div>
-
-          <div className="flex gap-2 flex-wrap">
-            <Button variant={status === 'all' ? 'default' : 'secondary'} onClick={() => setStatus('all')}>Todos</Button>
-            <Button variant={status === 'active' ? 'default' : 'secondary'} onClick={() => setStatus('active')}>Activos</Button>
-            <Button variant={status === 'inactive' ? 'default' : 'secondary'} onClick={() => setStatus('inactive')}>Inactivos</Button>
-            <Button variant={status === 'expired' ? 'default' : 'secondary'} onClick={() => setStatus('expired')}>Expirados</Button>
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <Button
+              variant="destructive"
+              onClick={handleDeleteSelected}
+              disabled={isDeleting || selectedVoucherIds.length === 0}
+            >
+              Eliminar seleccionados ({selectedVoucherIds.length})
+            </Button>
+            <Button variant="secondary" onClick={handleExport} disabled={isExporting}>
+              {isExporting ? 'Exportando...' : 'Exportar CSV'}
+            </Button>
           </div>
+        </div>
 
-          <div className="flex gap-2 flex-wrap">
-            <Button variant={period === 'all' ? 'default' : 'secondary'} onClick={() => setPeriod('all')}>Periodo: todos</Button>
-            <Button variant={period === 'este_mes' ? 'default' : 'secondary'} onClick={() => setPeriod('este_mes')}>Este mes</Button>
-            <Button variant={period === 'ultimo_mes' ? 'default' : 'secondary'} onClick={() => setPeriod('ultimo_mes')}>Último mes</Button>
-            <Button variant={period === 'este_trimestre' ? 'default' : 'secondary'} onClick={() => setPeriod('este_trimestre')}>Este trimestre</Button>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <input
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            placeholder="Buscar por código"
+            value={search}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
+          />
+          <select
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            value={status}
+            onChange={(event) => setStatus(event.target.value as 'all' | 'active' | 'inactive' | 'expired')}
+          >
+            <option value="all">Estado: todos</option>
+            <option value="active">Estado: activos</option>
+            <option value="inactive">Estado: inactivos</option>
+            <option value="expired">Estado: expirados</option>
+          </select>
+          <select
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            value={usage}
+            onChange={(event) => setUsage(event.target.value as 'all' | 'used' | 'unused')}
+          >
+            <option value="all">Uso: todos</option>
+            <option value="used">Uso: usados</option>
+            <option value="unused">Uso: no usados</option>
+          </select>
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px]">
+        <div className="flex gap-2">
+          <Button onClick={loadVouchers}>Aplicar filtros</Button>
+          <Button variant="secondary" onClick={clearFilters}>Restablecer</Button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[920px]">
               <thead>
                 <tr>
+                  <th className="px-3 py-2 text-left">
+                    <input
+                      type="checkbox"
+                      checked={allVisibleSelected}
+                      onChange={toggleAllVisible}
+                      className="h-4 w-4"
+                    />
+                  </th>
                   <th className="px-3 py-2 text-left">Código</th>
                   <th className="px-3 py-2 text-left">Tipo</th>
                   <th className="px-3 py-2 text-left">Curso</th>
@@ -438,21 +728,41 @@ export function VouchersAdminClient({ courses }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {vouchers.length === 0 ? (
+                {isLoading ? (
                   <tr>
-                    <td className="px-3 py-6 text-center text-muted-foreground" colSpan={8}>
-                      No hay vouchers para los filtros seleccionados.
+                    <td className="px-3 py-6 text-center text-muted-foreground" colSpan={9}>
+                      Cargando vouchers...
+                    </td>
+                  </tr>
+                ) : sortedVouchers.length === 0 ? (
+                  <tr>
+                    <td className="px-3 py-6 text-center text-muted-foreground" colSpan={9}>
+                      No hay vouchers creados todavía. Crea el primer lote para empezar.
                     </td>
                   </tr>
                 ) : (
-                  vouchers.map((voucher) => {
+                  sortedVouchers.map((voucher) => {
                     const expired = voucher.expiresAt ? new Date(voucher.expiresAt) < new Date() : false;
                     const usageLabel = `${voucher.currentUses}/${voucher.maxUses ?? '∞'}`;
 
                     return (
                       <tr key={voucher.id} className="border-t border-border">
+                        <td className="px-3 py-2">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4"
+                            checked={selectedVoucherIds.includes(voucher.id)}
+                            onChange={() => toggleVoucherSelection(voucher.id)}
+                          />
+                        </td>
                         <td className="px-3 py-2 font-mono text-xs">{voucher.code}</td>
-                        <td className="px-3 py-2 text-sm">{voucher.type}</td>
+                        <td className="px-3 py-2 text-sm">
+                          {voucher.type === 'DISCOUNT_PERCENT'
+                            ? 'Descuento (%)'
+                            : voucher.type === 'DISCOUNT_FIXED'
+                              ? 'Descuento fijo (€)'
+                              : 'Acceso gratis'}
+                        </td>
                         <td className="px-3 py-2 text-sm">{voucher.course?.title || 'Todos'}</td>
                         <td className="px-3 py-2 text-sm">
                           {voucher.type === 'DISCOUNT_PERCENT'
@@ -472,17 +782,29 @@ export function VouchersAdminClient({ courses }: Props) {
                           <div className="flex items-center justify-end gap-2">
                             <Button
                               size="sm"
-                              variant="secondary"
-                              onClick={() => setSelectedVoucherId(voucher.id)}
-                            >
-                              Ver detalle
-                            </Button>
-                            <Button
-                              size="sm"
                               variant={voucher.isActive ? 'secondary' : 'default'}
-                              onClick={() => triggerPlaceholderAction('Cambiar estado de voucher')}
+                              disabled={isDeleting}
+                              onClick={() => void handleToggleVoucher(voucher)}
                             >
                               {voucher.isActive ? 'Desactivar' : 'Activar'}
+                            </Button>
+                            {voucher.batch?.id ? (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                disabled={isDeleting}
+                                onClick={() => void handleDeleteBatch(voucher.batch!.id, voucher.batch!.name)}
+                              >
+                                Eliminar lote
+                              </Button>
+                            ) : null}
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              disabled={isDeleting}
+                              onClick={() => void handleDeleteVoucher(voucher)}
+                            >
+                              Eliminar
                             </Button>
                           </div>
                         </td>
@@ -491,56 +813,7 @@ export function VouchersAdminClient({ courses }: Props) {
                   })
                 )}
               </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="card space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="text-lg font-semibold">Detalle lateral</h3>
-            {selectedVoucher ? (
-              <Button size="sm" variant="secondary" onClick={() => setSelectedVoucherId(null)}>
-                Cerrar
-              </Button>
-            ) : null}
-          </div>
-
-          {selectedVoucher ? (
-            <div className="space-y-3 text-sm">
-              <div>
-                <p className="text-xs text-muted-foreground">Código</p>
-                <p className="font-mono mt-1">{selectedVoucher.code}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Lote</p>
-                <p className="mt-1">{selectedVoucher.batchName}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Curso</p>
-                <p className="mt-1">{selectedVoucher.course?.title ?? 'Todos los cursos'}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Uso</p>
-                <p className="mt-1">{selectedVoucher.currentUses}/{selectedVoucher.maxUses ?? '∞'} · Por usuario: {selectedVoucher.maxUsesPerUser}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Creado</p>
-                <p className="mt-1">{new Date(selectedVoucher.createdAt).toLocaleDateString('es-ES')}</p>
-              </div>
-              <div className="pt-2 space-y-2">
-                <Button className="w-full" onClick={() => triggerPlaceholderAction('Duplicar voucher')}>
-                  Duplicar voucher (placeholder)
-                </Button>
-                <Button className="w-full" variant="secondary" onClick={() => triggerPlaceholderAction('Ver historial de canjes')}>
-                  Historial de canjes (placeholder)
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
-              Selecciona un voucher para ver su detalle lateral. Este bloque está preparado para conectarse al detalle real o modal en la siguiente fase.
-            </div>
-          )}
+          </table>
         </div>
       </div>
     </div>

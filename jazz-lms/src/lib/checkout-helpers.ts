@@ -15,8 +15,14 @@ export function isUnsupportedPaymentMethodStripeError(error: Stripe.errors.Strip
   return (
     param.includes('payment_method_types') ||
     param.includes('automatic_payment_methods') ||
+    param.includes('payment_method_collection') ||
+    param.includes('billing_address_collection') ||
+    param.includes('phone_number_collection') ||
+    param.includes('customer_update') ||
     message.includes('payment method') ||
     message.includes('unsupported') ||
-    message.includes('not available')
+    message.includes('not available') ||
+    message.includes('invalid') ||
+    message.includes('unknown parameter')
   );
 }

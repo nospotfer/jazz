@@ -18,7 +18,7 @@ interface PaymentMethodModalProps {
 const copyByLanguage = {
   es: {
     title: 'Elige método de pago',
-    subtitle: 'Selecciona cómo quieres completar la compra.',
+    subtitle: 'Selecciona cómo quieres completar la compra. Podrás añadir tu código en la página de pago segura.',
     methodStripe: 'Stripe',
     methodPaypal: 'PayPal',
     methodBizum: 'Bizum',
@@ -27,7 +27,7 @@ const copyByLanguage = {
   },
   en: {
     title: 'Choose payment method',
-    subtitle: 'Select how you want to complete your purchase.',
+    subtitle: 'Select how you want to complete your purchase. You can add your code on the secure payment page.',
     methodStripe: 'Stripe',
     methodPaypal: 'PayPal',
     methodBizum: 'Bizum',
@@ -36,7 +36,7 @@ const copyByLanguage = {
   },
   fr: {
     title: 'Choisissez le moyen de paiement',
-    subtitle: 'Sélectionnez comment finaliser votre achat.',
+    subtitle: 'Sélectionnez comment finaliser votre achat. Vous pourrez saisir votre code sur la page de paiement sécurisée.',
     methodStripe: 'Stripe',
     methodPaypal: 'PayPal',
     methodBizum: 'Bizum',
@@ -45,7 +45,7 @@ const copyByLanguage = {
   },
   pt: {
     title: 'Escolha o método de pagamento',
-    subtitle: 'Selecione como deseja concluir a compra.',
+    subtitle: 'Selecione como deseja concluir a compra. Você poderá inserir o código na página de pagamento segura.',
     methodStripe: 'Stripe',
     methodPaypal: 'PayPal',
     methodBizum: 'Bizum',

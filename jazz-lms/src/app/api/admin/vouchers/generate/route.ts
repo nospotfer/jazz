@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +15,32 @@ function randomToken(size = 6) {
 
 function buildVoucherCode(prefix: string) {
   return `${prefix}-${randomToken(8)}`;
+}
+
+function sanitizeBaseCode(value: string) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 24);
+}
+
+function buildSequentialCode(baseCode: string, index: number) {
+  return `${baseCode}${String(index).padStart(2, '0')}`;
+}
+
+function extractSequentialIndex(code: string, baseCode: string) {
+  if (!code.startsWith(baseCode)) {
+    return null;
+  }
+
+  const suffix = code.slice(baseCode.length);
+  if (suffix.length < 2) {
+    return null;
+  }
+
+  if (!/^\d+$/.test(suffix)) {
+    return null;
+  }
+
+  const parsed = Number(suffix);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
 export async function POST(req: Request) {
@@ -43,6 +70,7 @@ export async function POST(req: Request) {
       : Number(body.minOrderValue);
     const prefix = String(body.prefix || 'JAZZ').trim().toUpperCase().slice(0, 12).replace(/[^A-Z0-9]/g, '');
     const batchName = body.batchName ? String(body.batchName) : null;
+    const deterministicBaseCode = body.deterministicBaseCode ? sanitizeBaseCode(String(body.deterministicBaseCode)) : null;
 
     if (!VOUCHER_TYPES.includes(type)) {
       return NextResponse.json(
@@ -70,20 +98,86 @@ export async function POST(req: Request) {
       : null;
 
     const metadata = typeof body.metadata === 'object' && body.metadata !== null ? body.metadata : null;
+    const prisma = db as any;
 
-    const generatedCodes = new Set<string>();
-    while (generatedCodes.size < count) {
-      generatedCodes.add(buildVoucherCode(prefix || 'JAZZ'));
+    let codes: string[] = [];
+
+    if (deterministicBaseCode) {
+      const existingCodes = await prisma.voucherCode.findMany({
+        where: {
+          code: {
+            startsWith: deterministicBaseCode,
+          },
+        },
+        select: {
+          code: true,
+        },
+      });
+
+      const usedIndexes = new Set<number>();
+      for (const item of existingCodes) {
+        const value = extractSequentialIndex(item.code, deterministicBaseCode);
+        if (value !== null) {
+          usedIndexes.add(value);
+        }
+      }
+
+      const generatedIndexes: number[] = [];
+      let candidateIndex = 1;
+
+      while (generatedIndexes.length < count) {
+        if (!usedIndexes.has(candidateIndex)) {
+          generatedIndexes.push(candidateIndex);
+          usedIndexes.add(candidateIndex);
+        }
+        candidateIndex += 1;
+      }
+
+      codes = generatedIndexes.map((index) => buildSequentialCode(deterministicBaseCode, index));
+    } else {
+      const generatedCodes = new Set<string>();
+      while (generatedCodes.size < count) {
+        generatedCodes.add(buildVoucherCode(prefix || 'JAZZ'));
+      }
+
+      codes = Array.from(generatedCodes);
     }
 
-    const codes = Array.from(generatedCodes);
+    const plannedVouchers = codes.map((code) => ({ id: crypto.randomUUID(), code }));
 
-    const prisma = db as any;
+    const stripeMetadataByCode = new Map<string, Record<string, unknown>>();
+    for (const voucher of plannedVouchers) {
+      const stripeMetadata = await syncVoucherPromotionCode(
+        {
+          id: voucher.id,
+          code: voucher.code,
+          type,
+          discountPercent,
+          discountAmount,
+          minOrderValue,
+          maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
+          isActive: true,
+          expiresAt,
+          metadata,
+        },
+        {
+          desiredActive: true,
+          createIfMissing: true,
+        }
+      );
+
+      if (!stripeMetadata) {
+        throw new Error(`Stripe sync returned empty metadata for voucher ${voucher.code}.`);
+      }
+
+      stripeMetadataByCode.set(voucher.code, mergeStripeVoucherMetadata(metadata, stripeMetadata));
+    }
+
     const result = await prisma.$transaction(async (tx: any) => {
       const batch = await tx.voucherBatch.create({
         data: {
           name: batchName,
-          codePrefix: prefix || 'JAZZ',
+          codePrefix: deterministicBaseCode || prefix || 'JAZZ',
           quantity: count,
           createdBy: auth.userId,
           metadata,
@@ -91,10 +185,11 @@ export async function POST(req: Request) {
       });
 
       const vouchers = await Promise.all(
-        codes.map((code) =>
+        plannedVouchers.map((voucher) =>
           tx.voucherCode.create({
             data: {
-              code,
+              id: voucher.id,
+              code: voucher.code,
               type,
               courseId,
               batchId: batch.id,
@@ -104,7 +199,7 @@ export async function POST(req: Request) {
               maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
               maxUsesPerUser,
               expiresAt,
-              metadata,
+              metadata: stripeMetadataByCode.get(voucher.code) ?? metadata,
             },
             select: {
               id: true,
