@@ -31,7 +31,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
       `connect-src ${cspConnectSrc.join(' ')}`,
-      "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
+      "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://open.spotify.com",
       "media-src 'self' blob: https:",
       isProduction ? 'upgrade-insecure-requests' : '',
     ]

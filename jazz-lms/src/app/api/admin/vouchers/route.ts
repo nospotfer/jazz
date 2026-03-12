@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { getVoucherArtistByKey } from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
 
@@ -15,35 +16,64 @@ export async function GET(req: Request) {
     const status = url.searchParams.get('status');
     const usage = url.searchParams.get('usage');
     const search = (url.searchParams.get('search') || '').trim();
+    const artistKeyParam = url.searchParams.get('artistKey');
+    const discountPercentParam = url.searchParams.get('discountPercent');
 
     const now = new Date();
-
-    const where: any = {};
+    const filters: any[] = [];
 
     if (search) {
-      where.code = { contains: search, mode: 'insensitive' };
+      filters.push({
+        code: { contains: search, mode: 'insensitive' },
+      });
+    }
+
+    const artist = getVoucherArtistByKey(artistKeyParam);
+    if (artist) {
+      filters.push({
+        code: { startsWith: artist.key },
+      });
+    }
+
+    const discountPercent = discountPercentParam ? Number(discountPercentParam) : null;
+    if (discountPercent !== null && Number.isFinite(discountPercent) && discountPercent > 0) {
+      filters.push({
+        discountPercent,
+      });
     }
 
     if (status === 'active') {
-      where.isActive = true;
-      where.OR = [{ expiresAt: null }, { expiresAt: { gt: now } }];
+      filters.push({
+        isActive: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+      });
     }
 
     if (status === 'inactive') {
-      where.isActive = false;
+      filters.push({
+        isActive: false,
+      });
     }
 
     if (status === 'expired') {
-      where.expiresAt = { lt: now };
+      filters.push({
+        expiresAt: { lt: now },
+      });
     }
 
     if (usage === 'used') {
-      where.currentUses = { gt: 0 };
+      filters.push({
+        currentUses: { gt: 0 },
+      });
     }
 
     if (usage === 'unused') {
-      where.currentUses = 0;
+      filters.push({
+        currentUses: 0,
+      });
     }
+
+    const where = filters.length > 0 ? { AND: filters } : {};
 
     const prisma = db as any;
     const [vouchers, total, usedCount, activeCount, expiredCount] = await Promise.all([

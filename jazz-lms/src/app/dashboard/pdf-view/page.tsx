@@ -8,18 +8,6 @@ import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 
-function isAuxiliaryAttachment(name: string) {
-  return /auxiliar|auxiliares|auxiliary|support/i.test(name);
-}
-
-function getClassNumberFromAttachment(pathOrName: string) {
-  const match = pathOrName.match(/clase\s*(\d{1,2})/i);
-  if (!match) return null;
-
-  const value = Number(match[1]);
-  return Number.isInteger(value) ? value : null;
-}
-
 export default async function PdfViewPage() {
   const supabase = createClient();
   const cookieStore = await cookies();
@@ -106,14 +94,17 @@ export default async function PdfViewPage() {
 
       if (!hasAccess) return [];
 
-      return lesson.attachments.map((attachment) => {
-        const isAuxiliary = isAuxiliaryAttachment(attachment.name);
-        const classNumber = getClassNumberFromAttachment(attachment.url) ?? index + 1;
-        const resolvedClassNumber = lessonClassById.get(lesson.id) ?? classNumber;
+      return lesson.attachments
+        .filter((attachment) => attachment.language === language)
+        .map((attachment) => {
+        const isAuxiliary = attachment.kind === 'AUXILIARY';
+        const resolvedClassNumber = lessonClassById.get(lesson.id) ?? index + 1;
 
         return {
           id: attachment.id,
           lessonId: lesson.id,
+          language: attachment.language,
+          documentKey: attachment.documentKey,
           title: isAuxiliary
             ? attachment.name
             : resolveLessonTitle(
@@ -137,8 +128,7 @@ export default async function PdfViewPage() {
       }
 
       return a.classNumber - b.classNumber;
-    })
-    .map(({ classNumber, isAuxiliary, ...item }) => item);
+    });
 
   return <PdfViewClient items={items} />;
 }

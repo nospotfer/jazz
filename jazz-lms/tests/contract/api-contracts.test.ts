@@ -59,6 +59,7 @@ vi.mock('next/headers', () => ({
 }));
 
 vi.mock('@/lib/language', () => ({
+  LANGUAGE_COOKIE_KEY: 'jazz_lang',
   normalizeLanguage: mocks.normalizeLanguage,
   languageToStripeLocale: mocks.languageToStripeLocale,
 }));
@@ -105,7 +106,11 @@ describe('API Contract: /api/purchases response shape', () => {
 });
 
 describe('API Contract: /api/dashboard/pdf-count response shape', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.cookies.mockResolvedValue({ get: vi.fn(() => ({ value: 'es' })) });
+    mocks.normalizeLanguage.mockReturnValue('es');
+  });
 
   test('returns { count: number }', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'a@b.com' } } });

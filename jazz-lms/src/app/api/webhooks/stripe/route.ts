@@ -119,6 +119,23 @@ export async function POST(req: Request) {
           })
         : null;
 
+      if (amountDiscount > 0 && !normalizedPromotionCode) {
+        console.error('[STRIPE_WEBHOOK_DISCOUNT_WITHOUT_CODE]', {
+          sessionId: session.id,
+          amountDiscount,
+        });
+        return new NextResponse('Webhook Error: Discount without promotion code', { status: 400 });
+      }
+
+      if (amountDiscount > 0 && normalizedPromotionCode && !mappedVoucher) {
+        console.error('[STRIPE_WEBHOOK_UNKNOWN_PROMO_CODE]', {
+          sessionId: session.id,
+          promotionCode: normalizedPromotionCode,
+          amountDiscount,
+        });
+        return new NextResponse('Webhook Error: Unknown promotion code', { status: 400 });
+      }
+
       const voucherId = mappedVoucher?.id ?? null;
       const originalPrice = Number.isFinite(subtotalAmount) ? Number(subtotalAmount.toFixed(2)) : 0;
       const discountAmount = Number.isFinite(amountDiscount) ? Number(amountDiscount.toFixed(2)) : 0;
