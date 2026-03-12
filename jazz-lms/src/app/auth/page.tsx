@@ -267,8 +267,8 @@ export default function AuthPage() {
     let isMounted = true;
 
     const checkUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (isMounted && data.user) {
+      const { data } = await supabase.auth.getSession();
+      if (isMounted && data.session?.user) {
         router.replace('/dashboard');
       }
     };

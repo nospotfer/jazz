@@ -4,6 +4,7 @@ import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function PATCH(
   req: Request,

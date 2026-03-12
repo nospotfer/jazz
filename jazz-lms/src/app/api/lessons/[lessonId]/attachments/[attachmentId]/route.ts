@@ -30,6 +30,11 @@ const extractStoragePath = (value: string, bucketName: string) => {
     if (prefixIndex >= 0) {
       return decodedPath.slice(prefixIndex + directPrefix.length);
     }
+
+    const fileName = pathSegments[pathSegments.length - 1];
+    if (fileName?.toLowerCase().endsWith('.pdf')) {
+      return fileName;
+    }
   } catch {
     return rawValue;
   }
@@ -171,7 +176,14 @@ export async function GET(
       return NextResponse.json({ error: 'Purchase required' }, { status: 403 });
     }
 
-    const storagePath = extractStoragePath(attachment.url, bucket);
+    let storagePath = extractStoragePath(attachment.url, bucket);
+
+    if (!storagePath || storagePath.includes('token=')) {
+      const normalizedName = attachment.name.toLowerCase().endsWith('.pdf')
+        ? attachment.name
+        : `${attachment.name}.pdf`;
+      storagePath = normalizedName;
+    }
 
     if (!storagePath || storagePath.includes('token=')) {
       return NextResponse.json({ error: 'Attachment path is invalid' }, { status: 422 });

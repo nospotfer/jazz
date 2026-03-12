@@ -4,6 +4,7 @@ import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 type BulkDeletePayload = {
   voucherIds?: string[];

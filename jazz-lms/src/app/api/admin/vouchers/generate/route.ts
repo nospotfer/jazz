@@ -10,6 +10,7 @@ import {
 } from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const VOUCHER_TYPES = ['FREE_ACCESS', 'DISCOUNT_PERCENT', 'DISCOUNT_FIXED'] as const;
 type VoucherType = (typeof VOUCHER_TYPES)[number];

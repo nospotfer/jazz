@@ -4,6 +4,7 @@ import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { getVoucherArtistByKey } from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 function csvEscape(value: string | number | null) {
   if (value === null || value === undefined) {

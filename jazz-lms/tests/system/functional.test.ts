@@ -154,8 +154,19 @@ describe('Functional: Privileged user PDF access', () => {
         id: 'c1',
         chapters: [{
           lessons: [
-            { id: 'l1', attachments: [{ id: 'a1' }, { id: 'a2' }] },
-            { id: 'l2', attachments: [{ id: 'a3' }] },
+            {
+              id: 'l1',
+              attachments: [
+                { id: 'a1', name: 'Clase 1_ La Esencia del Jazz - Apuntes.pdf', url: 'https://cdn.test/Clase%201_%20La%20Esencia%20del%20Jazz%20-%20Apuntes.pdf' },
+                { id: 'a2', name: 'Clase 2_ El Lenguaje del Jazz_ Heterogeneidad Sonora - Apuntes.pdf', url: 'https://cdn.test/Clase%202_%20El%20Lenguaje%20del%20Jazz_%20Heterogeneidad%20Sonora%20-%20Apuntes.pdf' },
+              ],
+            },
+            {
+              id: 'l2',
+              attachments: [
+                { id: 'a3', name: 'Clase 3_ Gospel y Blues_ Las Raices Profundas - Apuntes.pdf', url: 'https://cdn.test/Clase%203_%20Gospel%20y%20Blues_%20Las%20Raices%20Profundas%20-%20Apuntes.pdf' },
+              ],
+            },
           ],
         }],
       },
@@ -183,8 +194,18 @@ describe('Functional: Privileged user PDF access', () => {
         id: 'c1',
         chapters: [{
           lessons: [
-            { id: 'l1', attachments: [{ id: 'a1' }] },
-            { id: 'l2', attachments: [{ id: 'a2' }] },
+            {
+              id: 'l1',
+              attachments: [
+                { id: 'a1', name: 'Clase 1_ La Esencia del Jazz - Apuntes.pdf', url: 'https://cdn.test/Clase%201_%20La%20Esencia%20del%20Jazz%20-%20Apuntes.pdf' },
+              ],
+            },
+            {
+              id: 'l2',
+              attachments: [
+                { id: 'a2', name: 'Clase 2_ El Lenguaje del Jazz_ Heterogeneidad Sonora - Apuntes.pdf', url: 'https://cdn.test/Clase%202_%20El%20Lenguaje%20del%20Jazz_%20Heterogeneidad%20Sonora%20-%20Apuntes.pdf' },
+              ],
+            },
           ],
         }],
       },
@@ -192,7 +213,13 @@ describe('Functional: Privileged user PDF access', () => {
         id: 'c2',
         chapters: [{
           lessons: [
-            { id: 'l3', attachments: [{ id: 'a3' }, { id: 'a4' }] },
+            {
+              id: 'l3',
+              attachments: [
+                { id: 'a3', name: 'Clase 3_ Gospel y Blues_ Las Raices Profundas - Apuntes.pdf', url: 'https://cdn.test/Clase%203_%20Gospel%20y%20Blues_%20Las%20Raices%20Profundas%20-%20Apuntes.pdf' },
+                { id: 'a4', name: 'Clase 4_ Las Formas del Jazz_ Blues y Baladas - Apuntes.pdf', url: 'https://cdn.test/Clase%204_%20Las%20Formas%20del%20Jazz_%20Blues%20y%20Baladas%20-%20Apuntes.pdf' },
+              ],
+            },
           ],
         }],
       },

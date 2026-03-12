@@ -338,7 +338,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     expect(body.url).toBe('https://checkout.stripe.com/session');
   });
 
-  test('creates new Stripe customer when none exists', async () => {
+  test('uses customer_creation flow without manually creating customer', async () => {
     setupCheckoutMocks({ customers: [] });
 
     const { POST } = await import('@/app/api/checkout/route');
@@ -350,7 +350,7 @@ describe('POST /api/checkout (with Stripe)', () => {
 
     const res = await POST(req);
     expect(res.status).toBe(200);
-    expect(stripeMocks.customersCreate).toHaveBeenCalledTimes(1);
+    expect(stripeMocks.customersCreate).not.toHaveBeenCalled();
   });
 
   test('falls back to card-only when multi-method throws StripeInvalidRequestError', async () => {

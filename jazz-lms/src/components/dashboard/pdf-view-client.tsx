@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { FileText, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
-import { LANGUAGE_LABELS, type SupportedLanguage } from '@/lib/language';
 import { getCanonicalJazzClass, getLocalizedJazzClassLabel } from '@/lib/course-lessons';
 
 const PdfWorkspaceViewer = dynamic(
@@ -23,8 +22,6 @@ const PdfWorkspaceViewer = dynamic(
 interface PdfItem {
   id: string;
   lessonId: string;
-  language: SupportedLanguage;
-  documentKey: string;
   title: string;
   classLabel: string;
   url: string;
@@ -47,8 +44,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Los PDFs aparecerán aquí cuando se agreguen.',
       loadingPdf: 'Cargando PDF...',
       selectPdf: 'Selecciona un PDF',
-      downloadLanguage: 'Idioma de descarga',
-      downloadSelectedPdf: 'Descargar PDF seleccionado',
       auxiliaryLabel: 'Apuntes Auxiliares',
       auxiliaryTitle: 'Apunte auxiliar',
     },
@@ -60,8 +55,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Lesson PDFs will appear here when they are added.',
       loadingPdf: 'Loading PDF...',
       selectPdf: 'Select a PDF',
-      downloadLanguage: 'Download language',
-      downloadSelectedPdf: 'Download selected PDF',
       auxiliaryLabel: 'Auxiliary Notes',
       auxiliaryTitle: 'Auxiliary note',
     },
@@ -73,8 +66,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Les PDF des leçons apparaîtront ici lorsqu’ils seront ajoutés.',
       loadingPdf: 'Chargement du PDF...',
       selectPdf: 'Sélectionnez un PDF',
-      downloadLanguage: 'Langue du téléchargement',
-      downloadSelectedPdf: 'Télécharger le PDF sélectionné',
       auxiliaryLabel: 'Notes auxiliaires',
       auxiliaryTitle: 'Note auxiliaire',
     },
@@ -86,18 +77,16 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Os PDFs das aulas aparecerão aqui quando forem adicionados.',
       loadingPdf: 'Carregando PDF...',
       selectPdf: 'Selecione um PDF',
-      downloadLanguage: 'Idioma do download',
-      downloadSelectedPdf: 'Baixar PDF selecionado',
       auxiliaryLabel: 'Notas auxiliares',
       auxiliaryTitle: 'Nota auxiliar',
     },
   }[language];
 
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
-  const [downloadLanguage, setDownloadLanguage] = useState<SupportedLanguage>(language);
-  const [signedUrl, setSignedUrl] = useState<string>(items[0]?.url ?? '');
+  const [signedUrl, setSignedUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
+  const [shouldPrefetchFirstPdf, setShouldPrefetchFirstPdf] = useState(false);
 
   const selected = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0],
@@ -139,14 +128,14 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     [localizedItems, selected?.id]
   );
 
-  const loadSignedUrl = async (item: PdfItem, targetLanguage: SupportedLanguage) => {
+  const loadSignedUrl = async (item: PdfItem) => {
     setIsLoading(true);
     setLoadError('');
 
     try {
       const response = await axios.get(
         `/api/lessons/${item.lessonId}/attachments/${item.id}`,
-        { params: { download: 0, language: targetLanguage } }
+        { params: { download: 0 } }
       );
 
       setSignedUrl(response.data?.signedUrl || item.url);
@@ -160,33 +149,29 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   };
 
   const handleSelect = (item: PdfItem) => {
+    setShouldPrefetchFirstPdf(true);
     setSelectedId(item.id);
   };
 
-  const downloadSelected = async () => {
-    if (!selected) return;
-
-    try {
-      const response = await axios.get(
-        `/api/lessons/${selected.lessonId}/attachments/${selected.id}`,
-        {
-          params: {
-            download: 1,
-            language: downloadLanguage,
-          },
-        }
-      );
-
-      const signed = response.data?.signedUrl || selected.url;
-      window.open(signed, '_blank', 'noopener,noreferrer');
-    } catch {
-      window.open(selected.url, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   useEffect(() => {
-    setDownloadLanguage(language);
-  }, [language]);
+    if (!items[0]?.id) {
+      return;
+    }
+
+    const idleCallback = window.requestIdleCallback?.(() => {
+      setShouldPrefetchFirstPdf(true);
+    }, { timeout: 1500 });
+
+    if (idleCallback !== undefined) {
+      return () => window.cancelIdleCallback?.(idleCallback);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShouldPrefetchFirstPdf(true);
+    }, 1200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [items]);
 
   useEffect(() => {
     if (!selected) {
@@ -195,8 +180,14 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       return;
     }
 
-    void loadSignedUrl(selected, language);
-  }, [selected?.id, language]);
+    if (!shouldPrefetchFirstPdf) {
+      setSignedUrl('');
+      setLoadError('');
+      return;
+    }
+
+    void loadSignedUrl(selected);
+  }, [selected?.id, shouldPrefetchFirstPdf]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
@@ -244,31 +235,6 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             <div className="px-4 py-3 border-b border-border bg-card/80">
               <p className="text-sm font-medium text-foreground">{selectedLocalized?.displayClassLabel}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{selectedLocalized?.displayTitle}</p>
-              {selectedLocalized ? (
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2 items-end">
-                  <label className="text-xs text-muted-foreground space-y-1">
-                    <span className="block">{copy.downloadLanguage}</span>
-                    <select
-                      value={downloadLanguage}
-                      onChange={(event) => setDownloadLanguage(event.target.value as SupportedLanguage)}
-                      className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground"
-                    >
-                      {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={downloadSelected}
-                    className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-accent/50"
-                  >
-                    {copy.downloadSelectedPdf}
-                  </button>
-                </div>
-              ) : null}
             </div>
 
             {selectedLocalized ? (

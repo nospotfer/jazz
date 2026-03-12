@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { getCourseNoteIdentity, isCourseNoteAttachment } from '@/lib/course-notes';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,16 @@ export async function GET() {
     const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
     const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
+    if (!isPrivilegedViewer) {
+      const hasFullPurchase = await db.purchase.findFirst({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+
+      if (!hasFullPurchase) {
+        return NextResponse.json({ count: 0 });
+      }
+    }
 
     const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
       db.purchase.findMany({
@@ -49,10 +60,7 @@ export async function GET() {
                 orderBy: { position: 'asc' },
                 include: {
                   attachments: {
-                    select: {
-                      lessonId: true,
-                      documentKey: true,
-                    },
+                      select: { id: true, url: true, name: true },
                   },
                 },
               },
@@ -65,28 +73,46 @@ export async function GET() {
     const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
     const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
-    const count = publishedCourses.reduce((total, course) => {
+    const accessiblePdfKeys = new Set<string>();
+
+    publishedCourses.forEach((course) => {
       const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
 
-      const accessibleAttachments = lessons.reduce((lessonTotal, lesson) => {
+      lessons.forEach((lesson) => {
+        if (isPrivilegedViewer) {
+          lesson.attachments.forEach((attachment) => {
+            if (!isCourseNoteAttachment(attachment.name, attachment.url)) {
+              return;
+            }
+
+            const identity = getCourseNoteIdentity(attachment.url, attachment.name);
+            if (identity) {
+              accessiblePdfKeys.add(identity);
+            }
+          });
+          return;
+        }
+
         const hasAccess =
-          isPrivilegedViewer ||
           purchasedCourseIds.has(course.id) ||
           purchasedLessonIds.has(lesson.id);
 
-        if (!hasAccess) return lessonTotal;
+        if (!hasAccess) return;
 
-        const uniqueDocumentKeys = new Set(
-          lesson.attachments.map((attachment) => `${attachment.lessonId}:${attachment.documentKey}`)
-        );
+        lesson.attachments.forEach((attachment) => {
+          if (!isCourseNoteAttachment(attachment.name, attachment.url)) {
+            return;
+          }
 
-        return lessonTotal + uniqueDocumentKeys.size;
-      }, 0);
+          const identity = getCourseNoteIdentity(attachment.url, attachment.name);
+          if (identity) {
+            accessiblePdfKeys.add(identity);
+          }
+        });
+      });
+    });
 
-      return total + accessibleAttachments;
-    }, 0);
-
-    return NextResponse.json({ count });
+    return NextResponse.json({ count: accessiblePdfKeys.size });
   } catch (error) {
     console.error('[pdf-count]', error);
     return NextResponse.json({ count: 0 }, { status: 500 });

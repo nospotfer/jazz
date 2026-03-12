@@ -1,15 +1,22 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Bell, Search, User, Wallet, LogOut, X, Settings } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { resolveProfileAvatar } from '@/lib/profile-avatars';
-import { LanguageSelector } from '@/components/language-selector';
+
+const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
+  ssr: false,
+});
+
+const LanguageSelector = dynamic(() => import('@/components/language-selector').then((mod) => mod.LanguageSelector), {
+  ssr: false,
+});
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -40,6 +47,7 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
   const { t } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
+  const supabase = createClient();
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
     resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
   );
@@ -96,8 +104,6 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
 
   // ── Click outside to close ──────────────────────────────────────
   useEffect(() => {
-    const supabase = createClient();
-
     const syncAvatarFromSession = async () => {
       const {
         data: { user: latestUser },
@@ -109,8 +115,6 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
         );
       }
     };
-
-    syncAvatarFromSession();
 
     const {
       data: { subscription },
@@ -131,12 +135,17 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
       subscription.unsubscribe();
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     let isMounted = true;
+    let intervalId: number | null = null;
 
     const loadUnreadMessages = () => {
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
+
       fetch('/api/messages/unread-count')
         .then((response) => response.json())
         .then((data) => {
@@ -149,12 +158,30 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
         });
     };
 
+    const startPolling = () => {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+      }
+
+      intervalId = window.setInterval(loadUnreadMessages, 60000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadUnreadMessages();
+      }
+    };
+
     loadUnreadMessages();
-    const intervalId = window.setInterval(loadUnreadMessages, 20000);
+    startPolling();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
-      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+      }
     };
   }, []);
 

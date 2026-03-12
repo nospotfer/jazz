@@ -21,6 +21,14 @@ export interface CourseProgressItem {
   videos: CourseProgressVideo[];
 }
 
+function normalizeMergeKey(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function getLessonNumber(position: number | undefined, fallback: number) {
+  return typeof position === 'number' && position > 0 ? position : fallback;
+}
+
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -70,6 +78,7 @@ export async function GET() {
                 select: {
                   id: true,
                   title: true,
+                  position: true,
                 },
               },
             },
@@ -80,7 +89,6 @@ export async function GET() {
       const orderedLessons = publishedCourses.flatMap((course) =>
         course.chapters.flatMap((chapter) => chapter.lessons)
       );
-      const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
       const translationBundle = await getCourseTranslationBundle({
         language,
         courseIds: publishedCourses.map((course) => course.id),
@@ -88,31 +96,58 @@ export async function GET() {
         lessonIds: orderedLessons.map((lesson) => lesson.id),
       });
 
-      const courses: CourseProgressItem[] = publishedCourses.map((course) => ({
-        id: course.id,
-        title: resolveCourseText(
+      const coursesMap = new Map<string, CourseProgressItem>();
+
+      for (const course of publishedCourses) {
+        const localizedCourseTitle = resolveCourseText(
           translationBundle.courses,
           course.id,
           course.title,
           course.description
-        ).title,
-        videos: course.chapters.flatMap((chapter) =>
-          chapter.lessons.map((lesson) => ({
-            lessonId: lesson.id,
-            title: resolveLessonTitle(
+        ).title;
+        const courseKey = normalizeMergeKey(localizedCourseTitle);
+
+        if (!coursesMap.has(courseKey)) {
+          coursesMap.set(courseKey, {
+            id: course.id,
+            title: localizedCourseTitle,
+            videos: [],
+          });
+        }
+
+        const courseEntry = coursesMap.get(courseKey)!;
+        const existingLessonKeys = new Set(
+          courseEntry.videos.map((video) => normalizeMergeKey(`${video.progressPercent}:${video.title}`))
+        );
+
+        for (const chapter of course.chapters) {
+          for (const lesson of chapter.lessons) {
+            const classNumber = getLessonNumber(lesson.position, courseEntry.videos.length + 1);
+            const resolvedTitle = resolveLessonTitle(
               translationBundle.lessons,
               lesson.id,
               lesson.title,
               language,
-              lessonClassById.get(lesson.id)
-            ),
-            progressPercent: 0,
-            courseId: course.id,
-          }))
-        ),
-      }));
+              classNumber
+            );
+            const lessonKey = normalizeMergeKey(`${classNumber}:${resolvedTitle}`);
 
-      return NextResponse.json({ courses });
+            if (existingLessonKeys.has(lessonKey)) {
+              continue;
+            }
+
+            courseEntry.videos.push({
+              lessonId: lesson.id,
+              title: resolvedTitle,
+              progressPercent: 0,
+              courseId: course.id,
+            });
+            existingLessonKeys.add(lessonKey);
+          }
+        }
+      }
+
+      return NextResponse.json({ courses: Array.from(coursesMap.values()) });
     }
 
     const [fullCoursePurchases, lessonPurchases, userProgress] =
@@ -168,7 +203,6 @@ export async function GET() {
     const orderedLessons = fullCoursePurchases.flatMap((purchase) =>
       purchase.course.chapters.flatMap((chapter) => chapter.lessons)
     );
-    const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
     const translationBundle = await getCourseTranslationBundle({
       language,
       courseIds: Array.from(new Set([
@@ -231,7 +265,7 @@ export async function GET() {
               lesson.id,
               lesson.title,
               language,
-              lessonClassById.get(lesson.id)
+              getLessonNumber(lesson.position, courseEntry.videos.length + 1)
             ),
             progressPercent: getPercent(lesson.id),
             courseId: course.id,
@@ -264,7 +298,7 @@ export async function GET() {
           lp.lesson.id,
           lp.lesson.title,
           language,
-          lessonClassById.get(lp.lesson.id) ?? lp.lesson.position
+          getLessonNumber(lp.lesson.position, courseEntry.videos.length + 1)
         ),
         progressPercent: getPercent(lp.lessonId),
         courseId: course.id,

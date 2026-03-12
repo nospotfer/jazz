@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation';
 import { CourseViewClient } from '@/components/course/course-view-client';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { stripe } from '@/lib/stripe';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
+import { getServerUser } from '@/lib/server-user';
+import { hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
 
 type DashboardPageProps = {
   searchParams?: {
@@ -16,12 +16,9 @@ type DashboardPageProps = {
 };
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
-  const supabase = createClient();
   const cookieStore = await cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return redirect('/auth');
@@ -39,8 +36,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   let shouldReloadUnlockedDashboard = false;
 
-  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId && stripe) {
+  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
     try {
+      const { stripe } = await import('@/lib/stripe');
+      if (!stripe) {
+        throw new Error('Stripe is unavailable');
+      }
+
       const session = await stripe.checkout.sessions.retrieve(sessionId);
       const sessionUserId = session.metadata?.userId;
       const sessionCourseId = session.metadata?.courseId;
@@ -107,12 +109,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       },
     });
 
-    hasPurchased = !!(await db.purchase.findFirst({
-      where: {
-        userId: user.id,
-      },
-      select: { id: true },
-    }));
+    hasPurchased = await hasAnyCoursePurchase(user.id);
   } catch (error) {
     console.error('[dashboard] Database unavailable. Rendering fallback state.', error);
   }

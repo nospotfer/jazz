@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { randomUUID } from 'crypto';
+
 import { db } from '@/lib/db';
 import {
   LESSON_QUIZ_OPTIONS_PER_QUESTION,
@@ -24,6 +26,19 @@ class LessonQuizError extends Error {
     this.code = code;
   }
 }
+
+type EligibleQuestion = {
+  id: string;
+  prompt: string;
+  sourceLabel: string | null;
+  options: Array<{
+    id: string;
+    label: string;
+    text: string;
+    position: number;
+    isCorrect: boolean;
+  }>;
+};
 
 function shuffleArray<T>(items: T[]) {
   const cloned = [...items];
@@ -67,37 +82,23 @@ function serializeSummary(summary: {
   };
 }
 
-function serializeAttempt(attempt: {
-  id: string;
-  answers: Array<{
-    id: string;
-    orderIndex: number;
-    questionId: string;
-    selectedOptionId: string | null;
-    answeredAt: Date | null;
-    question: {
-      prompt: string;
-      sourceLabel: string | null;
-      options: Array<{
-        id: string;
-        label: string;
-        text: string;
-        position: number;
-      }>;
-    };
-  }>;
+function serializeAttempt(params: {
+  attemptId: string;
+  questions: EligibleQuestion[];
 }): LessonQuizAttemptPayload {
-  const questions = [...attempt.answers]
-    .sort((left, right) => left.orderIndex - right.orderIndex)
-    .map((answer) => ({
-      answerId: answer.id,
-      orderIndex: answer.orderIndex,
-      questionId: answer.questionId,
-      prompt: answer.question.prompt,
-      sourceLabel: answer.question.sourceLabel,
-      selectedOptionId: answer.selectedOptionId,
-      isAnswered: Boolean(answer.answeredAt),
-      options: [...answer.question.options]
+  return {
+    attemptId: params.attemptId,
+    questionCount: params.questions.length,
+    answeredCount: 0,
+    questions: params.questions.map((question, orderIndex) => ({
+      answerId: `${params.attemptId}:${question.id}`,
+      orderIndex,
+      questionId: question.id,
+      prompt: question.prompt,
+      sourceLabel: question.sourceLabel,
+      selectedOptionId: null,
+      isAnswered: false,
+      options: [...question.options]
         .sort((left, right) => left.position - right.position)
         .map((option) => ({
           id: option.id,
@@ -105,19 +106,14 @@ function serializeAttempt(attempt: {
           text: option.text,
           position: option.position,
         })),
-    }));
-
-  const answeredCount = questions.filter((question) => question.isAnswered).length;
-
-  return {
-    attemptId: attempt.id,
-    questionCount: questions.length,
-    answeredCount,
-    questions,
+    })),
   };
 }
 
-function buildResultPayload(attemptId: string, answers: Array<{ orderIndex: number; isCorrect: boolean | null }>): LessonQuizResultPayload {
+function buildResultPayload(
+  attemptId: string,
+  answers: Array<{ orderIndex: number; isCorrect: boolean | null }>
+): LessonQuizResultPayload {
   const orderedAnswers = [...answers].sort((left, right) => left.orderIndex - right.orderIndex);
   const correctQuestionNumbers = orderedAnswers
     .filter((answer) => answer.isCorrect)
@@ -140,30 +136,22 @@ function buildResultPayload(attemptId: string, answers: Array<{ orderIndex: numb
   };
 }
 
-async function loadAttemptForClient(attemptId: string) {
-  return db.lessonQuizAttempt.findUnique({
+async function loadEligibleQuestionBank(lessonId: string) {
+  const bank = await db.lessonQuizQuestion.findMany({
     where: {
-      id: attemptId,
+      lessonId,
+      isActive: true,
     },
     include: {
-      answers: {
+      options: {
         orderBy: {
-          orderIndex: 'asc',
-        },
-        include: {
-          question: {
-            include: {
-              options: {
-                orderBy: {
-                  position: 'asc',
-                },
-              },
-            },
-          },
+          position: 'asc',
         },
       },
     },
   });
+
+  return bank.filter(isQuestionEligible) as EligibleQuestion[];
 }
 
 export async function getLessonQuizSummary(userId: string, lessonId: string) {
@@ -210,90 +198,18 @@ export async function createOrResumeLessonQuizAttempt(params: {
   lessonId: string;
   restart?: boolean;
 }): Promise<LessonQuizLaunchResponse> {
-  const { userId, lessonId, restart = false } = params;
-
-  if (!restart) {
-    const existingAttempt = await db.lessonQuizAttempt.findFirst({
-      where: {
-        userId,
-        lessonId,
-        completedAt: null,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        answers: {
-          orderBy: {
-            orderIndex: 'asc',
-          },
-          include: {
-            question: {
-              include: {
-                options: {
-                  orderBy: {
-                    position: 'asc',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (existingAttempt && existingAttempt.answers.length === LESSON_QUIZ_QUESTION_COUNT) {
-      return {
-        attempt: serializeAttempt(existingAttempt),
-        summary: await getLessonQuizSummary(userId, lessonId),
-      };
-    }
-  }
-
-  const bank = await db.lessonQuizQuestion.findMany({
-    where: {
-      lessonId,
-      isActive: true,
-    },
-    include: {
-      options: {
-        orderBy: {
-          position: 'asc',
-        },
-      },
-    },
-  });
-
-  const eligibleQuestions = bank.filter(isQuestionEligible);
+  const { userId, lessonId } = params;
+  const eligibleQuestions = await loadEligibleQuestionBank(lessonId);
 
   if (eligibleQuestions.length < LESSON_QUIZ_QUESTION_COUNT) {
     throw new LessonQuizError('Quiz not ready for this lesson yet.', 409, 'QUIZ_NOT_READY');
   }
 
-  const selectedQuestions = shuffleArray(eligibleQuestions).slice(0, LESSON_QUIZ_QUESTION_COUNT);
-
-  const attempt = await db.lessonQuizAttempt.create({
-    data: {
-      userId,
-      lessonId,
-      questionCount: LESSON_QUIZ_QUESTION_COUNT,
-      answers: {
-        create: selectedQuestions.map((question, orderIndex) => ({
-          questionId: question.id,
-          orderIndex,
-        })),
-      },
-    },
-  });
-
-  const hydratedAttempt = await loadAttemptForClient(attempt.id);
-
-  if (!hydratedAttempt) {
-    throw new LessonQuizError('Unable to load lesson quiz attempt.', 500, 'QUIZ_ATTEMPT_LOAD_FAILED');
-  }
-
   return {
-    attempt: serializeAttempt(hydratedAttempt),
+    attempt: serializeAttempt({
+      attemptId: randomUUID(),
+      questions: shuffleArray(eligibleQuestions).slice(0, LESSON_QUIZ_QUESTION_COUNT),
+    }),
     summary: await getLessonQuizSummary(userId, lessonId),
   };
 }
@@ -304,166 +220,168 @@ export async function submitLessonQuizAnswer(params: {
   attemptId: string;
   questionId: string;
   optionId: string;
+  answers: Array<{
+    questionId: string;
+    selectedOptionId: string;
+  }>;
 }): Promise<LessonQuizAnswerResponse> {
-  const { userId, lessonId, attemptId, questionId, optionId } = params;
+  const { userId, lessonId, attemptId, questionId, optionId, answers } = params;
+  const eligibleQuestions = await loadEligibleQuestionBank(lessonId);
+  const eligibleQuestionMap = new Map(eligibleQuestions.map((question) => [question.id, question]));
 
-  const response = await db.$transaction(async (tx) => {
-    const attempt = await tx.lessonQuizAttempt.findFirst({
-      where: {
-        id: attemptId,
-        userId,
-        lessonId,
-      },
-      include: {
-        answers: {
-          orderBy: {
-            orderIndex: 'asc',
-          },
-          include: {
-            question: {
-              include: {
-                options: {
-                  orderBy: {
-                    position: 'asc',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+  const currentQuestion = eligibleQuestionMap.get(questionId);
+  if (!currentQuestion) {
+    throw new LessonQuizError('Question does not belong to this quiz.', 400, 'QUIZ_QUESTION_NOT_IN_ATTEMPT');
+  }
 
-    if (!attempt) {
-      throw new LessonQuizError('Lesson quiz attempt not found.', 404, 'QUIZ_ATTEMPT_NOT_FOUND');
-    }
+  const currentOption = currentQuestion.options.find((item) => item.id === optionId);
+  if (!currentOption) {
+    throw new LessonQuizError('Selected option does not belong to this question.', 400, 'QUIZ_OPTION_NOT_IN_QUESTION');
+  }
 
-    if (attempt.completedAt) {
-      throw new LessonQuizError('This lesson quiz attempt is already complete.', 409, 'QUIZ_ATTEMPT_COMPLETED');
-    }
+  const normalizedAnswers = answers.filter(
+    (answer, index, collection) =>
+      Boolean(answer.questionId) &&
+      Boolean(answer.selectedOptionId) &&
+      collection.findIndex((candidate) => candidate.questionId === answer.questionId) === index
+  );
+  const answeredCount = normalizedAnswers.length;
 
-    const answer = attempt.answers.find((item) => item.questionId === questionId);
-    if (!answer) {
-      throw new LessonQuizError('Question does not belong to this attempt.', 400, 'QUIZ_QUESTION_NOT_IN_ATTEMPT');
-    }
-
-    const option = answer.question.options.find((item) => item.id === optionId);
-    if (!option) {
-      throw new LessonQuizError('Selected option does not belong to this question.', 400, 'QUIZ_OPTION_NOT_IN_QUESTION');
-    }
-
-    if (!answer.answeredAt) {
-      await tx.lessonQuizAttemptAnswer.update({
-        where: {
-          id: answer.id,
-        },
-        data: {
-          selectedOptionId: optionId,
-          isCorrect: option.isCorrect,
-          answeredAt: new Date(),
-        },
-      });
-    }
-
-    const refreshedAnswers = await tx.lessonQuizAttemptAnswer.findMany({
-      where: {
-        attemptId,
-      },
-      orderBy: {
-        orderIndex: 'asc',
-      },
-      select: {
-        orderIndex: true,
-        questionId: true,
-        isCorrect: true,
-        answeredAt: true,
-      },
-    });
-
-    const answeredCount = refreshedAnswers.filter((item) => item.answeredAt).length;
-    let result: LessonQuizResultPayload | null = null;
-    let summary: LessonQuizSummarySnapshot | null = null;
-
-    if (answeredCount === refreshedAnswers.length) {
-      result = buildResultPayload(attemptId, refreshedAnswers);
-
-      await tx.lessonQuizAttempt.update({
-        where: {
-          id: attemptId,
-        },
-        data: {
-          scorePercent: result.scorePercent,
-          correctCount: result.correctCount,
-          medal: result.medal,
-          completedAt: new Date(),
-        },
-      });
-
-      const currentSummary = await tx.lessonQuizSummary.findUnique({
-        where: {
-          userId_lessonId: {
-            userId,
-            lessonId,
-          },
-        },
-      });
-
-      const shouldReplaceBest = !currentSummary || result.scorePercent >= currentSummary.bestScorePercent;
-
-      const updatedSummary = await tx.lessonQuizSummary.upsert({
-        where: {
-          userId_lessonId: {
-            userId,
-            lessonId,
-          },
-        },
-        create: {
-          userId,
-          lessonId,
-          bestAttemptId: result.attemptId,
-          bestScorePercent: result.scorePercent,
-          bestCorrectCount: result.correctCount,
-          bestMedal: result.medal,
-          totalAttempts: 1,
-          lastAttemptAt: new Date(),
-        },
-        update: {
-          totalAttempts: {
-            increment: 1,
-          },
-          lastAttemptAt: new Date(),
-          ...(shouldReplaceBest
-            ? {
-                bestAttemptId: result.attemptId,
-                bestScorePercent: result.scorePercent,
-                bestCorrectCount: result.correctCount,
-                bestMedal: result.medal,
-              }
-            : {}),
-        },
-        select: {
-          bestScorePercent: true,
-          bestCorrectCount: true,
-          bestMedal: true,
-          totalAttempts: true,
-          lastAttemptAt: true,
-        },
-      });
-
-      summary = serializeSummary(updatedSummary);
-    }
-
+  if (answeredCount < LESSON_QUIZ_QUESTION_COUNT) {
     return {
       attemptId,
       questionId,
-      isCorrect: Boolean(option.isCorrect),
+      isCorrect: Boolean(currentOption.isCorrect),
       answeredCount,
-      result,
-      summary,
-    } satisfies LessonQuizAnswerResponse;
+      isComplete: false,
+      result: null,
+      summary: null,
+    };
+  }
+
+  if (normalizedAnswers.length !== LESSON_QUIZ_QUESTION_COUNT) {
+    throw new LessonQuizError('Quiz session is incomplete.', 400, 'QUIZ_SESSION_INCOMPLETE');
+  }
+
+  const persistedRows = normalizedAnswers.map((answer, orderIndex) => {
+    const question = eligibleQuestionMap.get(answer.questionId);
+    if (!question) {
+      throw new LessonQuizError('Quiz session contains an invalid question.', 400, 'QUIZ_QUESTION_NOT_IN_ATTEMPT');
+    }
+
+    const selectedOption = question.options.find((option) => option.id === answer.selectedOptionId);
+    if (!selectedOption) {
+      throw new LessonQuizError('Quiz session contains an invalid option.', 400, 'QUIZ_OPTION_NOT_IN_QUESTION');
+    }
+
+    return {
+      orderIndex,
+      questionId: question.id,
+      selectedOptionId: selectedOption.id,
+      isCorrect: selectedOption.isCorrect,
+    };
   });
 
-  return response;
+  const persisted = await db.$transaction(async (tx) => {
+    const attempt = await tx.lessonQuizAttempt.create({
+      data: {
+        userId,
+        lessonId,
+        questionCount: LESSON_QUIZ_QUESTION_COUNT,
+        answers: {
+          create: persistedRows.map((row) => ({
+            questionId: row.questionId,
+            selectedOptionId: row.selectedOptionId,
+            orderIndex: row.orderIndex,
+            isCorrect: row.isCorrect,
+            answeredAt: new Date(),
+          })),
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const result = buildResultPayload(attempt.id, persistedRows);
+
+    await tx.lessonQuizAttempt.update({
+      where: {
+        id: attempt.id,
+      },
+      data: {
+        scorePercent: result.scorePercent,
+        correctCount: result.correctCount,
+        medal: result.medal,
+        completedAt: new Date(),
+      },
+    });
+
+    const currentSummary = await tx.lessonQuizSummary.findUnique({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId,
+        },
+      },
+    });
+    const shouldReplaceBest = !currentSummary || result.scorePercent >= currentSummary.bestScorePercent;
+
+    const updatedSummary = await tx.lessonQuizSummary.upsert({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId,
+        },
+      },
+      create: {
+        userId,
+        lessonId,
+        bestAttemptId: result.attemptId,
+        bestScorePercent: result.scorePercent,
+        bestCorrectCount: result.correctCount,
+        bestMedal: result.medal,
+        totalAttempts: 1,
+        lastAttemptAt: new Date(),
+      },
+      update: {
+        totalAttempts: {
+          increment: 1,
+        },
+        lastAttemptAt: new Date(),
+        ...(shouldReplaceBest
+          ? {
+              bestAttemptId: result.attemptId,
+              bestScorePercent: result.scorePercent,
+              bestCorrectCount: result.correctCount,
+              bestMedal: result.medal,
+            }
+          : {}),
+      },
+      select: {
+        bestScorePercent: true,
+        bestCorrectCount: true,
+        bestMedal: true,
+        totalAttempts: true,
+        lastAttemptAt: true,
+      },
+    });
+
+    return {
+      result,
+      summary: serializeSummary(updatedSummary),
+    };
+  });
+
+  return {
+    attemptId: persisted.result.attemptId,
+    questionId,
+    isCorrect: Boolean(currentOption.isCorrect),
+    answeredCount,
+    isComplete: true,
+    result: persisted.result,
+    summary: persisted.summary,
+  };
 }
 
 export async function assertLessonQuizAccess(params: {

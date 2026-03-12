@@ -1,8 +1,6 @@
-import { createClient } from '@/utils/supabase/server';
 import { PromoVideo } from '@/components/landing/promo-video';
 import { Header } from '@/components/layout/header';
 import dynamic from 'next/dynamic';
-import { redirect } from 'next/navigation';
 
 const Professor = dynamic(() => import('@/components/landing/professor').then((mod) => mod.Professor));
 const WhatYouLearn = dynamic(() => import('@/components/landing/what-you-learn').then((mod) => mod.WhatYouLearn));
@@ -14,19 +12,10 @@ const BoardNavigation = dynamic(() => import('@/components/landing/board-navigat
   ssr: false,
 });
 
-export default async function Home() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect('/dashboard');
-  }
-
+export default function Home() {
   return (
     <>
-      <Header />
+      <Header authMode="guest" />
       <main className="w-full snap-y snap-mandatory">
         <section id="board-hero" className="snap-start scroll-mt-14">
           <PromoVideo />

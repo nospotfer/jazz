@@ -1,12 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
-import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
+import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
+import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+
+const PaymentMethodModal = dynamic(
+  () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
+  { ssr: false }
+);
 
 interface CourseEnrollButtonProps {
   courseId: string;
@@ -18,6 +25,26 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   const [isLoading, setIsLoading] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+
+  useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      warmPaymentMethodModal();
+    });
+
+    if (idleCallback !== undefined) {
+      return () => {
+        window.cancelIdleCallback?.(idleCallback);
+      };
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      warmPaymentMethodModal();
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   const copy = {
     es: {
@@ -81,14 +108,22 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       return;
     }
 
+    warmPaymentMethodModal();
     setPaymentError('');
     setIsMethodModalOpen(true);
+  };
+
+  const primePaymentModal = () => {
+    warmPaymentMethodModal();
   };
 
   return (
     <div className="space-y-3">
       <Button
         onClick={onClick}
+        onMouseEnter={primePaymentModal}
+        onFocus={primePaymentModal}
+        onTouchStart={primePaymentModal}
         disabled={isLoading}
         className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 text-base font-semibold"
         size="lg"

@@ -4,6 +4,7 @@ import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { getVoucherArtistByKey } from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {

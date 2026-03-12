@@ -1,7 +1,10 @@
+import { cache } from 'react';
+
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { hasPermission, isAdminRole } from '@/lib/admin/permissions';
+import { getServerUser } from '@/lib/server-user';
 
 const OWNER_EMAIL = process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net';
 
@@ -17,12 +20,8 @@ type AuthContext = {
   };
 };
 
-async function getAuthContext(): Promise<AuthContext | null> {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const getAuthContext = cache(async (): Promise<AuthContext | null> => {
+  const user = await getServerUser();
 
   if (!user?.email) {
     return null;
@@ -82,7 +81,7 @@ async function getAuthContext(): Promise<AuthContext | null> {
       },
     };
   }
-}
+});
 
 function isOwnerEmail(email: string) {
   return email.toLowerCase() === OWNER_EMAIL.toLowerCase();

@@ -1,7 +1,6 @@
 'use client';
-import MuxPlayer from '@mux/mux-player-react';
 import { Button } from '../ui/button';
-import { CheckCircle, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
+import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -14,15 +13,30 @@ import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 import { getCanonicalJazzClass } from '@/lib/course-lessons';
 import { extractMuxPlaybackId } from '@/lib/mux-playback';
+import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import { useLanguage } from '@/components/providers/language-provider';
-import { LANGUAGE_LABELS, type SupportedLanguage, languageToHtmlLang } from '@/lib/language';
+import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { LanguageSelector } from '@/components/language-selector';
-import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
-import { LessonQuizOverlay } from '@/components/course/lesson-quiz-overlay';
+import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
 import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
+
+const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
+  ssr: false,
+});
+
+const LanguageSelector = dynamic(() => import('@/components/language-selector').then((mod) => mod.LanguageSelector), {
+  ssr: false,
+});
+
+const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
@@ -33,6 +47,20 @@ const PdfWorkspaceViewer = dynamic(
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     ),
+  }
+);
+
+const LessonQuizOverlay = dynamic(
+  () => import('@/components/course/lesson-quiz-overlay').then((mod) => mod.LessonQuizOverlay),
+  {
+    ssr: false,
+  }
+);
+
+const PaymentMethodModal = dynamic(
+  () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
+  {
+    ssr: false,
   }
 );
 
@@ -74,12 +102,34 @@ function getAttachmentDisplayName(name: string, classNumber: number | null, note
   return simplified;
 }
 
-function SpotifyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
-      <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
-    </svg>
-  );
+type MusicPlatform = 'spotify' | 'apple' | 'amazon' | 'youtube';
+
+function PlatformIcon({ platform }: { platform: MusicPlatform }) {
+  if (platform === 'spotify') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'apple') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M16.6 12.6c0-2 1.6-3 1.7-3.1-1-.6-2.5-.7-3.5-.1-.9.5-1.6.6-2.2.6-.6 0-1.3-.1-2.1-.6-1.1-.6-2.8-.4-3.8.7-1.6 1.8-1.3 5.2.7 8.1.9 1.3 2 2.7 3.5 2.6.7 0 1.2-.2 2-.2s1.2.2 2 .2c1.5 0 2.4-1.3 3.3-2.6.7-1.1 1-2.1 1-2.2-.1 0-2.6-1-2.6-3.4Zm-2.5-7.4c.7-.8 1.2-1.9 1-3-.9.1-2 .6-2.7 1.4-.7.7-1.3 1.9-1.1 3 .9.1 2-.5 2.8-1.4Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'amazon') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M5.5 16.6c3.2 2.1 8.2 2.3 11.8.6.5-.2 1 .3.5.7-3.9 2.8-9.8 2.9-13 .9-.4-.3 0-1 .7-.7Zm12.8-.9c-.4-.5-2.6-.2-3.6-.1-.3 0-.4-.2-.1-.5 1.8-1.3 4.8-.9 5.1-.5.3.3-.1 3.2-1.8 4.5-.3.2-.5.1-.4-.2.4-1 .9-3.2.8-3.2ZM9.5 11.7c0-1.8 1.3-2.7 3.2-2.7.6 0 1.1.1 1.6.3v-.4c0-.8-.6-1.2-1.5-1.2-.7 0-1.4.2-2.1.5l-.5-1.5c.9-.4 1.9-.7 3-.7 2.2 0 3.4 1 3.4 3v3.3c0 .6.1 1 .4 1.4v.2h-2.1c-.2-.2-.3-.5-.4-.8-.6.6-1.3 1-2.2 1-1.6 0-2.8-.9-2.8-2.4Zm4.8-.5v-.5c-.4-.2-.8-.2-1.3-.2-1 0-1.6.4-1.6 1.1 0 .6.5 1 1.3 1 .9 0 1.6-.5 1.6-1.4Z" />
+      </svg>
+    );
+  }
+
+  return <Youtube className="h-4 w-4" />;
 }
 
 export const CoursePlayer = ({
@@ -108,8 +158,6 @@ export const CoursePlayer = ({
       chooseMethod: 'Elegir método de pago',
       classNote: 'Apunte de clase',
       download: 'Descargar',
-      downloadLanguage: 'Idioma de descarga',
-      downloadSelectedPdf: 'Descargar PDF seleccionado',
       selectPdf: 'Selecciona un PDF para previsualizarlo aquí.',
       toggleNotesTooltip: 'Mostrar u ocultar apuntes',
       completeTooltip: 'Marcar como completada',
@@ -158,8 +206,6 @@ export const CoursePlayer = ({
       chooseMethod: 'Choose payment method',
       classNote: 'Class notes',
       download: 'Download',
-      downloadLanguage: 'Download language',
-      downloadSelectedPdf: 'Download selected PDF',
       selectPdf: 'Select a PDF to preview it here.',
       toggleNotesTooltip: 'Show or hide notes panel',
       completeTooltip: 'Mark lesson as complete',
@@ -208,8 +254,6 @@ export const CoursePlayer = ({
       chooseMethod: 'Choisir le moyen de paiement',
       classNote: 'Notes du cours',
       download: 'Télécharger',
-      downloadLanguage: 'Langue du téléchargement',
-      downloadSelectedPdf: 'Télécharger le PDF sélectionné',
       selectPdf: 'Sélectionnez un PDF pour l’aperçu ici.',
       toggleNotesTooltip: 'Afficher ou masquer les notes',
       completeTooltip: 'Marquer la leçon comme terminée',
@@ -258,8 +302,6 @@ export const CoursePlayer = ({
       chooseMethod: 'Escolher método de pagamento',
       classNote: 'Anotações da aula',
       download: 'Baixar',
-      downloadLanguage: 'Idioma do download',
-      downloadSelectedPdf: 'Baixar PDF selecionado',
       selectPdf: 'Selecione um PDF para pré-visualizá-lo aqui.',
       toggleNotesTooltip: 'Mostrar ou ocultar anotações',
       completeTooltip: 'Marcar aula como concluída',
@@ -304,16 +346,37 @@ export const CoursePlayer = ({
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [shouldLoadPlayback, setShouldLoadPlayback] = useState(false);
+  const [shouldLoadPdfPreview, setShouldLoadPdfPreview] = useState(false);
   const [playbackId, setPlaybackId] = useState('');
   const [playbackToken, setPlaybackToken] = useState('');
   const [thumbnailToken, setThumbnailToken] = useState('');
   const [storyboardToken, setStoryboardToken] = useState('');
   const [playbackError, setPlaybackError] = useState('');
   const [muxRuntimeError, setMuxRuntimeError] = useState('');
+
+  useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      warmPaymentMethodModal();
+    });
+
+    if (idleCallback !== undefined) {
+      return () => {
+        window.cancelIdleCallback?.(idleCallback);
+      };
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      warmPaymentMethodModal();
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
   const [selectedAttachmentId, setSelectedAttachmentId] = useState<string | null>(
     lesson.attachments[0]?.id ?? null
   );
-  const [downloadLanguage, setDownloadLanguage] = useState<SupportedLanguage>(language);
   const [previewUrl, setPreviewUrl] = useState('');
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const [pdfError, setPdfError] = useState('');
@@ -340,14 +403,8 @@ export const CoursePlayer = ({
   const classLabel = classNumber ? `${copy.classPrefix} ${classNumber}: ${lessonDisplayTitle}` : lessonDisplayTitle;
 
   const visibleAttachments = useMemo(
-    () =>
-      lesson.attachments.filter(
-        (attachment) =>
-          attachment.language === language &&
-          attachment.kind === 'CLASS' &&
-          !isAuxiliaryAttachment(attachment.name)
-      ),
-    [lesson.attachments, language]
+    () => lesson.attachments.filter((attachment) => !isAuxiliaryAttachment(attachment.name)),
+    [lesson.attachments]
   );
 
   const selectedAttachment = useMemo(
@@ -434,12 +491,28 @@ export const CoursePlayer = ({
   }, [language]);
 
   useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      setShouldLoadPlayback(true);
+    }, { timeout: 1200 });
+
+    if (idleCallback !== undefined) {
+      return () => window.cancelIdleCallback?.(idleCallback);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShouldLoadPlayback(true);
+    }, 800);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [lesson.id]);
+
+  useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
 
   useEffect(() => {
-    setDownloadLanguage(language);
-  }, [language]);
+    setQuizSummary(initialQuizSummary);
+  }, [initialQuizSummary]);
 
   useEffect(() => {
     if (!muxPlayerRef.current) {
@@ -513,7 +586,7 @@ export const CoursePlayer = ({
     let cancelled = false;
 
     const loadPlayback = async () => {
-      if (!canAccessLesson) {
+      if (!canAccessLesson || !shouldLoadPlayback) {
         setPlaybackId('');
         setPlaybackToken('');
         setThumbnailToken('');
@@ -561,31 +634,19 @@ export const CoursePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [canAccessLesson, lesson.id]);
+  }, [canAccessLesson, lesson.id, shouldLoadPlayback, copy.unableSignedPlayback]);
 
-  const getAttachmentSignedUrl = async (
-    attachmentId: string,
-    options?: { download?: boolean; language?: SupportedLanguage }
-  ) => {
-    const download = options?.download ?? false;
-
+  const getAttachmentSignedUrl = async (attachmentId: string, download = false) => {
     const response = await axios.get(
       `/api/lessons/${lesson.id}/attachments/${attachmentId}`,
       {
         params: {
           download: download ? 1 : 0,
-          language: options?.language,
         },
       }
     );
 
-    return response.data as {
-      signedUrl: string;
-      name: string;
-      storagePath: string;
-      language: SupportedLanguage;
-      availableLanguages: SupportedLanguage[];
-    };
+    return response.data as { signedUrl: string; name: string; storagePath: string };
   };
 
   const openPdfPreview = async (attachmentId: string) => {
@@ -595,10 +656,7 @@ export const CoursePlayer = ({
     setPdfError('');
 
     try {
-      const data = await getAttachmentSignedUrl(attachmentId, {
-        download: false,
-        language,
-      });
+      const data = await getAttachmentSignedUrl(attachmentId, false);
 
       setSelectedAttachmentId(attachmentId);
       setPreviewUrl((currentUrl) => {
@@ -629,14 +687,11 @@ export const CoursePlayer = ({
     }
   };
 
-  const downloadPdf = async (attachmentId: string, targetLanguage: SupportedLanguage) => {
+  const downloadPdf = async (attachmentId: string) => {
     if (!canAccessAttachments) return;
 
     try {
-      const data = await getAttachmentSignedUrl(attachmentId, {
-        download: true,
-        language: targetLanguage,
-      });
+      const data = await getAttachmentSignedUrl(attachmentId, true);
       window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
     } catch (error: any) {
       const fallbackAttachment = lesson.attachments.find((item) => item.id === attachmentId);
@@ -680,10 +735,51 @@ export const CoursePlayer = ({
     }
   };
 
-  const spotifyPlaylistUrl =
-    'https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp?si=b703a7e95ab74f13&pt=be2730b0d1779073b15efc4628184b44';
-  const spotifyEmbedUrl =
-    'https://open.spotify.com/embed/playlist/2SL42Fq3AgVvnJb7RixOvp?utm_source=generator&theme=0';
+  const primePaymentModal = () => {
+    warmPaymentMethodModal();
+  };
+
+  const openPaymentModal = () => {
+    warmPaymentMethodModal();
+    setPaymentError('');
+    setIsMethodModalOpen(true);
+  };
+
+  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
+  const musicLinks = [
+    {
+      label: 'Spotify',
+      href: `https://open.spotify.com/search/${musicSearch}`,
+      tooltip: copy.musicSpotify,
+      platform: 'spotify' as const,
+      colorClass: 'text-emerald-500',
+      tooltipClass: 'from-emerald-500 to-emerald-400',
+    },
+    {
+      label: 'Apple Music',
+      href: `https://music.apple.com/search?term=${musicSearch}`,
+      tooltip: copy.musicApple,
+      platform: 'apple' as const,
+      colorClass: 'text-rose-500',
+      tooltipClass: 'from-rose-500 to-orange-400',
+    },
+    {
+      label: 'Amazon Music',
+      href: `https://music.amazon.com/search/${musicSearch}`,
+      tooltip: copy.musicAmazon,
+      platform: 'amazon' as const,
+      colorClass: 'text-sky-500',
+      tooltipClass: 'from-sky-500 to-indigo-500',
+    },
+    {
+      label: 'YouTube',
+      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
+      tooltip: copy.musicYouTube,
+      platform: 'youtube' as const,
+      colorClass: 'text-red-500',
+      tooltipClass: 'from-red-500 to-rose-500',
+    },
+  ];
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
@@ -816,22 +912,42 @@ export const CoursePlayer = ({
   const firstAttachmentId = visibleAttachments[0]?.id;
 
   useEffect(() => {
-    if (!canAccessAttachments || !firstAttachmentId) {
+    if (!isNotesPanelOpen || !canAccessAttachments || !firstAttachmentId) {
+      return;
+    }
+
+    const idleCallback = window.requestIdleCallback?.(() => {
+      setShouldLoadPdfPreview(true);
+    }, { timeout: 1500 });
+
+    if (idleCallback !== undefined) {
+      return () => window.cancelIdleCallback?.(idleCallback);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShouldLoadPdfPreview(true);
+    }, 1200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [canAccessAttachments, firstAttachmentId, isNotesPanelOpen, lesson.id]);
+
+  useEffect(() => {
+    if (!canAccessAttachments || !firstAttachmentId || !shouldLoadPdfPreview) {
       return;
     }
 
     void openPdfPreview(firstAttachmentId);
-  }, [lesson.id, canAccessAttachments, firstAttachmentId]);
+  }, [lesson.id, canAccessAttachments, firstAttachmentId, shouldLoadPdfPreview]);
 
   return (
     <DashboardPreferencesProvider>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <Sidebar />
 
-        <div className="lg:pl-56 h-full overflow-hidden p-2 sm:p-3 lg:p-4 lg:pb-[196px]">
+        <div className="lg:pl-56 h-full overflow-hidden p-2 sm:p-3 lg:p-4">
           <div className={`mx-auto h-full grid grid-cols-1 gap-3 lg:gap-4 min-h-0 ${isNotesPanelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-1'}`}>
-            <div className="min-w-0 min-h-0 h-full flex flex-col gap-4">
-              <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] flex flex-col h-full min-h-0">
+            <div className="min-w-0 min-h-0 flex flex-col gap-4">
+              <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
                 <div className="p-3 sm:p-4 border-b-2 border-primary/45 bg-gradient-to-r from-primary/10 to-transparent">
                   <div className="flex flex-col gap-2">
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
@@ -840,21 +956,24 @@ export const CoursePlayer = ({
                     <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <ThemeToggle />
                         <LanguageSelector />
-                        <a
-                          href={spotifyPlaylistUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={copy.musicSpotify}
-                          aria-label={copy.musicSpotify}
-                          className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
-                        >
-                          <span className="text-emerald-500">
-                            <SpotifyIcon />
-                          </span>
-                          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-emerald-500 to-emerald-400 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
-                            {copy.musicSpotify}
-                          </span>
-                        </a>
+                        {musicLinks.map((platform) => (
+                          <a
+                            key={platform.label}
+                            href={platform.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={platform.tooltip}
+                            aria-label={platform.tooltip}
+                            className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
+                          >
+                            <span className={platform.colorClass}>
+                              <PlatformIcon platform={platform.platform} />
+                            </span>
+                            <span className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${platform.tooltipClass}`}>
+                              {platform.tooltip}
+                            </span>
+                          </a>
+                        ))}
 
                         <button
                           type="button"
@@ -905,16 +1024,11 @@ export const CoursePlayer = ({
                     </div>
                   </div>
                 </div>
-                <div
-                  ref={muxContainerRef}
-                  className="relative w-full flex-1 min-h-[260px] sm:min-h-[320px] lg:min-h-[420px] bg-black border border-primary/50 dark:border-primary/70 overflow-hidden"
-                >
+                <div ref={muxContainerRef} className="relative flex-1 min-h-0 bg-black border border-primary/50 dark:border-primary/70 rounded-b-xl overflow-hidden">
                   {canRenderMuxPlayer ? (
                     <MuxPlayer
                       ref={muxPlayerRef}
-                      className={`absolute inset-0 h-full w-full lesson-mux-player ${
-                        !isNotesPanelOpen ? 'lesson-mux-player--fit-contain' : ''
-                      }`}
+                      className="absolute inset-0 h-full w-full"
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
                       poster={playbackPosterUrl || undefined}
@@ -944,10 +1058,10 @@ export const CoursePlayer = ({
                             {copy.lessonLockedDesc}
                           </p>
                           <Button
-                            onClick={() => {
-                              setPaymentError('');
-                              setIsMethodModalOpen(true);
-                            }}
+                            onClick={openPaymentModal}
+                            onMouseEnter={primePaymentModal}
+                            onFocus={primePaymentModal}
+                            onTouchStart={primePaymentModal}
                             disabled={isPurchasing}
                             className="w-full sm:w-auto"
                           >
@@ -1009,36 +1123,6 @@ export const CoursePlayer = ({
                         ))}
                       </div>
 
-                      {selectedAttachment ? (
-                        <div className="mt-1 rounded-lg border border-border p-2.5 bg-background/80">
-                          <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2 items-end">
-                            <label className="text-xs text-muted-foreground space-y-1">
-                              <span className="block">{copy.downloadLanguage}</span>
-                              <select
-                                value={downloadLanguage}
-                                onChange={(event) => setDownloadLanguage(event.target.value as SupportedLanguage)}
-                                className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground"
-                              >
-                                {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
-                                  <option key={value} value={value}>
-                                    {label}
-                                  </option>
-                                ))}
-                              </select>
-                            </label>
-
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => downloadPdf(selectedAttachment.id, downloadLanguage)}
-                              className="w-full sm:w-auto"
-                            >
-                              {copy.downloadSelectedPdf}
-                            </Button>
-                          </div>
-                        </div>
-                      ) : null}
-
                       <div className="mt-2 flex-1 min-h-0 rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                         {isLoadingPdf ? (
                           <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
@@ -1079,10 +1163,10 @@ export const CoursePlayer = ({
                       <li>• {copy.unlockNotes}</li>
                     </ul>
                     <Button
-                      onClick={() => {
-                        setPaymentError('');
-                        setIsMethodModalOpen(true);
-                      }}
+                      onClick={openPaymentModal}
+                      onMouseEnter={primePaymentModal}
+                      onFocus={primePaymentModal}
+                      onTouchStart={primePaymentModal}
                       disabled={isPurchasing}
                       className="w-full mt-4"
                     >
@@ -1104,24 +1188,6 @@ export const CoursePlayer = ({
               {copy.loadingPlayer}
             </div>
           )}
-        </div>
-
-        <div className="fixed bottom-0 left-0 right-0 lg:left-56 z-30 border-t border-primary/35 bg-black">
-          <div className="px-2 sm:px-3 lg:px-4 py-1.5">
-            <div className="rounded-[12px] border border-primary/40 bg-black overflow-hidden">
-              <iframe
-                title="Spotify playlist"
-                src={spotifyEmbedUrl}
-                width="100%"
-                height="152"
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                allowFullScreen
-                className="block w-full bg-black"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
