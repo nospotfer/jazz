@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { buildLessonQuizSeedData, introLessonQuizSeed } from './quiz-seed-data';
 
 const database = new PrismaClient();
 
@@ -20,6 +21,9 @@ async function main() {
                     title: 'Introducción a la Cultura del Jazz',
                     position: 1,
                     videoUrl: 'YOUR_MUX_VIDEO_ID',
+                    quizQuestions: {
+                      create: buildLessonQuizSeedData(introLessonQuizSeed),
+                    },
                     attachments: {
                       create: [
                         {

@@ -17,6 +17,8 @@ export function PromoVideo() {
   const [thumbnailToken, setThumbnailToken] = useState('');
   const [storyboardToken, setStoryboardToken] = useState('');
   const [muxRuntimeError, setMuxRuntimeError] = useState('');
+  const [playerRetryCount, setPlayerRetryCount] = useState(0);
+  const [playerInstanceKey, setPlayerInstanceKey] = useState(0);
   const posterUrl = playbackId
     ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ''}`
     : '';
@@ -93,6 +95,7 @@ export function PromoVideo() {
         setThumbnailToken(data.thumbnailToken || '');
         setStoryboardToken(data.storyboardToken || '');
         setMuxRuntimeError('');
+        setPlayerRetryCount(0);
       } catch {
         if (cancelled) return;
         setMuxRuntimeError(copy.muxError);
@@ -156,6 +159,7 @@ export function PromoVideo() {
           >
             {hasMuxPlayback ? (
               <MuxPlayer
+                key={playerInstanceKey}
                 ref={playerRef}
                 className="absolute inset-0 w-full h-full"
                 playbackId={playbackId}
@@ -174,7 +178,28 @@ export function PromoVideo() {
                 loop
                 playsInline
                 accentColor="#d4af37"
-                onError={() => {
+                onError={async () => {
+                  if (playerRetryCount < 1) {
+                    try {
+                      const response = await fetch('/api/mux/promo-playback?retry=1', { cache: 'no-store' });
+                      if (!response.ok) {
+                        throw new Error('Promo playback retry request failed');
+                      }
+
+                      const data = await response.json();
+                      setPlaybackId(data.playbackId || '');
+                      setPlaybackToken(data.playbackToken || '');
+                      setThumbnailToken(data.thumbnailToken || '');
+                      setStoryboardToken(data.storyboardToken || '');
+                      setMuxRuntimeError('');
+                      setPlayerRetryCount(1);
+                      setPlayerInstanceKey((value) => value + 1);
+                      return;
+                    } catch {
+                      // Fall through and show the error message below.
+                    }
+                  }
+
                   setMuxRuntimeError(copy.muxError);
                 }}
               />

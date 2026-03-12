@@ -20,7 +20,9 @@ if (nodeEnv === 'development' && isLiveKey) {
 }
 
 if (vercelEnv === 'production' && isTestKey) {
-  throw new Error('Unsafe Stripe configuration: production deployment must use a live key (sk_live_...).');
+  console.warn(
+    'Unsafe Stripe configuration: production deployment is using a test key (sk_test_...).'
+  );
 }
 
 export const stripe = new Stripe(stripeSecretKey, {

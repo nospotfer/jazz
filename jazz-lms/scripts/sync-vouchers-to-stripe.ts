@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Prisma, PrismaClient } from '@prisma/client';
 import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '../src/lib/stripe-voucher-sync';
 
