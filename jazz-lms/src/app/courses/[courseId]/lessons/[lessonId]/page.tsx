@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { CoursePlayer } from '@/components/course/course-player';
 import { db } from '@/lib/db';
+import { LESSON_QUIZ_QUESTION_COUNT } from '@/lib/lesson-quiz';
+import { getLessonQuizQuestionBankCount, getLessonQuizSummary } from '@/lib/lesson-quiz-server';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
@@ -111,24 +113,29 @@ const LessonPage = async ({
     user.email?.toLowerCase() === (process.env.ADMIN_OWNER_EMAIL ?? '').toLowerCase();
   const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);
 
-  const userProgress = await db.userProgress.findUnique({
-    where: {
-      userId_lessonId: {
-        userId: user.id,
-        lessonId: params.lessonId,
+  const [userProgress, initialQuizSummary, quizQuestionBankCount] = await Promise.all([
+    db.userProgress.findUnique({
+      where: {
+        userId_lessonId: {
+          userId: user.id,
+          lessonId: params.lessonId,
+        },
       },
-    },
-    select: {
-      isCompleted: true,
-      progressPercent: true,
-    },
-  });
+      select: {
+        isCompleted: true,
+        progressPercent: true,
+      },
+    }),
+    getLessonQuizSummary(user.id, params.lessonId),
+    getLessonQuizQuestionBankCount(params.lessonId),
+  ]);
 
   const initialIsCompleted =
     Boolean(userProgress?.isCompleted) || (userProgress?.progressPercent ?? 0) >= 100;
   const initialProgressPercent = initialIsCompleted
     ? 100
     : userProgress?.progressPercent ?? 0;
+  const hasQuizAvailable = quizQuestionBankCount >= LESSON_QUIZ_QUESTION_COUNT;
 
   if (!canAccessLesson) {
     return redirect(`/courses/${params.courseId}?locked=true`);
@@ -142,6 +149,8 @@ const LessonPage = async ({
         lessonId={params.lessonId}
         initialIsCompleted={initialIsCompleted}
         initialProgressPercent={initialProgressPercent}
+        initialQuizSummary={initialQuizSummary}
+        hasQuizAvailable={hasQuizAvailable}
         canAccessLesson={canAccessLesson}
         canAccessAttachments={canAccessAttachments}
       />

@@ -1,7 +1,7 @@
 export interface CanonicalJazzClass {
   classNumber: number;
   classLabel: string;
-  subtitle: string;
+  subtitle: string; // Updated subtitle
   subtitles: Record<'es' | 'en' | 'fr' | 'pt', string>;
   descriptions: Record<'es' | 'en' | 'fr' | 'pt', string>;
   image: string;
@@ -11,12 +11,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 1,
     classLabel: 'Clase 1',
-    subtitle: 'Introducción a la cultura del jazz',
+    subtitle: 'La Esencia del Jazz',
     subtitles: {
-      es: 'Introducción a la cultura del jazz',
-      en: 'Introduction to jazz culture',
-      fr: 'Introduction à la culture du jazz',
-      pt: 'Introdução à cultura do jazz',
+      es: 'La Esencia del Jazz',
+      en: 'The Essence of Jazz',
+      fr: 'L’essence du jazz',
+      pt: 'A Essencia do Jazz',
     },
     descriptions: {
       es: 'Introducción general a la cultura del jazz, su origen histórico y sus bases estéticas.',
@@ -29,12 +29,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 2,
     classLabel: 'Clase 2',
-    subtitle: 'El lenguaje del jazz 1: heterogeneidad sonora',
+    subtitle: 'El Lenguaje del Jazz: Heterogeneidad Sonora',
     subtitles: {
-      es: 'El lenguaje del jazz 1: heterogeneidad sonora',
-      en: 'The language of jazz 1: sonic heterogeneity',
-      fr: 'Le langage du jazz 1 : hétérogénéité sonore',
-      pt: 'A linguagem do jazz 1: heterogeneidade sonora',
+      es: 'El Lenguaje del Jazz: Heterogeneidad Sonora',
+      en: 'The Language of Jazz: Sonic Heterogeneity',
+      fr: 'Le langage du jazz : hétérogénéité sonore',
+      pt: 'A Linguagem do Jazz: Heterogeneidade Sonora',
     },
     descriptions: {
       es: 'La heterogeneidad sonora y la personalización del sonido como rasgo esencial del jazz.',
@@ -47,12 +47,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 3,
     classLabel: 'Clase 3',
-    subtitle: 'El lenguaje del jazz 2: antecedentes',
+    subtitle: 'Gospel y Blues: Las Raices Profundas',
     subtitles: {
-      es: 'El lenguaje del jazz 2: antecedentes',
-      en: 'The language of jazz 2: roots',
-      fr: 'Le langage du jazz 2 : antécédents',
-      pt: 'A linguagem do jazz 2: antecedentes',
+      es: 'Gospel y Blues: Las Raices Profundas',
+      en: 'Gospel and Blues: The Deep Roots',
+      fr: 'Gospel et blues : les racines profondes',
+      pt: 'Gospel e Blues: As Raizes Profundas',
     },
     descriptions: {
       es: 'Antecedentes afroamericanos: gospel y blues como raíces fundamentales del lenguaje jazzístico.',
@@ -65,12 +65,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 4,
     classLabel: 'Clase 4',
-    subtitle: 'El lenguaje del jazz 3: improvisación',
+    subtitle: 'Las Formas del Jazz: Blues y Baladas',
     subtitles: {
-      es: 'El lenguaje del jazz 3: improvisación',
-      en: 'The language of jazz 3: improvisation',
-      fr: 'Le langage du jazz 3 : improvisation',
-      pt: 'A linguagem do jazz 3: improvisação',
+      es: 'Las Formas del Jazz: Blues y Baladas',
+      en: 'The Forms of Jazz: Blues and Ballads',
+      fr: 'Les formes du jazz : blues et ballades',
+      pt: 'As Formas do Jazz: Blues e Baladas',
     },
     descriptions: {
       es: 'La improvisación como eje central del jazz y sus formas principales.',
@@ -83,12 +83,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 5,
     classLabel: 'Clase 5',
-    subtitle: 'Un antecedente decisivo: ragtime',
+    subtitle: 'Un Antecedente Decisivo: El Ragtime',
     subtitles: {
-      es: 'Un antecedente decisivo: ragtime',
-      en: 'A decisive precursor: ragtime',
+      es: 'Un Antecedente Decisivo: El Ragtime',
+      en: 'A Decisive Precedent: Ragtime',
       fr: 'Un antécédent décisif : le ragtime',
-      pt: 'Um antecedente decisivo: ragtime',
+      pt: 'Um Antecedente Decisivo: O Ragtime',
     },
     descriptions: {
       es: 'Ragtime como antecedente clave y su relación con el surgimiento del jazz temprano.',
@@ -101,12 +101,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 6,
     classLabel: 'Clase 6',
-    subtitle: 'El lenguaje del jazz 4: ritmo',
+    subtitle: 'El Ritmo: El Corazon del Jazz',
     subtitles: {
-      es: 'El lenguaje del jazz 4: ritmo',
-      en: 'The language of jazz 4: rhythm',
-      fr: 'Le langage du jazz 4 : rythme',
-      pt: 'A linguagem do jazz 4: ritmo',
+      es: 'El Ritmo: El Corazon del Jazz',
+      en: 'Rhythm: The Heart of Jazz',
+      fr: 'Le rythme : le cœur du jazz',
+      pt: 'O Ritmo: O Coracao do Jazz',
     },
     descriptions: {
       es: 'Evolución del ritmo y de la sección rítmica desde el jazz temprano hasta el bop.',
@@ -119,12 +119,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 7,
     classLabel: 'Clase 7',
-    subtitle: 'Jamming y blowing',
+    subtitle: 'Jamming and Blowing: El Placer de Improvisar',
     subtitles: {
-      es: 'Jamming y blowing',
-      en: 'Jamming and blowing',
-      fr: 'Jamming et blowing',
-      pt: 'Jamming e blowing',
+      es: 'Jamming and Blowing: El Placer de Improvisar',
+      en: 'Jamming and Blowing: The Pleasure of Improvising',
+      fr: 'Jamming and blowing : le plaisir d’improviser',
+      pt: 'Jamming and Blowing: O Prazer de Improvisar',
     },
     descriptions: {
       es: 'La cultura de las jam sessions y su impacto en la consolidación del jazz moderno.',
@@ -137,12 +137,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 8,
     classLabel: 'Clase 8',
-    subtitle: 'Composición y arreglo en jazz',
+    subtitle: 'La Composicion Colaborativa: Ellington, Basie y Monk',
     subtitles: {
-      es: 'Composición y arreglo en jazz',
-      en: 'Composition and arrangements in jazz',
-      fr: 'Composition et arrangements en jazz',
-      pt: 'Composição e arranjos no jazz',
+      es: 'La Composicion Colaborativa: Ellington, Basie y Monk',
+      en: 'Collaborative Composition: Ellington, Basie, and Monk',
+      fr: 'La composition collaborative : Ellington, Basie et Monk',
+      pt: 'A Composicao Colaborativa: Ellington, Basie e Monk',
     },
     descriptions: {
       es: 'Composición y arreglos pensados para timbres y personalidades musicales concretas.',
@@ -155,12 +155,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 9,
     classLabel: 'Clase 9',
-    subtitle: 'De las marching bands a los primeros grupos de jazz',
+    subtitle: 'Instrumentos y Conjuntos: La Orquesta',
     subtitles: {
-      es: 'De las marching bands a los primeros grupos de jazz',
-      en: 'From marching bands to early jazz groups',
-      fr: 'Des marching bands aux premiers groupes de jazz',
-      pt: 'Das marching bands aos primeiros grupos de jazz',
+      es: 'Instrumentos y Conjuntos: La Orquesta',
+      en: 'Instruments and Ensembles: The Orchestra',
+      fr: 'Instruments et ensembles : l’orchestre',
+      pt: 'Instrumentos e Conjuntos: A Orquestra',
     },
     descriptions: {
       es: 'De las marching bands a las primeras formaciones que definieron el sonido del jazz.',
@@ -173,12 +173,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 10,
     classLabel: 'Clase 10',
-    subtitle: 'Swing y combos clásicos',
+    subtitle: 'Los Pequenos Grupos y el Mundo de los Solistas',
     subtitles: {
-      es: 'Swing y combos clásicos',
-      en: 'Swing and classic combos',
-      fr: 'Swing et combos classiques',
-      pt: 'Swing e combos clássicos',
+      es: 'Los Pequenos Grupos y el Mundo de los Solistas',
+      en: 'Small Groups and the World of Soloists',
+      fr: 'Les petits groupes et le monde des solistes',
+      pt: 'Os Pequenos Grupos e o Mundo dos Solistas',
     },
     descriptions: {
       es: 'El swing y los combos clásicos en la expansión internacional del género.',
@@ -191,12 +191,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 11,
     classLabel: 'Clase 11',
-    subtitle: 'Combos modernos e instrumentos de sección rítmica',
+    subtitle: 'La Seccion Ritmica: El Motor del Grupo',
     subtitles: {
-      es: 'Combos modernos e instrumentos de sección rítmica',
-      en: 'Modern combos and rhythm-section instruments',
-      fr: 'Combos modernes et instruments de section rythmique',
-      pt: 'Combos modernos e instrumentos da seção rítmica',
+      es: 'La Seccion Ritmica: El Motor del Grupo',
+      en: 'The Rhythm Section: The Engine of the Group',
+      fr: 'La section rythmique : le moteur du groupe',
+      pt: 'A Secao Ritmica: O Motor do Grupo',
     },
     descriptions: {
       es: 'Combos modernos y nuevas funciones instrumentales en el hard bop y el jazz modal.',
@@ -209,12 +209,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 12,
     classLabel: 'Clase 12',
-    subtitle: 'Improvisación',
+    subtitle: 'La Improvisacion en el Jazz',
     subtitles: {
-      es: 'Improvisación',
-      en: 'Improvisation',
-      fr: 'Improvisation',
-      pt: 'Improvisação',
+      es: 'La Improvisacion en el Jazz',
+      en: 'Improvisation in Jazz',
+      fr: 'L’improvisation en jazz',
+      pt: 'A Improvisacao no Jazz',
     },
     descriptions: {
       es: 'Procedimientos improvisatorios: paráfrasis, fórmula, motivo, modalidad y libertad.',
@@ -227,12 +227,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 13,
     classLabel: 'Clase 13',
-    subtitle: 'Jazz y entretenimiento',
+    subtitle: 'Jazz y Entertainment: Arte o Espectaculo',
     subtitles: {
-      es: 'Jazz y entretenimiento',
-      en: 'Jazz and entertainment',
-      fr: 'Jazz et divertissement',
-      pt: 'Jazz e entretenimento',
+      es: 'Jazz y Entertainment: Arte o Espectaculo',
+      en: 'Jazz and Entertainment: Art or Spectacle',
+      fr: 'Jazz et entertainment : art ou spectacle',
+      pt: 'Jazz e Entertainment: Arte ou Espetaculo',
     },
     descriptions: {
       es: 'Relación entre jazz y entretenimiento en su proceso de consolidación cultural.',
@@ -245,12 +245,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 14,
     classLabel: 'Clase 14',
-    subtitle: 'Canto jazz 1',
+    subtitle: 'Cantar Jazz (Parte 1): De Bessie Smith a Billie Holiday',
     subtitles: {
-      es: 'Canto jazz 1',
-      en: 'Jazz singing 1',
-      fr: 'Chant jazz 1',
-      pt: 'Canto jazz 1',
+      es: 'Cantar Jazz (Parte 1): De Bessie Smith a Billie Holiday',
+      en: 'Singing Jazz (Part 1): From Bessie Smith to Billie Holiday',
+      fr: 'Chanter le jazz (partie 1) : de Bessie Smith à Billie Holiday',
+      pt: 'Cantar Jazz (Parte 1): De Bessie Smith a Billie Holiday',
     },
     descriptions: {
       es: 'El canto jazzístico en su primera etapa y sus principales referentes históricos.',
@@ -263,12 +263,12 @@ export const CANONICAL_JAZZ_CLASSES: CanonicalJazzClass[] = [
   {
     classNumber: 15,
     classLabel: 'Clase 15',
-    subtitle: 'Canto jazz 2',
+    subtitle: 'Cantar Jazz (Parte 2): De Ella Fitzgerald a Sarah Vaughan',
     subtitles: {
-      es: 'Canto jazz 2',
-      en: 'Jazz singing 2',
-      fr: 'Chant jazz 2',
-      pt: 'Canto jazz 2',
+      es: 'Cantar Jazz (Parte 2): De Ella Fitzgerald a Sarah Vaughan',
+      en: 'Singing Jazz (Part 2): From Ella Fitzgerald to Sarah Vaughan',
+      fr: 'Chanter le jazz (partie 2) : de Ella Fitzgerald à Sarah Vaughan',
+      pt: 'Cantar Jazz (Parte 2): De Ella Fitzgerald a Sarah Vaughan',
     },
     descriptions: {
       es: 'Grandes voces del swing y su influencia en la evolución de la voz como instrumento.',

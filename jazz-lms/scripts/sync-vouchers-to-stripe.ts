@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '../src/lib/stripe-voucher-sync';
 
 const prisma = new PrismaClient();
@@ -135,7 +135,10 @@ async function main() {
         },
         data: {
           isActive: targetActive,
-          metadata: mergeStripeVoucherMetadata(voucher.metadata, stripeMetadata),
+          metadata: mergeStripeVoucherMetadata(
+            voucher.metadata,
+            stripeMetadata
+          ) as Prisma.InputJsonValue,
         },
       });
 

@@ -20,6 +20,9 @@ import type MuxPlayerElement from '@mux/mux-player';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSelector } from '@/components/language-selector';
 import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
+import { LessonQuizOverlay } from '@/components/course/lesson-quiz-overlay';
+import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
+import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
@@ -47,6 +50,8 @@ interface CoursePlayerProps {
   lessonId: string;
   initialIsCompleted: boolean;
   initialProgressPercent: number;
+  initialQuizSummary: LessonQuizSummarySnapshot | null;
+  hasQuizAvailable: boolean;
   canAccessLesson: boolean;
   canAccessAttachments: boolean;
 }
@@ -105,6 +110,8 @@ export const CoursePlayer = ({
   lessonId,
   initialIsCompleted,
   initialProgressPercent,
+  initialQuizSummary,
+  hasQuizAvailable,
   canAccessLesson,
   canAccessAttachments,
 }: CoursePlayerProps) => {
@@ -324,6 +331,9 @@ export const CoursePlayer = ({
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const [pdfError, setPdfError] = useState('');
   const [isNotesPanelOpen, setIsNotesPanelOpen] = useState(true);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [quizSummary, setQuizSummary] = useState<LessonQuizSummarySnapshot | null>(initialQuizSummary);
+  const [shouldRefreshAfterQuizClose, setShouldRefreshAfterQuizClose] = useState(false);
   const previewUrlRef = useRef('');
   const muxContainerRef = useRef<HTMLDivElement | null>(null);
   const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
@@ -433,6 +443,10 @@ export const CoursePlayer = ({
   useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
+
+  useEffect(() => {
+    setQuizSummary(initialQuizSummary);
+  }, [initialQuizSummary]);
 
   useEffect(() => {
     if (!muxPlayerRef.current) {
@@ -724,7 +738,7 @@ export const CoursePlayer = ({
     }
   };
 
-  const completeLesson = async () => {
+  const completeLesson = async ({ openQuizAfter = false }: { openQuizAfter?: boolean } = {}) => {
     if (isCompleting || isCompleted || !canAccessLesson) return;
 
     setIsCompleting(true);
@@ -741,7 +755,13 @@ export const CoursePlayer = ({
       setIsCompleted(true);
       confetti.onOpen();
       toast.success(copy.lessonCompleted);
-      router.refresh();
+
+      if (openQuizAfter) {
+        setShouldRefreshAfterQuizClose(true);
+        setIsQuizOpen(true);
+      } else {
+        router.refresh();
+      }
     } catch {
       toast.error(copy.somethingWrong);
     } finally {
@@ -765,6 +785,7 @@ export const CoursePlayer = ({
 
       setIsCompleted(false);
       setLastSavedPercent(0);
+      setIsQuizOpen(false);
       toast.success(copy.lessonReset);
       router.refresh();
     } catch {
@@ -789,7 +810,7 @@ export const CoursePlayer = ({
     const shouldCompleteByPlayback = watchedPercent >= 95 || lastSavedPercent >= 90;
     if (!shouldCompleteByPlayback) return;
 
-    await completeLesson();
+    await completeLesson({ openQuizAfter: false });
   };
 
   const onMarkAsComplete = async () => {
@@ -800,7 +821,16 @@ export const CoursePlayer = ({
       return;
     }
 
-    await completeLesson();
+    await completeLesson({ openQuizAfter: true });
+  };
+
+  const handleQuizClose = () => {
+    setIsQuizOpen(false);
+
+    if (shouldRefreshAfterQuizClose) {
+      setShouldRefreshAfterQuizClose(false);
+      router.refresh();
+    }
   };
 
   const firstAttachmentId = visibleAttachments[0]?.id;
@@ -885,6 +915,16 @@ export const CoursePlayer = ({
                               : copy.completeTooltip}
                           </span>
                         </button>
+
+                        {quizSummary && quizSummary.totalAttempts > 0 ? (
+                          <LessonQuizMedalBadge
+                            medal={quizSummary.bestMedal}
+                            language={language}
+                            scorePercent={quizSummary.bestScorePercent}
+                            compact
+                            className="shrink-0"
+                          />
+                        ) : null}
                     </div>
                   </div>
                 </div>
@@ -1054,6 +1094,16 @@ export const CoursePlayer = ({
           )}
         </div>
       </div>
+
+      <LessonQuizOverlay
+        courseId={course.id}
+        lessonId={lesson.id}
+        isOpen={isQuizOpen}
+        hasQuizAvailable={hasQuizAvailable}
+        initialSummary={quizSummary}
+        onClose={handleQuizClose}
+        onSummaryChange={setQuizSummary}
+      />
 
       <PaymentMethodModal
         isOpen={isMethodModalOpen}

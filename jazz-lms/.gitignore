@@ -40,6 +40,10 @@ next-env.d.ts
 # output logs
 npm_output.log
 
+# local PDF consultation for quiz authoring
+.local/
+local-reference/
+
 # IDE
 .idea/
 

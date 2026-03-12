@@ -1,13 +1,13 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function RedeemPage() {
+function RedeemPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [voucherCode, setVoucherCode] = useState('');
@@ -120,5 +120,22 @@ export default function RedeemPage() {
         ) : null}
       </div>
     </div>
+  );
+}
+
+export default function RedeemPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-4 bg-muted/20">
+          <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 space-y-3 shadow-sm">
+            <h1 className="text-2xl font-bold">Resgatar acesso</h1>
+            <p className="text-sm text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      }
+    >
+      <RedeemPageContent />
+    </Suspense>
   );
 }

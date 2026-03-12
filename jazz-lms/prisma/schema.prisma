@@ -20,6 +20,14 @@ enum VoucherType {
   DISCOUNT_FIXED
 }
 
+enum QuizMedalTier {
+  NONE
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -84,6 +92,9 @@ model Lesson {
   updatedAt       DateTime         @updatedAt
   attachments     Attachment[]
   chapter         Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  quizQuestions   LessonQuizQuestion[]
+  quizAttempts    LessonQuizAttempt[]
+  quizSummaries   LessonQuizSummary[]
   userProgress    UserProgress[]
   lessonPurchases LessonPurchase[]
   translations    LessonTranslation[]
@@ -282,4 +293,95 @@ model LessonNote {
   @@unique([userId, lessonId])
   @@index([lessonId])
   @@index([courseId])
+}
+
+model LessonQuizQuestion {
+  id             String                   @id @default(uuid())
+  lessonId       String
+  prompt         String
+  explanation    String?
+  sourceLabel    String?
+  isActive       Boolean                  @default(true)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  lesson         Lesson                   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  options        LessonQuizOption[]
+  attemptAnswers LessonQuizAttemptAnswer[]
+
+  @@index([lessonId, isActive])
+}
+
+model LessonQuizOption {
+  id         String                    @id @default(uuid())
+  questionId String
+  label      String
+  text       String
+  isCorrect  Boolean                   @default(false)
+  position   Int
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+  question   LessonQuizQuestion        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedBy LessonQuizAttemptAnswer[] @relation("SelectedQuizOption")
+
+  @@unique([questionId, position])
+  @@unique([questionId, label])
+  @@index([questionId])
+}
+
+model LessonQuizAttempt {
+  id            String                   @id @default(uuid())
+  userId        String
+  lessonId      String
+  scorePercent  Int?
+  correctCount  Int                      @default(0)
+  questionCount Int                      @default(12)
+  medal         QuizMedalTier            @default(NONE)
+  completedAt   DateTime?
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  lesson        Lesson                   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers       LessonQuizAttemptAnswer[]
+
+  @@index([userId, lessonId, createdAt])
+  @@index([lessonId, completedAt])
+}
+
+model LessonQuizAttemptAnswer {
+  id               String             @id @default(uuid())
+  attemptId        String
+  questionId       String
+  selectedOptionId String?
+  orderIndex       Int
+  isCorrect        Boolean?
+  answeredAt       DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  attempt          LessonQuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question         LessonQuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption   LessonQuizOption?  @relation("SelectedQuizOption", fields: [selectedOptionId], references: [id], onDelete: SetNull)
+
+  @@unique([attemptId, orderIndex])
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([questionId])
+  @@index([selectedOptionId])
+}
+
+model LessonQuizSummary {
+  id               String        @id @default(uuid())
+  userId           String
+  lessonId         String
+  bestAttemptId    String?
+  bestScorePercent Int           @default(0)
+  bestCorrectCount Int           @default(0)
+  bestMedal        QuizMedalTier @default(NONE)
+  totalAttempts    Int           @default(0)
+  lastAttemptAt    DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  lesson           Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([lessonId])
+  @@index([bestAttemptId])
 }

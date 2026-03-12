@@ -7,8 +7,19 @@ export async function GET() {
 
   if (missingMuxConfig) {
     return NextResponse.json(
-      { error: 'Mux signing is not configured.' },
-      { status: 503 }
+      {
+        playbackId: PROMO_MUX_PLAYBACK_ID,
+        playbackToken: '',
+        thumbnailToken: '',
+        storyboardToken: '',
+        tokenMode: 'none',
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, private, max-age=0',
+          Pragma: 'no-cache',
+        },
+      }
     );
   }
 
@@ -26,6 +37,21 @@ export async function GET() {
     });
   } catch (error) {
     console.error('[MUX_PROMO_PLAYBACK_ROUTE_ERROR]', error);
-    return NextResponse.json({ error: 'Failed to load promo playback' }, { status: 500 });
+    // Keep the landing promo available even if Mux signing key rotation is temporarily inconsistent.
+    return NextResponse.json(
+      {
+        playbackId: PROMO_MUX_PLAYBACK_ID,
+        playbackToken: '',
+        thumbnailToken: '',
+        storyboardToken: '',
+        tokenMode: 'none',
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, private, max-age=0',
+          Pragma: 'no-cache',
+        },
+      }
+    );
   }
 }
