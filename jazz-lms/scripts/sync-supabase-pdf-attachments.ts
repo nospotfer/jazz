@@ -1,5 +1,5 @@
 import { AttachmentKind, LanguageCode, PrismaClient } from '@prisma/client';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const db = new PrismaClient();
 
@@ -86,7 +86,7 @@ const detectAuxOrder = (input: string) => {
 async function listPdfPaths(options: {
   bucket: string;
   prefix: string;
-  supabase: ReturnType<typeof createClient>;
+  supabase: SupabaseClient<any, 'public', any>;
 }) {
   const { bucket, prefix, supabase } = options;
   const output: string[] = [];
