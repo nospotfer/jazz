@@ -83,9 +83,10 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   }[language];
 
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
-  const [signedUrl, setSignedUrl] = useState<string>(items[0]?.url ?? '');
+  const [signedUrl, setSignedUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
+  const [shouldPrefetchFirstPdf, setShouldPrefetchFirstPdf] = useState(false);
 
   const selected = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0],
@@ -148,8 +149,29 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   };
 
   const handleSelect = (item: PdfItem) => {
+    setShouldPrefetchFirstPdf(true);
     setSelectedId(item.id);
   };
+
+  useEffect(() => {
+    if (!items[0]?.id) {
+      return;
+    }
+
+    const idleCallback = window.requestIdleCallback?.(() => {
+      setShouldPrefetchFirstPdf(true);
+    }, { timeout: 1500 });
+
+    if (idleCallback !== undefined) {
+      return () => window.cancelIdleCallback?.(idleCallback);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShouldPrefetchFirstPdf(true);
+    }, 1200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [items]);
 
   useEffect(() => {
     if (!selected) {
@@ -158,8 +180,14 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       return;
     }
 
+    if (!shouldPrefetchFirstPdf) {
+      setSignedUrl('');
+      setLoadError('');
+      return;
+    }
+
     void loadSignedUrl(selected);
-  }, [selected?.id]);
+  }, [selected?.id, shouldPrefetchFirstPdf]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">

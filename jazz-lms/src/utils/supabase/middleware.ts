@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
 
   // If Supabase credentials are not set (local dev), skip creating the client
   if (!hasValidSupabasePublicConfig(url, key)) {
-    return response
+    return { response, user: null }
   }
 
   const supabase = createServerClient(url!, key!, {
@@ -60,12 +60,16 @@ export async function updateSession(request: NextRequest) {
   })
 
   try {
-    await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    return { response, user }
   } catch (err) {
     // If Supabase request fails, ignore in dev so page can render
     // eslint-disable-next-line no-console
     console.warn('Supabase auth.getUser failed:', err)
   }
 
-  return response
+  return { response, user: null }
 }

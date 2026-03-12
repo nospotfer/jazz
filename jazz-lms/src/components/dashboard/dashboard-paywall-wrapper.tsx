@@ -1,12 +1,19 @@
 'use client';
 
-import { ReactNode, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/components/providers/language-provider';
-import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
+import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
+import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+
+const PaymentMethodModal = dynamic(
+  () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
+  { ssr: false }
+);
 
 interface DashboardPaywallWrapperProps {
   hasPaidCourse: boolean;
@@ -60,6 +67,36 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
 
   const showPaywall = !hasPaidCourse && isLockedRoute;
 
+  useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      warmPaymentMethodModal();
+    });
+
+    if (idleCallback !== undefined) {
+      return () => {
+        window.cancelIdleCallback?.(idleCallback);
+      };
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      warmPaymentMethodModal();
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  const primePaymentModal = () => {
+    warmPaymentMethodModal();
+  };
+
+  const openPaymentModal = () => {
+    warmPaymentMethodModal();
+    setPaymentError('');
+    setIsMethodModalOpen(true);
+  };
+
   const handlePurchase = async (paymentMethod: PaymentMethod) => {
     if (!courseId || isPurchasing) return;
 
@@ -107,7 +144,10 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
               {copy.description}
             </p>
             <Button
-              onClick={() => setIsMethodModalOpen(true)}
+              onClick={openPaymentModal}
+              onMouseEnter={primePaymentModal}
+              onFocus={primePaymentModal}
+              onTouchStart={primePaymentModal}
               disabled={isPurchasing || !courseId}
               className="w-full"
             >

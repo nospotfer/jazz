@@ -2,7 +2,7 @@
 const nextConfig = {
   poweredByHeader: false,
   images: {
-    unoptimized: true
+    formats: ['image/avif', 'image/webp'],
   },
   async headers() {
     const isProduction = process.env.NODE_ENV === 'production';

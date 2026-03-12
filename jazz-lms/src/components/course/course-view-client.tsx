@@ -1,15 +1,30 @@
 'use client';
 
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Lock, X, PlayCircle, Loader2, ShoppingCart } from 'lucide-react';
-import { UnlockAnimation } from './unlock-animation';
-import { PurchaseSuccessModal } from './purchase-success-modal';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzDescription, getLocalizedJazzSubtitle } from '@/lib/course-lessons';
-import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
+import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
+import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+
+const UnlockAnimation = dynamic(
+  () => import('./unlock-animation').then((mod) => mod.UnlockAnimation),
+  { ssr: false }
+);
+
+const PurchaseSuccessModal = dynamic(
+  () => import('./purchase-success-modal').then((mod) => mod.PurchaseSuccessModal),
+  { ssr: false }
+);
+
+const PaymentMethodModal = dynamic(
+  () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
+  { ssr: false }
+);
 
 // ─── Lesson Data (same as landing page classes) ─────────────────────────────
 
@@ -577,6 +592,31 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      warmPaymentMethodModal();
+    });
+
+    if (idleCallback !== undefined) {
+      return () => {
+        window.cancelIdleCallback?.(idleCallback);
+      };
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      warmPaymentMethodModal();
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasPurchased) {
+      setProgressByLessonId({});
+      return;
+    }
+
     fetch('/api/dashboard/courses-progress')
       .then((response) => response.json())
       .then((data) => {
@@ -596,7 +636,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       .catch(() => {
         setProgressByLessonId({});
       });
-  }, []);
+  }, [hasPurchased]);
 
   useEffect(() => {
     const purchaseStatus = searchParams.get('purchase');
@@ -652,6 +692,16 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       setIsPurchasing(false);
     }
   }, [courseId, language]);
+
+  const primePaymentModal = useCallback(() => {
+    warmPaymentMethodModal();
+  }, []);
+
+  const openPaymentModal = useCallback(() => {
+    warmPaymentMethodModal();
+    setPaymentError('');
+    setIsMethodModalOpen(true);
+  }, []);
 
   const handleCardClick = useCallback((index: number) => {
     const lesson = lessonsData[index];
@@ -710,10 +760,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           {!hasPurchased && (
             <div className="mx-auto w-full max-w-sm space-y-2">
               <button
-                onClick={() => {
-                  setPaymentError('');
-                  setIsMethodModalOpen(true);
-                }}
+                onClick={openPaymentModal}
+                onMouseEnter={primePaymentModal}
+                onFocus={primePaymentModal}
+                onTouchStart={primePaymentModal}
                 disabled={isPurchasing}
                 className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
               >
@@ -853,10 +903,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                     isPinned={false}
                     position={popupPosition}
                     hasPurchased={hasPurchased}
-                    onPurchaseClick={() => {
-                      setPaymentError('');
-                      setIsMethodModalOpen(true);
-                    }}
+                    onPurchaseClick={openPaymentModal}
                     copy={copy}
                   />
                 )}
@@ -875,10 +922,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           isPinned={true}
           position={popupPosition}
           hasPurchased={hasPurchased}
-          onPurchaseClick={() => {
-            setPaymentError('');
-            setIsMethodModalOpen(true);
-          }}
+          onPurchaseClick={openPaymentModal}
           copy={copy}
         />
       )}

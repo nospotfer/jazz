@@ -7,29 +7,9 @@ import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { cookies } from 'next/headers';
 import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
+import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
 
 export const runtime = 'nodejs';
-
-type SupportedPaymentMethod = 'card' | 'paypal' | 'bizum';
-
-const supportedPaymentMethods = new Set<SupportedPaymentMethod>(['card', 'paypal', 'bizum']);
-
-function isSupportedPaymentMethod(value: unknown): value is SupportedPaymentMethod {
-  return typeof value === 'string' && supportedPaymentMethods.has(value as SupportedPaymentMethod);
-}
-
-function isUnsupportedPaymentMethodStripeError(error: Stripe.errors.StripeInvalidRequestError): boolean {
-  const param = (error.param || '').toLowerCase();
-  const message = (error.message || '').toLowerCase();
-
-  return (
-    param.includes('payment_method_types') ||
-    param.includes('automatic_payment_methods') ||
-    message.includes('payment method') ||
-    message.includes('unsupported') ||
-    message.includes('not available')
-  );
-}
 
 export async function POST(req: Request) {
   let copy = {
@@ -38,13 +18,15 @@ export async function POST(req: Request) {
     invalidRequest: 'Solicitud inválida',
     courseNotFound: 'Curso no encontrado',
     alreadyPurchased: 'El curso ya fue comprado',
+    paymentsUnavailable: 'Pagos temporalmente no disponibles',
     paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
+    voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
     internalError: 'Error interno del servidor',
   };
 
   try {
     const payload = await req.json();
-    const { courseId, source, language, paymentMethod } = payload ?? {};
+    const { courseId, source, language, paymentMethod, voucherCode } = payload ?? {};
 
     if (!courseId) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
@@ -66,7 +48,9 @@ export async function POST(req: Request) {
         invalidRequest: 'Solicitud inválida',
         courseNotFound: 'Curso no encontrado',
         alreadyPurchased: 'El curso ya fue comprado',
+        paymentsUnavailable: 'Pagos temporalmente no disponibles',
         paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
+        voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
         internalError: 'Error interno del servidor',
       },
       en: {
@@ -75,7 +59,9 @@ export async function POST(req: Request) {
         invalidRequest: 'Invalid request',
         courseNotFound: 'Course not found',
         alreadyPurchased: 'Course already purchased',
+        paymentsUnavailable: 'Payments are temporarily unavailable',
         paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
+        voucherInProvider: 'Enter your discount code on the secure payment page',
         internalError: 'Internal server error',
       },
       fr: {
@@ -84,7 +70,9 @@ export async function POST(req: Request) {
         invalidRequest: 'Requête invalide',
         courseNotFound: 'Cours introuvable',
         alreadyPurchased: 'Le cours a déjà été acheté',
+        paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
         paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
+        voucherInProvider: 'Saisissez votre code de réduction sur la page de paiement sécurisée',
         internalError: 'Erreur interne du serveur',
       },
       pt: {
@@ -93,10 +81,17 @@ export async function POST(req: Request) {
         invalidRequest: 'Solicitação inválida',
         courseNotFound: 'Curso não encontrado',
         alreadyPurchased: 'O curso já foi comprado',
+        paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
         paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
+        voucherInProvider: 'Insira o código de desconto na página de pagamento segura',
         internalError: 'Erro interno do servidor',
       },
     }[selectedLanguage];
+
+    if (typeof voucherCode === 'string' && voucherCode.trim().length > 0) {
+      return new NextResponse(copy.voucherInProvider, { status: 400 });
+    }
+
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
     const supabase = createClient();
@@ -112,25 +107,25 @@ export async function POST(req: Request) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
-    const course = await db.course.findUnique({
-      where: {
-        id: courseId,
-      },
-    });
+    const [course, existingPurchase] = await Promise.all([
+      db.course.findUnique({
+        where: {
+          id: courseId,
+        },
+      }),
+      db.purchase.findUnique({
+        where: {
+          userId_courseId: {
+            userId: user.id,
+            courseId,
+          },
+        },
+      }),
+    ]);
 
     if (!course) {
       return new NextResponse(copy.courseNotFound, { status: 404 });
     }
-
-    // Check if already purchased
-    const existingPurchase = await db.purchase.findUnique({
-      where: {
-        userId_courseId: {
-          userId: user.id,
-          courseId: courseId,
-        },
-      },
-    });
 
     if (existingPurchase) {
       return new NextResponse(copy.alreadyPurchased, { status: 400 });
@@ -139,6 +134,46 @@ export async function POST(req: Request) {
     const configuredPrice = Number(course.price ?? 0);
     const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
+
+    if (isFreeCourse) {
+      const prisma = db as any;
+      await prisma.$transaction(async (tx: any) => {
+        await tx.purchase.upsert({
+          where: {
+            userId_courseId: {
+              userId: user.id,
+              courseId,
+            },
+          },
+          update: {
+            voucherId: null,
+            originalPrice: 0,
+            finalPrice: 0,
+            discountAmount: 0,
+          },
+          create: {
+            userId: user.id,
+            courseId,
+            voucherId: null,
+            originalPrice: 0,
+            finalPrice: 0,
+            discountAmount: 0,
+          },
+        });
+      });
+
+      const successUrl = source === 'dashboard'
+        ? `${origin}/dashboard?purchase=success&source=dashboard&free=true`
+        : `${origin}/courses/${courseId}?success=true&free=true`;
+
+      return NextResponse.json({
+        url: successUrl,
+      });
+    }
+
+    if (!stripe) {
+      return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+    }
 
     const translationBundle = await getCourseTranslationBundle({
       language: selectedLanguage,
@@ -153,41 +188,7 @@ export async function POST(req: Request) {
       course.description
     );
 
-    if (isFreeCourse) {
-      await db.purchase.create({
-        data: {
-          userId: user.id,
-          courseId,
-        },
-      });
-
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&free=true`
-        : `${origin}/courses/${courseId}?success=true&free=true`;
-
-      return NextResponse.json({
-        url: successUrl,
-      });
-    }
-
-    // Find or create Stripe customer
-    let stripeCustomerId: string;
-    const customers = await stripe.customers.list({
-      email: user.email,
-      limit: 1,
-    });
-
-    if (customers.data.length > 0) {
-      stripeCustomerId = customers.data[0].id;
-    } else {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          userId: user.id,
-        },
-      });
-      stripeCustomerId = customer.id;
-    }
+    const checkoutOriginalPrice = Number(numericPrice.toFixed(2));
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       {
@@ -197,7 +198,7 @@ export async function POST(req: Request) {
             name: localizedCourse.title,
             description: localizedCourse.description || undefined,
           },
-          unit_amount: Math.round(numericPrice * 100),
+          unit_amount: Math.round(checkoutOriginalPrice * 100),
         },
         quantity: 1,
       },
@@ -209,7 +210,8 @@ export async function POST(req: Request) {
     const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
 
     const baseSessionParams: Stripe.Checkout.SessionCreateParams = {
-      customer: stripeCustomerId,
+      customer_creation: 'always',
+      customer_email: user.email,
       locale: stripeLocale,
       line_items,
       mode: 'payment',
@@ -220,6 +222,9 @@ export async function POST(req: Request) {
         purchaseType: 'course',
         courseId: course.id,
         userId: user.id,
+        originalPrice: String(checkoutOriginalPrice),
+        discountAmount: '0',
+        finalPrice: String(checkoutOriginalPrice),
       },
     };
 
@@ -236,7 +241,7 @@ export async function POST(req: Request) {
         try {
           const multiMethodParams: Stripe.Checkout.SessionCreateParams = {
             ...baseSessionParams,
-            payment_method_types: ['card', 'paypal', 'bizum'] as unknown as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
+            payment_method_types: ['card', 'paypal'] as unknown as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
           };
 
           session = await stripe.checkout.sessions.create(multiMethodParams);
@@ -257,10 +262,16 @@ export async function POST(req: Request) {
         }
       }
     } catch (error) {
-      if (
-        error instanceof Stripe.errors.StripeInvalidRequestError &&
-        isUnsupportedPaymentMethodStripeError(error)
-      ) {
+      if (error instanceof Stripe.errors.StripeInvalidRequestError) {
+        if (isUnsupportedPaymentMethodStripeError(error)) {
+          return new NextResponse(copy.paymentMethodUnavailable, { status: 400 });
+        }
+
+        console.log('[CHECKOUT_STRIPE_INVALID_REQUEST]', {
+          message: error.message,
+          param: error.param,
+          code: error.code,
+        });
         return new NextResponse(copy.paymentMethodUnavailable, { status: 400 });
       }
 

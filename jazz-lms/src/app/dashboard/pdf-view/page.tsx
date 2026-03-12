@@ -7,18 +7,12 @@ import { isAdminRole } from '@/lib/admin/permissions';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
-
-function isAuxiliaryAttachment(name: string) {
-  return /auxiliar|auxiliares|auxiliary|support/i.test(name);
-}
-
-function getClassNumberFromAttachment(pathOrName: string) {
-  const match = pathOrName.match(/clase\s*(\d{1,2})/i);
-  if (!match) return null;
-
-  const value = Number(match[1]);
-  return Number.isInteger(value) ? value : null;
-}
+import {
+  getCourseNoteClassNumber,
+  getCourseNoteIdentity,
+  isAuxiliaryCourseNote,
+  isCourseNoteAttachment,
+} from '@/lib/course-notes';
 
 export default async function PdfViewPage() {
   const supabase = createClient();
@@ -78,7 +72,6 @@ export default async function PdfViewPage() {
   const orderedLessons = publishedCourses.flatMap((course) =>
     course.chapters.flatMap((chapter) => chapter.lessons)
   );
-  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
 
   const translationBundle = await getCourseTranslationBundle({
     language,
@@ -94,43 +87,70 @@ export default async function PdfViewPage() {
     pt: 'Notas auxiliares',
   }[language];
 
-  const items = publishedCourses
+  const dedupedItems = new Map<string, {
+    id: string;
+    lessonId: string;
+    title: string;
+    classLabel: string;
+    url: string;
+    classNumber: number;
+    isAuxiliary: boolean;
+  }>();
+
+  publishedCourses
     .flatMap((course) => {
-    const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
+      const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
 
-    return lessons.flatMap((lesson, index) => {
-      const hasAccess =
-        isPrivilegedViewer ||
-        purchasedCourseIds.has(course.id) ||
-        purchasedLessonIds.has(lesson.id);
+      return lessons.flatMap((lesson, index) => {
+        const hasAccess =
+          isPrivilegedViewer ||
+          purchasedCourseIds.has(course.id) ||
+          purchasedLessonIds.has(lesson.id);
 
-      if (!hasAccess) return [];
+        if (!hasAccess) return [];
 
-      return lesson.attachments.map((attachment) => {
-        const isAuxiliary = isAuxiliaryAttachment(attachment.name);
-        const classNumber = getClassNumberFromAttachment(attachment.url) ?? index + 1;
-        const resolvedClassNumber = lessonClassById.get(lesson.id) ?? classNumber;
+        return lesson.attachments.map((attachment) => {
+          if (!isCourseNoteAttachment(attachment.name, attachment.url)) {
+            return null;
+          }
 
-        return {
-          id: attachment.id,
-          lessonId: lesson.id,
-          title: isAuxiliary
-            ? attachment.name
-            : resolveLessonTitle(
-                translationBundle.lessons,
-                lesson.id,
-                lesson.title,
-                language,
-                resolvedClassNumber
-              ),
-          classLabel: isAuxiliary ? auxiliaryLabel : getLocalizedJazzClassLabel(resolvedClassNumber, language),
-          url: attachment.url,
-          classNumber: resolvedClassNumber,
-          isAuxiliary,
-        };
+          const isAuxiliary = isAuxiliaryCourseNote(attachment.name, attachment.url);
+          const classNumber = getCourseNoteClassNumber(attachment.url || attachment.name) ?? lesson.position ?? index + 1;
+          const resolvedClassNumber = classNumber;
+          const attachmentIdentity = getCourseNoteIdentity(attachment.url, attachment.name);
+          const identity = `${isAuxiliary ? 'aux' : 'class'}:${attachmentIdentity || `${resolvedClassNumber}:${attachment.id}`}`;
+
+          if (dedupedItems.has(identity)) {
+            return null;
+          }
+
+          const item = {
+            id: attachment.id,
+            lessonId: lesson.id,
+            title: isAuxiliary
+              ? attachment.name
+              : resolveLessonTitle(
+                  translationBundle.lessons,
+                  lesson.id,
+                  lesson.title,
+                  language,
+                  resolvedClassNumber
+                ),
+            classLabel: isAuxiliary ? auxiliaryLabel : getLocalizedJazzClassLabel(resolvedClassNumber, language),
+            url: attachment.url,
+            classNumber: resolvedClassNumber,
+            isAuxiliary,
+          };
+
+          dedupedItems.set(identity, item);
+
+          return item;
+        });
       });
-    });
-  })
+    })
+    .filter(Boolean);
+
+  const items = Array.from(dedupedItems.values())
     .sort((a, b) => {
       if (a.isAuxiliary !== b.isAuxiliary) {
         return a.isAuxiliary ? 1 : -1;

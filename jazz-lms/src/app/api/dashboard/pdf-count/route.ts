@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { getCourseNoteIdentity, isCourseNoteAttachment } from '@/lib/course-notes';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,7 +60,7 @@ export async function GET() {
                 orderBy: { position: 'asc' },
                 include: {
                   attachments: {
-                    select: { id: true },
+                      select: { id: true, url: true, name: true },
                   },
                 },
               },
@@ -72,26 +73,46 @@ export async function GET() {
     const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
     const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
-    const count = publishedCourses.reduce((total, course) => {
+    const accessiblePdfKeys = new Set<string>();
+
+    publishedCourses.forEach((course) => {
       const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
 
-      const accessibleAttachments = lessons.reduce((lessonTotal, lesson) => {
+      lessons.forEach((lesson) => {
         if (isPrivilegedViewer) {
-          return lessonTotal + lesson.attachments.length;
+          lesson.attachments.forEach((attachment) => {
+            if (!isCourseNoteAttachment(attachment.name, attachment.url)) {
+              return;
+            }
+
+            const identity = getCourseNoteIdentity(attachment.url, attachment.name);
+            if (identity) {
+              accessiblePdfKeys.add(identity);
+            }
+          });
+          return;
         }
 
         const hasAccess =
           purchasedCourseIds.has(course.id) ||
           purchasedLessonIds.has(lesson.id);
 
-        if (!hasAccess) return lessonTotal;
-        return lessonTotal + lesson.attachments.length;
-      }, 0);
+        if (!hasAccess) return;
 
-      return total + accessibleAttachments;
-    }, 0);
+        lesson.attachments.forEach((attachment) => {
+          if (!isCourseNoteAttachment(attachment.name, attachment.url)) {
+            return;
+          }
 
-    return NextResponse.json({ count });
+          const identity = getCourseNoteIdentity(attachment.url, attachment.name);
+          if (identity) {
+            accessiblePdfKeys.add(identity);
+          }
+        });
+      });
+    });
+
+    return NextResponse.json({ count: accessiblePdfKeys.size });
   } catch (error) {
     console.error('[pdf-count]', error);
     return NextResponse.json({ count: 0 }, { status: 500 });

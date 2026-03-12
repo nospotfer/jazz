@@ -3,8 +3,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import MuxPlayer from '@mux/mux-player-react';
+import dynamic from 'next/dynamic';
 import { useLanguage } from '@/components/providers/language-provider';
+
+const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
+  ssr: false,
+});
 
 export function PromoVideo() {
   const router = useRouter();
@@ -12,6 +16,7 @@ export function PromoVideo() {
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const playerRef = useRef<any>(null);
+  const [shouldLoadPlayer, setShouldLoadPlayer] = useState(false);
   const [playbackId, setPlaybackId] = useState('');
   const [playbackToken, setPlaybackToken] = useState('');
   const [thumbnailToken, setThumbnailToken] = useState('');
@@ -79,6 +84,26 @@ export function PromoVideo() {
   }[language];
 
   useEffect(() => {
+    const idleCallback = window.requestIdleCallback?.(() => {
+      setShouldLoadPlayer(true);
+    }, { timeout: 1500 });
+
+    if (idleCallback !== undefined) {
+      return () => window.cancelIdleCallback?.(idleCallback);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShouldLoadPlayer(true);
+    }, 1200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    if (!shouldLoadPlayer) {
+      return;
+    }
+
     let cancelled = false;
 
     const loadPromoPlayback = async () => {
@@ -107,7 +132,7 @@ export function PromoVideo() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [copy.muxError, shouldLoadPlayer]);
 
   const toggleMute = () => {
     if (!playerRef.current) return;

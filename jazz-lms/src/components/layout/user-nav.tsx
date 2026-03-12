@@ -1,4 +1,3 @@
-import { createClient } from '@/utils/supabase/server';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,19 +14,10 @@ import { getCurrentUser } from '@/lib/admin';
 import Link from 'next/link';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { resolveProfileAvatar } from '@/lib/profile-avatars';
+import { getServerUser } from '@/lib/server-user';
 
 export const UserNav = async () => {
-  const supabase = createClient();
-
-  try {
-    await supabase.auth.refreshSession();
-  } catch {
-    // Ignore refresh errors and fallback to current session
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return <UserNavClient user={undefined} />;

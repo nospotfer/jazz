@@ -59,6 +59,7 @@ export interface LessonQuizAnswerResponse {
   questionId: string;
   isCorrect: boolean;
   answeredCount: number;
+  isComplete: boolean;
   result: LessonQuizResultPayload | null;
   summary: LessonQuizSummarySnapshot | null;
 }

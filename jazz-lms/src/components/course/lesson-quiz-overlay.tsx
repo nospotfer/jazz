@@ -312,11 +312,8 @@ export function LessonQuizOverlay({
       setAttempt(response.data.attempt);
       setSummary(response.data.summary);
       onSummaryChange?.(response.data.summary);
-
-      const firstUnansweredIndex = response.data.attempt.questions.findIndex((question) => !question.isAnswered);
-      const nextIndex = firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0;
-      setCurrentQuestionIndex(nextIndex);
-      setSelectedOptionId(response.data.attempt.questions[nextIndex]?.selectedOptionId ?? null);
+      setCurrentQuestionIndex(0);
+      setSelectedOptionId(null);
     } catch (error: unknown) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.error || copy.startError
@@ -363,11 +360,22 @@ export function LessonQuizOverlay({
     setIsSubmitting(true);
 
     try {
+      const selectedAnswers = attempt.questions
+        .map((question) => ({
+          questionId: question.questionId,
+          selectedOptionId:
+            question.questionId === currentQuestion.questionId
+              ? selectedOptionId
+              : question.selectedOptionId,
+        }))
+        .filter((question): question is { questionId: string; selectedOptionId: string } => Boolean(question.selectedOptionId));
+
       const response = await axios.post<LessonQuizAnswerResponse>(
         `/api/courses/${courseId}/lessons/${lessonId}/quiz/${attempt.attemptId}/answer`,
         {
           questionId: currentQuestion.questionId,
           optionId: selectedOptionId,
+          answers: selectedAnswers,
         }
       );
 
@@ -376,18 +384,20 @@ export function LessonQuizOverlay({
           return currentAttempt;
         }
 
+        const nextQuestions = currentAttempt.questions.map((question) =>
+          question.questionId === currentQuestion.questionId
+            ? {
+                ...question,
+                isAnswered: true,
+                selectedOptionId,
+              }
+            : question
+        );
+
         return {
           ...currentAttempt,
           answeredCount: response.data.answeredCount,
-          questions: currentAttempt.questions.map((question) =>
-            question.questionId === currentQuestion.questionId
-              ? {
-                  ...question,
-                  isAnswered: true,
-                  selectedOptionId,
-                }
-              : question
-          ),
+          questions: nextQuestions,
         };
       });
 
@@ -410,7 +420,7 @@ export function LessonQuizOverlay({
       advanceTimerRef.current = window.setTimeout(() => {
         setFeedback(null);
 
-        if (response.data.result) {
+        if (response.data.isComplete && response.data.result) {
           setResult(response.data.result);
           return;
         }

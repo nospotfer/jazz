@@ -24,6 +24,19 @@ export async function POST(
     const body = await req.json();
     const questionId = typeof body?.questionId === 'string' ? body.questionId : '';
     const optionId = typeof body?.optionId === 'string' ? body.optionId : '';
+    const answers = Array.isArray(body?.answers)
+      ? (body.answers as Array<{ questionId?: unknown; selectedOptionId?: unknown }>)
+          .flatMap((entry) => {
+            if (typeof entry?.questionId !== 'string' || typeof entry?.selectedOptionId !== 'string') {
+              return [];
+            }
+
+            return [{
+              questionId: entry.questionId,
+              selectedOptionId: entry.selectedOptionId,
+            }];
+          })
+      : [];
 
     if (!questionId || !optionId) {
       return NextResponse.json(
@@ -47,6 +60,7 @@ export async function POST(
       attemptId: params.attemptId,
       questionId,
       optionId,
+      answers,
     });
 
     return NextResponse.json(payload);

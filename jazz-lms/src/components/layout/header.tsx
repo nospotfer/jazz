@@ -1,11 +1,23 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { UserNav } from './user-nav';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { UserNavClient } from './user-nav-client';
 import { HeaderNav } from './header-nav';
-import { LanguageSelector } from '@/components/language-selector';
 
-export const Header = () => {
+const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
+  ssr: false,
+});
+
+const LanguageSelector = dynamic(() => import('@/components/language-selector').then((mod) => mod.LanguageSelector), {
+  ssr: false,
+});
+
+interface HeaderProps {
+  authMode?: 'auto' | 'guest';
+}
+
+export const Header = ({ authMode = 'auto' }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 dark:bg-black/95 backdrop-blur border-b border-[var(--color-jazz-title-accent)]/80">
       <div className="w-full flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -28,7 +40,7 @@ export const Header = () => {
         <div className="flex items-center space-x-3">
           <ThemeToggle />
           <LanguageSelector />
-          <UserNav />
+          {authMode === 'guest' ? <UserNavClient user={undefined} /> : <UserNav />}
         </div>
       </div>
     </header>
