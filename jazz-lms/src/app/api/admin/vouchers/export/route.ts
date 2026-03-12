@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { getVoucherArtistByKey } from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
 
@@ -24,19 +25,66 @@ export async function GET(req: Request) {
 
     const url = new URL(req.url);
     const status = url.searchParams.get('status');
+    const usage = url.searchParams.get('usage');
+    const search = (url.searchParams.get('search') || '').trim();
+    const artistKeyParam = url.searchParams.get('artistKey');
+    const discountPercentParam = url.searchParams.get('discountPercent');
 
     const now = new Date();
-    const where =
-      status === 'active'
-        ? {
-            isActive: true,
-            OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
-          }
-        : status === 'expired'
-        ? {
-            OR: [{ expiresAt: { lt: now } }],
-          }
-        : undefined;
+    const filters: any[] = [];
+
+    if (search) {
+      filters.push({
+        code: { contains: search, mode: 'insensitive' },
+      });
+    }
+
+    const artist = getVoucherArtistByKey(artistKeyParam);
+    if (artist) {
+      filters.push({
+        code: { startsWith: artist.key },
+      });
+    }
+
+    const discountPercent = discountPercentParam ? Number(discountPercentParam) : null;
+    if (discountPercent !== null && Number.isFinite(discountPercent) && discountPercent > 0) {
+      filters.push({
+        discountPercent,
+      });
+    }
+
+    if (status === 'active') {
+      filters.push({
+        isActive: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+      });
+    }
+
+    if (status === 'inactive') {
+      filters.push({
+        isActive: false,
+      });
+    }
+
+    if (status === 'expired') {
+      filters.push({
+        expiresAt: { lt: now },
+      });
+    }
+
+    if (usage === 'used') {
+      filters.push({
+        currentUses: { gt: 0 },
+      });
+    }
+
+    if (usage === 'unused') {
+      filters.push({
+        currentUses: 0,
+      });
+    }
+
+    const where = filters.length > 0 ? { AND: filters } : undefined;
 
     const prisma = db as any;
     const vouchers = await prisma.voucherCode.findMany({
@@ -54,6 +102,8 @@ export async function GET(req: Request) {
     const header = [
       'code',
       'type',
+      'artist',
+      'artistKey',
       'course',
       'discountPercent',
       'discountAmount',
@@ -69,6 +119,8 @@ export async function GET(req: Request) {
     const rows = vouchers.map((voucher: any) => [
       csvEscape(voucher.code),
       csvEscape(voucher.type),
+      csvEscape(voucher.metadata?.voucherArtistName || null),
+      csvEscape(voucher.metadata?.voucherArtistKey || null),
       csvEscape(voucher.course?.title || 'ALL_COURSES'),
       csvEscape(voucher.discountPercent),
       csvEscape(voucher.discountAmount),

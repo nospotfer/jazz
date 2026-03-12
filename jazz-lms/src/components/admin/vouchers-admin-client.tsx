@@ -3,6 +3,12 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import {
+  getVoucherArtistByDiscount,
+  getVoucherArtistByKey,
+  VOUCHER_ARTIST_TIERS,
+  type VoucherArtistTier,
+} from '@/lib/voucher-artists';
 
 type CourseOption = {
   id: string;
@@ -23,6 +29,7 @@ type VoucherItem = {
   isActive: boolean;
   expiresAt: string | null;
   createdAt: string;
+  metadata: Record<string, unknown> | null;
   course: { id: string; title: string } | null;
   _count: { redemptions: number };
   batch: { id: string; name: string | null; codePrefix: string | null; createdAt: string } | null;
@@ -40,10 +47,13 @@ type Props = {
 };
 
 export function VouchersAdminClient({ courses }: Props) {
-  const quickDiscounts = [10, 20, 30, 50, 100] as const;
+  const quickArtistTiers = [...VOUCHER_ARTIST_TIERS].sort((a, b) => a.discountPercent - b.discountPercent);
+  const initialArtist = getVoucherArtistByDiscount(20);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
   const [usage, setUsage] = useState<'all' | 'used' | 'unused'>('all');
+  const [filterArtistKey, setFilterArtistKey] = useState<string>('all');
+  const [filterDiscountPercent, setFilterDiscountPercent] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -57,13 +67,14 @@ export function VouchersAdminClient({ courses }: Props) {
     type: 'DISCOUNT_PERCENT',
     courseId: '',
     count: '1',
-    discountPercent: '20',
+    artistKey: initialArtist?.key || 'BESSIESMITH',
+    discountPercent: String(initialArtist?.discountPercent || 20),
     discountAmount: '',
     minOrderValue: '0',
     maxUses: '1',
     maxUsesPerUser: '1',
     expiresInDays: '',
-    prefix: 'TEST',
+    prefix: 'JAZZ',
     batchName: '',
   });
 
@@ -78,8 +89,14 @@ export function VouchersAdminClient({ courses }: Props) {
     if (search.trim()) {
       params.set('search', search.trim());
     }
+    if (filterArtistKey !== 'all') {
+      params.set('artistKey', filterArtistKey);
+    }
+    if (filterDiscountPercent !== 'all') {
+      params.set('discountPercent', filterDiscountPercent);
+    }
     return params.toString();
-  }, [search, status, usage]);
+  }, [filterArtistKey, filterDiscountPercent, search, status, usage]);
 
   const loadVouchers = useCallback(async () => {
     setIsLoading(true);
@@ -123,10 +140,12 @@ export function VouchersAdminClient({ courses }: Props) {
     setIsGenerating(true);
 
     try {
+      const selectedArtist = getVoucherArtistByKey(form.artistKey);
       const payload = {
         type: form.type,
         courseId: form.courseId || null,
         count: Number(form.count || 1),
+        artistKey: form.type === 'DISCOUNT_PERCENT' ? form.artistKey : null,
         discountPercent: form.type === 'DISCOUNT_PERCENT' ? Number(form.discountPercent || 0) : null,
         discountAmount: form.type === 'DISCOUNT_FIXED' ? Number(form.discountAmount || 0) : null,
         minOrderValue: Number(form.minOrderValue || 0),
@@ -134,7 +153,9 @@ export function VouchersAdminClient({ courses }: Props) {
         maxUsesPerUser: Number(form.maxUsesPerUser || 1),
         expiresInDays: form.expiresInDays ? Number(form.expiresInDays) : null,
         prefix: form.prefix,
-        batchName: form.batchName || null,
+        batchName:
+          form.batchName ||
+          (form.type === 'DISCOUNT_PERCENT' && selectedArtist ? selectedArtist.name : null),
       };
 
       const response = await fetch('/api/admin/vouchers/generate', {
@@ -165,10 +186,8 @@ export function VouchersAdminClient({ courses }: Props) {
     }
   };
 
-  const handleQuickBatch = async (discountPercent: number) => {
+  const handleQuickBatch = async (tier: VoucherArtistTier) => {
     setIsGenerating(true);
-
-    const codeBase = `CDJLMS${discountPercent}`;
 
     try {
       const response = await fetch('/api/admin/vouchers/generate', {
@@ -180,15 +199,15 @@ export function VouchersAdminClient({ courses }: Props) {
           type: 'DISCOUNT_PERCENT',
           courseId: form.courseId || null,
           count: 5,
-          discountPercent,
+          artistKey: tier.key,
+          discountPercent: tier.discountPercent,
           discountAmount: null,
           minOrderValue: Number(form.minOrderValue || 0),
           maxUses: Number(form.maxUses || 1),
           maxUsesPerUser: Number(form.maxUsesPerUser || 1),
           expiresInDays: form.expiresInDays ? Number(form.expiresInDays) : null,
           prefix: form.prefix,
-          batchName: codeBase,
-          deterministicBaseCode: codeBase,
+          batchName: tier.name,
         }),
       });
 
@@ -202,7 +221,7 @@ export function VouchersAdminClient({ courses }: Props) {
         : [];
 
       setLastGeneratedCodes(createdCodes);
-      toast.success(`Atajo ${discountPercent}%: 5 vouchers creados.`);
+      toast.success(`Atajo ${tier.name} ${tier.discountPercent}%: 5 vouchers creados.`);
       await loadVouchers();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No se pudo crear el lote rápido.';
@@ -261,7 +280,7 @@ export function VouchersAdminClient({ courses }: Props) {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/admin/vouchers/${voucher.id}`, {
+      const response = await fetch(`/api/admin/vouchers/${voucher.id}?force=true`, {
         method: 'DELETE',
       });
       const data = await response.json();
@@ -301,6 +320,7 @@ export function VouchersAdminClient({ courses }: Props) {
         },
         body: JSON.stringify({
           voucherIds: selectedVoucherIds,
+          force: true,
         }),
       });
 
@@ -311,9 +331,6 @@ export function VouchersAdminClient({ courses }: Props) {
 
       setSelectedVoucherIds([]);
       toast.success(data.message || 'Eliminación completada.');
-      if (Array.isArray(data.blockedCodes) && data.blockedCodes.length > 0) {
-        toast.info(`No eliminados por uso: ${data.blockedCodes.join(', ')}`);
-      }
       await loadVouchers();
     } catch (error) {
       const message =
@@ -326,7 +343,7 @@ export function VouchersAdminClient({ courses }: Props) {
 
   const handleDeleteBatch = async (batchId: string, batchName: string | null) => {
     const label = batchName || batchId;
-    const confirmed = window.confirm(`¿Eliminar lote ${label}? Se borrarán solo vouchers sin uso.`);
+    const confirmed = window.confirm(`¿Eliminar lote ${label}? Se borrarán también vouchers usados.`);
     if (!confirmed) {
       return;
     }
@@ -338,7 +355,7 @@ export function VouchersAdminClient({ courses }: Props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ batchId }),
+        body: JSON.stringify({ batchId, force: true }),
       });
 
       const data = await response.json();
@@ -348,9 +365,6 @@ export function VouchersAdminClient({ courses }: Props) {
 
       setSelectedVoucherIds([]);
       toast.success(data.message || 'Lote procesado.');
-      if (Array.isArray(data.blockedCodes) && data.blockedCodes.length > 0) {
-        toast.info(`No eliminados por uso: ${data.blockedCodes.join(', ')}`);
-      }
       await loadVouchers();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No se pudo eliminar el lote.';
@@ -363,8 +377,25 @@ export function VouchersAdminClient({ courses }: Props) {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const query = status === 'all' ? '' : `?status=${status}`;
-      const response = await fetch(`/api/admin/vouchers/export${query}`, {
+      const params = new URLSearchParams();
+      if (status !== 'all') {
+        params.set('status', status);
+      }
+      if (usage !== 'all') {
+        params.set('usage', usage);
+      }
+      if (search.trim()) {
+        params.set('search', search.trim());
+      }
+      if (filterArtistKey !== 'all') {
+        params.set('artistKey', filterArtistKey);
+      }
+      if (filterDiscountPercent !== 'all') {
+        params.set('discountPercent', filterDiscountPercent);
+      }
+
+      const query = params.toString();
+      const response = await fetch(`/api/admin/vouchers/export${query ? `?${query}` : ''}`, {
         method: 'GET',
       });
 
@@ -394,6 +425,8 @@ export function VouchersAdminClient({ courses }: Props) {
     setSearch('');
     setStatus('all');
     setUsage('all');
+    setFilterArtistKey('all');
+    setFilterDiscountPercent('all');
   };
 
   const copyLastGeneratedCodes = async () => {
@@ -485,11 +518,19 @@ export function VouchersAdminClient({ courses }: Props) {
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={form.type}
               onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  type: event.target.value,
-                  discountAmount: event.target.value === 'DISCOUNT_FIXED' ? prev.discountAmount : '',
-                }))
+                setForm((prev) => {
+                  const nextType = event.target.value;
+                  const selectedArtist = getVoucherArtistByKey(prev.artistKey);
+                  return {
+                    ...prev,
+                    type: nextType,
+                    discountAmount: nextType === 'DISCOUNT_FIXED' ? prev.discountAmount : '',
+                    discountPercent:
+                      nextType === 'DISCOUNT_PERCENT' && selectedArtist
+                        ? String(selectedArtist.discountPercent)
+                        : prev.discountPercent,
+                  };
+                })
               }
             >
               <option value="DISCOUNT_PERCENT">Descuento (%)</option>
@@ -528,6 +569,31 @@ export function VouchersAdminClient({ courses }: Props) {
 
           {form.type === 'DISCOUNT_PERCENT' ? (
             <div>
+              <label className="text-xs text-muted-foreground">Artista</label>
+              <select
+                className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                value={form.artistKey}
+                onChange={(event) => {
+                  const artist = getVoucherArtistByKey(event.target.value);
+                  setForm((prev) => ({
+                    ...prev,
+                    artistKey: event.target.value,
+                    discountPercent: artist ? String(artist.discountPercent) : prev.discountPercent,
+                    batchName: artist ? artist.name : prev.batchName,
+                  }));
+                }}
+              >
+                {VOUCHER_ARTIST_TIERS.map((artist) => (
+                  <option key={artist.key} value={artist.key}>
+                    {artist.name} · {artist.discountPercent}%
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+
+          {form.type === 'DISCOUNT_PERCENT' ? (
+            <div>
               <label className="text-xs text-muted-foreground">Descuento (%)</label>
               <input
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
@@ -535,9 +601,7 @@ export function VouchersAdminClient({ courses }: Props) {
                 min={1}
                 max={100}
                 value={form.discountPercent}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setForm((prev) => ({ ...prev, discountPercent: event.target.value }))
-                }
+                readOnly
               />
             </div>
           ) : null}
@@ -607,7 +671,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground">Prefijo del código</label>
+            <label className="text-xs text-muted-foreground">Prefijo (solo tipo no percentual)</label>
             <input
               className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={form.prefix}
@@ -635,17 +699,19 @@ export function VouchersAdminClient({ courses }: Props) {
         </div>
 
         <div className="rounded-md border border-border p-3">
-          <p className="text-xs text-muted-foreground mb-2">Atajos rápidos (crea 5 vouchers por botón)</p>
+          <p className="text-xs text-muted-foreground mb-2">
+            Atajos rápidos (5 vouchers por clic: 10,20,30,...,100 con nombre de artista)
+          </p>
           <div className="flex flex-wrap gap-2">
-            {quickDiscounts.map((value) => (
+            {quickArtistTiers.map((tier) => (
               <Button
-                key={value}
+                key={tier.key}
                 size="sm"
                 variant="secondary"
                 disabled={isGenerating}
-                onClick={() => void handleQuickBatch(value)}
+                onClick={() => void handleQuickBatch(tier)}
               >
-                {value}%
+                {tier.discountPercent}% · {tier.name}
               </Button>
             ))}
           </div>
@@ -672,7 +738,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
           <input
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             placeholder="Buscar por código"
@@ -697,6 +763,45 @@ export function VouchersAdminClient({ courses }: Props) {
             <option value="all">Uso: todos</option>
             <option value="used">Uso: usados</option>
             <option value="unused">Uso: no usados</option>
+          </select>
+          <select
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            value={filterArtistKey}
+            onChange={(event) => {
+              const nextArtist = event.target.value;
+              const artist = getVoucherArtistByKey(nextArtist);
+              setFilterArtistKey(nextArtist);
+              setFilterDiscountPercent(artist ? String(artist.discountPercent) : 'all');
+            }}
+          >
+            <option value="all">Artista: todos</option>
+            {VOUCHER_ARTIST_TIERS.map((artist) => (
+              <option key={artist.key} value={artist.key}>
+                {artist.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            value={filterDiscountPercent}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+              setFilterDiscountPercent(nextValue);
+              if (nextValue === 'all') {
+                setFilterArtistKey('all');
+                return;
+              }
+
+              const artist = getVoucherArtistByDiscount(Number(nextValue));
+              setFilterArtistKey(artist ? artist.key : 'all');
+            }}
+          >
+            <option value="all">Descuento: todos</option>
+            {quickArtistTiers.map((tier) => (
+              <option key={tier.key} value={tier.discountPercent}>
+                {tier.discountPercent}%
+              </option>
+            ))}
           </select>
         </div>
 

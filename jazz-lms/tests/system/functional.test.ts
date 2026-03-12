@@ -55,6 +55,7 @@ vi.mock('next/headers', () => ({
 }));
 
 vi.mock('@/lib/language', () => ({
+  LANGUAGE_COOKIE_KEY: 'jazz_lang',
   normalizeLanguage: mocks.normalizeLanguage,
   languageToStripeLocale: mocks.languageToStripeLocale,
 }));
@@ -137,6 +138,7 @@ describe('Functional: Free course purchase flow', () => {
 describe('Functional: Privileged user PDF access', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.cookies.mockResolvedValue({ get: vi.fn(() => ({ value: 'es' })) });
   });
 
   test('admin sees all PDFs without needing purchases', async () => {

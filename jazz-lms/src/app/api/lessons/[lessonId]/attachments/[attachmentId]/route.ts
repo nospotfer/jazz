@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { db } from '@/lib/db';
+import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/lib/language';
 
 export const runtime = 'nodejs';
 
@@ -36,6 +37,23 @@ const extractStoragePath = (value: string, bucketName: string) => {
   return rawValue;
 };
 
+const resolveRequestedLanguage = (value?: string | null): SupportedLanguage | null => {
+  if (!value) return null;
+
+  const normalized = value.toLowerCase().trim();
+  if (!normalized) return null;
+
+  if (normalized === 'pt-br' || normalized === 'pt_br') {
+    return 'pt';
+  }
+
+  if (SUPPORTED_LANGUAGES.includes(normalized as SupportedLanguage)) {
+    return normalized as SupportedLanguage;
+  }
+
+  return null;
+};
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { lessonId: string; attachmentId: string } }
@@ -58,7 +76,9 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const attachment = await db.attachment.findFirst({
+    const requestedLanguage = resolveRequestedLanguage(request.nextUrl.searchParams.get('language'));
+
+    const baseAttachment = await db.attachment.findFirst({
       where: {
         id: params.attachmentId,
         lessonId: params.lessonId,
@@ -76,9 +96,34 @@ export async function GET(
       },
     });
 
-    if (!attachment) {
+    if (!baseAttachment) {
       return NextResponse.json({ error: 'Attachment not found' }, { status: 404 });
     }
+
+    const translatedAttachment = requestedLanguage
+      ? await db.attachment.findUnique({
+          where: {
+            lessonId_language_documentKey: {
+              lessonId: baseAttachment.lessonId,
+              language: requestedLanguage,
+              documentKey: baseAttachment.documentKey,
+            },
+          },
+          include: {
+            lesson: {
+              include: {
+                chapter: {
+                  select: {
+                    courseId: true,
+                  },
+                },
+              },
+            },
+          },
+        })
+      : null;
+
+    const attachment = translatedAttachment ?? baseAttachment;
 
     const isAdminOwner = (user.email ?? '').toLowerCase() === adminOwnerEmail;
     const courseId = attachment.lesson.chapter.courseId;
@@ -172,11 +217,24 @@ export async function GET(
       );
     }
 
+    const variants = await db.attachment.findMany({
+      where: {
+        lessonId: attachment.lessonId,
+        documentKey: attachment.documentKey,
+      },
+      select: {
+        language: true,
+      },
+      distinct: ['language'],
+    });
+
     return NextResponse.json(
       {
         signedUrl: data.signedUrl,
         name: attachment.name,
         storagePath,
+        language: attachment.language,
+        availableLanguages: variants.map((variant) => variant.language),
       },
       {
         headers: {

@@ -8,6 +8,11 @@ const mocks = vi.hoisted(() => ({
   findLessonPurchases: vi.fn(),
   findCourses: vi.fn(),
   isAdminRole: vi.fn(),
+  cookies: vi.fn(),
+}));
+
+vi.mock('next/headers', () => ({
+  cookies: mocks.cookies,
 }));
 
 vi.mock('@/utils/supabase/server', () => ({
@@ -38,6 +43,7 @@ describe('GET /api/dashboard/pdf-count', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.isAdminRole.mockReturnValue(false);
+    mocks.cookies.mockResolvedValue({ get: vi.fn(() => ({ value: 'es' })) });
   });
 
   test('returns 401 with zero when unauthenticated', async () => {

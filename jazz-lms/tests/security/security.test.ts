@@ -75,6 +75,7 @@ vi.mock('next/headers', () => ({
 }));
 
 vi.mock('@/lib/language', () => ({
+  LANGUAGE_COOKIE_KEY: 'jazz_lang',
   normalizeLanguage: mocks.normalizeLanguage,
   languageToStripeLocale: mocks.languageToStripeLocale,
 }));
@@ -92,6 +93,8 @@ describe('Security: Authentication enforcement', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.ensureTables.mockResolvedValue(undefined);
+    mocks.cookies.mockResolvedValue({ get: vi.fn(() => ({ value: 'es' })) });
+    mocks.normalizeLanguage.mockReturnValue('es');
   });
 
   test('purchases route rejects unauthenticated requests', async () => {

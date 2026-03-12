@@ -183,6 +183,25 @@
     background: color-mix(in oklab, var(--color-jazz-cta) 45%, transparent) !important;
     transform: translateY(-1px);
   }
+
+  .pdf-workspace-viewer .rpv-core__inner-pages {
+    align-items: center;
+  }
+
+  .pdf-workspace-viewer .rpv-core__inner-page {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .lesson-mux-player {
+    display: block;
+    --media-object-fit: cover;
+    --media-object-position: center center;
+  }
+
+  .lesson-mux-player--fit-contain {
+    --media-object-fit: contain;
+  }
 }
 
 @layer components {

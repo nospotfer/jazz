@@ -1,31 +1,25 @@
-import { PrismaClient } from '@prisma/client';
+import { AttachmentKind, LanguageCode, PrismaClient } from '@prisma/client';
+import { createClient } from '@supabase/supabase-js';
 
 const db = new PrismaClient();
 
-const CLASS_PDF_PATHS = [
-  'Clase 1_ La Esencia del Jazz - Apuntes.pdf',
-  'Clase 2_ El Lenguaje del Jazz_ Heterogeneidad Sonora - Apuntes.pdf',
-  'Clase 3_ Gospel y Blues_ Las Raices Profundas - Apuntes.pdf',
-  'Clase 4_ Las Formas del Jazz_ Blues y Baladas - Apuntes.pdf',
-  'Clase 5_ Un Antecedente Decisivo_ El Ragtime - Apuntes.pdf',
-  'Clase 6_ El Ritmo_ El Corazon del Jazz - Apuntes.pdf',
-  'Clase 7_ Jamming and Blowing_ El Placer de Improvisar - Apuntes.pdf',
-  'Clase 8_ La Composicion Colaborativa_ Ellington, Basie y Monk - Apuntes.pdf',
-  'Clase 9_ Instrumentos y Conjuntos (La Orquesta)  - Apuntes.pdf',
-  'Clase 10_ Los Pequenos Grupos y el Mundo de los Solistas - Apuntes.pdf',
-  'Clase 11_ La Seccion Ritmica_ El Motor del Grupo  - Apuntes.pdf',
-  'Clase 12_ La Improvisacion en el Jazz - Apuntes.pdf',
-  'Clase 13_ Jazz y Entertainment_ Arte o Espectaculo_ - Apuntes.pdf',
-  'Clase 14_ Cantar Jazz (Parte 1)_ De Bessie Smith a Billie Holiday - Apuntes.pdf',
-  'Clase 15_ Cantar Jazz (Parte 2)_ De Ella Fitzgerald a Sarah Vaughan - Apuntes.pdf',
-];
+const SUPPORTED_LANGUAGES: LanguageCode[] = ['es', 'en', 'fr', 'pt'];
+const EXPECTED_CLASS_COUNT = 15;
+const EXPECTED_AUX_COUNT = 2;
 
-const AUXILIARY_PDFS = [
-  'Apuntes Auxiliares 1 - Anos relevantes del Periodo Clasico de la Historia del Jazz.pdf',
-  'Apuntes Auxiliares 2 - Anos relevantes del Periodo Moderno de la Historia del Jazz.pdf',
-];
+const normalizeName = (path: string) => path.split('/').at(-1)?.replace(/\.pdf$/i, '')?.trim() ?? path;
 
-const normalizeName = (path: string) => path.replace(/\.pdf$/i, '');
+const stripDiacritics = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+const normalizeStoragePath = (prefix: string, name: string) => {
+  const cleanedPrefix = prefix.trim().replace(/^\/+|\/+$/g, '');
+  if (!cleanedPrefix) return name;
+  return `${cleanedPrefix}/${name}`;
+};
 
 const getArgValue = (flag: string) => {
   const directArg = process.argv.find((arg) => arg.startsWith(`${flag}=`));
@@ -41,9 +35,175 @@ const getArgValue = (flag: string) => {
   return '';
 };
 
+const detectLanguage = (input: string): LanguageCode | null => {
+  const normalized = stripDiacritics(input);
+
+  if (/\baula\b/.test(normalized) || /informacao auxiliar/.test(normalized) || /(pt-br|ptbr|portugues|portuguese|brazilian)/.test(normalized)) {
+    return 'pt';
+  }
+
+  if (/\bcours\b/.test(normalized) || /\bclasse\b/.test(normalized) || /information auxiliaire/.test(normalized) || /(francais|francese|french)/.test(normalized)) {
+    return 'fr';
+  }
+
+  if (/\bclass\b/.test(normalized) || /auxiliary information/.test(normalized) || /(english|ingles|ingless)/.test(normalized)) {
+    return 'en';
+  }
+
+  if (/\bclase\b/.test(normalized) || /apuntes auxiliares/.test(normalized) || /(espanol|español|castellano|spanish)/.test(normalized)) {
+    return 'es';
+  }
+
+  return null;
+};
+
+const detectClassNumber = (input: string) => {
+  const normalized = stripDiacritics(input);
+  const match = normalized.match(/(?:clase|class|classe|cours|aula)\s*(\d{1,2})/i);
+  if (!match) return null;
+
+  const value = Number(match[1]);
+  if (!Number.isInteger(value) || value <= 0) return null;
+  return value;
+};
+
+const detectAuxOrder = (input: string) => {
+  const normalized = stripDiacritics(input);
+  if (!/(auxiliar|auxiliares|auxiliary|auxiliaire|support)/i.test(normalized)) {
+    return null;
+  }
+
+  const match = normalized.match(
+    /(?:auxiliar|auxiliares|auxiliary|auxiliaire|support)(?:\s+[a-z]+){0,3}\s*(\d{1,2})/i
+  );
+  if (!match) return 1;
+
+  const value = Number(match[1]);
+  if (!Number.isInteger(value) || value <= 0) return 1;
+  return value;
+};
+
+async function listPdfPaths(options: {
+  bucket: string;
+  prefix: string;
+  supabase: ReturnType<typeof createClient>;
+}) {
+  const { bucket, prefix, supabase } = options;
+  const output: string[] = [];
+  const queue = [prefix.trim().replace(/^\/+|\/+$/g, '')];
+
+  while (queue.length > 0) {
+    const current = queue.shift() ?? '';
+    let offset = 0;
+    const limit = 100;
+
+    while (true) {
+      const { data, error } = await supabase.storage.from(bucket).list(current, {
+        limit,
+        offset,
+        sortBy: { column: 'name', order: 'asc' },
+      });
+
+      if (error) {
+        throw new Error(`Failed listing storage path "${current || '/'}": ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        break;
+      }
+
+      for (const entry of data) {
+        const fullPath = normalizeStoragePath(current, entry.name);
+        const isFolder = !entry.metadata;
+
+        if (isFolder) {
+          queue.push(fullPath);
+          continue;
+        }
+
+        if (/\.pdf$/i.test(entry.name)) {
+          output.push(fullPath);
+        }
+      }
+
+      if (data.length < limit) {
+        break;
+      }
+
+      offset += limit;
+    }
+  }
+
+  return output;
+}
+
+type DetectedPdf = {
+  storagePath: string;
+  language: LanguageCode;
+  kind: AttachmentKind;
+  classNumber?: number;
+  auxOrder?: number;
+};
+
+const detectPdfMetadata = (storagePath: string): DetectedPdf | null => {
+  const filename = storagePath.split('/').at(-1) ?? storagePath;
+  const language = detectLanguage(storagePath);
+
+  if (!language) {
+    return null;
+  }
+
+  const auxOrder = detectAuxOrder(filename);
+  if (auxOrder !== null) {
+    return {
+      storagePath,
+      language,
+      kind: 'AUXILIARY',
+      auxOrder,
+    };
+  }
+
+  const classNumber = detectClassNumber(filename);
+  if (!classNumber) {
+    return null;
+  }
+
+  return {
+    storagePath,
+    language,
+    kind: 'CLASS',
+    classNumber,
+  };
+};
+
 async function main() {
-  const includeAuxiliary = process.argv.includes('--include-aux');
   const courseId = getArgValue('--course-id');
+  const storagePrefix = getArgValue('--storage-prefix');
+  const bucket = (process.env.SUPABASE_STORAGE_BUCKET || '').trim();
+  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+  const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+
+  if (!bucket || !supabaseUrl || !serviceRoleKey) {
+    throw new Error('Missing SUPABASE_STORAGE_BUCKET, NEXT_PUBLIC_SUPABASE_URL/SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  const rawStoragePaths = await listPdfPaths({
+    bucket,
+    prefix: storagePrefix,
+    supabase,
+  });
+
+  const detected = rawStoragePaths
+    .map((path) => detectPdfMetadata(path))
+    .filter((item): item is DetectedPdf => Boolean(item));
+
+  if (detected.length === 0) {
+    throw new Error('No recognizable multilingual PDFs were found in Supabase storage.');
+  }
 
   const lessons = await db.lesson.findMany({
     where: courseId
@@ -57,11 +217,6 @@ async function main() {
       chapter: {
         select: {
           position: true,
-        },
-      },
-      attachments: {
-        orderBy: {
-          createdAt: 'asc',
         },
       },
     },
@@ -82,69 +237,106 @@ async function main() {
     return;
   }
 
-  if (!courseId && lessons.length > CLASS_PDF_PATHS.length) {
+  if (!courseId && lessons.length > EXPECTED_CLASS_COUNT) {
     console.log(
       `Found ${lessons.length} lessons without --course-id. Use --course-id to avoid syncing the wrong course.`
     );
     return;
   }
 
-  console.log(
-    `Syncing ${Math.min(lessons.length, CLASS_PDF_PATHS.length)} classes${courseId ? ` for course ${courseId}` : ''}`
-  );
+  const classPdfs = detected.filter((item) => item.kind === 'CLASS');
+  const auxiliaryPdfs = detected.filter((item) => item.kind === 'AUXILIARY');
 
-  for (let index = 0; index < CLASS_PDF_PATHS.length; index += 1) {
-    const lesson = lessons[index];
-    const storagePath = CLASS_PDF_PATHS[index];
+  console.log(`Detected ${classPdfs.length} class PDFs and ${auxiliaryPdfs.length} auxiliary PDFs from storage.`);
+
+  const targetLessons = lessons.slice(0, EXPECTED_CLASS_COUNT);
+  console.log(`Syncing ${targetLessons.length} classes${courseId ? ` for course ${courseId}` : ''}`);
+
+  for (let index = 0; index < targetLessons.length; index += 1) {
+    const lesson = targetLessons[index];
+    const classNumber = index + 1;
 
     if (!lesson) {
-      console.log(`Skipping class ${index + 1}: lesson not found in database.`);
+      console.log(`Skipping class ${classNumber}: lesson not found in database.`);
       continue;
     }
 
-    const attachmentName = normalizeName(storagePath);
-    const firstAttachment = lesson.attachments[0];
+    for (const language of SUPPORTED_LANGUAGES) {
+      const file = classPdfs.find(
+        (item) => item.language === language && item.classNumber === classNumber
+      );
 
-    if (firstAttachment) {
-      await db.attachment.update({
-        where: { id: firstAttachment.id },
-        data: {
-          name: attachmentName,
-          url: storagePath,
-        },
-      });
-
-      if (lesson.attachments.length > 1) {
-        const extraAttachmentIds = lesson.attachments.slice(1).map((attachment) => attachment.id);
-        await db.attachment.deleteMany({
-          where: {
-            id: { in: extraAttachmentIds },
-          },
-        });
+      if (!file) {
+        console.log(`Missing class PDF for class ${classNumber}, language ${language}.`);
+        continue;
       }
-    } else {
-      await db.attachment.create({
-        data: {
+
+      await db.attachment.upsert({
+        where: {
+          lessonId_language_documentKey: {
+            lessonId: lesson.id,
+            language,
+            documentKey: 'class-note',
+          },
+        },
+        update: {
+          name: normalizeName(file.storagePath),
+          url: file.storagePath,
+          kind: 'CLASS',
+        },
+        create: {
           lessonId: lesson.id,
-          name: attachmentName,
-          url: storagePath,
+          name: normalizeName(file.storagePath),
+          url: file.storagePath,
+          language,
+          kind: 'CLASS',
+          documentKey: 'class-note',
         },
       });
-    }
 
-    console.log(`Class ${index + 1} synced -> ${storagePath}`);
+      console.log(`Class ${classNumber} [${language}] synced -> ${file.storagePath}`);
+    }
   }
 
-  if (includeAuxiliary && lessons[0]) {
-    for (const auxiliaryPath of AUXILIARY_PDFS) {
-      await db.attachment.create({
-        data: {
-          lessonId: lessons[0].id,
-          name: normalizeName(auxiliaryPath),
-          url: auxiliaryPath,
-        },
-      });
-      console.log(`Auxiliary attached to class 1 -> ${auxiliaryPath}`);
+  const firstLesson = targetLessons[0];
+  if (firstLesson) {
+    for (const language of SUPPORTED_LANGUAGES) {
+      for (let order = 1; order <= EXPECTED_AUX_COUNT; order += 1) {
+        const file = auxiliaryPdfs.find(
+          (item) => item.language === language && item.auxOrder === order
+        );
+
+        if (!file) {
+          console.log(`Missing auxiliary PDF ${order} for language ${language}.`);
+          continue;
+        }
+
+        const documentKey = `aux-${order}`;
+        await db.attachment.upsert({
+          where: {
+            lessonId_language_documentKey: {
+              lessonId: firstLesson.id,
+              language,
+              documentKey,
+            },
+          },
+          update: {
+            name: normalizeName(file.storagePath),
+            url: file.storagePath,
+            kind: 'AUXILIARY',
+          },
+          create: {
+            lessonId: firstLesson.id,
+            name: normalizeName(file.storagePath),
+            url: file.storagePath,
+            language,
+            kind: 'AUXILIARY',
+            documentKey,
+          },
+        });
+
+        console.log(`Auxiliary ${order} [${language}] synced -> ${file.storagePath}`);
+      }
     }
   }
 }

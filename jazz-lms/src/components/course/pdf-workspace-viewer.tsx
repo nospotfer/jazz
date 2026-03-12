@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Viewer, Worker, type RenderPageProps, SpecialZoomLevel } from '@react-pdf-viewer/core';
+import { Viewer, Worker, type RenderPageProps } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import {
   highlightPlugin,
@@ -257,12 +257,12 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   }, [language, tooltipMap, fileUrl]);
 
   return (
-    <div ref={containerRef} className="h-full w-full overflow-y-auto overflow-x-hidden">
+    <div ref={containerRef} className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden">
       <Worker workerUrl="/pdf.worker.min.js">
         <Viewer
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}
-          defaultScale={SpecialZoomLevel.PageFit}
+          defaultScale={1.3}
           localization={localization}
           plugins={[defaultLayoutPluginInstance, zoomPluginInstance, highlightPluginInstance]}
           renderPage={(props: RenderPageProps) => (

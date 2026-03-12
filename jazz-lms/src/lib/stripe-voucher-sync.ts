@@ -55,6 +55,26 @@ function toStripeCents(value: number | null) {
   return Math.max(1, Math.round(value * 100));
 }
 
+function buildArtistMetadata(rawMetadata: unknown) {
+  if (!rawMetadata || typeof rawMetadata !== 'object' || Array.isArray(rawMetadata)) {
+    return {};
+  }
+
+  const metadata = rawMetadata as Record<string, unknown>;
+  const artistKey = typeof metadata.voucherArtistKey === 'string' ? metadata.voucherArtistKey : null;
+  const artistName = typeof metadata.voucherArtistName === 'string' ? metadata.voucherArtistName : null;
+  const artistDiscount =
+    typeof metadata.voucherArtistDiscountPercent === 'number' && Number.isFinite(metadata.voucherArtistDiscountPercent)
+      ? String(Math.round(metadata.voucherArtistDiscountPercent))
+      : null;
+
+  return {
+    ...(artistKey ? { artistKey } : {}),
+    ...(artistName ? { artistName } : {}),
+    ...(artistDiscount ? { artistDiscount } : {}),
+  };
+}
+
 export function readStripeVoucherMetadata(rawMetadata: unknown): StripeVoucherMetadata | null {
   if (!rawMetadata || typeof rawMetadata !== 'object' || Array.isArray(rawMetadata)) {
     return null;
@@ -107,6 +127,7 @@ async function findPromotionCodeByCode(code: string) {
 
 function buildCouponCreateParams(voucher: VoucherSyncPayload): Stripe.CouponCreateParams {
   const redeemBy = toUnixTimestamp(voucher.expiresAt);
+  const artistMetadata = buildArtistMetadata(voucher.metadata);
 
   if (voucher.type === 'DISCOUNT_FIXED') {
     const amountOff = toStripeCents(voucher.discountAmount);
@@ -124,6 +145,7 @@ function buildCouponCreateParams(voucher: VoucherSyncPayload): Stripe.CouponCrea
         source: 'admin-voucher',
         voucherId: voucher.id,
         voucherCode: toUpperVoucherCode(voucher.code),
+        ...artistMetadata,
       },
     };
   }
@@ -142,6 +164,7 @@ function buildCouponCreateParams(voucher: VoucherSyncPayload): Stripe.CouponCrea
       source: 'admin-voucher',
       voucherId: voucher.id,
       voucherCode: toUpperVoucherCode(voucher.code),
+      ...artistMetadata,
     },
   };
 }
@@ -153,6 +176,7 @@ function buildPromotionCodeCreateParams(
 ): Stripe.PromotionCodeCreateParams {
   const expiresAt = toUnixTimestamp(voucher.expiresAt);
   const minimumAmount = toStripeCents(voucher.minOrderValue);
+  const artistMetadata = buildArtistMetadata(voucher.metadata);
 
   return {
     coupon: couponId,
@@ -170,6 +194,7 @@ function buildPromotionCodeCreateParams(
       source: 'admin-voucher',
       voucherId: voucher.id,
       voucherCode: toUpperVoucherCode(voucher.code),
+      ...artistMetadata,
     },
   };
 }

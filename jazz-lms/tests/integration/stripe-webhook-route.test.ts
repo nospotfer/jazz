@@ -46,7 +46,11 @@ describe('POST /api/webhooks/stripe', () => {
     }));
   }
 
-  function mockDb(purchaseUpsert = vi.fn(), lessonPurchaseUpsert = vi.fn()) {
+  function mockDb(
+    purchaseUpsert = vi.fn(),
+    lessonPurchaseUpsert = vi.fn(),
+    voucherFindUnique = vi.fn().mockResolvedValue(null)
+  ) {
     const tx = {
       purchase: { upsert: purchaseUpsert },
       voucherRedemption: {
@@ -65,6 +69,9 @@ describe('POST /api/webhooks/stripe', () => {
     vi.doMock('@/lib/db', () => ({
       db: {
         lessonPurchase: { upsert: lessonPurchaseUpsert },
+        voucherCode: {
+          findUnique: voucherFindUnique,
+        },
         $transaction: async (callback: (innerTx: typeof tx) => Promise<unknown>) => callback(tx),
       },
     }));
@@ -253,5 +260,56 @@ describe('POST /api/webhooks/stripe', () => {
     const response = await POST(makeReq());
     expect(response.status).toBe(200);
     expect(await response.text()).toContain('Unhandled event type');
+  });
+
+  test('returns 400 when discount is applied with unknown promo code', async () => {
+    const voucherFindUnique = vi.fn().mockResolvedValue(null);
+
+    vi.doMock('@/lib/stripe', () => ({
+      stripe: {
+        webhooks: {
+          constructEvent: vi.fn(() => ({
+            type: 'checkout.session.completed',
+            data: {
+              object: {
+                id: 'cs_test_2',
+                metadata: { userId: 'u1', courseId: 'c1', purchaseType: 'course' },
+              },
+            },
+          })),
+        },
+        checkout: {
+          sessions: {
+            retrieve: vi.fn().mockResolvedValue({
+              id: 'cs_test_2',
+              amount_subtotal: 2999,
+              amount_total: 999,
+              total_details: {
+                amount_discount: 2000,
+                breakdown: {
+                  discounts: [
+                    {
+                      discount: {
+                        promotion_code: { code: 'OLDCODE123' },
+                        coupon: null,
+                      },
+                    },
+                  ],
+                },
+              },
+            }),
+          },
+        },
+      },
+    }));
+
+    mockHeaders('sig_test');
+    mockDb(vi.fn(), vi.fn(), voucherFindUnique);
+
+    const { POST } = await import('@/app/api/webhooks/stripe/route');
+    const response = await POST(makeReq());
+    expect(response.status).toBe(400);
+    expect(await response.text()).toContain('Unknown promotion code');
+    expect(voucherFindUnique).toHaveBeenCalledTimes(1);
   });
 });

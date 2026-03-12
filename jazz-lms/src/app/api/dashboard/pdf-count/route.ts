@@ -27,16 +27,6 @@ export async function GET() {
     const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
     const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
-    if (!isPrivilegedViewer) {
-      const hasFullPurchase = await db.purchase.findFirst({
-        where: { userId: user.id },
-        select: { id: true },
-      });
-
-      if (!hasFullPurchase) {
-        return NextResponse.json({ count: 0 });
-      }
-    }
 
     const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
       db.purchase.findMany({
@@ -59,7 +49,10 @@ export async function GET() {
                 orderBy: { position: 'asc' },
                 include: {
                   attachments: {
-                    select: { id: true },
+                    select: {
+                      lessonId: true,
+                      documentKey: true,
+                    },
                   },
                 },
               },
@@ -76,16 +69,18 @@ export async function GET() {
       const lessons = course.chapters.flatMap((chapter) => chapter.lessons);
 
       const accessibleAttachments = lessons.reduce((lessonTotal, lesson) => {
-        if (isPrivilegedViewer) {
-          return lessonTotal + lesson.attachments.length;
-        }
-
         const hasAccess =
+          isPrivilegedViewer ||
           purchasedCourseIds.has(course.id) ||
           purchasedLessonIds.has(lesson.id);
 
         if (!hasAccess) return lessonTotal;
-        return lessonTotal + lesson.attachments.length;
+
+        const uniqueDocumentKeys = new Set(
+          lesson.attachments.map((attachment) => `${attachment.lessonId}:${attachment.documentKey}`)
+        );
+
+        return lessonTotal + uniqueDocumentKeys.size;
       }, 0);
 
       return total + accessibleAttachments;
