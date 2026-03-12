@@ -13,6 +13,8 @@ export type Permission =
   | 'courses.create'
   | 'courses.update'
   | 'courses.delete'
+  | 'vouchers.read'
+  | 'vouchers.update'
   | 'users.read'
   | 'users.update'
   | 'users.assign_role'
@@ -27,6 +29,8 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     'courses.create',
     'courses.update',
     'courses.delete',
+    'vouchers.read',
+    'vouchers.update',
     'users.read',
     'users.update',
     'users.assign_role',
@@ -40,6 +44,8 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     'courses.create',
     'courses.update',
     'courses.delete',
+    'vouchers.read',
+    'vouchers.update',
     'analytics.read',
   ],
   [ADMIN_ROLES.CONTENT_CREATOR]: [
