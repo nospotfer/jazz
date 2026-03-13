@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Camera, Save, Phone, Calendar, Shuffle, Check, CreditCard, Wallet, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { getRandomProfileAvatar, PROFILE_AVATAR_OPTIONS } from '@/lib/profile-avatars';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
+import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
+import { useUserJazzMedalProfile } from '@/hooks/use-user-jazz-medal-profile';
 
 type AvatarMode = 'random' | 'fixed';
 
@@ -74,6 +76,13 @@ export default function ProfilePage() {
       phonePlaceholder: '+34 600 000 000',
       cancel: 'Cancelar',
       confirmAvatar: 'Confirmar avatar',
+      medalTooltipPrefix: 'Ganada en',
+      medalTooltipEmpty: 'Aun sin medalla',
+      platinumProgressLabel: 'Medallas de platino',
+      supremeUnlocked: 'Has desbloqueado tu medalla suprema.',
+      supremeLocked: 'Cuando completes las 15 medallas de platino, aparecerá aquí tu medalla suprema.',
+      supremeTitle: 'Especialista en jazz',
+      openSupremePage: 'Ver reconocimiento especial',
     },
     en: {
       avatarUpdateError: 'Unable to update avatar',
@@ -113,6 +122,13 @@ export default function ProfilePage() {
       phonePlaceholder: '+1 555 123 4567',
       cancel: 'Cancel',
       confirmAvatar: 'Confirm avatar',
+      medalTooltipPrefix: 'Earned in',
+      medalTooltipEmpty: 'No medal yet',
+      platinumProgressLabel: 'Platinum medals',
+      supremeUnlocked: 'You unlocked your supreme medal.',
+      supremeLocked: 'When you complete all 15 platinum medals, your supreme medal will appear here.',
+      supremeTitle: 'Jazz specialist',
+      openSupremePage: 'View special recognition',
     },
     fr: {
       avatarUpdateError: 'Impossible de mettre à jour l’avatar',
@@ -152,6 +168,13 @@ export default function ProfilePage() {
       phonePlaceholder: '+33 6 12 34 56 78',
       cancel: 'Annuler',
       confirmAvatar: 'Confirmer l’avatar',
+      medalTooltipPrefix: 'Gagnee dans',
+      medalTooltipEmpty: 'Pas encore de medaille',
+      platinumProgressLabel: 'Medailles platine',
+      supremeUnlocked: 'Votre medaille supreme est debloquee.',
+      supremeLocked: 'Quand vous aurez les 15 medailles platine, votre medaille supreme apparaitra ici.',
+      supremeTitle: 'Specialiste du jazz',
+      openSupremePage: 'Voir la reconnaissance speciale',
     },
     pt: {
       avatarUpdateError: 'Não foi possível atualizar o avatar',
@@ -191,6 +214,13 @@ export default function ProfilePage() {
       phonePlaceholder: '+55 11 99999-9999',
       cancel: 'Cancelar',
       confirmAvatar: 'Confirmar avatar',
+      medalTooltipPrefix: 'Ganha na',
+      medalTooltipEmpty: 'Sem medalha ainda',
+      platinumProgressLabel: 'Medalhas de platina',
+      supremeUnlocked: 'Voce desbloqueou sua medalha suprema.',
+      supremeLocked: 'Quando completar as 15 medalhas de platina, sua medalha suprema vai aparecer aqui.',
+      supremeTitle: 'Especialista em jazz',
+      openSupremePage: 'Ver reconhecimento especial',
     },
   }[language];
   const [loading, setLoading] = useState(false);
@@ -203,8 +233,17 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState(getRandomProfileAvatar());
   const [draftAvatarMode, setDraftAvatarMode] = useState<AvatarMode>('random');
   const [draftAvatarUrl, setDraftAvatarUrl] = useState(getRandomProfileAvatar());
+  const [activeMedalTooltip, setActiveMedalTooltip] = useState<string | null>(null);
+  const { profile: medalProfile } = useUserJazzMedalProfile(language);
 
   const [formData, setFormData] = useState<ProfileFormData>(EMPTY_PROFILE_FORM);
+  const medalProgress = medalProfile?.progress ?? null;
+  const medalLessons = medalProfile?.lessons ?? [];
+  const activeProfileMedal = medalProgress?.activeProfileMedal ?? 'NONE';
+  const earnedLessonMedals = useMemo(
+    () => medalLessons.filter((lesson) => lesson.medal !== 'NONE'),
+    [medalLessons]
+  );
 
   useEffect(() => {
     const loadUser = async () => {
@@ -343,6 +382,15 @@ export default function ProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
+                  {activeProfileMedal !== 'NONE' ? (
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-card p-1.5 shadow-lg" data-testid="profile-active-medal">
+                      {activeProfileMedal === 'SUPREME' ? (
+                        <JazzSupremeMedal language={language} size="sm" />
+                      ) : (
+                        <JazzMedalIcon medal={activeProfileMedal} size="sm" />
+                      )}
+                    </div>
+                  ) : null}
                   <button
                     type="button"
                     onClick={openAvatarPicker}
@@ -358,6 +406,90 @@ export default function ProfilePage() {
                       ? copy.randomModeDesc
                       : copy.fixedModeDesc}
                   </p>
+                </div>
+
+                <div className="w-full rounded-[28px] border border-primary/15 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.16),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.12),_transparent_24%),linear-gradient(145deg,rgba(15,23,42,0.96),rgba(24,24,27,0.92),rgba(30,41,59,0.96))] p-4 shadow-[0_22px_44px_rgba(15,23,42,0.26)]">
+                  <div className="flex flex-wrap items-center justify-center gap-3" data-testid="profile-medal-wall">
+                    {earnedLessonMedals.map((lesson) => (
+                      <button
+                        key={`earned-medal-${lesson.classNumber}`}
+                        type="button"
+                        className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-transform hover:scale-105 focus-visible:scale-105"
+                        onMouseEnter={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
+                        onMouseLeave={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
+                        onFocus={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
+                        onBlur={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
+                        onClick={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : `lesson-${lesson.classNumber}`))}
+                        aria-label={`${copy.medalTooltipPrefix} ${lesson.title}`}
+                        data-testid={`profile-medal-${lesson.classNumber}`}
+                      >
+                        <JazzMedalIcon medal={lesson.medal} size="sm" />
+                        {activeMedalTooltip === `lesson-${lesson.classNumber}` ? (
+                          <span
+                            className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-white shadow-lg"
+                            role="tooltip"
+                          >
+                            {lesson.title}
+                          </span>
+                        ) : null}
+                      </button>
+                    ))}
+
+                    {Array.from({ length: Math.max(0, 15 - earnedLessonMedals.length) }, (_, index) => (
+                      <span
+                        key={`empty-medal-${index}`}
+                        className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-45"
+                        aria-label={copy.medalTooltipEmpty}
+                      >
+                        <JazzMedalIcon medal="NONE" size="sm" />
+                      </span>
+                    ))}
+
+                    {medalProgress?.hasSupremeMedal ? (
+                      <button
+                        type="button"
+                        onMouseEnter={() => setActiveMedalTooltip('supreme')}
+                        onMouseLeave={() => setActiveMedalTooltip((current) => (current === 'supreme' ? null : current))}
+                        onFocus={() => setActiveMedalTooltip('supreme')}
+                        onBlur={() => setActiveMedalTooltip((current) => (current === 'supreme' ? null : current))}
+                        onClick={() => {
+                          setActiveMedalTooltip((current) => (current === 'supreme' ? null : 'supreme'));
+                          router.push('/dashboard/jazz-specialist');
+                        }}
+                        className="group relative inline-flex h-14 w-14 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-transform hover:scale-105 focus-visible:scale-105"
+                        aria-label={copy.supremeTitle}
+                        data-testid="profile-supreme-medal"
+                      >
+                        <JazzSupremeMedal language={language} size="sm" />
+                        {activeMedalTooltip === 'supreme' ? (
+                          <span
+                            className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-yellow-300/35 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-yellow-100 shadow-lg"
+                            role="tooltip"
+                          >
+                            {copy.supremeTitle}
+                          </span>
+                        ) : null}
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+                    <span>{medalProgress ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}` : '0/15'} {copy.platinumProgressLabel}</span>
+                    <span className="h-1 w-1 rounded-full bg-muted-foreground/50" />
+                    <span>{medalProgress?.hasSupremeMedal ? copy.supremeUnlocked : copy.supremeLocked}</span>
+                  </div>
+
+                  {medalProgress?.hasSupremeMedal ? (
+                    <div className="mt-4 flex justify-center">
+                      <Button
+                        type="button"
+                        onClick={() => router.push('/dashboard/jazz-specialist')}
+                        className="rounded-xl bg-yellow-400 text-black hover:bg-yellow-300"
+                      >
+                        {copy.openSupremePage}
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

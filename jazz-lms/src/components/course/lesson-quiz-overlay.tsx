@@ -278,6 +278,8 @@ export function LessonQuizOverlay({
   }, []);
 
   const currentQuestion = attempt?.questions[currentQuestionIndex] ?? null;
+  const shouldShowLocalAnswerDebug = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const currentCorrectOption = currentQuestion?.options.find((option) => option.id === currentQuestion.answerId) ?? null;
 
   const sessionProgressPercent = useMemo(() => {
     if (!attempt) {
@@ -543,6 +545,15 @@ export function LessonQuizOverlay({
               {currentQuestion ? (
                 <div className={cn('relative overflow-hidden rounded-[32px] border p-6 shadow-2xl backdrop-blur-sm sm:p-8', questionCardTone)}>
                   <div className="absolute inset-x-10 top-0 h-20 bg-[radial-gradient(circle,_rgba(212,175,55,0.2),_transparent_55%)] blur-2xl" />
+
+                  {shouldShowLocalAnswerDebug && currentCorrectOption ? (
+                    <div className="absolute right-4 top-4 z-10 max-w-[18rem] rounded-2xl border border-cyan-200/35 bg-slate-950/90 px-3 py-2 text-xs text-cyan-50 shadow-[0_16px_40px_rgba(14,116,144,0.28)]">
+                      <p className="font-semibold uppercase tracking-[0.18em] text-cyan-200/80">Local QA</p>
+                      <p className="mt-1 font-medium">
+                        Correta: {currentCorrectOption.label} · {currentCorrectOption.text}
+                      </p>
+                    </div>
+                  ) : null}
 
                   <div className="relative">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary/75">

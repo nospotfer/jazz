@@ -1,4 +1,5 @@
 'use client';
+import MuxPlayer from '@mux/mux-player-react';
 import { Button } from '../ui/button';
 import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
@@ -13,30 +14,15 @@ import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 import { getCanonicalJazzClass } from '@/lib/course-lessons';
 import { extractMuxPlaybackId } from '@/lib/mux-playback';
-import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import { useLanguage } from '@/components/providers/language-provider';
 import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageSelector } from '@/components/language-selector';
+import { PaymentMethodModal, type PaymentMethod } from '@/components/payment/payment-method-modal';
+import { LessonQuizOverlay } from '@/components/course/lesson-quiz-overlay';
 import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
 import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
-
-const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
-  ssr: false,
-});
-
-const LanguageSelector = dynamic(() => import('@/components/language-selector').then((mod) => mod.LanguageSelector), {
-  ssr: false,
-});
-
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
-      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-    </div>
-  ),
-});
 
 const PdfWorkspaceViewer = dynamic(
   () => import('@/components/course/pdf-workspace-viewer').then((mod) => mod.PdfWorkspaceViewer),
@@ -47,20 +33,6 @@ const PdfWorkspaceViewer = dynamic(
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     ),
-  }
-);
-
-const LessonQuizOverlay = dynamic(
-  () => import('@/components/course/lesson-quiz-overlay').then((mod) => mod.LessonQuizOverlay),
-  {
-    ssr: false,
-  }
-);
-
-const PaymentMethodModal = dynamic(
-  () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
-  {
-    ssr: false,
   }
 );
 
@@ -346,34 +318,12 @@ export const CoursePlayer = ({
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
-  const [shouldLoadPlayback, setShouldLoadPlayback] = useState(false);
-  const [shouldLoadPdfPreview, setShouldLoadPdfPreview] = useState(false);
   const [playbackId, setPlaybackId] = useState('');
   const [playbackToken, setPlaybackToken] = useState('');
   const [thumbnailToken, setThumbnailToken] = useState('');
   const [storyboardToken, setStoryboardToken] = useState('');
   const [playbackError, setPlaybackError] = useState('');
   const [muxRuntimeError, setMuxRuntimeError] = useState('');
-
-  useEffect(() => {
-    const idleCallback = window.requestIdleCallback?.(() => {
-      warmPaymentMethodModal();
-    });
-
-    if (idleCallback !== undefined) {
-      return () => {
-        window.cancelIdleCallback?.(idleCallback);
-      };
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      warmPaymentMethodModal();
-    }, 800);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, []);
   const [selectedAttachmentId, setSelectedAttachmentId] = useState<string | null>(
     lesson.attachments[0]?.id ?? null
   );
@@ -491,22 +441,6 @@ export const CoursePlayer = ({
   }, [language]);
 
   useEffect(() => {
-    const idleCallback = window.requestIdleCallback?.(() => {
-      setShouldLoadPlayback(true);
-    }, { timeout: 1200 });
-
-    if (idleCallback !== undefined) {
-      return () => window.cancelIdleCallback?.(idleCallback);
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setShouldLoadPlayback(true);
-    }, 800);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [lesson.id]);
-
-  useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
 
@@ -586,7 +520,7 @@ export const CoursePlayer = ({
     let cancelled = false;
 
     const loadPlayback = async () => {
-      if (!canAccessLesson || !shouldLoadPlayback) {
+      if (!canAccessLesson) {
         setPlaybackId('');
         setPlaybackToken('');
         setThumbnailToken('');
@@ -634,7 +568,7 @@ export const CoursePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [canAccessLesson, lesson.id, shouldLoadPlayback, copy.unableSignedPlayback]);
+  }, [canAccessLesson, lesson.id]);
 
   const getAttachmentSignedUrl = async (attachmentId: string, download = false) => {
     const response = await axios.get(
@@ -733,16 +667,6 @@ export const CoursePlayer = ({
     } finally {
       setIsPurchasing(false);
     }
-  };
-
-  const primePaymentModal = () => {
-    warmPaymentMethodModal();
-  };
-
-  const openPaymentModal = () => {
-    warmPaymentMethodModal();
-    setPaymentError('');
-    setIsMethodModalOpen(true);
   };
 
   const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
@@ -912,32 +836,12 @@ export const CoursePlayer = ({
   const firstAttachmentId = visibleAttachments[0]?.id;
 
   useEffect(() => {
-    if (!isNotesPanelOpen || !canAccessAttachments || !firstAttachmentId) {
-      return;
-    }
-
-    const idleCallback = window.requestIdleCallback?.(() => {
-      setShouldLoadPdfPreview(true);
-    }, { timeout: 1500 });
-
-    if (idleCallback !== undefined) {
-      return () => window.cancelIdleCallback?.(idleCallback);
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setShouldLoadPdfPreview(true);
-    }, 1200);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [canAccessAttachments, firstAttachmentId, isNotesPanelOpen, lesson.id]);
-
-  useEffect(() => {
-    if (!canAccessAttachments || !firstAttachmentId || !shouldLoadPdfPreview) {
+    if (!canAccessAttachments || !firstAttachmentId) {
       return;
     }
 
     void openPdfPreview(firstAttachmentId);
-  }, [lesson.id, canAccessAttachments, firstAttachmentId, shouldLoadPdfPreview]);
+  }, [lesson.id, canAccessAttachments, firstAttachmentId]);
 
   return (
     <DashboardPreferencesProvider>
@@ -1058,10 +962,10 @@ export const CoursePlayer = ({
                             {copy.lessonLockedDesc}
                           </p>
                           <Button
-                            onClick={openPaymentModal}
-                            onMouseEnter={primePaymentModal}
-                            onFocus={primePaymentModal}
-                            onTouchStart={primePaymentModal}
+                            onClick={() => {
+                              setPaymentError('');
+                              setIsMethodModalOpen(true);
+                            }}
                             disabled={isPurchasing}
                             className="w-full sm:w-auto"
                           >
@@ -1163,10 +1067,10 @@ export const CoursePlayer = ({
                       <li>• {copy.unlockNotes}</li>
                     </ul>
                     <Button
-                      onClick={openPaymentModal}
-                      onMouseEnter={primePaymentModal}
-                      onFocus={primePaymentModal}
-                      onTouchStart={primePaymentModal}
+                      onClick={() => {
+                        setPaymentError('');
+                        setIsMethodModalOpen(true);
+                      }}
                       disabled={isPurchasing}
                       className="w-full mt-4"
                     >
