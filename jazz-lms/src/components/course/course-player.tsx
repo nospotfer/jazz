@@ -734,6 +734,16 @@ export const CoursePlayer = ({
     }
   };
 
+  const primePaymentModal = useCallback(() => {
+    warmPaymentMethodModal();
+  }, []);
+
+  const openPaymentModal = useCallback(() => {
+    warmPaymentMethodModal();
+    setPaymentError('');
+    setIsMethodModalOpen(true);
+  }, []);
+
   const lessonPlaylistTrack = useMemo(() => getJazzPlaylistTrackForLesson({
     classNumber,
     language,
