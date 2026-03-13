@@ -95,6 +95,20 @@ npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3000/api/webhoo
 npm run stripe:sandbox:all
 ```
 
+Local automated checkout tests also support a localhost-only fallback path that creates a synthetic purchase session without calling Stripe. This is intended for QA and Playwright/Vitest flows only and stays disabled in production.
+
+## Gamification Rules
+
+- Quiz medals and the jazz gamification progress remain backend-authoritative.
+- A medal is only shown when the user has valid access to the related lesson content through a full course purchase or an individual lesson purchase.
+- Users without paid access do not see stored medals in the header or profile, even if historical quiz summary rows exist.
+- The profile/header medal badge must not cover the user avatar.
+- Before the supreme unlock, the profile medal board is rendered as a fixed 3x5 grid for the 15 lesson slots.
+- After all 15 platinum medals are unlocked, the grid disappears and only the supreme medal remains in the profile.
+- Lesson video progress is persisted gradually every 5% with backend sync and playback-end auto-complete preserved.
+- The profile now includes a shared jazz playlist widget with previous/play-next controls, and the lesson player uses the same music-link source as the profile.
+- The jazz arcade quiz overlay now uses the course playlist as an interactive left-side panel, with track switching and platform links tied to the current lesson flow.
+
 ## Deployment
 
 We recommend deploying this project to [Vercel](https://vercel.com/), the creators of Next.js. Vercel provides a seamless deployment experience for Next.js applications.

@@ -91,7 +91,7 @@ function serializeAttempt(params: {
     questionCount: params.questions.length,
     answeredCount: 0,
     questions: params.questions.map((question, orderIndex) => ({
-      answerId: `${params.attemptId}:${question.id}`,
+      answerId: question.options.find((opt) => opt.isCorrect)?.id ?? '',
       orderIndex,
       questionId: question.id,
       prompt: question.prompt,
