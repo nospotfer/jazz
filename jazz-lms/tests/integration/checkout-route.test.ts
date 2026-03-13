@@ -1,5 +1,15 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+const APP_URL = 'https://app.example.com';
+
+function createCheckoutRequest(body: Record<string, unknown>) {
+  return new Request(`${APP_URL}/api/checkout`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: APP_URL },
+    body: JSON.stringify(body),
+  });
+}
+
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   courseFindUnique: vi.fn(),
@@ -66,11 +76,7 @@ describe('POST /api/checkout', () => {
 
   test('returns 400 for missing courseId', async () => {
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({}),
-    });
+    const req = createCheckoutRequest({});
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -78,11 +84,7 @@ describe('POST /api/checkout', () => {
 
   test('returns 400 for unsupported payment method', async () => {
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1', paymentMethod: 'pix' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1', paymentMethod: 'pix' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -90,11 +92,7 @@ describe('POST /api/checkout', () => {
 
   test('returns 400 when voucher code is sent to checkout API payload', async () => {
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1', voucherCode: 'PROMO100' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1', voucherCode: 'PROMO100' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -104,11 +102,7 @@ describe('POST /api/checkout', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(401);
@@ -119,11 +113,7 @@ describe('POST /api/checkout', () => {
     mocks.courseFindUnique.mockResolvedValue(null);
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(404);
@@ -135,11 +125,7 @@ describe('POST /api/checkout', () => {
     mocks.purchaseFindUnique.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -152,11 +138,7 @@ describe('POST /api/checkout', () => {
     mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1', source: 'dashboard' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1', source: 'dashboard' });
 
     const res = await POST(req);
     const body = await res.json();
@@ -172,11 +154,7 @@ describe('POST /api/checkout', () => {
     mocks.purchaseFindUnique.mockResolvedValue(null);
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(503);
@@ -186,11 +164,7 @@ describe('POST /api/checkout', () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: null } } });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -203,11 +177,7 @@ describe('POST /api/checkout', () => {
     mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1', source: 'course' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1', source: 'course' });
 
     const res = await POST(req);
     const body = await res.json();
@@ -220,14 +190,31 @@ describe('POST /api/checkout', () => {
     mocks.getUser.mockRejectedValue(new Error('unexpected'));
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(500);
+  });
+
+  test('creates a local test checkout without Stripe on localhost requests', async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
+    mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
+
+    const { POST } = await import('@/app/api/checkout/route');
+    const req = new Request('http://localhost:3000/api/checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
+      body: JSON.stringify({ courseId: 'c1', source: 'dashboard' }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toContain('/dashboard?purchase=success&source=dashboard&test=1');
+    expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -267,7 +254,13 @@ describe('POST /api/checkout (with Stripe)', () => {
         purchase: {
           findUnique: vi.fn().mockResolvedValue(options.existingPurchase ?? null),
           create: vi.fn().mockResolvedValue({ id: 'p1' }),
+          upsert: vi.fn().mockResolvedValue({ id: 'p1' }),
         },
+        $transaction: async (callback: (tx: any) => Promise<any>) => callback({
+          purchase: {
+            upsert: vi.fn().mockResolvedValue({ id: 'p1' }),
+          },
+        }),
       },
     }));
 
@@ -307,11 +300,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     setupCheckoutMocks();
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1', paymentMethod: 'card' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1', paymentMethod: 'card' });
 
     const res = await POST(req);
     const body = await res.json();
@@ -325,11 +314,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     setupCheckoutMocks();
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     const body = await res.json();
@@ -338,19 +323,15 @@ describe('POST /api/checkout (with Stripe)', () => {
     expect(body.url).toBe('https://checkout.stripe.com/session');
   });
 
-  test('uses customer_creation flow without manually creating customer', async () => {
+  test('creates a Stripe customer when no existing customer is found', async () => {
     setupCheckoutMocks({ customers: [] });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(200);
-    expect(stripeMocks.customersCreate).not.toHaveBeenCalled();
+    expect(stripeMocks.customersCreate).toHaveBeenCalledTimes(1);
   });
 
   test('falls back to card-only when multi-method throws StripeInvalidRequestError', async () => {
@@ -382,11 +363,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     const body = await res.json();
@@ -422,11 +399,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     });
 
     const { POST } = await import('@/app/api/checkout/route');
-    const req = new Request('http://localhost:3000/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
-      body: JSON.stringify({ courseId: 'c1' }),
-    });
+    const req = createCheckoutRequest({ courseId: 'c1' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);

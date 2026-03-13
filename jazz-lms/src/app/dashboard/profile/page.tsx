@@ -78,6 +78,7 @@ export default function ProfilePage() {
       confirmAvatar: 'Confirmar avatar',
       medalTooltipPrefix: 'Ganada en',
       medalTooltipEmpty: 'Aun sin medalla',
+      medalShowcaseTitle: 'Vitrina de medallas',
       platinumProgressLabel: 'Medallas de platino',
       supremeUnlocked: 'Has desbloqueado tu medalla suprema.',
       supremeLocked: 'Cuando completes las 15 medallas de platino, aparecerá aquí tu medalla suprema.',
@@ -124,6 +125,7 @@ export default function ProfilePage() {
       confirmAvatar: 'Confirm avatar',
       medalTooltipPrefix: 'Earned in',
       medalTooltipEmpty: 'No medal yet',
+      medalShowcaseTitle: 'Medal showcase',
       platinumProgressLabel: 'Platinum medals',
       supremeUnlocked: 'You unlocked your supreme medal.',
       supremeLocked: 'When you complete all 15 platinum medals, your supreme medal will appear here.',
@@ -170,6 +172,7 @@ export default function ProfilePage() {
       confirmAvatar: 'Confirmer l’avatar',
       medalTooltipPrefix: 'Gagnee dans',
       medalTooltipEmpty: 'Pas encore de medaille',
+      medalShowcaseTitle: 'Vitrine des medailles',
       platinumProgressLabel: 'Medailles platine',
       supremeUnlocked: 'Votre medaille supreme est debloquee.',
       supremeLocked: 'Quand vous aurez les 15 medailles platine, votre medaille supreme apparaitra ici.',
@@ -216,6 +219,7 @@ export default function ProfilePage() {
       confirmAvatar: 'Confirmar avatar',
       medalTooltipPrefix: 'Ganha na',
       medalTooltipEmpty: 'Sem medalha ainda',
+      medalShowcaseTitle: 'Vitrine de medalhas',
       platinumProgressLabel: 'Medalhas de platina',
       supremeUnlocked: 'Voce desbloqueou sua medalha suprema.',
       supremeLocked: 'Quando completar as 15 medalhas de platina, sua medalha suprema vai aparecer aqui.',
@@ -240,8 +244,8 @@ export default function ProfilePage() {
   const medalProgress = medalProfile?.progress ?? null;
   const medalLessons = medalProfile?.lessons ?? [];
   const activeProfileMedal = medalProgress?.activeProfileMedal ?? 'NONE';
-  const earnedLessonMedals = useMemo(
-    () => medalLessons.filter((lesson) => lesson.medal !== 'NONE'),
+  const visibleMedalLessons = useMemo(
+    () => medalLessons.slice(0, 15),
     [medalLessons]
   );
 
@@ -371,33 +375,26 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 xl:grid-cols-[240px_1fr_1fr] gap-6 items-stretch">
           <div className="xl:self-center">
             <div className="bg-card border border-border rounded-xl p-6 h-full">
-              <div className="flex flex-col items-center justify-center text-center gap-4 h-full min-h-[260px]">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-muted">
-                    <Image
-                      src={avatarUrl}
-                      alt={copy.profileAvatarAlt}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  {activeProfileMedal !== 'NONE' ? (
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-card p-1.5 shadow-lg" data-testid="profile-active-medal">
-                      {activeProfileMedal === 'SUPREME' ? (
-                        <JazzSupremeMedal language={language} size="sm" />
-                      ) : (
-                        <JazzMedalIcon medal={activeProfileMedal} size="sm" />
-                      )}
+              <div className="flex flex-col gap-5 h-full min-h-[260px]">
+                <div className="flex flex-col items-center justify-center text-center gap-4">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-muted">
+                      <Image
+                        src={avatarUrl}
+                        alt={copy.profileAvatarAlt}
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={openAvatarPicker}
-                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors"
-                  >
-                    <Camera className="h-3.5 w-3.5" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={openAvatarPicker}
+                      className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors"
+                    >
+                      <Camera className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <p className="font-medium text-foreground">{copy.profileIcon}</p>
@@ -409,43 +406,77 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="w-full rounded-[28px] border border-primary/15 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.16),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.12),_transparent_24%),linear-gradient(145deg,rgba(15,23,42,0.96),rgba(24,24,27,0.92),rgba(30,41,59,0.96))] p-4 shadow-[0_22px_44px_rgba(15,23,42,0.26)]">
-                  <div className="flex flex-wrap items-center justify-center gap-3" data-testid="profile-medal-wall">
-                    {earnedLessonMedals.map((lesson) => (
-                      <button
-                        key={`earned-medal-${lesson.classNumber}`}
-                        type="button"
-                        className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-transform hover:scale-105 focus-visible:scale-105"
-                        onMouseEnter={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
-                        onMouseLeave={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
-                        onFocus={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
-                        onBlur={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
-                        onClick={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : `lesson-${lesson.classNumber}`))}
-                        aria-label={`${copy.medalTooltipPrefix} ${lesson.title}`}
-                        data-testid={`profile-medal-${lesson.classNumber}`}
-                      >
-                        <JazzMedalIcon medal={lesson.medal} size="sm" />
-                        {activeMedalTooltip === `lesson-${lesson.classNumber}` ? (
-                          <span
-                            className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-white shadow-lg"
-                            role="tooltip"
-                          >
-                            {lesson.title}
-                          </span>
-                        ) : null}
-                      </button>
-                    ))}
-
-                    {Array.from({ length: Math.max(0, 15 - earnedLessonMedals.length) }, (_, index) => (
-                      <span
-                        key={`empty-medal-${index}`}
-                        className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-45"
-                        aria-label={copy.medalTooltipEmpty}
-                      >
+                  <div className="mb-4 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.28em] text-primary/80">{copy.medalShowcaseTitle}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {medalProgress ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}` : '0/15'} {copy.platinumProgressLabel}
+                      </p>
+                    </div>
+                    {activeProfileMedal !== 'NONE' ? (
+                      <div className="shrink-0 rounded-full border border-white/15 bg-card/90 p-2 shadow-lg" data-testid="profile-active-medal">
+                        {activeProfileMedal === 'SUPREME' ? (
+                          <JazzSupremeMedal language={language} size="sm" />
+                        ) : (
+                          <JazzMedalIcon medal={activeProfileMedal} size="sm" />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-60">
                         <JazzMedalIcon medal="NONE" size="sm" />
-                      </span>
-                    ))}
+                      </div>
+                    )}
+                  </div>
 
-                    {medalProgress?.hasSupremeMedal ? (
+                  {!medalProgress?.hasSupremeMedal ? (
+                    <div
+                      className="mx-auto grid w-full max-w-[18rem] grid-cols-5 gap-3"
+                      data-testid="profile-medal-grid"
+                    >
+                      {visibleMedalLessons.map((lesson: (typeof visibleMedalLessons)[number]) => {
+                        const isEarned = lesson.medal !== 'NONE';
+
+                        if (!isEarned) {
+                          return (
+                            <span
+                              key={`empty-medal-${lesson.classNumber}`}
+                              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-45"
+                              aria-label={copy.medalTooltipEmpty}
+                              data-testid={`profile-medal-slot-${lesson.classNumber}`}
+                            >
+                              <JazzMedalIcon medal="NONE" size="sm" />
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <button
+                            key={`earned-medal-${lesson.classNumber}`}
+                            type="button"
+                            className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-transform hover:scale-105 focus-visible:scale-105"
+                            onMouseEnter={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
+                            onMouseLeave={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
+                            onFocus={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
+                            onBlur={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
+                            onClick={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : `lesson-${lesson.classNumber}`))}
+                            aria-label={`${copy.medalTooltipPrefix} ${lesson.title}`}
+                            data-testid={`profile-medal-slot-${lesson.classNumber}`}
+                          >
+                            <JazzMedalIcon medal={lesson.medal} size="sm" />
+                            {activeMedalTooltip === `lesson-${lesson.classNumber}` ? (
+                              <span
+                                className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-white shadow-lg"
+                                role="tooltip"
+                              >
+                                {lesson.title}
+                              </span>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex justify-center" data-testid="profile-supreme-only">
                       <button
                         type="button"
                         onMouseEnter={() => setActiveMedalTooltip('supreme')}
@@ -456,7 +487,7 @@ export default function ProfilePage() {
                           setActiveMedalTooltip((current) => (current === 'supreme' ? null : 'supreme'));
                           router.push('/dashboard/jazz-specialist');
                         }}
-                        className="group relative inline-flex h-14 w-14 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-transform hover:scale-105 focus-visible:scale-105"
+                        className="group relative inline-flex h-16 w-16 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-transform hover:scale-105 focus-visible:scale-105"
                         aria-label={copy.supremeTitle}
                         data-testid="profile-supreme-medal"
                       >
@@ -470,12 +501,10 @@ export default function ProfilePage() {
                           </span>
                         ) : null}
                       </button>
-                    ) : null}
-                  </div>
+                    </div>
+                  )}
 
-                  <div className="mt-4 flex items-center justify-center gap-3 text-xs text-muted-foreground">
-                    <span>{medalProgress ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}` : '0/15'} {copy.platinumProgressLabel}</span>
-                    <span className="h-1 w-1 rounded-full bg-muted-foreground/50" />
+                  <div className="mt-4 text-center text-xs text-muted-foreground">
                     <span>{medalProgress?.hasSupremeMedal ? copy.supremeUnlocked : copy.supremeLocked}</span>
                   </div>
 
@@ -664,7 +693,6 @@ export default function ProfilePage() {
         </div>
 
       </form>
-
       {pickerOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"

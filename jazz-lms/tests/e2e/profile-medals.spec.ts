@@ -6,7 +6,64 @@ const loginPassword = process.env.E2E_LOGIN_PASSWORD;
 test.describe('profile medal wall', () => {
   test.skip(!loginEmail || !loginPassword, 'Set E2E_LOGIN_EMAIL and E2E_LOGIN_PASSWORD to run authenticated medal tests.');
 
-  test('shows lesson medal tooltip and supreme tooltip without numeric badges', async ({ page }) => {
+  test('shows a fixed 3x5 medal grid before the supreme medal unlocks', async ({ page }) => {
+    await page.route('**/api/dashboard/quiz-medals', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          platinumMedalCount: 1,
+          totalRequiredPlatinumMedals: 15,
+          remainingPlatinumMedals: 14,
+          hasSupremeMedal: false,
+          activeProfileMedal: 'PLATINUM',
+        }),
+      });
+    });
+
+    await page.route('**/api/dashboard/quiz-medals/profile?language=*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          progress: {
+            platinumMedalCount: 1,
+            totalRequiredPlatinumMedals: 15,
+            remainingPlatinumMedals: 14,
+            hasSupremeMedal: false,
+            activeProfileMedal: 'PLATINUM',
+          },
+          lessons: Array.from({ length: 15 }, (_, index) => ({
+            lessonId: `lesson-${index + 1}`,
+            classNumber: index + 1,
+            title: `Aula ${index + 1}`,
+            medal: index === 0 ? 'PLATINUM' : 'NONE',
+            bestScorePercent: index === 0 ? 100 : null,
+            bestCorrectCount: index === 0 ? 12 : null,
+          })),
+        }),
+      });
+    });
+
+    await page.goto('/auth?tab=login');
+    await page.locator('#loginEmail').fill(loginEmail!);
+    await page.locator('#loginPassword').fill(loginPassword!);
+    await page.getByRole('button', { name: /entrar|sign in|iniciar sesión|se connecter/i }).click();
+    await page.waitForURL('**/dashboard**', { timeout: 30000 });
+
+    await page.goto('/dashboard/profile');
+
+    const medalGrid = page.getByTestId('profile-medal-grid');
+    await expect(medalGrid).toBeVisible();
+    await expect(page.getByTestId('profile-supreme-only')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="profile-medal-slot-"]')).toHaveCount(15);
+
+    const lessonMedal = page.getByTestId('profile-medal-slot-1');
+    await lessonMedal.hover();
+    await expect(page.getByRole('tooltip', { name: 'Aula 1' })).toBeVisible();
+  });
+
+  test('replaces the 15-medal grid with only the supreme medal after full unlock', async ({ page }) => {
     await page.route('**/api/dashboard/quiz-medals', async (route) => {
       await route.fulfill({
         status: 200,
@@ -71,14 +128,8 @@ test.describe('profile medal wall', () => {
 
     await page.goto('/dashboard/profile');
 
-    const medalWall = page.getByTestId('profile-medal-wall');
-    await expect(medalWall).toBeVisible();
-
-    const lessonMedal = page.getByTestId('profile-medal-1');
-    await expect(lessonMedal).toBeVisible();
-    await expect(lessonMedal).toHaveText('');
-    await lessonMedal.hover();
-    await expect(page.getByRole('tooltip', { name: 'A Essencia do Jazz' })).toBeVisible();
+    await expect(page.getByTestId('profile-medal-grid')).toHaveCount(0);
+    await expect(page.getByTestId('profile-supreme-only')).toBeVisible();
 
     const supremeMedal = page.getByTestId('profile-supreme-medal');
     await expect(supremeMedal).toBeVisible();

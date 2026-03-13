@@ -313,7 +313,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                 }}
                 className="flex items-center gap-2 pl-2 border-l border-border cursor-pointer hover:opacity-80 transition-opacity"
               >
-                <div className="relative flex shrink-0 items-center justify-center pb-2">
+                <div className="flex shrink-0 flex-col items-center justify-center gap-1">
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
@@ -328,15 +328,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                     </div>
                   )}
 
-                  {medalProgress && medalProgress.activeProfileMedal !== 'NONE' ? (
-                    <span className="absolute -bottom-0.5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-card px-1.5 py-0.5 shadow-lg">
-                      {medalProgress.activeProfileMedal === 'SUPREME' ? (
-                        <JazzSupremeMedal language={language} size="sm" />
-                      ) : (
-                        <JazzMedalIcon medal={medalProgress.activeProfileMedal} size="sm" />
-                      )}
-                    </span>
-                  ) : null}
+
                 </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-foreground leading-none">

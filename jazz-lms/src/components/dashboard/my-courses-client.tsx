@@ -34,16 +34,13 @@ export function MyCoursesClient({ videos }: MyCoursesClientProps) {
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [completionAlertPending, setCompletionAlertPending] = useState(false);
 
-  const byTitle = new Map(videos.map((video) => [video.lessonTitle.toLowerCase(), video]));
   const orderedVideos = useMemo(
     () => [...videos].sort((a, b) => a.classOrder - b.classOrder),
     [videos]
   );
 
   const classes = CANONICAL_JAZZ_CLASSES.map((item) => {
-    const matchByTitle = byTitle.get(item.subtitle.toLowerCase());
-    const matchByOrder = orderedVideos[item.classNumber - 1];
-    const match = matchByTitle ?? matchByOrder;
+    const match = orderedVideos[item.classNumber - 1] ?? null;
     const progress = match?.progressPercent ?? 0;
     const minutesRemaining = match?.minutesRemaining ?? 20;
 

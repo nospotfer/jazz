@@ -13,6 +13,17 @@ import type { SupportedLanguage } from '@/lib/language';
 
 const defaultLessonCount = CANONICAL_JAZZ_CLASSES.length;
 
+type PublishedJazzQuizLesson = {
+  id: string;
+  title: string;
+  classNumber: number;
+};
+
+type PublishedJazzQuizLessonSet = {
+  courseId: string | null;
+  lessons: PublishedJazzQuizLesson[];
+};
+
 const getPublishedJazzQuizLessons = cache(async () => {
   const firstPublishedCourse = await db.course.findFirst({
     where: { isPublished: true },
@@ -63,6 +74,56 @@ const getPublishedJazzQuizLessons = cache(async () => {
   };
 });
 
+const getUserEntitledJazzQuizLessons = cache(async (
+  userId: string,
+  publishedCourse: PublishedJazzQuizLessonSet
+) => {
+  if (!publishedCourse.courseId || publishedCourse.lessons.length === 0) {
+    return {
+      hasAccess: false,
+      lessons: [] as PublishedJazzQuizLesson[],
+    };
+  }
+
+  const [fullCoursePurchase, lessonPurchases] = await Promise.all([
+    db.purchase.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: publishedCourse.courseId,
+        },
+      },
+      select: { id: true },
+    }),
+    db.lessonPurchase.findMany({
+      where: {
+        userId,
+        lessonId: {
+          in: publishedCourse.lessons.map((lesson) => lesson.id),
+        },
+      },
+      select: {
+        lessonId: true,
+      },
+    }),
+  ]);
+
+  if (fullCoursePurchase) {
+    return {
+      hasAccess: true,
+      lessons: publishedCourse.lessons,
+    };
+  }
+
+  const entitledLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
+  const entitledLessons = publishedCourse.lessons.filter((lesson) => entitledLessonIds.has(lesson.id));
+
+  return {
+    hasAccess: entitledLessons.length > 0,
+    lessons: entitledLessons,
+  };
+});
+
 const getUserJazzMedalSummaryRows = cache(async (userId: string, lessonIds: string[]) => {
   if (lessonIds.length === 0) {
     return [] as Array<{
@@ -93,32 +154,120 @@ const getUserJazzMedalSummaryRows = cache(async (userId: string, lessonIds: stri
 });
 
 export const getUserJazzMedalProgress = cache(async (userId: string) => {
-  const publishedCourse = await getPublishedJazzQuizLessons();
+  try {
+    const publishedCourse = await getPublishedJazzQuizLessons();
 
-  if (!publishedCourse.courseId) {
+    if (!publishedCourse.courseId) {
+      return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
+    }
+
+    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+
+    if (!entitledLessons.hasAccess) {
+      return buildUserJazzMedalProgress(0, publishedCourse.lessons.length || defaultLessonCount, 'NONE');
+    }
+
+    const summaries = await getUserJazzMedalSummaryRows(
+      userId,
+      entitledLessons.lessons.map((lesson) => lesson.id)
+    );
+    const platinumMedalCount = summaries.filter((summary) => summary.bestMedal === 'PLATINUM').length;
+
+    return buildUserJazzMedalProgress(
+      platinumMedalCount,
+      publishedCourse.lessons.length > 0 ? publishedCourse.lessons.length : defaultLessonCount,
+      getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
+    );
+  } catch (error) {
+    console.error('[jazz-medal-progress] Unable to load medal progress.', error);
     return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
   }
-
-  const summaries = await getUserJazzMedalSummaryRows(
-    userId,
-    publishedCourse.lessons.map((lesson) => lesson.id)
-  );
-  const platinumMedalCount = summaries.filter((summary) => summary.bestMedal === 'PLATINUM').length;
-
-  return buildUserJazzMedalProgress(
-    platinumMedalCount,
-    publishedCourse.lessons.length > 0 ? publishedCourse.lessons.length : defaultLessonCount,
-    getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
-  );
 });
 
 export const getUserJazzMedalProfile = cache(async (
   userId: string,
   language: SupportedLanguage
 ): Promise<UserJazzMedalProfileSnapshot> => {
-  const publishedCourse = await getPublishedJazzQuizLessons();
+  try {
+    const publishedCourse = await getPublishedJazzQuizLessons();
 
-  if (!publishedCourse.courseId) {
+    if (!publishedCourse.courseId) {
+      const progress = buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
+
+      return {
+        progress,
+        lessons: CANONICAL_JAZZ_CLASSES.map((lesson) => ({
+          lessonId: null,
+          classNumber: lesson.classNumber,
+          title: lesson.subtitles[language],
+          medal: 'NONE',
+          bestScorePercent: null,
+          bestCorrectCount: null,
+        })),
+      };
+    }
+
+    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+
+    if (!entitledLessons.hasAccess) {
+      return {
+        progress: buildUserJazzMedalProgress(0, publishedCourse.lessons.length || defaultLessonCount, 'NONE'),
+        lessons: publishedCourse.lessons.map((lesson) => ({
+          lessonId: lesson.id,
+          classNumber: lesson.classNumber,
+          title: lesson.title,
+          medal: 'NONE' as const,
+          bestScorePercent: null,
+          bestCorrectCount: null,
+        })),
+      };
+    }
+
+    const [summaries, translationBundle] = await Promise.all([
+      getUserJazzMedalSummaryRows(
+        userId,
+        entitledLessons.lessons.map((lesson) => lesson.id)
+      ),
+      getCourseTranslationBundle({
+        language,
+        courseIds: [publishedCourse.courseId],
+        chapterIds: [],
+        lessonIds: publishedCourse.lessons.map((lesson) => lesson.id),
+      }),
+    ]);
+
+    const summaryByLessonId = new Map(summaries.map((summary) => [summary.lessonId, summary]));
+    const platinumMedalCount = summaries.filter((summary) => summary.bestMedal === 'PLATINUM').length;
+    const progress = buildUserJazzMedalProgress(
+      platinumMedalCount,
+      publishedCourse.lessons.length > 0 ? publishedCourse.lessons.length : defaultLessonCount,
+      getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
+    );
+
+    return {
+      progress,
+      lessons: publishedCourse.lessons.map((lesson) => {
+        const isEntitledLesson = entitledLessons.lessons.some((item) => item.id === lesson.id);
+        const summary = summaryByLessonId.get(lesson.id);
+
+        return {
+          lessonId: lesson.id,
+          classNumber: lesson.classNumber,
+          title: resolveLessonTitle(
+            translationBundle.lessons,
+            lesson.id,
+            lesson.title,
+            language,
+            lesson.classNumber
+          ),
+          medal: isEntitledLesson ? summary?.bestMedal ?? 'NONE' : 'NONE',
+          bestScorePercent: isEntitledLesson ? summary?.bestScorePercent ?? null : null,
+          bestCorrectCount: isEntitledLesson ? summary?.bestCorrectCount ?? null : null,
+        };
+      }),
+    };
+  } catch (error) {
+    console.error('[jazz-medal-progress] Unable to load medal profile.', error);
     const progress = buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
 
     return {
@@ -133,47 +282,4 @@ export const getUserJazzMedalProfile = cache(async (
       })),
     };
   }
-
-  const [summaries, translationBundle] = await Promise.all([
-    getUserJazzMedalSummaryRows(
-      userId,
-      publishedCourse.lessons.map((lesson) => lesson.id)
-    ),
-    getCourseTranslationBundle({
-      language,
-      courseIds: [publishedCourse.courseId],
-      chapterIds: [],
-      lessonIds: publishedCourse.lessons.map((lesson) => lesson.id),
-    }),
-  ]);
-
-  const summaryByLessonId = new Map(summaries.map((summary) => [summary.lessonId, summary]));
-  const platinumMedalCount = summaries.filter((summary) => summary.bestMedal === 'PLATINUM').length;
-  const progress = buildUserJazzMedalProgress(
-    platinumMedalCount,
-    publishedCourse.lessons.length > 0 ? publishedCourse.lessons.length : defaultLessonCount,
-    getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
-  );
-
-  return {
-    progress,
-    lessons: publishedCourse.lessons.map((lesson) => {
-      const summary = summaryByLessonId.get(lesson.id);
-
-      return {
-        lessonId: lesson.id,
-        classNumber: lesson.classNumber,
-        title: resolveLessonTitle(
-          translationBundle.lessons,
-          lesson.id,
-          lesson.title,
-          language,
-          lesson.classNumber
-        ),
-        medal: summary?.bestMedal ?? 'NONE',
-        bestScorePercent: summary?.bestScorePercent ?? null,
-        bestCorrectCount: summary?.bestCorrectCount ?? null,
-      };
-    }),
-  };
 });
