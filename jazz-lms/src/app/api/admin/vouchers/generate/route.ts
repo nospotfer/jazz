@@ -3,6 +3,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
+import {
+  getVoucherArtistByDiscount,
+  getVoucherArtistByKey,
+  VOUCHER_ARTIST_TIERS,
+} from '@/lib/voucher-artists';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,30 +23,28 @@ function buildVoucherCode(prefix: string) {
   return `${prefix}-${randomToken(8)}`;
 }
 
-function sanitizeBaseCode(value: string) {
-  return value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 24);
+function randomDigits(size = 4) {
+  const max = 10 ** size;
+  const value = crypto.randomInt(0, max);
+  return String(value).padStart(size, '0');
 }
 
-function buildSequentialCode(baseCode: string, index: number) {
-  return `${baseCode}${String(index).padStart(2, '0')}`;
-}
+function extractArtistSequence(code: string, artistKey: string, discountPercent: number) {
+  const normalizedCode = code.trim().toUpperCase();
+  const pattern = new RegExp(`^${artistKey}${discountPercent}(\\d{2,})\\d{4}$`);
+  const match = normalizedCode.match(pattern);
 
-function extractSequentialIndex(code: string, baseCode: string) {
-  if (!code.startsWith(baseCode)) {
+  if (!match) {
     return null;
   }
 
-  const suffix = code.slice(baseCode.length);
-  if (suffix.length < 2) {
-    return null;
-  }
-
-  if (!/^\d+$/.test(suffix)) {
-    return null;
-  }
-
-  const parsed = Number(suffix);
+  const parsed = Number(match[1]);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function buildArtistVoucherCode(artistKey: string, discountPercent: number, sequence: number) {
+  const sequencePart = String(sequence).padStart(2, '0');
+  return `${artistKey}${discountPercent}${sequencePart}${randomDigits(4)}`;
 }
 
 export async function POST(req: Request) {
@@ -71,7 +74,8 @@ export async function POST(req: Request) {
       : Number(body.minOrderValue);
     const prefix = String(body.prefix || 'JAZZ').trim().toUpperCase().slice(0, 12).replace(/[^A-Z0-9]/g, '');
     const batchName = body.batchName ? String(body.batchName) : null;
-    const deterministicBaseCode = body.deterministicBaseCode ? sanitizeBaseCode(String(body.deterministicBaseCode)) : null;
+    const artistKeyRaw = typeof body.artistKey === 'string' ? body.artistKey : null;
+    const selectedArtist = getVoucherArtistByKey(artistKeyRaw);
 
     if (!VOUCHER_TYPES.includes(type)) {
       return NextResponse.json(
@@ -85,6 +89,30 @@ export async function POST(req: Request) {
         { success: false, error: 'Invalid discountPercent', message: 'Percentual deve ser entre 0 e 100.' },
         { status: 400 }
       );
+    }
+
+    if (type === 'DISCOUNT_PERCENT') {
+      if (!selectedArtist) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid artist',
+            message: 'Selecione um artista válido para vouchers percentuais.',
+          },
+          { status: 400 }
+        );
+      }
+
+      if (selectedArtist.discountPercent !== discountPercent) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid artist discount mapping',
+            message: 'O desconto precisa seguir o percentual oficial do artista selecionado.',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (type === 'DISCOUNT_FIXED' && (discountAmount === null || discountAmount <= 0)) {
@@ -103,7 +131,8 @@ export async function POST(req: Request) {
 
     let codes: string[] = [];
 
-    if (deterministicBaseCode) {
+    if (type === 'DISCOUNT_PERCENT' && selectedArtist && discountPercent !== null) {
+      const deterministicBaseCode = `${selectedArtist.key}${discountPercent}`;
       const existingCodes = await prisma.voucherCode.findMany({
         where: {
           code: {
@@ -115,26 +144,27 @@ export async function POST(req: Request) {
         },
       });
 
-      const usedIndexes = new Set<number>();
+      let maxSequence = 0;
       for (const item of existingCodes) {
-        const value = extractSequentialIndex(item.code, deterministicBaseCode);
-        if (value !== null) {
-          usedIndexes.add(value);
+        const sequence = extractArtistSequence(item.code, selectedArtist.key, discountPercent);
+        if (sequence !== null && sequence > maxSequence) {
+          maxSequence = sequence;
         }
       }
 
-      const generatedIndexes: number[] = [];
-      let candidateIndex = 1;
+      const generatedCodes = new Set<string>();
+      for (let offset = 1; offset <= count; offset += 1) {
+        const sequence = maxSequence + offset;
+        let nextCode = buildArtistVoucherCode(selectedArtist.key, discountPercent, sequence);
 
-      while (generatedIndexes.length < count) {
-        if (!usedIndexes.has(candidateIndex)) {
-          generatedIndexes.push(candidateIndex);
-          usedIndexes.add(candidateIndex);
+        while (generatedCodes.has(nextCode)) {
+          nextCode = buildArtistVoucherCode(selectedArtist.key, discountPercent, sequence);
         }
-        candidateIndex += 1;
+
+        generatedCodes.add(nextCode);
       }
 
-      codes = generatedIndexes.map((index) => buildSequentialCode(deterministicBaseCode, index));
+      codes = Array.from(generatedCodes);
     } else {
       const generatedCodes = new Set<string>();
       while (generatedCodes.size < count) {
@@ -142,6 +172,22 @@ export async function POST(req: Request) {
       }
 
       codes = Array.from(generatedCodes);
+    }
+
+    const mappedArtistFromDiscount = getVoucherArtistByDiscount(discountPercent);
+    const artistForMetadata = selectedArtist ?? mappedArtistFromDiscount;
+
+    const normalizedMetadata =
+      metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+        ? { ...(metadata as Record<string, unknown>) }
+        : {};
+
+    if (type === 'DISCOUNT_PERCENT' && artistForMetadata) {
+      normalizedMetadata.voucherArtistKey = artistForMetadata.key;
+      normalizedMetadata.voucherArtistName = artistForMetadata.name;
+      normalizedMetadata.voucherArtistDiscountPercent = artistForMetadata.discountPercent;
+      normalizedMetadata.voucherCodeFormat = 'ARTIST_PERCENT_SEQUENCE_RANDOM4';
+      normalizedMetadata.voucherArtistVersion = '2026-03-12';
     }
 
     const plannedVouchers = codes.map((code) => ({ id: crypto.randomUUID(), code }));
@@ -159,7 +205,7 @@ export async function POST(req: Request) {
           maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
           isActive: true,
           expiresAt,
-          metadata,
+          metadata: normalizedMetadata,
         },
         {
           desiredActive: true,
@@ -171,17 +217,17 @@ export async function POST(req: Request) {
         throw new Error(`Stripe sync returned empty metadata for voucher ${voucher.code}.`);
       }
 
-      stripeMetadataByCode.set(voucher.code, mergeStripeVoucherMetadata(metadata, stripeMetadata));
+      stripeMetadataByCode.set(voucher.code, mergeStripeVoucherMetadata(normalizedMetadata, stripeMetadata));
     }
 
     const result = await prisma.$transaction(async (tx: any) => {
       const batch = await tx.voucherBatch.create({
         data: {
-          name: batchName,
-          codePrefix: deterministicBaseCode || prefix || 'JAZZ',
+          name: batchName || (artistForMetadata ? artistForMetadata.name : null),
+          codePrefix: artistForMetadata ? `${artistForMetadata.key}${artistForMetadata.discountPercent}` : prefix || 'JAZZ',
           quantity: count,
           createdBy: auth.userId,
-          metadata,
+          metadata: normalizedMetadata,
         },
       });
 
@@ -200,7 +246,7 @@ export async function POST(req: Request) {
               maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
               maxUsesPerUser,
               expiresAt,
-              metadata: stripeMetadataByCode.get(voucher.code) ?? metadata,
+              metadata: stripeMetadataByCode.get(voucher.code) ?? normalizedMetadata,
             },
             select: {
               id: true,
@@ -219,6 +265,7 @@ export async function POST(req: Request) {
       success: true,
       created: result.vouchers.length,
       batchId: result.batch.id,
+      artists: VOUCHER_ARTIST_TIERS,
       vouchers: result.vouchers,
     });
   } catch (error) {

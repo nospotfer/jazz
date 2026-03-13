@@ -7,6 +7,10 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
+    if (!stripe) {
+      return new NextResponse('Payments are temporarily unavailable', { status: 503 });
+    }
+
     const origin = req.headers.get('origin') || 'http://localhost:3000';
 
     const supabase = createClient();

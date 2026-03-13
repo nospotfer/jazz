@@ -88,7 +88,7 @@ export async function GET(
 }
 
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: { voucherId: string } }
 ) {
   try {
@@ -96,6 +96,9 @@ export async function DELETE(
     if (!auth.ok) {
       return auth.response;
     }
+
+    const url = new URL(req.url);
+    const force = url.searchParams.get('force') === 'true';
 
     const prisma = db as any;
     const voucher = await prisma.voucherCode.findUnique({
@@ -128,7 +131,7 @@ export async function DELETE(
       );
     }
 
-    if (voucher.currentUses > 0 || voucher._count.redemptions > 0) {
+    if (!force && (voucher.currentUses > 0 || voucher._count.redemptions > 0)) {
       return NextResponse.json(
         {
           success: false,
@@ -175,7 +178,9 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       deletedCount: 1,
-      message: `Voucher ${result.code} eliminado.`,
+      message: force
+        ? `Voucher ${result.code} eliminado en modo forzado.`
+        : `Voucher ${result.code} eliminado.`,
     });
   } catch (error) {
     console.error('[ADMIN_VOUCHER_DELETE_ERROR]', error);

@@ -7,6 +7,15 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "test:security": "vitest run tests/security",
+    "test:regression": "vitest run tests/regression",
+    "test:system": "vitest run tests/system",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "security:secrets": "bash scripts/precommit-secret-scan.sh --all",
     "security:staged": "bash scripts/precommit-secret-scan.sh --staged",
     "hooks:install": "bash scripts/setup-git-hooks.sh",
@@ -25,7 +34,8 @@
     "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts",
     "stripe:sandbox:check": "node scripts/stripe-sandbox-check.mjs",
     "stripe:sandbox:webhook": "node scripts/stripe-sandbox-webhook.mjs",
-    "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook"
+    "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook",
+    "vouchers:stripe:sync": "npx tsx scripts/sync-vouchers-to-stripe.ts"
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.9.0",
@@ -48,6 +58,8 @@
     "axios": "1.7.2",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.0",
     "lucide-react": "0.414.0",
     "next": "14.2.5",
     "next-themes": "^0.4.6",
@@ -62,10 +74,12 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.0.4",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "4.1.17",
     "@types/node": "20.14.13",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "globals": "^16.5.0",
@@ -73,6 +87,7 @@
     "tailwindcss": "4.0.0-beta.10",
     "ts-node": "10.9.2",
     "tw-animate-css": "^1.4.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^2.1.9"
   }
 }

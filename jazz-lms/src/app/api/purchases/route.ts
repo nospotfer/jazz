@@ -36,7 +36,7 @@ export async function GET() {
       id: p.id,
       itemType: 'Curso',
       itemTitle: p.course.title,
-      amount: p.course.price || 0,
+      amount: p.finalPrice ?? p.course.price ?? 0,
       createdAt: p.createdAt.toISOString(),
       currency: 'EUR',
     }));

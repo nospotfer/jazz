@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 type BulkDeletePayload = {
   voucherIds?: string[];
   batchId?: string;
+  force?: boolean;
 };
 
 export async function POST(req: Request) {
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
     const batchId = typeof body.batchId === 'string' && body.batchId.trim().length > 0
       ? body.batchId.trim()
       : null;
+    const force = body.force === true;
 
     if (!voucherIds.length && !batchId) {
       return NextResponse.json(
@@ -79,12 +81,12 @@ export async function POST(req: Request) {
       });
     }
 
-    const blocked = candidates.filter((voucher: any) =>
-      voucher.currentUses > 0 || voucher._count.redemptions > 0
-    );
-    const deletable = candidates.filter((voucher: any) =>
-      voucher.currentUses === 0 && voucher._count.redemptions === 0
-    );
+    const blocked = force
+      ? []
+      : candidates.filter((voucher: any) => voucher.currentUses > 0 || voucher._count.redemptions > 0);
+    const deletable = force
+      ? candidates
+      : candidates.filter((voucher: any) => voucher.currentUses === 0 && voucher._count.redemptions === 0);
 
     for (const voucher of deletable) {
       await syncVoucherPromotionCode(voucher, {
@@ -136,7 +138,9 @@ export async function POST(req: Request) {
         message:
           blocked.length > 0
             ? `Se eliminaron ${deletable.length} voucher(s). ${blocked.length} no se pudieron eliminar por uso.`
-            : `Se eliminaron ${deletable.length} voucher(s).`,
+            : force
+              ? `Se eliminaron ${deletable.length} voucher(s) en modo forzado.`
+              : `Se eliminaron ${deletable.length} voucher(s).`,
       };
     });
 

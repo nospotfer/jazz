@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     courseNotFound: 'Curso no encontrado',
     alreadyPurchased: 'El curso ya fue comprado',
     paymentsUnavailable: 'Pagos temporalmente no disponibles',
+    inDevelopment: 'En desarrollo',
     paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
     voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
     internalError: 'Error interno del servidor',
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
         courseNotFound: 'Curso no encontrado',
         alreadyPurchased: 'El curso ya fue comprado',
         paymentsUnavailable: 'Pagos temporalmente no disponibles',
+        inDevelopment: 'En desarrollo',
         paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
         voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
         internalError: 'Error interno del servidor',
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
         courseNotFound: 'Course not found',
         alreadyPurchased: 'Course already purchased',
         paymentsUnavailable: 'Payments are temporarily unavailable',
+        inDevelopment: 'In development',
         paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
         voucherInProvider: 'Enter your discount code on the secure payment page',
         internalError: 'Internal server error',
@@ -71,6 +74,7 @@ export async function POST(req: Request) {
         courseNotFound: 'Cours introuvable',
         alreadyPurchased: 'Le cours a déjà été acheté',
         paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
+        inDevelopment: 'En developpement',
         paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
         voucherInProvider: 'Saisissez votre code de réduction sur la page de paiement sécurisée',
         internalError: 'Erreur interne du serveur',
@@ -82,6 +86,7 @@ export async function POST(req: Request) {
         courseNotFound: 'Curso não encontrado',
         alreadyPurchased: 'O curso já foi comprado',
         paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
+        inDevelopment: 'Em desenvolvimento',
         paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
         voucherInProvider: 'Insira o código de desconto na página de pagamento segura',
         internalError: 'Erro interno do servidor',
@@ -172,7 +177,7 @@ export async function POST(req: Request) {
     }
 
     if (!stripe) {
-      return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+      return new NextResponse(copy.inDevelopment, { status: 503 });
     }
 
     const translationBundle = await getCourseTranslationBundle({

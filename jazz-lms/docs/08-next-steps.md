@@ -159,8 +159,8 @@ Let students leave reviews after completing a course.
 #### 11. Add Certificates
 Generate PDF certificates when a user completes a course.
 
-#### 12. Add Multiple Payment Options
-Support PayPal, Apple Pay, or local payment methods.
+#### 12. Improve Payment-Method Availability Monitoring
+Track payment-method availability by market (e.g., Spain) and show country-aware checkout guidance when PayPal/Bizum are not available.
 
 #### 13. Add Coupons/Discounts
 Beyond Stripe's promotion codes, implement custom discount logic.

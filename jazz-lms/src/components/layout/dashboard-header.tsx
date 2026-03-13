@@ -9,6 +9,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { resolveProfileAvatar } from '@/lib/profile-avatars';
+import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
+import { useUserJazzMedalProgress } from '@/hooks/use-user-jazz-medal-progress';
+import type { UserJazzMedalProgress } from '@/lib/lesson-quiz';
 
 const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
   ssr: false,
@@ -41,13 +44,15 @@ interface DashboardHeaderProps {
   };
   role?: string | null;
   isAdmin?: boolean;
+  initialMedalProgress: UserJazzMedalProgress | null;
 }
 
-export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeaderProps) {
-  const { t } = useDashboardPreferences();
+export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress }: DashboardHeaderProps) {
+  const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
+  const { progress: medalProgress } = useUserJazzMedalProgress(initialMedalProgress);
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
     resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
   );
@@ -213,6 +218,16 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
           {/* Right side */}
           <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
+            {medalProgress?.hasSupremeMedal ? (
+              <Link
+                href="/dashboard/jazz-specialist"
+                aria-label={t('supremeMedalPage', 'Jazz specialist medal')}
+                title={t('supremeMedalPage', 'Jazz specialist medal')}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
+              >
+                <JazzMedalIcon medal="GOLD" size="sm" />
+              </Link>
+            ) : null}
             <Link
               href="/dashboard/settings"
               aria-label={t('settings', 'Settings')}
@@ -298,19 +313,31 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                 }}
                 className="flex items-center gap-2 pl-2 border-l border-border cursor-pointer hover:opacity-80 transition-opacity"
               >
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={displayName}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-primary text-xs font-bold">{initials}</span>
-                  </div>
-                )}
+                <div className="relative flex shrink-0 items-center justify-center pb-2">
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={displayName}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-primary text-xs font-bold">{initials}</span>
+                    </div>
+                  )}
+
+                  {medalProgress && medalProgress.activeProfileMedal !== 'NONE' ? (
+                    <span className="absolute -bottom-0.5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-card px-1.5 py-0.5 shadow-lg">
+                      {medalProgress.activeProfileMedal === 'SUPREME' ? (
+                        <JazzSupremeMedal language={language} size="sm" />
+                      ) : (
+                        <JazzMedalIcon medal={medalProgress.activeProfileMedal} size="sm" />
+                      )}
+                    </span>
+                  ) : null}
+                </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-foreground leading-none">
                     {displayName}
@@ -328,6 +355,18 @@ export function DashboardHeader({ user, role, isAdmin = false }: DashboardHeader
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    {medalProgress ? (
+                      <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                        {medalProgress.activeProfileMedal === 'SUPREME' ? (
+                          <JazzSupremeMedal language={language} size="sm" />
+                        ) : (
+                          <JazzMedalIcon medal={medalProgress.activeProfileMedal} size="sm" />
+                        )}
+                        <span>
+                          {medalProgress.platinumMedalCount}/{medalProgress.totalRequiredPlatinumMedals} {t('platinumMedals', 'platinum medals')}
+                        </span>
+                      </div>
+                    ) : null}
                     {isAdmin && (
                       <p className="text-xs font-semibold text-yellow-500 mt-1">
                         🔑 {role || t('adminPanel', 'Admin')}

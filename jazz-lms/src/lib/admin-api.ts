@@ -15,7 +15,7 @@ export async function ensureAdminApiPermission(permission: Permission) {
     return {
       ok: false as const,
       response: NextResponse.json(
-        { success: false, error: 'Unauthorized', message: 'Nao autorizado.' },
+        { success: false, error: 'Unauthorized', message: 'Não autorizado.' },
         { status: 401 }
       ),
       userId: null,
@@ -41,7 +41,7 @@ export async function ensureAdminApiPermission(permission: Permission) {
     return {
       ok: false as const,
       response: NextResponse.json(
-        { success: false, error: 'Forbidden', message: 'Permissao insuficiente.' },
+        { success: false, error: 'Forbidden', message: 'Permissão insuficiente.' },
         { status: 403 }
       ),
       userId: user.id,
