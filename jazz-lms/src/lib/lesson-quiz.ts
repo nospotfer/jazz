@@ -1,10 +1,13 @@
 export const LESSON_QUIZ_QUESTION_COUNT = 12;
 export const LESSON_QUIZ_OPTIONS_PER_QUESTION = 5;
 export const LESSON_QUIZ_AUTO_ADVANCE_MS = 4000;
+export const JAZZ_SUPREME_MEDAL_REQUIRED_COUNT = 15;
 
 export const QUIZ_MEDAL_TIERS = ['NONE', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM'] as const;
+export const USER_PROFILE_MEDAL_TIERS = [...QUIZ_MEDAL_TIERS, 'SUPREME'] as const;
 
 export type QuizMedalTierValue = (typeof QUIZ_MEDAL_TIERS)[number];
+export type UserProfileMedalTierValue = (typeof USER_PROFILE_MEDAL_TIERS)[number];
 
 export interface LessonQuizSummarySnapshot {
   bestScorePercent: number;
@@ -12,6 +15,28 @@ export interface LessonQuizSummarySnapshot {
   bestMedal: QuizMedalTierValue;
   totalAttempts: number;
   lastAttemptAt: string | null;
+}
+
+export interface UserJazzMedalProgress {
+  platinumMedalCount: number;
+  totalRequiredPlatinumMedals: number;
+  remainingPlatinumMedals: number;
+  hasSupremeMedal: boolean;
+  activeProfileMedal: UserProfileMedalTierValue;
+}
+
+export interface UserJazzLessonMedalSnapshot {
+  lessonId: string | null;
+  classNumber: number;
+  title: string;
+  medal: QuizMedalTierValue;
+  bestScorePercent: number | null;
+  bestCorrectCount: number | null;
+}
+
+export interface UserJazzMedalProfileSnapshot {
+  progress: UserJazzMedalProgress;
+  lessons: UserJazzLessonMedalSnapshot[];
 }
 
 export interface LessonQuizOptionPayload {
@@ -102,6 +127,16 @@ export function getQuizMedalTier(scorePercent: number): QuizMedalTierValue {
   return 'NONE';
 }
 
+export function getQuizMedalRank(medal: QuizMedalTierValue) {
+  return QUIZ_MEDAL_TIERS.indexOf(medal);
+}
+
+export function getHighestQuizMedal(medals: QuizMedalTierValue[]): QuizMedalTierValue {
+  return medals.reduce<QuizMedalTierValue>((highest, medal) => {
+    return getQuizMedalRank(medal) > getQuizMedalRank(highest) ? medal : highest;
+  }, 'NONE');
+}
+
 export function getQuizMedalTierFromCounts(correctCount: number, questionCount = LESSON_QUIZ_QUESTION_COUNT) {
   return getQuizMedalTier(calculateQuizScorePercent(correctCount, questionCount));
 }
@@ -112,4 +147,33 @@ export function hasMinimumQuizQuestions(questionCount: number, minimum = LESSON_
 
 export function isQuizAttemptComplete(answeredCount: number, questionCount = LESSON_QUIZ_QUESTION_COUNT) {
   return answeredCount >= questionCount;
+}
+
+export function hasUnlockedSupremeJazzMedal(
+  platinumMedalCount: number,
+  totalRequiredPlatinumMedals = JAZZ_SUPREME_MEDAL_REQUIRED_COUNT
+) {
+  if (!Number.isFinite(platinumMedalCount) || !Number.isFinite(totalRequiredPlatinumMedals)) {
+    return false;
+  }
+
+  return platinumMedalCount >= Math.max(1, Math.floor(totalRequiredPlatinumMedals));
+}
+
+export function buildUserJazzMedalProgress(
+  platinumMedalCount: number,
+  totalRequiredPlatinumMedals = JAZZ_SUPREME_MEDAL_REQUIRED_COUNT,
+  activeProfileMedal: UserProfileMedalTierValue = 'NONE'
+): UserJazzMedalProgress {
+  const safeTotal = Math.max(1, Math.floor(totalRequiredPlatinumMedals));
+  const safeCount = Math.max(0, Math.floor(platinumMedalCount));
+  const hasSupremeMedal = hasUnlockedSupremeJazzMedal(safeCount, safeTotal);
+
+  return {
+    platinumMedalCount: safeCount,
+    totalRequiredPlatinumMedals: safeTotal,
+    remainingPlatinumMedals: Math.max(0, safeTotal - safeCount),
+    hasSupremeMedal,
+    activeProfileMedal: hasSupremeMedal ? 'SUPREME' : activeProfileMedal,
+  };
 }

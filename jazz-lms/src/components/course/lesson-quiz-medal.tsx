@@ -1,4 +1,4 @@
-import { Award, BadgeCheck, Music2, Sparkles, Trophy } from 'lucide-react';
+import { Award, Music2, Sparkles } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { SupportedLanguage } from '@/lib/language';
@@ -11,7 +11,21 @@ type MedalPresentation = {
   iconClassName: string;
   haloClassName: string;
   dotClassName: string;
-  Icon: typeof Music2;
+};
+
+const medalIconSurfaceByTier: Record<QuizMedalTierValue, string> = {
+  NONE: 'border-white/10 bg-[linear-gradient(145deg,rgba(15,23,42,0.95),rgba(39,39,42,0.92),rgba(24,24,27,0.96))] text-amber-200 shadow-[0_0_18px_rgba(15,23,42,0.28)]',
+  BRONZE: 'border-amber-500/50 bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.25),_transparent_48%),linear-gradient(145deg,rgba(120,53,15,0.95),rgba(180,83,9,0.84),rgba(251,191,36,0.55))] text-amber-100 shadow-[0_0_22px_rgba(180,83,9,0.28)]',
+  SILVER: 'border-slate-300/60 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.55),_transparent_42%),linear-gradient(150deg,rgba(71,85,105,0.98),rgba(203,213,225,0.88),rgba(148,163,184,0.92))] text-slate-950 shadow-[0_0_22px_rgba(226,232,240,0.22)]',
+  GOLD: 'border-yellow-300/70 bg-[radial-gradient(circle_at_top,_rgba(254,240,138,0.6),_transparent_40%),linear-gradient(140deg,rgba(161,98,7,0.96),rgba(250,204,21,0.95),rgba(202,138,4,0.96))] text-black shadow-[0_0_24px_rgba(250,204,21,0.32)]',
+  PLATINUM: 'border-cyan-200/80 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_36%),linear-gradient(145deg,rgba(8,47,73,0.96),rgba(224,242,254,0.92),rgba(125,211,252,0.96))] text-slate-950 shadow-[0_0_26px_rgba(125,211,252,0.32)]',
+};
+
+const supremeTitles: Record<SupportedLanguage, string> = {
+  es: 'Especialista en jazz',
+  en: 'Jazz specialist',
+  fr: 'Specialiste du jazz',
+  pt: 'Especialista em jazz',
 };
 
 const medalLabels: Record<SupportedLanguage, Record<QuizMedalTierValue, string>> = {
@@ -123,7 +137,6 @@ export function getLessonQuizMedalPresentation(language: SupportedLanguage, meda
       iconClassName: 'text-amber-100',
       haloClassName: 'bg-amber-300/20',
       dotClassName: 'bg-amber-300',
-      Icon: Award,
     };
   }
 
@@ -135,7 +148,6 @@ export function getLessonQuizMedalPresentation(language: SupportedLanguage, meda
       iconClassName: 'text-slate-950',
       haloClassName: 'bg-white/30',
       dotClassName: 'bg-slate-100',
-      Icon: BadgeCheck,
     };
   }
 
@@ -147,7 +159,6 @@ export function getLessonQuizMedalPresentation(language: SupportedLanguage, meda
       iconClassName: 'text-black',
       haloClassName: 'bg-yellow-100/35',
       dotClassName: 'bg-yellow-100',
-      Icon: Trophy,
     };
   }
 
@@ -159,7 +170,6 @@ export function getLessonQuizMedalPresentation(language: SupportedLanguage, meda
       iconClassName: 'text-slate-950',
       haloClassName: 'bg-cyan-100/40',
       dotClassName: 'bg-cyan-100',
-      Icon: Sparkles,
     };
   }
 
@@ -170,8 +180,72 @@ export function getLessonQuizMedalPresentation(language: SupportedLanguage, meda
     iconClassName: 'text-amber-200',
     haloClassName: 'bg-white/10',
     dotClassName: 'bg-rose-400',
-    Icon: Music2,
   };
+}
+
+export function getSupremeJazzTitle(language: SupportedLanguage) {
+  return supremeTitles[language];
+}
+
+interface JazzMedalIconProps {
+  medal: QuizMedalTierValue;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function JazzMedalIcon({ medal, className, size = 'md' }: JazzMedalIconProps) {
+  const sizeClassName = size === 'sm' ? 'h-8 w-8' : size === 'lg' ? 'h-16 w-16' : 'h-11 w-11';
+  const ribbonClassName = size === 'sm' ? 'h-3 w-2.5 -bottom-1.5' : size === 'lg' ? 'h-6 w-4 -bottom-3' : 'h-4 w-3 -bottom-2';
+  const sparkleClassName = size === 'sm' ? 'h-3 w-3 -right-1 -top-1' : size === 'lg' ? 'h-5 w-5 -right-2 -top-2' : 'h-4 w-4 -right-1.5 -top-1.5';
+
+  return (
+    <span className={cn('relative inline-flex items-center justify-center', className)}>
+      <span className={cn('absolute left-1/2 -translate-x-[85%] rounded-b-full bg-gradient-to-b from-rose-400 to-rose-600', ribbonClassName)} />
+      <span className={cn('absolute left-1/2 -translate-x-[10%] rounded-b-full bg-gradient-to-b from-sky-300 to-cyan-500', ribbonClassName)} />
+      <span className={cn('relative inline-flex items-center justify-center rounded-full border', sizeClassName, medalIconSurfaceByTier[medal])}>
+        <span className="absolute inset-[16%] rounded-full border border-white/15 bg-black/10" />
+        <Award className={cn('relative z-[1]', size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-8 w-8' : 'h-5 w-5')} />
+      </span>
+      {medal === 'PLATINUM' ? (
+        <Sparkles className={cn('absolute text-cyan-100 drop-shadow-[0_0_8px_rgba(186,230,253,0.85)]', sparkleClassName)} />
+      ) : null}
+    </span>
+  );
+}
+
+interface JazzSupremeMedalProps {
+  language: SupportedLanguage;
+  interactive?: boolean;
+  className?: string;
+  size?: 'sm' | 'md';
+}
+
+export function JazzSupremeMedal({ language, interactive = false, className, size = 'md' }: JazzSupremeMedalProps) {
+  const title = getSupremeJazzTitle(language);
+  const shellClassName = size === 'sm' ? 'h-12 w-12' : 'h-24 w-24';
+  const innerInsetClassName = size === 'sm' ? 'inset-1.5' : 'inset-3';
+  const iconSize = size === 'sm' ? 'md' : 'lg';
+  const topSparkleClassName = size === 'sm' ? '-right-0.5 -top-0.5 h-3.5 w-3.5' : '-right-1 -top-1 h-5 w-5';
+  const bottomSparkleClassName = size === 'sm' ? '-bottom-0.5 -left-0.5 h-3 w-3' : '-bottom-1 -left-1 h-4 w-4';
+
+  return (
+    <div className={cn('relative inline-flex items-center justify-center', className)}>
+      <div className="absolute inset-0 rounded-full bg-yellow-300/25 blur-2xl" />
+      <div className="absolute inset-3 rounded-full bg-amber-300/30 blur-xl" />
+      <div className={cn('relative flex items-center justify-center rounded-full border border-yellow-200/70 bg-[radial-gradient(circle_at_top,_rgba(254,240,138,0.8),_transparent_45%),linear-gradient(145deg,rgba(146,64,14,0.95),rgba(250,204,21,0.98),rgba(245,158,11,0.96))] shadow-[0_0_48px_rgba(250,204,21,0.35)]', shellClassName)}>
+        <div className={cn('absolute rounded-full border border-white/25 bg-black/10', innerInsetClassName)} />
+        <JazzMedalIcon medal="GOLD" size={iconSize} className={cn(size === 'sm' ? 'scale-90' : 'scale-[1.1]')} />
+        <Sparkles className={cn('absolute text-yellow-100 drop-shadow-[0_0_10px_rgba(254,240,138,0.95)]', topSparkleClassName)} />
+        <Sparkles className={cn('absolute text-amber-100 drop-shadow-[0_0_10px_rgba(254,215,170,0.95)]', bottomSparkleClassName)} />
+      </div>
+
+      {interactive ? (
+        <div className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 rounded-full border border-yellow-300/40 bg-black/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-yellow-100 opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 data-[open=true]:opacity-100">
+          {title}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 interface LessonQuizMedalBadgeProps {
@@ -190,7 +264,6 @@ export function LessonQuizMedalBadge({
   className,
 }: LessonQuizMedalBadgeProps) {
   const presentation = getLessonQuizMedalPresentation(language, medal);
-  const { Icon } = presentation;
 
   return (
     <div
@@ -205,7 +278,7 @@ export function LessonQuizMedalBadge({
       <div className="relative flex items-center gap-3">
         <div className={cn('relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-black/15', compact && 'h-9 w-9')}>
           <div className={cn('absolute inset-1 rounded-xl blur-md', presentation.haloClassName)} />
-          <Icon className={cn('relative h-5 w-5', presentation.iconClassName)} />
+          <JazzMedalIcon medal={medal} size={compact ? 'sm' : 'md'} className={presentation.iconClassName} />
         </div>
 
         <div className="min-w-0">
