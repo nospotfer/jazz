@@ -453,7 +453,11 @@ export default function ProfilePage() {
                           <button
                             key={`earned-medal-${lesson.classNumber}`}
                             type="button"
-                            className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-transform hover:scale-105 focus-visible:scale-105"
+                            className={`group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-[transform,box-shadow,background-color] duration-200 focus-visible:scale-105 ${
+                              activeMedalTooltip === `lesson-${lesson.classNumber}`
+                                ? 'z-30 scale-[1.22] bg-white/12 shadow-[0_14px_28px_rgba(15,23,42,0.42)] animate-medal-hover-wobble'
+                                : 'hover:scale-[1.16]'
+                            }`}
                             onMouseEnter={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
                             onMouseLeave={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
                             onFocus={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
@@ -465,7 +469,7 @@ export default function ProfilePage() {
                             <JazzMedalIcon medal={lesson.medal} size="sm" />
                             {activeMedalTooltip === `lesson-${lesson.classNumber}` ? (
                               <span
-                                className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-white shadow-lg"
+                                className="pointer-events-none absolute left-1/2 top-0 z-40 w-max max-w-[13rem] -translate-x-1/2 -translate-y-[118%] rounded-2xl border border-white/15 bg-slate-950/95 px-4 py-2 text-center text-[12px] font-semibold leading-5 text-white shadow-[0_20px_40px_rgba(2,6,23,0.52)] backdrop-blur-md before:absolute before:-inset-2 before:-z-10 before:rounded-[1.15rem] before:bg-slate-950/72 before:blur-xl"
                                 role="tooltip"
                               >
                                 {lesson.title}
@@ -487,14 +491,18 @@ export default function ProfilePage() {
                           setActiveMedalTooltip((current) => (current === 'supreme' ? null : 'supreme'));
                           router.push('/dashboard/jazz-specialist');
                         }}
-                        className="group relative inline-flex h-16 w-16 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-transform hover:scale-105 focus-visible:scale-105"
+                        className={`group relative inline-flex h-16 w-16 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-[transform,box-shadow,background-color] duration-200 focus-visible:scale-105 ${
+                          activeMedalTooltip === 'supreme'
+                            ? 'z-30 scale-[1.16] bg-yellow-300/16 shadow-[0_16px_34px_rgba(250,204,21,0.25)] animate-medal-hover-wobble'
+                            : 'hover:scale-[1.1]'
+                        }`}
                         aria-label={copy.supremeTitle}
                         data-testid="profile-supreme-medal"
                       >
                         <JazzSupremeMedal language={language} size="sm" />
                         {activeMedalTooltip === 'supreme' ? (
                           <span
-                            className="pointer-events-none absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-yellow-300/35 bg-slate-950/95 px-3 py-1 text-[11px] font-semibold text-yellow-100 shadow-lg"
+                            className="pointer-events-none absolute left-1/2 top-0 z-40 w-max max-w-[13rem] -translate-x-1/2 -translate-y-[112%] rounded-2xl border border-yellow-300/35 bg-slate-950/95 px-4 py-2 text-center text-[12px] font-semibold leading-5 text-yellow-100 shadow-[0_20px_40px_rgba(2,6,23,0.52)] backdrop-blur-md before:absolute before:-inset-2 before:-z-10 before:rounded-[1.15rem] before:bg-slate-950/72 before:blur-xl"
                             role="tooltip"
                           >
                             {copy.supremeTitle}
