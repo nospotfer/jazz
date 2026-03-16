@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
 import { toast } from 'sonner';
 import axios from 'axios';
