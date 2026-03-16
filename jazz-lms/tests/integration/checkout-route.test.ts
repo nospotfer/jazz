@@ -196,11 +196,10 @@ describe('POST /api/checkout', () => {
     expect(res.status).toBe(500);
   });
 
-  test('creates a local test checkout without Stripe on localhost requests', async () => {
+  test('returns 503 for localhost paid checkout when Stripe is not configured', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
-    mocks.purchaseUpsert.mockResolvedValue({ id: 'p1' });
 
     const { POST } = await import('@/app/api/checkout/route');
     const req = new Request('http://localhost:3000/api/checkout', {
@@ -210,11 +209,8 @@ describe('POST /api/checkout', () => {
     });
 
     const res = await POST(req);
-    const body = await res.json();
 
-    expect(res.status).toBe(200);
-    expect(body.url).toContain('/dashboard?purchase=success&source=dashboard&test=1');
-    expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
+    expect(res.status).toBe(503);
   });
 });
 
@@ -323,7 +319,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     expect(body.url).toBe('https://checkout.stripe.com/session');
   });
 
-  test('creates a Stripe customer when no existing customer is found', async () => {
+  test('uses Stripe customer_creation flow when no existing customer is found', async () => {
     setupCheckoutMocks({ customers: [] });
 
     const { POST } = await import('@/app/api/checkout/route');
@@ -331,7 +327,7 @@ describe('POST /api/checkout (with Stripe)', () => {
 
     const res = await POST(req);
     expect(res.status).toBe(200);
-    expect(stripeMocks.customersCreate).toHaveBeenCalledTimes(1);
+    expect(stripeMocks.customersCreate).not.toHaveBeenCalled();
   });
 
   test('falls back to card-only when multi-method throws StripeInvalidRequestError', async () => {
