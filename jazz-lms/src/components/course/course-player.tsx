@@ -735,15 +735,15 @@ export const CoursePlayer = ({
     }
   };
 
-  const primePaymentModal = () => {
+  const primePaymentModal = useCallback(() => {
     warmPaymentMethodModal();
-  };
+  }, []);
 
-  const openPaymentModal = () => {
+  const openPaymentModal = useCallback(() => {
     warmPaymentMethodModal();
     setPaymentError('');
     setIsMethodModalOpen(true);
-  };
+  }, []);
 
   const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
   const musicLinks = [
@@ -780,6 +780,56 @@ export const CoursePlayer = ({
       tooltipClass: 'from-red-500 to-rose-500',
     },
   ];
+
+  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
+  const musicLinks = [
+    {
+      label: 'Spotify',
+      href: `https://open.spotify.com/search/${musicSearch}`,
+      tooltip: copy.musicSpotify,
+      platform: 'spotify' as const,
+      colorClass: 'text-emerald-500',
+      tooltipClass: 'from-emerald-500 to-emerald-400',
+    },
+    {
+      label: 'Apple Music',
+      href: `https://music.apple.com/search?term=${musicSearch}`,
+      tooltip: copy.musicApple,
+      platform: 'apple' as const,
+      colorClass: 'text-rose-500',
+      tooltipClass: 'from-rose-500 to-orange-400',
+    },
+    {
+      label: 'Amazon Music',
+      href: `https://music.amazon.com/search/${musicSearch}`,
+      tooltip: copy.musicAmazon,
+      platform: 'amazon' as const,
+      colorClass: 'text-sky-500',
+      tooltipClass: 'from-sky-500 to-indigo-500',
+    },
+    {
+      label: 'YouTube',
+      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
+      tooltip: copy.musicYouTube,
+      platform: 'youtube' as const,
+      colorClass: 'text-red-500',
+      tooltipClass: 'from-red-500 to-rose-500',
+    },
+  ];
+
+  const onTimeUpdate = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
+
+    const target = event.target as HTMLVideoElement | null;
+
+    if (!target) return;
+
+    const duration = Number.isFinite(target.duration) && target.duration > 0
+      ? target.duration
+      : DEFAULT_LESSON_DURATION_MINUTES * 60;
+
+    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
+    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
@@ -870,6 +920,13 @@ export const CoursePlayer = ({
       setIsCompleting(false);
     }
   };
+
+  const onEnded = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
+
+    const target = event.target as HTMLVideoElement | null;
+    if (!target) return;
+
 
   const onEnded = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
