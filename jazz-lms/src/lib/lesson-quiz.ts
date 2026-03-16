@@ -1,6 +1,6 @@
 export const LESSON_QUIZ_QUESTION_COUNT = 12;
 export const LESSON_QUIZ_OPTIONS_PER_QUESTION = 5;
-export const LESSON_QUIZ_AUTO_ADVANCE_MS = 4000;
+export const LESSON_QUIZ_AUTO_ADVANCE_MS = 1200;
 
 export const QUIZ_MEDAL_TIERS = ['NONE', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM'] as const;
 

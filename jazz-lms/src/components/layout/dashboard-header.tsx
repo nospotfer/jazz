@@ -44,10 +44,10 @@ interface DashboardHeaderProps {
   };
   role?: string | null;
   isAdmin?: boolean;
-  initialMedalProgress: UserJazzMedalProgress | null;
+  initialMedalProgress?: UserJazzMedalProgress | null;
 }
 
-export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress }: DashboardHeaderProps) {
+export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress = null }: DashboardHeaderProps) {
   const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
@@ -145,6 +145,8 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
   useEffect(() => {
     let isMounted = true;
     let intervalId: number | null = null;
+    let timeoutId: number | null = null;
+    let idleCallbackId: number | null = null;
 
     const loadUnreadMessages = () => {
       if (document.visibilityState === 'hidden') {
@@ -168,7 +170,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
         window.clearInterval(intervalId);
       }
 
-      intervalId = window.setInterval(loadUnreadMessages, 60000);
+      intervalId = window.setInterval(loadUnreadMessages, 180000);
     };
 
     const handleVisibilityChange = () => {
@@ -177,13 +179,28 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
       }
     };
 
-    loadUnreadMessages();
-    startPolling();
+    if (typeof window.requestIdleCallback === 'function') {
+      idleCallbackId = window.requestIdleCallback(() => {
+        loadUnreadMessages();
+        startPolling();
+      }, { timeout: 1500 });
+    } else {
+      timeoutId = window.setTimeout(() => {
+        loadUnreadMessages();
+        startPolling();
+      }, 900);
+    }
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (idleCallbackId !== null) {
+        window.cancelIdleCallback?.(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
       if (intervalId !== null) {
         window.clearInterval(intervalId);
       }

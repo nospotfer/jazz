@@ -18,12 +18,10 @@ function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) 
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  const isAuthResetPasswordPath = pathname.startsWith('/auth/reset-password')
   const isRootPath = pathname === '/'
   const needsAuthProcessing =
     isRootPath ||
     pathname.startsWith('/dashboard') ||
-    pathname.startsWith('/auth') ||
     pathname.startsWith('/admin')
 
   if (!needsAuthProcessing) {
@@ -42,12 +40,12 @@ export async function middleware(request: NextRequest) {
     return applyLocalNoStoreHeaders(request, response)
   }
 
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth') || isRootPath) {
+  if (pathname.startsWith('/dashboard') || isRootPath) {
     if (!user) {
       if (pathname.startsWith('/dashboard')) {
         return NextResponse.redirect(new URL('/auth', request.url))
       }
-    } else if ((pathname.startsWith('/auth') && !isAuthResetPasswordPath) || isRootPath) {
+    } else if (isRootPath) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }

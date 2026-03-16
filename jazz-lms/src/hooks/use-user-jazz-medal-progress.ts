@@ -15,6 +15,8 @@ export function useUserJazzMedalProgress(initialProgress: UserJazzMedalProgress 
   useEffect(() => {
     let isMounted = true;
     let intervalId: number | null = null;
+    let timeoutId: number | null = null;
+    let idleCallbackId: number | null = null;
 
     const loadProgress = async () => {
       if (document.visibilityState === 'hidden') {
@@ -49,15 +51,34 @@ export function useUserJazzMedalProgress(initialProgress: UserJazzMedalProgress 
       }
     };
 
-    void loadProgress();
+    if (!initialProgress) {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleCallbackId = window.requestIdleCallback(() => {
+          void loadProgress();
+        }, { timeout: 1800 });
+      } else {
+        timeoutId = window.setTimeout(() => {
+          void loadProgress();
+        }, 900);
+      }
+    }
+
     intervalId = window.setInterval(() => {
       void loadProgress();
-    }, 60000);
+    }, 300000);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+      if (idleCallbackId !== null && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleCallbackId);
+      }
+
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
 
       if (intervalId !== null) {
         window.clearInterval(intervalId);

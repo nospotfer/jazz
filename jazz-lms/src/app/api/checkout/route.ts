@@ -6,7 +6,6 @@ import { db } from '@/lib/db';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { cookies } from 'next/headers';
 import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
-import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
 import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
 
 export const runtime = 'nodejs';
@@ -175,19 +174,6 @@ export async function POST(req: Request) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
-    const translationBundle = await getCourseTranslationBundle({
-      language: selectedLanguage,
-      courseIds: [course.id],
-      chapterIds: [],
-      lessonIds: [],
-    });
-    const localizedCourse = resolveCourseText(
-      translationBundle.courses,
-      course.id,
-      course.title,
-      course.description
-    );
-
     const checkoutOriginalPrice = Number(numericPrice.toFixed(2));
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
@@ -195,8 +181,8 @@ export async function POST(req: Request) {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: localizedCourse.title,
-            description: localizedCourse.description || undefined,
+            name: course.title,
+            description: course.description || undefined,
           },
           unit_amount: Math.round(checkoutOriginalPrice * 100),
         },

@@ -9,7 +9,6 @@ import { DashboardPaywallWrapper } from '@/components/dashboard/dashboard-paywal
 import { DashboardLocalTestReset } from '@/components/dashboard/dashboard-local-test-reset';
 import { getServerUser } from '@/lib/server-user';
 import { getFirstPublishedCourseId, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
-import { getUserJazzMedalProgress } from '@/lib/jazz-medal-progress';
 
 export default async function DashboardLayout({
   children,
@@ -22,15 +21,13 @@ export default async function DashboardLayout({
     redirect('/auth');
   }
 
-  const dbUser = await getCurrentUser();
-  const role = dbUser?.role ?? null;
-  const isAdmin = isAdminRole(role);
-
-  const [firstCourseId, hasPaidCourse, medalProgress] = await Promise.all([
+  const [dbUser, firstCourseId, hasPaidCourse] = await Promise.all([
+    getCurrentUser(),
     getFirstPublishedCourseId(),
     hasAnyCoursePurchase(user.id),
-    getUserJazzMedalProgress(user.id),
   ]);
+  const role = dbUser?.role ?? null;
+  const isAdmin = isAdminRole(role);
 
   return (
     <DashboardPreferencesProvider>
@@ -38,7 +35,7 @@ export default async function DashboardLayout({
         <DashboardLocalTestReset />
         <Sidebar />
         <div className="lg:pl-64 h-full flex flex-col">
-          <DashboardHeader user={user} role={role} isAdmin={isAdmin} initialMedalProgress={medalProgress} />
+          <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
           <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <DashboardPaywallWrapper hasPaidCourse={hasPaidCourse} courseId={firstCourseId}>
               {children}
