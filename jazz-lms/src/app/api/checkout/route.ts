@@ -8,7 +8,6 @@ import { cookies } from 'next/headers';
 import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
 import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
-import { isLocalTestRequest } from '@/lib/test-mode';
 
 export const runtime = 'nodejs';
 
@@ -108,25 +107,25 @@ export async function POST(req: Request) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
-    const course = await db.course.findUnique({
-      where: {
-        id: courseId,
-      },
-    });
+    const [course, existingPurchase] = await Promise.all([
+      db.course.findUnique({
+        where: {
+          id: courseId,
+        },
+      }),
+      db.purchase.findUnique({
+        where: {
+          userId_courseId: {
+            userId: user.id,
+            courseId,
+          },
+        },
+      }),
+    ]);
 
     if (!course) {
       return new NextResponse(copy.courseNotFound, { status: 404 });
     }
-
-    // Check if already purchased
-    const existingPurchase = await db.purchase.findUnique({
-      where: {
-        userId_courseId: {
-          userId: user.id,
-          courseId: courseId,
-        },
-      },
-    });
 
     if (existingPurchase) {
       return new NextResponse(copy.alreadyPurchased, { status: 400 });
@@ -135,19 +134,6 @@ export async function POST(req: Request) {
     const configuredPrice = Number(course.price ?? 0);
     const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
-
-    const translationBundle = await getCourseTranslationBundle({
-      language: selectedLanguage,
-      courseIds: [course.id],
-      chapterIds: [],
-      lessonIds: [],
-    });
-    const localizedCourse = resolveCourseText(
-      translationBundle.courses,
-      course.id,
-      course.title,
-      course.description
-    );
 
     if (isFreeCourse) {
       const prisma = db as any;
@@ -185,64 +171,22 @@ export async function POST(req: Request) {
       });
     }
 
-    if (isLocalTestRequest(req)) {
-      const prisma = db as any;
-      await prisma.$transaction(async (tx: any) => {
-        await tx.purchase.upsert({
-          where: {
-            userId_courseId: {
-              userId: user.id,
-              courseId,
-            },
-          },
-          update: {
-            voucherId: null,
-            originalPrice: numericPrice,
-            finalPrice: numericPrice,
-            discountAmount: 0,
-            stripeSessionId: 'local-test-session',
-          },
-          create: {
-            userId: user.id,
-            courseId,
-            voucherId: null,
-            originalPrice: numericPrice,
-            finalPrice: numericPrice,
-            discountAmount: 0,
-            stripeSessionId: 'local-test-session',
-          },
-        });
-      });
-
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&test=1`
-        : `${origin}/courses/${courseId}?success=true&test=1`;
-
-      return NextResponse.json({ url: successUrl });
-    }
-
     if (!stripe) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
-    // Find or create Stripe customer
-    let stripeCustomerId: string;
-    const customers = await stripe.customers.list({
-      email: user.email,
-      limit: 1,
+    const translationBundle = await getCourseTranslationBundle({
+      language: selectedLanguage,
+      courseIds: [course.id],
+      chapterIds: [],
+      lessonIds: [],
     });
-
-    if (customers.data.length > 0) {
-      stripeCustomerId = customers.data[0].id;
-    } else {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          userId: user.id,
-        },
-      });
-      stripeCustomerId = customer.id;
-    }
+    const localizedCourse = resolveCourseText(
+      translationBundle.courses,
+      course.id,
+      course.title,
+      course.description
+    );
 
     const checkoutOriginalPrice = Number(numericPrice.toFixed(2));
 
@@ -266,7 +210,8 @@ export async function POST(req: Request) {
     const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
 
     const baseSessionParams: Stripe.Checkout.SessionCreateParams = {
-      customer: stripeCustomerId,
+      customer_creation: 'always',
+      customer_email: user.email,
       locale: stripeLocale,
       line_items,
       mode: 'payment',

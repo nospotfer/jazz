@@ -14,27 +14,26 @@ export function DashboardLocalTestReset() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const hasAttemptedResetRef = useRef(false);
-  const skippedSuccessfulCheckoutRef = useRef(false);
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') return;
     if (pathname !== '/dashboard') return;
     if (!isLocalTestHost()) return;
 
-    const purchaseStatus = searchParams.get('purchase');
-    const purchaseSource = searchParams.get('source');
+    const shouldRunReset = searchParams.get('resetTestPurchases') === '1';
 
-    if (purchaseStatus === 'success' && purchaseSource === 'dashboard') {
-      skippedSuccessfulCheckoutRef.current = true;
-      return;
-    }
-
-    if (skippedSuccessfulCheckoutRef.current || hasAttemptedResetRef.current) {
+    if (!shouldRunReset || hasAttemptedResetRef.current) {
       return;
     }
 
     hasAttemptedResetRef.current = true;
-    let isActive = true;
+
+    const clearResetTrigger = () => {
+      const nextParams = new URLSearchParams(searchParams.toString());
+      nextParams.delete('resetTestPurchases');
+      const query = nextParams.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    };
 
     const runReset = async () => {
       try {
@@ -61,19 +60,18 @@ export function DashboardLocalTestReset() {
           (data.deletedLessonPurchases ?? 0);
 
         if (deletedCount > 0) {
+          clearResetTrigger();
           router.refresh();
           return;
         }
       } catch {
-        return;
+        // Silent fail in local reset helper.
       }
+
+      clearResetTrigger();
     };
 
     void runReset();
-
-    return () => {
-      isActive = false;
-    };
   }, [pathname, router, searchParams]);
 
   return null;

@@ -379,6 +379,28 @@ form a {
   animation: locked-shake 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@keyframes medal-hover-wobble {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-4deg);
+  }
+  40% {
+    transform: rotate(3deg);
+  }
+  60% {
+    transform: rotate(-2deg);
+  }
+  80% {
+    transform: rotate(1deg);
+  }
+}
+
+.animate-medal-hover-wobble {
+  animation: medal-hover-wobble 0.58s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
 @keyframes quiz-side-bob {
   0%, 100% {
     transform: translateY(0px) scale(1);
