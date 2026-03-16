@@ -96,20 +96,6 @@ function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
 }
 
-function getAttachmentDisplayName(name: string, classNumber: number | null, noteLabel: string) {
-  const withoutExtension = name.replace(/\.pdf$/i, '').trim();
-  const simplified = withoutExtension
-    .replace(/^apuntes?\s*(auxiliares?)?\s*\d*\s*[-–—:]\s*/i, '')
-    .replace(/^apunte\s*(da|de)?\s*(aula|classe)?\s*\d*\s*[-–—:]\s*/i, '')
-    .trim();
-
-  if (!simplified) {
-    return classNumber ? `${noteLabel} ${classNumber}` : noteLabel;
-  }
-
-  return simplified;
-}
-
 export const CoursePlayer = ({
   course,
   lesson,
@@ -645,6 +631,7 @@ export const CoursePlayer = ({
       {
         params: {
           download: download ? 1 : 0,
+          language,
         },
       }
     );
@@ -928,7 +915,7 @@ export const CoursePlayer = ({
     }
 
     void openPdfPreview(firstAttachmentId);
-  }, [lesson.id, canAccessAttachments, firstAttachmentId, shouldLoadPdfPreview]);
+  }, [lesson.id, canAccessAttachments, firstAttachmentId, shouldLoadPdfPreview, language]);
 
   return (
     <DashboardPreferencesProvider>
@@ -947,8 +934,6 @@ export const CoursePlayer = ({
                     <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <ThemeToggle />
                         <LanguageSelector />
-                        <MusicPlatformLinks links={lessonPlaylistTrack.links} language={language} />
-
                         <button
                           type="button"
                           onClick={() => setIsNotesPanelOpen((current) => !current)}
@@ -1051,6 +1036,11 @@ export const CoursePlayer = ({
                   )}
                 </div>
               </div>
+              <div className="px-1">
+                <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                  <MusicPlatformLinks links={lessonPlaylistTrack.links} language={language} />
+                </div>
+              </div>
             </div>
 
             {isNotesPanelOpen ? (
@@ -1074,31 +1064,8 @@ export const CoursePlayer = ({
                     </div>
                   ) : (
                     <>
-                      <div className="space-y-2 max-h-40 overflow-auto pr-1">
-                        {visibleAttachments.map((attachment) => (
-                          <div
-                            key={attachment.id}
-                            onClick={() => openPdfPreview(attachment.id)}
-                            className={`rounded-lg border p-2.5 ${
-                              selectedAttachmentId === attachment.id
-                                ? 'border-primary/50 bg-primary/5'
-                                : 'border-border bg-background hover:bg-accent/40 cursor-pointer'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-2">
-                              <p
-                                className="text-sm font-medium text-foreground truncate"
-                                title={getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
-                              >
-                                {getAttachmentDisplayName(attachment.name, classNumber, copy.classNote)}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
                       {selectedAttachment ? (
-                        <div className="mt-1 rounded-lg border border-border p-2.5 bg-background/80">
+                        <div className="rounded-lg border border-border p-2.5 bg-background/80">
                           <div className="flex justify-end">
                             <Button
                               type="button"

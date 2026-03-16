@@ -139,7 +139,12 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     try {
       const response = await axios.get(
         `/api/lessons/${item.lessonId}/attachments/${item.id}`,
-        { params: { download: 0 } }
+        {
+          params: {
+            download: 0,
+            language,
+          },
+        }
       );
 
       setSignedUrl(response.data?.signedUrl || item.url);
@@ -212,7 +217,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     }
 
     void loadSignedUrl(selected);
-  }, [selected?.id, shouldPrefetchFirstPdf]);
+  }, [selected?.id, shouldPrefetchFirstPdf, language]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">

@@ -87,6 +87,7 @@ export default function AuthPage() {
       signInFailedRetry: 'No se pudo iniciar sesión. Inténtalo de nuevo.',
       googleNotConfigured: 'La autenticación con Google no está configurada en este entorno.',
       googleAuthFailed: 'No se pudo iniciar con Google',
+      googleOAuthClientDisabled: 'El cliente OAuth de Google está deshabilitado. Revisa Google Cloud Console y la configuración de Google en Supabase.',
       tabLogin: 'Iniciar sesión',
       tabRegister: 'Registrarse',
       googleRedirecting: 'Redirigiendo a Google...',
@@ -127,6 +128,7 @@ export default function AuthPage() {
       signInFailedRetry: 'Unable to sign in. Please try again.',
       googleNotConfigured: 'Google authentication is not configured in this environment.',
       googleAuthFailed: 'Unable to sign in with Google',
+      googleOAuthClientDisabled: 'Google OAuth client is disabled. Check Google Cloud Console and Google provider settings in Supabase.',
       tabLogin: 'Sign in',
       tabRegister: 'Register',
       googleRedirecting: 'Redirecting to Google...',
@@ -167,6 +169,7 @@ export default function AuthPage() {
       signInFailedRetry: 'Impossible de se connecter. Réessayez.',
       googleNotConfigured: 'L’authentification Google n’est pas configurée dans cet environnement.',
       googleAuthFailed: 'Impossible de se connecter avec Google',
+      googleOAuthClientDisabled: 'Le client OAuth Google est désactivé. Vérifiez Google Cloud Console et la configuration du provider Google dans Supabase.',
       tabLogin: 'Connexion',
       tabRegister: 'Inscription',
       googleRedirecting: 'Redirection vers Google...',
@@ -207,6 +210,7 @@ export default function AuthPage() {
       signInFailedRetry: 'Não foi possível entrar. Tente novamente.',
       googleNotConfigured: 'A autenticação com Google não está configurada neste ambiente.',
       googleAuthFailed: 'Não foi possível entrar com Google',
+      googleOAuthClientDisabled: 'O cliente OAuth do Google está desativado. Verifique o Google Cloud Console e a configuração do provider Google no Supabase.',
       tabLogin: 'Entrar',
       tabRegister: 'Cadastrar',
       googleRedirecting: 'Redirecionando para o Google...',
@@ -243,6 +247,7 @@ export default function AuthPage() {
     const tabParam = params.get('tab');
     const flowParam = params.get('flow');
     const oauthError = params.get('oauth_error');
+    const oauthErrorCode = params.get('oauth_error_code')?.trim().toLowerCase();
 
     if (tabParam === 'register' || flowParam === 'register') {
       setActiveTab('register');
@@ -253,7 +258,9 @@ export default function AuthPage() {
 
     if (oauthError) {
       const targetTab: 'login' | 'register' = flowParam === 'register' ? 'register' : 'login';
-      const message = oauthError.trim() || copy.googleStartError;
+      const message = oauthErrorCode === 'disabled_client'
+        ? copy.googleOAuthClientDisabled
+        : oauthError.trim() || copy.googleStartError;
 
       setActiveTab(targetTab);
       if (targetTab === 'register') {

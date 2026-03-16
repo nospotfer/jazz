@@ -353,7 +353,7 @@ function SidebarContent({
               />
             </button>
 
-            {isNotesSectionOpen ? <DashboardNotesNavPanel /> : null}
+            <DashboardNotesNavPanel isOpen={isNotesSectionOpen} />
           </div>
         </div>
       </nav>
