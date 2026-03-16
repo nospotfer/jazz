@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 import { NextResponse } from 'next/server'
-import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
 function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) {
   const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
@@ -32,8 +32,9 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request)
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const normalizedUrl = normalizeSupabaseUrl(url)
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
+  const hasSupabaseConfig = hasValidSupabasePublicConfig(normalizedUrl ?? undefined, anonKey)
 
   if (!hasSupabaseConfig) {
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {

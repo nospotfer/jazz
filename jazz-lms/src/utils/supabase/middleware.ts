@@ -1,6 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
-import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -11,13 +11,14 @@ export async function updateSession(request: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const normalizedUrl = normalizeSupabaseUrl(url)
 
   // If Supabase credentials are not set (local dev), skip creating the client
   if (!hasValidSupabasePublicConfig(url, key)) {
     return { response, user: null }
   }
 
-  const supabase = createServerClient(url!, key!, {
+  const supabase = createServerClient(normalizedUrl!, key!, {
     cookies: {
       get(name: string) {
         return request.cookies.get(name)?.value

@@ -53,16 +53,26 @@ describe('POST /api/dev/reset-test-purchases', () => {
       }),
     }));
 
-    const $transaction = vi.fn().mockResolvedValue([
-      { count: 2 },
-      { count: 5 },
-      { count: 1 },
-    ]);
+    const $transaction = vi.fn().mockImplementation(async (callback: (tx: any) => Promise<unknown>) =>
+      callback({
+        voucherRedemption: {
+          findMany: vi.fn().mockResolvedValue([{ voucherId: 'v1' }, { voucherId: 'v1' }]),
+          deleteMany: vi.fn().mockResolvedValue({ count: 2 }),
+        },
+        voucherCode: {
+          findUnique: vi.fn().mockResolvedValue({ currentUses: 3 }),
+          update: vi.fn().mockResolvedValue({ id: 'v1' }),
+        },
+        discountApplied: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 2 }),
+        },
+        purchase: { deleteMany: vi.fn().mockResolvedValue({ count: 2 }) },
+        userProgress: { deleteMany: vi.fn().mockResolvedValue({ count: 5 }) },
+        lessonPurchase: { deleteMany: vi.fn().mockResolvedValue({ count: 1 }) },
+      })
+    );
     vi.doMock('@/lib/db', () => ({
       db: {
-        purchase: { deleteMany: vi.fn() },
-        userProgress: { deleteMany: vi.fn() },
-        lessonPurchase: { deleteMany: vi.fn() },
         $transaction,
       },
     }));
@@ -76,6 +86,8 @@ describe('POST /api/dev/reset-test-purchases', () => {
     expect(body.deletedPurchases).toBe(2);
     expect(body.deletedProgress).toBe(5);
     expect(body.deletedLessonPurchases).toBe(1);
+    expect(body.deletedRedemptions).toBe(2);
+    expect(body.deletedDiscounts).toBe(2);
   });
 
   test('returns 500 on internal error', async () => {

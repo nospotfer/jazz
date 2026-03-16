@@ -9,11 +9,17 @@ import {
 } from '@/lib/pricing';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
+import { syncCourseCheckoutSession } from '@/lib/stripe-checkout-sync';
 
 export default async function CourseDetailPage({
   params,
+  searchParams,
 }: {
   params: { courseId: string };
+  searchParams?: {
+    success?: string | string[];
+    session_id?: string | string[];
+  };
 }) {
   const cookieStore = cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
@@ -67,6 +73,26 @@ export default async function CourseDetailPage({
 
   if (!user) {
     return redirect('/auth');
+  }
+
+  const successParam = Array.isArray(searchParams?.success)
+    ? searchParams?.success[0]
+    : searchParams?.success;
+  const sessionId = Array.isArray(searchParams?.session_id)
+    ? searchParams?.session_id[0]
+    : searchParams?.session_id;
+
+  if (successParam === 'true' && sessionId) {
+    try {
+      await syncCourseCheckoutSession({
+        sessionId,
+        expectedUserId: user.id,
+        expectedCourseId: params.courseId,
+      });
+      return redirect(`/courses/${params.courseId}?success=true`);
+    } catch (error) {
+      console.error('[course-page] Unable to confirm Stripe checkout session.', error);
+    }
   }
 
   const course = await db.course.findUnique({

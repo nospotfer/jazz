@@ -52,22 +52,34 @@ describe('POST /api/webhooks/stripe', () => {
     voucherFindUnique = vi.fn().mockResolvedValue(null)
   ) {
     const tx = {
-      purchase: { upsert: purchaseUpsert },
+      purchase: {
+        findUnique: vi.fn().mockResolvedValue(null),
+        findFirst: vi.fn().mockResolvedValue(null),
+        upsert: purchaseUpsert,
+        delete: vi.fn().mockResolvedValue({ id: 'p1' }),
+      },
       voucherRedemption: {
         findFirst: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue({ id: 'vr1' }),
+        update: vi.fn().mockResolvedValue({ id: 'vr1' }),
+        delete: vi.fn().mockResolvedValue({ id: 'vr1' }),
+        deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
       voucherCode: {
-        findUnique: vi.fn().mockResolvedValue(null),
+        findUnique: vi.fn().mockResolvedValue({ currentUses: 0 }),
         update: vi.fn().mockResolvedValue({ id: 'v1' }),
       },
       discountApplied: {
         upsert: vi.fn().mockResolvedValue({ id: 'd1' }),
+        deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
     };
 
     vi.doMock('@/lib/db', () => ({
       db: {
+        purchase: {
+          findFirst: vi.fn().mockResolvedValue(null),
+        },
         lessonPurchase: { upsert: lessonPurchaseUpsert },
         voucherCode: {
           findUnique: voucherFindUnique,
@@ -262,8 +274,9 @@ describe('POST /api/webhooks/stripe', () => {
     expect(await response.text()).toContain('Unhandled event type');
   });
 
-  test('returns 400 when discount is applied with unknown promo code', async () => {
+  test('returns 200 when discount is applied with unknown promo code', async () => {
     const voucherFindUnique = vi.fn().mockResolvedValue(null);
+    const purchaseUpsert = vi.fn().mockResolvedValue({ id: 'p1' });
 
     vi.doMock('@/lib/stripe', () => ({
       stripe: {
@@ -304,12 +317,73 @@ describe('POST /api/webhooks/stripe', () => {
     }));
 
     mockHeaders('sig_test');
-    mockDb(vi.fn(), vi.fn(), voucherFindUnique);
+    mockDb(purchaseUpsert, vi.fn(), voucherFindUnique);
 
     const { POST } = await import('@/app/api/webhooks/stripe/route');
     const response = await POST(makeReq());
-    expect(response.status).toBe(400);
-    expect(await response.text()).toContain('Unknown promotion code');
+    expect(response.status).toBe(200);
     expect(voucherFindUnique).toHaveBeenCalledTimes(1);
+    expect(purchaseUpsert).toHaveBeenCalledTimes(1);
+  });
+
+  test('reverts purchase data when checkout session expires', async () => {
+    const purchaseDelete = vi.fn().mockResolvedValue({ id: 'p1' });
+    const redemptionDeleteMany = vi.fn().mockResolvedValue({ count: 1 });
+    const discountDeleteMany = vi.fn().mockResolvedValue({ count: 1 });
+    const voucherUpdate = vi.fn().mockResolvedValue({ id: 'v1' });
+
+    vi.doMock('@/lib/stripe', () => ({
+      stripe: {
+        webhooks: {
+          constructEvent: vi.fn(() => ({
+            type: 'checkout.session.expired',
+            data: {
+              object: {
+                id: 'cs_test_expired_1',
+                metadata: {},
+              },
+            },
+          })),
+        },
+      },
+    }));
+
+    mockHeaders('sig_test');
+    vi.doMock('@/lib/db', () => ({
+      db: {
+        $transaction: async (callback: (tx: any) => Promise<unknown>) =>
+          callback({
+            purchase: {
+              findFirst: vi.fn().mockResolvedValue({
+                id: 'p1',
+                redemption: {
+                  id: 'vr1',
+                  voucherId: 'v1',
+                },
+              }),
+              delete: purchaseDelete,
+            },
+            voucherCode: {
+              findUnique: vi.fn().mockResolvedValue({ currentUses: 1 }),
+              update: voucherUpdate,
+            },
+            voucherRedemption: {
+              deleteMany: redemptionDeleteMany,
+            },
+            discountApplied: {
+              deleteMany: discountDeleteMany,
+            },
+          }),
+      },
+    }));
+
+    const { POST } = await import('@/app/api/webhooks/stripe/route');
+    const response = await POST(makeReq());
+
+    expect(response.status).toBe(200);
+    expect(voucherUpdate).toHaveBeenCalledTimes(1);
+    expect(redemptionDeleteMany).toHaveBeenCalledTimes(1);
+    expect(discountDeleteMany).toHaveBeenCalledTimes(1);
+    expect(purchaseDelete).toHaveBeenCalledTimes(1);
   });
 });

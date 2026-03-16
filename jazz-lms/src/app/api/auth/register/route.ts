@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
-import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
+import { hasValidSupabaseServerConfig, normalizeSupabaseUrl } from '@/lib/supabase-config';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
 
@@ -34,11 +34,11 @@ export async function POST(request: Request) {
 
     const { email, password, fullName } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const url = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!hasValidSupabaseServerConfig(url, anonKey, serviceRoleKey)) {
+    if (!hasValidSupabaseServerConfig(url ?? undefined, anonKey, serviceRoleKey)) {
       return NextResponse.json(
         {
           error:

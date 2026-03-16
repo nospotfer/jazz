@@ -18,23 +18,84 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const [deletedPurchases, deletedProgress, deletedLessonPurchases] = await db.$transaction([
-      db.purchase.deleteMany({
+    const summary = await db.$transaction(async (tx: any) => {
+      const redemptions = await tx.voucherRedemption.findMany({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          voucherId: true,
+        },
+      });
+
+      const usagesByVoucher = new Map<string, number>();
+      for (const redemption of redemptions) {
+        if (!redemption.voucherId) {
+          continue;
+        }
+
+        usagesByVoucher.set(
+          redemption.voucherId,
+          (usagesByVoucher.get(redemption.voucherId) || 0) + 1
+        );
+      }
+
+      for (const [voucherId, usageCount] of usagesByVoucher.entries()) {
+        const voucher = await tx.voucherCode.findUnique({
+          where: { id: voucherId },
+          select: { currentUses: true },
+        });
+
+        if (!voucher) {
+          continue;
+        }
+
+        await tx.voucherCode.update({
+          where: { id: voucherId },
+          data: {
+            currentUses: Math.max(0, voucher.currentUses - usageCount),
+          },
+        });
+      }
+
+      const deletedDiscounts = await tx.discountApplied.deleteMany({
+        where: {
+          purchase: {
+            userId: user.id,
+          },
+        },
+      });
+
+      const deletedRedemptions = await tx.voucherRedemption.deleteMany({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      const deletedPurchases = await tx.purchase.deleteMany({
         where: { userId: user.id },
-      }),
-      db.userProgress.deleteMany({
+      });
+
+      const deletedProgress = await tx.userProgress.deleteMany({
         where: { userId: user.id },
-      }),
-      db.lessonPurchase.deleteMany({
+      });
+
+      const deletedLessonPurchases = await tx.lessonPurchase.deleteMany({
         where: { userId: user.id },
-      }),
-    ]);
+      });
+
+      return {
+        deletedPurchases: deletedPurchases.count,
+        deletedProgress: deletedProgress.count,
+        deletedLessonPurchases: deletedLessonPurchases.count,
+        deletedRedemptions: deletedRedemptions.count,
+        deletedDiscounts: deletedDiscounts.count,
+      };
+    });
 
     return NextResponse.json({
       ok: true,
-      deletedPurchases: deletedPurchases.count,
-      deletedProgress: deletedProgress.count,
-      deletedLessonPurchases: deletedLessonPurchases.count,
+      ...summary,
     });
   } catch (error) {
     console.error('[DEV_RESET_TEST_PURCHASES_ERROR]', error);

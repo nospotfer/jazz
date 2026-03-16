@@ -60,7 +60,9 @@ Configurar no Vercel (Production + Preview + Development):
   - Site URL: `https://seu-dominio.com`
   - Redirects:
     - `https://seu-dominio.com/auth/callback`
+    - `https://seu-dominio.com/auth/reset-password`
     - `https://*.vercel.app/auth/callback`
+    - `https://*.vercel.app/auth/reset-password`
 
 ### 3.3 Storage
 - [ ] Bucket configurado em `SUPABASE_STORAGE_BUCKET`

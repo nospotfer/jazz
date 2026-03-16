@@ -136,6 +136,7 @@ export const CoursePlayer = ({
       chooseMethod: 'Elegir método de pago',
       classNote: 'Apunte de clase',
       download: 'Descargar',
+      downloadSelectedPdf: 'Descargar PDF seleccionado',
       selectPdf: 'Selecciona un PDF para previsualizarlo aquí.',
       toggleNotesTooltip: 'Mostrar u ocultar apuntes',
       completeTooltip: 'Marcar como completada',
@@ -184,6 +185,7 @@ export const CoursePlayer = ({
       chooseMethod: 'Choose payment method',
       classNote: 'Class notes',
       download: 'Download',
+      downloadSelectedPdf: 'Download selected PDF',
       selectPdf: 'Select a PDF to preview it here.',
       toggleNotesTooltip: 'Show or hide notes panel',
       completeTooltip: 'Mark lesson as complete',
@@ -232,6 +234,7 @@ export const CoursePlayer = ({
       chooseMethod: 'Choisir le moyen de paiement',
       classNote: 'Notes du cours',
       download: 'Télécharger',
+      downloadSelectedPdf: 'Télécharger le PDF sélectionné',
       selectPdf: 'Sélectionnez un PDF pour l’aperçu ici.',
       toggleNotesTooltip: 'Afficher ou masquer les notes',
       completeTooltip: 'Marquer la leçon comme terminée',
@@ -280,6 +283,7 @@ export const CoursePlayer = ({
       chooseMethod: 'Escolher método de pagamento',
       classNote: 'Anotações da aula',
       download: 'Baixar',
+      downloadSelectedPdf: 'Baixar PDF selecionado',
       selectPdf: 'Selecione um PDF para pré-visualizá-lo aqui.',
       toggleNotesTooltip: 'Mostrar ou ocultar anotações',
       completeTooltip: 'Marcar aula como concluída',
@@ -1092,6 +1096,21 @@ export const CoursePlayer = ({
                           </div>
                         ))}
                       </div>
+
+                      {selectedAttachment ? (
+                        <div className="mt-1 rounded-lg border border-border p-2.5 bg-background/80">
+                          <div className="flex justify-end">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => downloadPdf(selectedAttachment.id)}
+                              className="w-full sm:w-auto"
+                            >
+                              {copy.downloadSelectedPdf}
+                            </Button>
+                          </div>
+                        </div>
+                      ) : null}
 
                       <div className="mt-2 flex-1 min-h-0 rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                         {isLoadingPdf ? (

@@ -6,6 +6,7 @@ import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 import { getServerUser } from '@/lib/server-user';
 import { hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
+import { syncCourseCheckoutSession } from '@/lib/stripe-checkout-sync';
 
 type DashboardPageProps = {
   searchParams?: {
@@ -38,35 +39,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
     try {
-      const { stripe } = await import('@/lib/stripe');
-      if (!stripe) {
-        throw new Error('Stripe is unavailable');
-      }
+      const result = await syncCourseCheckoutSession({
+        sessionId,
+        expectedUserId: user.id,
+      });
 
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
-      const sessionUserId = session.metadata?.userId;
-      const sessionCourseId = session.metadata?.courseId;
-      const sessionPurchaseType = session.metadata?.purchaseType;
-
-      if (
-        session.payment_status === 'paid' &&
-        sessionUserId === user.id &&
-        sessionPurchaseType === 'course' &&
-        sessionCourseId
-      ) {
-        await db.purchase.upsert({
-          where: {
-            userId_courseId: {
-              userId: user.id,
-              courseId: sessionCourseId,
-            },
-          },
-          update: {},
-          create: {
-            userId: user.id,
-            courseId: sessionCourseId,
-          },
-        });
+      if (result.success) {
         shouldReloadUnlockedDashboard = true;
       }
     } catch (error) {

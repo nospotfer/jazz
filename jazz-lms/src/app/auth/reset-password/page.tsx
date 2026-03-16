@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/language-provider';
@@ -13,6 +13,8 @@ export default function ResetPasswordPage() {
     es: {
       tokenInvalid: 'Este enlace de restablecimiento es inválido o ha expirado. Solicita uno nuevo.',
       tokenValidationFailed: 'No se pudo validar el enlace de restablecimiento. Solicita uno nuevo.',
+      tokenMissing: 'El enlace no contiene credenciales válidas para restablecer la contraseña. Solicita uno nuevo.',
+      tokenExpiredUsed: 'Este enlace de restablecimiento ha expirado o ya fue utilizado. Solicita uno nuevo.',
       minPassword: 'La contraseña debe tener al menos 8 caracteres',
       updateFailed: 'No se pudo actualizar la contraseña',
       updated: '¡Contraseña actualizada con éxito!',
@@ -32,6 +34,8 @@ export default function ResetPasswordPage() {
     en: {
       tokenInvalid: 'This reset link is invalid or has expired. Request a new one.',
       tokenValidationFailed: 'Unable to validate the reset link. Request a new one.',
+      tokenMissing: 'This link does not contain valid reset credentials. Request a new one.',
+      tokenExpiredUsed: 'This reset link has expired or was already used. Request a new one.',
       minPassword: 'Password must be at least 8 characters',
       updateFailed: 'Unable to update password',
       updated: 'Password updated successfully!',
@@ -51,6 +55,8 @@ export default function ResetPasswordPage() {
     fr: {
       tokenInvalid: 'Ce lien de réinitialisation est invalide ou expiré. Demandez-en un nouveau.',
       tokenValidationFailed: 'Impossible de valider le lien de réinitialisation. Demandez-en un nouveau.',
+      tokenMissing: 'Ce lien ne contient pas de données valides pour réinitialiser le mot de passe. Demandez-en un nouveau.',
+      tokenExpiredUsed: 'Ce lien de réinitialisation a expiré ou a déjà été utilisé. Demandez-en un nouveau.',
       minPassword: 'Le mot de passe doit contenir au moins 8 caractères',
       updateFailed: 'Impossible de mettre à jour le mot de passe',
       updated: 'Mot de passe mis à jour avec succès !',
@@ -70,6 +76,8 @@ export default function ResetPasswordPage() {
     pt: {
       tokenInvalid: 'Este link de redefinição é inválido ou expirou. Solicite um novo.',
       tokenValidationFailed: 'Não foi possível validar o link de redefinição. Solicite um novo.',
+      tokenMissing: 'Este link não contém credenciais válidas para redefinir a senha. Solicite um novo.',
+      tokenExpiredUsed: 'Este link de redefinição expirou ou já foi usado. Solicite um novo.',
       minPassword: 'A senha deve ter pelo menos 8 caracteres',
       updateFailed: 'Não foi possível atualizar a senha',
       updated: 'Senha atualizada com sucesso!',
@@ -97,38 +105,81 @@ export default function ResetPasswordPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  const didBootstrapRef = useRef(false);
 
   useEffect(() => {
+    if (didBootstrapRef.current) {
+      return;
+    }
+    didBootstrapRef.current = true;
+
     const bootstrapRecoverySession = async () => {
       try {
         const query = new URLSearchParams(window.location.search);
+        const hash = window.location.hash.startsWith('#')
+          ? new URLSearchParams(window.location.hash.slice(1))
+          : new URLSearchParams();
+
         const authCode = query.get('code');
+        const tokenHash = query.get('token_hash') || hash.get('token_hash');
+        const tokenType = query.get('type') || hash.get('type');
+        const queryAccessToken = query.get('access_token');
+        const queryRefreshToken = query.get('refresh_token');
+        const hashAccessToken = hash.get('access_token');
+        const hashRefreshToken = hash.get('refresh_token');
+        const providerErrorDescription =
+          query.get('error_description') ||
+          hash.get('error_description') ||
+          query.get('error') ||
+          hash.get('error');
+
         let hasRecoveryCredential = false;
+        let consumedCredential = false;
+
+        if (providerErrorDescription) {
+          setTokenError(copy.tokenExpiredUsed);
+          setTokenValid(false);
+          setLoadingToken(false);
+          return;
+        }
 
         if (authCode) {
           hasRecoveryCredential = true;
           const { error: codeError } = await supabase.auth.exchangeCodeForSession(authCode);
           if (codeError) {
-            setTokenError(copy.tokenInvalid);
+            setTokenError(copy.tokenExpiredUsed);
             setTokenValid(false);
             setLoadingToken(false);
             return;
           }
+          consumedCredential = true;
+        } else if (tokenHash && tokenType === 'recovery') {
+          const verifyOtp = (supabase.auth as { verifyOtp?: (args: { token_hash: string; type: 'recovery' }) => Promise<{ error: { message?: string } | null }> }).verifyOtp;
+
+          if (typeof verifyOtp !== 'function') {
+            setTokenError(copy.tokenValidationFailed);
+            setTokenValid(false);
+            setLoadingToken(false);
+            return;
+          }
+
+          hasRecoveryCredential = true;
+          const { error: verifyError } = await verifyOtp({
+            token_hash: tokenHash,
+            type: 'recovery',
+          });
+
+          if (verifyError) {
+            setTokenError(copy.tokenExpiredUsed);
+            setTokenValid(false);
+            setLoadingToken(false);
+            return;
+          }
+
+          consumedCredential = true;
         } else {
-          const hash = window.location.hash.startsWith('#')
-            ? new URLSearchParams(window.location.hash.slice(1))
-            : new URLSearchParams();
-
-          const accessToken = hash.get('access_token');
-          const refreshToken = hash.get('refresh_token');
-          const hashErrorDescription = hash.get('error_description');
-
-          if (hashErrorDescription) {
-            setTokenError(copy.tokenInvalid);
-            setTokenValid(false);
-            setLoadingToken(false);
-            return;
-          }
+          const accessToken = queryAccessToken || hashAccessToken;
+          const refreshToken = queryRefreshToken || hashRefreshToken;
 
           if (accessToken && refreshToken) {
             hasRecoveryCredential = true;
@@ -138,21 +189,25 @@ export default function ResetPasswordPage() {
             });
 
             if (sessionError) {
-              setTokenError(copy.tokenInvalid);
+              setTokenError(copy.tokenExpiredUsed);
               setTokenValid(false);
               setLoadingToken(false);
               return;
             }
 
-            window.history.replaceState({}, '', window.location.pathname + window.location.search);
+            consumedCredential = true;
           }
         }
 
         if (!hasRecoveryCredential) {
-          setTokenError(copy.tokenInvalid);
+          setTokenError(copy.tokenMissing);
           setTokenValid(false);
           setLoadingToken(false);
           return;
+        }
+
+        if (consumedCredential) {
+          window.history.replaceState({}, '', window.location.pathname);
         }
 
         const { data } = await supabase.auth.getSession();
@@ -173,7 +228,7 @@ export default function ResetPasswordPage() {
     };
 
     bootstrapRecoverySession();
-  }, [supabase, copy.tokenInvalid, copy.tokenValidationFailed]);
+  }, [supabase, copy.tokenExpiredUsed, copy.tokenInvalid, copy.tokenMissing, copy.tokenValidationFailed]);
 
   const inputClasses =
     'w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors';

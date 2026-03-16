@@ -1,6 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
 type MinimalSupabase = {
   auth: {
@@ -13,8 +13,9 @@ export function createClient(): any {
   const cookieStore = cookies()
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const normalizedUrl = normalizeSupabaseUrl(url)
 
-  if (!hasValidSupabasePublicConfig(url, key)) {
+  if (!hasValidSupabasePublicConfig(normalizedUrl ?? undefined, key)) {
     const stub: MinimalSupabase = {
       auth: {
         getUser: async () => ({ data: { user: null } }),
@@ -28,7 +29,7 @@ export function createClient(): any {
   }
 
   return createServerClient(
-    url!,
+    normalizedUrl!,
     key!,
     {
       cookies: {

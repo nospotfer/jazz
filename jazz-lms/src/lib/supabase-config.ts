@@ -14,6 +14,17 @@ export function hasValidSupabasePublicConfig(url?: string, anonKey?: string) {
   return Boolean(url && anonKey);
 }
 
+export function normalizeSupabaseUrl(url?: string) {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return null;
+  }
+}
+
 export function hasValidSupabaseServerConfig(
   url?: string,
   anonKey?: string,

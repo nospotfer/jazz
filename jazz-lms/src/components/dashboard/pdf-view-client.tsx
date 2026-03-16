@@ -44,6 +44,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Los PDFs aparecerán aquí cuando se agreguen.',
       loadingPdf: 'Cargando PDF...',
       selectPdf: 'Selecciona un PDF',
+      downloadSelectedPdf: 'Descargar PDF seleccionado',
       auxiliaryLabel: 'Apuntes Auxiliares',
       auxiliaryTitle: 'Apunte auxiliar',
     },
@@ -55,6 +56,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Lesson PDFs will appear here when they are added.',
       loadingPdf: 'Loading PDF...',
       selectPdf: 'Select a PDF',
+      downloadSelectedPdf: 'Download selected PDF',
       auxiliaryLabel: 'Auxiliary Notes',
       auxiliaryTitle: 'Auxiliary note',
     },
@@ -66,6 +68,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Les PDF des leçons apparaîtront ici lorsqu’ils seront ajoutés.',
       loadingPdf: 'Chargement du PDF...',
       selectPdf: 'Sélectionnez un PDF',
+      downloadSelectedPdf: 'Télécharger le PDF sélectionné',
       auxiliaryLabel: 'Notes auxiliaires',
       auxiliaryTitle: 'Note auxiliaire',
     },
@@ -77,6 +80,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       noPdfsDesc: 'Os PDFs das aulas aparecerão aqui quando forem adicionados.',
       loadingPdf: 'Carregando PDF...',
       selectPdf: 'Selecione um PDF',
+      downloadSelectedPdf: 'Baixar PDF selecionado',
       auxiliaryLabel: 'Notas auxiliares',
       auxiliaryTitle: 'Nota auxiliar',
     },
@@ -173,6 +177,27 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     return () => window.clearTimeout(timeoutId);
   }, [items]);
 
+  const downloadSelected = async () => {
+    if (!selected) return;
+
+    try {
+      const response = await axios.get(
+        `/api/lessons/${selected.lessonId}/attachments/${selected.id}`,
+        {
+          params: {
+            download: 1,
+            language,
+          },
+        }
+      );
+
+      const signed = response.data?.signedUrl || selected.url;
+      window.open(signed, '_blank', 'noopener,noreferrer');
+    } catch {
+      window.open(selected.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   useEffect(() => {
     if (!selected) {
       setSignedUrl('');
@@ -235,6 +260,17 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             <div className="px-4 py-3 border-b border-border bg-card/80">
               <p className="text-sm font-medium text-foreground">{selectedLocalized?.displayClassLabel}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{selectedLocalized?.displayTitle}</p>
+              {selectedLocalized ? (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={downloadSelected}
+                    className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-accent/50"
+                  >
+                    {copy.downloadSelectedPdf}
+                  </button>
+                </div>
+              ) : null}
             </div>
 
             {selectedLocalized ? (

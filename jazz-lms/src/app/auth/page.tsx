@@ -35,18 +35,31 @@ function resolveClientAppOrigin(currentOrigin: string): string {
   const isDevelopment = process.env.NODE_ENV !== 'production';
 
   if (isDevelopment) {
-    if (isLocalOrigin(currentOrigin)) {
-      return currentOrigin;
-    }
-
     if (configuredOrigin && isLocalOrigin(configuredOrigin)) {
       return configuredOrigin;
+    }
+
+    if (isLocalOrigin(currentOrigin)) {
+      return currentOrigin;
     }
 
     return 'http://localhost:3000';
   }
 
   return configuredOrigin || currentOrigin;
+}
+
+function buildOAuthCallbackUrl(origin: string, flow: 'login' | 'register', lang: string): string {
+  const callbackUrl = new URL('/auth/callback', origin);
+  callbackUrl.searchParams.set('flow', flow);
+  callbackUrl.searchParams.set('lang', lang);
+  return callbackUrl.toString();
+}
+
+function shouldRetryWithAlternateRedirect(message?: string | null): boolean {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return normalized.includes('requested path is invalid') || normalized.includes('invalid path');
 }
 
 export default function AuthPage() {
@@ -311,10 +324,7 @@ export default function AuthPage() {
   const redirectTo = useMemo(() => {
     if (typeof window === 'undefined') return undefined;
     const appOrigin = resolveClientAppOrigin(window.location.origin);
-    const callbackUrl = new URL('/auth/callback', appOrigin);
-    callbackUrl.searchParams.set('flow', activeTab);
-    callbackUrl.searchParams.set('lang', language);
-    return callbackUrl.toString();
+    return buildOAuthCallbackUrl(appOrigin, activeTab, language);
   }, [activeTab, language]);
 
   useEffect(() => {
@@ -460,26 +470,56 @@ export default function AuthPage() {
     setGoogleLoading(true);
 
     try {
-      const callbackUrl = redirectTo;
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: callbackUrl,
-          queryParams: {
-            prompt: 'select_account',
-            hl: languageToHtmlLang(language),
-            ui_locales: languageToHtmlLang(language),
-          },
-        },
-      });
+      const candidates = new Set<string>();
+      const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
 
-      if (error) {
-        const message = error.message || copy.googleAuthFailed;
-        if (activeTab === 'register') {
-          setRegisterError(message);
-        } else {
-          setLoginError(message);
+      if (redirectTo) {
+        candidates.add(redirectTo);
+      }
+
+      if (typeof window !== 'undefined') {
+        candidates.add(buildOAuthCallbackUrl(window.location.origin, activeTab, language));
+      }
+
+      if (configuredOrigin) {
+        candidates.add(buildOAuthCallbackUrl(configuredOrigin, activeTab, language));
+      }
+
+      if (process.env.NODE_ENV !== 'production') {
+        candidates.add(buildOAuthCallbackUrl('http://localhost:3000', activeTab, language));
+        candidates.add(buildOAuthCallbackUrl('http://localhost:3001', activeTab, language));
+      }
+
+      let lastErrorMessage = copy.googleAuthFailed;
+      const callbackCandidates = Array.from(candidates);
+
+      for (const callbackUrl of callbackCandidates) {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: callbackUrl,
+            queryParams: {
+              prompt: 'select_account',
+              hl: languageToHtmlLang(language),
+              ui_locales: languageToHtmlLang(language),
+            },
+          },
+        });
+
+        if (!error) {
+          return;
         }
+
+        lastErrorMessage = error.message || copy.googleAuthFailed;
+        if (!shouldRetryWithAlternateRedirect(lastErrorMessage)) {
+          break;
+        }
+      }
+
+      if (activeTab === 'register') {
+        setRegisterError(lastErrorMessage);
+      } else {
+        setLoginError(lastErrorMessage);
       }
     } catch {
       const message = copy.googleStartError;

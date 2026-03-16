@@ -36,7 +36,9 @@ type VoucherItem = {
 };
 
 type VoucherStats = {
+  generated: number;
   total: number;
+  available: number;
   active: number;
   used: number;
   expired: number;
@@ -59,7 +61,14 @@ export function VouchersAdminClient({ courses }: Props) {
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [vouchers, setVouchers] = useState<VoucherItem[]>([]);
-  const [stats, setStats] = useState<VoucherStats>({ total: 0, active: 0, used: 0, expired: 0 });
+  const [stats, setStats] = useState<VoucherStats>({
+    generated: 0,
+    total: 0,
+    available: 0,
+    active: 0,
+    used: 0,
+    expired: 0,
+  });
   const [lastGeneratedCodes, setLastGeneratedCodes] = useState<string[]>([]);
   const [selectedVoucherIds, setSelectedVoucherIds] = useState<string[]>([]);
 
@@ -117,7 +126,9 @@ export function VouchersAdminClient({ courses }: Props) {
       setVouchers(list);
       setSelectedVoucherIds((prev) => prev.filter((id) => list.some((voucher) => voucher.id === id)));
       setStats({
+        generated: Number(data.stats?.generated || data.stats?.total || 0),
         total: Number(data.stats?.total || 0),
+        available: Number(data.stats?.available || 0),
         active: Number(data.stats?.active || 0),
         used: Number(data.stats?.used || 0),
         expired: Number(data.stats?.expired || 0),
@@ -126,7 +137,14 @@ export function VouchersAdminClient({ courses }: Props) {
       console.error(error);
       toast.error('Error al cargar vouchers.');
       setVouchers([]);
-      setStats({ total: 0, active: 0, used: 0, expired: 0 });
+      setStats({
+        generated: 0,
+        total: 0,
+        available: 0,
+        active: 0,
+        used: 0,
+        expired: 0,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -444,7 +462,7 @@ export function VouchersAdminClient({ courses }: Props) {
   };
 
   const statusLabel = useMemo(() => {
-    return `Total: ${stats.total} · Activos: ${stats.active} · Usados: ${stats.used} · Expirados: ${stats.expired}`;
+    return `Generados: ${stats.generated} · Disponibles: ${stats.available} · Usados: ${stats.used} · Expirados: ${stats.expired}`;
   }, [stats]);
 
   const sortedVouchers = useMemo(() => {
@@ -487,12 +505,12 @@ export function VouchersAdminClient({ courses }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
           <div className="rounded-md border border-border p-4">
-            <p className="text-xs text-muted-foreground">Total de vouchers</p>
-            <p className="text-3xl font-bold mt-2">{stats.total}</p>
+            <p className="text-xs text-muted-foreground">Vouchers gerados</p>
+            <p className="text-3xl font-bold mt-2">{stats.generated}</p>
           </div>
           <div className="rounded-md border border-border p-4">
-            <p className="text-xs text-muted-foreground">Vouchers activos</p>
-            <p className="text-3xl font-bold mt-2">{stats.active}</p>
+            <p className="text-xs text-muted-foreground">Vouchers disponíveis</p>
+            <p className="text-3xl font-bold mt-2">{stats.available}</p>
           </div>
           <div className="rounded-md border border-border p-4">
             <p className="text-xs text-muted-foreground">Vouchers usados</p>
