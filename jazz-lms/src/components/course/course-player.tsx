@@ -16,8 +16,7 @@ import {
   shouldAutoCompleteLessonByPlayback,
   shouldPersistLessonProgress,
 } from '@/lib/lesson-progress';
-import { MusicPlatformLinks } from '@/components/music/music-platform-links';
-import { getJazzPlaylistTrackForLesson } from '@/lib/jazz-playlist';
+import { SpotifyPlaylistFooter } from '@/components/music/spotify-playlist-footer';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 import { getCanonicalJazzClass } from '@/lib/course-lessons';
 import { extractMuxPlaybackId } from '@/lib/mux-playback';
@@ -26,6 +25,7 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
 import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
 import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
 
@@ -71,6 +71,8 @@ const PaymentMethodModal = dynamic(
     ssr: false,
   }
 );
+
+const SPOTIFY_WEB_PLAYER_URL = 'https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp';
 
 interface CoursePlayerProps {
   course: Course & {
@@ -314,6 +316,7 @@ export const CoursePlayer = ({
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
   const [shouldLoadPlayback, setShouldLoadPlayback] = useState(false);
   const [shouldLoadPdfPreview, setShouldLoadPdfPreview] = useState(false);
   const [playbackId, setPlaybackId] = useState('');
@@ -707,6 +710,7 @@ export const CoursePlayer = ({
         source: 'dashboard',
         language,
         paymentMethod,
+        voucherCode: appliedVoucher?.voucher.code,
       });
 
       if (response.data?.url) {
@@ -734,13 +738,6 @@ export const CoursePlayer = ({
     setPaymentError('');
     setIsMethodModalOpen(true);
   }, []);
-
-  const lessonPlaylistTrack = useMemo(() => getJazzPlaylistTrackForLesson({
-    classNumber,
-    language,
-    fallbackTitle: lessonDisplayTitle,
-    courseTitle: course.title,
-  }), [classNumber, course.title, language, lessonDisplayTitle]);
 
   const getPlaybackMetrics = useCallback((event?: Event) => {
     const eventTarget = event?.target as { duration?: number; currentTime?: number } | null;
@@ -922,7 +919,7 @@ export const CoursePlayer = ({
       <div className="h-[100dvh] overflow-hidden bg-background">
         <Sidebar />
 
-        <div className="lg:pl-56 h-full overflow-hidden p-2 sm:p-3 lg:p-4">
+        <div className="lg:pl-56 h-full overflow-hidden p-2 pb-[168px] sm:p-3 sm:pb-[168px] lg:p-4 lg:pb-[168px]">
           <div className={`mx-auto h-full grid grid-cols-1 gap-3 lg:gap-4 min-h-0 ${isNotesPanelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-1'}`}>
             <div className="min-w-0 min-h-0 flex flex-col gap-4">
               <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
@@ -934,6 +931,19 @@ export const CoursePlayer = ({
                     <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <ThemeToggle />
                         <LanguageSelector />
+                        <a
+                          href={SPOTIFY_WEB_PLAYER_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={copy.musicSpotify}
+                          aria-label={copy.musicSpotify}
+                          className="relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border border-primary/40 bg-background/95 px-2.5 text-[11px] font-semibold text-foreground transition-colors hover:bg-accent"
+                        >
+                          <svg viewBox="0 0 24 24" className="h-4 w-4 text-emerald-500" aria-hidden="true" fill="currentColor">
+                            <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
+                          </svg>
+                          <span>Spotify</span>
+                        </a>
                         <button
                           type="button"
                           onClick={() => setIsNotesPanelOpen((current) => !current)}
@@ -987,7 +997,7 @@ export const CoursePlayer = ({
                   {canRenderMuxPlayer ? (
                     <MuxPlayer
                       ref={muxPlayerRef}
-                      className="absolute inset-0 h-full w-full"
+                      className="lesson-mux-player lesson-mux-player--fit-contain absolute inset-0 h-full w-full"
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
                       poster={playbackPosterUrl || undefined}
@@ -1034,11 +1044,6 @@ export const CoursePlayer = ({
                       )}
                     </div>
                   )}
-                </div>
-              </div>
-              <div className="px-1">
-                <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                  <MusicPlatformLinks links={lessonPlaylistTrack.links} language={language} />
                 </div>
               </div>
             </div>
@@ -1145,6 +1150,8 @@ export const CoursePlayer = ({
             </div>
           )}
         </div>
+
+        <SpotifyPlaylistFooter className="fixed bottom-0 left-0 right-0 z-30 lg:left-56" />
       </div>
 
       <LessonQuizOverlay
@@ -1162,11 +1169,16 @@ export const CoursePlayer = ({
         isOpen={isMethodModalOpen}
         isLoading={isPurchasing}
         language={language}
+        courseId={course.id}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
             setIsMethodModalOpen(false);
           }
+        }}
+        onVoucherApplied={(voucher) => {
+          setAppliedVoucher(voucher);
+          setPaymentError('');
         }}
         onConfirm={(method) => {
           void handlePurchaseClick(method);

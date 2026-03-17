@@ -201,6 +201,7 @@
 
   .lesson-mux-player--fit-contain {
     --media-object-fit: contain;
+    --media-object-position: center center;
   }
 }
 

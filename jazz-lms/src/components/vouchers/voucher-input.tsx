@@ -43,6 +43,8 @@ export function VoucherInput({ courseId, onApplied, disabled }: VoucherInputProp
       apply: 'Aplicar',
       validating: 'Validando...',
       invalid: 'Código inválido o expirado.',
+      missingCode: 'Ingresa un código antes de aplicar.',
+      missingCourse: 'No se encontró el curso para validar el voucher.',
       remove: 'Quitar',
     },
     en: {
@@ -51,6 +53,8 @@ export function VoucherInput({ courseId, onApplied, disabled }: VoucherInputProp
       apply: 'Apply',
       validating: 'Validating...',
       invalid: 'Invalid or expired code.',
+      missingCode: 'Enter a code before applying.',
+      missingCourse: 'Course was not found to validate this voucher.',
       remove: 'Remove',
     },
     fr: {
@@ -59,6 +63,8 @@ export function VoucherInput({ courseId, onApplied, disabled }: VoucherInputProp
       apply: 'Appliquer',
       validating: 'Validation...',
       invalid: 'Code invalide ou expiré.',
+      missingCode: 'Saisissez un code avant d’appliquer.',
+      missingCourse: 'Le cours est introuvable pour valider ce code.',
       remove: 'Supprimer',
     },
     pt: {
@@ -67,13 +73,25 @@ export function VoucherInput({ courseId, onApplied, disabled }: VoucherInputProp
       apply: 'Aplicar',
       validating: 'Validando...',
       invalid: 'Código inválido ou expirado.',
+      missingCode: 'Digite um código antes de aplicar.',
+      missingCourse: 'Curso não encontrado para validar este voucher.',
       remove: 'Remover',
     },
   }[language];
 
   const handleApply = async () => {
     const normalizedCode = code.trim().toUpperCase();
-    if (!normalizedCode || !courseId) {
+    if (!normalizedCode) {
+      setStatus('error');
+      setMessage(copy.missingCode);
+      onApplied(null);
+      return;
+    }
+
+    if (!courseId) {
+      setStatus('error');
+      setMessage(copy.missingCourse);
+      onApplied(null);
       return;
     }
 
@@ -89,18 +107,22 @@ export function VoucherInput({ courseId, onApplied, disabled }: VoucherInputProp
       if (response.data?.valid) {
         setVoucherData(response.data as AppliedVoucher);
         setStatus('success');
-        setMessage(response.data.message || 'Voucher aplicado.');
+        const successMessage = response.data.message || 'Voucher aplicado.';
+        setMessage(successMessage);
         onApplied(response.data as AppliedVoucher);
       } else {
         setVoucherData(null);
         setStatus('error');
-        setMessage(response.data?.message || copy.invalid);
+        const invalidMessage = response.data?.message || copy.invalid;
+        setMessage(invalidMessage);
         onApplied(null);
       }
     } catch (error) {
       const apiMessage =
-        axios.isAxiosError(error) && error.response?.data?.message
+        axios.isAxiosError(error) && typeof error.response?.data?.message === 'string'
           ? String(error.response.data.message)
+          : axios.isAxiosError(error) && typeof error.response?.data === 'string'
+            ? String(error.response.data)
           : copy.invalid;
       setVoucherData(null);
       setStatus('error');

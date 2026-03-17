@@ -88,8 +88,7 @@ Critério de aceite:
 - [ ] Eventos ativos: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`
 - [ ] `STRIPE_WEBHOOK_SECRET` atualizado no Vercel
 - [ ] PayPal habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
-- [ ] Bizum habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
-- [ ] Fluxos PayPal e Bizum testados em sandbox e validados em produção
+- [ ] Fluxo PayPal testado em sandbox e validado em produção
 
 ### 5.2 Fluxo funcional
 - [ ] Usuário sem compra não acessa aulas bloqueadas

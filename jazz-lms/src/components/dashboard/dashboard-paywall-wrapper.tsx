@@ -9,6 +9,7 @@ import { Loader2, Lock, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -27,6 +28,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
 
   const copy = {
     es: {
@@ -108,6 +110,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         source: 'dashboard',
         language,
         paymentMethod,
+        voucherCode: appliedVoucher?.voucher.code,
       });
 
       if (response.data?.url) {
@@ -174,11 +177,16 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         isOpen={isMethodModalOpen}
         isLoading={isPurchasing}
         language={language}
+        courseId={courseId ?? ''}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
             setIsMethodModalOpen(false);
           }
+        }}
+        onVoucherApplied={(voucher) => {
+          setAppliedVoucher(voucher);
+          setPaymentError('');
         }}
         onConfirm={(method) => {
           void handlePurchase(method);

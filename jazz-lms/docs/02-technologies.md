@@ -433,7 +433,7 @@ Accessible, unstyled UI components:
 | Supabase over Firebase | Open-source, PostgreSQL, great auth |
 | Prisma over raw SQL | Type-safe queries, easy migrations |
 | Mux over YouTube | Professional streaming, no ads |
-| Stripe as processor (with PayPal/Bizum via Checkout) | Single integration with broader method coverage |
+| Lemon Squeezy as processor (with card/PayPal in hosted checkout) | Single hosted integration with broad payment coverage |
 | Vercel over AWS | Simpler deployment, optimized for Next.js |
 | Tailwind over CSS-in-JS | Faster development, smaller bundle |
 

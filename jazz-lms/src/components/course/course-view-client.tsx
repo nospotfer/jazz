@@ -10,6 +10,7 @@ import { useDashboardPreferences } from '@/components/providers/dashboard-prefer
 import { getLocalizedJazzDescription, getLocalizedJazzSubtitle } from '@/lib/course-lessons';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 
 const UnlockAnimation = dynamic(
   () => import('./unlock-animation').then((mod) => mod.UnlockAnimation),
@@ -589,6 +590,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
   const [progressByLessonId, setProgressByLessonId] = useState<Record<string, number>>({});
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -678,6 +680,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         source: 'dashboard',
         language,
         paymentMethod,
+        voucherCode: appliedVoucher?.voucher.code,
       });
 
       if (response.data?.url) {
@@ -691,7 +694,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       }
       setIsPurchasing(false);
     }
-  }, [courseId, language]);
+  }, [appliedVoucher, courseId, language]);
 
   const primePaymentModal = useCallback(() => {
     warmPaymentMethodModal();
@@ -943,11 +946,16 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         isOpen={isMethodModalOpen}
         isLoading={isPurchasing}
         language={language}
+        courseId={courseId ?? ''}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
             setIsMethodModalOpen(false);
           }
+        }}
+        onVoucherApplied={(voucher) => {
+          setAppliedVoucher(voucher);
+          setPaymentError('');
         }}
         onConfirm={(method) => {
           void handlePurchaseClick(method);

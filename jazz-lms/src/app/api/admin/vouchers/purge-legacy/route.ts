@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { isLegacyVoucherCode } from '@/lib/voucher-artists';
-import { syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
+import { removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
 
 export const runtime = 'nodejs';
 
@@ -61,14 +61,26 @@ export async function POST(req: Request) {
       });
     }
 
-    for (const voucher of legacyVouchers) {
-      await syncVoucherPromotionCode(voucher, {
-        desiredActive: false,
-        createIfMissing: false,
-      });
-    }
-
     const deletedIds = legacyVouchers.map((voucher: any) => voucher.id);
+    const lemonSyncResults = await Promise.all(
+      legacyVouchers.map((voucher: any) =>
+        removeVoucherDiscountSync({
+          id: voucher.id,
+          code: voucher.code,
+          type: voucher.type,
+          discountPercent: voucher.discountPercent,
+          discountAmount: voucher.discountAmount,
+          maxUses: voucher.maxUses,
+          expiresAt: voucher.expiresAt,
+          metadata: voucher.metadata,
+        })
+      )
+    );
+    const lemonSyncWarnings = lemonSyncResults
+      .map((result, index) => ({ result, code: legacyVouchers[index]?.code }))
+      .filter((entry) => !entry.result.ok)
+      .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
+
     const affectedBatchIds = Array.from(
       new Set(
         legacyVouchers
@@ -116,6 +128,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       deletedCount: deletedIds.length,
+      lemonSyncWarnings,
       message: `Se eliminaron ${deletedIds.length} cupon(es) legado(s).`,
     });
   } catch (error) {

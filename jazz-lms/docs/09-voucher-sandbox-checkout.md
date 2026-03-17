@@ -1,21 +1,17 @@
-# Voucher + Checkout Sandbox (Stripe / Bizum)
+# Voucher + Checkout Sandbox (Lemon Squeezy / PayPal)
 
-Este guia prepara o ambiente para testar pagamento com desconto via voucher.
+Este guia prepara o ambiente para testar pagamento com desconto via voucher usando Lemon Squeezy.
 
 ## 1) Variáveis obrigatórias
 
 Preencha no `.env.local`:
 
 - `NEXT_PUBLIC_APP_URL=http://localhost:3000`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...`
-- `STRIPE_SECRET_KEY=sk_test_...`
-- `STRIPE_WEBHOOK_SECRET=whsec_...`
-
-Onde obter cada chave:
-
-- `STRIPE_SECRET_KEY`: Stripe Dashboard (modo Test) → Developers → API keys → Secret key.
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Stripe Dashboard (modo Test) → Developers → API keys → Publishable key.
-- `STRIPE_WEBHOOK_SECRET`: Stripe CLI (`stripe listen --forward-to localhost:3000/api/webhooks/stripe`) ou Dashboard do endpoint webhook.
+- `LEMON_SQUEEZY_API_KEY=...`
+- `LEMON_SQUEEZY_WEBHOOK_SECRET=...`
+- `LEMON_SQUEEZY_STORE_ID=317886`
+- `LEMON_SQUEEZY_PRODUCT_ID=896872`
+- `LEMON_SQUEEZY_VARIANT_ID=1411237`
 
 Opcional (quando usar Supabase local/externo):
 
@@ -23,34 +19,27 @@ Opcional (quando usar Supabase local/externo):
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY=...`
 - `SUPABASE_SERVICE_ROLE_KEY=...`
 
-## 2) Validar Stripe sandbox
-
-No projeto:
-
-- `npm run stripe:sandbox:check`
-
-Se retornar `STRIPE_SANDBOX_CHECK_OK`, as chaves de teste estão corretas.
-
-## 3) Subir app e webhook local
+## 2) Subir app local
 
 Terminal 1:
 
 - `npm run dev`
 
-Terminal 2:
+## 3) Validar webhook
 
-- `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+No Lemon Squeezy Webhooks:
 
-Copie o `whsec_...` mostrado pelo Stripe CLI para `STRIPE_WEBHOOK_SECRET`.
+- Endpoint: `https://culturadeljazz.com/api/webhooks/lemon-squeezy`
+- Eventos: `order_created`, `order_refunded`
 
-## 4) Habilitar método Bizum no Stripe
+Para teste local com webhook real, use um túnel e aponte o endpoint para `https://<tunnel>/api/webhooks/lemon-squeezy`.
 
-No Stripe Dashboard (modo Test):
+## 4) Validar método PayPal
 
-- Ative `Bizum` em Payment methods.
-- Confirme que o país/conta permite Bizum no sandbox.
+No checkout hospedado da Lemon Squeezy:
 
-Observação: no código, Bizum já está habilitado via Stripe Checkout quando disponível.
+- Verifique se PayPal aparece para sua conta/região em modo de teste.
+- Se não aparecer, finalize o teste com cartão.
 
 ## 5) Criar vouchers rápidos no admin
 
@@ -75,20 +64,16 @@ Fluxo recomendado:
 
 1. Copie um código criado.
 2. Abra compra do curso (dashboard ou página do curso).
-3. No modal de método de pagamento, selecione cartão/PayPal/Bizum.
+3. No modal de método de pagamento, selecione cartão ou PayPal.
 4. Preencha o campo opcional de voucher.
-5. Continue para Stripe Checkout.
+5. Continue para o checkout da Lemon Squeezy.
 
 Resultado esperado:
 
-- Valor da sessão Stripe já vai com desconto.
+- Valor final da compra sai com desconto.
 - Após pagamento, webhook grava `finalPrice`, `discountAmount`, `voucherId` e contabiliza uso do voucher.
 
-## 7) Cartão de teste
-
-Use o cartão de teste padrão da Stripe que vocês já utilizam no sandbox (ex.: `4242 4242 4242 4242`).
-
-## 8) Verificações pós-compra
+## 7) Verificações pós-compra
 
 - Compra criada com preço final (descontado).
 - Voucher com `currentUses` incrementado.

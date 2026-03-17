@@ -6,13 +6,11 @@ import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 import { getServerUser } from '@/lib/server-user';
 import { hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
-import { syncCourseCheckoutSession } from '@/lib/stripe-checkout-sync';
 
 type DashboardPageProps = {
   searchParams?: {
     purchase?: string | string[];
     source?: string | string[];
-    session_id?: string | string[];
   };
 };
 
@@ -23,37 +21,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   if (!user) {
     return redirect('/auth');
-  }
-
-  const purchaseStatus = Array.isArray(searchParams?.purchase)
-    ? searchParams?.purchase[0]
-    : searchParams?.purchase;
-  const purchaseSource = Array.isArray(searchParams?.source)
-    ? searchParams?.source[0]
-    : searchParams?.source;
-  const sessionId = Array.isArray(searchParams?.session_id)
-    ? searchParams?.session_id[0]
-    : searchParams?.session_id;
-
-  let shouldReloadUnlockedDashboard = false;
-
-  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
-    try {
-      const result = await syncCourseCheckoutSession({
-        sessionId,
-        expectedUserId: user.id,
-      });
-
-      if (result.success) {
-        shouldReloadUnlockedDashboard = true;
-      }
-    } catch (error) {
-      console.error('[dashboard] Unable to confirm Stripe checkout session.', error);
-    }
-  }
-
-  if (shouldReloadUnlockedDashboard) {
-    return redirect('/dashboard?purchase=success&source=dashboard');
   }
 
   let course: {

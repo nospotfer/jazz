@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { getVoucherProviderDiscountCode } from '@/lib/voucher-lemon-sync';
 
 export type VoucherTypeValue = 'FREE_ACCESS' | 'DISCOUNT_PERCENT' | 'DISCOUNT_FIXED';
 
@@ -24,6 +25,7 @@ export type VoucherValidationResult =
       voucher: {
         id: string;
         code: string;
+        providerDiscountCode: string;
         type: VoucherTypeValue;
         discountPercent: number;
         discountAmount: number;
@@ -92,6 +94,7 @@ export async function validateVoucherForCourse({
       isActive: true,
       expiresAt: true,
       courseId: true,
+      metadata: true,
     },
   });
 
@@ -197,6 +200,7 @@ export async function validateVoucherForCourse({
     voucher: {
       id: voucher.id,
       code: voucher.code,
+      providerDiscountCode: getVoucherProviderDiscountCode(voucher.metadata, voucher.code),
       type: voucher.type,
       discountPercent: toMoney(Number(voucher.discountPercent ?? 0)),
       discountAmount: toMoney(Number(voucher.discountAmount ?? 0)),

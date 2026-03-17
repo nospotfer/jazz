@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureMessagingTables } from '@/lib/messages-db';
-import { randomUUID } from 'crypto';
+import { randomUUID, timingSafeEqual } from 'crypto';
 import { Resend } from 'resend';
+import { checkRateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
 
 const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
@@ -50,14 +51,44 @@ async function notifyStudentByEmail(to: string, subject: string, body: string) {
 
 export async function POST(req: Request) {
   try {
+    const webhookLimit = checkRateLimit(req, {
+      bucket: 'webhook-email',
+      maxRequests: 30,
+      windowMs: 60_000,
+    });
+
+    if (!webhookLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many webhook requests', retryAfterSeconds: webhookLimit.retryAfterSeconds },
+        {
+          status: 429,
+          headers: createRateLimitHeaders(webhookLimit, 60_000),
+        }
+      );
+    }
+
     await ensureMessagingTables();
 
     const configuredSecret = process.env.INBOUND_EMAIL_WEBHOOK_SECRET?.trim();
-    if (configuredSecret) {
-      const providedSecret = req.headers.get('x-inbox-secret')?.trim();
-      if (!providedSecret || providedSecret !== configuredSecret) {
-        return new NextResponse('Unauthorized', { status: 401 });
-      }
+    if (!configuredSecret) {
+      console.error('[messages:email-webhook] Missing INBOUND_EMAIL_WEBHOOK_SECRET');
+      return new NextResponse('Webhook secret not configured', { status: 503 });
+    }
+
+    const providedSecret = req.headers.get('x-inbox-secret')?.trim();
+    if (!providedSecret) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const expectedBuffer = Buffer.from(configuredSecret);
+    const providedBuffer = Buffer.from(providedSecret);
+
+    if (expectedBuffer.length !== providedBuffer.length) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    if (!timingSafeEqual(expectedBuffer, providedBuffer)) {
+      return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const payload = await req.json();

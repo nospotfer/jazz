@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
 import { hasValidSupabaseServerConfig, normalizeSupabaseUrl } from '@/lib/supabase-config';
+import { checkRateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
 
 function hasPlaceholder(value: string | undefined, placeholder: string) {
   return !value || value.includes(placeholder);
@@ -32,6 +33,46 @@ export async function POST(request: Request) {
 
     const { email } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
+
+    const ipLimit = checkRateLimit(request, {
+      bucket: 'auth-send-code-ip',
+      maxRequests: 20,
+      windowMs: 60_000,
+    });
+
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Demasiados intentos. Espera un momento antes de solicitar un nuevo código.',
+          retryAfterSeconds: ipLimit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: createRateLimitHeaders(ipLimit, 60_000),
+        }
+      );
+    }
+
+    const emailLimit = checkRateLimit(request, {
+      bucket: 'auth-send-code-email',
+      identifier: normalizedEmail || 'missing-email',
+      maxRequests: 5,
+      windowMs: 10 * 60_000,
+    });
+
+    if (!emailLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Este correo alcanzó el límite de solicitudes. Intenta nuevamente en unos minutos.',
+          retryAfterSeconds: emailLimit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: createRateLimitHeaders(emailLimit, 10 * 60_000),
+        }
+      );
+    }
+
     const url = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

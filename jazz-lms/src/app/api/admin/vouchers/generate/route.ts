@@ -2,12 +2,12 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
 import {
   getVoucherArtistByDiscount,
   getVoucherArtistByKey,
   VOUCHER_ARTIST_TIERS,
 } from '@/lib/voucher-artists';
+import { ensureVoucherDiscountSynced } from '@/lib/voucher-lemon-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -192,34 +192,6 @@ export async function POST(req: Request) {
 
     const plannedVouchers = codes.map((code) => ({ id: crypto.randomUUID(), code }));
 
-    const stripeMetadataByCode = new Map<string, Record<string, unknown>>();
-    for (const voucher of plannedVouchers) {
-      const stripeMetadata = await syncVoucherPromotionCode(
-        {
-          id: voucher.id,
-          code: voucher.code,
-          type,
-          discountPercent,
-          discountAmount,
-          minOrderValue,
-          maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
-          isActive: true,
-          expiresAt,
-          metadata: normalizedMetadata,
-        },
-        {
-          desiredActive: true,
-          createIfMissing: true,
-        }
-      );
-
-      if (!stripeMetadata) {
-        throw new Error(`Stripe sync returned empty metadata for voucher ${voucher.code}.`);
-      }
-
-      stripeMetadataByCode.set(voucher.code, mergeStripeVoucherMetadata(normalizedMetadata, stripeMetadata));
-    }
-
     const result = await prisma.$transaction(async (tx: any) => {
       const batch = await tx.voucherBatch.create({
         data: {
@@ -246,7 +218,7 @@ export async function POST(req: Request) {
               maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
               maxUsesPerUser,
               expiresAt,
-              metadata: stripeMetadataByCode.get(voucher.code) ?? normalizedMetadata,
+              metadata: normalizedMetadata,
             },
             select: {
               id: true,
@@ -261,10 +233,41 @@ export async function POST(req: Request) {
       return { batch, vouchers };
     });
 
+    const syncWarnings: string[] = [];
+    let syncedWithLemon = 0;
+
+    for (const createdVoucher of result.vouchers) {
+      const syncResult = await ensureVoucherDiscountSynced({
+        id: createdVoucher.id,
+        code: createdVoucher.code,
+        type,
+        discountPercent: type === 'DISCOUNT_PERCENT' ? discountPercent : null,
+        discountAmount: type === 'DISCOUNT_FIXED' ? discountAmount : null,
+        maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
+        expiresAt,
+        metadata: normalizedMetadata,
+      });
+
+      await prisma.voucherCode.update({
+        where: { id: createdVoucher.id },
+        data: {
+          metadata: syncResult.metadata,
+        },
+      });
+
+      if (syncResult.ok) {
+        syncedWithLemon += 1;
+      } else {
+        syncWarnings.push(`${createdVoucher.code}: ${syncResult.reason || 'sync failed'}`);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       created: result.vouchers.length,
       batchId: result.batch.id,
+      syncedWithLemon,
+      syncWarnings,
       artists: VOUCHER_ARTIST_TIERS,
       vouchers: result.vouchers,
     });

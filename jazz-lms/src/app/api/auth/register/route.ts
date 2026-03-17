@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
 import { hasValidSupabaseServerConfig, normalizeSupabaseUrl } from '@/lib/supabase-config';
+import { checkRateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
 
@@ -34,6 +35,46 @@ export async function POST(request: Request) {
 
     const { email, password, fullName } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
+
+    const ipLimit = checkRateLimit(request, {
+      bucket: 'auth-register-ip',
+      maxRequests: 10,
+      windowMs: 60_000,
+    });
+
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Demasiados intentos de registro. Espera un momento antes de intentarlo otra vez.',
+          retryAfterSeconds: ipLimit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: createRateLimitHeaders(ipLimit, 60_000),
+        }
+      );
+    }
+
+    const emailLimit = checkRateLimit(request, {
+      bucket: 'auth-register-email',
+      identifier: normalizedEmail || 'missing-email',
+      maxRequests: 4,
+      windowMs: 30 * 60_000,
+    });
+
+    if (!emailLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Este correo alcanzó el límite de intentos de registro. Intenta más tarde.',
+          retryAfterSeconds: emailLimit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: createRateLimitHeaders(emailLimit, 30 * 60_000),
+        }
+      );
+    }
+
     const url = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

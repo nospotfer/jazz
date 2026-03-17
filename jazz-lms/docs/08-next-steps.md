@@ -160,7 +160,7 @@ Let students leave reviews after completing a course.
 Generate PDF certificates when a user completes a course.
 
 #### 12. Improve Payment-Method Availability Monitoring
-Track payment-method availability by market (e.g., Spain) and show country-aware checkout guidance when PayPal/Bizum are not available.
+Track payment-method availability by market and show country-aware checkout guidance when PayPal is not available.
 
 #### 13. Add Coupons/Discounts
 Beyond Stripe's promotion codes, implement custom discount logic.

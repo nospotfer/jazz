@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { Disc3, Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { MusicPlatformLinks } from '@/components/music/music-platform-links';
 import { Button } from '@/components/ui/button';
 import { getJazzStudyPlaylist } from '@/lib/jazz-playlist';
 import type { SupportedLanguage } from '@/lib/language';
@@ -164,10 +163,6 @@ export function ProfileJazzPlaylist({ language, earnedClassNumbers = [] }: Profi
                   <Button type="button" size="icon-sm" variant="outline" onClick={selectNext} className="border-white/15 bg-white/5 text-white hover:bg-white/10" aria-label={copy.next}>
                     <SkipForward className="h-4 w-4" />
                   </Button>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <MusicPlatformLinks links={activeTrack.links} language={language} buttonClassName="border-white/15 bg-white/5 hover:bg-white/10" />
                 </div>
               </div>
             </div>

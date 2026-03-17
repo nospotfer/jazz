@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
+import { removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -88,12 +88,25 @@ export async function POST(req: Request) {
       ? candidates
       : candidates.filter((voucher: any) => voucher.currentUses === 0 && voucher._count.redemptions === 0);
 
-    for (const voucher of deletable) {
-      await syncVoucherPromotionCode(voucher, {
-        desiredActive: false,
-        createIfMissing: false,
-      });
-    }
+    const lemonSyncResults = await Promise.all(
+      deletable.map((voucher: any) =>
+        removeVoucherDiscountSync({
+          id: voucher.id,
+          code: voucher.code,
+          type: voucher.type,
+          discountPercent: voucher.discountPercent,
+          discountAmount: voucher.discountAmount,
+          maxUses: voucher.maxUses,
+          expiresAt: voucher.expiresAt,
+          metadata: voucher.metadata,
+        })
+      )
+    );
+
+    const lemonSyncWarnings = lemonSyncResults
+      .map((result, index) => ({ result, code: deletable[index]?.code }))
+      .filter((entry) => !entry.result.ok)
+      .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
 
     const result = await prisma.$transaction(async (tx: any) => {
       if (deletable.length) {
@@ -147,6 +160,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       ...result,
+      lemonSyncWarnings,
     });
   } catch (error) {
     console.error('[ADMIN_VOUCHERS_BULK_DELETE_ERROR]', error);

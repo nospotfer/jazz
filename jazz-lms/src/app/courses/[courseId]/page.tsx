@@ -9,7 +9,6 @@ import {
 } from '@/lib/pricing';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
-import { syncCourseCheckoutSession } from '@/lib/stripe-checkout-sync';
 
 export default async function CourseDetailPage({
   params,
@@ -18,7 +17,6 @@ export default async function CourseDetailPage({
   params: { courseId: string };
   searchParams?: {
     success?: string | string[];
-    session_id?: string | string[];
   };
 }) {
   const cookieStore = cookies();
@@ -32,7 +30,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Contenido del curso',
       chapterLabel: 'Capítulo',
       fullAccess: 'Acceso completo a las 15 clases',
-      securePayment: 'Pago seguro gestionado por Stripe',
+      securePayment: 'Pago seguro gestionado por Lemon Squeezy',
     },
     en: {
       chapter: 'chapter',
@@ -42,7 +40,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Course content',
       chapterLabel: 'Chapter',
       fullAccess: 'Full access to all 15 classes',
-      securePayment: 'Secure payment handled by Stripe',
+      securePayment: 'Secure payment handled by Lemon Squeezy',
     },
     fr: {
       chapter: 'chapitre',
@@ -52,7 +50,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Contenu du cours',
       chapterLabel: 'Chapitre',
       fullAccess: 'Accès complet aux 15 cours',
-      securePayment: 'Paiement sécurisé géré par Stripe',
+      securePayment: 'Paiement sécurisé géré par Lemon Squeezy',
     },
     pt: {
       chapter: 'capítulo',
@@ -62,7 +60,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Conteúdo do curso',
       chapterLabel: 'Capítulo',
       fullAccess: 'Acesso completo às 15 aulas',
-      securePayment: 'Pagamento seguro processado pelo Stripe',
+      securePayment: 'Pagamento seguro processado pelo Lemon Squeezy',
     },
   }[language];
 
@@ -78,21 +76,9 @@ export default async function CourseDetailPage({
   const successParam = Array.isArray(searchParams?.success)
     ? searchParams?.success[0]
     : searchParams?.success;
-  const sessionId = Array.isArray(searchParams?.session_id)
-    ? searchParams?.session_id[0]
-    : searchParams?.session_id;
 
-  if (successParam === 'true' && sessionId) {
-    try {
-      await syncCourseCheckoutSession({
-        sessionId,
-        expectedUserId: user.id,
-        expectedCourseId: params.courseId,
-      });
-      return redirect(`/courses/${params.courseId}?success=true`);
-    } catch (error) {
-      console.error('[course-page] Unable to confirm Stripe checkout session.', error);
-    }
+  if (successParam === 'true') {
+    return redirect(`/courses/${params.courseId}?success=true`);
   }
 
   const course = await db.course.findUnique({

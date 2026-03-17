@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { PaymentMethod } from '@/components/payment/payment-method-modal';
+import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -25,6 +26,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   const [isLoading, setIsLoading] = useState(false);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -54,7 +56,6 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       methodLabel: 'Método de pago',
       methodCard: 'Tarjeta',
       methodPaypal: 'PayPal',
-      methodBizum: 'Bizum',
       methodHint: 'Selecciona cómo quieres pagar.',
     },
     en: {
@@ -86,9 +87,10 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         courseId,
         language,
         paymentMethod: price > 0 ? paymentMethod : undefined,
+        voucherCode: appliedVoucher?.voucher.code,
       });
 
-      // Redirect to Stripe Checkout
+      // Redirect to Lemon Squeezy Checkout
       window.location.assign(response.data.url);
     } catch (error) {
       if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
@@ -142,11 +144,16 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         isOpen={isMethodModalOpen}
         isLoading={isLoading}
         language={language}
+        courseId={courseId}
         errorMessage={paymentError}
         onClose={() => {
           if (!isLoading) {
             setIsMethodModalOpen(false);
           }
+        }}
+        onVoucherApplied={(voucher) => {
+          setAppliedVoucher(voucher);
+          setPaymentError('');
         }}
         onConfirm={(method) => {
           void checkoutWithMethod(method);

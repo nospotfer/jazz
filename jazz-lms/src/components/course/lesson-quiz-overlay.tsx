@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { MusicPlatformLinks } from '@/components/music/music-platform-links';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
@@ -293,10 +292,6 @@ function QuizPlaylistPanel({
               </button>
             );
           })}
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <MusicPlatformLinks links={activeTrack.links} language={language} buttonClassName="border-white/12 bg-white/8 hover:bg-white/14 text-white" />
         </div>
       </div>
     </aside>

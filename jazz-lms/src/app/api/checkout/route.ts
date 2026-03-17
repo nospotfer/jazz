@@ -1,14 +1,14 @@
 import { createClient } from '@/utils/supabase/server';
-import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { cookies } from 'next/headers';
-import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
-import { getCourseTranslationBundle, resolveCourseText } from '@/lib/course-translations';
-import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
+import { normalizeLanguage } from '@/lib/language';
+import { isSupportedPaymentMethod } from '@/lib/checkout-helpers';
 import { isLocalTestRequest } from '@/lib/test-mode';
+import { createLemonCheckout, getLemonConfig, isLemonConfigured } from '@/lib/lemon-squeezy';
+import { validateVoucherForCourse } from '@/lib/vouchers';
+import { upsertCoursePurchaseFromProvider } from '@/lib/course-purchase-sync';
 
 export const runtime = 'nodejs';
 
@@ -21,7 +21,8 @@ export async function POST(req: Request) {
     alreadyPurchased: 'El curso ya fue comprado',
     paymentsUnavailable: 'Pagos temporalmente no disponibles',
     paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
-    voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
+    invalidVoucher: 'Código de voucher inválido',
+    voucherNotConfigured: 'Este voucher no está configurado en el checkout',
     internalError: 'Error interno del servidor',
   };
 
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
     const selectedLanguage = typeof language === 'string' && language.trim().length > 0
       ? normalizeLanguage(language)
       : normalizeLanguage(cookieStore.get('jazz_lang')?.value);
-    const stripeLocale = languageToStripeLocale(selectedLanguage);
+
     copy = {
       es: {
         unauthorized: 'No autorizado',
@@ -51,7 +52,8 @@ export async function POST(req: Request) {
         alreadyPurchased: 'El curso ya fue comprado',
         paymentsUnavailable: 'Pagos temporalmente no disponibles',
         paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
-        voucherInProvider: 'Introduce el código de descuento en la página de pago segura',
+        invalidVoucher: 'Código de voucher inválido',
+        voucherNotConfigured: 'Este voucher no está configurado en el checkout',
         internalError: 'Error interno del servidor',
       },
       en: {
@@ -62,7 +64,8 @@ export async function POST(req: Request) {
         alreadyPurchased: 'Course already purchased',
         paymentsUnavailable: 'Payments are temporarily unavailable',
         paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
-        voucherInProvider: 'Enter your discount code on the secure payment page',
+        invalidVoucher: 'Invalid voucher code',
+        voucherNotConfigured: 'This voucher is not configured in checkout',
         internalError: 'Internal server error',
       },
       fr: {
@@ -73,7 +76,8 @@ export async function POST(req: Request) {
         alreadyPurchased: 'Le cours a déjà été acheté',
         paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
         paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
-        voucherInProvider: 'Saisissez votre code de réduction sur la page de paiement sécurisée',
+        invalidVoucher: 'Code promo invalide',
+        voucherNotConfigured: 'Ce code promo n’est pas configuré dans le checkout',
         internalError: 'Erreur interne du serveur',
       },
       pt: {
@@ -84,16 +88,13 @@ export async function POST(req: Request) {
         alreadyPurchased: 'O curso já foi comprado',
         paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
         paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
-        voucherInProvider: 'Insira o código de desconto na página de pagamento segura',
+        invalidVoucher: 'Código de voucher inválido',
+        voucherNotConfigured: 'Este voucher não está configurado no checkout',
         internalError: 'Erro interno do servidor',
       },
     }[selectedLanguage];
 
-    if (typeof voucherCode === 'string' && voucherCode.trim().length > 0) {
-      return new NextResponse(copy.voucherInProvider, { status: 400 });
-    }
-
-    const origin = req.headers.get('origin') || 'http://localhost:3000';
+    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     const supabase = createClient();
     const {
@@ -118,12 +119,11 @@ export async function POST(req: Request) {
       return new NextResponse(copy.courseNotFound, { status: 404 });
     }
 
-    // Check if already purchased
     const existingPurchase = await db.purchase.findUnique({
       where: {
         userId_courseId: {
           userId: user.id,
-          courseId: courseId,
+          courseId,
         },
       },
     });
@@ -136,18 +136,20 @@ export async function POST(req: Request) {
     const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
 
-    const translationBundle = await getCourseTranslationBundle({
-      language: selectedLanguage,
-      courseIds: [course.id],
-      chapterIds: [],
-      lessonIds: [],
-    });
-    const localizedCourse = resolveCourseText(
-      translationBundle.courses,
-      course.id,
-      course.title,
-      course.description
-    );
+    const normalizedVoucherCode =
+      typeof voucherCode === 'string' && voucherCode.trim().length > 0 ? voucherCode.trim().toUpperCase() : null;
+
+    const voucherValidation = normalizedVoucherCode
+      ? await validateVoucherForCourse({
+          code: normalizedVoucherCode,
+          courseId,
+          userId: user.id,
+        })
+      : null;
+
+    if (voucherValidation && !voucherValidation.valid) {
+      return new NextResponse(voucherValidation.message || copy.invalidVoucher, { status: 400 });
+    }
 
     if (isFreeCourse) {
       const prisma = db as any;
@@ -185,33 +187,32 @@ export async function POST(req: Request) {
       });
     }
 
+    if (voucherValidation?.valid && voucherValidation.isFree) {
+      await upsertCoursePurchaseFromProvider({
+        userId: user.id,
+        courseId,
+        providerReferenceId: `ls-voucher:${voucherValidation.voucher.providerDiscountCode}`,
+        originalPrice: voucherValidation.originalPrice,
+        discountAmount: voucherValidation.discount,
+        finalPrice: voucherValidation.finalPrice,
+        voucherCode: voucherValidation.voucher.code,
+      });
+
+      const successUrl = source === 'dashboard'
+        ? `${origin}/dashboard?purchase=success&source=dashboard&voucher=true&free=true`
+        : `${origin}/courses/${courseId}?success=true&voucher=true&free=true`;
+
+      return NextResponse.json({ url: successUrl });
+    }
+
     if (isLocalTestRequest(req)) {
-      const prisma = db as any;
-      await prisma.$transaction(async (tx: any) => {
-        await tx.purchase.upsert({
-          where: {
-            userId_courseId: {
-              userId: user.id,
-              courseId,
-            },
-          },
-          update: {
-            voucherId: null,
-            originalPrice: numericPrice,
-            finalPrice: numericPrice,
-            discountAmount: 0,
-            stripeSessionId: 'local-test-session',
-          },
-          create: {
-            userId: user.id,
-            courseId,
-            voucherId: null,
-            originalPrice: numericPrice,
-            finalPrice: numericPrice,
-            discountAmount: 0,
-            stripeSessionId: 'local-test-session',
-          },
-        });
+      await upsertCoursePurchaseFromProvider({
+        userId: user.id,
+        courseId,
+        providerReferenceId: 'local-test-session',
+        originalPrice: numericPrice,
+        discountAmount: 0,
+        finalPrice: numericPrice,
       });
 
       const successUrl = source === 'dashboard'
@@ -221,119 +222,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: successUrl });
     }
 
-    if (!stripe) {
+    if (!isLemonConfigured()) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
-    // Find or create Stripe customer
-    let stripeCustomerId: string;
-    const customers = await stripe.customers.list({
-      email: user.email,
-      limit: 1,
-    });
+    const lemonConfig = getLemonConfig();
 
-    if (customers.data.length > 0) {
-      stripeCustomerId = customers.data[0].id;
-    } else {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          userId: user.id,
-        },
-      });
-      stripeCustomerId = customer.id;
-    }
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true`;
 
-    const checkoutOriginalPrice = Number(numericPrice.toFixed(2));
-
-    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-      {
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: localizedCourse.title,
-            description: localizedCourse.description || undefined,
-          },
-          unit_amount: Math.round(checkoutOriginalPrice * 100),
-        },
-        quantity: 1,
-      },
-    ];
-
-    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&session_id={CHECKOUT_SESSION_ID}`;
-    const dashboardCancelUrl = `${origin}/dashboard?purchase=canceled&source=dashboard`;
-    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&session_id={CHECKOUT_SESSION_ID}`;
-    const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
-
-    const baseSessionParams: Stripe.Checkout.SessionCreateParams = {
-      customer: stripeCustomerId,
-      locale: stripeLocale,
-      line_items,
-      mode: 'payment',
-      allow_promotion_codes: true,
-      success_url: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
-      cancel_url: source === 'dashboard' ? dashboardCancelUrl : courseCancelUrl,
-      metadata: {
-        purchaseType: 'course',
-        courseId: course.id,
-        userId: user.id,
-        originalPrice: String(checkoutOriginalPrice),
-        discountAmount: '0',
-        finalPrice: String(checkoutOriginalPrice),
-      },
-    };
-
-    let session: Stripe.Checkout.Session;
+    let checkoutUrl: string;
     try {
-      if (isSupportedPaymentMethod(paymentMethod)) {
-        const explicitMethodParams: Stripe.Checkout.SessionCreateParams = {
-          ...baseSessionParams,
-          payment_method_types: [paymentMethod] as unknown as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
-        };
-
-        session = await stripe.checkout.sessions.create(explicitMethodParams);
-      } else {
-        try {
-          const multiMethodParams: Stripe.Checkout.SessionCreateParams = {
-            ...baseSessionParams,
-            payment_method_types: ['card', 'paypal'] as unknown as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
-          };
-
-          session = await stripe.checkout.sessions.create(multiMethodParams);
-        } catch (fallbackError) {
-          if (
-            fallbackError instanceof Stripe.errors.StripeInvalidRequestError &&
-            isUnsupportedPaymentMethodStripeError(fallbackError)
-          ) {
-            const cardOnlyParams: Stripe.Checkout.SessionCreateParams = {
-              ...baseSessionParams,
-              payment_method_types: ['card'],
-            };
-
-            session = await stripe.checkout.sessions.create(cardOnlyParams);
-          } else {
-            throw fallbackError;
-          }
-        }
-      }
+      checkoutUrl = await createLemonCheckout({
+        storeId: lemonConfig.storeId as string,
+        variantId: lemonConfig.variantId as string,
+        email: user.email,
+        successUrl: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
+        customData: {
+          purchaseType: 'course',
+          courseId: course.id,
+          userId: user.id,
+          language: selectedLanguage,
+          courseTitle: course.title,
+          originalPrice: String(Number(numericPrice.toFixed(2))),
+        },
+        discountCode: voucherValidation?.valid ? voucherValidation.voucher.providerDiscountCode : undefined,
+      });
     } catch (error) {
-      if (error instanceof Stripe.errors.StripeInvalidRequestError) {
-        if (isUnsupportedPaymentMethodStripeError(error)) {
-          return new NextResponse(copy.paymentMethodUnavailable, { status: 400 });
-        }
+      const errorMessage = error instanceof Error ? error.message.toLowerCase() : '';
+      const voucherRejectedByProvider =
+        errorMessage.includes('discount code') && errorMessage.includes('does not exist');
 
-        console.log('[CHECKOUT_STRIPE_INVALID_REQUEST]', {
-          message: error.message,
-          param: error.param,
-          code: error.code,
-        });
-        return new NextResponse(copy.paymentMethodUnavailable, { status: 400 });
+      if (voucherRejectedByProvider) {
+        return new NextResponse(copy.voucherNotConfigured, { status: 400 });
       }
 
       throw error;
     }
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
     console.log('[CHECKOUT_ERROR]', error);
     return new NextResponse(copy.internalError, { status: 500 });

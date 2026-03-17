@@ -357,7 +357,7 @@ describe('POST /api/checkout (with Stripe)', () => {
     stripeMocks.stripeCreate.mockImplementation(() => {
       callCount++;
       if (callCount === 1) {
-        throw new StripeInvalidRequestError('The payment method type "bizum" is not activated', 'payment_method_types');
+        throw new StripeInvalidRequestError('The payment method type "paypal" is not activated', 'payment_method_types');
       }
       return Promise.resolve({ url: 'https://checkout.stripe.com/fallback' });
     });
