@@ -53,6 +53,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       somethingWrong: 'Algo salió mal. Inténtalo de nuevo.',
       enrollFree: 'Inscribirse gratis',
       buyCourse: 'Comprar curso',
+      chooseMethod: 'Elegir método de pago',
       methodLabel: 'Método de pago',
       methodCard: 'Tarjeta',
       methodPaypal: 'PayPal',

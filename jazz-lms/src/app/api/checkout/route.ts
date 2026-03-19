@@ -6,9 +6,10 @@ import { cookies } from 'next/headers';
 import { normalizeLanguage } from '@/lib/language';
 import { isSupportedPaymentMethod } from '@/lib/checkout-helpers';
 import { isLocalTestRequest } from '@/lib/test-mode';
-import { createLemonCheckout, getLemonConfig, isLemonConfigured } from '@/lib/lemon-squeezy';
+import { createLemonCheckout, getLemonConfig, isLemonConfigured, isLemonWebhookConfigured } from '@/lib/lemon-squeezy';
 import { validateVoucherForCourse } from '@/lib/vouchers';
 import { upsertCoursePurchaseFromProvider } from '@/lib/course-purchase-sync';
+import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs';
 
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
     paymentsUnavailable: 'Pagos temporalmente no disponibles',
     paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
     invalidVoucher: 'Código de voucher inválido',
+    voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
     voucherNotConfigured: 'Este voucher no está configurado en el checkout',
     internalError: 'Error interno del servidor',
   };
@@ -53,6 +55,7 @@ export async function POST(req: Request) {
         paymentsUnavailable: 'Pagos temporalmente no disponibles',
         paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
         invalidVoucher: 'Código de voucher inválido',
+        voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
         voucherNotConfigured: 'Este voucher no está configurado en el checkout',
         internalError: 'Error interno del servidor',
       },
@@ -65,6 +68,7 @@ export async function POST(req: Request) {
         paymentsUnavailable: 'Payments are temporarily unavailable',
         paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
         invalidVoucher: 'Invalid voucher code',
+        voucherMaxUsesReached: 'This voucher has reached its maximum number of uses',
         voucherNotConfigured: 'This voucher is not configured in checkout',
         internalError: 'Internal server error',
       },
@@ -77,6 +81,7 @@ export async function POST(req: Request) {
         paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
         paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
         invalidVoucher: 'Code promo invalide',
+        voucherMaxUsesReached: 'Ce code promo a atteint son nombre maximal d’utilisations',
         voucherNotConfigured: 'Ce code promo n’est pas configuré dans le checkout',
         internalError: 'Erreur interne du serveur',
       },
@@ -89,6 +94,7 @@ export async function POST(req: Request) {
         paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
         paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
         invalidVoucher: 'Código de voucher inválido',
+        voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
         voucherNotConfigured: 'Este voucher não está configurado no checkout',
         internalError: 'Erro interno do servidor',
       },
@@ -97,9 +103,8 @@ export async function POST(req: Request) {
     const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const authResult = await supabase.auth.getUser();
+    const user = authResult?.data?.user ?? null;
 
     if (!user) {
       return new NextResponse(copy.unauthorized, { status: 401 });
@@ -129,6 +134,13 @@ export async function POST(req: Request) {
     });
 
     if (existingPurchase) {
+      console.warn('[CHECKOUT_ALREADY_PURCHASED]', {
+        userId: user.id,
+        userEmail: user.email,
+        courseId,
+        purchaseId: existingPurchase.id,
+        providerReferenceId: existingPurchase.providerReferenceId ?? null,
+      });
       return new NextResponse(copy.alreadyPurchased, { status: 400 });
     }
 
@@ -195,7 +207,8 @@ export async function POST(req: Request) {
         originalPrice: voucherValidation.originalPrice,
         discountAmount: voucherValidation.discount,
         finalPrice: voucherValidation.finalPrice,
-        voucherCode: voucherValidation.voucher.code,
+        localVoucherCode: voucherValidation.voucher.code,
+        providerDiscountCode: voucherValidation.voucher.providerDiscountCode,
       });
 
       const successUrl = source === 'dashboard'
@@ -226,10 +239,17 @@ export async function POST(req: Request) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
+    if (!isLemonWebhookConfigured()) {
+      console.warn('[CHECKOUT_WARNING] Lemon webhook secret is missing. Purchase unlock may not persist.');
+    }
+
     const lemonConfig = getLemonConfig();
 
-    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard`;
-    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true`;
+    const encodedCourseId = encodeURIComponent(courseId);
+    const checkoutAttemptId = randomUUID();
+    const encodedCheckoutAttemptId = encodeURIComponent(checkoutAttemptId);
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
 
     let checkoutUrl: string;
     try {
@@ -242,20 +262,84 @@ export async function POST(req: Request) {
           purchaseType: 'course',
           courseId: course.id,
           userId: user.id,
+          checkoutAttemptId,
           language: selectedLanguage,
           courseTitle: course.title,
           originalPrice: String(Number(numericPrice.toFixed(2))),
+          ...(voucherValidation?.valid
+            ? {
+                voucherCode: voucherValidation.voucher.code,
+                providerDiscountCode: voucherValidation.voucher.providerDiscountCode,
+              }
+            : {}),
         },
         discountCode: voucherValidation?.valid ? voucherValidation.voucher.providerDiscountCode : undefined,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message.toLowerCase() : '';
+      const normalizedProviderError = errorMessage.replace(/[_-]+/g, ' ');
       const voucherRejectedByProvider =
-        errorMessage.includes('discount code') && errorMessage.includes('does not exist');
+        errorMessage.includes('discount') &&
+        (errorMessage.includes('does not exist') ||
+          errorMessage.includes('invalid') ||
+          errorMessage.includes('not found') ||
+          errorMessage.includes('not valid'));
+      const voucherMaxUsesReachedAtProvider =
+        normalizedProviderError.includes('discount') &&
+        (normalizedProviderError.includes('maximum redemptions') ||
+          normalizedProviderError.includes('max redemptions') ||
+          normalizedProviderError.includes('reached its maximum') ||
+          normalizedProviderError.includes('maximum uses') ||
+          normalizedProviderError.includes('max uses') ||
+          normalizedProviderError.includes('usage limit') ||
+          (normalizedProviderError.includes('redemption') && normalizedProviderError.includes('limit')) ||
+          (normalizedProviderError.includes('redemption') && normalizedProviderError.includes('reached')));
+
+      const lemonConfigFailure =
+        errorMessage.includes('missing lemon_squeezy') ||
+        errorMessage.includes('missing lemon');
+
+      if (voucherMaxUsesReachedAtProvider) {
+        if (voucherValidation?.valid) {
+          const nextCurrentUses = voucherValidation.voucher.maxUses !== null
+            ? Math.max(voucherValidation.voucher.maxUses, voucherValidation.voucher.currentUses)
+            : Math.max(1, voucherValidation.voucher.currentUses + 1);
+
+          await db.voucherCode.update({
+            where: {
+              id: voucherValidation.voucher.id,
+            },
+            data: {
+              currentUses: nextCurrentUses,
+            },
+          });
+
+          console.warn('[CHECKOUT_VOUCHER_MAX_USES_SYNCED]', {
+            voucherId: voucherValidation.voucher.id,
+            voucherCode: voucherValidation.voucher.code,
+            localMaxUses: voucherValidation.voucher.maxUses,
+            localCurrentUsesBefore: voucherValidation.voucher.currentUses,
+            localCurrentUsesAfter: nextCurrentUses,
+          });
+        }
+
+        return new NextResponse(copy.voucherMaxUsesReached, { status: 400 });
+      }
 
       if (voucherRejectedByProvider) {
         return new NextResponse(copy.voucherNotConfigured, { status: 400 });
       }
+
+      if (lemonConfigFailure) {
+        return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+      }
+
+      console.error('[CHECKOUT_LEMON_CREATE_ERROR]', {
+        courseId,
+        userId: user.id,
+        voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+        error,
+      });
 
       throw error;
     }

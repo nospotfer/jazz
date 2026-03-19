@@ -126,8 +126,8 @@ src/app/
     │                   └── route.ts    # PUT /api/courses/.../progress
     │
     └── webhooks/
-        └── stripe/
-            └── route.ts  # POST /api/webhooks/stripe
+      └── lemon-squeezy/
+        └── route.ts  # POST /api/webhooks/lemon-squeezy
 ```
 
 ### Understanding the Naming Convention
@@ -221,7 +221,7 @@ Configuration and utility functions.
 ```
 src/lib/
 ├── db.ts           # Prisma client singleton
-├── stripe.ts       # Stripe client configuration
+├── lemon-squeezy.ts # Lemon Squeezy client configuration
 └── utils.ts        # Utility functions (cn for classnames)
 ```
 
@@ -235,12 +235,11 @@ export const db = globalThis.prisma || new PrismaClient();
 if (process.env.NODE_ENV !== 'production') globalThis.prisma = db;
 ```
 
-#### `stripe.ts` - Stripe Client
+#### `lemon-squeezy.ts` - Lemon Squeezy Client
 ```typescript
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
-  typescript: true,
-});
+export function isLemonConfigured() {
+  return Boolean(process.env.LEMON_SQUEEZY_API_KEY?.trim());
+}
 ```
 
 #### `utils.ts` - Utility Functions

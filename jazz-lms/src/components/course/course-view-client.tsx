@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Lock, X, PlayCircle, Loader2, ShoppingCart } from 'lucide-react';
+import { Lock, LockOpen, X, PlayCircle, Loader2, ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
@@ -525,6 +525,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPreview: 'Vista previa de clase',
       premiumClickHint: 'Premium — Haz clic para saber más',
       academyTitle: 'Academia Cultura del Jazz',
+      purchaseVerifying: 'Verificando tu pago y desbloqueo del curso...',
+      purchasePending: 'Pago recibido, pero la confirmación aún está pendiente. Espera unos segundos y recarga la página.',
     },
     en: {
       classPrefix: 'Class',
@@ -542,6 +544,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPreview: 'Class preview',
       premiumClickHint: 'Premium — Click to learn more',
       academyTitle: 'Jazz Culture Academy',
+      purchaseVerifying: 'Verifying your payment and course unlock...',
+      purchasePending: 'Payment received, but confirmation is still pending. Please wait a few seconds and refresh.',
     },
     fr: {
       classPrefix: 'Cours',
@@ -559,6 +563,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPreview: 'Aperçu du cours',
       premiumClickHint: 'Premium — Cliquez pour en savoir plus',
       academyTitle: 'Académie Culture du Jazz',
+      purchaseVerifying: 'Vérification du paiement et du déblocage du cours...',
+      purchasePending: 'Paiement reçu, mais la confirmation est encore en attente. Veuillez patienter quelques secondes puis actualiser.',
     },
     pt: {
       classPrefix: 'Aula',
@@ -576,14 +582,17 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPreview: 'Prévia da aula',
       premiumClickHint: 'Premium — Clique para saber mais',
       academyTitle: 'Academia Cultura do Jazz',
+      purchaseVerifying: 'Verificando seu pagamento e desbloqueio do curso...',
+      purchasePending: 'Pagamento recebido, mas a confirmação ainda está pendente. Aguarde alguns segundos e recarregue a página.',
     },
   }[language];
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [hasPurchased] = useState(initialHasPurchased);
+  const [hasPurchased, setHasPurchased] = useState(initialHasPurchased);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [isVerifyingPurchase, setIsVerifyingPurchase] = useState(false);
   const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
@@ -612,6 +621,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       window.clearTimeout(timeoutId);
     };
   }, []);
+
+  useEffect(() => {
+    setHasPurchased(initialHasPurchased);
+  }, [initialHasPurchased]);
 
   useEffect(() => {
     if (!hasPurchased) {
@@ -644,11 +657,111 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     const purchaseStatus = searchParams.get('purchase');
     const source = searchParams.get('source');
 
-    if (purchaseStatus === 'success' && source === 'dashboard' && hasPurchased) {
-      setShowUnlockAnimation(true);
-      router.replace('/dashboard');
+    if (purchaseStatus !== 'success' || source !== 'dashboard') {
+      return;
     }
-  }, [searchParams, hasPurchased, router]);
+
+    let cancelled = false;
+
+    const finishAsPurchased = () => {
+      if (cancelled) {
+        return;
+      }
+
+      setHasPurchased(true);
+      setIsVerifyingPurchase(false);
+      setPaymentError('');
+      setShowUnlockAnimation(true);
+      router.refresh();
+      router.replace('/dashboard');
+    };
+
+    const verifyPurchase = async () => {
+      if (hasPurchased) {
+        finishAsPurchased();
+        return;
+      }
+
+      setIsVerifyingPurchase(true);
+
+      const orderId =
+        searchParams.get('order_id') ||
+        searchParams.get('orderId') ||
+        searchParams.get('lemon_order_id') ||
+        searchParams.get('lemonOrderId');
+      const checkoutAttemptId =
+        searchParams.get('checkoutAttemptId') ||
+        searchParams.get('checkout_attempt_id') ||
+        searchParams.get('attemptId') ||
+        searchParams.get('attempt_id');
+      const successCourseId = searchParams.get('courseId') || courseId;
+
+      if (!successCourseId) {
+        setIsVerifyingPurchase(false);
+        setPaymentError(copy.purchasePending);
+        return;
+      }
+
+      const runReconciliation = async () => {
+        try {
+          const reconciliationPayload: {
+            action: 'reconcile';
+            courseId: string;
+            orderId?: string;
+            checkoutAttemptId?: string;
+          } = {
+            action: 'reconcile',
+            courseId: successCourseId,
+          };
+
+          if (orderId) {
+            reconciliationPayload.orderId = orderId;
+          }
+
+          if (checkoutAttemptId) {
+            reconciliationPayload.checkoutAttemptId = checkoutAttemptId;
+          }
+
+          const reconciliation = await axios.post('/api/purchases', reconciliationPayload);
+
+          return Boolean(reconciliation.data?.purchased);
+        } catch {
+          return false;
+        }
+      };
+
+      if (await runReconciliation()) {
+        finishAsPurchased();
+        return;
+      }
+
+      for (let attempt = 0; attempt < 20; attempt += 1) {
+        if (cancelled) {
+          return;
+        }
+
+        if (await runReconciliation()) {
+          finishAsPurchased();
+          return;
+        }
+
+        await new Promise((resolve) => {
+          window.setTimeout(resolve, 2000);
+        });
+      }
+
+      if (!cancelled) {
+        setIsVerifyingPurchase(false);
+        setPaymentError(copy.purchasePending);
+      }
+    };
+
+    void verifyPurchase();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, hasPurchased, router, courseId, copy.purchasePending]);
 
   const handleMouseEnter = useCallback((index: number, e: React.MouseEvent) => {
     if (hasPurchased) return;
@@ -767,13 +880,13 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                 onMouseEnter={primePaymentModal}
                 onFocus={primePaymentModal}
                 onTouchStart={primePaymentModal}
-                disabled={isPurchasing}
+                disabled={isPurchasing || isVerifyingPurchase}
                 className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
               >
-                {isPurchasing ? (
+                {isPurchasing || isVerifyingPurchase ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {copy.processing}
+                    {isVerifyingPurchase ? copy.purchaseVerifying : copy.processing}
                   </>
                 ) : (
                   <>
@@ -782,6 +895,9 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                   </>
                 )}
               </button>
+              {isVerifyingPurchase ? (
+                <p className="text-xs text-muted-foreground text-left">{copy.purchaseVerifying}</p>
+              ) : null}
               {paymentError ? (
                 <p className="text-xs text-destructive text-left">{paymentError}</p>
               ) : null}
@@ -880,7 +996,11 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
                           {progressPercent}% {copy.watched}
                         </span>
                         <span className={`inline-flex items-center gap-1 ${isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-primary-foreground/85'}`}>
-                          <Lock className="h-2.5 w-2.5" />
+                          {isLocked ? (
+                            <Lock className="h-3.5 w-3.5" />
+                          ) : (
+                            <LockOpen className="h-3.5 w-3.5" />
+                          )}
                           {isLocked ? copy.purchaseRequired : copy.available}
                         </span>
                       </div>

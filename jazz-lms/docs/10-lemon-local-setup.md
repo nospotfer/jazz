@@ -79,3 +79,12 @@ Enable events:
 - Never commit `.env.local`
 - If any API key was shared in chat/screenshots, rotate it before production
 - Use a strong random `LEMON_SQUEEZY_WEBHOOK_SECRET` for production
+
+## 7) Payment test agents
+
+- Backend payment validation:
+	- `npm run test:payments:backend`
+- Frontend real Lemon checkout validation:
+	- `npm run test:payments:frontend:real`
+- Full critical pass (backend + frontend real + build):
+	- `npm run test:payments:all`

@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
   isAdminRole: vi.fn(),
   cookies: vi.fn(),
   normalizeLanguage: vi.fn(),
-  languageToStripeLocale: vi.fn(),
+  languageToCheckoutLocale: vi.fn(),
   getCourseTranslationBundle: vi.fn(),
   resolveCourseText: vi.fn(),
   purchaseCreate: vi.fn(),
@@ -68,8 +68,6 @@ vi.mock('@/lib/admin/permissions', () => ({
   isAdminRole: mocks.isAdminRole,
 }));
 
-vi.mock('@/lib/stripe', () => ({ stripe: null }));
-
 vi.mock('next/headers', () => ({
   cookies: mocks.cookies,
 }));
@@ -77,7 +75,7 @@ vi.mock('next/headers', () => ({
 vi.mock('@/lib/language', () => ({
   LANGUAGE_COOKIE_KEY: 'jazz_lang',
   normalizeLanguage: mocks.normalizeLanguage,
-  languageToStripeLocale: mocks.languageToStripeLocale,
+  languageToCheckoutLocale: mocks.languageToCheckoutLocale,
 }));
 
 vi.mock('@/lib/course-translations', () => ({
@@ -142,7 +140,7 @@ describe('Security: Input validation', () => {
     vi.clearAllMocks();
     mocks.cookies.mockResolvedValue({ get: vi.fn(() => undefined) });
     mocks.normalizeLanguage.mockReturnValue('es');
-    mocks.languageToStripeLocale.mockReturnValue('es');
+    mocks.languageToCheckoutLocale.mockReturnValue('es');
     mocks.getCourseTranslationBundle.mockResolvedValue({ courses: new Map() });
     mocks.resolveCourseText.mockReturnValue({ title: 'Curso', description: 'Desc' });
   });
@@ -235,36 +233,6 @@ describe('Security: Dev endpoint protection', () => {
     });
     const response = await POST(req);
     expect(response.status).toBe(401);
-  });
-});
-
-describe('Security: Header validation in Stripe webhook', () => {
-  const webhookMocks = vi.hoisted(() => ({
-    stripe: {
-      webhooks: { constructEvent: vi.fn() },
-    },
-    headers: vi.fn(),
-  }));
-
-  test('missing Stripe-Signature header returns 400', async () => {
-    vi.doMock('@/lib/stripe', () => ({ stripe: webhookMocks.stripe }));
-    vi.doMock('next/headers', () => ({
-      headers: () => Promise.resolve({ get: () => null }),
-    }));
-
-    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
-
-    const { POST } = await import('@/app/api/webhooks/stripe/route');
-    const req = new Request('http://localhost/api/webhooks/stripe', {
-      method: 'POST',
-      body: '{}',
-    });
-    const response = await POST(req);
-
-    expect(response.status).toBe(400);
-
-    vi.doUnmock('@/lib/stripe');
-    vi.doUnmock('next/headers');
   });
 });
 

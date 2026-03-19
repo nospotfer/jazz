@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   normalizeLanguage,
   languageToHtmlLang,
-  languageToStripeLocale,
+  languageToCheckoutLocale,
   SUPPORTED_LANGUAGES,
   LANGUAGE_LABELS,
   LANGUAGE_STORAGE_KEY,
@@ -57,15 +57,15 @@ describe('languageToHtmlLang', () => {
   });
 });
 
-describe('languageToStripeLocale', () => {
+describe('languageToCheckoutLocale', () => {
   test('maps pt to pt-BR', () => {
-    expect(languageToStripeLocale('pt')).toBe('pt-BR');
+    expect(languageToCheckoutLocale('pt')).toBe('pt-BR');
   });
 
   test('returns other languages unchanged', () => {
-    expect(languageToStripeLocale('es')).toBe('es');
-    expect(languageToStripeLocale('en')).toBe('en');
-    expect(languageToStripeLocale('fr')).toBe('fr');
+    expect(languageToCheckoutLocale('es')).toBe('es');
+    expect(languageToCheckoutLocale('en')).toBe('en');
+    expect(languageToCheckoutLocale('fr')).toBe('fr');
   });
 });
 

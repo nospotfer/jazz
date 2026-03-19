@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { getRandomProfileAvatar, PROFILE_AVATAR_OPTIONS } from '@/lib/profile-avatars';
-import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
 import { useUserJazzMedalProfile } from '@/hooks/use-user-jazz-medal-profile';
@@ -41,7 +40,7 @@ export default function ProfilePage() {
     es: {
       avatarUpdateError: 'No se pudo actualizar el avatar',
       profileUpdateError: 'No se pudo actualizar el perfil',
-      paymentsPortalError: 'No se pudo abrir el portal de pagos. Inténtalo más tarde.',
+      billingSupportError: 'No se pudo abrir el canal de soporte de pagos. Inténtalo más tarde.',
       title: 'Perfil',
       subtitle: 'Gestiona tu perfil, datos personales y preferencias de avatar',
       profileIcon: 'Icono de perfil',
@@ -65,8 +64,8 @@ export default function ProfilePage() {
       country: 'País',
       countryPlaceholder: 'País',
       paymentMethods: 'Métodos de pago',
-      paymentMethodsDesc: 'Gestiona tus tarjetas y datos de facturación en nuestro portal seguro de Stripe.',
-      managePaymentMethods: 'Gestionar métodos de pago',
+      paymentMethodsDesc: 'Para gestionar tus datos de facturación, contacta con nuestro soporte financiero.',
+      managePaymentMethods: 'Contactar soporte financiero',
       chooseAvatarStyle: 'Elige tu estilo de avatar',
       chooseAvatarDesc: 'Selecciona un icono fijo o mantén el modo aleatorio.',
       randomAvatarOption: 'Avatar aleatorio en cada inicio de sesión',
@@ -88,7 +87,7 @@ export default function ProfilePage() {
     en: {
       avatarUpdateError: 'Unable to update avatar',
       profileUpdateError: 'Unable to update profile',
-      paymentsPortalError: 'Unable to open the payment portal. Please try again later.',
+      billingSupportError: 'Unable to open billing support. Please try again later.',
       title: 'Profile',
       subtitle: 'Manage your profile, personal data, and avatar preferences',
       profileIcon: 'Profile icon',
@@ -112,8 +111,8 @@ export default function ProfilePage() {
       country: 'Country',
       countryPlaceholder: 'Country',
       paymentMethods: 'Payment methods',
-      paymentMethodsDesc: 'Manage your cards and billing details in our secure Stripe portal.',
-      managePaymentMethods: 'Manage payment methods',
+      paymentMethodsDesc: 'To manage billing details, contact our finance support channel.',
+      managePaymentMethods: 'Contact finance support',
       chooseAvatarStyle: 'Choose your avatar style',
       chooseAvatarDesc: 'Select a fixed icon or keep random mode.',
       randomAvatarOption: 'Random avatar at each sign-in',
@@ -135,7 +134,7 @@ export default function ProfilePage() {
     fr: {
       avatarUpdateError: 'Impossible de mettre à jour l’avatar',
       profileUpdateError: 'Impossible de mettre à jour le profil',
-      paymentsPortalError: 'Impossible d’ouvrir le portail de paiement. Réessayez plus tard.',
+      billingSupportError: 'Impossible d’ouvrir le support de facturation. Réessayez plus tard.',
       title: 'Profil',
       subtitle: 'Gérez votre profil, vos données personnelles et vos préférences d’avatar',
       profileIcon: 'Icône de profil',
@@ -159,8 +158,8 @@ export default function ProfilePage() {
       country: 'Pays',
       countryPlaceholder: 'Pays',
       paymentMethods: 'Moyens de paiement',
-      paymentMethodsDesc: 'Gérez vos cartes et données de facturation dans notre portail Stripe sécurisé.',
-      managePaymentMethods: 'Gérer les moyens de paiement',
+      paymentMethodsDesc: 'Pour gérer la facturation, contactez notre support financier.',
+      managePaymentMethods: 'Contacter le support financier',
       chooseAvatarStyle: 'Choisissez votre style d’avatar',
       chooseAvatarDesc: 'Sélectionnez une icône fixe ou conservez le mode aléatoire.',
       randomAvatarOption: 'Avatar aléatoire à chaque connexion',
@@ -182,7 +181,7 @@ export default function ProfilePage() {
     pt: {
       avatarUpdateError: 'Não foi possível atualizar o avatar',
       profileUpdateError: 'Não foi possível atualizar o perfil',
-      paymentsPortalError: 'Não foi possível abrir o portal de pagamentos. Tente novamente mais tarde.',
+      billingSupportError: 'Não foi possível abrir o suporte financeiro. Tente novamente mais tarde.',
       title: 'Perfil',
       subtitle: 'Gerencie seu perfil, dados pessoais e preferências de avatar',
       profileIcon: 'Ícone de perfil',
@@ -206,8 +205,8 @@ export default function ProfilePage() {
       country: 'País',
       countryPlaceholder: 'País',
       paymentMethods: 'Métodos de pagamento',
-      paymentMethodsDesc: 'Gerencie seus cartões e dados de cobrança em nosso portal seguro do Stripe.',
-      managePaymentMethods: 'Gerenciar métodos de pagamento',
+      paymentMethodsDesc: 'Para gerenciar dados de cobrança, entre em contato com o suporte financeiro.',
+      managePaymentMethods: 'Contatar suporte financeiro',
       chooseAvatarStyle: 'Escolha seu estilo de avatar',
       chooseAvatarDesc: 'Selecione um ícone fixo ou mantenha o modo aleatório.',
       randomAvatarOption: 'Avatar aleatório em cada login',
@@ -229,7 +228,7 @@ export default function ProfilePage() {
   }[language];
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [isSupportLoading, setIsSupportLoading] = useState(false);
   const [email, setEmail] = useState('');
 
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -353,12 +352,15 @@ export default function ProfilePage() {
 
   const handleManagePayments = async () => {
     try {
-      setIsPortalLoading(true);
-      const res = await axios.post('/api/stripe-portal');
-      window.location.assign(res.data.url);
+      setIsSupportLoading(true);
+      const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'admin@neurofactory.net';
+      const subject = encodeURIComponent('Billing support request');
+      const body = encodeURIComponent(`Hello, I need help with my billing details for account: ${email || 'unknown'}.`);
+      window.location.assign(`mailto:${supportEmail}?subject=${subject}&body=${body}`);
     } catch {
-      alert(copy.paymentsPortalError);
-      setIsPortalLoading(false);
+      alert(copy.billingSupportError);
+    } finally {
+      setIsSupportLoading(false);
     }
   };
 
@@ -678,10 +680,10 @@ export default function ProfilePage() {
               <Button
                 type="button"
                 onClick={handleManagePayments}
-                disabled={isPortalLoading}
+                disabled={isSupportLoading}
                 className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {isPortalLoading ? (
+                {isSupportLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : (
                   <Wallet className="h-4 w-4 mr-2" />

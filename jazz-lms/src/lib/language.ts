@@ -33,7 +33,7 @@ export function languageToHtmlLang(language: SupportedLanguage): string {
   return language;
 }
 
-export function languageToStripeLocale(language: SupportedLanguage): 'es' | 'en' | 'fr' | 'pt-BR' {
+export function languageToCheckoutLocale(language: SupportedLanguage): 'es' | 'en' | 'fr' | 'pt-BR' {
   if (language === 'pt') return 'pt-BR';
   return language;
 }

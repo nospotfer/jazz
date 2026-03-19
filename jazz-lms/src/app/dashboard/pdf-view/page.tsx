@@ -144,15 +144,13 @@ export default async function PdfViewPage() {
     })
     .filter(Boolean);
 
-  const items = Array.from(dedupedItems.values())
-    .sort((a, b) => {
-      if (a.isAuxiliary !== b.isAuxiliary) {
-        return a.isAuxiliary ? 1 : -1;
-      }
+  const items = Array.from(dedupedItems.values()).sort((a, b) => {
+    if (a.isAuxiliary !== b.isAuxiliary) {
+      return a.isAuxiliary ? 1 : -1;
+    }
 
-      return a.classNumber - b.classNumber;
-    })
-    .map(({ classNumber, isAuxiliary, ...item }) => item);
+    return a.classNumber - b.classNumber;
+  });
 
   return <PdfViewClient items={items} />;
 }

@@ -23,7 +23,7 @@ const copyByLanguage = {
     title: 'Elige método de pago',
     subtitle: 'Selecciona cómo quieres completar la compra.',
     voucherHint: 'Aplica tu código antes de continuar al checkout.',
-    methodStripe: 'Tarjeta',
+    methodCard: 'Tarjeta',
     methodPaypal: 'PayPal',
     cancel: 'Cancelar',
     continue: 'Continuar',
@@ -32,7 +32,7 @@ const copyByLanguage = {
     title: 'Choose payment method',
     subtitle: 'Select how you want to complete your purchase.',
     voucherHint: 'Apply your code before continuing to checkout.',
-    methodStripe: 'Card',
+    methodCard: 'Card',
     methodPaypal: 'PayPal',
     cancel: 'Cancel',
     continue: 'Continue',
@@ -41,7 +41,7 @@ const copyByLanguage = {
     title: 'Choisissez le moyen de paiement',
     subtitle: 'Sélectionnez comment finaliser votre achat.',
     voucherHint: 'Appliquez votre code avant de continuer vers le checkout.',
-    methodStripe: 'Carte',
+    methodCard: 'Carte',
     methodPaypal: 'PayPal',
     cancel: 'Annuler',
     continue: 'Continuer',
@@ -50,7 +50,7 @@ const copyByLanguage = {
     title: 'Escolha o método de pagamento',
     subtitle: 'Selecione como deseja concluir a compra.',
     voucherHint: 'Aplique seu código antes de continuar para o checkout.',
-    methodStripe: 'Cartão',
+    methodCard: 'Cartão',
     methodPaypal: 'PayPal',
     cancel: 'Cancelar',
     continue: 'Continuar',
@@ -173,7 +173,7 @@ export function PaymentMethodModal({
             ) : null}
             <div className="relative z-10">
               <MethodLogo method="card" />
-              <p className="mt-3 text-lg font-semibold text-foreground">{copy.methodStripe}</p>
+              <p className="mt-3 text-lg font-semibold text-foreground">{copy.methodCard}</p>
               <p className="mt-1 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground">CARD</p>
             </div>
           </button>

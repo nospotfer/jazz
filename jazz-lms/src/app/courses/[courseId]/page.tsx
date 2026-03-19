@@ -73,14 +73,6 @@ export default async function CourseDetailPage({
     return redirect('/auth');
   }
 
-  const successParam = Array.isArray(searchParams?.success)
-    ? searchParams?.success[0]
-    : searchParams?.success;
-
-  if (successParam === 'true') {
-    return redirect(`/courses/${params.courseId}?success=true`);
-  }
-
   const course = await db.course.findUnique({
     where: {
       id: params.courseId,

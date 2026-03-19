@@ -21,9 +21,9 @@ API routes live in the `/app/api/` folder. Each `route.ts` file defines the endp
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/checkout` | POST | Create a Stripe checkout session |
+| `/api/checkout` | POST | Create a Lemon Squeezy checkout URL |
 | `/api/courses/[courseId]/lessons/[lessonId]/progress` | PUT | Update lesson completion status |
-| `/api/webhooks/stripe` | POST | Receive Stripe payment notifications |
+| `/api/webhooks/lemon-squeezy` | POST | Receive Lemon Squeezy payment notifications |
 
 ---
 
@@ -33,12 +33,12 @@ API routes live in the `/app/api/` folder. Each `route.ts` file defines the endp
 
 **URL**: `POST /api/checkout`
 
-**Purpose**: Creates a Stripe checkout session and returns the URL to redirect the user.
+**Purpose**: Creates a Lemon Squeezy checkout URL and returns it for redirect.
 
 ### How it works
 
 ```
-Frontend                          Backend                         Stripe
+Frontend                          Backend                  Lemon Squeezy
    │                                │                               │
    │  POST /api/checkout            │                               │
    │  { courseId: "abc123" }        │                               │
@@ -47,7 +47,7 @@ Frontend                          Backend                         Stripe
    │                                │  Verify user is logged in     │
    │                                │  Get course from database     │
    │                                │                               │
-   │                                │  Create checkout session      │
+  │                                │  Create checkout URL          │
    │                                ├──────────────────────────────►│
    │                                │◄──────────────────────────────┤
    │                                │  Session URL returned         │
@@ -55,7 +55,7 @@ Frontend                          Backend                         Stripe
    │  { url: "https://checkout..."}│                               │
    │◄───────────────────────────────┤                               │
    │                                │                               │
-   │  Redirect to Stripe            │                               │
+  │  Redirect to hosted checkout   │                               │
    ├───────────────────────────────────────────────────────────────►│
 ```
 
@@ -65,7 +65,7 @@ Frontend                          Backend                         Stripe
 // src/app/api/checkout/route.ts
 
 import { createClient } from '@/utils/supabase/server';
-import { stripe } from '@/lib/stripe';
+import { createLemonCheckout } from '@/lib/lemon-squeezy';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -96,36 +96,20 @@ export async function POST(req: Request) {
       return new NextResponse('Not Found', { status: 404 });
     }
 
-    // Step 5: Create line items for Stripe
-    const line_items = [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: course.title,
-          },
-          unit_amount: Math.round((course.price || 0) * 100), // Stripe uses cents
-        },
-        quantity: 1,
-      },
-    ];
-
-    // Step 6: Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items,
-      mode: 'payment',  // One-time payment (not subscription)
-      allow_promotion_codes: true,  // Allow discount codes
-      success_url: `${req.headers.get('origin')}/courses/${courseId}?success=true`,
-      cancel_url: `${req.headers.get('origin')}/courses/${courseId}?canceled=true`,
-      metadata: {
+    // Step 5: Create Lemon checkout URL
+    const checkoutUrl = await createLemonCheckout({
+      storeId: process.env.LEMON_SQUEEZY_STORE_ID!,
+      variantId: process.env.LEMON_SQUEEZY_VARIANT_ID!,
+      email: user.email!,
+      successUrl: `${req.headers.get('origin')}/courses/${courseId}?success=true`,
+      customData: {
         courseId: course.id,
-        userId: user.id,  // Important! Used in webhook to create purchase
+        userId: user.id,
       },
     });
 
-    // Step 7: Return session URL
-    return NextResponse.json({ url: session.url });
+    // Step 6: Return checkout URL
+    return NextResponse.json({ url: checkoutUrl });
     
   } catch (error) {
     console.log('[CHECKOUT_ERROR]', error);
@@ -149,7 +133,7 @@ Content-Type: application/json
 **Response (Success)**:
 ```json
 {
-  "url": "https://checkout.stripe.com/c/pay/cs_test_..."
+  "url": "https://checkout.lemonsqueezy.com/checkout/..."
 }
 ```
 
@@ -161,13 +145,11 @@ Content-Type: application/json
 
 ### Key Concepts
 
-#### Why `unit_amount` in cents?
-Stripe expects amounts in the smallest currency unit. For USD, that's cents:
-- $99.99 → 9999 cents
-- `Math.round((course.price || 0) * 100)`
+#### Why return a hosted checkout URL?
+The backend keeps credentials secure and the frontend only receives a safe redirect URL.
 
 #### Why store `userId` and `courseId` in metadata?
-When Stripe sends the webhook after payment, we need to know:
+When Lemon sends the webhook after payment, we need to know:
 - Who paid (userId)
 - What they paid for (courseId)
 
@@ -288,13 +270,13 @@ This prevents errors when marking a lesson complete for the first time.
 
 ---
 
-## 3. Stripe Webhook Endpoint
+## 3. Lemon Squeezy Webhook Endpoint
 
-**File**: `src/app/api/webhooks/stripe/route.ts`
+**File**: `src/app/api/webhooks/lemon-squeezy/route.ts`
 
-**URL**: `POST /api/webhooks/stripe`
+**URL**: `POST /api/webhooks/lemon-squeezy`
 
-**Purpose**: Receives notifications from Stripe when events happen (like successful payments).
+**Purpose**: Receives notifications from Lemon Squeezy when events happen (like paid/refunded orders).
 
 ### Why Webhooks?
 
@@ -304,16 +286,16 @@ Without webhooks (Bad):
                                          Hope network doesn't fail
                                          
 With webhooks (Good):
-  User pays → Stripe notifies YOUR SERVER → Server creates purchase
-                                            100% reliable
+  User pays → Lemon Squeezy notifies YOUR SERVER → Server creates purchase
+                                                    100% reliable
 ```
 
 ### How it works
 
 ```
-Stripe                            Backend                       Database
+Lemon Squeezy                     Backend                       Database
    │                                │                              │
-   │  POST /api/webhooks/stripe     │                              │
+  │  POST /api/webhooks/lemon-squeezy│                            │
    │  (signed payload)              │                              │
    ├───────────────────────────────►│                              │
    │                                │                              │
@@ -321,7 +303,7 @@ Stripe                            Backend                       Database
    │                                │  2. Parse event              │
    │                                │  3. Check event type         │
    │                                │                              │
-   │                                │  If checkout.session.completed:
+  │                                │  If order_created:
    │                                │  Extract userId & courseId   │
    │                                │  from metadata               │
    │                                │                              │
@@ -335,34 +317,30 @@ Stripe                            Backend                       Database
 ### Code Breakdown
 
 ```typescript
-// src/app/api/webhooks/stripe/route.ts
+// src/app/api/webhooks/lemon-squeezy/route.ts
 
 export async function POST(req: Request) {
   // Step 1: Get raw body and signature
   const body = await req.text();  // Must be raw text, not JSON
-  const signature = (await headers()).get('Stripe-Signature') as string;
+  const signature = (await headers()).get('x-signature') as string;
 
-  let event: Stripe.Event;
+  let payload: Record<string, unknown>;
 
-  // Step 2: Verify the webhook is really from Stripe
+  // Step 2: Verify the webhook is really from Lemon Squeezy
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!  // Secret from Stripe dashboard
-    );
+    payload = JSON.parse(body);
   } catch (error: unknown) {
-    // Invalid signature = not from Stripe (could be an attack)
+    // Invalid signature = not from provider (could be an attack)
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
   // Step 3: Get session data
-  const session = event.data.object as Stripe.Checkout.Session;
-  const userId = session?.metadata?.userId;
-  const courseId = session?.metadata?.courseId;
+  const eventName = (payload.meta as any)?.event_name;
+  const userId = (payload.meta as any)?.custom_data?.userId;
+  const courseId = (payload.meta as any)?.custom_data?.courseId;
 
   // Step 4: Handle the event
-  if (event.type === 'checkout.session.completed') {
+  if (eventName === 'order_created') {
     if (!userId || !courseId) {
       return new NextResponse('Missing metadata', { status: 400 });
     }
@@ -390,14 +368,14 @@ Anyone could send a POST request to your webhook URL. Without verification, an a
 1. Send fake "payment completed" events
 2. Get free access to courses
 
-The signature proves the request came from Stripe.
+The signature proves the request came from Lemon Squeezy.
 
 ### Request/Response
 
-**Request** (from Stripe):
+**Request** (from Lemon Squeezy):
 ```
-POST /api/webhooks/stripe
-Stripe-Signature: t=1704120000,v1=abc123...
+POST /api/webhooks/lemon-squeezy
+x-signature: abc123...
 Content-Type: application/json
 
 {
@@ -405,7 +383,7 @@ Content-Type: application/json
   "type": "checkout.session.completed",
   "data": {
     "object": {
-      "id": "cs_1234",
+      "id": "order_1234",
       "metadata": {
         "userId": "user-abc",
         "courseId": "course-xyz"
@@ -421,19 +399,10 @@ Content-Type: application/json
 
 ### Testing Webhooks Locally
 
-Use the Stripe CLI:
+Use your local webhook forwarding setup:
 ```bash
-# Install Stripe CLI
-brew install stripe/stripe-cli/stripe
-
-# Login
-stripe login
-
-# Forward webhooks to your local server
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
-
-# In another terminal, trigger test events
-stripe trigger checkout.session.completed
+# See docs/10-lemon-local-setup.md
+# Forward events to /api/webhooks/lemon-squeezy
 ```
 
 ---
@@ -510,16 +479,16 @@ if (!courseId) {
 Never hardcode secrets:
 ```typescript
 // ❌ Bad
-const stripe = new Stripe('YOUR_STRIPE_SECRET_KEY');
+const apiKey = 'YOUR_LEMON_SQUEEZY_API_KEY';
 
 // ✅ Good
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const apiKey = process.env.LEMON_SQUEEZY_API_KEY!;
 ```
 
 ### 4. Verify Webhook Signatures
 Always verify webhooks are from who they claim:
 ```typescript
-const event = stripe.webhooks.constructEvent(body, signature, secret);
+const isValid = verifyLemonSignature(body, signature);
 ```
 
 ---

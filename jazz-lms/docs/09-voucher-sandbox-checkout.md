@@ -79,3 +79,12 @@ Resultado esperado:
 - Voucher com `currentUses` incrementado.
 - Registro em `VoucherRedemption` e `DiscountApplied`.
 - Histórico de compras exibindo valor final.
+
+## 8) Operational audit/reset commands
+
+- Audit geral em JSON: `npm run audit:vouchers -- --json`
+- Audit de usuário/curso: `npm run audit:vouchers -- --user-id=<userId> --course-id=<courseId>`
+- Audit de códigos específicos: `npm run audit:vouchers -- --codes=CDJLMS1001,CDJLMS2001`
+- Reset em simulação: `npm run reset:user:vouchers -- --user-id=<userId> --dry-run`
+- Reset real por usuário+curso: `npm run reset:user:vouchers -- --user-id=<userId> --course-id=<courseId>`
+- Reset com safety-sync de códigos: `npm run reset:user:vouchers -- --user-id=<userId> --codes=CDJLMS1001,CDJLMS2001`

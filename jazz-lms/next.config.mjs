@@ -12,8 +12,8 @@ const nextConfig = {
       'https://*.supabase.co',
       'wss://*.supabase.co',
       'https://*.mux.com',
-      'https://api.stripe.com',
-      'https://*.stripe.com',
+      'https://api.lemonsqueezy.com',
+      'https://*.lemonsqueezy.com',
     ];
 
     if (!isProduction) {
@@ -29,9 +29,9 @@ const nextConfig = {
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       `connect-src ${cspConnectSrc.join(' ')}`,
-      "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://open.spotify.com",
+      "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://*.lemonsqueezy.com https://open.spotify.com",
       "media-src 'self' blob: https:",
       isProduction ? 'upgrade-insecure-requests' : '',
     ]

@@ -24,6 +24,23 @@ type LemonApiDiscountRecord = {
   };
 };
 
+export type LemonApiOrderRecord = {
+  id?: string;
+  attributes?: {
+    identifier?: string;
+    status?: string;
+    user_email?: string;
+    created_at?: string;
+    subtotal?: string | number;
+    subtotal_formatted?: string;
+    total?: string | number;
+    total_formatted?: string;
+    discount_code?: string;
+    custom_data?: Record<string, unknown>;
+    first_order_item?: Record<string, unknown>;
+  };
+};
+
 function readRequiredEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) {
@@ -46,6 +63,10 @@ export function isLemonConfigured() {
   );
 }
 
+export function isLemonWebhookConfigured() {
+  return Boolean(readOptionalEnv('LEMON_SQUEEZY_WEBHOOK_SECRET'));
+}
+
 function getHeaders() {
   return {
     Accept: 'application/vnd.api+json',
@@ -61,6 +82,18 @@ async function parseJsonApiResponse<T>(response: Response): Promise<T> {
   }
 
   return (await response.json()) as T;
+}
+
+function isLemonOrdersIncludeFirstOrderItemNotAllowedError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  const normalized = message.toLowerCase().replace(/[_-]+/g, ' ');
+
+  return (
+    normalized.includes('lemon api failed (400)') &&
+    normalized.includes('include') &&
+    normalized.includes('first order item') &&
+    (normalized.includes('not allowed') || normalized.includes('invalid query parameter'))
+  );
 }
 
 export type LemonCheckoutInput = {
@@ -278,6 +311,124 @@ export async function deleteLemonDiscount(discountId: string): Promise<void> {
     const body = await response.text();
     throw new Error(`Lemon discount delete failed (${response.status}): ${body}`);
   }
+}
+
+export async function retrieveLemonOrder(orderId: string): Promise<LemonApiOrderRecord | null> {
+  const normalizedOrderId = orderId.trim();
+
+  if (!normalizedOrderId) {
+    return null;
+  }
+
+  const response = await fetch(`${LEMON_API_BASE}/orders/${encodeURIComponent(normalizedOrderId)}`, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  const json = await parseJsonApiResponse<{ data?: LemonApiOrderRecord }>(response);
+  return json?.data ?? null;
+}
+
+export async function listRecentLemonOrdersByEmail(input: {
+  email: string;
+  withinMinutes: number;
+  maxPages?: number;
+  pageSize?: number;
+}): Promise<LemonApiOrderRecord[]> {
+  const normalizedEmail = input.email.trim().toLowerCase();
+  if (!normalizedEmail) {
+    return [];
+  }
+
+  const withinMinutes = Number.isFinite(input.withinMinutes)
+    ? Math.max(1, Math.floor(input.withinMinutes))
+    : 30;
+  const cutoffEpoch = Date.now() - withinMinutes * 60 * 1000;
+  const maxPages = Number.isFinite(input.maxPages) ? Math.max(1, Math.floor(input.maxPages)) : 3;
+  const pageSize = Number.isFinite(input.pageSize)
+    ? Math.min(100, Math.max(1, Math.floor(input.pageSize)))
+    : 50;
+  const storeId = readOptionalEnv('LEMON_SQUEEZY_STORE_ID');
+
+  const collected: LemonApiOrderRecord[] = [];
+
+  for (let page = 1; page <= maxPages; page += 1) {
+    const fetchOrdersPage = async (withInclude: boolean) => {
+      const params = new URLSearchParams({
+        'page[number]': String(page),
+        'page[size]': String(pageSize),
+      });
+
+      if (withInclude) {
+        params.set('include', 'first_order_item');
+      }
+
+      if (storeId) {
+        params.set('filter[store_id]', storeId);
+      }
+
+      params.set('filter[user_email]', normalizedEmail);
+
+      const response = await fetch(`${LEMON_API_BASE}/orders?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+      });
+
+      return parseJsonApiResponse<{
+        data?: LemonApiOrderRecord[];
+        meta?: { page?: { currentPage?: number; lastPage?: number } };
+      }>(response);
+    };
+
+    let json: {
+      data?: LemonApiOrderRecord[];
+      meta?: { page?: { currentPage?: number; lastPage?: number } };
+    };
+
+    try {
+      json = await fetchOrdersPage(true);
+    } catch (error) {
+      if (!isLemonOrdersIncludeFirstOrderItemNotAllowedError(error)) {
+        throw error;
+      }
+
+      json = await fetchOrdersPage(false);
+    }
+
+    const records = Array.isArray(json?.data) ? json.data : [];
+
+    for (const record of records) {
+      const attributes = record?.attributes;
+      const recordEmail = attributes?.user_email?.trim().toLowerCase();
+      if (!recordEmail || recordEmail !== normalizedEmail) {
+        continue;
+      }
+
+      const createdAt = attributes?.created_at ? Date.parse(attributes.created_at) : Number.NaN;
+      if (Number.isFinite(createdAt) && createdAt < cutoffEpoch) {
+        continue;
+      }
+
+      collected.push(record);
+    }
+
+    const currentPage = Number(json?.meta?.page?.currentPage ?? page);
+    const lastPage = Number(json?.meta?.page?.lastPage ?? page);
+
+    if (!Number.isFinite(lastPage) || currentPage >= lastPage) {
+      break;
+    }
+  }
+
+  return collected.sort((left, right) => {
+    const leftEpoch = Date.parse(left?.attributes?.created_at ?? '') || 0;
+    const rightEpoch = Date.parse(right?.attributes?.created_at ?? '') || 0;
+    return rightEpoch - leftEpoch;
+  });
 }
 
 export function verifyLemonSignature(payload: string, signature: string | null | undefined): boolean {

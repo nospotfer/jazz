@@ -9,9 +9,10 @@ required_envs=(
   NEXT_PUBLIC_SUPABASE_ANON_KEY
   DATABASE_URL
   SUPABASE_SERVICE_ROLE_KEY
-  STRIPE_SECRET_KEY
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  STRIPE_WEBHOOK_SECRET
+  LEMON_SQUEEZY_API_KEY
+  LEMON_SQUEEZY_WEBHOOK_SECRET
+  LEMON_SQUEEZY_STORE_ID
+  LEMON_SQUEEZY_VARIANT_ID
   SUPABASE_STORAGE_BUCKET
   MUX_SIGNING_KEY_ID
   MUX_SIGNING_PRIVATE_KEY
@@ -36,13 +37,13 @@ if (( ${#missing[@]} > 0 )); then
   exit 1
 fi
 
-if [[ "$STRIPE_SECRET_KEY" != sk_live_* ]]; then
-  echo "❌ STRIPE_SECRET_KEY is not live (expected prefix sk_live_)"
+if [[ "$LEMON_SQUEEZY_API_KEY" != lsk_* ]]; then
+  echo "❌ LEMON_SQUEEZY_API_KEY is invalid (expected prefix lsk_)"
   exit 1
 fi
 
-if [[ "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" != pk_live_* ]]; then
-  echo "❌ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not live (expected prefix pk_live_)"
+if [[ -z "$LEMON_SQUEEZY_WEBHOOK_SECRET" ]]; then
+  echo "❌ LEMON_SQUEEZY_WEBHOOK_SECRET is required"
   exit 1
 fi
 
