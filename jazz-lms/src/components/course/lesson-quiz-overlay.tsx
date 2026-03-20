@@ -6,22 +6,16 @@ import axios from 'axios';
 import {
   Loader2,
   Music2,
-  Pause,
-  Play,
   RefreshCw,
-  SkipBack,
-  SkipForward,
   Sparkles,
   Star,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { MusicPlatformLinks } from '@/components/music/music-platform-links';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
-import { getJazzStudyPlaylist } from '@/lib/jazz-playlist';
 import {
   LESSON_QUIZ_AUTO_ADVANCE_MS,
   LESSON_QUIZ_QUESTION_COUNT,
@@ -128,176 +122,99 @@ function QuizSideDecor() {
 
 function QuizPlaylistPanel({
   language,
-  currentLessonClassNumber,
 }: {
   language: 'es' | 'en' | 'fr' | 'pt';
-  currentLessonClassNumber?: number | null;
 }) {
+  const SPOTIFY_PLAYLIST_WEBPLAYER_URL = 'https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp';
+  const SPOTIFY_PLAYLIST_EMBED_URL =
+    'https://open.spotify.com/embed/playlist/2SL42Fq3AgVvnJb7RixOvp?utm_source=generator&theme=0';
+
   const copy = {
     es: {
       title: 'Playlist del curso',
       subtitle: 'Controla la escucha mientras respondes el jazz arcade.',
       nowPlaying: 'Sonando ahora',
-      play: 'Reproducir rotacion',
-      pause: 'Pausar rotacion',
-      previous: 'Anterior',
-      next: 'Siguiente',
-      courseTracks: '15 pistas del curso',
-      playing: 'Activo',
-      paused: 'En pausa',
+      currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
+      fullPlaylist: 'Playlist completa no player Spotify',
+      openSpotify: 'Abrir en Spotify',
+      player: 'Player Spotify',
     },
     en: {
       title: 'Course playlist',
       subtitle: 'Control the listening flow while you answer the jazz arcade quiz.',
       nowPlaying: 'Now playing',
-      play: 'Start rotation',
-      pause: 'Pause rotation',
-      previous: 'Previous',
-      next: 'Next',
-      courseTracks: '15 course tracks',
-      playing: 'Active',
-      paused: 'Paused',
+      currentTrack: "After You've Gone — Benny Goodman Trio",
+      fullPlaylist: 'Full playlist inside Spotify player',
+      openSpotify: 'Open in Spotify',
+      player: 'Playlist player',
     },
     fr: {
       title: 'Playlist du cours',
       subtitle: 'Pilotez l ecoute pendant que vous repondez au quiz jazz arcade.',
       nowPlaying: 'En lecture',
-      play: 'Lancer la rotation',
-      pause: 'Mettre en pause',
-      previous: 'Precedent',
-      next: 'Suivant',
-      courseTracks: '15 pistes du cours',
-      playing: 'Actif',
-      paused: 'En pause',
+      currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
+      fullPlaylist: 'Playlist complete dans le player Spotify',
+      openSpotify: 'Ouvrir dans Spotify',
+      player: 'Player Spotify',
     },
     pt: {
       title: 'Playlist do curso',
       subtitle: 'Controle a escuta enquanto responde o quiz jazz arcade.',
       nowPlaying: 'Tocando agora',
-      play: 'Iniciar rotacao',
-      pause: 'Pausar rotacao',
-      previous: 'Anterior',
-      next: 'Proxima',
-      courseTracks: '15 faixas do curso',
-      playing: 'Ativo',
-      paused: 'Em pausa',
+      currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
+      fullPlaylist: 'Playlist completa no player do Spotify',
+      openSpotify: 'Abrir no Spotify',
+      player: 'Player Spotify',
     },
   }[language];
 
-  const playlist = useMemo(() => getJazzStudyPlaylist(language), [language]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-
-  useEffect(() => {
-    if (!playlist.length) {
-      return;
-    }
-
-    const requestedIndex = playlist.findIndex((track) => track.classNumber === currentLessonClassNumber);
-    setActiveIndex(requestedIndex >= 0 ? requestedIndex : 0);
-  }, [currentLessonClassNumber, playlist]);
-
-  useEffect(() => {
-    if (!isPlaying || playlist.length <= 1) {
-      return;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % playlist.length);
-    }, 9000);
-
-    return () => window.clearInterval(intervalId);
-  }, [isPlaying, playlist.length]);
-
-  const activeTrack = playlist[activeIndex] ?? null;
-
-  if (!activeTrack) {
-    return null;
-  }
-
-  const selectPrevious = () => {
-    setActiveIndex((current) => (current - 1 + playlist.length) % playlist.length);
-  };
-
-  const selectNext = () => {
-    setActiveIndex((current) => (current + 1) % playlist.length);
-  };
-
   return (
-    <aside className="hidden xl:flex xl:w-[312px] xl:shrink-0 xl:-ml-6 xl:flex-col 2xl:-ml-10">
-      <div className="overflow-hidden rounded-[30px] border border-primary/20 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(34,211,238,0.12),_transparent_30%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(17,24,39,0.95),rgba(30,41,59,0.92))] p-4 text-white shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
+    <aside className="hidden self-stretch xl:mt-[5.5rem] xl:flex xl:w-[300px] xl:shrink-0 xl:-ml-4 xl:flex-col 2xl:-ml-8">
+      <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-primary/20 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(34,211,238,0.12),_transparent_30%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(17,24,39,0.95),rgba(30,41,59,0.92))] p-3.5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.34em] text-primary/90">{copy.title}</p>
             <p className="mt-1 text-xs leading-5 text-slate-300">{copy.subtitle}</p>
           </div>
-          <div className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-black shadow-[0_10px_24px_rgba(245,158,11,0.35)]">
-            {activeIndex + 1}/{playlist.length}
-          </div>
+          <a
+            href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={copy.openSpotify}
+            className="inline-flex h-9 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+          >
+            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954] text-[9px] font-black text-black">S</span>
+            Spotify
+          </a>
         </div>
 
-        <div className="mt-4 flex items-center gap-3 rounded-[24px] border border-white/10 bg-white/8 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
+        <div className="mt-3 flex items-center gap-3 rounded-[22px] border border-white/10 bg-white/8 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[18px] bg-primary/20 shadow-inner">
-            <Image src={activeTrack.image} alt={activeTrack.title} fill sizes="64px" className="object-cover" />
+            <Image src="/images/clase1.jpg" alt={copy.currentTrack} fill sizes="64px" className="object-cover" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80">{copy.nowPlaying}</p>
-            <p className="truncate text-lg font-bold text-white">{activeTrack.title}</p>
-            <p className="truncate text-xs text-slate-300">{activeTrack.classLabel}</p>
+            <p className="truncate text-sm font-bold text-white">{copy.currentTrack}</p>
+            <p className="truncate text-xs text-slate-300">{copy.fullPlaylist}</p>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-2 rounded-full border border-white/10 bg-black/35 px-4 py-3 text-white shadow-[0_14px_28px_rgba(15,23,42,0.3)]">
-          <button type="button" onClick={selectPrevious} aria-label={copy.previous} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-primary/25">
-            <SkipBack className="h-4 w-4" />
-          </button>
-          <button type="button" onClick={() => setIsPlaying((current) => !current)} aria-label={isPlaying ? copy.pause : copy.play} className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-black shadow-[0_14px_26px_rgba(245,158,11,0.42)] transition hover:bg-amber-300">
-            {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[1px]" />}
-          </button>
-          <button type="button" onClick={selectNext} aria-label={copy.next} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-primary/25">
-            <SkipForward className="h-4 w-4" />
-          </button>
+        <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
+          <div className="mt-2 min-h-[152px] flex-1 overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+            <iframe
+              title="Quiz Spotify playlist"
+              src={SPOTIFY_PLAYLIST_EMBED_URL}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              className="block h-full w-full bg-[#0b1220]"
+            />
+          </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-300">
-          <span>{copy.courseTracks}</span>
-          <span>{isPlaying ? copy.playing : copy.paused}</span>
-        </div>
-
-        <div className="mt-2 overflow-hidden rounded-full bg-white/10">
-          <div className="h-1.5 rounded-full bg-gradient-to-r from-primary via-amber-300 to-cyan-300" style={{ width: `${((activeIndex + 1) / playlist.length) * 100}%` }} />
-        </div>
-
-        <div className="mt-4 space-y-2">
-          {playlist.slice(0, 5).map((track, index) => {
-            const playlistIndex = index;
-            const isActive = playlistIndex === activeIndex;
-
-            return (
-              <button
-                key={track.id}
-                type="button"
-                onClick={() => setActiveIndex(playlistIndex)}
-                className={cn(
-                  'flex w-full items-center gap-3 rounded-[18px] px-3 py-2.5 text-left transition',
-                  isActive ? 'border border-primary/25 bg-primary/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]' : 'hover:bg-white/8'
-                )}
-              >
-                <span className={cn('inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white', isActive ? 'bg-primary text-black' : 'bg-slate-700/70')}>
-                  {isActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 translate-x-[1px]" />}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-white">{track.title}</span>
-                  <span className="block truncate text-[11px] text-slate-400">{track.classLabel}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <MusicPlatformLinks links={activeTrack.links} language={language} buttonClassName="border-white/12 bg-white/8 hover:bg-white/14 text-white" />
-        </div>
       </div>
     </aside>
   );
@@ -306,7 +223,6 @@ function QuizPlaylistPanel({
 export function LessonQuizOverlay({
   courseId,
   lessonId,
-  currentLessonClassNumber,
   isOpen,
   hasQuizAvailable,
   initialSummary,
@@ -673,7 +589,7 @@ export function LessonQuizOverlay({
         />
       ))}
 
-      <div className="relative flex h-full flex-col p-4 sm:p-6 lg:px-20 lg:py-8">
+      <div className="relative flex h-[100dvh] flex-col p-3 sm:p-4 lg:px-16 lg:py-4">
         <div className="flex items-center justify-between">
           <div className="hidden sm:block">
             <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary/75">{copy.resumeTitle}</p>
@@ -690,7 +606,7 @@ export function LessonQuizOverlay({
           </button>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[1500px] flex-1 items-center justify-start">
+        <div className="relative mx-auto flex w-full max-w-[1460px] flex-1 items-start justify-start py-1.5">
           {!hasQuizAvailable ? (
             <div className="animate-fade-scale-in w-full max-w-2xl rounded-[28px] border border-white/10 bg-[linear-gradient(145deg,rgba(17,24,39,0.96),rgba(24,24,27,0.95),rgba(51,65,85,0.92))] p-8 text-center shadow-2xl">
               <div className="mx-auto flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-3xl border border-primary/25 bg-primary/10 text-primary">
@@ -708,16 +624,16 @@ export function LessonQuizOverlay({
               <p className="mt-4 text-sm text-muted-foreground">{error || copy.loading}</p>
             </div>
           ) : (
-            <div className="flex w-full animate-fade-scale-in items-start gap-6 xl:gap-8">
-              <QuizPlaylistPanel language={language} currentLessonClassNumber={currentLessonClassNumber} />
+            <div className="flex w-full animate-fade-scale-in items-stretch gap-4 xl:gap-6">
+              <QuizPlaylistPanel language={language} />
 
               <div className="min-w-0 flex-1">
-                <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-stretch lg:justify-between">
-                  <div className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-sm lg:min-w-[320px]">
+                <div className="mb-3.5 flex flex-col gap-2.5 lg:flex-row lg:items-stretch lg:justify-between">
+                  <div className="rounded-3xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm lg:min-w-[300px]">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary/80">{copy.yourProgress}</p>
                   <div className="mt-3 flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-2xl font-serif font-bold text-white">
+                      <p className="text-xl font-serif font-bold text-white">
                         {copy.questionLabel} {currentQuestionIndex + 1} {copy.of} {attempt.questionCount}
                       </p>
                       <p className="text-sm text-white/65">{sessionProgressPercent}%</p>
@@ -737,25 +653,25 @@ export function LessonQuizOverlay({
                       className="self-start"
                     />
                   ) : (
-                    <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 px-5 py-4 text-sm text-white/60 lg:min-w-[280px]">
+                    <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 lg:min-w-[260px]">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary/80">{copy.currentBest}</p>
-                      <p className="mt-3 leading-6">{copy.bestResultEmpty}</p>
+                      <p className="mt-2 leading-5">{copy.bestResultEmpty}</p>
                     </div>
                   )}
                 </div>
 
                 {currentQuestion ? (
-                  <div className={cn('relative overflow-hidden rounded-[32px] border p-6 shadow-2xl backdrop-blur-sm sm:p-8', questionCardTone)}>
+                  <div className={cn('relative overflow-hidden rounded-[28px] border p-5 shadow-2xl backdrop-blur-sm sm:p-6', questionCardTone)}>
                     <div className="absolute inset-x-10 top-0 h-20 bg-[radial-gradient(circle,_rgba(212,175,55,0.2),_transparent_55%)] blur-2xl" />
 
                     <div className="relative">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary/75">
                         {copy.questionLabel} {currentQuestionIndex + 1}
                       </p>
-                      <h2 className="mt-4 text-2xl font-bold leading-tight text-white sm:text-3xl">
+                      <h2 className="mt-3 text-xl font-bold leading-tight text-white sm:text-2xl">
                         {copy.questionLabel} {currentQuestionIndex + 1} - {currentQuestion.prompt}
                       </h2>
-                      <p className="mt-3 text-sm text-white/65">{copy.instruction}</p>
+                      <p className="mt-2 text-sm text-white/65">{copy.instruction}</p>
 
                       {showQaAnswer && currentCorrectOption ? (
                         <div className="mt-4 inline-flex max-w-full items-center gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 px-4 py-3 text-left shadow-[0_0_24px_rgba(34,211,238,0.12)]">
@@ -768,7 +684,7 @@ export function LessonQuizOverlay({
                         </div>
                       ) : null}
 
-                      <div className="mt-8 grid gap-3">
+                      <div className="mt-5 grid gap-2.5">
                         {currentQuestion.options.map((option) => {
                           const isSelected = selectedOptionId === option.id;
                           const isCorrectOption = option.id === currentQuestion.answerId;
@@ -791,20 +707,20 @@ export function LessonQuizOverlay({
                               disabled={isLocked || isSubmitting}
                               onClick={() => setSelectedOptionId(option.id)}
                               className={cn(
-                                'flex w-full items-start gap-4 rounded-2xl border px-4 py-4 text-left transition-all duration-150 disabled:cursor-default disabled:opacity-90',
+                                'flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-150 disabled:cursor-default disabled:opacity-90',
                                 optionTone
                               )}
                             >
                               <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-current/20 bg-black/10 text-xs font-bold">
                                 {option.label}
                               </span>
-                              <span className="text-sm leading-6 sm:text-[15px]">{option.text}</span>
+                              <span className="text-sm leading-5 sm:text-[15px]">{option.text}</span>
                             </button>
                           );
                         })}
                       </div>
 
-                      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-white/45">
                           <Music2 className="h-4 w-4 text-primary/65" />
                           <span>Jazz arcade • 5 choices • 12 rounds</span>

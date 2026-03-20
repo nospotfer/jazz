@@ -526,7 +526,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       premiumClickHint: 'Premium — Haz clic para saber más',
       academyTitle: 'Academia Cultura del Jazz',
       purchaseVerifying: 'Verificando tu pago y desbloqueo del curso...',
-      purchasePending: 'Pago recibido, pero la confirmación aún está pendiente. Espera unos segundos y recarga la página.',
+      purchasePending: 'Pago recibido. La confirmación aún está pendiente, seguimos verificando automáticamente...',
     },
     en: {
       classPrefix: 'Class',
@@ -545,7 +545,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       premiumClickHint: 'Premium — Click to learn more',
       academyTitle: 'Jazz Culture Academy',
       purchaseVerifying: 'Verifying your payment and course unlock...',
-      purchasePending: 'Payment received, but confirmation is still pending. Please wait a few seconds and refresh.',
+      purchasePending: 'Payment received. Confirmation is still pending, we are still checking automatically...',
     },
     fr: {
       classPrefix: 'Cours',
@@ -564,7 +564,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       premiumClickHint: 'Premium — Cliquez pour en savoir plus',
       academyTitle: 'Académie Culture du Jazz',
       purchaseVerifying: 'Vérification du paiement et du déblocage du cours...',
-      purchasePending: 'Paiement reçu, mais la confirmation est encore en attente. Veuillez patienter quelques secondes puis actualiser.',
+      purchasePending: 'Paiement reçu. La confirmation est encore en attente, nous continuons la vérification automatiquement...',
     },
     pt: {
       classPrefix: 'Aula',
@@ -583,7 +583,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       premiumClickHint: 'Premium — Clique para saber mais',
       academyTitle: 'Academia Cultura do Jazz',
       purchaseVerifying: 'Verificando seu pagamento e desbloqueio do curso...',
-      purchasePending: 'Pagamento recebido, mas a confirmação ainda está pendente. Aguarde alguns segundos e recarregue a página.',
+      purchasePending: 'Pagamento recebido. A confirmação ainda está pendente, seguimos verificando automaticamente...',
     },
   }[language];
   const router = useRouter();
@@ -735,7 +735,10 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         return;
       }
 
-      for (let attempt = 0; attempt < 20; attempt += 1) {
+      const maxAttempts = 120;
+      const pollIntervalMs = 2000;
+
+      for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
         if (cancelled) {
           return;
         }
@@ -746,7 +749,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         }
 
         await new Promise((resolve) => {
-          window.setTimeout(resolve, 2000);
+          window.setTimeout(resolve, pollIntervalMs);
         });
       }
 
