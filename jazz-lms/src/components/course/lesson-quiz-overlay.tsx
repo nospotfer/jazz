@@ -80,12 +80,47 @@ function buildConfettiBurst() {
   }));
 }
 
-function QuizSideDecor() {
+function QuizSideDecor({
+  language,
+}: {
+  language: 'es' | 'en' | 'fr' | 'pt';
+}) {
+  const copy = {
+    es: {
+      arcadeSwing: 'Arcade swing',
+      groove: '8-bit groove',
+      solo: 'Solo',
+      rhythm: 'Ritmo',
+      pulse: 'Pulso',
+    },
+    en: {
+      arcadeSwing: 'Arcade swing',
+      groove: '8-bit groove',
+      solo: 'Solo',
+      rhythm: 'Rhythm',
+      pulse: 'Pulse',
+    },
+    fr: {
+      arcadeSwing: 'Arcade swing',
+      groove: 'Groove 8-bit',
+      solo: 'Solo',
+      rhythm: 'Rythme',
+      pulse: 'Pulsation',
+    },
+    pt: {
+      arcadeSwing: 'Arcade swing',
+      groove: 'Groove 8-bit',
+      solo: 'Solo',
+      rhythm: 'Ritmo',
+      pulse: 'Pulso',
+    },
+  }[language];
+
   return (
     <>
       <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-44 flex-col justify-center gap-5 px-5 lg:flex">
         <div className="quiz-pixel-panel animate-quiz-side-bob" style={{ animationDelay: '0.25s' }}>
-          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-cyan-100/80">Arcade swing</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-cyan-100/80">{copy.arcadeSwing}</p>
           <div className="mt-3 grid grid-cols-4 gap-2">
             {Array.from({ length: 8 }, (_, index) => (
               <span
@@ -98,11 +133,11 @@ function QuizSideDecor() {
 
         <div className="quiz-pixel-panel animate-quiz-side-bob" style={{ animationDelay: '0.8s' }}>
           <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.22em] text-amber-100/75">
-            <span>8-bit groove</span>
+            <span>{copy.groove}</span>
             <span>12/12</span>
           </div>
           <div className="mt-3 space-y-2">
-            {['Solo', 'Rhythm', 'Pulse'].map((label, index) => (
+            {[copy.solo, copy.rhythm, copy.pulse].map((label, index) => (
               <div key={label} className="flex items-center gap-2">
                 <span className="w-12 text-[10px] uppercase tracking-[0.18em] text-amber-50/70">{label}</span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/10">
@@ -268,6 +303,8 @@ export function LessonQuizOverlay({
       resumeTitle: 'Modo jazz arcade',
       bestResultEmpty: 'Tu mejor medalla aparecerá aquí cuando cierres una ronda completa.',
       closeQuiz: 'Cerrar quiz',
+      quizMeta: 'Jazz arcade • 5 opciones • 12 rondas',
+      qaLabel: 'QA local: respuesta correcta es',
     },
     en: {
       loading: 'Preparing your quiz...',
@@ -292,6 +329,8 @@ export function LessonQuizOverlay({
       resumeTitle: 'Jazz arcade mode',
       bestResultEmpty: 'Your best medal will appear here after your first full run.',
       closeQuiz: 'Close quiz',
+      quizMeta: 'Jazz arcade • 5 choices • 12 rounds',
+      qaLabel: 'Local QA: correct answer is',
     },
     fr: {
       loading: 'Préparation de votre quiz...',
@@ -316,6 +355,8 @@ export function LessonQuizOverlay({
       resumeTitle: 'Mode jazz arcade',
       bestResultEmpty: 'Votre meilleure médaille apparaîtra ici après une première tentative complète.',
       closeQuiz: 'Fermer le quiz',
+      quizMeta: 'Jazz arcade • 5 choix • 12 tours',
+      qaLabel: 'QA local: la bonne réponse est',
     },
     pt: {
       loading: 'Preparando seu quiz...',
@@ -340,6 +381,8 @@ export function LessonQuizOverlay({
       resumeTitle: 'Modo jazz arcade',
       bestResultEmpty: 'Sua melhor medalha vai aparecer aqui depois da primeira rodada completa.',
       closeQuiz: 'Fechar quiz',
+      quizMeta: 'Jazz arcade • 5 opções • 12 rodadas',
+      qaLabel: 'QA local: resposta correta é',
     },
   }[language];
 
@@ -389,7 +432,7 @@ export function LessonQuizOverlay({
     try {
       const response = await axios.post<LessonQuizLaunchResponse>(
         `/api/courses/${courseId}/lessons/${lessonId}/quiz`,
-        { restart }
+        { restart, language }
       );
 
       setAttempt(response.data.attempt);
@@ -421,6 +464,14 @@ export function LessonQuizOverlay({
 
     void openQuiz(false);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !hasQuizAvailable) {
+      return;
+    }
+
+    void openQuiz(false);
+  }, [language]);
 
   useEffect(() => {
     if (!currentQuestion) {
@@ -570,7 +621,7 @@ export function LessonQuizOverlay({
       <div className="quiz-scanlines absolute inset-0 opacity-40" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.18),_transparent_30%),radial-gradient(circle_at_bottom,_rgba(56,189,248,0.12),_transparent_28%)]" />
 
-      <QuizSideDecor />
+      <QuizSideDecor language={language} />
 
       {confettiPieces.map((piece) => (
         <span
@@ -679,7 +730,7 @@ export function LessonQuizOverlay({
                             {currentCorrectOption.label}
                           </span>
                           <span className="min-w-0 text-sm font-medium text-cyan-50">
-                            QA local: resposta correta é {currentCorrectOption.text}
+                            {copy.qaLabel} {currentCorrectOption.text}
                           </span>
                         </div>
                       ) : null}
@@ -723,7 +774,7 @@ export function LessonQuizOverlay({
                       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-white/45">
                           <Music2 className="h-4 w-4 text-primary/65" />
-                          <span>Jazz arcade • 5 choices • 12 rounds</span>
+                          <span>{copy.quizMeta}</span>
                         </div>
 
                         <Button
