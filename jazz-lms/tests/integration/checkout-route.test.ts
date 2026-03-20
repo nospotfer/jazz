@@ -189,7 +189,6 @@ describe('POST /api/checkout', () => {
 
   test('creates a local test checkout on localhost requests', async () => {
     process.env.ENABLE_LOCAL_TEST_CHECKOUT = '1';
-  test('returns 503 for localhost paid checkout when Stripe is not configured', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
@@ -202,12 +201,12 @@ describe('POST /api/checkout', () => {
     });
 
     const res = await POST(req);
+    const body = await res.json();
 
     expect(res.status).toBe(200);
     expect(body.url).toContain('/dashboard?purchase=success&source=dashboard&test=1');
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
     delete process.env.ENABLE_LOCAL_TEST_CHECKOUT;
-    expect(res.status).toBe(503);
   });
 });
 

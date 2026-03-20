@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -766,41 +766,19 @@ export const CoursePlayer = ({
     const eventTarget = event?.target as { duration?: number; currentTime?: number } | null;
     const eventCurrentTarget = event?.currentTarget as { duration?: number; currentTime?: number } | null;
     const muxPlayer = muxPlayerRef.current as { duration?: number; currentTime?: number } | null;
-  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
-  const musicLinks = [
-    {
-      label: 'Spotify',
-      href: `https://open.spotify.com/search/${musicSearch}`,
-      tooltip: copy.musicSpotify,
-      platform: 'spotify' as const,
-      colorClass: 'text-emerald-500',
-      tooltipClass: 'from-emerald-500 to-emerald-400',
-    },
-    {
-      label: 'Apple Music',
-      href: `https://music.apple.com/search?term=${musicSearch}`,
-      tooltip: copy.musicApple,
-      platform: 'apple' as const,
-      colorClass: 'text-rose-500',
-      tooltipClass: 'from-rose-500 to-orange-400',
-    },
-    {
-      label: 'Amazon Music',
-      href: `https://music.amazon.com/search/${musicSearch}`,
-      tooltip: copy.musicAmazon,
-      platform: 'amazon' as const,
-      colorClass: 'text-sky-500',
-      tooltipClass: 'from-sky-500 to-indigo-500',
-    },
-    {
-      label: 'YouTube',
-      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
-      tooltip: copy.musicYouTube,
-      platform: 'youtube' as const,
-      colorClass: 'text-red-500',
-      tooltipClass: 'from-red-500 to-rose-500',
-    },
-  ];
+    const durationCandidates = [eventTarget?.duration, eventCurrentTarget?.duration, muxPlayer?.duration];
+    const currentCandidates = [eventTarget?.currentTime, eventCurrentTarget?.currentTime, muxPlayer?.currentTime];
+
+    const duration = durationCandidates.find((value) => Number.isFinite(value) && (value ?? 0) > 0)
+      ?? DEFAULT_LESSON_DURATION_MINUTES * 60;
+    const current = currentCandidates.find((value) => Number.isFinite(value) && (value ?? 0) >= 0) ?? 0;
+
+    return {
+      duration: Number(duration),
+      current: Number(current),
+      percent: calculateLessonProgressPercent(Number(current), Number(duration)),
+    };
+  }, []);
 
   const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
   const musicLinks = [
@@ -841,39 +819,15 @@ export const CoursePlayer = ({
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
 
-    const target = event.target as HTMLVideoElement | null;
-
-    if (!target) return;
-
-    const duration = Number.isFinite(target.duration) && target.duration > 0
-      ? target.duration
-      : DEFAULT_LESSON_DURATION_MINUTES * 60;
-
-    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
-    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
-
-  const onTimeUpdate = async (event: Event) => {
-    if (isCompleted || !canAccessLesson) return;
-
-    const target = event.target as HTMLVideoElement | null;
-
-    if (!target) return;
-
-    const duration = Number.isFinite(target.duration) && target.duration > 0
-      ? target.duration
-      : DEFAULT_LESSON_DURATION_MINUTES * 60;
-
-    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
-    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
-
-    if (percent < 1 || percent >= 100 || percent - lastSavedPercent < 10) {
+    const { duration, current, percent } = getPlaybackMetrics(event);
+    if (!shouldPersistLessonProgress(percent, lastSavedPercent)) {
       return;
     }
 
     setLastSavedPercent(percent);
 
     try {
-      const minutesRemaining = Math.max(0, Math.ceil((duration - current) / 60));
+      const minutesRemaining = calculateLessonMinutesRemaining(current, duration);
 
       await axios.put(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, {
         isCompleted: false,
@@ -945,23 +899,8 @@ export const CoursePlayer = ({
   const onEnded = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
 
-    const target = event.target as HTMLVideoElement | null;
-    if (!target) return;
-
-
-  const onEnded = async (event: Event) => {
-    if (isCompleted || !canAccessLesson) return;
-
-    const target = event.target as HTMLVideoElement | null;
-    if (!target) return;
-
-    const duration = Number.isFinite(target.duration) ? target.duration : NaN;
-    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
-    const watchedPercent = Number.isFinite(duration) && duration > 0
-      ? (current / duration) * 100
-      : 0;
-
-    const shouldCompleteByPlayback = watchedPercent >= 95 || lastSavedPercent >= 90;
+    const { percent: watchedPercent } = getPlaybackMetrics(event);
+    const shouldCompleteByPlayback = shouldAutoCompleteLessonByPlayback(watchedPercent, lastSavedPercent);
     if (!shouldCompleteByPlayback) return;
 
     await completeLesson({ openQuizAfter: false });
