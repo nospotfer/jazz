@@ -348,9 +348,13 @@ export async function listRecentLemonOrdersByEmail(input: {
     ? Math.max(1, Math.floor(input.withinMinutes))
     : 30;
   const cutoffEpoch = Date.now() - withinMinutes * 60 * 1000;
-  const maxPages = Number.isFinite(input.maxPages) ? Math.max(1, Math.floor(input.maxPages)) : 3;
-  const pageSize = Number.isFinite(input.pageSize)
-    ? Math.min(100, Math.max(1, Math.floor(input.pageSize)))
+  const maxPagesInput = input.maxPages;
+  const pageSizeInput = input.pageSize;
+  const maxPages = typeof maxPagesInput === 'number' && Number.isFinite(maxPagesInput)
+    ? Math.max(1, Math.floor(maxPagesInput))
+    : 3;
+  const pageSize = typeof pageSizeInput === 'number' && Number.isFinite(pageSizeInput)
+    ? Math.min(100, Math.max(1, Math.floor(pageSizeInput)))
     : 50;
   const storeId = readOptionalEnv('LEMON_SQUEEZY_STORE_ID');
 
