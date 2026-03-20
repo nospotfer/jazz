@@ -1,7 +1,7 @@
 import { CANONICAL_JAZZ_CLASSES, getCanonicalJazzClass, getLocalizedJazzClassLabel } from '@/lib/course-lessons';
 import type { SupportedLanguage } from '@/lib/language';
 
-export type MusicPlatform = 'spotify' | 'apple' | 'amazon' | 'youtube';
+export type MusicPlatform = 'spotify';
 
 export interface MusicPlatformLink {
   label: string;
@@ -22,35 +22,20 @@ export interface JazzPlaylistTrack {
 
 const MUSIC_PLATFORM_LABELS: Record<MusicPlatform, string> = {
   spotify: 'Spotify',
-  apple: 'Apple Music',
-  amazon: 'Amazon Music',
-  youtube: 'YouTube',
 };
 
 const MUSIC_PLATFORM_TOOLTIP_COPY: Record<SupportedLanguage, Record<MusicPlatform, string>> = {
   es: {
     spotify: 'Abrir en Spotify',
-    apple: 'Abrir en Apple Music',
-    amazon: 'Abrir en Amazon Music',
-    youtube: 'Abrir en YouTube',
   },
   en: {
     spotify: 'Open in Spotify',
-    apple: 'Open in Apple Music',
-    amazon: 'Open in Amazon Music',
-    youtube: 'Open in YouTube',
   },
   fr: {
     spotify: 'Ouvrir dans Spotify',
-    apple: 'Ouvrir dans Apple Music',
-    amazon: 'Ouvrir dans Amazon Music',
-    youtube: 'Ouvrir dans YouTube',
   },
   pt: {
     spotify: 'Abrir no Spotify',
-    apple: 'Abrir no Apple Music',
-    amazon: 'Abrir no Amazon Music',
-    youtube: 'Abrir no YouTube',
   },
 };
 
@@ -66,21 +51,6 @@ export function buildMusicPlatformLinks(searchTerm: string): MusicPlatformLink[]
       label: MUSIC_PLATFORM_LABELS.spotify,
       href: `https://open.spotify.com/search/${encodedSearch}`,
       platform: 'spotify',
-    },
-    {
-      label: MUSIC_PLATFORM_LABELS.apple,
-      href: `https://music.apple.com/search?term=${encodedSearch}`,
-      platform: 'apple',
-    },
-    {
-      label: MUSIC_PLATFORM_LABELS.amazon,
-      href: `https://music.amazon.com/search/${encodedSearch}`,
-      platform: 'amazon',
-    },
-    {
-      label: MUSIC_PLATFORM_LABELS.youtube,
-      href: `https://www.youtube.com/results?search_query=${encodedSearch}`,
-      platform: 'youtube',
     },
   ];
 }
