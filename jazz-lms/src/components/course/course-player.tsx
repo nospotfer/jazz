@@ -1,9 +1,9 @@
 'use client';
 import { Button } from '../ui/button';
-import { CheckCircle, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
+import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -96,6 +96,50 @@ interface CoursePlayerProps {
 
 function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
+}
+
+function getAttachmentDisplayName(name: string, classNumber: number | null, noteLabel: string) {
+  const withoutExtension = name.replace(/\.pdf$/i, '').trim();
+  const simplified = withoutExtension
+    .replace(/^apuntes?\s*(auxiliares?)?\s*\d*\s*[-–—:]\s*/i, '')
+    .replace(/^apunte\s*(da|de)?\s*(aula|classe)?\s*\d*\s*[-–—:]\s*/i, '')
+    .trim();
+
+  if (!simplified) {
+    return classNumber ? `${noteLabel} ${classNumber}` : noteLabel;
+  }
+
+  return simplified;
+}
+
+type MusicPlatform = 'spotify' | 'apple' | 'amazon' | 'youtube';
+
+function PlatformIcon({ platform }: { platform: MusicPlatform }) {
+  if (platform === 'spotify') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'apple') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M16.6 12.6c0-2 1.6-3 1.7-3.1-1-.6-2.5-.7-3.5-.1-.9.5-1.6.6-2.2.6-.6 0-1.3-.1-2.1-.6-1.1-.6-2.8-.4-3.8.7-1.6 1.8-1.3 5.2.7 8.1.9 1.3 2 2.7 3.5 2.6.7 0 1.2-.2 2-.2s1.2.2 2 .2c1.5 0 2.4-1.3 3.3-2.6.7-1.1 1-2.1 1-2.2-.1 0-2.6-1-2.6-3.4Zm-2.5-7.4c.7-.8 1.2-1.9 1-3-.9.1-2 .6-2.7 1.4-.7.7-1.3 1.9-1.1 3 .9.1 2-.5 2.8-1.4Z" />
+      </svg>
+    );
+  }
+
+  if (platform === 'amazon') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <path d="M5.5 16.6c3.2 2.1 8.2 2.3 11.8.6.5-.2 1 .3.5.7-3.9 2.8-9.8 2.9-13 .9-.4-.3 0-1 .7-.7Zm12.8-.9c-.4-.5-2.6-.2-3.6-.1-.3 0-.4-.2-.1-.5 1.8-1.3 4.8-.9 5.1-.5.3.3-.1 3.2-1.8 4.5-.3.2-.5.1-.4-.2.4-1 .9-3.2.8-3.2ZM9.5 11.7c0-1.8 1.3-2.7 3.2-2.7.6 0 1.1.1 1.6.3v-.4c0-.8-.6-1.2-1.5-1.2-.7 0-1.4.2-2.1.5l-.5-1.5c.9-.4 1.9-.7 3-.7 2.2 0 3.4 1 3.4 3v3.3c0 .6.1 1 .4 1.4v.2h-2.1c-.2-.2-.3-.5-.4-.8-.6.6-1.3 1-2.2 1-1.6 0-2.8-.9-2.8-2.4Zm4.8-.5v-.5c-.4-.2-.8-.2-1.3-.2-1 0-1.6.4-1.6 1.1 0 .6.5 1 1.3 1 .9 0 1.6-.5 1.6-1.4Z" />
+      </svg>
+    );
+  }
+
+  return <Youtube className="h-4 w-4" />;
 }
 
 export const CoursePlayer = ({
@@ -358,9 +402,6 @@ export const CoursePlayer = ({
   const previewUrlRef = useRef('');
   const muxContainerRef = useRef<HTMLDivElement | null>(null);
   const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
-  const lastSavedPercentRef = useRef(initialProgressPercent);
-  const isCompletedRef = useRef(initialIsCompleted);
-  const isCompletingRef = useRef(false);
   const router = useRouter();
   const confetti = useConfettiStore();
 
@@ -483,24 +524,6 @@ export const CoursePlayer = ({
   useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
-
-  useEffect(() => {
-    setLastSavedPercent(initialProgressPercent);
-    lastSavedPercentRef.current = initialProgressPercent;
-  }, [initialProgressPercent, lesson.id]);
-
-  useEffect(() => {
-    setIsCompleted(initialIsCompleted);
-    isCompletedRef.current = initialIsCompleted;
-  }, [initialIsCompleted, lesson.id]);
-
-  useEffect(() => {
-    lastSavedPercentRef.current = lastSavedPercent;
-  }, [lastSavedPercent]);
-
-  useEffect(() => {
-    isCompletedRef.current = isCompleted;
-  }, [isCompleted]);
 
   useEffect(() => {
     setQuizSummary(initialQuizSummary);
@@ -743,22 +766,128 @@ export const CoursePlayer = ({
     const eventTarget = event?.target as { duration?: number; currentTime?: number } | null;
     const eventCurrentTarget = event?.currentTarget as { duration?: number; currentTime?: number } | null;
     const muxPlayer = muxPlayerRef.current as { duration?: number; currentTime?: number } | null;
+  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
+  const musicLinks = [
+    {
+      label: 'Spotify',
+      href: `https://open.spotify.com/search/${musicSearch}`,
+      tooltip: copy.musicSpotify,
+      platform: 'spotify' as const,
+      colorClass: 'text-emerald-500',
+      tooltipClass: 'from-emerald-500 to-emerald-400',
+    },
+    {
+      label: 'Apple Music',
+      href: `https://music.apple.com/search?term=${musicSearch}`,
+      tooltip: copy.musicApple,
+      platform: 'apple' as const,
+      colorClass: 'text-rose-500',
+      tooltipClass: 'from-rose-500 to-orange-400',
+    },
+    {
+      label: 'Amazon Music',
+      href: `https://music.amazon.com/search/${musicSearch}`,
+      tooltip: copy.musicAmazon,
+      platform: 'amazon' as const,
+      colorClass: 'text-sky-500',
+      tooltipClass: 'from-sky-500 to-indigo-500',
+    },
+    {
+      label: 'YouTube',
+      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
+      tooltip: copy.musicYouTube,
+      platform: 'youtube' as const,
+      colorClass: 'text-red-500',
+      tooltipClass: 'from-red-500 to-rose-500',
+    },
+  ];
 
-    const duration = [eventTarget?.duration, eventCurrentTarget?.duration, muxPlayer?.duration]
-      .find((value) => Number.isFinite(value) && Number(value) > 0);
-    const currentTime = [eventTarget?.currentTime, eventCurrentTarget?.currentTime, muxPlayer?.currentTime]
-      .find((value) => Number.isFinite(value) && Number(value) >= 0);
+  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
+  const musicLinks = [
+    {
+      label: 'Spotify',
+      href: `https://open.spotify.com/search/${musicSearch}`,
+      tooltip: copy.musicSpotify,
+      platform: 'spotify' as const,
+      colorClass: 'text-emerald-500',
+      tooltipClass: 'from-emerald-500 to-emerald-400',
+    },
+    {
+      label: 'Apple Music',
+      href: `https://music.apple.com/search?term=${musicSearch}`,
+      tooltip: copy.musicApple,
+      platform: 'apple' as const,
+      colorClass: 'text-rose-500',
+      tooltipClass: 'from-rose-500 to-orange-400',
+    },
+    {
+      label: 'Amazon Music',
+      href: `https://music.amazon.com/search/${musicSearch}`,
+      tooltip: copy.musicAmazon,
+      platform: 'amazon' as const,
+      colorClass: 'text-sky-500',
+      tooltipClass: 'from-sky-500 to-indigo-500',
+    },
+    {
+      label: 'YouTube',
+      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
+      tooltip: copy.musicYouTube,
+      platform: 'youtube' as const,
+      colorClass: 'text-red-500',
+      tooltipClass: 'from-red-500 to-rose-500',
+    },
+  ];
 
-    return {
-      duration: Number(duration ?? DEFAULT_LESSON_DURATION_MINUTES * 60),
-      currentTime: Number(currentTime ?? 0),
-    };
-  }, []);
+  const onTimeUpdate = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
 
-  const completeLesson = useCallback(async ({ openQuizAfter = false }: { openQuizAfter?: boolean } = {}) => {
-    if (isCompletingRef.current || isCompletedRef.current || !canAccessLesson) return;
+    const target = event.target as HTMLVideoElement | null;
 
-    isCompletingRef.current = true;
+    if (!target) return;
+
+    const duration = Number.isFinite(target.duration) && target.duration > 0
+      ? target.duration
+      : DEFAULT_LESSON_DURATION_MINUTES * 60;
+
+    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
+    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
+
+  const onTimeUpdate = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
+
+    const target = event.target as HTMLVideoElement | null;
+
+    if (!target) return;
+
+    const duration = Number.isFinite(target.duration) && target.duration > 0
+      ? target.duration
+      : DEFAULT_LESSON_DURATION_MINUTES * 60;
+
+    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
+    const percent = Math.max(0, Math.min(100, Math.round((current / duration) * 100)));
+
+    if (percent < 1 || percent >= 100 || percent - lastSavedPercent < 10) {
+      return;
+    }
+
+    setLastSavedPercent(percent);
+
+    try {
+      const minutesRemaining = Math.max(0, Math.ceil((duration - current) / 60));
+
+      await axios.put(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, {
+        isCompleted: false,
+        progressPercent: percent,
+        minutesRemaining,
+      });
+    } catch {
+      // Silent fail for background progress sync
+    }
+  };
+
+  const completeLesson = async ({ openQuizAfter = false }: { openQuizAfter?: boolean } = {}) => {
+    if (isCompleting || isCompleted || !canAccessLesson) return;
+
     setIsCompleting(true);
     try {
       await axios.put(
@@ -771,9 +900,6 @@ export const CoursePlayer = ({
       );
 
       setIsCompleted(true);
-      setLastSavedPercent(100);
-      isCompletedRef.current = true;
-      lastSavedPercentRef.current = 100;
       confetti.onOpen();
       toast.success(copy.lessonCompleted);
 
@@ -786,15 +912,13 @@ export const CoursePlayer = ({
     } catch {
       toast.error(copy.somethingWrong);
     } finally {
-      isCompletingRef.current = false;
       setIsCompleting(false);
     }
-  }, [canAccessLesson, confetti, copy.lessonCompleted, copy.somethingWrong, course.id, lesson.id, router]);
+  };
 
-  const resetLessonCompletion = useCallback(async () => {
-    if (isCompletingRef.current || !canAccessLesson) return;
+  const resetLessonCompletion = async () => {
+    if (isCompleting || !canAccessLesson) return;
 
-    isCompletingRef.current = true;
     setIsCompleting(true);
     try {
       await axios.put(
@@ -809,60 +933,39 @@ export const CoursePlayer = ({
       setIsCompleted(false);
       setLastSavedPercent(0);
       setIsQuizOpen(false);
-      isCompletedRef.current = false;
-      lastSavedPercentRef.current = 0;
       toast.success(copy.lessonReset);
       router.refresh();
     } catch {
       toast.error(copy.somethingWrong);
     } finally {
-      isCompletingRef.current = false;
       setIsCompleting(false);
     }
-  }, [canAccessLesson, copy.lessonReset, copy.somethingWrong, course.id, lesson.id, router]);
+  };
 
-  const onTimeUpdate = useCallback(async (event: Event) => {
-    if (isCompletedRef.current || !canAccessLesson) return;
+  const onEnded = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
 
-    const { duration, currentTime } = getPlaybackMetrics(event);
-    const percent = calculateLessonProgressPercent(currentTime, duration);
+    const target = event.target as HTMLVideoElement | null;
+    if (!target) return;
 
-    if (!shouldPersistLessonProgress(percent, lastSavedPercentRef.current)) {
-      return;
-    }
 
-    lastSavedPercentRef.current = percent;
-    setLastSavedPercent(percent);
+  const onEnded = async (event: Event) => {
+    if (isCompleted || !canAccessLesson) return;
 
-    try {
-      const minutesRemaining = calculateLessonMinutesRemaining(currentTime, duration);
+    const target = event.target as HTMLVideoElement | null;
+    if (!target) return;
 
-      await axios.put(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, {
-        isCompleted: false,
-        progressPercent: percent,
-        minutesRemaining,
-      });
-    } catch {
-      // Silent fail for background progress sync
-    }
-  }, [canAccessLesson, course.id, getPlaybackMetrics, lesson.id]);
-
-  const onEnded = useCallback(async (event: Event) => {
-    if (isCompletedRef.current || !canAccessLesson) return;
-
-    const { duration, currentTime } = getPlaybackMetrics(event);
+    const duration = Number.isFinite(target.duration) ? target.duration : NaN;
+    const current = Number.isFinite(target.currentTime) ? target.currentTime : 0;
     const watchedPercent = Number.isFinite(duration) && duration > 0
-      ? (currentTime / duration) * 100
+      ? (current / duration) * 100
       : 0;
 
-    const shouldCompleteByPlayback = shouldAutoCompleteLessonByPlayback(
-      watchedPercent,
-      lastSavedPercentRef.current
-    );
+    const shouldCompleteByPlayback = watchedPercent >= 95 || lastSavedPercent >= 90;
     if (!shouldCompleteByPlayback) return;
 
     await completeLesson({ openQuizAfter: false });
-  }, [canAccessLesson, completeLesson, getPlaybackMetrics]);
+  };
 
   const onMarkAsComplete = async () => {
     if (!canAccessLesson) return;
@@ -944,6 +1047,25 @@ export const CoursePlayer = ({
                           </svg>
                           <span>Spotify</span>
                         </a>
+                        {musicLinks.map((platform) => (
+                          <a
+                            key={platform.label}
+                            href={platform.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={platform.tooltip}
+                            aria-label={platform.tooltip}
+                            className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
+                          >
+                            <span className={platform.colorClass}>
+                              <PlatformIcon platform={platform.platform} />
+                            </span>
+                            <span className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${platform.tooltipClass}`}>
+                              {platform.tooltip}
+                            </span>
+                          </a>
+                        ))}
+
                         <button
                           type="button"
                           onClick={() => setIsNotesPanelOpen((current) => !current)}
@@ -1003,7 +1125,7 @@ export const CoursePlayer = ({
                       poster={playbackPosterUrl || undefined}
                       accentColor="#d4af37"
                       onCanPlay={() => setIsReady(true)}
-                      onEnded={onEnded as (event: unknown) => void}
+                      onEnded={(event) => onEnded(event as unknown as Event)}
                       onTimeUpdate={onTimeUpdate}
                       onError={() => {
                         setMuxRuntimeError(copy.muxTokenError);
@@ -1157,7 +1279,6 @@ export const CoursePlayer = ({
       <LessonQuizOverlay
         courseId={course.id}
         lessonId={lesson.id}
-        currentLessonClassNumber={classNumber}
         isOpen={isQuizOpen}
         hasQuizAvailable={hasQuizAvailable}
         initialSummary={quizSummary}

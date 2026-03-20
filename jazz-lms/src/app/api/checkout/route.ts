@@ -10,6 +10,8 @@ import { createLemonCheckout, getLemonConfig, isLemonConfigured, isLemonWebhookC
 import { validateVoucherForCourse } from '@/lib/vouchers';
 import { upsertCoursePurchaseFromProvider } from '@/lib/course-purchase-sync';
 import { randomUUID } from 'crypto';
+import { languageToStripeLocale, normalizeLanguage } from '@/lib/language';
+import { isSupportedPaymentMethod, isUnsupportedPaymentMethodStripeError } from '@/lib/checkout-helpers';
 
 export const runtime = 'nodejs';
 
@@ -114,11 +116,21 @@ export async function POST(req: Request) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
-    const course = await db.course.findUnique({
-      where: {
-        id: courseId,
-      },
-    });
+    const [course, existingPurchase] = await Promise.all([
+      db.course.findUnique({
+        where: {
+          id: courseId,
+        },
+      }),
+      db.purchase.findUnique({
+        where: {
+          userId_courseId: {
+            userId: user.id,
+            courseId,
+          },
+        },
+      }),
+    ]);
 
     if (!course) {
       return new NextResponse(copy.courseNotFound, { status: 404 });
@@ -325,6 +337,49 @@ export async function POST(req: Request) {
 
         return new NextResponse(copy.voucherMaxUsesReached, { status: 400 });
       }
+    if (!stripe) {
+      return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+    }
+
+    const checkoutOriginalPrice = Number(numericPrice.toFixed(2));
+
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+      {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: course.title,
+            description: course.description || undefined,
+          },
+          unit_amount: Math.round(checkoutOriginalPrice * 100),
+        },
+        quantity: 1,
+      },
+    ];
+
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&session_id={CHECKOUT_SESSION_ID}`;
+    const dashboardCancelUrl = `${origin}/dashboard?purchase=canceled&source=dashboard`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&session_id={CHECKOUT_SESSION_ID}`;
+    const courseCancelUrl = `${origin}/courses/${courseId}?canceled=true`;
+
+    const baseSessionParams: Stripe.Checkout.SessionCreateParams = {
+      customer_creation: 'always',
+      customer_email: user.email,
+      locale: stripeLocale,
+      line_items,
+      mode: 'payment',
+      allow_promotion_codes: true,
+      success_url: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
+      cancel_url: source === 'dashboard' ? dashboardCancelUrl : courseCancelUrl,
+      metadata: {
+        purchaseType: 'course',
+        courseId: course.id,
+        userId: user.id,
+        originalPrice: String(checkoutOriginalPrice),
+        discountAmount: '0',
+        finalPrice: String(checkoutOriginalPrice),
+      },
+    };
 
       if (voucherRejectedByProvider) {
         return new NextResponse(copy.voucherNotConfigured, { status: 400 });
