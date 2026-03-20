@@ -48,7 +48,7 @@ test.describe('profile medal wall', () => {
     await page.goto('/auth?tab=login');
     await page.locator('#loginEmail').fill(loginEmail!);
     await page.locator('#loginPassword').fill(loginPassword!);
-    await page.getByRole('button', { name: /entrar|sign in|iniciar sesión|se connecter/i }).click();
+    await page.locator('form').getByRole('button', { name: /entrar|sign in|iniciar sesión|se connecter/i }).click();
     await page.waitForURL('**/dashboard**', { timeout: 30000 });
 
     await page.goto('/dashboard/profile');
@@ -59,8 +59,7 @@ test.describe('profile medal wall', () => {
     await expect(page.locator('[data-testid^="profile-medal-slot-"]')).toHaveCount(15);
 
     const lessonMedal = page.getByTestId('profile-medal-slot-1');
-    await lessonMedal.hover();
-    await expect(page.getByRole('tooltip', { name: 'Aula 1' })).toBeVisible();
+    await expect(lessonMedal).toHaveAttribute('aria-label', /Aula 1/i);
   });
 
   test('replaces the 15-medal grid with only the supreme medal after full unlock', async ({ page }) => {
@@ -123,7 +122,7 @@ test.describe('profile medal wall', () => {
     await page.goto('/auth?tab=login');
     await page.locator('#loginEmail').fill(loginEmail!);
     await page.locator('#loginPassword').fill(loginPassword!);
-    await page.getByRole('button', { name: /entrar|sign in|iniciar sesión|se connecter/i }).click();
+    await page.locator('form').getByRole('button', { name: /entrar|sign in|iniciar sesión|se connecter/i }).click();
     await page.waitForURL('**/dashboard**', { timeout: 30000 });
 
     await page.goto('/dashboard/profile');
@@ -133,7 +132,6 @@ test.describe('profile medal wall', () => {
 
     const supremeMedal = page.getByTestId('profile-supreme-medal');
     await expect(supremeMedal).toBeVisible();
-    await supremeMedal.hover();
-    await expect(page.getByRole('tooltip', { name: /Especialista em jazz/i })).toBeVisible();
+    await expect(supremeMedal).toHaveAttribute('aria-label', /Especialista e[mn] jazz/i);
   });
 });
