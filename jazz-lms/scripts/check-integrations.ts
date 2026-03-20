@@ -176,12 +176,22 @@ async function main() {
     const token = createMuxPlaybackToken(playbackId);
     const url = `https://stream.mux.com/${playbackId}.m3u8?token=${token}`;
 
-    const response = await fetch(url, { method: 'HEAD' });
-    if (response.ok) {
-      muxOk += 1;
-    } else {
+    const response = await fetch(url);
+    if (!response.ok) {
       throw new Error(`Mux failed for lesson ${lesson.title}: HTTP ${response.status}`);
     }
+
+    const content = await response.text();
+    const lines = content.split('\n').map((line) => line.trim());
+    const streamInfLines = lines.filter((line) => line.startsWith('#EXT-X-STREAM-INF'));
+    const hasResolution = streamInfLines.some((line) => /RESOLUTION=\d+x\d+/i.test(line));
+    const hasVideoCodec = streamInfLines.some((line) => /CODECS="[^"]*(avc1|hvc1|hev1|vp09|av01)/i.test(line));
+
+    if (!hasResolution && !hasVideoCodec) {
+      throw new Error(`Mux failed for lesson ${lesson.title}: no video variant in manifest`);
+    }
+
+    muxOk += 1;
   }
 
   const supabase = createClient(
