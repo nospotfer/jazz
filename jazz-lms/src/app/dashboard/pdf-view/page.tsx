@@ -37,14 +37,10 @@ export default async function PdfViewPage() {
   const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
   const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
-  const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
+  const [fullPurchases, publishedCourses] = await Promise.all([
     db.purchase.findMany({
       where: { userId: user.id },
       select: { courseId: true },
-    }),
-    db.lessonPurchase.findMany({
-      where: { userId: user.id },
-      select: { lessonId: true },
     }),
     db.course.findMany({
       where: { isPublished: true },
@@ -67,7 +63,6 @@ export default async function PdfViewPage() {
   ]);
 
   const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
-  const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
   const orderedLessons = publishedCourses.flatMap((course) =>
     course.chapters.flatMap((chapter) => chapter.lessons)
@@ -104,8 +99,7 @@ export default async function PdfViewPage() {
       return lessons.flatMap((lesson, index) => {
         const hasAccess =
           isPrivilegedViewer ||
-          purchasedCourseIds.has(course.id) ||
-          purchasedLessonIds.has(lesson.id);
+          purchasedCourseIds.has(course.id);
 
         if (!hasAccess) return [];
 
@@ -150,15 +144,13 @@ export default async function PdfViewPage() {
     })
     .filter(Boolean);
 
-  const items = Array.from(dedupedItems.values())
-    .sort((a, b) => {
-      if (a.isAuxiliary !== b.isAuxiliary) {
-        return a.isAuxiliary ? 1 : -1;
-      }
+  const items = Array.from(dedupedItems.values()).sort((a, b) => {
+    if (a.isAuxiliary !== b.isAuxiliary) {
+      return a.isAuxiliary ? 1 : -1;
+    }
 
-      return a.classNumber - b.classNumber;
-    })
-    .map(({ classNumber, isAuxiliary, ...item }) => item);
+    return a.classNumber - b.classNumber;
+  });
 
   return <PdfViewClient items={items} />;
 }

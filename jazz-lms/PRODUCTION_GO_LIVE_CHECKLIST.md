@@ -38,9 +38,11 @@ Configurar no Vercel (Production + Preview + Development):
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_STORAGE_BUCKET`
 - `SIGNED_URL_TTL_SECONDS`
-- `STRIPE_SECRET_KEY`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEBHOOK_SECRET`
+- `LEMON_SQUEEZY_API_KEY`
+- `LEMON_SQUEEZY_WEBHOOK_SECRET`
+- `LEMON_SQUEEZY_STORE_ID`
+- `LEMON_SQUEEZY_PRODUCT_ID`
+- `LEMON_SQUEEZY_VARIANT_ID`
 - `MUX_SIGNING_KEY_ID`
 - `MUX_SIGNING_PRIVATE_KEY`
 - `PROFESSOR_EMAIL`
@@ -60,7 +62,9 @@ Configurar no Vercel (Production + Preview + Development):
   - Site URL: `https://seu-dominio.com`
   - Redirects:
     - `https://seu-dominio.com/auth/callback`
+    - `https://seu-dominio.com/auth/reset-password`
     - `https://*.vercel.app/auth/callback`
+    - `https://*.vercel.app/auth/reset-password`
 
 ### 3.3 Storage
 - [ ] Bucket configurado em `SUPABASE_STORAGE_BUCKET`
@@ -78,22 +82,20 @@ Critério de aceite:
 - [ ] Login com Google cria sessão e redireciona para `/dashboard`
 - [ ] Falhas OAuth retornam para `/auth` com mensagem amigável
 
-## 5) Stripe (pagamentos)
+## 5) Lemon Squeezy (pagamentos)
 
-### 5.1 Dashboard Stripe
-- [ ] Chaves corretas (produção: `sk_live` e `pk_live`)
-- [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/stripe`
-- [ ] Eventos ativos: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`
-- [ ] `STRIPE_WEBHOOK_SECRET` atualizado no Vercel
-- [ ] PayPal habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
-- [ ] Bizum habilitado no Stripe Dashboard para o mercado alvo (Espanha) em test/live
-- [ ] Fluxos PayPal e Bizum testados em sandbox e validados em produção
+### 5.1 Dashboard Lemon Squeezy
+- [ ] Chaves corretas (`LEMON_SQUEEZY_API_KEY`, `LEMON_SQUEEZY_WEBHOOK_SECRET`)
+- [ ] Store/Product/Variant corretos no Vercel (`LEMON_SQUEEZY_STORE_ID`, `LEMON_SQUEEZY_PRODUCT_ID`, `LEMON_SQUEEZY_VARIANT_ID`)
+- [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/lemon-squeezy`
+- [ ] Eventos ativos: `order_created`, `order_refunded`
+- [ ] `LEMON_SQUEEZY_WEBHOOK_SECRET` atualizado no Vercel
 
 ### 5.2 Fluxo funcional
 - [ ] Usuário sem compra não acessa aulas bloqueadas
 - [ ] Primeira aula segue liberada (preview)
-- [ ] Checkout cria sessão Stripe
-- [ ] Webhook grava compra em `Purchase`/`LessonPurchase`
+- [ ] Checkout cria URL no Lemon Squeezy
+- [ ] Webhook grava/reverte compra em `Purchase`
 - [ ] Após compra, acesso liberado corretamente
 
 ## 6) Controle de acesso
@@ -134,9 +136,8 @@ npm run lint
 npm run build
 npm run check:integrations
 
-# stripe sandbox (local)
-npm run stripe:sandbox:check
-npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3000/api/webhooks/stripe --cleanup
+# lemon local (consulte docs/10-lemon-local-setup.md)
+# configurar webhook local para /api/webhooks/lemon-squeezy
 
 # deploy assistido
 npm run deploy:prod

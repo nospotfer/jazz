@@ -17,9 +17,9 @@ const mocks = vi.hoisted(() => ({
   purchaseUpsert: vi.fn(),
   cookies: vi.fn(),
   normalizeLanguage: vi.fn(),
-  languageToStripeLocale: vi.fn(),
   getCourseTranslationBundle: vi.fn(),
   resolveCourseText: vi.fn(),
+  upsertCoursePurchaseFromProvider: vi.fn(),
 }));
 
 vi.mock('@/utils/supabase/server', () => ({
@@ -45,22 +45,21 @@ vi.mock('@/lib/db', () => ({
   },
 }));
 
-vi.mock('@/lib/stripe', () => ({
-  stripe: null,
-}));
-
 vi.mock('next/headers', () => ({
   cookies: mocks.cookies,
 }));
 
 vi.mock('@/lib/language', () => ({
   normalizeLanguage: mocks.normalizeLanguage,
-  languageToStripeLocale: mocks.languageToStripeLocale,
 }));
 
 vi.mock('@/lib/course-translations', () => ({
   getCourseTranslationBundle: mocks.getCourseTranslationBundle,
   resolveCourseText: mocks.resolveCourseText,
+}));
+
+vi.mock('@/lib/course-purchase-sync', () => ({
+  upsertCoursePurchaseFromProvider: mocks.upsertCoursePurchaseFromProvider,
 }));
 
 describe('POST /api/checkout', () => {
@@ -69,9 +68,9 @@ describe('POST /api/checkout', () => {
 
     mocks.cookies.mockResolvedValue({ get: vi.fn(() => undefined) });
     mocks.normalizeLanguage.mockReturnValue('es');
-    mocks.languageToStripeLocale.mockReturnValue('es');
     mocks.getCourseTranslationBundle.mockResolvedValue({ courses: new Map() });
     mocks.resolveCourseText.mockReturnValue({ title: 'Curso', description: 'Desc' });
+    mocks.upsertCoursePurchaseFromProvider.mockResolvedValue(undefined);
   });
 
   test('returns 400 for missing courseId', async () => {
@@ -85,14 +84,6 @@ describe('POST /api/checkout', () => {
   test('returns 400 for unsupported payment method', async () => {
     const { POST } = await import('@/app/api/checkout/route');
     const req = createCheckoutRequest({ courseId: 'c1', paymentMethod: 'pix' });
-
-    const res = await POST(req);
-    expect(res.status).toBe(400);
-  });
-
-  test('returns 400 when voucher code is sent to checkout API payload', async () => {
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1', voucherCode: 'PROMO100' });
 
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -148,7 +139,7 @@ describe('POST /api/checkout', () => {
     expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
   });
 
-  test('returns 503 when stripe is not configured for paid course', async () => {
+  test('returns 503 when Lemon is not configured for paid course', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
@@ -196,6 +187,8 @@ describe('POST /api/checkout', () => {
     expect(res.status).toBe(500);
   });
 
+  test('creates a local test checkout on localhost requests', async () => {
+    process.env.ENABLE_LOCAL_TEST_CHECKOUT = '1';
   test('returns 503 for localhost paid checkout when Stripe is not configured', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
     mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
@@ -210,6 +203,10 @@ describe('POST /api/checkout', () => {
 
     const res = await POST(req);
 
+    expect(res.status).toBe(200);
+    expect(body.url).toContain('/dashboard?purchase=success&source=dashboard&test=1');
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
+    delete process.env.ENABLE_LOCAL_TEST_CHECKOUT;
     expect(res.status).toBe(503);
   });
 });

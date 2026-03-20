@@ -32,10 +32,13 @@
     "lesson-metadata:sync": "npx tsx scripts/sync-jazz-lesson-metadata.ts",
     "mux:apply": "npx tsx scripts/apply-mux-playback-ids.ts",
     "pdf:sync": "npx tsx scripts/sync-supabase-pdf-attachments.ts",
-    "stripe:sandbox:check": "node scripts/stripe-sandbox-check.mjs",
-    "stripe:sandbox:webhook": "node scripts/stripe-sandbox-webhook.mjs",
-    "stripe:sandbox:all": "npm run stripe:sandbox:check && npm run stripe:sandbox:webhook",
-    "vouchers:stripe:sync": "npx tsx scripts/sync-vouchers-to-stripe.ts"
+    "audit:vouchers": "npx tsx scripts/audit-voucher-accounting.ts",
+    "reset:user:vouchers": "npx tsx scripts/reset-user-voucher-state.ts",
+    "test:payments:backend": "bash scripts/test-payments-backend.sh",
+    "test:payments:frontend:real": "bash scripts/test-payments-frontend-real.sh",
+    "test:payments:vouchers:real": "bash scripts/test-payments-voucher-matrix-real.sh",
+    "test:payments:vouchers:serial:real": "bash scripts/test-payments-vouchers-serial-real.sh",
+    "test:payments:all": "bash scripts/test-payments-all.sh"
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.9.0",
@@ -51,7 +54,6 @@
     "@react-pdf-viewer/search": "^3.12.0",
     "@react-pdf-viewer/selection-mode": "^3.12.0",
     "@react-pdf-viewer/zoom": "^3.12.0",
-    "@stripe/stripe-js": "4.1.0",
     "@supabase/auth-ui-react": "0.4.7",
     "@supabase/ssr": "0.5.0",
     "@supabase/supabase-js": "2.44.4",
@@ -68,7 +70,6 @@
     "react-dom": "18.3.1",
     "resend": "^6.9.2",
     "sonner": "^2.0.7",
-    "stripe": "16.2.0",
     "tailwind-merge": "2.4.0",
     "zustand": "^5.0.8"
   },

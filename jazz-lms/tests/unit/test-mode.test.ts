@@ -5,6 +5,10 @@ const setNodeEnv = (value: string | undefined) => {
   (process.env as Record<string, string | undefined>).NODE_ENV = value;
 };
 
+const setLocalTestCheckoutFlag = (value: string | undefined) => {
+  (process.env as Record<string, string | undefined>).ENABLE_LOCAL_TEST_CHECKOUT = value;
+};
+
 describe('test-mode host detection', () => {
   test('recognizes loopback hosts and rejects external hosts', () => {
     expect(isLocalhostHost('localhost')).toBe(true);
@@ -26,9 +30,11 @@ describe('test-mode host detection', () => {
 
 describe('test-mode request detection', () => {
   const originalNodeEnv = process.env.NODE_ENV;
+  const originalLocalTestCheckoutFlag = process.env.ENABLE_LOCAL_TEST_CHECKOUT;
 
   afterEach(() => {
     setNodeEnv(originalNodeEnv);
+    setLocalTestCheckoutFlag(originalLocalTestCheckoutFlag);
   });
 
   test('returns false in production', () => {
@@ -39,16 +45,27 @@ describe('test-mode request detection', () => {
     expect(isLocalTestRequest(req)).toBe(false);
   });
 
-  test('accepts localhost host header in non-production', () => {
+  test('returns false when local-test flag is disabled', () => {
     setNodeEnv('test');
+    setLocalTestCheckoutFlag(undefined);
+    const req = new Request('http://example.com', {
+      headers: { host: 'localhost:3000' },
+    });
+    expect(isLocalTestRequest(req)).toBe(false);
+  });
+
+  test('accepts localhost host header in non-production when local-test flag is enabled', () => {
+    setNodeEnv('test');
+    setLocalTestCheckoutFlag('1');
     const req = new Request('http://example.com', {
       headers: { host: 'localhost:3000' },
     });
     expect(isLocalTestRequest(req)).toBe(true);
   });
 
-  test('accepts localhost origin in non-production', () => {
+  test('accepts localhost origin in non-production when local-test flag is enabled', () => {
     setNodeEnv('test');
+    setLocalTestCheckoutFlag('1');
     const req = new Request('http://example.com', {
       headers: { origin: 'http://127.0.0.1:3000' },
     });
@@ -57,6 +74,7 @@ describe('test-mode request detection', () => {
 
   test('rejects malformed and non-local origin/host', () => {
     setNodeEnv('test');
+    setLocalTestCheckoutFlag('1');
     const req = new Request('http://example.com', {
       headers: {
         host: 'api.example.com',

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { mergeStripeVoucherMetadata, syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
+import { ensureVoucherDiscountSynced, removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -48,26 +48,33 @@ export async function PATCH(
       );
     }
 
-    const stripeMetadata = await syncVoucherPromotionCode(
-      {
-        ...currentVoucher,
-        isActive,
-      },
-      {
-        desiredActive: isActive,
-        createIfMissing: true,
-      }
-    );
-
-    if (!stripeMetadata) {
-      throw new Error(`Stripe sync returned empty metadata for voucher ${currentVoucher.code}.`);
-    }
+    const syncResult = isActive
+      ? await ensureVoucherDiscountSynced({
+          id: currentVoucher.id,
+          code: currentVoucher.code,
+          type: currentVoucher.type,
+          discountPercent: currentVoucher.discountPercent,
+          discountAmount: currentVoucher.discountAmount,
+          maxUses: currentVoucher.maxUses,
+          expiresAt: currentVoucher.expiresAt,
+          metadata: currentVoucher.metadata,
+        })
+      : await removeVoucherDiscountSync({
+          id: currentVoucher.id,
+          code: currentVoucher.code,
+          type: currentVoucher.type,
+          discountPercent: currentVoucher.discountPercent,
+          discountAmount: currentVoucher.discountAmount,
+          maxUses: currentVoucher.maxUses,
+          expiresAt: currentVoucher.expiresAt,
+          metadata: currentVoucher.metadata,
+        });
 
     const voucher = await prisma.voucherCode.update({
       where: { id: params.voucherId },
       data: {
         isActive,
-        metadata: mergeStripeVoucherMetadata(currentVoucher.metadata, stripeMetadata),
+        metadata: syncResult.metadata,
       },
       select: {
         id: true,
@@ -76,7 +83,14 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({ success: true, voucher });
+    return NextResponse.json({
+      success: true,
+      voucher,
+      lemonSync: {
+        ok: syncResult.ok,
+        reason: syncResult.reason || null,
+      },
+    });
   } catch (error) {
     console.error('[ADMIN_VOUCHER_TOGGLE_ERROR]', error);
     return NextResponse.json(

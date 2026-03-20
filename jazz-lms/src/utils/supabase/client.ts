@@ -1,5 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
-import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
 type MinimalSupabase = {
   auth: {
@@ -20,8 +20,9 @@ type MinimalSupabase = {
 export function createClient(): any {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const normalizedUrl = normalizeSupabaseUrl(url)
 
-  if (!hasValidSupabasePublicConfig(url, key)) {
+  if (!hasValidSupabasePublicConfig(normalizedUrl ?? undefined, key)) {
     // Return a minimal stub so client-side code won't crash in local dev
     const stub: MinimalSupabase = {
       auth: {
@@ -68,5 +69,5 @@ export function createClient(): any {
     return stub
   }
 
-  return createBrowserClient(url!, key!)
+  return createBrowserClient(normalizedUrl!, key!)
 }

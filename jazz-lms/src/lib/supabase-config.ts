@@ -6,6 +6,20 @@ function isPlaceholder(value?: string) {
   return PLACEHOLDER_HINTS.some((hint) => normalized.includes(hint));
 }
 
+export function normalizeSupabaseUrl(url?: string) {
+  if (!url) {
+    return null;
+  }
+
+  const trimmed = url.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.replace(/\/+$/, '');
+}
+
 export function hasValidSupabasePublicConfig(url?: string, anonKey?: string) {
   if (isPlaceholder(url) || isPlaceholder(anonKey)) {
     return false;

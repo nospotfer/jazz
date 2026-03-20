@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
   isAdminRole: vi.fn(),
   cookies: vi.fn(),
   normalizeLanguage: vi.fn(),
-  languageToStripeLocale: vi.fn(),
+  languageToCheckoutLocale: vi.fn(),
   getCourseTranslationBundle: vi.fn(),
   resolveCourseText: vi.fn(),
 }));
@@ -48,8 +48,6 @@ vi.mock('@/lib/db', () => ({
   },
 }));
 
-vi.mock('@/lib/stripe', () => ({ stripe: null }));
-
 vi.mock('next/headers', () => ({
   cookies: mocks.cookies,
 }));
@@ -57,7 +55,7 @@ vi.mock('next/headers', () => ({
 vi.mock('@/lib/language', () => ({
   LANGUAGE_COOKIE_KEY: 'jazz_lang',
   normalizeLanguage: mocks.normalizeLanguage,
-  languageToStripeLocale: mocks.languageToStripeLocale,
+  languageToCheckoutLocale: mocks.languageToCheckoutLocale,
 }));
 
 vi.mock('@/lib/course-translations', () => ({
@@ -74,7 +72,7 @@ describe('Functional: Free course purchase flow', () => {
     vi.clearAllMocks();
     mocks.cookies.mockResolvedValue({ get: vi.fn(() => undefined) });
     mocks.normalizeLanguage.mockReturnValue('es');
-    mocks.languageToStripeLocale.mockReturnValue('es');
+    mocks.languageToCheckoutLocale.mockReturnValue('es');
     mocks.getCourseTranslationBundle.mockResolvedValue({ courses: new Map() });
     mocks.resolveCourseText.mockReturnValue({ title: 'Curso Gratis', description: 'Desc' });
   });

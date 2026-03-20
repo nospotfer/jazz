@@ -77,7 +77,7 @@ export async function GET(req: Request) {
     const where = filters.length > 0 ? { AND: filters } : {};
 
     const prisma = db as any;
-    const [vouchers, total, usedCount, activeCount, expiredCount] = await Promise.all([
+    const [vouchers, generatedCount, usedCount, activeCount, activeVoucherUsageRows, expiredCount] = await Promise.all([
       prisma.voucherCode.findMany({
         where,
         include: {
@@ -106,6 +106,16 @@ export async function GET(req: Request) {
           OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
         },
       }),
+      prisma.voucherCode.findMany({
+        where: {
+          isActive: true,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        },
+        select: {
+          currentUses: true,
+          maxUses: true,
+        },
+      }),
       prisma.voucherCode.count({
         where: {
           expiresAt: { lt: now },
@@ -113,11 +123,21 @@ export async function GET(req: Request) {
       }),
     ]);
 
+    const availableCount = activeVoucherUsageRows.reduce((acc: number, voucher: { currentUses: number; maxUses: number | null }) => {
+      if (voucher.maxUses === null) {
+        return acc + 1;
+      }
+
+      return voucher.currentUses < voucher.maxUses ? acc + 1 : acc;
+    }, 0);
+
     return NextResponse.json({
       success: true,
       stats: {
-        total,
+        generated: generatedCount,
+        total: generatedCount,
         used: usedCount,
+        available: availableCount,
         active: activeCount,
         expired: expiredCount,
       },

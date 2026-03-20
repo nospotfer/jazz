@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { syncVoucherPromotionCode } from '@/lib/stripe-voucher-sync';
+import { removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -142,9 +142,15 @@ export async function DELETE(
       );
     }
 
-    await syncVoucherPromotionCode(voucher, {
-      desiredActive: false,
-      createIfMissing: false,
+    const lemonSync = await removeVoucherDiscountSync({
+      id: voucher.id,
+      code: voucher.code,
+      type: voucher.type,
+      discountPercent: voucher.discountPercent,
+      discountAmount: voucher.discountAmount,
+      maxUses: voucher.maxUses,
+      expiresAt: voucher.expiresAt,
+      metadata: voucher.metadata,
     });
 
     const result = await prisma.$transaction(async (tx: any) => {
@@ -178,6 +184,10 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       deletedCount: 1,
+      lemonSync: {
+        ok: lemonSync.ok,
+        reason: lemonSync.reason || null,
+      },
       message: force
         ? `Voucher ${result.code} eliminado en modo forzado.`
         : `Voucher ${result.code} eliminado.`,

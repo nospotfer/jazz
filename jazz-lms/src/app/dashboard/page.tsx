@@ -11,7 +11,6 @@ type DashboardPageProps = {
   searchParams?: {
     purchase?: string | string[];
     source?: string | string[];
-    session_id?: string | string[];
   };
 };
 
@@ -22,60 +21,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   if (!user) {
     return redirect('/auth');
-  }
-
-  const purchaseStatus = Array.isArray(searchParams?.purchase)
-    ? searchParams?.purchase[0]
-    : searchParams?.purchase;
-  const purchaseSource = Array.isArray(searchParams?.source)
-    ? searchParams?.source[0]
-    : searchParams?.source;
-  const sessionId = Array.isArray(searchParams?.session_id)
-    ? searchParams?.session_id[0]
-    : searchParams?.session_id;
-
-  let shouldReloadUnlockedDashboard = false;
-
-  if (purchaseStatus === 'success' && purchaseSource === 'dashboard' && sessionId) {
-    try {
-      const { stripe } = await import('@/lib/stripe');
-      if (!stripe) {
-        throw new Error('Stripe is unavailable');
-      }
-
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
-      const sessionUserId = session.metadata?.userId;
-      const sessionCourseId = session.metadata?.courseId;
-      const sessionPurchaseType = session.metadata?.purchaseType;
-
-      if (
-        session.payment_status === 'paid' &&
-        sessionUserId === user.id &&
-        sessionPurchaseType === 'course' &&
-        sessionCourseId
-      ) {
-        await db.purchase.upsert({
-          where: {
-            userId_courseId: {
-              userId: user.id,
-              courseId: sessionCourseId,
-            },
-          },
-          update: {},
-          create: {
-            userId: user.id,
-            courseId: sessionCourseId,
-          },
-        });
-        shouldReloadUnlockedDashboard = true;
-      }
-    } catch (error) {
-      console.error('[dashboard] Unable to confirm Stripe checkout session.', error);
-    }
-  }
-
-  if (shouldReloadUnlockedDashboard) {
-    return redirect('/dashboard?purchase=success&source=dashboard');
   }
 
   let course: {

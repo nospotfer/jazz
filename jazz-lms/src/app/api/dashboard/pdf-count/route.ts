@@ -39,14 +39,10 @@ export async function GET() {
       }
     }
 
-    const [fullPurchases, lessonPurchases, publishedCourses] = await Promise.all([
+    const [fullPurchases, publishedCourses] = await Promise.all([
       db.purchase.findMany({
         where: { userId: user.id },
         select: { courseId: true },
-      }),
-      db.lessonPurchase.findMany({
-        where: { userId: user.id },
-        select: { lessonId: true },
       }),
       db.course.findMany({
         where: { isPublished: true },
@@ -71,7 +67,6 @@ export async function GET() {
     ]);
 
     const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));
-    const purchasedLessonIds = new Set(lessonPurchases.map((purchase) => purchase.lessonId));
 
     const accessiblePdfKeys = new Set<string>();
 
@@ -93,9 +88,7 @@ export async function GET() {
           return;
         }
 
-        const hasAccess =
-          purchasedCourseIds.has(course.id) ||
-          purchasedLessonIds.has(lesson.id);
+        const hasAccess = purchasedCourseIds.has(course.id);
 
         if (!hasAccess) return;
 

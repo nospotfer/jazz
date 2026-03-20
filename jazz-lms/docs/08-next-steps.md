@@ -160,10 +160,10 @@ Let students leave reviews after completing a course.
 Generate PDF certificates when a user completes a course.
 
 #### 12. Improve Payment-Method Availability Monitoring
-Track payment-method availability by market (e.g., Spain) and show country-aware checkout guidance when PayPal/Bizum are not available.
+Track payment-method availability by market and show country-aware checkout guidance when PayPal is not available.
 
 #### 13. Add Coupons/Discounts
-Beyond Stripe's promotion codes, implement custom discount logic.
+Beyond Lemon Squeezy discount codes, implement custom discount logic.
 
 #### 14. Add Notifications
 Email notifications for:
@@ -202,12 +202,12 @@ Mux playback IDs are technically public. For sensitive content, consider:
 - Token-based authentication
 - Domain restrictions
 
-#### 3. Validate Stripe Webhook Signatures
-Always verify webhooks come from Stripe:
+#### 3. Validate Lemon Webhook Signatures
+Always verify webhooks come from Lemon Squeezy:
 
 ```typescript
 // Always do this!
-const event = stripe.webhooks.constructEvent(body, signature, secret);
+const isValid = verifyLemonSignature(body, signature);
 ```
 
 #### 4. Rate Limit API Routes
@@ -316,16 +316,13 @@ model Purchase {
 
 ---
 
-### Stripe
+### Lemon Squeezy
 
-#### 1. Test with Test Mode First
-Always use Stripe test mode during development:
-- Test card: `4242 4242 4242 4242`
-- Any future expiry date
-- Any CVC
+#### 1. Test in Sandbox First
+Always use Lemon Squeezy sandbox mode during development.
 
 #### 2. Handle Webhook Failures
-Stripe retries failed webhooks. Make your handler idempotent:
+Lemon Squeezy may retry failed webhooks. Make your handler idempotent:
 
 ```typescript
 // Check if purchase already exists
@@ -339,7 +336,7 @@ if (existingPurchase) {
 ```
 
 #### 3. Set Up Webhook Endpoint in Production
-Don't forget to configure the webhook URL in Stripe dashboard for production.
+Don't forget to configure the webhook URL in Lemon dashboard for production.
 
 ---
 
@@ -351,7 +348,7 @@ Ensure `.env` is in `.gitignore`.
 #### 2. Use Different Keys for Production
 Development and production should use different:
 - Supabase projects
-- Stripe accounts (test vs live)
+- Lemon Squeezy environment (sandbox vs live)
 - Database instances
 
 #### 3. Validate Environment Variables
@@ -371,10 +368,10 @@ if (!process.env.DATABASE_URL) {
 ### Before Going Live
 
 - [ ] Verify all environment variables are set in Vercel
-- [ ] Set up Stripe webhook for production URL
+- [ ] Set up Lemon Squeezy webhook for production URL
 - [ ] Configure OAuth redirect URLs for production domain
 - [ ] Enable HTTPS (automatic on Vercel)
-- [ ] Test complete purchase flow with Stripe test mode
+- [ ] Test complete purchase flow with Lemon sandbox mode
 - [ ] Seed production database with real course content
 - [ ] Update Mux video IDs in database
 - [ ] Remove placeholder content (Lorem ipsum, etc.)
@@ -388,7 +385,7 @@ if (!process.env.DATABASE_URL) {
 ### Ongoing Maintenance
 
 - [ ] Monitor error logs
-- [ ] Check Stripe dashboard for failed payments
+- [ ] Check Lemon dashboard for failed payments
 - [ ] Back up database regularly
 - [ ] Keep dependencies updated
 - [ ] Monitor for security advisories
@@ -404,7 +401,7 @@ if (!process.env.DATABASE_URL) {
 
 2. **No Video Upload**: Videos must be uploaded to Mux separately and IDs added to the database manually.
 
-3. **No Refund Handling**: Stripe refunds aren't automatically reflected in the database.
+3. **No Refund Handling**: Provider refunds may not be automatically reflected if webhooks are misconfigured.
 
 4. **No Subscription Support**: Only one-time payments are implemented.
 
@@ -427,7 +424,7 @@ if (!process.env.DATABASE_URL) {
 - **Next.js**: [nextjs.org/docs](https://nextjs.org/docs)
 - **Supabase**: [supabase.com/docs](https://supabase.com/docs)
 - **Prisma**: [prisma.io/docs](https://www.prisma.io/docs)
-- **Stripe**: [stripe.com/docs](https://stripe.com/docs)
+- **Lemon Squeezy**: [docs.lemonsqueezy.com](https://docs.lemonsqueezy.com)
 - **Mux**: [docs.mux.com](https://docs.mux.com)
 - **Tailwind CSS**: [tailwindcss.com/docs](https://tailwindcss.com/docs)
 
@@ -435,7 +432,7 @@ if (!process.env.DATABASE_URL) {
 
 - [Next.js App Router Tutorial](https://nextjs.org/learn)
 - [Supabase Auth Tutorial](https://supabase.com/docs/guides/auth)
-- [Stripe Checkout Integration](https://stripe.com/docs/checkout/quickstart)
+- [Lemon Squeezy API docs](https://docs.lemonsqueezy.com/api)
 
 ---
 

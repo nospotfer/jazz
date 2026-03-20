@@ -23,6 +23,10 @@ export async function POST(
 
     const body = await req.json().catch(() => ({}));
     const restart = body?.restart === true;
+    const language =
+      body?.language === 'es' || body?.language === 'en' || body?.language === 'fr' || body?.language === 'pt'
+        ? body.language
+        : 'es';
 
     await assertLessonQuizAccess({
       userId: user.id,
@@ -34,6 +38,7 @@ export async function POST(
       userId: user.id,
       lessonId: params.lessonId,
       restart,
+      language,
     });
 
     return NextResponse.json(payload);

@@ -282,13 +282,13 @@ import MuxPlayer from '@mux/mux-player-react';
 
 ---
 
-## 8. Stripe (v16.2.0)
+## 8. Lemon Squeezy
 
 ### What is it?
-Stripe is a **payment processing platform**. It handles credit card payments, subscriptions, and more.
+Lemon Squeezy is a **payment processing platform**. It handles hosted checkout and payment events.
 
 ### Why use it?
-- **Security**: Stripe handles sensitive payment data (PCI compliance)
+- **Security**: Lemon Squeezy handles sensitive payment data (PCI compliance)
 - **Easy integration**: Well-documented APIs and libraries
 - **Checkout**: Pre-built checkout pages
 - **Webhooks**: Get notified when payments complete
@@ -300,13 +300,13 @@ User clicks "Enroll"
     ↓
 App creates a Checkout Session
     ↓
-User is redirected to Stripe's checkout page
+User is redirected to Lemon Squeezy checkout page
     ↓
 User enters payment info
     ↓
-Stripe processes payment
+Lemon Squeezy processes payment
     ↓
-Stripe sends webhook to /api/webhooks/stripe
+Lemon Squeezy sends webhook to /api/webhooks/lemon-squeezy
     ↓
 App creates Purchase record in database
     ↓
@@ -318,30 +318,25 @@ User can now access the course
 #### Checkout Session
 A temporary object that represents the customer's intent to pay:
 ```typescript
-const session = await stripe.checkout.sessions.create({
-  payment_method_types: ['card'],
-  line_items: [{ ... }],
-  mode: 'payment',
-  success_url: 'https://yoursite.com/success',
-  cancel_url: 'https://yoursite.com/cancel',
-  metadata: { courseId, userId }, // Custom data
+const checkoutUrl = await createLemonCheckout({
+  storeId,
+  variantId,
+  email,
+  successUrl: 'https://yoursite.com/success',
+  customData: { courseId, userId },
 });
 ```
 
 #### Webhooks
-Stripe sends events to your server. You must verify the signature:
+Lemon Squeezy sends events to your server. You must verify the signature:
 ```typescript
-const event = stripe.webhooks.constructEvent(
-  body,
-  signature,
-  process.env.STRIPE_WEBHOOK_SECRET
-);
+const isValid = verifyLemonSignature(body, signature);
 ```
 
 ### Important Files
-- `src/lib/stripe.ts` - Stripe client configuration
+- `src/lib/lemon-squeezy.ts` - Lemon Squeezy API/webhook helpers
 - `src/app/api/checkout/route.ts` - Create checkout sessions
-- `src/app/api/webhooks/stripe/route.ts` - Handle Stripe events
+- `src/app/api/webhooks/lemon-squeezy/route.ts` - Handle payment events
 
 ---
 
@@ -376,8 +371,10 @@ Set these in Vercel dashboard:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `DATABASE_URL`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
+- `LEMON_SQUEEZY_API_KEY`
+- `LEMON_SQUEEZY_WEBHOOK_SECRET`
+- `LEMON_SQUEEZY_STORE_ID`
+- `LEMON_SQUEEZY_VARIANT_ID`
 
 ---
 
@@ -433,7 +430,7 @@ Accessible, unstyled UI components:
 | Supabase over Firebase | Open-source, PostgreSQL, great auth |
 | Prisma over raw SQL | Type-safe queries, easy migrations |
 | Mux over YouTube | Professional streaming, no ads |
-| Stripe as processor (with PayPal/Bizum via Checkout) | Single integration with broader method coverage |
+| Lemon Squeezy as processor (with card/PayPal in hosted checkout) | Single hosted integration with broad payment coverage |
 | Vercel over AWS | Simpler deployment, optimized for Next.js |
 | Tailwind over CSS-in-JS | Faster development, smaller bundle |
 

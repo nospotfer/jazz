@@ -1,6 +1,6 @@
 # La Cultura del Jazz - LMS Platform
 
-This is a custom, high-performance video course platform built with Next.js, Tailwind CSS, Shadcn UI, Supabase, Prisma, Mux, and Stripe.
+This is a custom, high-performance video course platform built with Next.js, Tailwind CSS, Shadcn UI, Supabase, Prisma, Mux, and Lemon Squeezy.
 
 ## Getting Started
 
@@ -29,10 +29,12 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 APP_URL=http://localhost:3000
 DATABASE_URL="postgresql://user:password@host:port/database"
 
-# Stripe
-STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=YOUR_STRIPE_PUBLISHABLE_KEY
-STRIPE_WEBHOOK_SECRET=YOUR_STRIPE_WEBHOOK_SECRET
+# Lemon Squeezy
+LEMON_SQUEEZY_API_KEY=YOUR_LEMON_SQUEEZY_API_KEY
+LEMON_SQUEEZY_WEBHOOK_SECRET=YOUR_LEMON_SQUEEZY_WEBHOOK_SECRET
+LEMON_SQUEEZY_STORE_ID=YOUR_STORE_ID
+LEMON_SQUEEZY_PRODUCT_ID=YOUR_PRODUCT_ID
+LEMON_SQUEEZY_VARIANT_ID=YOUR_VARIANT_ID
 ```
 
 ### 4. Seed the database
@@ -63,8 +65,11 @@ Go to **Authentication → URL Configuration** and set:
 - **Site URL (dev):** `http://localhost:3000`
 - **Additional Redirect URLs:**
 	- `http://localhost:3000/auth/callback`
+	- `http://localhost:3000/auth/reset-password`
 	- `https://jazz-lms.vercel.app/auth/callback`
+	- `https://jazz-lms.vercel.app/auth/reset-password`
 	- `https://*.vercel.app/auth/callback`
+	- `https://*.vercel.app/auth/reset-password`
 
 ### Google Cloud Console
 
@@ -77,25 +82,15 @@ Go to **APIs & Services → Credentials → OAuth 2.0 Client IDs** and set:
 
 > Note: For Supabase OAuth providers, Google redirects back to Supabase (`/auth/v1/callback`), and Supabase then redirects to your app callback (`/auth/callback`).
 
-## Stripe Sandbox
+## Lemon Squeezy Webhook (MVP)
 
-Use test mode (no real charges) with `sk_test` / `pk_test` keys.
+Use Lemon Squeezy test mode and configure your webhook endpoint:
 
-```bash
-# 1) Validate Stripe sandbox env + auth
-npm run stripe:sandbox:check
+- Endpoint: `/api/webhooks/lemon-squeezy`
+- Required events: `order_created`, `order_refunded`
+- Signature header: `X-Signature` (validated against `LEMON_SQUEEZY_WEBHOOK_SECRET`)
 
-# 2) Start app locally
-npm run dev
-
-# 3) Simulate a signed Stripe webhook locally
-npm run stripe:sandbox:webhook -- --webhook-url=http://localhost:3000/api/webhooks/stripe --cleanup
-
-# 4) Run full sandbox check in one command (requires app running)
-npm run stripe:sandbox:all
-```
-
-Local automated checkout tests also support a localhost-only fallback path that creates a synthetic purchase session without calling Stripe. This is intended for QA and Playwright/Vitest flows only and stays disabled in production.
+Local automated checkout tests still support a localhost-only fallback path that creates a synthetic purchase record without calling the payment provider. This is intended for QA and Playwright/Vitest flows only and stays disabled in production.
 
 ## Gamification Rules
 

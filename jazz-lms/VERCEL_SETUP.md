@@ -18,7 +18,7 @@ Your Supabase database is **IPv6-only**, which means Vercel (IPv4-only platform)
 
 ---
 
-## Variables to Add (core 6 for app/auth/checkout):
+## Variables to Add (core for app/auth/checkout):
 
 ### 1. Supabase URL
 **Name:** `NEXT_PUBLIC_SUPABASE_URL`  
@@ -48,25 +48,39 @@ postgresql://postgres.your-project-ref:[YOUR-PASSWORD]@aws-0-region.pooler.supab
 - Session Pooler bridges this compatibility gap
 - Replace `[YOUR-PASSWORD]` with your actual database password
 
-### 4. Stripe Secret Key
-**Name:** `STRIPE_SECRET_KEY`  
-**Value:** Get from Stripe Dashboard → Developers → API keys
+### 4. Lemon Squeezy API Key
+**Name:** `LEMON_SQUEEZY_API_KEY`  
+**Value:** Lemon Squeezy Dashboard → Settings → API
 ```
-your_stripe_secret_key_here
-```
-
-### 5. Stripe Publishable Key
-**Name:** `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
-**Value:** Get from Stripe Dashboard → Developers → API keys
-```
-your_stripe_publishable_key_here
+your_lemon_squeezy_api_key_here
 ```
 
-### 6. Stripe Webhook Secret
-**Name:** `STRIPE_WEBHOOK_SECRET`  
-**Value:** Get from Stripe Dashboard → Developers → Webhooks
+### 5. Lemon Squeezy Store ID
+**Name:** `LEMON_SQUEEZY_STORE_ID`  
+**Value:** Your Lemon store id
 ```
-your_stripe_webhook_secret_here
+317886
+```
+
+### 6. Lemon Squeezy Product ID
+**Name:** `LEMON_SQUEEZY_PRODUCT_ID`  
+**Value:** Your Lemon product id
+```
+896872
+```
+
+### 7. Lemon Squeezy Variant ID
+**Name:** `LEMON_SQUEEZY_VARIANT_ID`  
+**Value:** Your Lemon variant id
+```
+1411237
+```
+
+### 8. Lemon Squeezy Webhook Secret
+**Name:** `LEMON_SQUEEZY_WEBHOOK_SECRET`  
+**Value:** Lemon Squeezy Dashboard → Settings → Webhooks
+```
+your_lemon_squeezy_webhook_secret_here
 ```
 
 ---
@@ -95,10 +109,12 @@ From your Supabase dashboard screenshot:
 
 Before deploying, verify:
 
-- [ ] All 6 environment variables added in Vercel
+- [ ] All required environment variables added in Vercel
 - [ ] Each variable has Production, Preview, AND Development selected
 - [ ] DATABASE_URL uses Session Pooler host (ends with `.pooler.supabase.com`)
 - [ ] DATABASE_URL user format is: `postgres.{your-project-ref}`
+- [ ] Lemon webhook points to `/api/webhooks/lemon-squeezy`
+- [ ] Lemon webhook events enabled: `order_created`, `order_refunded`
 - [ ] Database tables created in Supabase (see SUPABASE_DATABASE_SETUP.md)
 
 ---

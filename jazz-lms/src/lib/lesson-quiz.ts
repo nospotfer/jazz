@@ -28,6 +28,16 @@ export interface UserJazzMedalProfileSnapshot {
   lessons: UserJazzMedalLessonSnapshot[];
 }
 
+export interface CourseCompletionRecognitionSnapshot {
+  isEligible: boolean;
+  completedLessons: number;
+  totalLessons: number;
+  completionPercent: number;
+  quizzesWithMedalCount: number;
+  scorePercent: number;
+  medal: QuizMedalTierValue;
+}
+
 export interface LessonQuizSummarySnapshot {
   bestScorePercent: number;
   bestCorrectCount: number;

@@ -150,7 +150,7 @@ export async function GET() {
       return NextResponse.json({ courses: Array.from(coursesMap.values()) });
     }
 
-    const [fullCoursePurchases, lessonPurchases, userProgress] =
+    const [fullCoursePurchases, userProgress] =
       await Promise.all([
         db.purchase.findMany({
           where: { userId: user.id },
@@ -164,25 +164,6 @@ export async function GET() {
                     lessons: {
                       where: { isPublished: true },
                       orderBy: { position: 'asc' },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }),
-        db.lessonPurchase.findMany({
-          where: { userId: user.id },
-          include: {
-            lesson: {
-              include: {
-                chapter: {
-                  include: {
-                    course: {
-                      select: {
-                        id: true,
-                        title: true,
-                      },
                     },
                   },
                 },
@@ -205,18 +186,15 @@ export async function GET() {
     );
     const translationBundle = await getCourseTranslationBundle({
       language,
-      courseIds: Array.from(new Set([
-        ...fullCoursePurchases.map((purchase) => purchase.course.id),
-        ...lessonPurchases.map((purchase) => purchase.lesson.chapter.course.id),
-      ])),
-      chapterIds: Array.from(new Set([
-        ...fullCoursePurchases.flatMap((purchase) => purchase.course.chapters.map((chapter) => chapter.id)),
-        ...lessonPurchases.map((purchase) => purchase.lesson.chapter.id),
-      ])),
-      lessonIds: Array.from(new Set([
-        ...orderedLessons.map((lesson) => lesson.id),
-        ...lessonPurchases.map((purchase) => purchase.lesson.id),
-      ])),
+      courseIds: Array.from(new Set(
+        fullCoursePurchases.map((purchase) => purchase.course.id)
+      )),
+      chapterIds: Array.from(new Set(
+        fullCoursePurchases.flatMap((purchase) => purchase.course.chapters.map((chapter) => chapter.id))
+      )),
+      lessonIds: Array.from(new Set(
+        orderedLessons.map((lesson) => lesson.id)
+      )),
     });
 
     const progressMap = new Map<string, { isCompleted: boolean; progressPercent: number }>(
@@ -273,36 +251,6 @@ export async function GET() {
           existingIds.add(lesson.id);
         }
       }
-    }
-
-    for (const lp of lessonPurchases) {
-      const course = lp.lesson.chapter.course;
-      if (!coursesMap.has(course.id)) {
-        coursesMap.set(course.id, {
-          id: course.id,
-          title: resolveCourseText(
-            translationBundle.courses,
-            course.id,
-            course.title,
-            null
-          ).title,
-          videos: [],
-        });
-      }
-      const courseEntry = coursesMap.get(course.id)!;
-      if (courseEntry.videos.some((v) => v.lessonId === lp.lessonId)) continue;
-      courseEntry.videos.push({
-        lessonId: lp.lessonId,
-        title: resolveLessonTitle(
-          translationBundle.lessons,
-          lp.lesson.id,
-          lp.lesson.title,
-          language,
-          getLessonNumber(lp.lesson.position, courseEntry.videos.length + 1)
-        ),
-        progressPercent: getPercent(lp.lessonId),
-        courseId: course.id,
-      });
     }
 
     const courses = Array.from(coursesMap.values());

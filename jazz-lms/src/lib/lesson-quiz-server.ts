@@ -40,6 +40,8 @@ type EligibleQuestion = {
   }>;
 };
 
+type SupportedQuizLanguage = 'es' | 'en' | 'fr' | 'pt';
+
 function shuffleArray<T>(items: T[]) {
   const cloned = [...items];
 
@@ -108,6 +110,97 @@ function serializeAttempt(params: {
         })),
     })),
   };
+}
+
+async function translateText(text: string, targetLanguage: SupportedQuizLanguage) {
+  if (!text.trim() || targetLanguage === 'pt') {
+    return text;
+  }
+
+  try {
+    const params = new URLSearchParams({
+      client: 'gtx',
+      sl: 'auto',
+      tl: targetLanguage,
+      dt: 't',
+      q: text,
+    });
+
+    const response = await fetch(`https://translate.googleapis.com/translate_a/single?${params.toString()}`, {
+      cache: 'no-store',
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+      },
+    });
+
+    if (!response.ok) {
+      return text;
+    }
+
+    const payload = (await response.json()) as unknown;
+
+    if (!Array.isArray(payload) || !Array.isArray(payload[0])) {
+      return text;
+    }
+
+    const translated = (payload[0] as unknown[])
+      .map((chunk) => (Array.isArray(chunk) && typeof chunk[0] === 'string' ? chunk[0] : ''))
+      .join('')
+      .trim();
+
+    return translated || text;
+  } catch {
+    return text;
+  }
+}
+
+async function localizeQuestions(
+  questions: EligibleQuestion[],
+  language: SupportedQuizLanguage
+): Promise<EligibleQuestion[]> {
+  if (language === 'pt') {
+    return questions;
+  }
+
+  const cache = new Map<string, string>();
+
+  const translateCached = async (text: string) => {
+    if (!text.trim()) {
+      return text;
+    }
+
+    if (cache.has(text)) {
+      return cache.get(text) as string;
+    }
+
+    const translated = await translateText(text, language);
+    cache.set(text, translated);
+    return translated;
+  };
+
+  const localizedQuestions = await Promise.all(
+    questions.map(async (question) => {
+      const [prompt, sourceLabel, options] = await Promise.all([
+        translateCached(question.prompt),
+        question.sourceLabel ? translateCached(question.sourceLabel) : Promise.resolve(null),
+        Promise.all(
+          question.options.map(async (option) => ({
+            ...option,
+            text: await translateCached(option.text),
+          }))
+        ),
+      ]);
+
+      return {
+        ...question,
+        prompt,
+        sourceLabel,
+        options,
+      };
+    })
+  );
+
+  return localizedQuestions;
 }
 
 function buildResultPayload(
@@ -197,18 +290,23 @@ export async function createOrResumeLessonQuizAttempt(params: {
   userId: string;
   lessonId: string;
   restart?: boolean;
+  language?: SupportedQuizLanguage;
 }): Promise<LessonQuizLaunchResponse> {
   const { userId, lessonId } = params;
   const eligibleQuestions = await loadEligibleQuestionBank(lessonId);
+  const targetLanguage = params.language ?? 'es';
 
   if (eligibleQuestions.length < LESSON_QUIZ_QUESTION_COUNT) {
     throw new LessonQuizError('Quiz not ready for this lesson yet.', 409, 'QUIZ_NOT_READY');
   }
 
+  const selectedQuestions = shuffleArray(eligibleQuestions).slice(0, LESSON_QUIZ_QUESTION_COUNT);
+  const localizedQuestions = await localizeQuestions(selectedQuestions, targetLanguage);
+
   return {
     attempt: serializeAttempt({
       attemptId: randomUUID(),
-      questions: shuffleArray(eligibleQuestions).slice(0, LESSON_QUIZ_QUESTION_COUNT),
+      questions: localizedQuestions,
     }),
     summary: await getLessonQuizSummary(userId, lessonId),
   };

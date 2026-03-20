@@ -19,6 +19,14 @@ export function isLocalhostHost(host: string | null | undefined): boolean {
 export function isLocalTestRequest(req: Request): boolean {
   if (process.env.NODE_ENV === 'production') return false;
 
+  const localTestCheckoutFlag = process.env.ENABLE_LOCAL_TEST_CHECKOUT?.trim().toLowerCase();
+  const isLocalTestCheckoutEnabled =
+    localTestCheckoutFlag === '1' ||
+    localTestCheckoutFlag === 'true' ||
+    localTestCheckoutFlag === 'yes';
+
+  if (!isLocalTestCheckoutEnabled) return false;
+
   const hostHeader = req.headers.get('host') || req.headers.get('x-forwarded-host');
   const origin = req.headers.get('origin');
 

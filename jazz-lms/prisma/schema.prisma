@@ -175,7 +175,7 @@ model Purchase {
   originalPrice  Float?
   finalPrice     Float?
   discountAmount Float?
-  stripeSessionId String?
+  providerReferenceId String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -186,7 +186,7 @@ model Purchase {
   @@unique([userId, courseId])
   @@index([courseId])
   @@index([voucherId])
-  @@index([stripeSessionId])
+  @@index([providerReferenceId])
 }
 
 model VoucherBatch {

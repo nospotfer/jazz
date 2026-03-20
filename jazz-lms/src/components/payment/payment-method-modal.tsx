@@ -3,52 +3,55 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { VoucherInput, type AppliedVoucher } from '@/components/vouchers/voucher-input';
 
-export type PaymentMethod = 'card' | 'paypal' | 'bizum';
+export type PaymentMethod = 'card' | 'paypal';
 
 interface PaymentMethodModalProps {
   isOpen: boolean;
   isLoading?: boolean;
   language: 'es' | 'en' | 'fr' | 'pt';
+  courseId: string;
   errorMessage?: string;
   onClose: () => void;
+  onVoucherApplied: (voucher: AppliedVoucher | null) => void;
   onConfirm: (method: PaymentMethod) => void;
 }
 
 const copyByLanguage = {
   es: {
     title: 'Elige método de pago',
-    subtitle: 'Selecciona cómo quieres completar la compra. Podrás añadir tu código en la página de pago segura.',
-    methodStripe: 'Stripe',
+    subtitle: 'Selecciona cómo quieres completar la compra.',
+    voucherHint: 'Aplica tu código antes de continuar al checkout.',
+    methodCard: 'Tarjeta',
     methodPaypal: 'PayPal',
-    methodBizum: 'Bizum',
     cancel: 'Cancelar',
     continue: 'Continuar',
   },
   en: {
     title: 'Choose payment method',
-    subtitle: 'Select how you want to complete your purchase. You can add your code on the secure payment page.',
-    methodStripe: 'Stripe',
+    subtitle: 'Select how you want to complete your purchase.',
+    voucherHint: 'Apply your code before continuing to checkout.',
+    methodCard: 'Card',
     methodPaypal: 'PayPal',
-    methodBizum: 'Bizum',
     cancel: 'Cancel',
     continue: 'Continue',
   },
   fr: {
     title: 'Choisissez le moyen de paiement',
-    subtitle: 'Sélectionnez comment finaliser votre achat. Vous pourrez saisir votre code sur la page de paiement sécurisée.',
-    methodStripe: 'Stripe',
+    subtitle: 'Sélectionnez comment finaliser votre achat.',
+    voucherHint: 'Appliquez votre code avant de continuer vers le checkout.',
+    methodCard: 'Carte',
     methodPaypal: 'PayPal',
-    methodBizum: 'Bizum',
     cancel: 'Annuler',
     continue: 'Continuer',
   },
   pt: {
     title: 'Escolha o método de pagamento',
-    subtitle: 'Selecione como deseja concluir a compra. Você poderá inserir o código na página de pagamento segura.',
-    methodStripe: 'Stripe',
+    subtitle: 'Selecione como deseja concluir a compra.',
+    voucherHint: 'Aplique seu código antes de continuar para o checkout.',
+    methodCard: 'Cartão',
     methodPaypal: 'PayPal',
-    methodBizum: 'Bizum',
     cancel: 'Cancelar',
     continue: 'Continuar',
   },
@@ -78,22 +81,17 @@ function MethodLogo({ method }: { method: PaymentMethod }) {
     );
   }
 
-  return (
-    <div className="h-11 w-11 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-      <svg viewBox="0 0 64 64" className="h-7 w-7" aria-hidden="true">
-        <circle cx="32" cy="32" r="18" fill="#10B981" fillOpacity="0.25" />
-        <path d="M24 34c0-5 3.3-8 8-8 3.4 0 6 1.6 7.3 4.4l-4.2 1.5c-.7-1.4-1.8-2-3.3-2-2.1 0-3.6 1.5-3.6 4.1s1.4 4.2 3.7 4.2c1.5 0 2.6-.6 3.4-2l4.1 1.5c-1.3 2.8-3.9 4.4-7.5 4.4-4.8 0-7.9-3.1-7.9-8.1Z" fill="#10B981" />
-      </svg>
-    </div>
-  );
+  return null;
 }
 
 export function PaymentMethodModal({
   isOpen,
   isLoading = false,
   language,
+  courseId,
   errorMessage,
   onClose,
+  onVoucherApplied,
   onConfirm,
 }: PaymentMethodModalProps) {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
@@ -144,7 +142,16 @@ export function PaymentMethodModal({
           <p className="mt-1 text-sm text-muted-foreground">{copy.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="mb-4 rounded-lg border border-border bg-background/40 p-3">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">{copy.voucherHint}</p>
+          <VoucherInput
+            courseId={courseId}
+            disabled={isLoading}
+            onApplied={onVoucherApplied}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => handleSelectMethod('card')}
@@ -166,8 +173,8 @@ export function PaymentMethodModal({
             ) : null}
             <div className="relative z-10">
               <MethodLogo method="card" />
-              <p className="mt-3 text-lg font-semibold text-foreground">{copy.methodStripe}</p>
-              <p className="mt-1 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground">STRIPE</p>
+              <p className="mt-3 text-lg font-semibold text-foreground">{copy.methodCard}</p>
+              <p className="mt-1 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground">CARD</p>
             </div>
           </button>
 
@@ -197,31 +204,6 @@ export function PaymentMethodModal({
             </div>
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleSelectMethod('bizum')}
-            disabled={isLoading}
-            className={`relative overflow-hidden rounded-xl border p-4 sm:p-5 text-left transition-all duration-200 ease-out will-change-transform ${
-              selectedMethod === 'bizum'
-                ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20 scale-[1.04] -translate-y-1'
-                : 'border-border bg-background hover:scale-[1.035] hover:-translate-y-1 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/15'
-            }`}
-          >
-            {selectedMethod === 'bizum' ? (
-              <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-primary/18 via-transparent to-primary/5 animate-pulse" />
-            ) : null}
-            {selectedMethod === 'bizum' ? (
-              <span className="payment-selected-sheen" aria-hidden="true" />
-            ) : null}
-            {animatedMethod === 'bizum' ? (
-              <span key={`bizum-${animationNonce}`} className="payment-tunnel-select" aria-hidden="true" />
-            ) : null}
-            <div className="relative z-10">
-              <MethodLogo method="bizum" />
-              <p className="mt-3 text-lg font-semibold text-foreground">{copy.methodBizum}</p>
-              <p className="mt-1 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground">BIZUM</p>
-            </div>
-          </button>
         </div>
 
         {errorMessage ? (

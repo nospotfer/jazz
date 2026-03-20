@@ -215,12 +215,12 @@ export const Hero = ({ course }: { course: Course | null }) => {
       return;  // Could redirect to /auth here
     }
 
-    // Create Stripe checkout session
+    // Create checkout URL
     const response = await axios.post('/api/checkout', {
       courseId: course.id,
     });
 
-    // Redirect to Stripe checkout page
+    // Redirect to hosted checkout page
     window.location.href = response.data.url;
   };
 

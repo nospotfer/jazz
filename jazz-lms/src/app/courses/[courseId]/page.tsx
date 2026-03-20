@@ -12,8 +12,12 @@ import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } fro
 
 export default async function CourseDetailPage({
   params,
+  searchParams,
 }: {
   params: { courseId: string };
+  searchParams?: {
+    success?: string | string[];
+  };
 }) {
   const cookieStore = cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
@@ -26,7 +30,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Contenido del curso',
       chapterLabel: 'Capítulo',
       fullAccess: 'Acceso completo a las 15 clases',
-      securePayment: 'Pago seguro gestionado por Stripe',
+      securePayment: 'Pago seguro gestionado por Lemon Squeezy',
     },
     en: {
       chapter: 'chapter',
@@ -36,7 +40,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Course content',
       chapterLabel: 'Chapter',
       fullAccess: 'Full access to all 15 classes',
-      securePayment: 'Secure payment handled by Stripe',
+      securePayment: 'Secure payment handled by Lemon Squeezy',
     },
     fr: {
       chapter: 'chapitre',
@@ -46,7 +50,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Contenu du cours',
       chapterLabel: 'Chapitre',
       fullAccess: 'Accès complet aux 15 cours',
-      securePayment: 'Paiement sécurisé géré par Stripe',
+      securePayment: 'Paiement sécurisé géré par Lemon Squeezy',
     },
     pt: {
       chapter: 'capítulo',
@@ -56,7 +60,7 @@ export default async function CourseDetailPage({
       contentTitle: 'Conteúdo do curso',
       chapterLabel: 'Capítulo',
       fullAccess: 'Acesso completo às 15 aulas',
-      securePayment: 'Pagamento seguro processado pelo Stripe',
+      securePayment: 'Pagamento seguro processado pelo Lemon Squeezy',
     },
   }[language];
 
