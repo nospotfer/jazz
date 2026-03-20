@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { MusicPlatformLinks } from '@/components/music/music-platform-links';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
@@ -293,6 +294,10 @@ function QuizPlaylistPanel({
             );
           })}
         </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <MusicPlatformLinks links={activeTrack.links} language={language} buttonClassName="border-white/12 bg-white/8 hover:bg-white/14 text-white" />
+        </div>
       </div>
     </aside>
   );
@@ -519,19 +524,65 @@ export function LessonQuizOverlay({
       return;
     }
 
+    const selectedAnswers = attempt.questions
+      .map((question) => ({
+        questionId: question.questionId,
+        selectedOptionId:
+          question.questionId === currentQuestion.questionId
+            ? selectedOptionId
+            : question.selectedOptionId,
+      }))
+      .filter((question): question is { questionId: string; selectedOptionId: string } => Boolean(question.selectedOptionId));
+
+    const answeredCount = selectedAnswers.length;
+    const isCorrect = currentQuestion.answerId === selectedOptionId;
+    const isFinalAnswer = answeredCount >= attempt.questionCount;
+
+    setAttempt((currentAttempt) => {
+      if (!currentAttempt) {
+        return currentAttempt;
+      }
+
+      const nextQuestions = currentAttempt.questions.map((question) =>
+        question.questionId === currentQuestion.questionId
+          ? {
+              ...question,
+              isAnswered: true,
+              selectedOptionId,
+            }
+          : question
+      );
+
+      return {
+        ...currentAttempt,
+        answeredCount,
+        questions: nextQuestions,
+      };
+    });
+
+    setFeedback({
+      questionId: currentQuestion.questionId,
+      verdict: isCorrect ? 'correct' : 'incorrect',
+    });
+
+    if (isCorrect) {
+      confetti.onOpen();
+      setConfettiPieces(buildConfettiBurst());
+      window.setTimeout(() => setConfettiPieces([]), 2100);
+    }
+
+    if (!isFinalAnswer) {
+      advanceTimerRef.current = window.setTimeout(() => {
+        setFeedback(null);
+        setCurrentQuestionIndex((currentIndex) => Math.min(currentIndex + 1, LESSON_QUIZ_QUESTION_COUNT - 1));
+      }, LESSON_QUIZ_AUTO_ADVANCE_MS);
+
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const selectedAnswers = attempt.questions
-        .map((question) => ({
-          questionId: question.questionId,
-          selectedOptionId:
-            question.questionId === currentQuestion.questionId
-              ? selectedOptionId
-              : question.selectedOptionId,
-        }))
-        .filter((question): question is { questionId: string; selectedOptionId: string } => Boolean(question.selectedOptionId));
-
       const response = await axios.post<LessonQuizAnswerResponse>(
         `/api/courses/${courseId}/lessons/${lessonId}/quiz/${attempt.attemptId}/answer`,
         {
@@ -541,39 +592,6 @@ export function LessonQuizOverlay({
         }
       );
 
-      setAttempt((currentAttempt) => {
-        if (!currentAttempt) {
-          return currentAttempt;
-        }
-
-        const nextQuestions = currentAttempt.questions.map((question) =>
-          question.questionId === currentQuestion.questionId
-            ? {
-                ...question,
-                isAnswered: true,
-                selectedOptionId,
-              }
-            : question
-        );
-
-        return {
-          ...currentAttempt,
-          answeredCount: response.data.answeredCount,
-          questions: nextQuestions,
-        };
-      });
-
-      setFeedback({
-        questionId: currentQuestion.questionId,
-        verdict: response.data.isCorrect ? 'correct' : 'incorrect',
-      });
-
-      if (response.data.isCorrect) {
-        confetti.onOpen();
-        setConfettiPieces(buildConfettiBurst());
-        window.setTimeout(() => setConfettiPieces([]), 2100);
-      }
-
       if (response.data.summary) {
         setSummary(response.data.summary);
         onSummaryChange?.(response.data.summary);
@@ -582,14 +600,35 @@ export function LessonQuizOverlay({
       advanceTimerRef.current = window.setTimeout(() => {
         setFeedback(null);
 
-        if (response.data.isComplete && response.data.result) {
+        if (response.data.result) {
           setResult(response.data.result);
-          return;
         }
-
-        setCurrentQuestionIndex((currentIndex) => Math.min(currentIndex + 1, LESSON_QUIZ_QUESTION_COUNT - 1));
       }, LESSON_QUIZ_AUTO_ADVANCE_MS);
     } catch (error: unknown) {
+      setAttempt((currentAttempt) => {
+        if (!currentAttempt) {
+          return currentAttempt;
+        }
+
+        const restoredQuestions = currentAttempt.questions.map((question) =>
+          question.questionId === currentQuestion.questionId
+            ? {
+                ...question,
+                isAnswered: false,
+                selectedOptionId: null,
+              }
+            : question
+        );
+
+        return {
+          ...currentAttempt,
+          answeredCount: Math.max(0, currentAttempt.answeredCount - 1),
+          questions: restoredQuestions,
+        };
+      });
+      setFeedback(null);
+      setSelectedOptionId(null);
+
       const message = axios.isAxiosError(error)
         ? error.response?.data?.error || copy.answerError
         : copy.answerError;

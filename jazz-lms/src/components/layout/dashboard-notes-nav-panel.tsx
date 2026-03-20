@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ChevronDown, Library } from 'lucide-react';
 
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
@@ -19,14 +20,10 @@ interface CourseProgressItem {
   videos: CourseProgressVideo[];
 }
 
-interface DashboardNotesNavPanelProps {
-  isOpen?: boolean;
-}
-
-export function DashboardNotesNavPanel({ isOpen = false }: DashboardNotesNavPanelProps) {
+export function DashboardNotesNavPanel() {
   const { t, language } = useDashboardPreferences();
   const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
   const [noteContent, setNoteContent] = useState('');
 
@@ -54,10 +51,21 @@ export function DashboardNotesNavPanel({ isOpen = false }: DashboardNotesNavPane
         });
     };
 
-    loadCourses();
+    const idleCallback = window.requestIdleCallback?.(() => {
+      loadCourses();
+    }, { timeout: 1000 });
 
+    if (idleCallback !== undefined) {
+      return () => {
+        isMounted = false;
+        window.cancelIdleCallback?.(idleCallback);
+      };
+    }
+
+    const timeoutId = window.setTimeout(loadCourses, 300);
     return () => {
       isMounted = false;
+      window.clearTimeout(timeoutId);
     };
   }, []);
 
@@ -106,8 +114,14 @@ export function DashboardNotesNavPanel({ isOpen = false }: DashboardNotesNavPane
   };
 
   return (
-    <div className={`${isOpen ? 'mt-1 flex h-full min-h-0 flex-col' : 'hidden'}`} aria-hidden={!isOpen}>
-      <div className="ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-1 min-h-0 flex-col">
+    <div className="mt-1 flex h-full min-h-0 flex-col">
+      <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground bg-accent/30">
+        <Library className="h-5 w-5 flex-shrink-0" />
+        <span className="flex-1 text-left">{t('myNotes', 'My Notes')}</span>
+        <ChevronDown className="h-4 w-4 flex-shrink-0 rotate-180" />
+      </div>
+
+      <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-1 min-h-0 flex-col">
         {loading && (
           <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
         )}

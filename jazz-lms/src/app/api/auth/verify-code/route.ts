@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
-import { checkRateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
-import { hasValidSupabaseServerConfig, normalizeSupabaseUrl } from '@/lib/supabase-config';
+import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 function hasPlaceholder(value: string | undefined, placeholder: string) {
   return !value || value.includes(placeholder);
@@ -35,51 +34,11 @@ export async function POST(request: Request) {
 
     const { email, code } = await request.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
-
-    const ipLimit = checkRateLimit(request, {
-      bucket: 'auth-verify-code-ip',
-      maxRequests: 30,
-      windowMs: 60_000,
-    });
-
-    if (!ipLimit.allowed) {
-      return NextResponse.json(
-        {
-          error: 'Demasiados intentos de verificación. Espera un momento.',
-          retryAfterSeconds: ipLimit.retryAfterSeconds,
-        },
-        {
-          status: 429,
-          headers: createRateLimitHeaders(ipLimit, 60_000),
-        }
-      );
-    }
-
-    const emailLimit = checkRateLimit(request, {
-      bucket: 'auth-verify-code-email',
-      identifier: normalizedEmail || 'missing-email',
-      maxRequests: 10,
-      windowMs: 10 * 60_000,
-    });
-
-    if (!emailLimit.allowed) {
-      return NextResponse.json(
-        {
-          error: 'Se alcanzó el límite de intentos para este correo. Solicita un nuevo código más tarde.',
-          retryAfterSeconds: emailLimit.retryAfterSeconds,
-        },
-        {
-          status: 429,
-          headers: createRateLimitHeaders(emailLimit, 10 * 60_000),
-        }
-      );
-    }
-
-    const url = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!hasValidSupabaseServerConfig(url ?? undefined, anonKey, serviceRoleKey)) {
+    if (!hasValidSupabaseServerConfig(url, anonKey, serviceRoleKey)) {
       return NextResponse.json(
         {
           error:

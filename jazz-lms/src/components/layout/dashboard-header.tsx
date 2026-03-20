@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Bell, Search, User, Wallet, LogOut, X, Settings } from 'lucide-react';
+import { Bell, Search, User, Wallet, LogOut, X, Settings, ScrollText } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -10,6 +10,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { resolveProfileAvatar } from '@/lib/profile-avatars';
 import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
+import { useUserCourseCompletionRecognition } from '@/hooks/use-user-course-completion-recognition';
 import { useUserJazzMedalProgress } from '@/hooks/use-user-jazz-medal-progress';
 import type { UserJazzMedalProgress } from '@/lib/lesson-quiz';
 
@@ -44,15 +45,16 @@ interface DashboardHeaderProps {
   };
   role?: string | null;
   isAdmin?: boolean;
-  initialMedalProgress: UserJazzMedalProgress | null;
+  initialMedalProgress?: UserJazzMedalProgress | null;
 }
 
-export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress }: DashboardHeaderProps) {
+export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress = null }: DashboardHeaderProps) {
   const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
   const { progress: medalProgress } = useUserJazzMedalProgress(initialMedalProgress);
+  const { recognition } = useUserCourseCompletionRecognition();
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
     resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
   );
@@ -145,6 +147,8 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
   useEffect(() => {
     let isMounted = true;
     let intervalId: number | null = null;
+    let timeoutId: number | null = null;
+    let idleCallbackId: number | null = null;
 
     const loadUnreadMessages = () => {
       if (document.visibilityState === 'hidden') {
@@ -168,7 +172,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
         window.clearInterval(intervalId);
       }
 
-      intervalId = window.setInterval(loadUnreadMessages, 60000);
+      intervalId = window.setInterval(loadUnreadMessages, 180000);
     };
 
     const handleVisibilityChange = () => {
@@ -177,13 +181,28 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
       }
     };
 
-    loadUnreadMessages();
-    startPolling();
+    if (typeof window.requestIdleCallback === 'function') {
+      idleCallbackId = window.requestIdleCallback(() => {
+        loadUnreadMessages();
+        startPolling();
+      }, { timeout: 1500 });
+    } else {
+      timeoutId = window.setTimeout(() => {
+        loadUnreadMessages();
+        startPolling();
+      }, 900);
+    }
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (idleCallbackId !== null) {
+        window.cancelIdleCallback?.(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
       if (intervalId !== null) {
         window.clearInterval(intervalId);
       }
@@ -226,6 +245,16 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
               >
                 <JazzMedalIcon medal="GOLD" size="sm" />
+              </Link>
+            ) : null}
+            {recognition.isEligible ? (
+              <Link
+                href="/dashboard/course-completion-recognition"
+                aria-label={t('courseRecognitionPage', 'Course completion recognition')}
+                title={t('courseRecognitionPage', 'Course completion recognition')}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
+              >
+                <ScrollText className="h-5 w-5" />
               </Link>
             ) : null}
             <Link

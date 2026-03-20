@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 import { NextResponse } from 'next/server'
-import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
+import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 
 function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) {
   const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
@@ -18,12 +18,10 @@ function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) 
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  const isAuthResetPasswordPath = pathname.startsWith('/auth/reset-password')
   const isRootPath = pathname === '/'
   const needsAuthProcessing =
     isRootPath ||
     pathname.startsWith('/dashboard') ||
-    pathname.startsWith('/auth') ||
     pathname.startsWith('/admin')
 
   if (!needsAuthProcessing) {
@@ -32,9 +30,8 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request)
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const normalizedUrl = normalizeSupabaseUrl(url)
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  const hasSupabaseConfig = hasValidSupabasePublicConfig(normalizedUrl ?? undefined, anonKey)
+  const hasSupabaseConfig = hasValidSupabasePublicConfig(url, anonKey)
 
   if (!hasSupabaseConfig) {
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
@@ -43,12 +40,12 @@ export async function middleware(request: NextRequest) {
     return applyLocalNoStoreHeaders(request, response)
   }
 
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/auth') || isRootPath) {
+  if (pathname.startsWith('/dashboard') || isRootPath) {
     if (!user) {
       if (pathname.startsWith('/dashboard')) {
         return NextResponse.redirect(new URL('/auth', request.url))
       }
-    } else if ((pathname.startsWith('/auth') && !isAuthResetPasswordPath) || isRootPath) {
+    } else if (isRootPath) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }

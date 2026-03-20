@@ -43,7 +43,7 @@ Hardening em `next.config.mjs`:
 
 ## Rotação de segredos (obrigatório após exposição)
 
-1. Lemon Squeezy: rotacionar `LEMON_SQUEEZY_API_KEY` e `LEMON_SQUEEZY_WEBHOOK_SECRET`.
+1. Stripe: rotacionar `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET`.
 2. Supabase: rotacionar `SUPABASE_SERVICE_ROLE_KEY`.
 3. Atualizar variáveis no Vercel (Production/Preview/Development).
 4. Validar app e webhooks após rotação.

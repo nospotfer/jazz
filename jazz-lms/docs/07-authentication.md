@@ -495,11 +495,8 @@ For this project, configure URLs in **two places**:
 - **Site URL (development)**: `http://localhost:3000`
 - **Additional Redirect URLs**:
   - `http://localhost:3000/auth/callback`
-  - `http://localhost:3000/auth/reset-password`
   - `https://jazz-lms.vercel.app/auth/callback`
-  - `https://jazz-lms.vercel.app/auth/reset-password`
   - `https://*.vercel.app/auth/callback`
-  - `https://*.vercel.app/auth/reset-password`
 
 #### B) Google Cloud Console (OAuth Client)
 

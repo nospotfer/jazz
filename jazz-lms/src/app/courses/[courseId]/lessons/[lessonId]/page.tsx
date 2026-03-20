@@ -98,7 +98,17 @@ const LessonPage = async ({
     },
   });
 
-  const canAccessLesson = !!hasFullPurchase;
+  const hasLessonPurchase = await db.lessonPurchase.findUnique({
+    where: {
+      userId_lessonId: {
+        userId: user.id,
+        lessonId: params.lessonId,
+      },
+    },
+  });
+
+  const canAccessLesson =
+    !!hasFullPurchase || !!hasLessonPurchase;
   const isAdminOwner =
     user.email?.toLowerCase() === (process.env.ADMIN_OWNER_EMAIL ?? '').toLowerCase();
   const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);

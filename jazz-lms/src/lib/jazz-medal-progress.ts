@@ -4,7 +4,11 @@ import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 import { db } from '@/lib/db';
 import {
+  LESSON_QUIZ_QUESTION_COUNT,
   buildUserJazzMedalProgress,
+  clampQuizPercent,
+  type CourseCompletionRecognitionSnapshot,
+  getQuizMedalTier,
   getHighestQuizMedal,
   type QuizMedalTierValue,
   type UserJazzMedalProfileSnapshot,
@@ -12,6 +16,16 @@ import {
 import type { SupportedLanguage } from '@/lib/language';
 
 const defaultLessonCount = CANONICAL_JAZZ_CLASSES.length;
+
+const emptyRecognitionSnapshot: CourseCompletionRecognitionSnapshot = {
+  isEligible: false,
+  completedLessons: 0,
+  totalLessons: 0,
+  completionPercent: 0,
+  quizzesWithMedalCount: 0,
+  scorePercent: 0,
+  medal: 'NONE',
+};
 
 type PublishedJazzQuizLesson = {
   id: string;
@@ -181,6 +195,87 @@ export const getUserJazzMedalProgress = cache(async (userId: string) => {
   } catch (error) {
     console.error('[jazz-medal-progress] Unable to load medal progress.', error);
     return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
+  }
+});
+
+export const getUserCourseCompletionRecognition = cache(async (
+  userId: string
+): Promise<CourseCompletionRecognitionSnapshot> => {
+  try {
+    const publishedCourse = await getPublishedJazzQuizLessons();
+
+    if (!publishedCourse.courseId || publishedCourse.lessons.length === 0) {
+      return emptyRecognitionSnapshot;
+    }
+
+    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+
+    if (!entitledLessons.hasAccess || entitledLessons.lessons.length === 0) {
+      return emptyRecognitionSnapshot;
+    }
+
+    const entitledLessonIds = entitledLessons.lessons.map((lesson) => lesson.id);
+
+    const [completedLessons, summaries, fullyCompletedQuizAttempts] = await Promise.all([
+      db.userProgress.count({
+        where: {
+          userId,
+          lessonId: { in: entitledLessonIds },
+          isCompleted: true,
+        },
+      }),
+      getUserJazzMedalSummaryRows(userId, entitledLessonIds),
+      db.lessonQuizAttempt.findMany({
+        where: {
+          userId,
+          lessonId: { in: entitledLessonIds },
+          completedAt: { not: null },
+          questionCount: { gte: LESSON_QUIZ_QUESTION_COUNT },
+        },
+        distinct: ['lessonId'],
+        select: {
+          lessonId: true,
+        },
+      }),
+    ]);
+
+    const totalLessons = entitledLessonIds.length;
+    const completionPercent = clampQuizPercent((completedLessons / totalLessons) * 100);
+    const summaryByLessonId = new Map(summaries.map((summary) => [summary.lessonId, summary]));
+    const fullyCompletedQuizLessonIds = new Set(
+      fullyCompletedQuizAttempts.map((attempt) => attempt.lessonId)
+    );
+
+    const lessonsWithQuizMedal = entitledLessonIds.filter((lessonId) => {
+      const summary = summaryByLessonId.get(lessonId);
+      return Boolean(summary && summary.bestMedal !== 'NONE' && fullyCompletedQuizLessonIds.has(lessonId));
+    });
+
+    const quizzesWithMedalCount = lessonsWithQuizMedal.length;
+    const scoreRows = entitledLessonIds
+      .map((lessonId) => summaryByLessonId.get(lessonId)?.bestScorePercent)
+      .filter((value): value is number => typeof value === 'number');
+    const rawScorePercent =
+      scoreRows.length > 0
+        ? scoreRows.reduce((total, value) => total + value, 0) / scoreRows.length
+        : 0;
+    const scorePercent = clampQuizPercent(rawScorePercent);
+    const medal = getQuizMedalTier(scorePercent);
+    const isEligible =
+      totalLessons > 0 && completionPercent >= 100 && quizzesWithMedalCount === totalLessons;
+
+    return {
+      isEligible,
+      completedLessons,
+      totalLessons,
+      completionPercent,
+      quizzesWithMedalCount,
+      scorePercent,
+      medal,
+    };
+  } catch (error) {
+    console.error('[jazz-medal-progress] Unable to load course completion recognition.', error);
+    return emptyRecognitionSnapshot;
   }
 });
 
