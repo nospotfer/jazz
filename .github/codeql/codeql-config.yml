@@ -1,0 +1,21 @@
+name: "CodeQL Config"
+
+# Keep default standard queries and add security+quality coverage.
+disable-default-queries: false
+
+queries:
+  - uses: security-and-quality
+
+# Restrict analysis to first-party code paths relevant to this project.
+paths:
+  - jazz-lms/src
+  - jazz-lms/scripts
+  - jazz-lms/prisma
+
+# Ignore generated artifacts and bulky vendored assets.
+paths-ignore:
+  - jazz-lms/coverage
+  - jazz-lms/test-results
+  - jazz-lms/public/pdf.worker.min.js
+  - "**/*.min.js"
+  - "**/*.d.ts"
