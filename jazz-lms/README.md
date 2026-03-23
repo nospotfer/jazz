@@ -104,7 +104,7 @@ Local automated checkout tests still support a localhost-only fallback path that
 - The profile now includes a shared jazz playlist widget with previous/play-next controls, and the lesson player uses the same music-link source as the profile.
 - The jazz arcade quiz overlay now uses the course playlist as an interactive left-side panel, with track switching and platform links tied to the current lesson flow.
 - A second recognition icon (scroll style) appears in the dashboard header when the student has 100% watched lessons and completed all lesson quizzes with at least a medal; this opens the course completion recognition page.
-- The course completion recognition PDF includes student name, final quiz score label, final ranking medal, and a professor-signature placeholder, while the supreme specialist recognition remains unchanged.
+- The course completion recognition certificate now follows an A4-style formal layout, uses a larger professor signature with teacher name, highlights the supreme medal tier visually, and downloads directly as PDF from the same page.
 
 ## Deployment
 

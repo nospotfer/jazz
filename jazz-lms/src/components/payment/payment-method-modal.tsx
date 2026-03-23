@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import { VoucherInput, type AppliedVoucher } from '@/components/vouchers/voucher-input';
 
 export type PaymentMethod = 'card' | 'paypal';
@@ -21,36 +22,36 @@ interface PaymentMethodModalProps {
 const copyByLanguage = {
   es: {
     title: 'Elige método de pago',
-    subtitle: 'Selecciona cómo quieres completar la compra.',
+    subtitle: 'Selecciona cómo quieres completar la compra en Lemon Squeezy.',
     voucherHint: 'Aplica tu código antes de continuar al checkout.',
-    methodCard: 'Tarjeta',
+    methodCard: 'Tarjeta (Lemon Squeezy)',
     methodPaypal: 'PayPal',
     cancel: 'Cancelar',
     continue: 'Continuar',
   },
   en: {
     title: 'Choose payment method',
-    subtitle: 'Select how you want to complete your purchase.',
+    subtitle: 'Select how you want to complete your purchase in Lemon Squeezy.',
     voucherHint: 'Apply your code before continuing to checkout.',
-    methodCard: 'Card',
+    methodCard: 'Card (Lemon Squeezy)',
     methodPaypal: 'PayPal',
     cancel: 'Cancel',
     continue: 'Continue',
   },
   fr: {
     title: 'Choisissez le moyen de paiement',
-    subtitle: 'Sélectionnez comment finaliser votre achat.',
+    subtitle: 'Sélectionnez comment finaliser votre achat via Lemon Squeezy.',
     voucherHint: 'Appliquez votre code avant de continuer vers le checkout.',
-    methodCard: 'Carte',
+    methodCard: 'Carte (Lemon Squeezy)',
     methodPaypal: 'PayPal',
     cancel: 'Annuler',
     continue: 'Continuer',
   },
   pt: {
     title: 'Escolha o método de pagamento',
-    subtitle: 'Selecione como deseja concluir a compra.',
+    subtitle: 'Selecione como deseja concluir a compra no Lemon Squeezy.',
     voucherHint: 'Aplique seu código antes de continuar para o checkout.',
-    methodCard: 'Cartão',
+    methodCard: 'Cartão (Lemon Squeezy)',
     methodPaypal: 'PayPal',
     cancel: 'Cancelar',
     continue: 'Continuar',
@@ -70,18 +71,14 @@ function MethodLogo({ method }: { method: PaymentMethod }) {
     );
   }
 
-  if (method === 'paypal') {
-    return (
-      <div className="h-11 w-11 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center">
-        <svg viewBox="0 0 64 64" className="h-7 w-7" aria-hidden="true">
-          <path d="M23 50h-7l6-36h14c8 0 13 4 12 11-1 7-6 10-13 10h-6l-2 15Z" fill="#0EA5E9" />
-          <path d="M29 50h-7l5-29h13c7 0 11 3 10 9-1 6-5 8-11 8h-6l-4 12Z" fill="#1D4ED8" />
-        </svg>
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div className="h-11 w-11 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center">
+      <svg viewBox="0 0 64 64" className="h-7 w-7" aria-hidden="true">
+        <path d="M23 50h-7l6-36h14c8 0 13 4 12 11-1 7-6 10-13 10h-6l-2 15Z" fill="#0EA5E9" />
+        <path d="M29 50h-7l5-29h13c7 0 11 3 10 9-1 6-5 8-11 8h-6l-4 12Z" fill="#1D4ED8" />
+      </svg>
+    </div>
+  );
 }
 
 export function PaymentMethodModal({
@@ -144,11 +141,7 @@ export function PaymentMethodModal({
 
         <div className="mb-4 rounded-lg border border-border bg-background/40 p-3">
           <p className="mb-2 text-xs font-medium text-muted-foreground">{copy.voucherHint}</p>
-          <VoucherInput
-            courseId={courseId}
-            disabled={isLoading}
-            onApplied={onVoucherApplied}
-          />
+          <VoucherInput courseId={courseId} disabled={isLoading} onApplied={onVoucherApplied} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -203,7 +196,6 @@ export function PaymentMethodModal({
               <p className="mt-1 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground">PAYPAL</p>
             </div>
           </button>
-
         </div>
 
         {errorMessage ? (

@@ -15,109 +15,74 @@ type CompletionCopy = {
   eyebrow: string;
   subtitle: string;
   certificateTitle: string;
+  certificateSubtitle: string;
   completionLabel: (completed: number, total: number) => string;
   scoreLabel: (score: number) => string;
-  medalLabel: (medal: string) => string;
-  signatureLabel: string;
+  teacherName: string;
   buttonLabel: string;
   gratitudeLines: (name: string) => string[];
 };
 
-function getMedalLabel(language: SupportedLanguage, medal: QuizMedalTierValue) {
-  const labels: Record<SupportedLanguage, Record<QuizMedalTierValue, string>> = {
-    en: {
-      NONE: 'No medal',
-      BRONZE: 'Bronze medal',
-      SILVER: 'Silver medal',
-      GOLD: 'Gold medal',
-      PLATINUM: 'Platinum medal',
-    },
-    es: {
-      NONE: 'Sin medalla',
-      BRONZE: 'Medalla de bronce',
-      SILVER: 'Medalla de plata',
-      GOLD: 'Medalla de oro',
-      PLATINUM: 'Medalla de platino',
-    },
-    fr: {
-      NONE: 'Sans medaille',
-      BRONZE: 'Medaille de bronze',
-      SILVER: 'Medaille d argent',
-      GOLD: 'Medaille d or',
-      PLATINUM: 'Medaille de platine',
-    },
-    pt: {
-      NONE: 'Sem medalha',
-      BRONZE: 'Medalha de bronze',
-      SILVER: 'Medalha de prata',
-      GOLD: 'Medalha de ouro',
-      PLATINUM: 'Medalha de platina',
-    },
-  };
-
-  return labels[language][medal];
-}
-
 function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
   const copy: Record<SupportedLanguage, CompletionCopy> = {
     en: {
-      eyebrow: 'Course recognition',
-      subtitle: 'A special thank-you for completing your full learning journey.',
-      certificateTitle: 'Congratulations',
-      completionLabel: (completed, total) => `Completed lessons: ${completed}/${total}`,
-      scoreLabel: (score) => `Final quiz score: ${score}%`,
-      medalLabel: (medal) => `Final ranking: ${medal}`,
-      signatureLabel: 'Professor Signature',
-      buttonLabel: 'Convert to PDF',
+      eyebrow: 'Official certificate',
+      subtitle: 'Formal record of completion and academic achievement.',
+      certificateTitle: 'Certificate of Completion',
+      certificateSubtitle: 'This document certifies that',
+      completionLabel: (completed, total) => `Program completed in full: ${completed} of ${total} classes`,
+      scoreLabel: (score) => `Personal learning milestone validated at ${score}%`,
+      teacherName: 'Enric Vieira',
+      buttonLabel: 'Download PDF Certificate',
       gratitudeLines: (name) => [
-        `Thank you ${name} for your commitment and dedication throughout this course.`,
-        'You attended every class, completed every quiz, and built consistent progress from start to finish.',
-        'We are proud of your achievement and happy to celebrate this milestone with you.',
+        `${name} has successfully fulfilled the academic and practical requirements of this training program.`,
+        'The participant has completed all course sessions, finished the required assessments, and demonstrated consistent engagement throughout the full curriculum.',
+        'This certification is issued in recognition of individual commitment, continuous discipline, and verified learning progress.',
       ],
     },
     es: {
-      eyebrow: 'Reconocimiento del curso',
-      subtitle: 'Un agradecimiento especial por completar todo tu recorrido de aprendizaje.',
-      certificateTitle: 'Felicitaciones',
-      completionLabel: (completed, total) => `Clases completadas: ${completed}/${total}`,
-      scoreLabel: (score) => `Puntuacion final de quizzes: ${score}%`,
-      medalLabel: (medal) => `Ranking final: ${medal}`,
-      signatureLabel: 'Firma del Profesor',
-      buttonLabel: 'Convertir a PDF',
+      eyebrow: 'Certificado oficial',
+      subtitle: 'Registro formal de finalizacion y logro academico.',
+      certificateTitle: 'Certificado de Finalizacion',
+      certificateSubtitle: 'Por medio del presente se certifica que',
+      completionLabel: (completed, total) => `Programa completado integralmente: ${completed} de ${total} clases`,
+      scoreLabel: (score) => `Conquista personal de aprendizaje validada en ${score}%`,
+      teacherName: 'Enric Vieira',
+      buttonLabel: 'Descargar Certificado en PDF',
       gratitudeLines: (name) => [
-        `Gracias ${name} por tu compromiso y dedicacion durante todo este curso.`,
-        'Asististe a cada clase, completaste cada quiz y construiste progreso constante de principio a fin.',
-        'Nos enorgullece tu logro y celebramos contigo este paso importante.',
+        `${name} ha cumplido satisfactoriamente los requisitos academicos y practicos establecidos para este programa de formacion.`,
+        'El participante completo la totalidad de las clases, finalizo las evaluaciones requeridas y mantuvo un progreso constante durante todo el proceso.',
+        'Este certificado se emite como constancia formal de dedicacion individual, disciplina sostenida y aprendizaje verificado.',
       ],
     },
     fr: {
-      eyebrow: 'Reconnaissance du cours',
-      subtitle: 'Un remerciement special pour avoir complete tout votre parcours d apprentissage.',
-      certificateTitle: 'Felicitations',
-      completionLabel: (completed, total) => `Cours completes: ${completed}/${total}`,
-      scoreLabel: (score) => `Score final des quiz: ${score}%`,
-      medalLabel: (medal) => `Classement final: ${medal}`,
-      signatureLabel: 'Signature du Professeur',
-      buttonLabel: 'Convertir en PDF',
+      eyebrow: 'Certificat officiel',
+      subtitle: 'Attestation formelle de reussite et de progression academique.',
+      certificateTitle: 'Certificat de Reussite',
+      certificateSubtitle: 'Par le present document, il est certifie que',
+      completionLabel: (completed, total) => `Programme integralement complete: ${completed} sur ${total} cours`,
+      scoreLabel: (score) => `Accomplissement personnel valide a ${score}%`,
+      teacherName: 'Enric Vieira',
+      buttonLabel: 'Telecharger le Certificat PDF',
       gratitudeLines: (name) => [
-        `Merci ${name} pour votre engagement et votre implication tout au long de ce cours.`,
-        'Vous avez suivi chaque cours, termine chaque quiz et construit une progression reguliere du debut a la fin.',
-        'Nous sommes fiers de votre resultat et heureux de celebrer cette etape avec vous.',
+        `${name} a rempli avec succes les exigences academiques et pratiques de ce programme de formation.`,
+        'Le participant a suivi l ensemble des cours, termine les evaluations requises et maintenu une progression reguliere tout au long du parcours.',
+        'Ce certificat est delivre en reconnaissance officielle de l engagement personnel, de la discipline et de l apprentissage confirme.',
       ],
     },
     pt: {
-      eyebrow: 'Reconhecimento do curso',
-      subtitle: 'Um agradecimento especial por concluir toda a sua jornada de aprendizado.',
-      certificateTitle: 'Parabens',
-      completionLabel: (completed, total) => `Aulas concluidas: ${completed}/${total}`,
-      scoreLabel: (score) => `Pontuacao final dos quizzes: ${score}%`,
-      medalLabel: (medal) => `Ranking final: ${medal}`,
-      signatureLabel: 'Assinatura do Professor',
-      buttonLabel: 'Converter em PDF',
+      eyebrow: 'Certificado oficial',
+      subtitle: 'Registro formal de conclusao e aproveitamento academico.',
+      certificateTitle: 'Certificado de Conclusao',
+      certificateSubtitle: 'Certificamos, para os devidos fins, que',
+      completionLabel: (completed, total) => `Programa concluido integralmente: ${completed} de ${total} aulas`,
+      scoreLabel: (score) => `Conquista individual de aprendizagem validada em ${score}%`,
+      teacherName: 'Enric Vieira',
+      buttonLabel: 'Baixar Certificado em PDF',
       gratitudeLines: (name) => [
-        `Obrigado ${name} por sua dedicacao e constancia durante todo o curso.`,
-        'Voce assistiu todas as aulas, concluiu todos os quizzes e manteve evolucao continua ate o final.',
-        'Temos orgulho da sua conquista e celebramos este momento junto com voce.',
+        `${name} cumpriu com exito os requisitos academicos e praticos estabelecidos para este programa de formacao.`,
+        'O participante concluiu todas as aulas previstas, finalizou as avaliacoes obrigatorias e demonstrou evolucao consistente ao longo de todo o percurso.',
+        'Este certificado e emitido como comprovacao formal de dedicacao pessoal, disciplina continua e progresso de aprendizagem verificado.',
       ],
     },
   };
@@ -142,8 +107,6 @@ export default async function CourseCompletionRecognitionPage() {
 
   const studentName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Jazz Student';
   const copy = getCompletionCopy(language);
-  const medalLabel = getMedalLabel(language, recognition.medal);
-
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
@@ -157,11 +120,12 @@ export default async function CourseCompletionRecognitionPage() {
         language={language}
         studentName={studentName}
         certificateTitle={copy.certificateTitle}
+        certificateSubtitle={copy.certificateSubtitle}
         completionLabel={copy.completionLabel(recognition.completedLessons, recognition.totalLessons)}
         scoreLabel={copy.scoreLabel(recognition.scorePercent)}
-        medalLabel={copy.medalLabel(medalLabel)}
         gratitudeLines={copy.gratitudeLines(studentName)}
-        signatureLabel={copy.signatureLabel}
+        teacherName={copy.teacherName}
+        signatureSrc="/images/enric_signature.png"
         buttonLabel={copy.buttonLabel}
         medal={recognition.medal}
       />

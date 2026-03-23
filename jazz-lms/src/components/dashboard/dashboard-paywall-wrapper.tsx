@@ -64,6 +64,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;
     if (pathname === '/dashboard') return false;
+    if (pathname.startsWith('/dashboard/lemon-sandbox')) return false;
     return pathname.startsWith('/dashboard');
   }, [pathname]);
 
