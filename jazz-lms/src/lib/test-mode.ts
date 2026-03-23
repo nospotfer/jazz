@@ -16,16 +16,18 @@ export function isLocalhostHost(host: string | null | undefined): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1';
 }
 
-export function isLocalTestRequest(req: Request): boolean {
+export function isLocalTestCheckoutEnabled(): boolean {
   if (process.env.NODE_ENV === 'production') return false;
 
   const localTestCheckoutFlag = process.env.ENABLE_LOCAL_TEST_CHECKOUT?.trim().toLowerCase();
-  const isLocalTestCheckoutEnabled =
-    localTestCheckoutFlag === '1' ||
-    localTestCheckoutFlag === 'true' ||
-    localTestCheckoutFlag === 'yes';
 
-  if (!isLocalTestCheckoutEnabled) return false;
+  return localTestCheckoutFlag === '1'
+    || localTestCheckoutFlag === 'true'
+    || localTestCheckoutFlag === 'yes';
+}
+
+export function isLocalTestRequest(req: Request): boolean {
+  if (!isLocalTestCheckoutEnabled()) return false;
 
   const hostHeader = req.headers.get('host') || req.headers.get('x-forwarded-host');
   const origin = req.headers.get('origin');
