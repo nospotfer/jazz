@@ -1,12 +1,12 @@
-'use client';
-import { createClient } from '@/utils/supabase/client';
-import { useMemo, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import type { AuthChangeEvent } from '@supabase/supabase-js';
-import { getRandomProfileAvatar } from '@/lib/profile-avatars';
-import { hasValidSupabasePublicConfig } from '@/lib/supabase-config';
-import { useLanguage } from '@/components/providers/language-provider';
-import { languageToHtmlLang } from '@/lib/language';
+"use client";
+import { useLanguage } from "@/components/providers/language-provider";
+import { languageToHtmlLang } from "@/lib/language";
+import { getRandomProfileAvatar } from "@/lib/profile-avatars";
+import { hasValidSupabasePublicConfig } from "@/lib/supabase-config";
+import { createClient } from "@/utils/supabase/client";
+import type { AuthChangeEvent } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 function normalizeBaseOrigin(value?: string | null): string | null {
   if (!value) return null;
@@ -24,7 +24,7 @@ function isLocalOrigin(origin?: string | null): boolean {
 
   try {
     const { hostname } = new URL(origin);
-    return hostname === 'localhost' || hostname === '127.0.0.1';
+    return hostname === "localhost" || hostname === "127.0.0.1";
   } catch {
     return false;
   }
@@ -32,7 +32,7 @@ function isLocalOrigin(origin?: string | null): boolean {
 
 function resolveClientAppOrigin(currentOrigin: string): string {
   const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
-  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const isDevelopment = process.env.NODE_ENV !== "production";
 
   if (isDevelopment) {
     if (isLocalOrigin(currentOrigin)) {
@@ -43,7 +43,7 @@ function resolveClientAppOrigin(currentOrigin: string): string {
       return configuredOrigin;
     }
 
-    return 'http://localhost:3000';
+    return "http://localhost:3000";
   }
 
   return configuredOrigin || currentOrigin;
@@ -53,197 +53,210 @@ export default function AuthPage() {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
   const { language } = useLanguage();
-  const REMEMBER_EMAIL_KEY = 'auth:rememberEmail';
+  const REMEMBER_EMAIL_KEY = "auth:rememberEmail";
   const hasSupabaseConfig = hasValidSupabasePublicConfig(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   );
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
   const copy = {
     es: {
-      googleStartError: 'No se pudo iniciar con Google. Inténtalo de nuevo.',
-      fullNameRequired: 'El nombre completo es obligatorio',
-      invalidEmail: 'Introduce un correo válido',
-      passwordMin: 'La contraseña debe tener al menos 8 caracteres',
-      registerFailed: 'El registro falló',
-      registerSuccess: 'Cuenta creada. Verifica el código enviado a tu correo para continuar.',
-      registerFailedRetry: 'El registro falló. Inténtalo de nuevo.',
-      emailPasswordRequired: 'Correo y contraseña son obligatorios',
-      signInFailed: 'No se pudo iniciar sesión',
-      signInFailedRetry: 'No se pudo iniciar sesión. Inténtalo de nuevo.',
-      googleNotConfigured: 'La autenticación con Google no está configurada en este entorno.',
-      googleAuthFailed: 'No se pudo iniciar con Google',
-      tabLogin: 'Iniciar sesión',
-      tabRegister: 'Registrarse',
-      googleRedirecting: 'Redirigiendo a Google...',
-      googleRegister: 'Registrarse con Google',
-      googleLogin: 'Iniciar sesión con Google',
-      authMissingConfig: 'La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.',
-      or: 'O',
-      fullName: 'Nombre completo',
-      fullNamePlaceholder: 'Tu nombre completo',
-      email: 'Correo',
-      emailPlaceholder: 'tu@correo.com',
-      password: 'Contraseña',
-      passwordPlaceholder: 'Tu contraseña',
-      hidePassword: 'Ocultar contraseña',
-      showPassword: 'Mostrar contraseña',
-      minChars: 'Mínimo 8 caracteres',
-      creatingAccount: 'Creando cuenta...',
-      createAccount: 'Crear cuenta',
-      haveAccount: '¿Ya tienes una cuenta?',
-      loginLink: 'Inicia sesión',
-      forgotPassword: '¿Olvidaste tu contraseña?',
-      rememberMe: 'Recordarme',
-      signingIn: 'Iniciando sesión...',
-      signIn: 'Iniciar sesión',
-      noAccount: '¿No tienes una cuenta?',
-      registerLink: 'Regístrate',
+      googleStartError: "No se pudo iniciar con Google. Inténtalo de nuevo.",
+      fullNameRequired: "El nombre completo es obligatorio",
+      invalidEmail: "Introduce un correo válido",
+      passwordMin: "La contraseña debe tener al menos 8 caracteres",
+      registerFailed: "El registro falló",
+      registerSuccess:
+        "Cuenta creada. Verifica el código enviado a tu correo para continuar.",
+      registerFailedRetry: "El registro falló. Inténtalo de nuevo.",
+      emailPasswordRequired: "Correo y contraseña son obligatorios",
+      signInFailed: "No se pudo iniciar sesión",
+      signInFailedRetry: "No se pudo iniciar sesión. Inténtalo de nuevo.",
+      googleNotConfigured:
+        "La autenticación con Google no está configurada en este entorno.",
+      googleAuthFailed: "No se pudo iniciar con Google",
+      tabLogin: "Iniciar sesión",
+      tabRegister: "Registrarse",
+      googleRedirecting: "Redirigiendo a Google...",
+      googleRegister: "Registrarse con Google",
+      googleLogin: "Iniciar sesión con Google",
+      authMissingConfig:
+        "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.",
+      or: "O",
+      fullName: "Nombre completo",
+      fullNamePlaceholder: "Tu nombre completo",
+      email: "Correo",
+      emailPlaceholder: "tu@correo.com",
+      password: "Contraseña",
+      passwordPlaceholder: "Tu contraseña",
+      hidePassword: "Ocultar contraseña",
+      showPassword: "Mostrar contraseña",
+      minChars: "Mínimo 8 caracteres",
+      creatingAccount: "Creando cuenta...",
+      createAccount: "Crear cuenta",
+      haveAccount: "¿Ya tienes una cuenta?",
+      loginLink: "Inicia sesión",
+      forgotPassword: "¿Olvidaste tu contraseña?",
+      rememberMe: "Recordarme",
+      signingIn: "Iniciando sesión...",
+      signIn: "Iniciar sesión",
+      noAccount: "¿No tienes una cuenta?",
+      registerLink: "Regístrate",
     },
     en: {
-      googleStartError: 'Google sign-in failed. Please try again.',
-      fullNameRequired: 'Full name is required',
-      invalidEmail: 'Please enter a valid email',
-      passwordMin: 'Password must be at least 8 characters',
-      registerFailed: 'Registration failed',
-      registerSuccess: 'Account created. Verify the code sent to your email to continue.',
-      registerFailedRetry: 'Registration failed. Please try again.',
-      emailPasswordRequired: 'Email and password are required',
-      signInFailed: 'Unable to sign in',
-      signInFailedRetry: 'Unable to sign in. Please try again.',
-      googleNotConfigured: 'Google authentication is not configured in this environment.',
-      googleAuthFailed: 'Unable to sign in with Google',
-      tabLogin: 'Sign in',
-      tabRegister: 'Register',
-      googleRedirecting: 'Redirecting to Google...',
-      googleRegister: 'Sign up with Google',
-      googleLogin: 'Sign in with Google',
-      authMissingConfig: 'Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local environment.',
-      or: 'OR',
-      fullName: 'Full name',
-      fullNamePlaceholder: 'Your full name',
-      email: 'Email',
-      emailPlaceholder: 'you@email.com',
-      password: 'Password',
-      passwordPlaceholder: 'Your password',
-      hidePassword: 'Hide password',
-      showPassword: 'Show password',
-      minChars: 'Minimum 8 characters',
-      creatingAccount: 'Creating account...',
-      createAccount: 'Create account',
-      haveAccount: 'Already have an account?',
-      loginLink: 'Sign in',
-      forgotPassword: 'Forgot your password?',
-      rememberMe: 'Remember me',
-      signingIn: 'Signing in...',
-      signIn: 'Sign in',
-      noAccount: 'Don’t have an account?',
-      registerLink: 'Sign up',
+      googleStartError: "Google sign-in failed. Please try again.",
+      fullNameRequired: "Full name is required",
+      invalidEmail: "Please enter a valid email",
+      passwordMin: "Password must be at least 8 characters",
+      registerFailed: "Registration failed",
+      registerSuccess:
+        "Account created. Verify the code sent to your email to continue.",
+      registerFailedRetry: "Registration failed. Please try again.",
+      emailPasswordRequired: "Email and password are required",
+      signInFailed: "Unable to sign in",
+      signInFailedRetry: "Unable to sign in. Please try again.",
+      googleNotConfigured:
+        "Google authentication is not configured in this environment.",
+      googleAuthFailed: "Unable to sign in with Google",
+      tabLogin: "Sign in",
+      tabRegister: "Register",
+      googleRedirecting: "Redirecting to Google...",
+      googleRegister: "Sign up with Google",
+      googleLogin: "Sign in with Google",
+      authMissingConfig:
+        "Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local environment.",
+      or: "OR",
+      fullName: "Full name",
+      fullNamePlaceholder: "Your full name",
+      email: "Email",
+      emailPlaceholder: "you@email.com",
+      password: "Password",
+      passwordPlaceholder: "Your password",
+      hidePassword: "Hide password",
+      showPassword: "Show password",
+      minChars: "Minimum 8 characters",
+      creatingAccount: "Creating account...",
+      createAccount: "Create account",
+      haveAccount: "Already have an account?",
+      loginLink: "Sign in",
+      forgotPassword: "Forgot your password?",
+      rememberMe: "Remember me",
+      signingIn: "Signing in...",
+      signIn: "Sign in",
+      noAccount: "Don’t have an account?",
+      registerLink: "Sign up",
     },
     fr: {
-      googleStartError: 'La connexion Google a échoué. Réessayez.',
-      fullNameRequired: 'Le nom complet est requis',
-      invalidEmail: 'Veuillez saisir un e-mail valide',
-      passwordMin: 'Le mot de passe doit contenir au moins 8 caractères',
-      registerFailed: 'Échec de l’inscription',
-      registerSuccess: 'Compte créé. Vérifiez le code envoyé à votre e-mail pour continuer.',
-      registerFailedRetry: 'Échec de l’inscription. Réessayez.',
-      emailPasswordRequired: 'E-mail et mot de passe requis',
-      signInFailed: 'Impossible de se connecter',
-      signInFailedRetry: 'Impossible de se connecter. Réessayez.',
-      googleNotConfigured: 'L’authentification Google n’est pas configurée dans cet environnement.',
-      googleAuthFailed: 'Impossible de se connecter avec Google',
-      tabLogin: 'Connexion',
-      tabRegister: 'Inscription',
-      googleRedirecting: 'Redirection vers Google...',
-      googleRegister: 'S’inscrire avec Google',
-      googleLogin: 'Se connecter avec Google',
-      authMissingConfig: 'L’authentification n’est pas configurée. Définissez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY valides dans votre environnement local.',
-      or: 'OU',
-      fullName: 'Nom complet',
-      fullNamePlaceholder: 'Votre nom complet',
-      email: 'E-mail',
-      emailPlaceholder: 'vous@email.com',
-      password: 'Mot de passe',
-      passwordPlaceholder: 'Votre mot de passe',
-      hidePassword: 'Masquer le mot de passe',
-      showPassword: 'Afficher le mot de passe',
-      minChars: 'Minimum 8 caractères',
-      creatingAccount: 'Création du compte...',
-      createAccount: 'Créer un compte',
-      haveAccount: 'Vous avez déjà un compte ?',
-      loginLink: 'Se connecter',
-      forgotPassword: 'Mot de passe oublié ?',
-      rememberMe: 'Se souvenir de moi',
-      signingIn: 'Connexion en cours...',
-      signIn: 'Se connecter',
-      noAccount: 'Vous n’avez pas de compte ?',
-      registerLink: 'S’inscrire',
+      googleStartError: "La connexion Google a échoué. Réessayez.",
+      fullNameRequired: "Le nom complet est requis",
+      invalidEmail: "Veuillez saisir un e-mail valide",
+      passwordMin: "Le mot de passe doit contenir au moins 8 caractères",
+      registerFailed: "Échec de l’inscription",
+      registerSuccess:
+        "Compte créé. Vérifiez le code envoyé à votre e-mail pour continuer.",
+      registerFailedRetry: "Échec de l’inscription. Réessayez.",
+      emailPasswordRequired: "E-mail et mot de passe requis",
+      signInFailed: "Impossible de se connecter",
+      signInFailedRetry: "Impossible de se connecter. Réessayez.",
+      googleNotConfigured:
+        "L’authentification Google n’est pas configurée dans cet environnement.",
+      googleAuthFailed: "Impossible de se connecter avec Google",
+      tabLogin: "Connexion",
+      tabRegister: "Inscription",
+      googleRedirecting: "Redirection vers Google...",
+      googleRegister: "S’inscrire avec Google",
+      googleLogin: "Se connecter avec Google",
+      authMissingConfig:
+        "L’authentification n’est pas configurée. Définissez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY valides dans votre environnement local.",
+      or: "OU",
+      fullName: "Nom complet",
+      fullNamePlaceholder: "Votre nom complet",
+      email: "E-mail",
+      emailPlaceholder: "vous@email.com",
+      password: "Mot de passe",
+      passwordPlaceholder: "Votre mot de passe",
+      hidePassword: "Masquer le mot de passe",
+      showPassword: "Afficher le mot de passe",
+      minChars: "Minimum 8 caractères",
+      creatingAccount: "Création du compte...",
+      createAccount: "Créer un compte",
+      haveAccount: "Vous avez déjà un compte ?",
+      loginLink: "Se connecter",
+      forgotPassword: "Mot de passe oublié ?",
+      rememberMe: "Se souvenir de moi",
+      signingIn: "Connexion en cours...",
+      signIn: "Se connecter",
+      noAccount: "Vous n’avez pas de compte ?",
+      registerLink: "S’inscrire",
     },
     pt: {
-      googleStartError: 'Falha ao entrar com Google. Tente novamente.',
-      fullNameRequired: 'Nome completo é obrigatório',
-      invalidEmail: 'Digite um e-mail válido',
-      passwordMin: 'A senha deve ter pelo menos 8 caracteres',
-      registerFailed: 'Falha no cadastro',
-      registerSuccess: 'Conta criada. Verifique o código enviado para seu e-mail para continuar.',
-      registerFailedRetry: 'Falha no cadastro. Tente novamente.',
-      emailPasswordRequired: 'E-mail e senha são obrigatórios',
-      signInFailed: 'Não foi possível entrar',
-      signInFailedRetry: 'Não foi possível entrar. Tente novamente.',
-      googleNotConfigured: 'A autenticação com Google não está configurada neste ambiente.',
-      googleAuthFailed: 'Não foi possível entrar com Google',
-      tabLogin: 'Entrar',
-      tabRegister: 'Cadastrar',
-      googleRedirecting: 'Redirecionando para o Google...',
-      googleRegister: 'Cadastrar com Google',
-      googleLogin: 'Entrar com Google',
-      authMissingConfig: 'A autenticação não está configurada. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY válidos no seu ambiente local.',
-      or: 'OU',
-      fullName: 'Nome completo',
-      fullNamePlaceholder: 'Seu nome completo',
-      email: 'E-mail',
-      emailPlaceholder: 'voce@email.com',
-      password: 'Senha',
-      passwordPlaceholder: 'Sua senha',
-      hidePassword: 'Ocultar senha',
-      showPassword: 'Mostrar senha',
-      minChars: 'Mínimo de 8 caracteres',
-      creatingAccount: 'Criando conta...',
-      createAccount: 'Criar conta',
-      haveAccount: 'Já tem uma conta?',
-      loginLink: 'Entrar',
-      forgotPassword: 'Esqueceu sua senha?',
-      rememberMe: 'Lembrar de mim',
-      signingIn: 'Entrando...',
-      signIn: 'Entrar',
-      noAccount: 'Não tem uma conta?',
-      registerLink: 'Cadastre-se',
+      googleStartError: "Falha ao entrar com Google. Tente novamente.",
+      fullNameRequired: "Nome completo é obrigatório",
+      invalidEmail: "Digite um e-mail válido",
+      passwordMin: "A senha deve ter pelo menos 8 caracteres",
+      registerFailed: "Falha no cadastro",
+      registerSuccess:
+        "Conta criada. Verifique o código enviado para seu e-mail para continuar.",
+      registerFailedRetry: "Falha no cadastro. Tente novamente.",
+      emailPasswordRequired: "E-mail e senha são obrigatórios",
+      signInFailed: "Não foi possível entrar",
+      signInFailedRetry: "Não foi possível entrar. Tente novamente.",
+      googleNotConfigured:
+        "A autenticação com Google não está configurada neste ambiente.",
+      googleAuthFailed: "Não foi possível entrar com Google",
+      tabLogin: "Entrar",
+      tabRegister: "Cadastrar",
+      googleRedirecting: "Redirecionando para o Google...",
+      googleRegister: "Cadastrar com Google",
+      googleLogin: "Entrar com Google",
+      authMissingConfig:
+        "A autenticação não está configurada. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY válidos no seu ambiente local.",
+      or: "OU",
+      fullName: "Nome completo",
+      fullNamePlaceholder: "Seu nome completo",
+      email: "E-mail",
+      emailPlaceholder: "voce@email.com",
+      password: "Senha",
+      passwordPlaceholder: "Sua senha",
+      hidePassword: "Ocultar senha",
+      showPassword: "Mostrar senha",
+      minChars: "Mínimo de 8 caracteres",
+      creatingAccount: "Criando conta...",
+      createAccount: "Criar conta",
+      haveAccount: "Já tem uma conta?",
+      loginLink: "Entrar",
+      forgotPassword: "Esqueceu sua senha?",
+      rememberMe: "Lembrar de mim",
+      signingIn: "Entrando...",
+      signIn: "Entrar",
+      noAccount: "Não tem uma conta?",
+      registerLink: "Cadastre-se",
     },
   }[language];
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    const urlEmail = params.get('email');
-    const tabParam = params.get('tab');
-    const flowParam = params.get('flow');
-    const oauthError = params.get('oauth_error');
+    const urlEmail = params.get("email");
+    const tabParam = params.get("tab");
+    const flowParam = params.get("flow");
+    const oauthError = params.get("oauth_error");
 
-    if (tabParam === 'register' || flowParam === 'register') {
-      setActiveTab('register');
+    if (tabParam === "register" || flowParam === "register") {
+      setActiveTab("register");
     }
     if (urlEmail) {
       setLoginEmail(urlEmail);
     }
 
     if (oauthError) {
-      const targetTab: 'login' | 'register' = flowParam === 'register' ? 'register' : 'login';
+      const targetTab: "login" | "register" =
+        flowParam === "register" ? "register" : "login";
       const message = oauthError.trim() || copy.googleStartError;
 
       setActiveTab(targetTab);
-      if (targetTab === 'register') {
+      if (targetTab === "register") {
         setRegisterError(message);
       } else {
         setLoginError(message);
@@ -252,7 +265,7 @@ export default function AuthPage() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const rememberedEmail = window.localStorage.getItem(REMEMBER_EMAIL_KEY);
     if (rememberedEmail) {
@@ -269,7 +282,7 @@ export default function AuthPage() {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (isMounted && data.session?.user) {
-        router.replace('/dashboard');
+        router.replace("/dashboard");
       }
     };
 
@@ -278,8 +291,8 @@ export default function AuthPage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (event === 'SIGNED_IN') {
-        router.replace('/dashboard');
+      if (event === "SIGNED_IN") {
+        router.replace("/dashboard");
         router.refresh();
       }
     });
@@ -291,51 +304,54 @@ export default function AuthPage() {
   }, [router, supabase]);
 
   // Sign up state
-  const [fullName, setFullName] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [registerMessage, setRegisterMessage] = useState('');
-  const [registerError, setRegisterError] = useState('');
+  const [registerMessage, setRegisterMessage] = useState("");
+  const [registerError, setRegisterError] = useState("");
 
   // Sign in state
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const redirectTo = useMemo(() => {
-    if (typeof window === 'undefined') return undefined;
+    if (typeof window === "undefined") return undefined;
     const appOrigin = resolveClientAppOrigin(window.location.origin);
-    const callbackUrl = new URL('/auth/callback', appOrigin);
-    callbackUrl.searchParams.set('flow', activeTab);
-    callbackUrl.searchParams.set('lang', language);
+    const callbackUrl = new URL("/auth/callback", appOrigin);
     return callbackUrl.toString();
-  }, [activeTab, language]);
+  }, []);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
-    if (typeof window === 'undefined') return;
+    if (process.env.NODE_ENV === "production") return;
+    if (typeof window === "undefined") return;
 
-    const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
+    const configuredOrigin = normalizeBaseOrigin(
+      process.env.NEXT_PUBLIC_APP_URL,
+    );
     const runtimeOrigin = window.location.origin;
     const resolvedOrigin = resolveClientAppOrigin(runtimeOrigin);
 
     if (configuredOrigin && !isLocalOrigin(configuredOrigin)) {
-      console.warn('[auth] NEXT_PUBLIC_APP_URL is not localhost in development. Falling back to a local runtime origin.', {
-        configuredOrigin,
-        runtimeOrigin,
-        resolvedOrigin,
-      });
+      console.warn(
+        "[auth] NEXT_PUBLIC_APP_URL is not localhost in development. Falling back to a local runtime origin.",
+        {
+          configuredOrigin,
+          runtimeOrigin,
+          resolvedOrigin,
+        },
+      );
       return;
     }
 
     if (runtimeOrigin !== resolvedOrigin) {
-      console.info('[auth] OAuth callback origin normalized in development.', {
+      console.info("[auth] OAuth callback origin normalized in development.", {
         runtimeOrigin,
         resolvedOrigin,
       });
@@ -362,13 +378,13 @@ export default function AuthPage() {
     }
 
     setRegisterLoading(true);
-    setRegisterError('');
-    setRegisterMessage('');
+    setRegisterError("");
+    setRegisterMessage("");
 
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: normalizedEmail,
           password: registerPassword,
@@ -401,7 +417,7 @@ export default function AuthPage() {
     }
 
     setLoginLoading(true);
-    setLoginError('');
+    setLoginError("");
 
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -416,17 +432,17 @@ export default function AuthPage() {
 
       const { data: signedInUserData } = await supabase.auth.getUser();
       const currentMetadata = signedInUserData.user?.user_metadata || {};
-      if (currentMetadata.avatar_mode !== 'fixed') {
+      if (currentMetadata.avatar_mode !== "fixed") {
         await supabase.auth.updateUser({
           data: {
             ...currentMetadata,
-            avatar_mode: 'random',
+            avatar_mode: "random",
             avatar_url: getRandomProfileAvatar(),
           },
         });
       }
 
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         if (rememberMe) {
           window.localStorage.setItem(REMEMBER_EMAIL_KEY, normalizedEmail);
         } else {
@@ -434,7 +450,7 @@ export default function AuthPage() {
         }
       }
 
-      router.replace('/dashboard');
+      router.replace("/dashboard");
       router.refresh();
     } catch {
       setLoginError(copy.signInFailedRetry);
@@ -444,12 +460,12 @@ export default function AuthPage() {
   };
 
   const handleGoogleAuth = async () => {
-    setLoginError('');
-    setRegisterError('');
+    setLoginError("");
+    setRegisterError("");
 
     if (!hasSupabaseConfig) {
       const message = copy.googleNotConfigured;
-      if (activeTab === 'register') {
+      if (activeTab === "register") {
         setRegisterError(message);
       } else {
         setLoginError(message);
@@ -460,13 +476,15 @@ export default function AuthPage() {
     setGoogleLoading(true);
 
     try {
-      const callbackUrl = redirectTo;
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+      const callbackUrl =
+        redirectTo || `${window.location.origin}/auth/callback`;
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
         options: {
           redirectTo: callbackUrl,
+          skipBrowserRedirect: true,
           queryParams: {
-            prompt: 'select_account',
+            prompt: "select_account",
             hl: languageToHtmlLang(language),
             ui_locales: languageToHtmlLang(language),
           },
@@ -475,15 +493,28 @@ export default function AuthPage() {
 
       if (error) {
         const message = error.message || copy.googleAuthFailed;
-        if (activeTab === 'register') {
+        if (activeTab === "register") {
           setRegisterError(message);
         } else {
           setLoginError(message);
         }
+        return;
       }
+
+      if (!data?.url) {
+        const message = copy.googleAuthFailed;
+        if (activeTab === "register") {
+          setRegisterError(message);
+        } else {
+          setLoginError(message);
+        }
+        return;
+      }
+
+      window.location.assign(data.url);
     } catch {
       const message = copy.googleStartError;
-      if (activeTab === 'register') {
+      if (activeTab === "register") {
         setRegisterError(message);
       } else {
         setLoginError(message);
@@ -494,32 +525,43 @@ export default function AuthPage() {
   };
 
   const inputClasses =
-    'w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors';
+    "w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
 
-  const labelClasses = 'block text-sm font-medium text-[#D1D5DB] mb-1.5';
-  const helperClasses = 'text-xs text-[#9CA3AF] mt-1.5';
+  const labelClasses = "block text-sm font-medium text-[#D1D5DB] mb-1.5";
+  const helperClasses = "text-xs text-[#9CA3AF] mt-1.5";
 
-  const PasswordToggleIcon = ({ visible }: { visible: boolean }) => (
+  const PasswordToggleIcon = ({ visible }: { visible: boolean }) =>
     visible ? (
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <svg
+        className="w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
         <path d="M3 3l18 18" />
         <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" />
         <path d="M16.68 16.67A9.65 9.65 0 0 1 12 18c-5 0-9-6-9-6a16.7 16.7 0 0 1 3.33-3.88" />
         <path d="M9.88 5.1A9.7 9.7 0 0 1 12 5c5 0 9 6 9 6a16.6 16.6 0 0 1-1.67 2.39" />
       </svg>
     ) : (
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <svg
+        className="w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
         <circle cx="12" cy="12" r="3" />
       </svg>
-    )
-  );
+    );
 
-  const clearMessagesForTab = (tab: 'login' | 'register') => {
+  const clearMessagesForTab = (tab: "login" | "register") => {
     setActiveTab(tab);
-    setLoginError('');
-    setRegisterError('');
-    setRegisterMessage('');
+    setLoginError("");
+    setRegisterError("");
+    setRegisterMessage("");
   };
 
   return (
@@ -528,21 +570,21 @@ export default function AuthPage() {
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
-            onClick={() => clearMessagesForTab('login')}
+            onClick={() => clearMessagesForTab("login")}
             className={`flex-1 py-3 text-sm sm:text-base font-semibold transition-colors ${
-              activeTab === 'login'
-                ? 'text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card'
-                : 'text-[#9CA3AF] hover:text-white bg-transparent'
+              activeTab === "login"
+                ? "text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card"
+                : "text-[#9CA3AF] hover:text-white bg-transparent"
             }`}
           >
             {copy.tabLogin}
           </button>
           <button
-            onClick={() => clearMessagesForTab('register')}
+            onClick={() => clearMessagesForTab("register")}
             className={`flex-1 py-3 text-sm sm:text-base font-semibold transition-colors ${
-              activeTab === 'register'
-                ? 'text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card'
-                : 'text-[#9CA3AF] hover:text-white bg-transparent'
+              activeTab === "register"
+                ? "text-[#FBBF24] border-b-2 border-[#FBBF24] bg-card"
+                : "text-[#9CA3AF] hover:text-white bg-transparent"
             }`}
           >
             {copy.tabRegister}
@@ -576,7 +618,7 @@ export default function AuthPage() {
             </svg>
             {googleLoading
               ? copy.googleRedirecting
-              : activeTab === 'register'
+              : activeTab === "register"
                 ? copy.googleRegister
                 : copy.googleLogin}
           </button>
@@ -596,7 +638,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {activeTab === 'register' ? (
+          {activeTab === "register" ? (
             <form onSubmit={handleRegister} className="space-y-5">
               <div>
                 <label htmlFor="fullName" className={labelClasses}>
@@ -635,7 +677,7 @@ export default function AuthPage() {
                 <div className="relative">
                   <input
                     id="registerPassword"
-                    type={showRegisterPassword ? 'text' : 'password'}
+                    type={showRegisterPassword ? "text" : "password"}
                     placeholder={copy.passwordPlaceholder}
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
@@ -647,7 +689,11 @@ export default function AuthPage() {
                     type="button"
                     onClick={() => setShowRegisterPassword((prev) => !prev)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
-                    aria-label={showRegisterPassword ? copy.hidePassword : copy.showPassword}
+                    aria-label={
+                      showRegisterPassword
+                        ? copy.hidePassword
+                        : copy.showPassword
+                    }
                   >
                     <PasswordToggleIcon visible={showRegisterPassword} />
                   </button>
@@ -675,10 +721,10 @@ export default function AuthPage() {
               </button>
 
               <p className="text-center text-[#9CA3AF] text-sm mt-3">
-                {copy.haveAccount}{' '}
+                {copy.haveAccount}{" "}
                 <button
                   type="button"
-                  onClick={() => clearMessagesForTab('login')}
+                  onClick={() => clearMessagesForTab("login")}
                   className="text-[#FBBF24] hover:text-[#F59E0B] font-medium"
                 >
                   {copy.loginLink}
@@ -704,12 +750,19 @@ export default function AuthPage() {
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label htmlFor="loginPassword" className="block text-sm font-medium text-[#D1D5DB]">
+                  <label
+                    htmlFor="loginPassword"
+                    className="block text-sm font-medium text-[#D1D5DB]"
+                  >
                     {copy.password}
                   </label>
                   <button
                     type="button"
-                    onClick={() => router.push(`/auth/forgot-password${loginEmail ? `?email=${encodeURIComponent(loginEmail.trim())}` : ''}`)}
+                    onClick={() =>
+                      router.push(
+                        `/auth/forgot-password${loginEmail ? `?email=${encodeURIComponent(loginEmail.trim())}` : ""}`,
+                      )
+                    }
                     className="text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors"
                   >
                     {copy.forgotPassword}
@@ -719,7 +772,7 @@ export default function AuthPage() {
                 <div className="relative">
                   <input
                     id="loginPassword"
-                    type={showLoginPassword ? 'text' : 'password'}
+                    type={showLoginPassword ? "text" : "password"}
                     placeholder={copy.passwordPlaceholder}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
@@ -730,7 +783,9 @@ export default function AuthPage() {
                     type="button"
                     onClick={() => setShowLoginPassword((prev) => !prev)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
-                    aria-label={showLoginPassword ? copy.hidePassword : copy.showPassword}
+                    aria-label={
+                      showLoginPassword ? copy.hidePassword : copy.showPassword
+                    }
                   >
                     <PasswordToggleIcon visible={showLoginPassword} />
                   </button>
@@ -762,10 +817,10 @@ export default function AuthPage() {
               </button>
 
               <p className="text-center text-[#9CA3AF] text-sm mt-3">
-                {copy.noAccount}{' '}
+                {copy.noAccount}{" "}
                 <button
                   type="button"
-                  onClick={() => clearMessagesForTab('register')}
+                  onClick={() => clearMessagesForTab("register")}
                   className="text-[#FBBF24] hover:text-[#F59E0B] font-medium"
                 >
                   {copy.registerLink}

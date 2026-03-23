@@ -17,7 +17,7 @@ The Jazz LMS uses **Supabase Authentication** to handle user login and signup. T
 
 ## Authentication Flow
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │                      AUTHENTICATION FLOW                                │
 ├────────────────────────────────────────────────────────────────────────┤
@@ -69,14 +69,14 @@ The Jazz LMS uses **Supabase Authentication** to handle user login and signup. T
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `src/app/auth/page.tsx` | Login/signup UI |
-| `src/app/auth/callback/route.ts` | OAuth callback handler |
-| `src/utils/supabase/client.ts` | Browser-side Supabase client |
-| `src/utils/supabase/server.ts` | Server-side Supabase client |
-| `src/utils/supabase/middleware.ts` | Session refresh middleware |
-| `src/middleware.ts` | Next.js middleware configuration |
+| File                               | Purpose                          |
+| ---------------------------------- | -------------------------------- |
+| `src/app/auth/page.tsx`            | Login/signup UI                  |
+| `src/app/auth/callback/route.ts`   | OAuth callback handler           |
+| `src/utils/supabase/client.ts`     | Browser-side Supabase client     |
+| `src/utils/supabase/server.ts`     | Server-side Supabase client      |
+| `src/utils/supabase/middleware.ts` | Session refresh middleware       |
+| `src/middleware.ts`                | Next.js middleware configuration |
 
 ---
 
@@ -87,21 +87,21 @@ The Jazz LMS uses **Supabase Authentication** to handle user login and signup. T
 This page uses Supabase's pre-built Auth UI component:
 
 ```tsx
-'use client';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { createClient } from '@/utils/supabase/client';
+"use client";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { createClient } from "@/utils/supabase/client";
 
 export default function AuthPage() {
-  const supabase = createClient();  // Browser client
-  
+  const supabase = createClient(); // Browser client
+
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="w-full max-w-md p-8 bg-card rounded-lg shadow-lg">
         <Auth
           supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}  // Pre-built theme
-          providers={['github']}              // OAuth providers
+          appearance={{ theme: ThemeSupa }} // Pre-built theme
+          providers={["github"]} // OAuth providers
         />
       </div>
     </div>
@@ -109,29 +109,29 @@ export default function AuthPage() {
 }
 ```
 
-### What happens when you submit:
+### What happens when you submit
 
 1. **Email/Password**: Supabase validates credentials, creates session
 2. **GitHub**: Redirects to GitHub → GitHub redirects back to `/auth/callback`
 
-### Customization Options:
+### Customization Options
 
 ```tsx
 <Auth
   supabaseClient={supabase}
-  appearance={{ 
+  appearance={{
     theme: ThemeSupa,
     variables: {
       default: {
         colors: {
-          brand: '#d4af37',        // Custom brand color
-          brandAccent: '#c9a030',
+          brand: "#d4af37", // Custom brand color
+          brandAccent: "#c9a030",
         },
       },
     },
   }}
-  providers={['github', 'google']}  // Add more providers
-  redirectTo="http://localhost:3000/auth/callback"  // Custom redirect
+  providers={["github", "google"]} // Add more providers
+  redirectTo="http://localhost:3000/auth/callback" // Custom redirect
 />
 ```
 
@@ -144,26 +144,26 @@ export default function AuthPage() {
 When GitHub (or another OAuth provider) authenticates the user, it redirects back with a `code` parameter. This route exchanges the code for session tokens:
 
 ```typescript
-import { createClient } from '@/utils/supabase/server'
-import { NextResponse } from 'next/server'
+import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
-  const origin = requestUrl.origin
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const origin = requestUrl.origin;
 
   if (code) {
-    const supabase = createClient()
+    const supabase = createClient();
     // Exchange temporary code for permanent session tokens
-    await supabase.auth.exchangeCodeForSession(code)
+    await supabase.auth.exchangeCodeForSession(code);
   }
 
   // Redirect to dashboard
-  return NextResponse.redirect(`${origin}/dashboard`)
+  return NextResponse.redirect(`${origin}/dashboard`);
 }
 ```
 
-### What's happening:
+### What's happening
 
 1. GitHub redirects to: `/auth/callback?code=abc123xyz`
 2. Our route extracts the code
@@ -177,29 +177,29 @@ export async function GET(request: Request) {
 
 ### Why Two Clients?
 
-| Context | Client | Why |
-|---------|--------|-----|
-| Browser (Client Components) | `client.ts` | Uses browser cookies, works with JavaScript |
+| Context                                | Client      | Why                                                  |
+| -------------------------------------- | ----------- | ---------------------------------------------------- |
+| Browser (Client Components)            | `client.ts` | Uses browser cookies, works with JavaScript          |
 | Server (Server Components, API Routes) | `server.ts` | Uses server-side cookies, works with Next.js headers |
 
 ### Browser Client (`client.ts`)
 
 ```typescript
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 }
 ```
 
 **When to use**: In components with `'use client'` directive
 
 ```tsx
-'use client';
-import { createClient } from '@/utils/supabase/client';
+"use client";
+import { createClient } from "@/utils/supabase/client";
 
 function MyComponent() {
   const supabase = createClient();
@@ -210,11 +210,11 @@ function MyComponent() {
 ### Server Client (`server.ts`)
 
 ```typescript
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export function createClient() {
-  const cookieStore = cookies()
+  const cookieStore = cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -222,25 +222,25 @@ export function createClient() {
     {
       cookies: {
         async get(name: string) {
-          return (await cookieStore).get(name)?.value
+          return (await cookieStore).get(name)?.value;
         },
         async set(name: string, value: string, options: CookieOptions) {
           try {
-            (await cookieStore).set({ name, value, ...options })
+            (await cookieStore).set({ name, value, ...options });
           } catch (_) {
             // Ignored in Server Components (middleware handles it)
           }
         },
         async remove(name: string, options: CookieOptions) {
           try {
-            (await cookieStore).set({ name, value: '', ...options })
+            (await cookieStore).set({ name, value: "", ...options });
           } catch (_) {
             // Ignored in Server Components
           }
         },
       },
-    }
-  )
+    },
+  );
 }
 ```
 
@@ -248,11 +248,13 @@ export function createClient() {
 
 ```typescript
 // Server Component (no 'use client')
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from "@/utils/supabase/server";
 
 async function MyServerComponent() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   // ...
 }
 ```
@@ -266,6 +268,7 @@ async function MyServerComponent() {
 ### What is Middleware?
 
 Middleware runs **before every request**. It's perfect for:
+
 - Checking authentication
 - Refreshing session tokens
 - Redirecting unauthenticated users
@@ -273,26 +276,26 @@ Middleware runs **before every request**. It's perfect for:
 ### Configuration (`src/middleware.ts`)
 
 ```typescript
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/utils/supabase/middleware'
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  return await updateSession(request);
 }
 
 export const config = {
   matcher: [
     // Run on all routes except static files
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
-}
+};
 ```
 
 ### Session Update Logic (`middleware.ts`)
 
 ```typescript
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request: { headers: request.headers } })
+  let response = NextResponse.next({ request: { headers: request.headers } });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -300,34 +303,39 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         get(name: string) {
-          return request.cookies.get(name)?.value
+          return request.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
           // Update both request and response cookies
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({ request: { headers: request.headers } })
-          response.cookies.set({ name, value, ...options })
+          request.cookies.set({ name, value, ...options });
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          response.cookies.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
           // Clear cookies from both
-          request.cookies.set({ name, value: '', ...options })
-          response = NextResponse.next({ request: { headers: request.headers } })
-          response.cookies.set({ name, value: '', ...options })
+          request.cookies.set({ name, value: "", ...options });
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          response.cookies.set({ name, value: "", ...options });
         },
       },
-    }
-  )
+    },
+  );
 
   // This refreshes the session if needed
-  await supabase.auth.getUser()
+  await supabase.auth.getUser();
 
-  return response
+  return response;
 }
 ```
 
 ### Why is this needed?
 
 Supabase uses **JWT tokens** that expire. The middleware:
+
 1. Checks if the token is expired or about to expire
 2. Automatically refreshes it
 3. Updates the cookies with the new token
@@ -380,14 +388,16 @@ function MyComponent() {
 ### In API Routes
 
 ```typescript
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: Request) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 
   // Proceed with authenticated request...
@@ -448,10 +458,12 @@ export default async function DashboardPage() {
 ```typescript
 export async function POST(req: Request) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 
   // Protected logic here...
@@ -465,14 +477,16 @@ export async function POST(req: Request) {
 The user object contains useful information:
 
 ```typescript
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 // Available properties:
-user.id                        // Unique user ID
-user.email                     // User's email
-user.user_metadata.full_name   // Display name (from OAuth)
-user.user_metadata.avatar_url  // Profile picture (from OAuth)
-user.created_at               // When account was created
+user.id; // Unique user ID
+user.email; // User's email
+user.user_metadata.full_name; // Display name (from OAuth)
+user.user_metadata.avatar_url; // Profile picture (from OAuth)
+user.created_at; // When account was created
 ```
 
 ---
@@ -505,7 +519,18 @@ For this project, configure URLs in **two places**:
 - **Authorized redirect URIs**:
   - `https://feavujcllgbzlvdvkkxx.supabase.co/auth/v1/callback`
 
+#### C) Google Auth Platform (Branding)
+
+- **App name**: `Jazz LMS`
+- **Support email**: project support email
+
 Important:
+
+- The account chooser can show `Continue to <project-ref>.supabase.co` when Supabase handles OAuth.
+- The visible app label in consent comes from Google Branding configuration.
+
+Important:
+
 - Google redirects to Supabase first (`/auth/v1/callback`).
 - Supabase then redirects to your app (`/auth/callback`).
 - URLs must match exactly (`http` vs `https`, ports, trailing slashes).
@@ -527,10 +552,14 @@ APP_URL=http://localhost:3000
 
 ```typescript
 // ✅ Good - validates with server
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 // ❌ Bad - can be spoofed on client
-const { data: { session } } = await supabase.auth.getSession();
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 ```
 
 ### 2. Always check auth in API routes
@@ -538,7 +567,7 @@ const { data: { session } } = await supabase.auth.getSession();
 ```typescript
 // Always do this:
 if (!user) {
-  return new NextResponse('Unauthorized', { status: 401 });
+  return new NextResponse("Unauthorized", { status: 401 });
 }
 ```
 
@@ -562,15 +591,18 @@ OAuth callbacks require HTTPS. Vercel handles this automatically.
 ## Troubleshooting
 
 ### "User is null even after login"
+
 - Check that middleware is running
 - Verify cookies are being set
 - Check browser dev tools for cookie errors
 
 ### "OAuth redirect not working"
+
 - Verify redirect URL in provider settings
 - Check that URL matches exactly (including http vs https)
 
 ### "Google login in localhost redirects to production domain"
+
 - If dev and prod share the same Supabase project, check **Authentication → URL Configuration** first.
 - For local testing, set **Site URL** to `http://localhost:3000`.
 - Ensure **Additional Redirect URLs** contains at least:
@@ -585,10 +617,11 @@ OAuth callbacks require HTTPS. Vercel handles this automatically.
 - Retry in an incognito window to avoid stale OAuth state/cookies.
 
 ### "Session expired immediately"
+
 - Middleware might not be configured correctly
 - Check `matcher` in middleware config
 
 ### "PKCE flow error"
+
 - Ensure you're using the SSR package (`@supabase/ssr`)
 - Make sure callback route uses `exchangeCodeForSession`
-

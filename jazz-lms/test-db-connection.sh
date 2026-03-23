@@ -11,18 +11,21 @@ echo ""
 
 # Load environment variables
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -a
+    # shellcheck disable=SC1091
+    . ./.env
+    set +a
 fi
 
 # Extract host from DATABASE_URL if available
 if [ -n "$DATABASE_URL" ]; then
-    DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\):.*/\1/p')
+    DB_HOST=$(printf '%s\n' "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
     echo "Testing connection to: $DB_HOST"
     echo ""
 
     # Test Session Pooler connection
     echo "1️⃣ Testing Session Pooler connection..."
-    timeout 5 nc -zv $DB_HOST 5432 2>&1 | grep -q "succeeded" && echo "✅ Session Pooler is reachable" || echo "❌ Session Pooler is not reachable from this network"
+    timeout 5 nc -zv "$DB_HOST" 5432 2>&1 | grep -q "succeeded" && echo "✅ Session Pooler is reachable" || echo "❌ Session Pooler is not reachable from this network"
 else
     echo "⚠️  DATABASE_URL not found in .env file"
 fi
