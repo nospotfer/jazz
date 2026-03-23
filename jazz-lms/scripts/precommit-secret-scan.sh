@@ -31,6 +31,10 @@ scan_all() {
   matches=""
 
   while IFS= read -r -d '' file; do
+    if [[ ! -f "$file" ]]; then
+      continue
+    fi
+
     case "$file" in
       node_modules/*|.next/*|.vercel/*)
         continue

@@ -129,3 +129,10 @@ Vercel will automatically build and deploy your application.
 ## Security
 
 Hardening and operational security checklist: see `SECURITY_HARDENING.md`.
+
+Current repository security automation:
+
+- Secret scanning with Gitleaks: `../.github/workflows/secret-scan.yml`
+- Static code scanning with CodeQL (JavaScript/TypeScript): `../.github/workflows/codeql-analysis.yml`
+- CodeQL query and scope configuration: `../.github/codeql/codeql-config.yml`
+- Dependency and GitHub Actions update monitoring via Dependabot: `../.github/dependabot.yml`
