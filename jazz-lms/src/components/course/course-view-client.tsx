@@ -9,8 +9,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzDescription, getLocalizedJazzSubtitle } from '@/lib/course-lessons';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 
 const UnlockAnimation = dynamic(
   () => import('./unlock-animation').then((mod) => mod.UnlockAnimation),
@@ -513,7 +513,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Clase',
       processing: 'Procesando...',
       buyFullCourse: 'Comprar curso completo — €29.99',
-      chooseMethod: 'Elegir método de pago',
+      chooseMethod: 'Aplicar voucher y continuar',
       watched: 'visto',
       purchaseRequired: 'Compra requerida',
       available: 'Disponible',
@@ -532,7 +532,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Class',
       processing: 'Processing...',
       buyFullCourse: 'Buy full course — €29.99',
-      chooseMethod: 'Choose payment method',
+      chooseMethod: 'Apply voucher and continue',
       watched: 'watched',
       purchaseRequired: 'Purchase required',
       available: 'Available',
@@ -551,7 +551,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Cours',
       processing: 'Traitement...',
       buyFullCourse: 'Acheter le cours complet — €29.99',
-      chooseMethod: 'Choisir le moyen de paiement',
+      chooseMethod: 'Appliquer un code et continuer',
       watched: 'vu',
       purchaseRequired: 'Achat requis',
       available: 'Disponible',
@@ -570,7 +570,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
       classPrefix: 'Aula',
       processing: 'Processando...',
       buyFullCourse: 'Comprar curso completo — €29.99',
-      chooseMethod: 'Escolher método de pagamento',
+      chooseMethod: 'Aplicar voucher e continuar',
       watched: 'assistido',
       purchaseRequired: 'Compra necessária',
       available: 'Disponível',
@@ -804,7 +804,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
     setHoveredIndex(null);
   }, [pinnedIndex]);
 
-  const handlePurchaseClick = useCallback(async (paymentMethod: PaymentMethod) => {
+  const handlePurchaseClick = useCallback(async () => {
     if (!courseId) return;
 
     setIsPurchasing(true);
@@ -814,7 +814,6 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         courseId,
         source: 'dashboard',
         language,
-        paymentMethod,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -1089,6 +1088,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
         isLoading={isPurchasing}
         language={language}
         courseId={courseId ?? ''}
+        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
@@ -1099,8 +1099,8 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
           setAppliedVoucher(voucher);
           setPaymentError('');
         }}
-        onConfirm={(method) => {
-          void handlePurchaseClick(method);
+        onConfirm={() => {
+          void handlePurchaseClick();
         }}
       />
     </>

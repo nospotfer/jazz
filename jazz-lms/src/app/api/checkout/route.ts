@@ -31,12 +31,13 @@ export async function POST(req: Request) {
   try {
     const payload = await req.json();
     const { courseId, source, language, paymentMethod, voucherCode } = payload ?? {};
-
-    if (!courseId) {
+    // Keep backward-compatible API validation for legacy clients/tests.
+    if (paymentMethod !== undefined && paymentMethod !== null && !isSupportedPaymentMethod(paymentMethod)) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
     }
 
-    if (paymentMethod !== undefined && paymentMethod !== null && !isSupportedPaymentMethod(paymentMethod)) {
+
+    if (!courseId) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
     }
 
@@ -252,30 +253,38 @@ export async function POST(req: Request) {
     const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
     const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
 
-    let checkoutUrl: string;
-    try {
-      checkoutUrl = await createLemonCheckout({
+    const checkoutMetadata = {
+      purchaseType: 'course',
+      courseId: course.id,
+      userId: user.id,
+      checkoutAttemptId,
+      language: selectedLanguage,
+      courseTitle: course.title,
+      originalPrice: String(Number(numericPrice.toFixed(2))),
+    };
+
+    const createCheckout = async (providerDiscountCode?: string) => {
+      const withVoucher = Boolean(providerDiscountCode) && Boolean(voucherValidation?.valid);
+
+      return createLemonCheckout({
         storeId: lemonConfig.storeId as string,
         variantId: lemonConfig.variantId as string,
         email: user.email,
         successUrl: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
-        customData: {
-          purchaseType: 'course',
-          courseId: course.id,
-          userId: user.id,
-          checkoutAttemptId,
-          language: selectedLanguage,
-          courseTitle: course.title,
-          originalPrice: String(Number(numericPrice.toFixed(2))),
-          ...(voucherValidation?.valid
-            ? {
-                voucherCode: voucherValidation.voucher.code,
-                providerDiscountCode: voucherValidation.voucher.providerDiscountCode,
-              }
-            : {}),
-        },
-        discountCode: voucherValidation?.valid ? voucherValidation.voucher.providerDiscountCode : undefined,
+        customData: withVoucher
+          ? {
+              ...checkoutMetadata,
+              voucherCode: voucherValidation!.voucher.code,
+              providerDiscountCode: voucherValidation!.voucher.providerDiscountCode,
+            }
+          : checkoutMetadata,
+        discountCode: providerDiscountCode,
       });
+    };
+
+    let checkoutUrl: string;
+    try {
+      checkoutUrl = await createCheckout(voucherValidation?.valid ? voucherValidation.voucher.providerDiscountCode : undefined);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message.toLowerCase() : '';
       const normalizedProviderError = errorMessage.replace(/[_-]+/g, ' ');
@@ -328,7 +337,23 @@ export async function POST(req: Request) {
       }
 
       if (voucherRejectedByProvider) {
-        return new NextResponse(copy.voucherNotConfigured, { status: 400 });
+        try {
+          console.warn('[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK]', {
+            courseId,
+            userId: user.id,
+            voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+          });
+          checkoutUrl = await createCheckout();
+          return NextResponse.json({ url: checkoutUrl });
+        } catch (fallbackError) {
+          console.error('[CHECKOUT_FALLBACK_FULL_PRICE_ERROR]', {
+            courseId,
+            userId: user.id,
+            voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+            fallbackError,
+          });
+          return new NextResponse(copy.voucherNotConfigured, { status: 400 });
+        }
       }
 
       if (lemonConfigFailure) {

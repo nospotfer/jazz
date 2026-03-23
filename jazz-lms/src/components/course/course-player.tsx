@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
+import { DEFAULT_FULL_COURSE_PRICE_EUR, DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import {
   calculateLessonMinutesRemaining,
   calculateLessonProgressPercent,
@@ -24,7 +24,6 @@ import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-mo
 import { useLanguage } from '@/components/providers/language-provider';
 import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
 import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
@@ -135,7 +134,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar apunte',
       openingCheckout: 'Abriendo pago...',
       unlockFullCourse: 'Desbloquear curso completo',
-      chooseMethod: 'Elegir método de pago',
+      chooseMethod: 'Aplicar voucher y continuar',
       classNote: 'Apunte de clase',
       download: 'Descargar',
       downloadSelectedPdf: 'Descargar PDF seleccionado',
@@ -181,7 +180,7 @@ export const CoursePlayer = ({
       showNotes: 'Show notes',
       openingCheckout: 'Opening checkout...',
       unlockFullCourse: 'Unlock full course',
-      chooseMethod: 'Choose payment method',
+      chooseMethod: 'Apply voucher and continue',
       classNote: 'Class notes',
       download: 'Download',
       downloadSelectedPdf: 'Download selected PDF',
@@ -227,7 +226,7 @@ export const CoursePlayer = ({
       showNotes: 'Afficher les notes',
       openingCheckout: 'Ouverture du paiement...',
       unlockFullCourse: 'Débloquer le cours complet',
-      chooseMethod: 'Choisir le moyen de paiement',
+      chooseMethod: 'Appliquer un code et continuer',
       classNote: 'Notes du cours',
       download: 'Télécharger',
       downloadSelectedPdf: 'Télécharger le PDF sélectionné',
@@ -273,7 +272,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar anotações',
       openingCheckout: 'Abrindo checkout...',
       unlockFullCourse: 'Desbloquear curso completo',
-      chooseMethod: 'Escolher método de pagamento',
+      chooseMethod: 'Aplicar voucher e continuar',
       classNote: 'Anotações da aula',
       download: 'Baixar',
       downloadSelectedPdf: 'Baixar PDF selecionado',
@@ -680,7 +679,7 @@ export const CoursePlayer = ({
     }
   };
 
-  const handlePurchaseClick = async (paymentMethod: PaymentMethod) => {
+  const handlePurchaseClick = async () => {
     if (isPurchasing) return;
 
     setIsPurchasing(true);
@@ -690,7 +689,6 @@ export const CoursePlayer = ({
         courseId: course.id,
         source: 'dashboard',
         language,
-        paymentMethod,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -1134,6 +1132,7 @@ export const CoursePlayer = ({
         isLoading={isPurchasing}
         language={language}
         courseId={course.id}
+        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
@@ -1144,8 +1143,8 @@ export const CoursePlayer = ({
           setAppliedVoucher(voucher);
           setPaymentError('');
         }}
-        onConfirm={(method) => {
-          void handlePurchaseClick(method);
+        onConfirm={() => {
+          void handlePurchaseClick();
         }}
       />
     </DashboardPreferencesProvider>
