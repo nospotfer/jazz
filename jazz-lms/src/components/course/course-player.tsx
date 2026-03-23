@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '../ui/button';
-import { CheckCircle, Youtube, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
+import { CheckCircle, Lock, ShoppingCart, FileText, PanelRightClose, PanelRightOpen, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Chapter, Course, Lesson, Attachment } from '@prisma/client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
+import { DEFAULT_FULL_COURSE_PRICE_EUR, DEFAULT_LESSON_DURATION_MINUTES } from '@/lib/pricing';
 import {
   calculateLessonMinutesRemaining,
   calculateLessonProgressPercent,
@@ -24,7 +24,6 @@ import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-mo
 import { useLanguage } from '@/components/providers/language-provider';
 import { languageToHtmlLang } from '@/lib/language';
 import type MuxPlayerElement from '@mux/mux-player';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 import { LessonQuizMedalBadge } from '@/components/course/lesson-quiz-medal';
 import type { LessonQuizSummarySnapshot } from '@/lib/lesson-quiz';
@@ -112,36 +111,6 @@ function getAttachmentDisplayName(name: string, classNumber: number | null, note
   return simplified;
 }
 
-type MusicPlatform = 'spotify' | 'apple' | 'amazon' | 'youtube';
-
-function PlatformIcon({ platform }: { platform: MusicPlatform }) {
-  if (platform === 'spotify') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
-        <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
-      </svg>
-    );
-  }
-
-  if (platform === 'apple') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
-        <path d="M16.6 12.6c0-2 1.6-3 1.7-3.1-1-.6-2.5-.7-3.5-.1-.9.5-1.6.6-2.2.6-.6 0-1.3-.1-2.1-.6-1.1-.6-2.8-.4-3.8.7-1.6 1.8-1.3 5.2.7 8.1.9 1.3 2 2.7 3.5 2.6.7 0 1.2-.2 2-.2s1.2.2 2 .2c1.5 0 2.4-1.3 3.3-2.6.7-1.1 1-2.1 1-2.2-.1 0-2.6-1-2.6-3.4Zm-2.5-7.4c.7-.8 1.2-1.9 1-3-.9.1-2 .6-2.7 1.4-.7.7-1.3 1.9-1.1 3 .9.1 2-.5 2.8-1.4Z" />
-      </svg>
-    );
-  }
-
-  if (platform === 'amazon') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
-        <path d="M5.5 16.6c3.2 2.1 8.2 2.3 11.8.6.5-.2 1 .3.5.7-3.9 2.8-9.8 2.9-13 .9-.4-.3 0-1 .7-.7Zm12.8-.9c-.4-.5-2.6-.2-3.6-.1-.3 0-.4-.2-.1-.5 1.8-1.3 4.8-.9 5.1-.5.3.3-.1 3.2-1.8 4.5-.3.2-.5.1-.4-.2.4-1 .9-3.2.8-3.2ZM9.5 11.7c0-1.8 1.3-2.7 3.2-2.7.6 0 1.1.1 1.6.3v-.4c0-.8-.6-1.2-1.5-1.2-.7 0-1.4.2-2.1.5l-.5-1.5c.9-.4 1.9-.7 3-.7 2.2 0 3.4 1 3.4 3v3.3c0 .6.1 1 .4 1.4v.2h-2.1c-.2-.2-.3-.5-.4-.8-.6.6-1.3 1-2.2 1-1.6 0-2.8-.9-2.8-2.4Zm4.8-.5v-.5c-.4-.2-.8-.2-1.3-.2-1 0-1.6.4-1.6 1.1 0 .6.5 1 1.3 1 .9 0 1.6-.5 1.6-1.4Z" />
-      </svg>
-    );
-  }
-
-  return <Youtube className="h-4 w-4" />;
-}
-
 export const CoursePlayer = ({
   course,
   lesson,
@@ -165,7 +134,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar apunte',
       openingCheckout: 'Abriendo pago...',
       unlockFullCourse: 'Desbloquear curso completo',
-      chooseMethod: 'Elegir método de pago',
+      chooseMethod: 'Aplicar voucher y continuar',
       classNote: 'Apunte de clase',
       download: 'Descargar',
       downloadSelectedPdf: 'Descargar PDF seleccionado',
@@ -176,9 +145,6 @@ export const CoursePlayer = ({
       showPdfAction: 'Mostrar PDF',
       completeAction: 'Concluir',
       musicSpotify: 'Abrir en Spotify',
-      musicApple: 'Abrir en Apple Music',
-      musicAmazon: 'Abrir en Amazon Music',
-      musicYouTube: 'Abrir en YouTube',
       loadingPlayer: 'Cargando reproductor de la lección...',
       unableSignedPlayback: 'No se pudo cargar el playback firmado de esta lección en este momento.',
       unableLoadPdf: 'No se pudo cargar este PDF en este momento.',
@@ -214,7 +180,7 @@ export const CoursePlayer = ({
       showNotes: 'Show notes',
       openingCheckout: 'Opening checkout...',
       unlockFullCourse: 'Unlock full course',
-      chooseMethod: 'Choose payment method',
+      chooseMethod: 'Apply voucher and continue',
       classNote: 'Class notes',
       download: 'Download',
       downloadSelectedPdf: 'Download selected PDF',
@@ -225,9 +191,6 @@ export const CoursePlayer = ({
       showPdfAction: 'Show PDF',
       completeAction: 'Complete',
       musicSpotify: 'Open in Spotify',
-      musicApple: 'Open in Apple Music',
-      musicAmazon: 'Open in Amazon Music',
-      musicYouTube: 'Open in YouTube',
       loadingPlayer: 'Loading lesson player...',
       unableSignedPlayback: 'Unable to load signed playback for this lesson right now.',
       unableLoadPdf: 'Unable to load this PDF right now.',
@@ -263,7 +226,7 @@ export const CoursePlayer = ({
       showNotes: 'Afficher les notes',
       openingCheckout: 'Ouverture du paiement...',
       unlockFullCourse: 'Débloquer le cours complet',
-      chooseMethod: 'Choisir le moyen de paiement',
+      chooseMethod: 'Appliquer un code et continuer',
       classNote: 'Notes du cours',
       download: 'Télécharger',
       downloadSelectedPdf: 'Télécharger le PDF sélectionné',
@@ -274,9 +237,6 @@ export const CoursePlayer = ({
       showPdfAction: 'Afficher PDF',
       completeAction: 'Valider',
       musicSpotify: 'Ouvrir dans Spotify',
-      musicApple: 'Ouvrir dans Apple Music',
-      musicAmazon: 'Ouvrir dans Amazon Music',
-      musicYouTube: 'Ouvrir dans YouTube',
       loadingPlayer: 'Chargement du lecteur de leçon...',
       unableSignedPlayback: 'Impossible de charger la lecture sécurisée de cette leçon pour le moment.',
       unableLoadPdf: 'Impossible de charger ce PDF pour le moment.',
@@ -312,7 +272,7 @@ export const CoursePlayer = ({
       showNotes: 'Mostrar anotações',
       openingCheckout: 'Abrindo checkout...',
       unlockFullCourse: 'Desbloquear curso completo',
-      chooseMethod: 'Escolher método de pagamento',
+      chooseMethod: 'Aplicar voucher e continuar',
       classNote: 'Anotações da aula',
       download: 'Baixar',
       downloadSelectedPdf: 'Baixar PDF selecionado',
@@ -323,9 +283,6 @@ export const CoursePlayer = ({
       showPdfAction: 'Mostrar PDF',
       completeAction: 'Concluir',
       musicSpotify: 'Abrir no Spotify',
-      musicApple: 'Abrir no Apple Music',
-      musicAmazon: 'Abrir no Amazon Music',
-      musicYouTube: 'Abrir no YouTube',
       loadingPlayer: 'Carregando player da aula...',
       unableSignedPlayback: 'Não foi possível carregar o playback assinado desta aula agora.',
       unableLoadPdf: 'Não foi possível carregar este PDF agora.',
@@ -722,7 +679,7 @@ export const CoursePlayer = ({
     }
   };
 
-  const handlePurchaseClick = async (paymentMethod: PaymentMethod) => {
+  const handlePurchaseClick = async () => {
     if (isPurchasing) return;
 
     setIsPurchasing(true);
@@ -732,7 +689,6 @@ export const CoursePlayer = ({
         courseId: course.id,
         source: 'dashboard',
         language,
-        paymentMethod,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -779,42 +735,6 @@ export const CoursePlayer = ({
       percent: calculateLessonProgressPercent(Number(current), Number(duration)),
     };
   }, []);
-
-  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
-  const musicLinks = [
-    {
-      label: 'Spotify',
-      href: `https://open.spotify.com/search/${musicSearch}`,
-      tooltip: copy.musicSpotify,
-      platform: 'spotify' as const,
-      colorClass: 'text-emerald-500',
-      tooltipClass: 'from-emerald-500 to-emerald-400',
-    },
-    {
-      label: 'Apple Music',
-      href: `https://music.apple.com/search?term=${musicSearch}`,
-      tooltip: copy.musicApple,
-      platform: 'apple' as const,
-      colorClass: 'text-rose-500',
-      tooltipClass: 'from-rose-500 to-orange-400',
-    },
-    {
-      label: 'Amazon Music',
-      href: `https://music.amazon.com/search/${musicSearch}`,
-      tooltip: copy.musicAmazon,
-      platform: 'amazon' as const,
-      colorClass: 'text-sky-500',
-      tooltipClass: 'from-sky-500 to-indigo-500',
-    },
-    {
-      label: 'YouTube',
-      href: `https://www.youtube.com/results?search_query=${musicSearch}`,
-      tooltip: copy.musicYouTube,
-      platform: 'youtube' as const,
-      colorClass: 'text-red-500',
-      tooltipClass: 'from-red-500 to-rose-500',
-    },
-  ];
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
@@ -986,24 +906,6 @@ export const CoursePlayer = ({
                           </svg>
                           <span>Spotify</span>
                         </a>
-                        {musicLinks.map((platform) => (
-                          <a
-                            key={platform.label}
-                            href={platform.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title={platform.tooltip}
-                            aria-label={platform.tooltip}
-                            className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
-                          >
-                            <span className={platform.colorClass}>
-                              <PlatformIcon platform={platform.platform} />
-                            </span>
-                            <span className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${platform.tooltipClass}`}>
-                              {platform.tooltip}
-                            </span>
-                          </a>
-                        ))}
 
                         <button
                           type="button"
@@ -1230,6 +1132,7 @@ export const CoursePlayer = ({
         isLoading={isPurchasing}
         language={language}
         courseId={course.id}
+        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
@@ -1240,8 +1143,8 @@ export const CoursePlayer = ({
           setAppliedVoucher(voucher);
           setPaymentError('');
         }}
-        onConfirm={(method) => {
-          void handlePurchaseClick(method);
+        onConfirm={() => {
+          void handlePurchaseClick();
         }}
       />
     </DashboardPreferencesProvider>

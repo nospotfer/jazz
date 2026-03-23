@@ -163,6 +163,7 @@ function QuizPlaylistPanel({
   const SPOTIFY_PLAYLIST_WEBPLAYER_URL = 'https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp';
   const SPOTIFY_PLAYLIST_EMBED_URL =
     'https://open.spotify.com/embed/playlist/2SL42Fq3AgVvnJb7RixOvp?utm_source=generator&theme=0';
+  const [embedFailed, setEmbedFailed] = useState(false);
 
   const copy = {
     es: {
@@ -237,16 +238,30 @@ function QuizPlaylistPanel({
         <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
           <div className="mt-2 min-h-[152px] flex-1 overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
-            <iframe
-              title="Quiz Spotify playlist"
-              src={SPOTIFY_PLAYLIST_EMBED_URL}
-              width="100%"
-              height="152"
-              frameBorder="0"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              className="block h-full w-full bg-[#0b1220]"
-            />
+            {embedFailed ? (
+              <div className="flex h-full items-center justify-center px-4">
+                <a
+                  href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+                >
+                  {copy.openSpotify}
+                </a>
+              </div>
+            ) : (
+              <iframe
+                title="Quiz Spotify playlist"
+                src={SPOTIFY_PLAYLIST_EMBED_URL}
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                className="block h-full w-full bg-[#0b1220]"
+                onError={() => setEmbedFailed(true)}
+              />
+            )}
           </div>
         </div>
 

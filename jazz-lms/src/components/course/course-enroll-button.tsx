@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 
 const PaymentMethodModal = dynamic(
@@ -53,7 +52,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       somethingWrong: 'Algo salió mal. Inténtalo de nuevo.',
       enrollFree: 'Inscribirse gratis',
       buyCourse: 'Comprar curso',
-      chooseMethod: 'Elegir método de pago',
+      chooseMethod: 'Aplicar voucher y continuar',
       methodLabel: 'Método de pago',
       methodCard: 'Tarjeta',
       methodPaypal: 'PayPal',
@@ -63,23 +62,23 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       somethingWrong: 'Something went wrong. Please try again.',
       enrollFree: 'Enroll for free',
       buyCourse: 'Buy course',
-      chooseMethod: 'Choose payment method',
+      chooseMethod: 'Apply voucher and continue',
     },
     fr: {
       somethingWrong: 'Une erreur est survenue. Réessayez.',
       enrollFree: 'S’inscrire gratuitement',
       buyCourse: 'Acheter le cours',
-      chooseMethod: 'Choisir le moyen de paiement',
+      chooseMethod: 'Appliquer un code et continuer',
     },
     pt: {
       somethingWrong: 'Algo deu errado. Tente novamente.',
       enrollFree: 'Inscrever-se grátis',
       buyCourse: 'Comprar curso',
-      chooseMethod: 'Escolher método de pagamento',
+      chooseMethod: 'Aplicar voucher e continuar',
     },
   }[language];
 
-  const checkoutWithMethod = async (paymentMethod: PaymentMethod) => {
+  const checkoutCourse = async () => {
     try {
       setIsLoading(true);
       setPaymentError('');
@@ -87,7 +86,6 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       const response = await axios.post('/api/checkout', {
         courseId,
         language,
-        paymentMethod: price > 0 ? paymentMethod : undefined,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -107,7 +105,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
 
   const onClick = () => {
     if (price === 0) {
-      void checkoutWithMethod('card');
+      void checkoutCourse();
       return;
     }
 
@@ -146,6 +144,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         isLoading={isLoading}
         language={language}
         courseId={courseId}
+        basePrice={price}
         errorMessage={paymentError}
         onClose={() => {
           if (!isLoading) {
@@ -156,8 +155,8 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
           setAppliedVoucher(voucher);
           setPaymentError('');
         }}
-        onConfirm={(method) => {
-          void checkoutWithMethod(method);
+        onConfirm={() => {
+          void checkoutCourse();
         }}
       />
     </div>

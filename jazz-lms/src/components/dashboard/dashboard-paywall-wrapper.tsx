@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Lock, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
-import type { PaymentMethod } from '@/components/payment/payment-method-modal';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -36,28 +36,28 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
       description: 'Para acceder a esta área necesitas realizar el pago del curso completo.',
       processing: 'Procesando...',
       payFullCourse: 'Pagar curso completo',
-      chooseMethod: 'Elegir método de pago',
+      chooseMethod: 'Aplicar voucher y continuar',
     },
     en: {
       title: 'Locked area',
       description: 'To access this area, you need to purchase the full course.',
       processing: 'Processing...',
       payFullCourse: 'Pay full course',
-      chooseMethod: 'Choose payment method',
+      chooseMethod: 'Apply voucher and continue',
     },
     fr: {
       title: 'Zone bloquée',
       description: 'Pour accéder à cette zone, vous devez acheter le cours complet.',
       processing: 'Traitement...',
       payFullCourse: 'Payer le cours complet',
-      chooseMethod: 'Choisir le moyen de paiement',
+      chooseMethod: 'Appliquer un code et continuer',
     },
     pt: {
       title: 'Área bloqueada',
       description: 'Para acessar esta área, você precisa comprar o curso completo.',
       processing: 'Processando...',
       payFullCourse: 'Pagar curso completo',
-      chooseMethod: 'Escolher método de pagamento',
+      chooseMethod: 'Aplicar voucher e continuar',
     },
   }[language];
 
@@ -99,7 +99,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
     setIsMethodModalOpen(true);
   };
 
-  const handlePurchase = async (paymentMethod: PaymentMethod) => {
+  const handlePurchase = async () => {
     if (!courseId || isPurchasing) return;
 
     try {
@@ -109,7 +109,6 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         courseId,
         source: 'dashboard',
         language,
-        paymentMethod,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -178,6 +177,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         isLoading={isPurchasing}
         language={language}
         courseId={courseId ?? ''}
+        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
@@ -188,8 +188,8 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
           setAppliedVoucher(voucher);
           setPaymentError('');
         }}
-        onConfirm={(method) => {
-          void handlePurchase(method);
+        onConfirm={() => {
+          void handlePurchase();
         }}
       />
     </div>

@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { Download, Loader2, ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { JazzMedalIcon } from '@/components/course/lesson-quiz-medal';
+import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
 import { Button } from '@/components/ui/button';
 import type { QuizMedalTierValue } from '@/lib/lesson-quiz';
 import type { SupportedLanguage } from '@/lib/language';
@@ -13,11 +13,12 @@ interface CourseCompletionCertificateProps {
   language: SupportedLanguage;
   studentName: string;
   certificateTitle: string;
+  certificateSubtitle: string;
   completionLabel: string;
   scoreLabel: string;
-  medalLabel: string;
   gratitudeLines: string[];
-  signatureLabel: string;
+  teacherName: string;
+  signatureSrc: string;
   buttonLabel: string;
   medal: QuizMedalTierValue;
 }
@@ -44,11 +45,12 @@ export function CourseCompletionCertificate({
   language,
   studentName,
   certificateTitle,
+  certificateSubtitle,
   completionLabel,
   scoreLabel,
-  medalLabel,
   gratitudeLines,
-  signatureLabel,
+  teacherName,
+  signatureSrc,
   buttonLabel,
   medal,
 }: CourseCompletionCertificateProps) {
@@ -69,9 +71,10 @@ export function CourseCompletionCertificate({
       const JsPdf = jsPdfModule.jsPDF ?? jsPdfModule.default;
 
       const canvas = await html2canvas(certificateRef.current, {
-        scale: 2,
-        backgroundColor: '#efeff1',
+        scale: Math.max(2, window.devicePixelRatio || 2),
+        backgroundColor: '#f7f4ed',
         useCORS: true,
+        allowTaint: false,
       });
 
       const pdf = new JsPdf({
@@ -93,7 +96,7 @@ export function CourseCompletionCertificate({
       const y = (pageHeight - renderHeight) / 2;
 
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, renderWidth, renderHeight, undefined, 'FAST');
-      await pdf.save(`course-recognition-${sanitizeFileName(studentName || 'student')}.pdf`, { returnPromise: true });
+      pdf.save(`course-recognition-${sanitizeFileName(studentName || 'student')}.pdf`);
     } catch {
       const errorMessage = language === 'en'
         ? 'Unable to generate the PDF right now.'
@@ -112,46 +115,64 @@ export function CourseCompletionCertificate({
     <div className="space-y-6">
       <div
         ref={certificateRef}
-        className="mx-auto w-full max-w-[760px] border border-black/40 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.78),_rgba(233,233,236,0.92)_40%,_rgba(216,216,220,0.96)_100%)] p-6 shadow-[0_10px_30px_rgba(15,23,42,0.2)] sm:p-10"
+        className="mx-auto aspect-[210/297] w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
       >
-        <div className="rounded-sm border border-black/20 bg-white/10 px-6 py-8 sm:px-10 sm:py-12">
+        <div className="flex h-full flex-col rounded-[2px] border-2 border-[#b49a69] bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(250,245,235,0.7))] px-5 py-6 sm:px-10 sm:py-10">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-black/25 bg-black/5 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-black/75">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#7a633a]/40 bg-[#f8f1df] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f5630]">
               <ScrollText className="h-3.5 w-3.5" />
               Jazz LMS
             </div>
-            <h1 className="mt-6 text-2xl font-semibold tracking-[0.08em] text-black/85 sm:text-4xl">
+            <h1 className="mt-6 text-2xl font-semibold uppercase tracking-[0.14em] text-[#3f2f1c] sm:text-4xl">
               {certificateTitle}
             </h1>
-            <p className="mt-3 text-base font-medium uppercase tracking-[0.12em] text-black/70">
+            <p className="mt-3 text-sm font-medium tracking-[0.08em] text-[#5e4a2f] sm:text-base">
+              {certificateSubtitle}
+            </p>
+            <p className="mt-6 text-[24px] font-semibold tracking-[0.1em] text-[#2f2416] sm:text-[34px]">
               {studentName}
             </p>
           </div>
 
-          <div className="mt-7 space-y-2 text-left text-base leading-7 text-black/80">
+          <div className="mt-8 space-y-2 text-left text-[14px] leading-7 text-[#3d3328] sm:text-[16px]">
             {gratitudeLines.map((line) => (
               <p key={line}>{line}</p>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-col items-center gap-2 text-center">
-            <p className="rounded-full border border-black/25 bg-black/5 px-4 py-1 text-sm font-semibold uppercase tracking-[0.1em] text-black/80">
+          <div className="mt-8 flex flex-col items-center gap-3 text-center">
+            <p className="rounded-full border border-[#7a633a]/35 bg-[#efe4cf] px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#5f4a2b] sm:text-sm">
               {completionLabel}
             </p>
-            <p className="text-sm font-semibold uppercase tracking-[0.1em] text-black/70">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#6f5732] sm:text-sm">
               {scoreLabel}
             </p>
-            <div className="mt-2 inline-flex items-center gap-3">
-              <JazzMedalIcon medal={medal} size="lg" />
-              <p className={`text-lg font-semibold uppercase tracking-[0.11em] ${medalToneByTier[medal]}`}>
-                {medalLabel}
-              </p>
+            <div className="mt-2 inline-flex items-center justify-center">
+              {medal === 'PLATINUM' ? (
+                <div className="relative">
+                  <div className="absolute inset-0 scale-125 rounded-full bg-yellow-300/35 blur-xl" />
+                  <div className="relative rounded-full border border-yellow-300/55 bg-gradient-to-br from-amber-100 to-yellow-300/70 px-4 py-3 shadow-[0_0_34px_rgba(250,204,21,0.45)]">
+                    <JazzSupremeMedal language={language} size="sm" />
+                  </div>
+                </div>
+              ) : (
+                <JazzMedalIcon medal={medal} size="lg" className={medalToneByTier[medal]} />
+              )}
             </div>
           </div>
 
-          <div className="mx-auto mt-14 w-full max-w-[400px] text-center">
-            <div className="h-px w-full bg-black/70" />
-            <p className="pt-2 text-sm uppercase tracking-[0.1em] text-black/75">{signatureLabel}</p>
+          <div className="mx-auto mt-auto w-full max-w-[480px] pt-8 text-center">
+            <div className="h-px w-full bg-[#5f4b2f]/80" />
+            <div className="flex justify-center pt-4">
+              <img
+                src={signatureSrc}
+                alt={teacherName}
+                className="h-20 w-auto object-contain sm:h-24"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <p className="pt-2 text-base font-semibold tracking-[0.06em] text-[#46341f] sm:text-lg">{teacherName}</p>
           </div>
         </div>
       </div>

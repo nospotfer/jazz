@@ -514,11 +514,24 @@ WHERE n.nspname = 'public'
     'Chapter',
     'Lesson',
     'Attachment',
+    'CourseTranslation',
+    'ChapterTranslation',
+    'LessonTranslation',
     'Purchase',
     'UserProgress',
     'LessonPurchase',
     'LessonNote',
+    'VoucherCode',
+    'VoucherBatch',
+    'VoucherRedemption',
+    'DiscountApplied',
+    'LessonQuizQuestion',
+    'LessonQuizOption',
+    'LessonQuizAttempt',
+    'LessonQuizAttemptAnswer',
+    'LessonQuizSummary',
     'messagethread',
-    'message'
+    'message',
+    '_prisma_migrations'
   )
 ORDER BY c.relname;

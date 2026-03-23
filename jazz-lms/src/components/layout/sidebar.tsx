@@ -254,7 +254,7 @@ function SidebarContent({
   const menuItems = [
     {
       label: t('lobby', 'Lobby'),
-      href: '/dashboard?resetTestPurchases=1',
+      href: '/dashboard',
       icon: Home,
     },
     {

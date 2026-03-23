@@ -13,8 +13,9 @@ Este guia aplica as correções dos alertas vistos no Security Advisor sem alter
 1. Abra Supabase Dashboard → SQL Editor.
 2. Crie uma nova query.
 3. Copie e execute todo o conteúdo de [supabase-security-hardening.sql](supabase-security-hardening.sql).
+4. Em seguida, execute o conteúdo de [supabase/migrations/202603200001_rls_quiz_voucher_and_system.sql](supabase/migrations/202603200001_rls_quiz_voucher_and_system.sql).
 
-Esse script é idempotente (pode executar mais de uma vez).
+Os scripts são idempotentes (podem executar mais de uma vez).
 
 ## 2) Habilitar proteção de senha vazada (Dashboard)
 
@@ -42,12 +43,25 @@ WHERE n.nspname = 'public'
     'Chapter',
     'Lesson',
     'Attachment',
+    'CourseTranslation',
+    'ChapterTranslation',
+    'LessonTranslation',
     'Purchase',
     'UserProgress',
     'LessonPurchase',
     'LessonNote',
+    'VoucherCode',
+    'VoucherBatch',
+    'VoucherRedemption',
+    'DiscountApplied',
+    'LessonQuizQuestion',
+    'LessonQuizOption',
+    'LessonQuizAttempt',
+    'LessonQuizAttemptAnswer',
+    'LessonQuizSummary',
     'messagethread',
-    'message'
+    'message',
+    '_prisma_migrations'
   )
 ORDER BY c.relname;
 ```
@@ -86,7 +100,14 @@ Esperado: `proconfig` contém `search_path=public, pg_catalog`.
 - Curso/Capítulo/Lição/Anexo: leitura para quem comprou o curso (ou admin).
 - Purchase/UserProgress/LessonPurchase: acesso ao próprio usuário (ou admin).
 - LessonNote: dono da nota (ou admin).
+- VoucherCode: leitura por usuário autenticado (somente vouchers ativos e não expirados) ou admin; escrita admin.
+- VoucherBatch: admin only.
+- VoucherRedemption: próprio usuário ou admin.
+- DiscountApplied: próprio usuário (via Purchase) ou admin.
+- LessonQuizQuestion/LessonQuizOption: acesso para usuário com curso adquirido (ou admin).
+- LessonQuizAttempt/LessonQuizAttemptAnswer/LessonQuizSummary: próprio usuário (ou admin).
 - MessageThread/Message: participante da conversa (ou admin).
+- _prisma_migrations: admin only.
 
 ## Observação importante
 

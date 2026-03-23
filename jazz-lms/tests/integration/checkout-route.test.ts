@@ -20,6 +20,10 @@ const mocks = vi.hoisted(() => ({
   getCourseTranslationBundle: vi.fn(),
   resolveCourseText: vi.fn(),
   upsertCoursePurchaseFromProvider: vi.fn(),
+  isLemonConfigured: vi.fn(),
+  isLemonWebhookConfigured: vi.fn(),
+  getLemonConfig: vi.fn(),
+  createLemonCheckout: vi.fn(),
 }));
 
 vi.mock('@/utils/supabase/server', () => ({
@@ -62,6 +66,13 @@ vi.mock('@/lib/course-purchase-sync', () => ({
   upsertCoursePurchaseFromProvider: mocks.upsertCoursePurchaseFromProvider,
 }));
 
+vi.mock('@/lib/lemon-squeezy', () => ({
+  isLemonConfigured: mocks.isLemonConfigured,
+  isLemonWebhookConfigured: mocks.isLemonWebhookConfigured,
+  getLemonConfig: mocks.getLemonConfig,
+  createLemonCheckout: mocks.createLemonCheckout,
+}));
+
 describe('POST /api/checkout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -71,6 +82,14 @@ describe('POST /api/checkout', () => {
     mocks.getCourseTranslationBundle.mockResolvedValue({ courses: new Map() });
     mocks.resolveCourseText.mockReturnValue({ title: 'Curso', description: 'Desc' });
     mocks.upsertCoursePurchaseFromProvider.mockResolvedValue(undefined);
+    mocks.isLemonConfigured.mockReturnValue(false);
+    mocks.isLemonWebhookConfigured.mockReturnValue(false);
+    mocks.getLemonConfig.mockReturnValue({
+      storeId: 'store-1',
+      variantId: 'variant-1',
+      webhookSecret: 'whsec_1',
+    });
+    mocks.createLemonCheckout.mockResolvedValue('https://lemon.test/checkout/session');
   });
 
   test('returns 400 for missing courseId', async () => {
@@ -151,6 +170,24 @@ describe('POST /api/checkout', () => {
     expect(res.status).toBe(503);
   });
 
+  test('creates Lemon checkout session for paid course when configured', async () => {
+    mocks.isLemonConfigured.mockReturnValue(true);
+    mocks.isLemonWebhookConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'student@example.com' } } });
+    mocks.courseFindUnique.mockResolvedValue({ id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+
+    const { POST } = await import('@/app/api/checkout/route');
+    const req = createCheckoutRequest({ courseId: 'c1', source: 'dashboard' });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toBe('https://lemon.test/checkout/session');
+    expect(mocks.createLemonCheckout).toHaveBeenCalledTimes(1);
+  });
+
   test('returns 400 when user has no email', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: null } } });
 
@@ -207,193 +244,5 @@ describe('POST /api/checkout', () => {
     expect(body.url).toContain('/dashboard?purchase=success&source=dashboard&test=1');
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
     delete process.env.ENABLE_LOCAL_TEST_CHECKOUT;
-  });
-});
-
-describe('POST /api/checkout (with Stripe)', () => {
-  const stripeMocks = vi.hoisted(() => ({
-    stripeCreate: vi.fn(),
-    customersList: vi.fn(),
-    customersCreate: vi.fn(),
-  }));
-
-  beforeEach(() => {
-    vi.resetModules();
-    vi.clearAllMocks();
-  });
-
-  function setupCheckoutMocks(options: {
-    stripeNull?: boolean;
-    user?: Record<string, unknown> | null;
-    course?: Record<string, unknown> | null;
-    existingPurchase?: Record<string, unknown> | null;
-    customers?: Array<Record<string, unknown>>;
-    sessionUrl?: string;
-  } = {}) {
-    vi.doMock('@/utils/supabase/server', () => ({
-      createClient: () => ({
-        auth: {
-          getUser: vi.fn().mockResolvedValue({
-            data: { user: options.user ?? { id: 'u1', email: 'user@test.com' } },
-          }),
-        },
-      }),
-    }));
-
-    vi.doMock('@/lib/db', () => ({
-      db: {
-        course: { findUnique: vi.fn().mockResolvedValue(options.course ?? { id: 'c1', title: 'Jazz', description: 'Desc', price: 29.99 }) },
-        purchase: {
-          findUnique: vi.fn().mockResolvedValue(options.existingPurchase ?? null),
-          create: vi.fn().mockResolvedValue({ id: 'p1' }),
-          upsert: vi.fn().mockResolvedValue({ id: 'p1' }),
-        },
-        $transaction: async (callback: (tx: any) => Promise<any>) => callback({
-          purchase: {
-            upsert: vi.fn().mockResolvedValue({ id: 'p1' }),
-          },
-        }),
-      },
-    }));
-
-    stripeMocks.customersList.mockResolvedValue({ data: options.customers ?? [{ id: 'cus_1' }] });
-    stripeMocks.customersCreate.mockResolvedValue({ id: 'cus_new' });
-    stripeMocks.stripeCreate.mockResolvedValue({ url: options.sessionUrl ?? 'https://checkout.stripe.com/session' });
-
-    vi.doMock('@/lib/stripe', () => ({
-      stripe: options.stripeNull
-        ? null
-        : {
-            customers: { list: stripeMocks.customersList, create: stripeMocks.customersCreate },
-            checkout: { sessions: { create: stripeMocks.stripeCreate } },
-          },
-    }));
-
-    vi.doMock('next/headers', () => ({
-      cookies: vi.fn().mockResolvedValue({ get: vi.fn(() => undefined) }),
-    }));
-
-    vi.doMock('@/lib/language', () => ({
-      normalizeLanguage: vi.fn().mockReturnValue('es'),
-      languageToStripeLocale: vi.fn().mockReturnValue('es'),
-    }));
-
-    vi.doMock('@/lib/course-translations', () => ({
-      getCourseTranslationBundle: vi.fn().mockResolvedValue({ courses: new Map() }),
-      resolveCourseText: vi.fn().mockReturnValue({ title: 'Jazz Curso', description: 'Desc' }),
-    }));
-
-    vi.doMock('@/lib/pricing', () => ({
-      DEFAULT_FULL_COURSE_PRICE_EUR: 29.99,
-    }));
-  }
-
-  test('creates Stripe checkout session for paid course', async () => {
-    setupCheckoutMocks();
-
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1', paymentMethod: 'card' });
-
-    const res = await POST(req);
-    const body = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(body.url).toBe('https://checkout.stripe.com/session');
-    expect(stripeMocks.stripeCreate).toHaveBeenCalledTimes(1);
-  });
-
-  test('creates Stripe session with auto payment methods when no method specified', async () => {
-    setupCheckoutMocks();
-
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1' });
-
-    const res = await POST(req);
-    const body = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(body.url).toBe('https://checkout.stripe.com/session');
-  });
-
-  test('uses Stripe customer_creation flow when no existing customer is found', async () => {
-    setupCheckoutMocks({ customers: [] });
-
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1' });
-
-    const res = await POST(req);
-    expect(res.status).toBe(200);
-    expect(stripeMocks.customersCreate).not.toHaveBeenCalled();
-  });
-
-  test('falls back to card-only when multi-method throws StripeInvalidRequestError', async () => {
-    // Prepare a shared error class that both the mock and thrown error use
-    class StripeInvalidRequestError extends Error {
-      type = 'StripeInvalidRequestError';
-      param: string;
-      constructor(msg: string, param?: string) {
-        super(msg);
-        this.param = param ?? '';
-      }
-    }
-
-    vi.doMock('stripe', () => {
-      const StripeMod = Object.assign(function() {}, {
-        errors: { StripeInvalidRequestError },
-      });
-      return { default: StripeMod, __esModule: true };
-    });
-
-    setupCheckoutMocks();
-    let callCount = 0;
-    stripeMocks.stripeCreate.mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        throw new StripeInvalidRequestError('The payment method type "bizum" is not activated', 'payment_method_types');
-      }
-      return Promise.resolve({ url: 'https://checkout.stripe.com/fallback' });
-    });
-
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1' });
-
-    const res = await POST(req);
-    const body = await res.json();
-
-    // First call fails → fallback → second call succeeds
-    expect(stripeMocks.stripeCreate).toHaveBeenCalledTimes(2);
-    expect(res.status).toBe(200);
-    expect(body.url).toBe('https://checkout.stripe.com/fallback');
-  });
-
-  test('returns 400 when even card-only fallback throws payment method error', async () => {
-    // Shared error class
-    class StripeInvalidRequestError extends Error {
-      type = 'StripeInvalidRequestError';
-      param: string;
-      constructor(msg: string, param?: string) {
-        super(msg);
-        this.param = param ?? '';
-      }
-    }
-
-    vi.doMock('stripe', () => {
-      const StripeMod = Object.assign(function() {}, {
-        errors: { StripeInvalidRequestError },
-      });
-      return { default: StripeMod, __esModule: true };
-    });
-
-    setupCheckoutMocks();
-    // Both calls throw the same error
-    stripeMocks.stripeCreate.mockImplementation(() => {
-      throw new StripeInvalidRequestError('payment method not available', 'payment_method_types');
-    });
-
-    const { POST } = await import('@/app/api/checkout/route');
-    const req = createCheckoutRequest({ courseId: 'c1' });
-
-    const res = await POST(req);
-    expect(res.status).toBe(400);
   });
 });

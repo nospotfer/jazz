@@ -90,6 +90,104 @@ BEGIN
 END
 $$;
 
+DO $$
+BEGIN
+  IF to_regclass('public."CourseTranslation"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS course_translation_select_purchased_or_admin ON public."CourseTranslation"';
+    EXECUTE 'DROP POLICY IF EXISTS course_translation_admin_write ON public."CourseTranslation"';
+    EXECUTE 'ALTER TABLE public."CourseTranslation" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."ChapterTranslation"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS chapter_translation_select_purchased_or_admin ON public."ChapterTranslation"';
+    EXECUTE 'DROP POLICY IF EXISTS chapter_translation_admin_write ON public."ChapterTranslation"';
+    EXECUTE 'ALTER TABLE public."ChapterTranslation" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonTranslation"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_translation_select_purchased_or_admin ON public."LessonTranslation"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_translation_admin_write ON public."LessonTranslation"';
+    EXECUTE 'ALTER TABLE public."LessonTranslation" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."VoucherCode"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS voucher_code_select_active_authenticated_or_admin ON public."VoucherCode"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_code_admin_insert ON public."VoucherCode"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_code_admin_update ON public."VoucherCode"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_code_admin_delete ON public."VoucherCode"';
+    EXECUTE 'ALTER TABLE public."VoucherCode" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."VoucherBatch"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS voucher_batch_admin_select ON public."VoucherBatch"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_batch_admin_insert ON public."VoucherBatch"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_batch_admin_update ON public."VoucherBatch"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_batch_admin_delete ON public."VoucherBatch"';
+    EXECUTE 'ALTER TABLE public."VoucherBatch" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."VoucherRedemption"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS voucher_redemption_select_own_or_admin ON public."VoucherRedemption"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_redemption_insert_own_or_admin ON public."VoucherRedemption"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_redemption_update_own_or_admin ON public."VoucherRedemption"';
+    EXECUTE 'DROP POLICY IF EXISTS voucher_redemption_delete_admin_only ON public."VoucherRedemption"';
+    EXECUTE 'ALTER TABLE public."VoucherRedemption" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."DiscountApplied"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS discount_applied_select_own_or_admin ON public."DiscountApplied"';
+    EXECUTE 'DROP POLICY IF EXISTS discount_applied_admin_insert ON public."DiscountApplied"';
+    EXECUTE 'DROP POLICY IF EXISTS discount_applied_admin_update ON public."DiscountApplied"';
+    EXECUTE 'DROP POLICY IF EXISTS discount_applied_admin_delete ON public."DiscountApplied"';
+    EXECUTE 'ALTER TABLE public."DiscountApplied" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonQuizQuestion"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_question_select_course_access_or_admin ON public."LessonQuizQuestion"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_question_admin_write ON public."LessonQuizQuestion"';
+    EXECUTE 'ALTER TABLE public."LessonQuizQuestion" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonQuizOption"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_option_select_course_access_or_admin ON public."LessonQuizOption"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_option_admin_write ON public."LessonQuizOption"';
+    EXECUTE 'ALTER TABLE public."LessonQuizOption" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonQuizAttempt"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_select_own_or_admin ON public."LessonQuizAttempt"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_insert_own_or_admin ON public."LessonQuizAttempt"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_update_own_or_admin ON public."LessonQuizAttempt"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_delete_admin_only ON public."LessonQuizAttempt"';
+    EXECUTE 'ALTER TABLE public."LessonQuizAttempt" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonQuizAttemptAnswer"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_answer_select_own_or_admin ON public."LessonQuizAttemptAnswer"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_answer_insert_own_or_admin ON public."LessonQuizAttemptAnswer"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_answer_update_own_or_admin ON public."LessonQuizAttemptAnswer"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_attempt_answer_delete_admin_only ON public."LessonQuizAttemptAnswer"';
+    EXECUTE 'ALTER TABLE public."LessonQuizAttemptAnswer" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public."LessonQuizSummary"') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_summary_select_own_or_admin ON public."LessonQuizSummary"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_summary_insert_own_or_admin ON public."LessonQuizSummary"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_summary_update_own_or_admin ON public."LessonQuizSummary"';
+    EXECUTE 'DROP POLICY IF EXISTS lesson_quiz_summary_delete_admin_only ON public."LessonQuizSummary"';
+    EXECUTE 'ALTER TABLE public."LessonQuizSummary" DISABLE ROW LEVEL SECURITY';
+  END IF;
+
+  IF to_regclass('public._prisma_migrations') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS prisma_migrations_admin_only_select ON public._prisma_migrations';
+    EXECUTE 'DROP POLICY IF EXISTS prisma_migrations_admin_only_insert ON public._prisma_migrations';
+    EXECUTE 'DROP POLICY IF EXISTS prisma_migrations_admin_only_update ON public._prisma_migrations';
+    EXECUTE 'DROP POLICY IF EXISTS prisma_migrations_admin_only_delete ON public._prisma_migrations';
+    EXECUTE 'ALTER TABLE public._prisma_migrations DISABLE ROW LEVEL SECURITY';
+  END IF;
+END
+$$;
+
 DROP FUNCTION IF EXISTS public.has_course_access(text);
 DROP FUNCTION IF EXISTS public.is_admin_user();
 DROP FUNCTION IF EXISTS public.request_user_email();
@@ -109,11 +207,24 @@ WHERE n.nspname = 'public'
     'Chapter',
     'Lesson',
     'Attachment',
+    'CourseTranslation',
+    'ChapterTranslation',
+    'LessonTranslation',
     'Purchase',
     'UserProgress',
     'LessonPurchase',
     'LessonNote',
+    'VoucherCode',
+    'VoucherBatch',
+    'VoucherRedemption',
+    'DiscountApplied',
+    'LessonQuizQuestion',
+    'LessonQuizOption',
+    'LessonQuizAttempt',
+    'LessonQuizAttemptAnswer',
+    'LessonQuizSummary',
     'messagethread',
-    'message'
+    'message',
+    '_prisma_migrations'
   )
 ORDER BY c.relname;

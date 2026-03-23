@@ -204,6 +204,15 @@ export function PromoVideo() {
                 playsInline
                 accentColor="#d4af37"
                 onError={async () => {
+                  if (playbackToken) {
+                    setPlaybackToken('');
+                    setThumbnailToken('');
+                    setStoryboardToken('');
+                    setMuxRuntimeError('');
+                    setPlayerInstanceKey((value) => value + 1);
+                    return;
+                  }
+
                   if (playerRetryCount < 1) {
                     try {
                       const response = await fetch('/api/mux/promo-playback?retry=1', { cache: 'no-store' });

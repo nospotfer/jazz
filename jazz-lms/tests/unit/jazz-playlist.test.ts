@@ -7,12 +7,12 @@ import {
 } from '@/lib/jazz-playlist';
 
 describe('jazz playlist helpers', () => {
-  test('builds the four music platform links from a search term', () => {
+  test('builds the spotify music link from a search term', () => {
     const links = buildMusicPlatformLinks('The Essence of Jazz');
 
-    expect(links).toHaveLength(4);
+    expect(links).toHaveLength(1);
     expect(links[0]).toMatchObject({ platform: 'spotify' });
-    expect(links[3]?.href).toContain('youtube.com/results');
+    expect(links[0]?.href).toContain('open.spotify.com/search');
   });
 
   test('returns the full 15-track canonical study playlist', () => {
@@ -46,6 +46,6 @@ describe('jazz playlist helpers', () => {
 
     expect(track.classNumber).toBe(0);
     expect(track.title).toBe('Minha Aula Livre');
-    expect(track.links[1]?.href).toContain('Minha%20Aula%20Livre');
+    expect(track.links[0]?.href).toContain('Minha%20Aula%20Livre');
   });
 });
