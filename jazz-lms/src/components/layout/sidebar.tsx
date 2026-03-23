@@ -10,7 +10,6 @@ import {
   X,
   Home,
   BookOpen,
-  FlaskConical,
   MessageSquare,
   LogOut,
   Library,
@@ -251,7 +250,6 @@ function SidebarContent({
 }) {
   const { t } = useDashboardPreferences();
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
-  const showLocalSandbox = process.env.NODE_ENV !== 'production';
 
   const menuItems = [
     {
@@ -274,13 +272,6 @@ function SidebarContent({
       href: '/dashboard/pdf-view',
       icon: FileText,
     },
-    ...(showLocalSandbox
-      ? [{
-          label: t('lemonSandbox', 'Lemon Sandbox'),
-          href: '/dashboard/lemon-sandbox',
-          icon: FlaskConical,
-        }]
-      : []),
   ];
 
   return (
