@@ -2,7 +2,6 @@
 import { LessonQuizMedalBadge } from "@/components/course/lesson-quiz-medal";
 import { Sidebar } from "@/components/layout/sidebar";
 import { SpotifyPlaylistFooter } from "@/components/music/spotify-playlist-footer";
-import type { PaymentMethod } from "@/components/payment/payment-method-modal";
 import { DashboardPreferencesProvider } from "@/components/providers/dashboard-preferences-provider";
 import { useLanguage } from "@/components/providers/language-provider";
 import type { AppliedVoucher } from "@/components/vouchers/voucher-input";
@@ -10,29 +9,29 @@ import { useConfettiStore } from "@/hooks/use-confetti-store";
 import { getCanonicalJazzClass } from "@/lib/course-lessons";
 import { languageToHtmlLang } from "@/lib/language";
 import {
-    calculateLessonMinutesRemaining,
-    calculateLessonProgressPercent,
-    shouldAutoCompleteLessonByPlayback,
-    shouldPersistLessonProgress,
+  calculateLessonMinutesRemaining,
+  calculateLessonProgressPercent,
+  shouldAutoCompleteLessonByPlayback,
+  shouldPersistLessonProgress,
 } from "@/lib/lesson-progress";
 import type { LessonQuizSummarySnapshot } from "@/lib/lesson-quiz";
 import { extractMuxPlaybackId } from "@/lib/mux-playback";
 import {
-    loadPaymentMethodModal,
-    warmPaymentMethodModal,
+  loadPaymentMethodModal,
+  warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
 import { DEFAULT_LESSON_DURATION_MINUTES } from "@/lib/pricing";
 import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
 import {
-    CheckCircle,
-    FileText,
-    Loader2,
-    Lock,
-    PanelRightClose,
-    PanelRightOpen,
-    ShoppingCart,
+  CheckCircle,
+  FileText,
+  Loader2,
+  Lock,
+  PanelRightClose,
+  PanelRightOpen,
+  ShoppingCart,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -793,7 +792,7 @@ export const CoursePlayer = ({
     }
   };
 
-  const handlePurchaseClick = async (paymentMethod: PaymentMethod) => {
+  const handlePurchaseClick = async () => {
     if (isPurchasing) return;
 
     setIsPurchasing(true);
@@ -803,7 +802,6 @@ export const CoursePlayer = ({
         courseId: course.id,
         source: "dashboard",
         language,
-        paymentMethod,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
@@ -1369,8 +1367,8 @@ export const CoursePlayer = ({
           setAppliedVoucher(voucher);
           setPaymentError("");
         }}
-        onConfirm={(method) => {
-          void handlePurchaseClick(method);
+        onConfirm={() => {
+          void handlePurchaseClick();
         }}
       />
     </DashboardPreferencesProvider>
