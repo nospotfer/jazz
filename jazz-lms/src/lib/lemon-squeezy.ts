@@ -1,8 +1,8 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
-const LEMON_API_BASE = 'https://api.lemonsqueezy.com/v1';
+const LEMON_API_BASE = "https://api.lemonsqueezy.com/v1";
 
-export type LemonDiscountAmountType = 'percent' | 'fixed';
+export type LemonDiscountAmountType = "percent" | "fixed";
 
 export type LemonDiscountInput = {
   storeId: string;
@@ -55,23 +55,37 @@ function readOptionalEnv(name: string): string | null {
   return value && value.length > 0 ? value : null;
 }
 
+function sanitizeLemonResourceId(value: string, fieldName: string): string {
+  const normalized = value.trim();
+
+  if (!normalized) {
+    throw new Error(`${fieldName} is required`);
+  }
+
+  if (!/^[A-Za-z0-9_-]+$/.test(normalized)) {
+    throw new Error(`Invalid ${fieldName}`);
+  }
+
+  return normalized;
+}
+
 export function isLemonConfigured() {
   return Boolean(
-    readOptionalEnv('LEMON_SQUEEZY_API_KEY') &&
-      readOptionalEnv('LEMON_SQUEEZY_STORE_ID') &&
-      readOptionalEnv('LEMON_SQUEEZY_VARIANT_ID')
+    readOptionalEnv("LEMON_SQUEEZY_API_KEY") &&
+    readOptionalEnv("LEMON_SQUEEZY_STORE_ID") &&
+    readOptionalEnv("LEMON_SQUEEZY_VARIANT_ID"),
   );
 }
 
 export function isLemonWebhookConfigured() {
-  return Boolean(readOptionalEnv('LEMON_SQUEEZY_WEBHOOK_SECRET'));
+  return Boolean(readOptionalEnv("LEMON_SQUEEZY_WEBHOOK_SECRET"));
 }
 
 function getHeaders() {
   return {
-    Accept: 'application/vnd.api+json',
-    'Content-Type': 'application/vnd.api+json',
-    Authorization: `Bearer ${readRequiredEnv('LEMON_SQUEEZY_API_KEY')}`,
+    Accept: "application/vnd.api+json",
+    "Content-Type": "application/vnd.api+json",
+    Authorization: `Bearer ${readRequiredEnv("LEMON_SQUEEZY_API_KEY")}`,
   };
 }
 
@@ -84,15 +98,18 @@ async function parseJsonApiResponse<T>(response: Response): Promise<T> {
   return (await response.json()) as T;
 }
 
-function isLemonOrdersIncludeFirstOrderItemNotAllowedError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-  const normalized = message.toLowerCase().replace(/[_-]+/g, ' ');
+function isLemonOrdersIncludeFirstOrderItemNotAllowedError(
+  error: unknown,
+): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const normalized = message.toLowerCase().replace(/[_-]+/g, " ");
 
   return (
-    normalized.includes('lemon api failed (400)') &&
-    normalized.includes('include') &&
-    normalized.includes('first order item') &&
-    (normalized.includes('not allowed') || normalized.includes('invalid query parameter'))
+    normalized.includes("lemon api failed (400)") &&
+    normalized.includes("include") &&
+    normalized.includes("first order item") &&
+    (normalized.includes("not allowed") ||
+      normalized.includes("invalid query parameter"))
   );
 }
 
@@ -105,13 +122,15 @@ export type LemonCheckoutInput = {
   discountCode?: string;
 };
 
-export async function createLemonCheckout(input: LemonCheckoutInput): Promise<string> {
+export async function createLemonCheckout(
+  input: LemonCheckoutInput,
+): Promise<string> {
   const response = await fetch(`${LEMON_API_BASE}/checkouts`, {
-    method: 'POST',
+    method: "POST",
     headers: getHeaders(),
     body: JSON.stringify({
       data: {
-        type: 'checkouts',
+        type: "checkouts",
         attributes: {
           checkout_data: {
             email: input.email,
@@ -129,20 +148,20 @@ export async function createLemonCheckout(input: LemonCheckoutInput): Promise<st
           },
           product_options: {
             redirect_url: input.successUrl,
-            receipt_button_text: 'Voltar ao curso',
+            receipt_button_text: "Voltar ao curso",
             receipt_link_url: input.successUrl,
           },
         },
         relationships: {
           store: {
             data: {
-              type: 'stores',
+              type: "stores",
               id: input.storeId,
             },
           },
           variant: {
             data: {
-              type: 'variants',
+              type: "variants",
               id: input.variantId,
             },
           },
@@ -153,7 +172,9 @@ export async function createLemonCheckout(input: LemonCheckoutInput): Promise<st
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Lemon checkout create failed (${response.status}): ${body}`);
+    throw new Error(
+      `Lemon checkout create failed (${response.status}): ${body}`,
+    );
   }
 
   const json = (await response.json()) as {
@@ -166,18 +187,22 @@ export async function createLemonCheckout(input: LemonCheckoutInput): Promise<st
 
   const checkoutUrl = json?.data?.attributes?.url;
   if (!checkoutUrl) {
-    throw new Error('Lemon checkout response missing url');
+    throw new Error("Lemon checkout response missing url");
   }
 
   return checkoutUrl;
 }
 
-export async function createLemonDiscount(input: LemonDiscountInput): Promise<{ id: string; code: string }> {
-  const amount = Number.isFinite(input.amount) ? Math.max(0, Math.round(input.amount)) : 0;
+export async function createLemonDiscount(
+  input: LemonDiscountInput,
+): Promise<{ id: string; code: string }> {
+  const amount = Number.isFinite(input.amount)
+    ? Math.max(0, Math.round(input.amount))
+    : 0;
 
   const payload: any = {
     data: {
-      type: 'discounts',
+      type: "discounts",
       attributes: {
         name: input.name,
         code: input.code,
@@ -185,8 +210,10 @@ export async function createLemonDiscount(input: LemonDiscountInput): Promise<{ 
         amount_type: input.amountType,
         is_limited_to_products: Boolean(input.variantId),
         is_limited_redemptions:
-          Number.isFinite(Number(input.maxRedemptions)) && Number(input.maxRedemptions) > 0,
-        ...(Number.isFinite(Number(input.maxRedemptions)) && Number(input.maxRedemptions) > 0
+          Number.isFinite(Number(input.maxRedemptions)) &&
+          Number(input.maxRedemptions) > 0,
+        ...(Number.isFinite(Number(input.maxRedemptions)) &&
+        Number(input.maxRedemptions) > 0
           ? {
               max_redemptions: Number(input.maxRedemptions),
             }
@@ -194,14 +221,16 @@ export async function createLemonDiscount(input: LemonDiscountInput): Promise<{ 
         ...(input.expiresAt
           ? {
               expires_at:
-                typeof input.expiresAt === 'string' ? input.expiresAt : new Date(input.expiresAt).toISOString(),
+                typeof input.expiresAt === "string"
+                  ? input.expiresAt
+                  : new Date(input.expiresAt).toISOString(),
             }
           : {}),
       },
       relationships: {
         store: {
           data: {
-            type: 'stores',
+            type: "stores",
             id: input.storeId,
           },
         },
@@ -210,7 +239,7 @@ export async function createLemonDiscount(input: LemonDiscountInput): Promise<{ 
               variants: {
                 data: [
                   {
-                    type: 'variants',
+                    type: "variants",
                     id: input.variantId,
                   },
                 ],
@@ -222,33 +251,44 @@ export async function createLemonDiscount(input: LemonDiscountInput): Promise<{ 
   };
 
   const response = await fetch(`${LEMON_API_BASE}/discounts`, {
-    method: 'POST',
+    method: "POST",
     headers: getHeaders(),
     body: JSON.stringify(payload),
   });
 
-  const json = await parseJsonApiResponse<{ data?: LemonApiDiscountRecord }>(response);
+  const json = await parseJsonApiResponse<{ data?: LemonApiDiscountRecord }>(
+    response,
+  );
   const id = json?.data?.id;
   const code = json?.data?.attributes?.code;
 
   if (!id || !code) {
-    throw new Error('Lemon discount response missing id/code');
+    throw new Error("Lemon discount response missing id/code");
   }
 
   return { id, code };
 }
 
-export async function retrieveLemonDiscount(discountId: string): Promise<{ id: string; code: string } | null> {
-  const response = await fetch(`${LEMON_API_BASE}/discounts/${discountId}`, {
-    method: 'GET',
-    headers: getHeaders(),
-  });
+export async function retrieveLemonDiscount(
+  discountId: string,
+): Promise<{ id: string; code: string } | null> {
+  const safeDiscountId = sanitizeLemonResourceId(discountId, "discountId");
+
+  const response = await fetch(
+    `${LEMON_API_BASE}/discounts/${encodeURIComponent(safeDiscountId)}`,
+    {
+      method: "GET",
+      headers: getHeaders(),
+    },
+  );
 
   if (response.status === 404) {
     return null;
   }
 
-  const json = await parseJsonApiResponse<{ data?: LemonApiDiscountRecord }>(response);
+  const json = await parseJsonApiResponse<{ data?: LemonApiDiscountRecord }>(
+    response,
+  );
   const id = json?.data?.id;
   const code = json?.data?.attributes?.code;
 
@@ -259,20 +299,26 @@ export async function retrieveLemonDiscount(discountId: string): Promise<{ id: s
   return { id, code };
 }
 
-export async function findLemonDiscountByCode(storeId: string, code: string): Promise<{ id: string; code: string } | null> {
+export async function findLemonDiscountByCode(
+  storeId: string,
+  code: string,
+): Promise<{ id: string; code: string } | null> {
   const safeCode = code.trim().toUpperCase();
 
   for (let page = 1; page <= 10; page += 1) {
     const params = new URLSearchParams({
-      'filter[store_id]': storeId,
-      'page[number]': String(page),
-      'page[size]': '100',
+      "filter[store_id]": storeId,
+      "page[number]": String(page),
+      "page[size]": "100",
     });
 
-    const response = await fetch(`${LEMON_API_BASE}/discounts?${params.toString()}`, {
-      method: 'GET',
-      headers: getHeaders(),
-    });
+    const response = await fetch(
+      `${LEMON_API_BASE}/discounts?${params.toString()}`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      },
+    );
 
     const json = await parseJsonApiResponse<{
       data?: LemonApiDiscountRecord[];
@@ -280,7 +326,9 @@ export async function findLemonDiscountByCode(storeId: string, code: string): Pr
     }>(response);
 
     const records = Array.isArray(json?.data) ? json.data : [];
-    const found = records.find((record) => record?.attributes?.code?.trim().toUpperCase() === safeCode);
+    const found = records.find(
+      (record) => record?.attributes?.code?.trim().toUpperCase() === safeCode,
+    );
 
     if (found?.id && found?.attributes?.code) {
       return { id: found.id, code: found.attributes.code };
@@ -299,7 +347,7 @@ export async function findLemonDiscountByCode(storeId: string, code: string): Pr
 
 export async function deleteLemonDiscount(discountId: string): Promise<void> {
   const response = await fetch(`${LEMON_API_BASE}/discounts/${discountId}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: getHeaders(),
   });
 
@@ -309,27 +357,32 @@ export async function deleteLemonDiscount(discountId: string): Promise<void> {
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Lemon discount delete failed (${response.status}): ${body}`);
+    throw new Error(
+      `Lemon discount delete failed (${response.status}): ${body}`,
+    );
   }
 }
 
-export async function retrieveLemonOrder(orderId: string): Promise<LemonApiOrderRecord | null> {
-  const normalizedOrderId = orderId.trim();
+export async function retrieveLemonOrder(
+  orderId: string,
+): Promise<LemonApiOrderRecord | null> {
+  const normalizedOrderId = sanitizeLemonResourceId(orderId, "orderId");
 
-  if (!normalizedOrderId) {
-    return null;
-  }
-
-  const response = await fetch(`${LEMON_API_BASE}/orders/${encodeURIComponent(normalizedOrderId)}`, {
-    method: 'GET',
-    headers: getHeaders(),
-  });
+  const response = await fetch(
+    `${LEMON_API_BASE}/orders/${encodeURIComponent(normalizedOrderId)}`,
+    {
+      method: "GET",
+      headers: getHeaders(),
+    },
+  );
 
   if (response.status === 404) {
     return null;
   }
 
-  const json = await parseJsonApiResponse<{ data?: LemonApiOrderRecord }>(response);
+  const json = await parseJsonApiResponse<{ data?: LemonApiOrderRecord }>(
+    response,
+  );
   return json?.data ?? null;
 }
 
@@ -350,37 +403,42 @@ export async function listRecentLemonOrdersByEmail(input: {
   const cutoffEpoch = Date.now() - withinMinutes * 60 * 1000;
   const maxPagesInput = input.maxPages;
   const pageSizeInput = input.pageSize;
-  const maxPages = typeof maxPagesInput === 'number' && Number.isFinite(maxPagesInput)
-    ? Math.max(1, Math.floor(maxPagesInput))
-    : 3;
-  const pageSize = typeof pageSizeInput === 'number' && Number.isFinite(pageSizeInput)
-    ? Math.min(100, Math.max(1, Math.floor(pageSizeInput)))
-    : 50;
-  const storeId = readOptionalEnv('LEMON_SQUEEZY_STORE_ID');
+  const maxPages =
+    typeof maxPagesInput === "number" && Number.isFinite(maxPagesInput)
+      ? Math.max(1, Math.floor(maxPagesInput))
+      : 3;
+  const pageSize =
+    typeof pageSizeInput === "number" && Number.isFinite(pageSizeInput)
+      ? Math.min(100, Math.max(1, Math.floor(pageSizeInput)))
+      : 50;
+  const storeId = readOptionalEnv("LEMON_SQUEEZY_STORE_ID");
 
   const collected: LemonApiOrderRecord[] = [];
 
   for (let page = 1; page <= maxPages; page += 1) {
     const fetchOrdersPage = async (withInclude: boolean) => {
       const params = new URLSearchParams({
-        'page[number]': String(page),
-        'page[size]': String(pageSize),
+        "page[number]": String(page),
+        "page[size]": String(pageSize),
       });
 
       if (withInclude) {
-        params.set('include', 'first_order_item');
+        params.set("include", "first_order_item");
       }
 
       if (storeId) {
-        params.set('filter[store_id]', storeId);
+        params.set("filter[store_id]", storeId);
       }
 
-      params.set('filter[user_email]', normalizedEmail);
+      params.set("filter[user_email]", normalizedEmail);
 
-      const response = await fetch(`${LEMON_API_BASE}/orders?${params.toString()}`, {
-        method: 'GET',
-        headers: getHeaders(),
-      });
+      const response = await fetch(
+        `${LEMON_API_BASE}/orders?${params.toString()}`,
+        {
+          method: "GET",
+          headers: getHeaders(),
+        },
+      );
 
       return parseJsonApiResponse<{
         data?: LemonApiOrderRecord[];
@@ -412,7 +470,9 @@ export async function listRecentLemonOrdersByEmail(input: {
         continue;
       }
 
-      const createdAt = attributes?.created_at ? Date.parse(attributes.created_at) : Number.NaN;
+      const createdAt = attributes?.created_at
+        ? Date.parse(attributes.created_at)
+        : Number.NaN;
       if (Number.isFinite(createdAt) && createdAt < cutoffEpoch) {
         continue;
       }
@@ -429,19 +489,25 @@ export async function listRecentLemonOrdersByEmail(input: {
   }
 
   return collected.sort((left, right) => {
-    const leftEpoch = Date.parse(left?.attributes?.created_at ?? '') || 0;
-    const rightEpoch = Date.parse(right?.attributes?.created_at ?? '') || 0;
+    const leftEpoch = Date.parse(left?.attributes?.created_at ?? "") || 0;
+    const rightEpoch = Date.parse(right?.attributes?.created_at ?? "") || 0;
     return rightEpoch - leftEpoch;
   });
 }
 
-export function verifyLemonSignature(payload: string, signature: string | null | undefined): boolean {
+export function verifyLemonSignature(
+  payload: string,
+  signature: string | null | undefined,
+): boolean {
   const secret = process.env.LEMON_SQUEEZY_WEBHOOK_SECRET?.trim();
   if (!secret || !signature) {
     return false;
   }
 
-  const digest = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  const digest = crypto
+    .createHmac("sha256", secret)
+    .update(payload)
+    .digest("hex");
   const incoming = signature.trim().toLowerCase();
 
   if (digest.length !== incoming.length) {
@@ -453,9 +519,9 @@ export function verifyLemonSignature(payload: string, signature: string | null |
 
 export function getLemonConfig() {
   return {
-    apiKey: readOptionalEnv('LEMON_SQUEEZY_API_KEY'),
-    storeId: readOptionalEnv('LEMON_SQUEEZY_STORE_ID'),
-    productId: readOptionalEnv('LEMON_SQUEEZY_PRODUCT_ID'),
-    variantId: readOptionalEnv('LEMON_SQUEEZY_VARIANT_ID'),
+    apiKey: readOptionalEnv("LEMON_SQUEEZY_API_KEY"),
+    storeId: readOptionalEnv("LEMON_SQUEEZY_STORE_ID"),
+    productId: readOptionalEnv("LEMON_SQUEEZY_PRODUCT_ID"),
+    variantId: readOptionalEnv("LEMON_SQUEEZY_VARIANT_ID"),
   };
 }
