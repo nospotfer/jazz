@@ -260,37 +260,45 @@ describe("POST /api/checkout", () => {
   });
 
   test("ignores untrusted origin header when building success url", async () => {
+    const previousAppUrl = process.env.NEXT_PUBLIC_APP_URL;
     process.env.NEXT_PUBLIC_APP_URL = APP_URL;
-    mocks.getUser.mockResolvedValue({
-      data: { user: { id: "u1", email: "student@example.com" } },
-    });
-    mocks.courseFindUnique.mockResolvedValue({
-      id: "c1",
-      title: "Curso",
-      description: "",
-      price: 0,
-    });
-    mocks.purchaseFindUnique.mockResolvedValue(null);
-    mocks.purchaseUpsert.mockResolvedValue({ id: "p1" });
 
-    const { POST } = await import("@/app/api/checkout/route");
-    const req = new Request(`${APP_URL}/api/checkout`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        origin: "https://evil.example",
-      },
-      body: JSON.stringify({ courseId: "c1", source: "dashboard" }),
-    });
+    try {
+      mocks.getUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "student@example.com" } },
+      });
+      mocks.courseFindUnique.mockResolvedValue({
+        id: "c1",
+        title: "Curso",
+        description: "",
+        price: 0,
+      });
+      mocks.purchaseFindUnique.mockResolvedValue(null);
+      mocks.purchaseUpsert.mockResolvedValue({ id: "p1" });
 
-    const res = await POST(req);
-    const body = await res.json();
+      const { POST } = await import("@/app/api/checkout/route");
+      const req = new Request(`${APP_URL}/api/checkout`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "https://evil.example",
+        },
+        body: JSON.stringify({ courseId: "c1", source: "dashboard" }),
+      });
 
-    expect(res.status).toBe(200);
-    expect(body.url).toContain(`${APP_URL}/dashboard?purchase=success`);
-    expect(body.url).not.toContain("evil.example");
+      const res = await POST(req);
+      const body = await res.json();
 
-    delete process.env.NEXT_PUBLIC_APP_URL;
+      expect(res.status).toBe(200);
+      expect(body.url).toContain(`${APP_URL}/dashboard?purchase=success`);
+      expect(body.url).not.toContain("evil.example");
+    } finally {
+      if (previousAppUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_APP_URL;
+      } else {
+        process.env.NEXT_PUBLIC_APP_URL = previousAppUrl;
+      }
+    }
   });
 
   test("returns 500 on unexpected error", async () => {

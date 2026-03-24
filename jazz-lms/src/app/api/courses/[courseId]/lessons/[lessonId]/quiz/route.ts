@@ -1,42 +1,46 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import {
   assertLessonQuizAccess,
   createOrResumeLessonQuizAttempt,
   isLessonQuizError,
-} from '@/lib/lesson-quiz-server';
-import { createClient } from '@/utils/supabase/server';
+} from "@/lib/lesson-quiz-server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { courseId: string; lessonId: string } }
+  { params }: { params: Promise<{ courseId: string; lessonId: string }> },
 ) {
   try {
+    const { courseId, lessonId } = await params;
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const body = await req.json().catch(() => ({}));
     const restart = body?.restart === true;
     const language =
-      body?.language === 'es' || body?.language === 'en' || body?.language === 'fr' || body?.language === 'pt'
+      body?.language === "es" ||
+      body?.language === "en" ||
+      body?.language === "fr" ||
+      body?.language === "pt"
         ? body.language
-        : 'es';
+        : "es";
 
     await assertLessonQuizAccess({
       userId: user.id,
-      courseId: params.courseId,
-      lessonId: params.lessonId,
+      courseId,
+      lessonId,
     });
 
     const payload = await createOrResumeLessonQuizAttempt({
       userId: user.id,
-      lessonId: params.lessonId,
+      lessonId,
       restart,
       language,
     });
@@ -49,17 +53,17 @@ export async function POST(
           error: error.message,
           code: error.code,
         },
-        { status: error.statusCode }
+        { status: error.statusCode },
       );
     }
 
-    console.log('[LESSON_QUIZ_START_ERROR]', error);
+    console.log("[LESSON_QUIZ_START_ERROR]", error);
     return NextResponse.json(
       {
-        error: 'Internal Server Error',
-        code: 'LESSON_QUIZ_START_ERROR',
+        error: "Internal Server Error",
+        code: "LESSON_QUIZ_START_ERROR",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

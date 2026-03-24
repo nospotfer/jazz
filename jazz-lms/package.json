@@ -2,6 +2,9 @@
   "name": "jazz-lms",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -57,15 +60,6 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.100.0",
     "axios": "^1.13.6",
-    "class-variance-authority": "0.7.0",
-    "clsx": "2.1.1",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.4",
-    "lucide-react": "0.414.0",
-    "next": "^14.2.35",
-    "@supabase/ssr": "0.5.0",
-    "@supabase/supabase-js": "2.44.4",
-    "axios": "1.13.5",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
     "html2canvas": "^1.4.1",

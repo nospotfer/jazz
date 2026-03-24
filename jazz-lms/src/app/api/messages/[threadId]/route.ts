@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { db } from '@/lib/db';
-import { ensureMessagingTables } from '@/lib/messages-db';
-import { randomUUID } from 'crypto';
-import { Resend } from 'resend';
+import { db } from "@/lib/db";
+import { ensureMessagingTables } from "@/lib/messages-db";
+import { createClient } from "@/utils/supabase/server";
+import { randomUUID } from "crypto";
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 type ThreadRow = {
   id: string;
@@ -34,15 +34,16 @@ type LastMessageRow = {
 };
 
 const professorEmail = (
-  process.env.PROFESSOR_EMAIL?.trim() ||
-  'culturadeljazz@gmail.com'
+  process.env.PROFESSOR_EMAIL?.trim() || "culturadeljazz@gmail.com"
 ).toLowerCase();
 
 async function notifyByEmail(to: string, subject: string, body: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) {
-    console.warn('[messages:thread:notifyByEmail] Missing RESEND_API_KEY or RESEND_FROM_EMAIL');
+    console.warn(
+      "[messages:thread:notifyByEmail] Missing RESEND_API_KEY or RESEND_FROM_EMAIL",
+    );
     return;
   }
 
@@ -55,15 +56,19 @@ async function notifyByEmail(to: string, subject: string, body: string) {
       text: body,
     });
   } catch (error) {
-    console.error('[messages:thread:notifyByEmail] Email delivery failed', error);
+    console.error(
+      "[messages:thread:notifyByEmail] Email delivery failed",
+      error,
+    );
   }
 }
 
 export async function GET(
   _req: Request,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> },
 ) {
   try {
+    const { threadId: rawThreadId } = await params;
     await ensureMessagingTables();
 
     const supabase = createClient();
@@ -72,11 +77,11 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (!user?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const isProfessor = user.email.toLowerCase() === professorEmail;
-    const threadId = params.threadId.replace(/'/g, "''");
+    const threadId = rawThreadId.replace(/'/g, "''");
 
     const threads = await db.$queryRawUnsafe<ThreadRow[]>(`
       SELECT *
@@ -87,7 +92,7 @@ export async function GET(
 
     const thread = threads[0];
     if (!thread) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     const ownsThread =
@@ -95,7 +100,7 @@ export async function GET(
       thread.studentEmail.toLowerCase() === user.email.toLowerCase();
 
     if (!isProfessor && !ownsThread) {
-      return new NextResponse('Forbidden', { status: 403 });
+      return new NextResponse("Forbidden", { status: 403 });
     }
 
     const messages = await db.$queryRawUnsafe<MessageRow[]>(`
@@ -107,7 +112,7 @@ export async function GET(
 
     await db.$executeRawUnsafe(`
       UPDATE Message
-      SET ${isProfessor ? 'unreadByProfessor = 0' : 'unreadByStudent = 0'}
+      SET ${isProfessor ? "unreadByProfessor = 0" : "unreadByStudent = 0"}
       WHERE threadId = '${threadId}'
     `);
 
@@ -118,16 +123,17 @@ export async function GET(
       professorEmail,
     });
   } catch (error) {
-    console.error('[messages:thread:get]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.error("[messages:thread:get]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
 export async function POST(
   req: Request,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Promise<{ threadId: string }> },
 ) {
   try {
+    const { threadId: rawThreadId } = await params;
     await ensureMessagingTables();
 
     const supabase = createClient();
@@ -136,11 +142,11 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (!user?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const isProfessor = user.email.toLowerCase() === professorEmail;
-    const threadId = params.threadId.replace(/'/g, "''");
+    const threadId = rawThreadId.replace(/'/g, "''");
 
     const threads = await db.$queryRawUnsafe<ThreadRow[]>(`
       SELECT *
@@ -151,7 +157,7 @@ export async function POST(
 
     const thread = threads[0];
     if (!thread) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     const ownsThread =
@@ -159,14 +165,14 @@ export async function POST(
       thread.studentEmail.toLowerCase() === user.email.toLowerCase();
 
     if (!isProfessor && !ownsThread) {
-      return new NextResponse('Forbidden', { status: 403 });
+      return new NextResponse("Forbidden", { status: 403 });
     }
 
     const body = await req.json();
-    const message = String(body?.message || '').trim();
+    const message = String(body?.message || "").trim();
 
     if (!message) {
-      return new NextResponse('Message is required', { status: 400 });
+      return new NextResponse("Message is required", { status: 400 });
     }
 
     const now = new Date().toISOString();
@@ -186,10 +192,16 @@ export async function POST(
       const sameBody = latest.body.trim() === message;
       const latestTimestamp = new Date(latest.createdAt).getTime();
       const nowTimestamp = new Date(now).getTime();
-      const sentTooSoon = Number.isFinite(latestTimestamp) && nowTimestamp - latestTimestamp < 15000;
+      const sentTooSoon =
+        Number.isFinite(latestTimestamp) &&
+        nowTimestamp - latestTimestamp < 15000;
 
       if (sameSender && sameBody && sentTooSoon) {
-        return NextResponse.json({ ok: true, createdAt: latest.createdAt, duplicateSkipped: true });
+        return NextResponse.json({
+          ok: true,
+          createdAt: latest.createdAt,
+          duplicateSkipped: true,
+        });
       }
     }
 
@@ -211,8 +223,8 @@ export async function POST(
         '${threadId}',
         '${user.id.replace(/'/g, "''")}',
         '${user.email.replace(/'/g, "''")}',
-        '${String(user.user_metadata?.full_name || '').replace(/'/g, "''")}',
-        '${isProfessor ? 'professor' : 'student'}',
+        '${String(user.user_metadata?.full_name || "").replace(/'/g, "''")}',
+        '${isProfessor ? "professor" : "student"}',
         '${message.replace(/'/g, "''")}',
         '${now}',
         ${isProfessor ? 1 : 0},
@@ -227,17 +239,17 @@ export async function POST(
     `);
 
     const recipient = isProfessor ? thread.studentEmail : professorEmail;
-    const senderLabel = isProfessor ? 'Professor Enric Vázquez' : user.email;
+    const senderLabel = isProfessor ? "Professor Enric Vázquez" : user.email;
 
     await notifyByEmail(
       recipient,
       `New reply: ${thread.subject} [Thread:${thread.id}]`,
-      `From: ${senderLabel}\nThread ID: ${thread.id}\n\n${message}\n\nIMPORTANT: Keep [Thread:${thread.id}] in the subject when replying so the message is attached to the correct conversation.`
+      `From: ${senderLabel}\nThread ID: ${thread.id}\n\n${message}\n\nIMPORTANT: Keep [Thread:${thread.id}] in the subject when replying so the message is attached to the correct conversation.`,
     );
 
     return NextResponse.json({ ok: true, createdAt: now });
   } catch (error) {
-    console.error('[messages:thread:post]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.error("[messages:thread:post]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
