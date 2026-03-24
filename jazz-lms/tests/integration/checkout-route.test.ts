@@ -20,10 +20,11 @@ const mocks = vi.hoisted(() => ({
   getCourseTranslationBundle: vi.fn(),
   resolveCourseText: vi.fn(),
   upsertCoursePurchaseFromProvider: vi.fn(),
-  isLemonConfigured: vi.fn(),
-  isLemonWebhookConfigured: vi.fn(),
-  getLemonConfig: vi.fn(),
-  createLemonCheckout: vi.fn(),
+  getPaymentProvider: vi.fn(),
+  isActivePaymentProviderConfigured: vi.fn(),
+  createProviderCheckout: vi.fn(),
+  getProviderVoucherReferencePrefix: vi.fn(),
+  isDodoWebhookConfigured: vi.fn(),
 }));
 
 vi.mock("@/utils/supabase/server", () => ({
@@ -67,11 +68,15 @@ vi.mock("@/lib/course-purchase-sync", () => ({
   upsertCoursePurchaseFromProvider: mocks.upsertCoursePurchaseFromProvider,
 }));
 
-vi.mock("@/lib/lemon-squeezy", () => ({
-  isLemonConfigured: mocks.isLemonConfigured,
-  isLemonWebhookConfigured: mocks.isLemonWebhookConfigured,
-  getLemonConfig: mocks.getLemonConfig,
-  createLemonCheckout: mocks.createLemonCheckout,
+vi.mock("@/lib/payments/provider", () => ({
+  getPaymentProvider: mocks.getPaymentProvider,
+  isActivePaymentProviderConfigured: mocks.isActivePaymentProviderConfigured,
+  createProviderCheckout: mocks.createProviderCheckout,
+  getProviderVoucherReferencePrefix: mocks.getProviderVoucherReferencePrefix,
+}));
+
+vi.mock("@/lib/payments/providers/dodo", () => ({
+  isDodoWebhookConfigured: mocks.isDodoWebhookConfigured,
 }));
 
 describe("POST /api/checkout", () => {
@@ -86,16 +91,13 @@ describe("POST /api/checkout", () => {
       description: "Desc",
     });
     mocks.upsertCoursePurchaseFromProvider.mockResolvedValue(undefined);
-    mocks.isLemonConfigured.mockReturnValue(false);
-    mocks.isLemonWebhookConfigured.mockReturnValue(false);
-    mocks.getLemonConfig.mockReturnValue({
-      storeId: "store-1",
-      variantId: "variant-1",
-      webhookSecret: "whsec_1",
-    });
-    mocks.createLemonCheckout.mockResolvedValue(
-      "https://lemon.test/checkout/session",
+    mocks.getPaymentProvider.mockReturnValue("dodo");
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(false);
+    mocks.createProviderCheckout.mockResolvedValue(
+      "https://test.checkout.dodopayments.com/session/cks_123",
     );
+    mocks.getProviderVoucherReferencePrefix.mockReturnValue("dodo-voucher");
+    mocks.isDodoWebhookConfigured.mockReturnValue(true);
   });
 
   test("returns 400 for missing courseId", async () => {
@@ -180,7 +182,7 @@ describe("POST /api/checkout", () => {
     expect(mocks.purchaseUpsert).toHaveBeenCalledTimes(1);
   });
 
-  test("returns 503 when Lemon is not configured for paid course", async () => {
+  test("returns 503 when provider is not configured for paid course", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
@@ -199,9 +201,9 @@ describe("POST /api/checkout", () => {
     expect(res.status).toBe(503);
   });
 
-  test("creates Lemon checkout session for paid course when configured", async () => {
-    mocks.isLemonConfigured.mockReturnValue(true);
-    mocks.isLemonWebhookConfigured.mockReturnValue(true);
+  test("creates checkout session for paid course when provider is configured", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.isDodoWebhookConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
@@ -220,8 +222,10 @@ describe("POST /api/checkout", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.url).toBe("https://lemon.test/checkout/session");
-    expect(mocks.createLemonCheckout).toHaveBeenCalledTimes(1);
+    expect(body.url).toBe(
+      "https://test.checkout.dodopayments.com/session/cks_123",
+    );
+    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(1);
   });
 
   test("returns 400 when user has no email", async () => {

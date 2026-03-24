@@ -1,0 +1,138 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - heading "Introduction to Jazz Music" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Discover the fundamentals of jazz music, from its rich history to essential theory. Perfect for beginners and enthusiasts looking to deepen their understanding of this iconic genre.
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - text: 3 capítulos
+        - generic [ref=e12]:
+          - img [ref=e13]
+          - text: 15 lecciones
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Contenido del curso" [level=2] [ref=e18]
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - 'heading "Capítulo 1: Chapter 1: Jazz Foundations" [level=3] [ref=e22]'
+              - paragraph [ref=e23]: 5 lecciones
+            - list [ref=e24]:
+              - listitem [ref=e25]:
+                - generic [ref=e26]:
+                  - img [ref=e27]
+                  - generic [ref=e30]: La Esencia del Jazz
+              - listitem [ref=e31]:
+                - generic [ref=e32]:
+                  - img [ref=e33]
+                  - generic [ref=e36]: "El Lenguaje del Jazz: Heterogeneidad Sonora"
+              - listitem [ref=e37]:
+                - generic [ref=e38]:
+                  - img [ref=e39]
+                  - generic [ref=e42]: "Gospel y Blues: Las Raices Profundas"
+              - listitem [ref=e43]:
+                - generic [ref=e44]:
+                  - img [ref=e45]
+                  - generic [ref=e48]: "Las Formas del Jazz: Blues y Baladas"
+              - listitem [ref=e49]:
+                - generic [ref=e50]:
+                  - img [ref=e51]
+                  - generic [ref=e54]: "Un Antecedente Decisivo: El Ragtime"
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - 'heading "Capítulo 2: Chapter 2: Jazz Theory" [level=3] [ref=e57]'
+              - paragraph [ref=e58]: 5 lecciones
+            - list [ref=e59]:
+              - listitem [ref=e60]:
+                - generic [ref=e61]:
+                  - img [ref=e62]
+                  - generic [ref=e65]: "El Ritmo: El Corazon del Jazz"
+              - listitem [ref=e66]:
+                - generic [ref=e67]:
+                  - img [ref=e68]
+                  - generic [ref=e71]: "Jamming and Blowing: El Placer de Improvisar"
+              - listitem [ref=e72]:
+                - generic [ref=e73]:
+                  - img [ref=e74]
+                  - generic [ref=e77]: "La Composicion Colaborativa: Ellington, Basie y Monk"
+              - listitem [ref=e78]:
+                - generic [ref=e79]:
+                  - img [ref=e80]
+                  - generic [ref=e83]: "Instrumentos y Conjuntos: La Orquesta"
+              - listitem [ref=e84]:
+                - generic [ref=e85]:
+                  - img [ref=e86]
+                  - generic [ref=e89]: Los Pequenos Grupos y el Mundo de los Solistas
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - 'heading "Capítulo 3: Chapter 3: Great Jazz Artists" [level=3] [ref=e92]'
+              - paragraph [ref=e93]: 5 lecciones
+            - list [ref=e94]:
+              - listitem [ref=e95]:
+                - generic [ref=e96]:
+                  - img [ref=e97]
+                  - generic [ref=e100]: "La Seccion Ritmica: El Motor del Grupo"
+              - listitem [ref=e101]:
+                - generic [ref=e102]:
+                  - img [ref=e103]
+                  - generic [ref=e106]: La Improvisacion en el Jazz
+              - listitem [ref=e107]:
+                - generic [ref=e108]:
+                  - img [ref=e109]
+                  - generic [ref=e112]: "Jazz y Entertainment: Arte o Espectaculo"
+              - listitem [ref=e113]:
+                - generic [ref=e114]:
+                  - img [ref=e115]
+                  - generic [ref=e118]: "Cantar Jazz (Parte 1): De Bessie Smith a Billie Holiday"
+              - listitem [ref=e119]:
+                - generic [ref=e120]:
+                  - img [ref=e121]
+                  - generic [ref=e124]: "Cantar Jazz (Parte 2): De Ella Fitzgerald a Sarah Vaughan"
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - paragraph [ref=e128]: €29.99
+          - paragraph [ref=e129]: Acceso completo a las 15 clases
+        - generic [ref=e130]:
+          - button "Aplicar voucher y continuar" [ref=e131]:
+            - img
+            - text: Aplicar voucher y continuar
+          - generic [ref=e132]:
+            - button "close" [ref=e133]
+            - generic [ref=e134]:
+              - button [ref=e135]:
+                - img [ref=e136]
+              - generic [ref=e139]:
+                - heading "Activa tu descuento" [level=3] [ref=e140]
+                - paragraph [ref=e141]: Ingresa tu voucher y continúa al checkout seguro de Lemon Squeezy.
+              - generic [ref=e142]:
+                - paragraph [ref=e143]: Si no tienes voucher, el curso sigue con el precio normal.
+                - generic [ref=e144]:
+                  - text: Código de descuento
+                  - generic [ref=e145]:
+                    - textbox "Ingresa tu código" [ref=e146]
+                    - button "Aplicar" [disabled]
+              - generic [ref=e147]:
+                - paragraph [ref=e148]: Resumen de compra
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - generic [ref=e151]: Precio base
+                    - generic [ref=e152]: EUR 29.99
+                  - generic [ref=e153]:
+                    - generic [ref=e154]: Descuento
+                    - generic [ref=e155]: "-EUR 0.00"
+                  - generic [ref=e157]:
+                    - generic [ref=e158]: Total a pagar
+                    - generic [ref=e159]: EUR 29.99
+              - paragraph [ref=e160]: Error interno del servidor
+              - generic [ref=e161]:
+                - button "Cancelar" [ref=e162]
+                - button "Ir al checkout" [ref=e163]
+        - generic [ref=e164]: Pago seguro gestionado por Lemon Squeezy
+  - button "Open Next.js Dev Tools" [ref=e170] [cursor=pointer]:
+    - img [ref=e171]
+  - alert [ref=e174]
+```
