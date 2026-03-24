@@ -1,21 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Viewer, Worker, type RenderPageProps } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { useLanguage } from "@/components/providers/language-provider";
+import { Viewer, Worker, type RenderPageProps } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import {
-  highlightPlugin,
-  Trigger,
-  type HighlightArea,
-  type RenderHighlightTargetProps,
-  type RenderHighlightsProps,
-} from '@react-pdf-viewer/highlight';
-import { zoomPlugin } from '@react-pdf-viewer/zoom';
-import enUS from '@react-pdf-viewer/locales/lib/en_US.json';
-import esES from '@react-pdf-viewer/locales/lib/es_ES.json';
-import frFR from '@react-pdf-viewer/locales/lib/fr_FR.json';
-import ptPT from '@react-pdf-viewer/locales/lib/pt_PT.json';
-import { useLanguage } from '@/components/providers/language-provider';
+    highlightPlugin,
+    Trigger,
+    type HighlightArea,
+    type RenderHighlightsProps,
+    type RenderHighlightTargetProps,
+} from "@react-pdf-viewer/highlight";
+import { zoomPlugin } from "@react-pdf-viewer/zoom";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface PdfWorkspaceViewerProps {
   fileUrl: string;
@@ -28,7 +24,15 @@ interface SavedHighlight {
   highlightAreas: HighlightArea[];
 }
 
-const HIGHLIGHT_COLORS = ['#fde047', '#f97316', '#22c55e', '#38bdf8', '#a78bfa', '#f43f5e', '#14b8a6'];
+const HIGHLIGHT_COLORS = [
+  "#fde047",
+  "#f97316",
+  "#22c55e",
+  "#38bdf8",
+  "#a78bfa",
+  "#f43f5e",
+  "#14b8a6",
+];
 
 export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();
@@ -37,7 +41,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
 
   const storageKey = useMemo(
     () => `pdf-highlights:${encodeURIComponent(fileUrl)}`,
-    [fileUrl]
+    [fileUrl],
   );
 
   useEffect(() => {
@@ -127,77 +131,70 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
     renderHighlights,
   });
 
-  const localization = useMemo(() => {
-    if (language === 'es') return esES;
-    if (language === 'fr') return frFR;
-    if (language === 'pt') return ptPT;
-    return enUS;
-  }, [language]);
-
   const tooltipMap = useMemo(() => {
-    if (language === 'pt') {
+    if (language === "pt") {
       return {
-        Attachment: 'Anexos',
-        Thumbnails: 'Miniaturas',
-        Bookmark: 'Favoritos',
-        'Open file': 'Abrir arquivo',
-        Print: 'Imprimir',
-        Download: 'Baixar',
-        'Enter full screen': 'Tela cheia',
-        'Exit full screen': 'Sair da tela cheia',
-        'Go to first page': 'Primeira página',
-        'Go to previous page': 'Página anterior',
-        'Go to next page': 'Próxima página',
-        'Go to last page': 'Última página',
-        'Previous page': 'Página anterior',
-        'Next page': 'Próxima página',
-        'Zoom in': 'Aproximar',
-        'Zoom out': 'Afastar',
-        Search: 'Buscar',
+        Attachment: "Anexos",
+        Thumbnails: "Miniaturas",
+        Bookmark: "Favoritos",
+        "Open file": "Abrir arquivo",
+        Print: "Imprimir",
+        Download: "Baixar",
+        "Enter full screen": "Tela cheia",
+        "Exit full screen": "Sair da tela cheia",
+        "Go to first page": "Primeira página",
+        "Go to previous page": "Página anterior",
+        "Go to next page": "Próxima página",
+        "Go to last page": "Última página",
+        "Previous page": "Página anterior",
+        "Next page": "Próxima página",
+        "Zoom in": "Aproximar",
+        "Zoom out": "Afastar",
+        Search: "Buscar",
       } as Record<string, string>;
     }
 
-    if (language === 'es') {
+    if (language === "es") {
       return {
-        Attachment: 'Adjuntos',
-        Thumbnails: 'Miniaturas',
-        Bookmark: 'Marcadores',
-        'Open file': 'Abrir archivo',
-        Print: 'Imprimir',
-        Download: 'Descargar',
-        'Enter full screen': 'Pantalla completa',
-        'Exit full screen': 'Salir de pantalla completa',
-        'Go to first page': 'Primera página',
-        'Go to previous page': 'Página anterior',
-        'Go to next page': 'Página siguiente',
-        'Go to last page': 'Última página',
-        'Previous page': 'Página anterior',
-        'Next page': 'Página siguiente',
-        'Zoom in': 'Acercar',
-        'Zoom out': 'Alejar',
-        Search: 'Buscar',
+        Attachment: "Adjuntos",
+        Thumbnails: "Miniaturas",
+        Bookmark: "Marcadores",
+        "Open file": "Abrir archivo",
+        Print: "Imprimir",
+        Download: "Descargar",
+        "Enter full screen": "Pantalla completa",
+        "Exit full screen": "Salir de pantalla completa",
+        "Go to first page": "Primera página",
+        "Go to previous page": "Página anterior",
+        "Go to next page": "Página siguiente",
+        "Go to last page": "Última página",
+        "Previous page": "Página anterior",
+        "Next page": "Página siguiente",
+        "Zoom in": "Acercar",
+        "Zoom out": "Alejar",
+        Search: "Buscar",
       } as Record<string, string>;
     }
 
-    if (language === 'fr') {
+    if (language === "fr") {
       return {
-        Attachment: 'Pièces jointes',
-        Thumbnails: 'Miniatures',
-        Bookmark: 'Signets',
-        'Open file': 'Ouvrir le fichier',
-        Print: 'Imprimer',
-        Download: 'Télécharger',
-        'Enter full screen': 'Plein écran',
-        'Exit full screen': 'Quitter le plein écran',
-        'Go to first page': 'Première page',
-        'Go to previous page': 'Page précédente',
-        'Go to next page': 'Page suivante',
-        'Go to last page': 'Dernière page',
-        'Previous page': 'Page précédente',
-        'Next page': 'Page suivante',
-        'Zoom in': 'Agrandir',
-        'Zoom out': 'Réduire',
-        Search: 'Rechercher',
+        Attachment: "Pièces jointes",
+        Thumbnails: "Miniatures",
+        Bookmark: "Signets",
+        "Open file": "Ouvrir le fichier",
+        Print: "Imprimer",
+        Download: "Télécharger",
+        "Enter full screen": "Plein écran",
+        "Exit full screen": "Quitter le plein écran",
+        "Go to first page": "Première page",
+        "Go to previous page": "Page précédente",
+        "Go to next page": "Page suivante",
+        "Go to last page": "Dernière page",
+        "Previous page": "Page précédente",
+        "Next page": "Page suivante",
+        "Zoom in": "Agrandir",
+        "Zoom out": "Réduire",
+        Search: "Rechercher",
       } as Record<string, string>;
     }
 
@@ -205,12 +202,12 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   }, [language]);
 
   const downloadLabels = useMemo(
-    () => ['Download', 'Descargar', 'Télécharger', 'Baixar'],
-    []
+    () => ["Download", "Descargar", "Télécharger", "Baixar"],
+    [],
   );
 
   useEffect(() => {
-    if (language === 'en') {
+    if (language === "en") {
       return;
     }
 
@@ -220,23 +217,27 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
     }
 
     const translateAttrs = () => {
-      const elements = root.querySelectorAll<HTMLElement>('[title], [aria-label]');
+      const elements = root.querySelectorAll<HTMLElement>(
+        "[title], [aria-label]",
+      );
       elements.forEach((el) => {
-        const title = el.getAttribute('title');
+        const title = el.getAttribute("title");
         if (title && tooltipMap[title]) {
-          el.setAttribute('title', tooltipMap[title]);
+          el.setAttribute("title", tooltipMap[title]);
         }
 
-        const ariaLabel = el.getAttribute('aria-label');
+        const ariaLabel = el.getAttribute("aria-label");
         if (ariaLabel && tooltipMap[ariaLabel]) {
-          el.setAttribute('aria-label', tooltipMap[ariaLabel]);
+          el.setAttribute("aria-label", tooltipMap[ariaLabel]);
         }
 
-        const resolvedTitle = el.getAttribute('title') || '';
-        const resolvedAria = el.getAttribute('aria-label') || '';
-        const isDownload = downloadLabels.includes(resolvedTitle) || downloadLabels.includes(resolvedAria);
+        const resolvedTitle = el.getAttribute("title") || "";
+        const resolvedAria = el.getAttribute("aria-label") || "";
+        const isDownload =
+          downloadLabels.includes(resolvedTitle) ||
+          downloadLabels.includes(resolvedAria);
         if (isDownload) {
-          el.classList.add('pdf-download-emphasis');
+          el.classList.add("pdf-download-emphasis");
         }
       });
     };
@@ -250,21 +251,27 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['title', 'aria-label'],
+      attributeFilter: ["title", "aria-label"],
     });
 
     return () => observer.disconnect();
   }, [language, tooltipMap, fileUrl]);
 
   return (
-    <div ref={containerRef} className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden">
+    <div
+      ref={containerRef}
+      className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden"
+    >
       <Worker workerUrl="/pdf.worker.min.js">
         <Viewer
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}
           defaultScale={1.3}
-          localization={localization}
-          plugins={[defaultLayoutPluginInstance, zoomPluginInstance, highlightPluginInstance]}
+          plugins={[
+            defaultLayoutPluginInstance,
+            zoomPluginInstance,
+            highlightPluginInstance,
+          ]}
           renderPage={(props: RenderPageProps) => (
             <>
               {props.canvasLayer.children}

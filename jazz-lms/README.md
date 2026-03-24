@@ -21,7 +21,7 @@ npm install
 
 Create a `.env` file in the root of the project and add the following environment variables:
 
-```
+```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
@@ -64,23 +64,29 @@ Go to **Authentication → URL Configuration** and set:
 
 - **Site URL (dev):** `http://localhost:3000`
 - **Additional Redirect URLs:**
-	- `http://localhost:3000/auth/callback`
-	- `http://localhost:3000/auth/reset-password`
-	- `https://jazz-lms.vercel.app/auth/callback`
-	- `https://jazz-lms.vercel.app/auth/reset-password`
-	- `https://*.vercel.app/auth/callback`
-	- `https://*.vercel.app/auth/reset-password`
+  - `http://localhost:3000/auth/callback`
+  - `http://localhost:3000/auth/reset-password`
+  - `https://jazz-lms.vercel.app/auth/callback`
+  - `https://jazz-lms.vercel.app/auth/reset-password`
+  - `https://*.vercel.app/auth/callback`
+  - `https://*.vercel.app/auth/reset-password`
 
 ### Google Cloud Console
 
 Go to **APIs & Services → Credentials → OAuth 2.0 Client IDs** and set:
 
 - **Authorized JavaScript origins:**
-	- `https://feavujcllgbzlvdvkkxx.supabase.co`
+  - `https://feavujcllgbzlvdvkkxx.supabase.co`
 - **Authorized redirect URIs:**
-	- `https://feavujcllgbzlvdvkkxx.supabase.co/auth/v1/callback`
+  - `https://feavujcllgbzlvdvkkxx.supabase.co/auth/v1/callback`
+
+Go to **Google Auth Platform → Branding** and set:
+
+- **App name:** `Jazz LMS`
+- **Support email:** your project support email
 
 > Note: For Supabase OAuth providers, Google redirects back to Supabase (`/auth/v1/callback`), and Supabase then redirects to your app callback (`/auth/callback`).
+> Note: In Google's account selector, "Continue to ...supabase.co" is expected when using Supabase-hosted OAuth endpoints.
 
 ## Lemon Squeezy Webhook (MVP)
 

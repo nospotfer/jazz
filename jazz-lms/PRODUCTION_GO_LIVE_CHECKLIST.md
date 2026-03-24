@@ -54,10 +54,12 @@ Configurar no Vercel (Production + Preview + Development):
 ## 3) Supabase (Auth + DB + Storage)
 
 ### 3.1 Banco
+
 - [ ] Rodou `supabase-migration.sql` no SQL Editor
 - [ ] Tabelas existem: `Course`, `Chapter`, `Lesson`, `Attachment`, `Purchase`, `UserProgress`, `User`
 
 ### 3.2 Auth/OAuth
+
 - [ ] Supabase Authentication > URL Configuration
   - Site URL: `https://seu-dominio.com`
   - Redirects:
@@ -67,6 +69,7 @@ Configurar no Vercel (Production + Preview + Development):
     - `https://*.vercel.app/auth/reset-password`
 
 ### 3.3 Storage
+
 - [ ] Bucket configurado em `SUPABASE_STORAGE_BUCKET`
 - [ ] Arquivos de anexo realmente existentes no bucket
 - [ ] Links em `Attachment.url` apontam para objetos válidos
@@ -77,14 +80,17 @@ No Google Cloud Console (OAuth Client):
 
 - [ ] Authorized JavaScript origins: `https://<project-ref>.supabase.co`
 - [ ] Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
+- [ ] Google Auth Platform > Branding > App name: `Jazz LMS`
 
 Critério de aceite:
+
 - [ ] Login com Google cria sessão e redireciona para `/dashboard`
 - [ ] Falhas OAuth retornam para `/auth` com mensagem amigável
 
 ## 5) Lemon Squeezy (pagamentos)
 
 ### 5.1 Dashboard Lemon Squeezy
+
 - [ ] Chaves corretas (`LEMON_SQUEEZY_API_KEY`, `LEMON_SQUEEZY_WEBHOOK_SECRET`)
 - [ ] Store/Product/Variant corretos no Vercel (`LEMON_SQUEEZY_STORE_ID`, `LEMON_SQUEEZY_PRODUCT_ID`, `LEMON_SQUEEZY_VARIANT_ID`)
 - [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/lemon-squeezy`
@@ -92,6 +98,7 @@ Critério de aceite:
 - [ ] `LEMON_SQUEEZY_WEBHOOK_SECRET` atualizado no Vercel
 
 ### 5.2 Fluxo funcional
+
 - [ ] Usuário sem compra não acessa aulas bloqueadas
 - [ ] Primeira aula segue liberada (preview)
 - [ ] Checkout cria URL no Lemon Squeezy
@@ -150,6 +157,6 @@ npm run deploy:prod
 
 Bloqueios encontrados:
 
-1. 
-2. 
-3. 
+1. Descreva o bloqueio encontrado.
+2. Descreva o bloqueio encontrado.
+3. Descreva o bloqueio encontrado.

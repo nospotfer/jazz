@@ -1,7 +1,11 @@
-import { CANONICAL_JAZZ_CLASSES, getCanonicalJazzClass, getLocalizedJazzClassLabel } from '@/lib/course-lessons';
-import type { SupportedLanguage } from '@/lib/language';
+import {
+  CANONICAL_JAZZ_CLASSES,
+  getCanonicalJazzClass,
+  getLocalizedJazzClassLabel,
+} from "@/lib/course-lessons";
+import type { SupportedLanguage } from "@/lib/language";
 
-export type MusicPlatform = 'spotify';
+export type MusicPlatform = "spotify";
 
 export interface MusicPlatformLink {
   label: string;
@@ -21,41 +25,51 @@ export interface JazzPlaylistTrack {
 }
 
 const MUSIC_PLATFORM_LABELS: Record<MusicPlatform, string> = {
-  spotify: 'Spotify',
+  spotify: "Spotify",
 };
 
-const MUSIC_PLATFORM_TOOLTIP_COPY: Record<SupportedLanguage, Record<MusicPlatform, string>> = {
+const MUSIC_PLATFORM_TOOLTIP_COPY: Record<
+  SupportedLanguage,
+  Record<MusicPlatform, string>
+> = {
   es: {
-    spotify: 'Abrir en Spotify',
+    spotify: "Abrir en Spotify",
   },
   en: {
-    spotify: 'Open in Spotify',
+    spotify: "Open in Spotify",
   },
   fr: {
-    spotify: 'Ouvrir dans Spotify',
+    spotify: "Ouvrir dans Spotify",
   },
   pt: {
-    spotify: 'Abrir no Spotify',
+    spotify: "Abrir no Spotify",
   },
 };
 
-export function getMusicPlatformTooltip(platform: MusicPlatform, language: SupportedLanguage) {
+export function getMusicPlatformTooltip(
+  platform: MusicPlatform,
+  language: SupportedLanguage,
+) {
   return MUSIC_PLATFORM_TOOLTIP_COPY[language][platform];
 }
 
-export function buildMusicPlatformLinks(searchTerm: string): MusicPlatformLink[] {
+export function buildMusicPlatformLinks(
+  searchTerm: string,
+): MusicPlatformLink[] {
   const encodedSearch = encodeURIComponent(searchTerm);
 
   return [
     {
       label: MUSIC_PLATFORM_LABELS.spotify,
       href: `https://open.spotify.com/search/${encodedSearch}`,
-      platform: 'spotify',
+      platform: "spotify",
     },
   ];
 }
 
-export function getJazzStudyPlaylist(language: SupportedLanguage): JazzPlaylistTrack[] {
+export function getJazzStudyPlaylist(
+  language: SupportedLanguage,
+): JazzPlaylistTrack[] {
   return CANONICAL_JAZZ_CLASSES.map((item) => {
     const title = item.subtitles[language];
     const classLabel = getLocalizedJazzClassLabel(item.classNumber, language);
@@ -80,24 +94,29 @@ export function getJazzPlaylistTrackForLesson(params: {
   fallbackTitle: string;
   courseTitle: string;
 }) {
-  const canonicalClass = params.classNumber ? getCanonicalJazzClass(params.classNumber) : null;
+  const canonicalClass = params.classNumber
+    ? getCanonicalJazzClass(params.classNumber)
+    : null;
 
   if (!canonicalClass || !params.classNumber) {
     const searchTerm = `${params.fallbackTitle} ${params.courseTitle}`;
 
     return {
-      id: 'lesson-fallback-track',
+      id: "lesson-fallback-track",
       classNumber: 0,
       classLabel: params.courseTitle,
       title: params.fallbackTitle,
       description: params.courseTitle,
-      image: '/images/clase1.jpg',
+      image: "/images/clase1.jpg",
       searchTerm,
       links: buildMusicPlatformLinks(searchTerm),
     };
   }
 
-  const classLabel = getLocalizedJazzClassLabel(params.classNumber, params.language);
+  const classLabel = getLocalizedJazzClassLabel(
+    params.classNumber,
+    params.language,
+  );
   const title = canonicalClass.subtitles[params.language];
   const searchTerm = `${title} ${params.courseTitle}`;
 
