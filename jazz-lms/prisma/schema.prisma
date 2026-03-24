@@ -33,6 +33,14 @@ enum QuizMedalTier {
   PLATINUM
 }
 
+enum PaymentWebhookEventStatus {
+  RECEIVED
+  PROCESSING
+  PROCESSED
+  FAILED
+  IGNORED
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -260,6 +268,31 @@ model DiscountApplied {
 
   @@index([purchaseId])
   @@index([voucherId])
+}
+
+model PaymentWebhookEvent {
+  id           String                    @id @default(uuid())
+  provider     String
+  accountId    String?
+  eventId      String
+  eventType    String
+  eventKey     String                    @unique
+  status       PaymentWebhookEventStatus @default(RECEIVED)
+  payload      Json
+  headers      Json?
+  signature    String?
+  payloadHash  String
+  attemptCount Int                       @default(0)
+  lastError    String?
+  firstSeenAt  DateTime                  @default(now())
+  processedAt  DateTime?
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+
+  @@index([provider, accountId])
+  @@index([provider, eventType])
+  @@index([status, updatedAt])
+  @@index([eventId])
 }
 
 model UserProgress {

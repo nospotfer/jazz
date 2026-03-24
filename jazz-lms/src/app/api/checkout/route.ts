@@ -3,11 +3,12 @@ import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { normalizeLanguage } from "@/lib/language";
 import {
-  createLemonCheckout,
-  getLemonConfig,
-  isLemonConfigured,
-  isLemonWebhookConfigured,
-} from "@/lib/lemon-squeezy";
+  createProviderCheckout,
+  getPaymentProvider,
+  getProviderVoucherReferencePrefix,
+  isActivePaymentProviderConfigured,
+} from "@/lib/payments/provider";
+import { isDodoWebhookConfigured } from "@/lib/payments/providers/dodo";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
 import { isLocalTestRequest } from "@/lib/test-mode";
 import { validateVoucherForCourse } from "@/lib/vouchers";
@@ -36,6 +37,7 @@ function normalizeOrigin(value: string | null | undefined) {
 }
 
 export async function POST(req: Request) {
+  const paymentProvider = getPaymentProvider();
   let copy = {
     unauthorized: "No autorizado",
     emailRequired: "El correo del usuario es obligatorio",
@@ -258,10 +260,13 @@ export async function POST(req: Request) {
     }
 
     if (voucherValidation?.valid && voucherValidation.isFree) {
+      const providerVoucherPrefix =
+        getProviderVoucherReferencePrefix(paymentProvider);
+
       await upsertCoursePurchaseFromProvider({
         userId: user.id,
         courseId,
-        providerReferenceId: `ls-voucher:${voucherValidation.voucher.providerDiscountCode}`,
+        providerReferenceId: `${providerVoucherPrefix}:${voucherValidation.voucher.providerDiscountCode}`,
         originalPrice: voucherValidation.originalPrice,
         discountAmount: voucherValidation.discount,
         finalPrice: voucherValidation.finalPrice,
@@ -295,17 +300,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: successUrl });
     }
 
-    if (!isLemonConfigured()) {
+    if (!isActivePaymentProviderConfigured(paymentProvider)) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }
 
-    if (!isLemonWebhookConfigured()) {
+    if (paymentProvider === "dodo" && !isDodoWebhookConfigured()) {
+      console.warn(
+        "[CHECKOUT_WARNING] Dodo webhook secret is missing. Purchase unlock may not persist.",
+      );
+    }
+
+    if (
+      paymentProvider === "lemon" &&
+      !process.env.LEMON_SQUEEZY_WEBHOOK_SECRET?.trim()
+    ) {
       console.warn(
         "[CHECKOUT_WARNING] Lemon webhook secret is missing. Purchase unlock may not persist.",
       );
     }
-
-    const lemonConfig = getLemonConfig();
 
     const encodedCourseId = encodeURIComponent(courseId);
     const checkoutAttemptId = randomUUID();
@@ -327,22 +339,23 @@ export async function POST(req: Request) {
       const withVoucher =
         Boolean(providerDiscountCode) && Boolean(voucherValidation?.valid);
 
-      return createLemonCheckout({
-        storeId: lemonConfig.storeId as string,
-        variantId: lemonConfig.variantId as string,
-        email: user.email,
-        successUrl:
-          source === "dashboard" ? dashboardSuccessUrl : courseSuccessUrl,
-        customData: withVoucher
-          ? {
-              ...checkoutMetadata,
-              voucherCode: voucherValidation!.voucher.code,
-              providerDiscountCode:
-                voucherValidation!.voucher.providerDiscountCode,
-            }
-          : checkoutMetadata,
-        discountCode: providerDiscountCode,
-      });
+      return createProviderCheckout(
+        {
+          email: user.email,
+          successUrl:
+            source === "dashboard" ? dashboardSuccessUrl : courseSuccessUrl,
+          customData: withVoucher
+            ? {
+                ...checkoutMetadata,
+                voucherCode: voucherValidation!.voucher.code,
+                providerDiscountCode:
+                  voucherValidation!.voucher.providerDiscountCode,
+              }
+            : checkoutMetadata,
+          providerDiscountCode: providerDiscountCode,
+        },
+        paymentProvider,
+      );
     };
 
     let checkoutUrl: string;
@@ -375,9 +388,10 @@ export async function POST(req: Request) {
           (normalizedProviderError.includes("redemption") &&
             normalizedProviderError.includes("reached")));
 
-      const lemonConfigFailure =
+      const providerConfigFailure =
         errorMessage.includes("missing lemon_squeezy") ||
-        errorMessage.includes("missing lemon");
+        errorMessage.includes("missing lemon") ||
+        errorMessage.includes("missing dodo");
 
       if (voucherMaxUsesReachedAtProvider) {
         if (voucherValidation?.valid) {
@@ -434,13 +448,14 @@ export async function POST(req: Request) {
         }
       }
 
-      if (lemonConfigFailure) {
+      if (providerConfigFailure) {
         return new NextResponse(copy.paymentsUnavailable, { status: 503 });
       }
 
-      console.error("[CHECKOUT_LEMON_CREATE_ERROR]", {
+      console.error("[CHECKOUT_PROVIDER_CREATE_ERROR]", {
         courseId,
         userId: user.id,
+        provider: paymentProvider,
         voucherCode: voucherValidation?.valid
           ? voucherValidation.voucher.code
           : null,
