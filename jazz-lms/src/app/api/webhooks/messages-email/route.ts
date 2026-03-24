@@ -1,18 +1,17 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { ensureMessagingTables } from '@/lib/messages-db';
-import { randomUUID, timingSafeEqual } from 'crypto';
-import { Resend } from 'resend';
-import { checkRateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
+import { db } from "@/lib/db";
+import { extractNormalizedEmail } from "@/lib/email-validation";
+import { ensureMessagingTables } from "@/lib/messages-db";
+import { checkRateLimit, createRateLimitHeaders } from "@/lib/rate-limit";
+import { randomUUID, timingSafeEqual } from "crypto";
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 const professorEmail = (
-  process.env.PROFESSOR_EMAIL?.trim() ||
-  'culturadeljazz@gmail.com'
+  process.env.PROFESSOR_EMAIL?.trim() || "culturadeljazz@gmail.com"
 ).toLowerCase();
 
 function normalizeEmail(raw: string) {
-  const match = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-  return (match?.[0] || raw).trim().toLowerCase();
+  return extractNormalizedEmail(raw);
 }
 
 function extractThreadId(input: string) {
@@ -32,7 +31,9 @@ async function notifyStudentByEmail(to: string, subject: string, body: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) {
-    console.warn('[messages:email-webhook:notifyStudent] Missing RESEND_API_KEY or RESEND_FROM_EMAIL');
+    console.warn(
+      "[messages:email-webhook:notifyStudent] Missing RESEND_API_KEY or RESEND_FROM_EMAIL",
+    );
     return;
   }
 
@@ -45,25 +46,31 @@ async function notifyStudentByEmail(to: string, subject: string, body: string) {
       text: body,
     });
   } catch (error) {
-    console.error('[messages:email-webhook:notifyStudent] Email delivery failed', error);
+    console.error(
+      "[messages:email-webhook:notifyStudent] Email delivery failed",
+      error,
+    );
   }
 }
 
 export async function POST(req: Request) {
   try {
     const webhookLimit = checkRateLimit(req, {
-      bucket: 'webhook-email',
+      bucket: "webhook-email",
       maxRequests: 30,
       windowMs: 60_000,
     });
 
     if (!webhookLimit.allowed) {
       return NextResponse.json(
-        { error: 'Too many webhook requests', retryAfterSeconds: webhookLimit.retryAfterSeconds },
+        {
+          error: "Too many webhook requests",
+          retryAfterSeconds: webhookLimit.retryAfterSeconds,
+        },
         {
           status: 429,
           headers: createRateLimitHeaders(webhookLimit, 60_000),
-        }
+        },
       );
     }
 
@@ -71,51 +78,59 @@ export async function POST(req: Request) {
 
     const configuredSecret = process.env.INBOUND_EMAIL_WEBHOOK_SECRET?.trim();
     if (!configuredSecret) {
-      console.error('[messages:email-webhook] Missing INBOUND_EMAIL_WEBHOOK_SECRET');
-      return new NextResponse('Webhook secret not configured', { status: 503 });
+      console.error(
+        "[messages:email-webhook] Missing INBOUND_EMAIL_WEBHOOK_SECRET",
+      );
+      return new NextResponse("Webhook secret not configured", { status: 503 });
     }
 
-    const providedSecret = req.headers.get('x-inbox-secret')?.trim();
+    const providedSecret = req.headers.get("x-inbox-secret")?.trim();
     if (!providedSecret) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const expectedBuffer = Buffer.from(configuredSecret);
     const providedBuffer = Buffer.from(providedSecret);
 
     if (expectedBuffer.length !== providedBuffer.length) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     if (!timingSafeEqual(expectedBuffer, providedBuffer)) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const payload = await req.json();
-    const fromRaw = String(payload?.from || payload?.sender || '');
+    const fromRaw = String(payload?.from || payload?.sender || "");
     const fromEmail = normalizeEmail(fromRaw);
     if (fromEmail !== professorEmail) {
-      return new NextResponse('Ignored sender', { status: 202 });
+      return new NextResponse("Ignored sender", { status: 202 });
     }
 
-    const subject = String(payload?.subject || '');
-    const textBody = String(payload?.text || payload?.body || payload?.strippedText || '').trim();
+    const subject = String(payload?.subject || "");
+    const textBody = String(
+      payload?.text || payload?.body || payload?.strippedText || "",
+    ).trim();
     if (!textBody) {
-      return new NextResponse('Message body is required', { status: 400 });
+      return new NextResponse("Message body is required", { status: 400 });
     }
 
     const threadId = extractThreadId(`${subject}\n${textBody}`);
     if (!threadId) {
-      return new NextResponse('Thread ID not found in email content', { status: 400 });
+      return new NextResponse("Thread ID not found in email content", {
+        status: 400,
+      });
     }
 
     const safeThreadId = threadId.replace(/'/g, "''");
-    const threads = await db.$queryRawUnsafe<Array<{
-      id: string;
-      subject: string;
-      studentId: string;
-      studentEmail: string;
-    }>>(`
+    const threads = await db.$queryRawUnsafe<
+      Array<{
+        id: string;
+        subject: string;
+        studentId: string;
+        studentEmail: string;
+      }>
+    >(`
       SELECT id, subject, studentId, studentEmail
       FROM MessageThread
       WHERE id = '${safeThreadId}'
@@ -124,7 +139,7 @@ export async function POST(req: Request) {
 
     const thread = threads[0];
     if (!thread) {
-      return new NextResponse('Thread not found', { status: 404 });
+      return new NextResponse("Thread not found", { status: 404 });
     }
 
     const now = new Date().toISOString();
@@ -166,12 +181,16 @@ export async function POST(req: Request) {
     await notifyStudentByEmail(
       thread.studentEmail,
       `El profesor respondió: ${thread.subject}`,
-      `El profesor Enric Vázquez respondió a tu mensaje en la bandeja:\n\n${textBody}\n\nAbre tu bandeja de estudiante para continuar la conversación.`
+      `El profesor Enric Vázquez respondió a tu mensaje en la bandeja:\n\n${textBody}\n\nAbre tu bandeja de estudiante para continuar la conversación.`,
     );
 
-    return NextResponse.json({ ok: true, threadId: thread.id, studentId: thread.studentId });
+    return NextResponse.json({
+      ok: true,
+      threadId: thread.id,
+      studentId: thread.studentId,
+    });
   } catch (error) {
-    console.error('[messages:email-webhook]', error);
-    return new NextResponse('Error interno del servidor', { status: 500 });
+    console.error("[messages:email-webhook]", error);
+    return new NextResponse("Error interno del servidor", { status: 500 });
   }
 }
