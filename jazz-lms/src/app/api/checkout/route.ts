@@ -1,107 +1,161 @@
-import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
-import { cookies } from 'next/headers';
-import { normalizeLanguage } from '@/lib/language';
-import { isSupportedPaymentMethod } from '@/lib/checkout-helpers';
-import { isLocalTestRequest } from '@/lib/test-mode';
-import { createLemonCheckout, getLemonConfig, isLemonConfigured, isLemonWebhookConfigured } from '@/lib/lemon-squeezy';
-import { validateVoucherForCourse } from '@/lib/vouchers';
-import { upsertCoursePurchaseFromProvider } from '@/lib/course-purchase-sync';
-import { randomUUID } from 'crypto';
+import { isSupportedPaymentMethod } from "@/lib/checkout-helpers";
+import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
+import { db } from "@/lib/db";
+import { normalizeLanguage } from "@/lib/language";
+import {
+  createLemonCheckout,
+  getLemonConfig,
+  isLemonConfigured,
+  isLemonWebhookConfigured,
+} from "@/lib/lemon-squeezy";
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { isLocalTestRequest } from "@/lib/test-mode";
+import { validateVoucherForCourse } from "@/lib/vouchers";
+import { createClient } from "@/utils/supabase/server";
+import { randomUUID } from "crypto";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
+
+function normalizeOrigin(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return null;
+    }
+
+    return parsed.origin;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(req: Request) {
   let copy = {
-    unauthorized: 'No autorizado',
-    emailRequired: 'El correo del usuario es obligatorio',
-    invalidRequest: 'Solicitud inválida',
-    courseNotFound: 'Curso no encontrado',
-    alreadyPurchased: 'El curso ya fue comprado',
-    paymentsUnavailable: 'Pagos temporalmente no disponibles',
-    paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
-    invalidVoucher: 'Código de voucher inválido',
-    voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
-    voucherNotConfigured: 'Este voucher no está configurado en el checkout',
-    internalError: 'Error interno del servidor',
+    unauthorized: "No autorizado",
+    emailRequired: "El correo del usuario es obligatorio",
+    invalidRequest: "Solicitud inválida",
+    courseNotFound: "Curso no encontrado",
+    alreadyPurchased: "El curso ya fue comprado",
+    paymentsUnavailable: "Pagos temporalmente no disponibles",
+    paymentMethodUnavailable: "Método de pago no disponible para esta compra",
+    invalidVoucher: "Código de voucher inválido",
+    voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
+    voucherNotConfigured: "Este voucher no está configurado en el checkout",
+    internalError: "Error interno del servidor",
   };
 
   try {
     const payload = await req.json();
-    const { courseId, source, language, paymentMethod, voucherCode } = payload ?? {};
+    const { courseId, source, language, paymentMethod, voucherCode } =
+      payload ?? {};
     // Keep backward-compatible API validation for legacy clients/tests.
-    if (paymentMethod !== undefined && paymentMethod !== null && !isSupportedPaymentMethod(paymentMethod)) {
+    if (
+      paymentMethod !== undefined &&
+      paymentMethod !== null &&
+      !isSupportedPaymentMethod(paymentMethod)
+    ) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
     }
-
 
     if (!courseId) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
     }
 
     const cookieStore = await cookies();
-    const selectedLanguage = typeof language === 'string' && language.trim().length > 0
-      ? normalizeLanguage(language)
-      : normalizeLanguage(cookieStore.get('jazz_lang')?.value);
+    const selectedLanguage =
+      typeof language === "string" && language.trim().length > 0
+        ? normalizeLanguage(language)
+        : normalizeLanguage(cookieStore.get("jazz_lang")?.value);
 
     copy = {
       es: {
-        unauthorized: 'No autorizado',
-        emailRequired: 'El correo del usuario es obligatorio',
-        invalidRequest: 'Solicitud inválida',
-        courseNotFound: 'Curso no encontrado',
-        alreadyPurchased: 'El curso ya fue comprado',
-        paymentsUnavailable: 'Pagos temporalmente no disponibles',
-        paymentMethodUnavailable: 'Método de pago no disponible para esta compra',
-        invalidVoucher: 'Código de voucher inválido',
-        voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
-        voucherNotConfigured: 'Este voucher no está configurado en el checkout',
-        internalError: 'Error interno del servidor',
+        unauthorized: "No autorizado",
+        emailRequired: "El correo del usuario es obligatorio",
+        invalidRequest: "Solicitud inválida",
+        courseNotFound: "Curso no encontrado",
+        alreadyPurchased: "El curso ya fue comprado",
+        paymentsUnavailable: "Pagos temporalmente no disponibles",
+        paymentMethodUnavailable:
+          "Método de pago no disponible para esta compra",
+        invalidVoucher: "Código de voucher inválido",
+        voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
+        voucherNotConfigured: "Este voucher no está configurado en el checkout",
+        internalError: "Error interno del servidor",
       },
       en: {
-        unauthorized: 'Unauthorized',
-        emailRequired: 'User email is required',
-        invalidRequest: 'Invalid request',
-        courseNotFound: 'Course not found',
-        alreadyPurchased: 'Course already purchased',
-        paymentsUnavailable: 'Payments are temporarily unavailable',
-        paymentMethodUnavailable: 'Payment method is unavailable for this purchase',
-        invalidVoucher: 'Invalid voucher code',
-        voucherMaxUsesReached: 'This voucher has reached its maximum number of uses',
-        voucherNotConfigured: 'This voucher is not configured in checkout',
-        internalError: 'Internal server error',
+        unauthorized: "Unauthorized",
+        emailRequired: "User email is required",
+        invalidRequest: "Invalid request",
+        courseNotFound: "Course not found",
+        alreadyPurchased: "Course already purchased",
+        paymentsUnavailable: "Payments are temporarily unavailable",
+        paymentMethodUnavailable:
+          "Payment method is unavailable for this purchase",
+        invalidVoucher: "Invalid voucher code",
+        voucherMaxUsesReached:
+          "This voucher has reached its maximum number of uses",
+        voucherNotConfigured: "This voucher is not configured in checkout",
+        internalError: "Internal server error",
       },
       fr: {
-        unauthorized: 'Non autorisé',
-        emailRequired: 'L’e-mail utilisateur est obligatoire',
-        invalidRequest: 'Requête invalide',
-        courseNotFound: 'Cours introuvable',
-        alreadyPurchased: 'Le cours a déjà été acheté',
-        paymentsUnavailable: 'Les paiements sont temporairement indisponibles',
-        paymentMethodUnavailable: 'Le moyen de paiement n’est pas disponible pour cet achat',
-        invalidVoucher: 'Code promo invalide',
-        voucherMaxUsesReached: 'Ce code promo a atteint son nombre maximal d’utilisations',
-        voucherNotConfigured: 'Ce code promo n’est pas configuré dans le checkout',
-        internalError: 'Erreur interne du serveur',
+        unauthorized: "Non autorisé",
+        emailRequired: "L’e-mail utilisateur est obligatoire",
+        invalidRequest: "Requête invalide",
+        courseNotFound: "Cours introuvable",
+        alreadyPurchased: "Le cours a déjà été acheté",
+        paymentsUnavailable: "Les paiements sont temporairement indisponibles",
+        paymentMethodUnavailable:
+          "Le moyen de paiement n’est pas disponible pour cet achat",
+        invalidVoucher: "Code promo invalide",
+        voucherMaxUsesReached:
+          "Ce code promo a atteint son nombre maximal d’utilisations",
+        voucherNotConfigured:
+          "Ce code promo n’est pas configuré dans le checkout",
+        internalError: "Erreur interne du serveur",
       },
       pt: {
-        unauthorized: 'Não autorizado',
-        emailRequired: 'O e-mail do usuário é obrigatório',
-        invalidRequest: 'Solicitação inválida',
-        courseNotFound: 'Curso não encontrado',
-        alreadyPurchased: 'O curso já foi comprado',
-        paymentsUnavailable: 'Pagamentos temporariamente indisponíveis',
-        paymentMethodUnavailable: 'O método de pagamento não está disponível para esta compra',
-        invalidVoucher: 'Código de voucher inválido',
-        voucherMaxUsesReached: 'Este voucher atingiu o limite total de usos',
-        voucherNotConfigured: 'Este voucher não está configurado no checkout',
-        internalError: 'Erro interno do servidor',
+        unauthorized: "Não autorizado",
+        emailRequired: "O e-mail do usuário é obrigatório",
+        invalidRequest: "Solicitação inválida",
+        courseNotFound: "Curso não encontrado",
+        alreadyPurchased: "O curso já foi comprado",
+        paymentsUnavailable: "Pagamentos temporariamente indisponíveis",
+        paymentMethodUnavailable:
+          "O método de pagamento não está disponível para esta compra",
+        invalidVoucher: "Código de voucher inválido",
+        voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
+        voucherNotConfigured: "Este voucher não está configurado no checkout",
+        internalError: "Erro interno do servidor",
       },
     }[selectedLanguage];
 
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const configuredAppOrigin = normalizeOrigin(
+      process.env.NEXT_PUBLIC_APP_URL,
+    );
+    const requestOrigin = normalizeOrigin(req.headers.get("origin"));
+    const requestUrlOrigin = normalizeOrigin(req.url);
+
+    const trustedOrigins = new Set<string>([
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+    ]);
+    if (configuredAppOrigin) {
+      trustedOrigins.add(configuredAppOrigin);
+    }
+    if (requestUrlOrigin) {
+      trustedOrigins.add(requestUrlOrigin);
+    }
+
+    const origin =
+      requestOrigin && trustedOrigins.has(requestOrigin)
+        ? requestOrigin
+        : (configuredAppOrigin ?? requestUrlOrigin ?? "http://localhost:3000");
 
     const supabase = createClient();
     const authResult = await supabase.auth.getUser();
@@ -136,7 +190,7 @@ export async function POST(req: Request) {
     }
 
     if (existingPurchase) {
-      console.warn('[CHECKOUT_ALREADY_PURCHASED]', {
+      console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
         userId: user.id,
         userEmail: user.email,
         courseId,
@@ -147,11 +201,14 @@ export async function POST(req: Request) {
     }
 
     const configuredPrice = Number(course.price ?? 0);
-    const isFreeCourse = !Number.isFinite(configuredPrice) || configuredPrice <= 0;
+    const isFreeCourse =
+      !Number.isFinite(configuredPrice) || configuredPrice <= 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
 
     const normalizedVoucherCode =
-      typeof voucherCode === 'string' && voucherCode.trim().length > 0 ? voucherCode.trim().toUpperCase() : null;
+      typeof voucherCode === "string" && voucherCode.trim().length > 0
+        ? voucherCode.trim().toUpperCase()
+        : null;
 
     const voucherValidation = normalizedVoucherCode
       ? await validateVoucherForCourse({
@@ -162,7 +219,10 @@ export async function POST(req: Request) {
       : null;
 
     if (voucherValidation && !voucherValidation.valid) {
-      return new NextResponse(voucherValidation.message || copy.invalidVoucher, { status: 400 });
+      return new NextResponse(
+        voucherValidation.message || copy.invalidVoucher,
+        { status: 400 },
+      );
     }
 
     if (isFreeCourse) {
@@ -192,9 +252,10 @@ export async function POST(req: Request) {
         });
       });
 
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&free=true`
-        : `${origin}/courses/${courseId}?success=true&free=true`;
+      const successUrl =
+        source === "dashboard"
+          ? `${origin}/dashboard?purchase=success&source=dashboard&free=true`
+          : `${origin}/courses/${courseId}?success=true&free=true`;
 
       return NextResponse.json({
         url: successUrl,
@@ -213,9 +274,10 @@ export async function POST(req: Request) {
         providerDiscountCode: voucherValidation.voucher.providerDiscountCode,
       });
 
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&voucher=true&free=true`
-        : `${origin}/courses/${courseId}?success=true&voucher=true&free=true`;
+      const successUrl =
+        source === "dashboard"
+          ? `${origin}/dashboard?purchase=success&source=dashboard&voucher=true&free=true`
+          : `${origin}/courses/${courseId}?success=true&voucher=true&free=true`;
 
       return NextResponse.json({ url: successUrl });
     }
@@ -224,15 +286,16 @@ export async function POST(req: Request) {
       await upsertCoursePurchaseFromProvider({
         userId: user.id,
         courseId,
-        providerReferenceId: 'local-test-session',
+        providerReferenceId: "local-test-session",
         originalPrice: numericPrice,
         discountAmount: 0,
         finalPrice: numericPrice,
       });
 
-      const successUrl = source === 'dashboard'
-        ? `${origin}/dashboard?purchase=success&source=dashboard&test=1`
-        : `${origin}/courses/${courseId}?success=true&test=1`;
+      const successUrl =
+        source === "dashboard"
+          ? `${origin}/dashboard?purchase=success&source=dashboard&test=1`
+          : `${origin}/courses/${courseId}?success=true&test=1`;
 
       return NextResponse.json({ url: successUrl });
     }
@@ -242,7 +305,9 @@ export async function POST(req: Request) {
     }
 
     if (!isLemonWebhookConfigured()) {
-      console.warn('[CHECKOUT_WARNING] Lemon webhook secret is missing. Purchase unlock may not persist.');
+      console.warn(
+        "[CHECKOUT_WARNING] Lemon webhook secret is missing. Purchase unlock may not persist.",
+      );
     }
 
     const lemonConfig = getLemonConfig();
@@ -254,7 +319,7 @@ export async function POST(req: Request) {
     const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
 
     const checkoutMetadata = {
-      purchaseType: 'course',
+      purchaseType: "course",
       courseId: course.id,
       userId: user.id,
       checkoutAttemptId,
@@ -264,18 +329,21 @@ export async function POST(req: Request) {
     };
 
     const createCheckout = async (providerDiscountCode?: string) => {
-      const withVoucher = Boolean(providerDiscountCode) && Boolean(voucherValidation?.valid);
+      const withVoucher =
+        Boolean(providerDiscountCode) && Boolean(voucherValidation?.valid);
 
       return createLemonCheckout({
         storeId: lemonConfig.storeId as string,
         variantId: lemonConfig.variantId as string,
         email: user.email,
-        successUrl: source === 'dashboard' ? dashboardSuccessUrl : courseSuccessUrl,
+        successUrl:
+          source === "dashboard" ? dashboardSuccessUrl : courseSuccessUrl,
         customData: withVoucher
           ? {
               ...checkoutMetadata,
               voucherCode: voucherValidation!.voucher.code,
-              providerDiscountCode: voucherValidation!.voucher.providerDiscountCode,
+              providerDiscountCode:
+                voucherValidation!.voucher.providerDiscountCode,
             }
           : checkoutMetadata,
         discountCode: providerDiscountCode,
@@ -284,36 +352,47 @@ export async function POST(req: Request) {
 
     let checkoutUrl: string;
     try {
-      checkoutUrl = await createCheckout(voucherValidation?.valid ? voucherValidation.voucher.providerDiscountCode : undefined);
+      checkoutUrl = await createCheckout(
+        voucherValidation?.valid
+          ? voucherValidation.voucher.providerDiscountCode
+          : undefined,
+      );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message.toLowerCase() : '';
-      const normalizedProviderError = errorMessage.replace(/[_-]+/g, ' ');
+      const errorMessage =
+        error instanceof Error ? error.message.toLowerCase() : "";
+      const normalizedProviderError = errorMessage.replace(/[_-]+/g, " ");
       const voucherRejectedByProvider =
-        errorMessage.includes('discount') &&
-        (errorMessage.includes('does not exist') ||
-          errorMessage.includes('invalid') ||
-          errorMessage.includes('not found') ||
-          errorMessage.includes('not valid'));
+        errorMessage.includes("discount") &&
+        (errorMessage.includes("does not exist") ||
+          errorMessage.includes("invalid") ||
+          errorMessage.includes("not found") ||
+          errorMessage.includes("not valid"));
       const voucherMaxUsesReachedAtProvider =
-        normalizedProviderError.includes('discount') &&
-        (normalizedProviderError.includes('maximum redemptions') ||
-          normalizedProviderError.includes('max redemptions') ||
-          normalizedProviderError.includes('reached its maximum') ||
-          normalizedProviderError.includes('maximum uses') ||
-          normalizedProviderError.includes('max uses') ||
-          normalizedProviderError.includes('usage limit') ||
-          (normalizedProviderError.includes('redemption') && normalizedProviderError.includes('limit')) ||
-          (normalizedProviderError.includes('redemption') && normalizedProviderError.includes('reached')));
+        normalizedProviderError.includes("discount") &&
+        (normalizedProviderError.includes("maximum redemptions") ||
+          normalizedProviderError.includes("max redemptions") ||
+          normalizedProviderError.includes("reached its maximum") ||
+          normalizedProviderError.includes("maximum uses") ||
+          normalizedProviderError.includes("max uses") ||
+          normalizedProviderError.includes("usage limit") ||
+          (normalizedProviderError.includes("redemption") &&
+            normalizedProviderError.includes("limit")) ||
+          (normalizedProviderError.includes("redemption") &&
+            normalizedProviderError.includes("reached")));
 
       const lemonConfigFailure =
-        errorMessage.includes('missing lemon_squeezy') ||
-        errorMessage.includes('missing lemon');
+        errorMessage.includes("missing lemon_squeezy") ||
+        errorMessage.includes("missing lemon");
 
       if (voucherMaxUsesReachedAtProvider) {
         if (voucherValidation?.valid) {
-          const nextCurrentUses = voucherValidation.voucher.maxUses !== null
-            ? Math.max(voucherValidation.voucher.maxUses, voucherValidation.voucher.currentUses)
-            : Math.max(1, voucherValidation.voucher.currentUses + 1);
+          const nextCurrentUses =
+            voucherValidation.voucher.maxUses !== null
+              ? Math.max(
+                  voucherValidation.voucher.maxUses,
+                  voucherValidation.voucher.currentUses,
+                )
+              : Math.max(1, voucherValidation.voucher.currentUses + 1);
 
           await db.voucherCode.update({
             where: {
@@ -324,7 +403,7 @@ export async function POST(req: Request) {
             },
           });
 
-          console.warn('[CHECKOUT_VOUCHER_MAX_USES_SYNCED]', {
+          console.warn("[CHECKOUT_VOUCHER_MAX_USES_SYNCED]", {
             voucherId: voucherValidation.voucher.id,
             voucherCode: voucherValidation.voucher.code,
             localMaxUses: voucherValidation.voucher.maxUses,
@@ -338,18 +417,22 @@ export async function POST(req: Request) {
 
       if (voucherRejectedByProvider) {
         try {
-          console.warn('[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK]', {
+          console.warn("[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK]", {
             courseId,
             userId: user.id,
-            voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+            voucherCode: voucherValidation?.valid
+              ? voucherValidation.voucher.code
+              : null,
           });
           checkoutUrl = await createCheckout();
           return NextResponse.json({ url: checkoutUrl });
         } catch (fallbackError) {
-          console.error('[CHECKOUT_FALLBACK_FULL_PRICE_ERROR]', {
+          console.error("[CHECKOUT_FALLBACK_FULL_PRICE_ERROR]", {
             courseId,
             userId: user.id,
-            voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+            voucherCode: voucherValidation?.valid
+              ? voucherValidation.voucher.code
+              : null,
             fallbackError,
           });
           return new NextResponse(copy.voucherNotConfigured, { status: 400 });
@@ -360,10 +443,12 @@ export async function POST(req: Request) {
         return new NextResponse(copy.paymentsUnavailable, { status: 503 });
       }
 
-      console.error('[CHECKOUT_LEMON_CREATE_ERROR]', {
+      console.error("[CHECKOUT_LEMON_CREATE_ERROR]", {
         courseId,
         userId: user.id,
-        voucherCode: voucherValidation?.valid ? voucherValidation.voucher.code : null,
+        voucherCode: voucherValidation?.valid
+          ? voucherValidation.voucher.code
+          : null,
         error,
       });
 
@@ -372,7 +457,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
-    console.log('[CHECKOUT_ERROR]', error);
+    console.log("[CHECKOUT_ERROR]", error);
     return new NextResponse(copy.internalError, { status: 500 });
   }
 }

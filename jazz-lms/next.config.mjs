@@ -2,22 +2,30 @@
 const nextConfig = {
   poweredByHeader: false,
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias ?? {}),
+      canvas: false,
+    };
+
+    return config;
   },
   async headers() {
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.NODE_ENV === "production";
 
     const cspConnectSrc = [
       "'self'",
-      'https://*.supabase.co',
-      'wss://*.supabase.co',
-      'https://*.mux.com',
-      'https://api.lemonsqueezy.com',
-      'https://*.lemonsqueezy.com',
+      "https://*.supabase.co",
+      "wss://*.supabase.co",
+      "https://*.mux.com",
+      "https://api.lemonsqueezy.com",
+      "https://*.lemonsqueezy.com",
     ];
 
     if (!isProduction) {
-      cspConnectSrc.push('ws://localhost:*', 'http://localhost:*');
+      cspConnectSrc.push("ws://localhost:*", "http://localhost:*");
     }
 
     const contentSecurityPolicy = [
@@ -30,49 +38,50 @@ const nextConfig = {
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      `connect-src ${cspConnectSrc.join(' ')}`,
+      `connect-src ${cspConnectSrc.join(" ")}`,
       "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://*.lemonsqueezy.com https://open.spotify.com",
       "media-src 'self' blob: https:",
-      isProduction ? 'upgrade-insecure-requests' : '',
+      isProduction ? "upgrade-insecure-requests" : "",
     ]
       .filter(Boolean)
-      .join('; ');
+      .join("; ");
 
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'Content-Security-Policy',
+            key: "Content-Security-Policy",
             value: contentSecurityPolicy,
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
           {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), interest-cohort=()",
           },
           {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
           },
           {
-            key: 'Cross-Origin-Resource-Policy',
-            value: 'same-origin',
+            key: "Cross-Origin-Resource-Policy",
+            value: "same-origin",
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload',
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
           },
         ],
       },
