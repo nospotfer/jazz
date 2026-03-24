@@ -1,40 +1,48 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { CoursePlayer } from '@/components/course/course-player';
-import { db } from '@/lib/db';
-import { LESSON_QUIZ_QUESTION_COUNT } from '@/lib/lesson-quiz';
-import { getLessonQuizQuestionBankCount, getLessonQuizSummary } from '@/lib/lesson-quiz-server';
-import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
-import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
+import { CoursePlayer } from "@/components/course/course-player";
+import {
+  getCourseTranslationBundle,
+  resolveCourseText,
+  resolveLessonTitle,
+} from "@/lib/course-translations";
+import { db } from "@/lib/db";
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
+import { LESSON_QUIZ_QUESTION_COUNT } from "@/lib/lesson-quiz";
+import {
+  getLessonQuizQuestionBankCount,
+  getLessonQuizSummary,
+} from "@/lib/lesson-quiz-server";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const LessonPage = async ({
   params,
 }: {
-  params: { courseId: string; lessonId: string };
+  params: Promise<{ courseId: string; lessonId: string }>;
 }) => {
+  const { courseId, lessonId } = await params;
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/auth');
+    return redirect("/auth");
   }
 
   const course = await db.course.findUnique({
     where: {
-      id: params.courseId,
+      id: courseId,
     },
     include: {
       chapters: {
         orderBy: {
-          position: 'asc',
+          position: "asc",
         },
         include: {
           lessons: {
             orderBy: {
-              position: 'asc',
+              position: "asc",
             },
             include: {
               attachments: true,
@@ -46,13 +54,17 @@ const LessonPage = async ({
   });
 
   if (!course) {
-    return redirect('/dashboard');
+    return redirect("/dashboard");
   }
 
   const cookieStore = await cookies();
-  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const language = normalizeLanguage(
+    cookieStore.get(LANGUAGE_COOKIE_KEY)?.value,
+  );
   const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
-  const lessonClassById = new Map(orderedLessons.map((item, index) => [item.id, index + 1]));
+  const lessonClassById = new Map(
+    orderedLessons.map((item, index) => [item.id, index + 1]),
+  );
 
   const translationBundle = await getCourseTranslationBundle({
     language,
@@ -63,10 +75,20 @@ const LessonPage = async ({
 
   const localizedCourse = {
     ...course,
-    ...resolveCourseText(translationBundle.courses, course.id, course.title, course.description),
+    ...resolveCourseText(
+      translationBundle.courses,
+      course.id,
+      course.title,
+      course.description,
+    ),
     chapters: course.chapters.map((chapter) => ({
       ...chapter,
-      ...resolveCourseText(translationBundle.chapters, chapter.id, chapter.title, chapter.description),
+      ...resolveCourseText(
+        translationBundle.chapters,
+        chapter.id,
+        chapter.title,
+        chapter.description,
+      ),
       lessons: chapter.lessons.map((item) => ({
         ...item,
         title: resolveLessonTitle(
@@ -74,7 +96,7 @@ const LessonPage = async ({
           item.id,
           item.title,
           language,
-          lessonClassById.get(item.id)
+          lessonClassById.get(item.id),
         ),
       })),
     })),
@@ -82,18 +104,17 @@ const LessonPage = async ({
 
   const lesson = localizedCourse.chapters
     .flatMap((chapter) => chapter.lessons)
-    .find((lesson) => lesson.id === params.lessonId);
-
+    .find((lesson) => lesson.id === lessonId);
 
   if (!lesson || !lesson.isPublished) {
-    return redirect('/dashboard');
+    return redirect("/dashboard");
   }
 
   const hasFullPurchase = await db.purchase.findUnique({
     where: {
       userId_courseId: {
         userId: user.id,
-        courseId: params.courseId,
+        courseId,
       },
     },
   });
@@ -102,43 +123,45 @@ const LessonPage = async ({
     where: {
       userId_lessonId: {
         userId: user.id,
-        lessonId: params.lessonId,
+        lessonId,
       },
     },
   });
 
-  const canAccessLesson =
-    !!hasFullPurchase || !!hasLessonPurchase;
+  const canAccessLesson = !!hasFullPurchase || !!hasLessonPurchase;
   const isAdminOwner =
-    user.email?.toLowerCase() === (process.env.ADMIN_OWNER_EMAIL ?? '').toLowerCase();
+    user.email?.toLowerCase() ===
+    (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
   const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);
 
-  const [userProgress, initialQuizSummary, quizQuestionBankCount] = await Promise.all([
-    db.userProgress.findUnique({
-      where: {
-        userId_lessonId: {
-          userId: user.id,
-          lessonId: params.lessonId,
+  const [userProgress, initialQuizSummary, quizQuestionBankCount] =
+    await Promise.all([
+      db.userProgress.findUnique({
+        where: {
+          userId_lessonId: {
+            userId: user.id,
+            lessonId,
+          },
         },
-      },
-      select: {
-        isCompleted: true,
-        progressPercent: true,
-      },
-    }),
-    getLessonQuizSummary(user.id, params.lessonId),
-    getLessonQuizQuestionBankCount(params.lessonId),
-  ]);
+        select: {
+          isCompleted: true,
+          progressPercent: true,
+        },
+      }),
+      getLessonQuizSummary(user.id, lessonId),
+      getLessonQuizQuestionBankCount(lessonId),
+    ]);
 
   const initialIsCompleted =
-    Boolean(userProgress?.isCompleted) || (userProgress?.progressPercent ?? 0) >= 100;
+    Boolean(userProgress?.isCompleted) ||
+    (userProgress?.progressPercent ?? 0) >= 100;
   const initialProgressPercent = initialIsCompleted
     ? 100
-    : userProgress?.progressPercent ?? 0;
+    : (userProgress?.progressPercent ?? 0);
   const hasQuizAvailable = quizQuestionBankCount >= LESSON_QUIZ_QUESTION_COUNT;
 
   if (!canAccessLesson) {
-    return redirect(`/courses/${params.courseId}?locked=true`);
+    return redirect(`/courses/${courseId}?locked=true`);
   }
 
   return (
@@ -146,7 +169,7 @@ const LessonPage = async ({
       <CoursePlayer
         course={localizedCourse}
         lesson={lesson}
-        lessonId={params.lessonId}
+        lessonId={lessonId}
         initialIsCompleted={initialIsCompleted}
         initialProgressPercent={initialProgressPercent}
         initialQuizSummary={initialQuizSummary}

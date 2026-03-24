@@ -139,8 +139,6 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_APP_URL,
     );
     const requestOrigin = normalizeOrigin(req.headers.get("origin"));
-    const requestUrlOrigin = normalizeOrigin(req.url);
-
     const trustedOrigins = new Set<string>([
       "http://localhost:3000",
       "http://127.0.0.1:3000",
@@ -148,14 +146,11 @@ export async function POST(req: Request) {
     if (configuredAppOrigin) {
       trustedOrigins.add(configuredAppOrigin);
     }
-    if (requestUrlOrigin) {
-      trustedOrigins.add(requestUrlOrigin);
-    }
 
     const origin =
       requestOrigin && trustedOrigins.has(requestOrigin)
         ? requestOrigin
-        : (configuredAppOrigin ?? requestUrlOrigin ?? "http://localhost:3000");
+        : (configuredAppOrigin ?? "http://localhost:3000");
 
     const supabase = createClient();
     const authResult = await supabase.auth.getUser();

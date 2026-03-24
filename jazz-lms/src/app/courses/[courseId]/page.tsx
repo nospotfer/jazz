@@ -1,66 +1,67 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { db } from '@/lib/db';
-import { CourseEnrollButton } from '@/components/course/course-enroll-button';
-import { BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { CourseEnrollButton } from "@/components/course/course-enroll-button";
 import {
-  DEFAULT_FULL_COURSE_PRICE_EUR,
-} from '@/lib/pricing';
-import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
-import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
+  getCourseTranslationBundle,
+  resolveCourseText,
+  resolveLessonTitle,
+} from "@/lib/course-translations";
+import { db } from "@/lib/db";
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
+import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { createClient } from "@/utils/supabase/server";
+import { BookOpen, CheckCircle, Clock } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function CourseDetailPage({
   params,
-  searchParams,
 }: {
-  params: { courseId: string };
-  searchParams?: {
-    success?: string | string[];
-  };
+  params: Promise<{ courseId: string }>;
 }) {
-  const cookieStore = cookies();
-  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const { courseId } = await params;
+  const cookieStore = await cookies();
+  const language = normalizeLanguage(
+    cookieStore.get(LANGUAGE_COOKIE_KEY)?.value,
+  );
   const copy = {
     es: {
-      chapter: 'capítulo',
-      chapterPlural: 'capítulos',
-      lesson: 'lección',
-      lessonPlural: 'lecciones',
-      contentTitle: 'Contenido del curso',
-      chapterLabel: 'Capítulo',
-      fullAccess: 'Acceso completo a las 15 clases',
-      securePayment: 'Pago seguro gestionado por Lemon Squeezy',
+      chapter: "capítulo",
+      chapterPlural: "capítulos",
+      lesson: "lección",
+      lessonPlural: "lecciones",
+      contentTitle: "Contenido del curso",
+      chapterLabel: "Capítulo",
+      fullAccess: "Acceso completo a las 15 clases",
+      securePayment: "Pago seguro gestionado por Lemon Squeezy",
     },
     en: {
-      chapter: 'chapter',
-      chapterPlural: 'chapters',
-      lesson: 'lesson',
-      lessonPlural: 'lessons',
-      contentTitle: 'Course content',
-      chapterLabel: 'Chapter',
-      fullAccess: 'Full access to all 15 classes',
-      securePayment: 'Secure payment handled by Lemon Squeezy',
+      chapter: "chapter",
+      chapterPlural: "chapters",
+      lesson: "lesson",
+      lessonPlural: "lessons",
+      contentTitle: "Course content",
+      chapterLabel: "Chapter",
+      fullAccess: "Full access to all 15 classes",
+      securePayment: "Secure payment handled by Lemon Squeezy",
     },
     fr: {
-      chapter: 'chapitre',
-      chapterPlural: 'chapitres',
-      lesson: 'leçon',
-      lessonPlural: 'leçons',
-      contentTitle: 'Contenu du cours',
-      chapterLabel: 'Chapitre',
-      fullAccess: 'Accès complet aux 15 cours',
-      securePayment: 'Paiement sécurisé géré par Lemon Squeezy',
+      chapter: "chapitre",
+      chapterPlural: "chapitres",
+      lesson: "leçon",
+      lessonPlural: "leçons",
+      contentTitle: "Contenu du cours",
+      chapterLabel: "Chapitre",
+      fullAccess: "Accès complet aux 15 cours",
+      securePayment: "Paiement sécurisé géré par Lemon Squeezy",
     },
     pt: {
-      chapter: 'capítulo',
-      chapterPlural: 'capítulos',
-      lesson: 'aula',
-      lessonPlural: 'aulas',
-      contentTitle: 'Conteúdo do curso',
-      chapterLabel: 'Capítulo',
-      fullAccess: 'Acesso completo às 15 aulas',
-      securePayment: 'Pagamento seguro processado pelo Lemon Squeezy',
+      chapter: "capítulo",
+      chapterPlural: "capítulos",
+      lesson: "aula",
+      lessonPlural: "aulas",
+      contentTitle: "Conteúdo do curso",
+      chapterLabel: "Capítulo",
+      fullAccess: "Acesso completo às 15 aulas",
+      securePayment: "Pagamento seguro processado pelo Lemon Squeezy",
     },
   }[language];
 
@@ -70,12 +71,12 @@ export default async function CourseDetailPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/auth');
+    return redirect("/auth");
   }
 
   const course = await db.course.findUnique({
     where: {
-      id: params.courseId,
+      id: courseId,
       isPublished: true,
     },
     include: {
@@ -84,11 +85,11 @@ export default async function CourseDetailPage({
       },
       chapters: {
         where: { isPublished: true },
-        orderBy: { position: 'asc' },
+        orderBy: { position: "asc" },
         include: {
           lessons: {
             where: { isPublished: true },
-            orderBy: { position: 'asc' },
+            orderBy: { position: "asc" },
           },
         },
       },
@@ -96,17 +97,20 @@ export default async function CourseDetailPage({
   });
 
   if (!course) {
-    return redirect('/dashboard');
+    return redirect("/dashboard");
   }
 
   const hasPurchased = course.purchases.length > 0;
-  const displayPrice = course.price && course.price > 0 ? DEFAULT_FULL_COURSE_PRICE_EUR : 0;
+  const displayPrice =
+    course.price && course.price > 0 ? DEFAULT_FULL_COURSE_PRICE_EUR : 0;
   const totalLessons = course.chapters.reduce(
     (acc, chapter) => acc + chapter.lessons.length,
-    0
+    0,
   );
   const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
-  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+  const lessonClassById = new Map(
+    orderedLessons.map((lesson, index) => [lesson.id, index + 1]),
+  );
 
   const translationBundle = await getCourseTranslationBundle({
     language,
@@ -119,16 +123,14 @@ export default async function CourseDetailPage({
     translationBundle.courses,
     course.id,
     course.title,
-    course.description
+    course.description,
   );
 
   // If already purchased, redirect to first lesson
   if (hasPurchased) {
     const firstLesson = course.chapters[0]?.lessons[0];
     if (firstLesson) {
-      return redirect(
-        `/courses/${course.id}/lessons/${firstLesson.id}`
-      );
+      return redirect(`/courses/${course.id}/lessons/${firstLesson.id}`);
     }
   }
 
@@ -148,11 +150,13 @@ export default async function CourseDetailPage({
           <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <BookOpen className="h-4 w-4" />
-              {course.chapters.length} {course.chapters.length !== 1 ? copy.chapterPlural : copy.chapter}
+              {course.chapters.length}{" "}
+              {course.chapters.length !== 1 ? copy.chapterPlural : copy.chapter}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {totalLessons} {totalLessons !== 1 ? copy.lessonPlural : copy.lesson}
+              {totalLessons}{" "}
+              {totalLessons !== 1 ? copy.lessonPlural : copy.lesson}
             </span>
           </div>
         </div>
@@ -170,44 +174,48 @@ export default async function CourseDetailPage({
                 translationBundle.chapters,
                 chapter.id,
                 chapter.title,
-                chapter.description
+                chapter.description,
               );
 
               return (
-              <div
-                key={chapter.id}
-                className="bg-card border border-border rounded-xl overflow-hidden"
-              >
-                <div className="px-4 py-3 bg-muted/50 border-b border-border">
-                  <h3 className="font-semibold text-foreground">
-                    {copy.chapterLabel} {chapterIndex + 1}: {localizedChapter.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {chapter.lessons.length} {chapter.lessons.length !== 1 ? copy.lessonPlural : copy.lesson}
-                  </p>
+                <div
+                  key={chapter.id}
+                  className="bg-card border border-border rounded-xl overflow-hidden"
+                >
+                  <div className="px-4 py-3 bg-muted/50 border-b border-border">
+                    <h3 className="font-semibold text-foreground">
+                      {copy.chapterLabel} {chapterIndex + 1}:{" "}
+                      {localizedChapter.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {chapter.lessons.length}{" "}
+                      {chapter.lessons.length !== 1
+                        ? copy.lessonPlural
+                        : copy.lesson}
+                    </p>
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {chapter.lessons.map((lesson) => (
+                      <li
+                        key={lesson.id}
+                        className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <CheckCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                          <span className="truncate">
+                            {resolveLessonTitle(
+                              translationBundle.lessons,
+                              lesson.id,
+                              lesson.title,
+                              language,
+                              lessonClassById.get(lesson.id),
+                            )}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="divide-y divide-border">
-                  {chapter.lessons.map((lesson) => (
-                    <li
-                      key={lesson.id}
-                      className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <CheckCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
-                        <span className="truncate">
-                          {resolveLessonTitle(
-                            translationBundle.lessons,
-                            lesson.id,
-                            lesson.title,
-                            language,
-                            lessonClassById.get(lesson.id)
-                          )}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
               );
             })}
           </div>
@@ -224,10 +232,7 @@ export default async function CourseDetailPage({
                 {copy.fullAccess}
               </p>
             </div>
-            <CourseEnrollButton
-              courseId={course.id}
-              price={displayPrice}
-            />
+            <CourseEnrollButton courseId={course.id} price={displayPrice} />
             <div className="text-xs text-center text-muted-foreground">
               {copy.securePayment}
             </div>

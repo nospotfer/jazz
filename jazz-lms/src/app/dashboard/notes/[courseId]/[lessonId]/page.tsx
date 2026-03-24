@@ -1,13 +1,16 @@
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
-import { db } from '@/lib/db';
-import { LessonNotesEditor } from '@/components/dashboard/lesson-notes-editor';
-import { isAdminRole } from '@/lib/admin/permissions';
-import { ensureLessonNotesTable } from '@/lib/lesson-notes';
-import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
-import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
-import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
+import { LessonNotesEditor } from "@/components/dashboard/lesson-notes-editor";
+import { isAdminRole } from "@/lib/admin/permissions";
+import { getLocalizedJazzClassLabel } from "@/lib/course-lessons";
+import {
+  getCourseTranslationBundle,
+  resolveLessonTitle,
+} from "@/lib/course-translations";
+import { db } from "@/lib/db";
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
+import { ensureLessonNotesTable } from "@/lib/lesson-notes";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface RawLessonNote {
   userId: string;
@@ -21,27 +24,28 @@ interface RawLessonNote {
 export default async function LessonNotesPage({
   params,
 }: {
-  params: { courseId: string; lessonId: string };
+  params: Promise<{ courseId: string; lessonId: string }>;
 }) {
+  const { courseId, lessonId } = await params;
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/auth');
+    return redirect("/auth");
   }
 
   const course = await db.course.findUnique({
-    where: { id: params.courseId },
+    where: { id: courseId },
     include: {
       chapters: {
         where: { isPublished: true },
-        orderBy: { position: 'asc' },
+        orderBy: { position: "asc" },
         include: {
           lessons: {
             where: { isPublished: true },
-            orderBy: { position: 'asc' },
+            orderBy: { position: "asc" },
             select: {
               id: true,
               title: true,
@@ -53,17 +57,21 @@ export default async function LessonNotesPage({
   });
 
   if (!course) {
-    return redirect('/dashboard');
+    return redirect("/dashboard");
   }
 
   const cookieStore = await cookies();
-  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const language = normalizeLanguage(
+    cookieStore.get(LANGUAGE_COOKIE_KEY)?.value,
+  );
 
   const orderedLessons = course.chapters.flatMap((chapter) => chapter.lessons);
-  const lessonIndex = orderedLessons.findIndex((lesson) => lesson.id === params.lessonId);
+  const lessonIndex = orderedLessons.findIndex(
+    (lesson) => lesson.id === lessonId,
+  );
 
   if (lessonIndex < 0) {
-    return redirect('/dashboard');
+    return redirect("/dashboard");
   }
 
   const lesson = orderedLessons[lessonIndex];
@@ -81,7 +89,7 @@ export default async function LessonNotesPage({
     lesson.id,
     lesson.title,
     language,
-    lessonIndex + 1
+    lessonIndex + 1,
   );
 
   const [hasFullPurchase, hasLessonPurchase] = await Promise.all([
@@ -89,7 +97,7 @@ export default async function LessonNotesPage({
       where: {
         userId_courseId: {
           userId: user.id,
-          courseId: params.courseId,
+          courseId,
         },
       },
     }),
@@ -97,7 +105,7 @@ export default async function LessonNotesPage({
       where: {
         userId_lessonId: {
           userId: user.id,
-          lessonId: params.lessonId,
+          lessonId,
         },
       },
     }),
@@ -110,8 +118,11 @@ export default async function LessonNotesPage({
       })
     : null;
 
-  const professorEmail = (process.env.PROFESSOR_EMAIL || '').trim().toLowerCase();
-  const isProfessor = !!professorEmail && user.email?.toLowerCase() === professorEmail;
+  const professorEmail = (process.env.PROFESSOR_EMAIL || "")
+    .trim()
+    .toLowerCase();
+  const isProfessor =
+    !!professorEmail && user.email?.toLowerCase() === professorEmail;
   const isPrivilegedViewer = isProfessor || isAdminRole(dbUser?.role ?? null);
 
   await ensureLessonNotesTable();
@@ -120,14 +131,16 @@ export default async function LessonNotesPage({
     ? await db.$queryRaw<RawLessonNote[]>`
         SELECT userId, content, isBold, isItalic, fontSize, updatedAt
         FROM LessonNote
-        WHERE courseId = ${params.courseId}
-          AND lessonId = ${params.lessonId}
+        WHERE courseId = ${courseId}
+          AND lessonId = ${lessonId}
           AND content <> ''
         ORDER BY updatedAt DESC
       `
     : [];
 
-  const studentUserIds = Array.from(new Set(studentNotes.map((note) => note.userId)));
+  const studentUserIds = Array.from(
+    new Set(studentNotes.map((note) => note.userId)),
+  );
   const studentUsers = studentUserIds.length
     ? await db.user.findMany({
         where: { id: { in: studentUserIds } },
@@ -145,7 +158,7 @@ export default async function LessonNotesPage({
     const owner = studentMap.get(note.userId);
     return {
       userId: note.userId,
-      userEmail: owner?.email ?? '',
+      userEmail: owner?.email ?? "",
       userName: owner?.name ?? null,
       content: note.content,
       isBold: Boolean(note.isBold),
@@ -156,18 +169,16 @@ export default async function LessonNotesPage({
   });
 
   const canAccessNotes =
-    isPrivilegedViewer ||
-    !!hasFullPurchase ||
-    !!hasLessonPurchase;
+    isPrivilegedViewer || !!hasFullPurchase || !!hasLessonPurchase;
 
   if (!canAccessNotes) {
-    return redirect(`/courses/${params.courseId}?locked=true`);
+    return redirect(`/courses/${courseId}?locked=true`);
   }
 
   return (
     <LessonNotesEditor
-      courseId={params.courseId}
-      lessonId={params.lessonId}
+      courseId={courseId}
+      lessonId={lessonId}
       classLabel={getLocalizedJazzClassLabel(lessonIndex + 1, language)}
       lessonTitle={localizedLessonTitle}
       isPrivilegedViewer={isPrivilegedViewer}

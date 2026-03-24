@@ -1,16 +1,26 @@
-import { PromoVideo } from '@/components/landing/promo-video';
-import { Header } from '@/components/layout/header';
-import dynamic from 'next/dynamic';
+import { BoardNavigation } from "@/components/landing/board-navigation";
+import { PromoVideo } from "@/components/landing/promo-video";
+import { Header } from "@/components/layout/header";
+import dynamic from "next/dynamic";
 
-const Professor = dynamic(() => import('@/components/landing/professor').then((mod) => mod.Professor));
-const WhatYouLearn = dynamic(() => import('@/components/landing/what-you-learn').then((mod) => mod.WhatYouLearn));
-const Classes = dynamic(() => import('@/components/landing/classes').then((mod) => mod.Classes));
-const Press = dynamic(() => import('@/components/landing/press-gallery').then((mod) => mod.Press));
-const JazzCats = dynamic(() => import('@/components/landing/jazz-cats').then((mod) => mod.JazzCats));
-const FAQFooter = dynamic(() => import('@/components/landing/faq-footer').then((mod) => mod.FAQFooter));
-const BoardNavigation = dynamic(() => import('@/components/landing/board-navigation').then((mod) => mod.BoardNavigation), {
-  ssr: false,
-});
+const Professor = dynamic(() =>
+  import("@/components/landing/professor").then((mod) => mod.Professor),
+);
+const WhatYouLearn = dynamic(() =>
+  import("@/components/landing/what-you-learn").then((mod) => mod.WhatYouLearn),
+);
+const Classes = dynamic(() =>
+  import("@/components/landing/classes").then((mod) => mod.Classes),
+);
+const Press = dynamic(() =>
+  import("@/components/landing/press-gallery").then((mod) => mod.Press),
+);
+const JazzCats = dynamic(() =>
+  import("@/components/landing/jazz-cats").then((mod) => mod.JazzCats),
+);
+const FAQFooter = dynamic(() =>
+  import("@/components/landing/faq-footer").then((mod) => mod.FAQFooter),
+);
 
 export default function Home() {
   return (

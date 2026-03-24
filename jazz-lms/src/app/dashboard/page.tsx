@@ -1,26 +1,24 @@
-import { redirect } from 'next/navigation';
-import { CourseViewClient } from '@/components/course/course-view-client';
-import { cookies } from 'next/headers';
-import { db } from '@/lib/db';
-import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
-import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
-import { getServerUser } from '@/lib/server-user';
-import { hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
+import { CourseViewClient } from "@/components/course/course-view-client";
+import {
+  getCourseTranslationBundle,
+  resolveLessonTitle,
+} from "@/lib/course-translations";
+import { hasAnyCoursePurchase } from "@/lib/dashboard-server-data";
+import { db } from "@/lib/db";
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
+import { getServerUser } from "@/lib/server-user";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-type DashboardPageProps = {
-  searchParams?: {
-    purchase?: string | string[];
-    source?: string | string[];
-  };
-};
-
-export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+export default async function DashboardPage() {
   const cookieStore = await cookies();
-  const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
+  const language = normalizeLanguage(
+    cookieStore.get(LANGUAGE_COOKIE_KEY)?.value,
+  );
   const user = await getServerUser();
 
   if (!user) {
-    return redirect('/auth');
+    return redirect("/auth");
   }
 
   let course: {
@@ -33,17 +31,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   try {
     course = await db.course.findFirst({
       where: { isPublished: true },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
       select: {
         id: true,
         chapters: {
           where: { isPublished: true },
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
           select: {
             id: true,
             lessons: {
               where: { isPublished: true },
-              orderBy: { position: 'asc' },
+              orderBy: { position: "asc" },
               select: {
                 id: true,
                 title: true,
@@ -56,7 +54,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
     hasPurchased = await hasAnyCoursePurchase(user.id);
   } catch (error) {
-    console.error('[dashboard] Database unavailable. Rendering fallback state.', error);
+    console.error(
+      "[dashboard] Database unavailable. Rendering fallback state.",
+      error,
+    );
   }
 
   const lessonRoutesByTitle = course
@@ -66,14 +67,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           .map((lesson) => [
             lesson.title.toLowerCase().trim(),
             `/courses/${course.id}/lessons/${lesson.id}`,
-          ])
+          ]),
       )
     : {};
 
   const orderedLessons = course
     ? course.chapters.flatMap((chapter) => chapter.lessons)
     : [];
-  const lessonClassById = new Map(orderedLessons.map((lesson, index) => [lesson.id, index + 1]));
+  const lessonClassById = new Map(
+    orderedLessons.map((lesson, index) => [lesson.id, index + 1]),
+  );
 
   const translationBundle = course
     ? await getCourseTranslationBundle({
@@ -85,7 +88,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     : null;
 
   const lessonRoutesInOrder = orderedLessons.map(
-    (lesson) => `/courses/${course?.id}/lessons/${lesson.id}`
+    (lesson) => `/courses/${course?.id}/lessons/${lesson.id}`,
   );
 
   const lessonIdsInOrder = orderedLessons.map((lesson) => lesson.id);
@@ -96,14 +99,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           lesson.id,
           lesson.title,
           language,
-          lessonClassById.get(lesson.id)
+          lessonClassById.get(lesson.id),
         )
-      : lesson.title
+      : lesson.title,
   );
 
   return (
     <CourseViewClient
-      userName={user.user_metadata?.full_name || user.email || 'Estudiante de Jazz'}
+      userName={
+        user.user_metadata?.full_name || user.email || "Estudiante de Jazz"
+      }
       hasPurchased={hasPurchased}
       courseId={course?.id ?? null}
       lessonRoutesByTitle={lessonRoutesByTitle}

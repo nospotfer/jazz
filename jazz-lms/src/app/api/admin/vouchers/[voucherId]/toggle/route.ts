@@ -1,32 +1,40 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { ensureVoucherDiscountSynced, removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
+import { ensureAdminApiPermission } from "@/lib/admin-api";
+import { db } from "@/lib/db";
+import {
+  ensureVoucherDiscountSynced,
+  removeVoucherDiscountSync,
+} from "@/lib/voucher-lemon-sync";
+import { NextResponse } from "next/server";
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { voucherId: string } }
+  { params }: { params: Promise<{ voucherId: string }> },
 ) {
   try {
-    const auth = await ensureAdminApiPermission('vouchers.update');
+    const { voucherId } = await params;
+    const auth = await ensureAdminApiPermission("vouchers.update");
     if (!auth.ok) {
       return auth.response;
     }
 
     const { isActive } = await req.json();
-    if (typeof isActive !== 'boolean') {
+    if (typeof isActive !== "boolean") {
       return NextResponse.json(
-        { success: false, error: 'Invalid payload', message: 'isActive deve ser booleano.' },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid payload",
+          message: "isActive deve ser booleano.",
+        },
+        { status: 400 },
       );
     }
 
     const prisma = db as any;
     const currentVoucher = await prisma.voucherCode.findUnique({
-      where: { id: params.voucherId },
+      where: { id: voucherId },
       select: {
         id: true,
         code: true,
@@ -43,8 +51,12 @@ export async function PATCH(
 
     if (!currentVoucher) {
       return NextResponse.json(
-        { success: false, error: 'Not found', message: 'Voucher no encontrado.' },
-        { status: 404 }
+        {
+          success: false,
+          error: "Not found",
+          message: "Voucher no encontrado.",
+        },
+        { status: 404 },
       );
     }
 
@@ -71,7 +83,7 @@ export async function PATCH(
         });
 
     const voucher = await prisma.voucherCode.update({
-      where: { id: params.voucherId },
+      where: { id: voucherId },
       data: {
         isActive,
         metadata: syncResult.metadata,
@@ -92,10 +104,14 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHER_TOGGLE_ERROR]', error);
+    console.error("[ADMIN_VOUCHER_TOGGLE_ERROR]", error);
     return NextResponse.json(
-      { success: false, error: 'Server error', message: 'Erro ao atualizar voucher.' },
-      { status: 500 }
+      {
+        success: false,
+        error: "Server error",
+        message: "Erro ao atualizar voucher.",
+      },
+      { status: 500 },
     );
   }
 }

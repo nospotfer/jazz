@@ -1,12 +1,13 @@
-import { createClient } from '@/utils/supabase/server';
-import { db } from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { db } from "@/lib/db";
+import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { courseId: string; lessonId: string } }
+  { params }: { params: Promise<{ courseId: string; lessonId: string }> },
 ) {
   try {
+    const { lessonId } = await params;
     const supabase = createClient();
     const {
       data: { user },
@@ -14,7 +15,7 @@ export async function PUT(
     const { isCompleted, progressPercent, minutesRemaining } = await req.json();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const safeProgressPercent = Number.isFinite(progressPercent)
@@ -29,7 +30,7 @@ export async function PUT(
       where: {
         userId_lessonId: {
           userId: user.id,
-          lessonId: params.lessonId,
+          lessonId,
         },
       },
       update: {
@@ -47,24 +48,24 @@ export async function PUT(
       },
       create: {
         userId: user.id,
-        lessonId: params.lessonId,
+        lessonId,
         isCompleted,
         progressPercent: isCompleted
           ? 100
           : safeProgressPercent !== undefined
-          ? safeProgressPercent
-          : 0,
+            ? safeProgressPercent
+            : 0,
         minutesRemaining: isCompleted
           ? 0
           : safeMinutesRemaining !== undefined
-          ? safeMinutesRemaining
-          : 20,
+            ? safeMinutesRemaining
+            : 20,
       },
     });
 
     return NextResponse.json(userProgress);
   } catch (error) {
-    console.log('[LESSON_PROGRESS_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.log("[LESSON_PROGRESS_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
