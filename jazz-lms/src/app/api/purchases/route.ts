@@ -33,31 +33,6 @@ function toErrorMessage(error: unknown): string {
   return "";
 }
 
-function toErrorCode(error: unknown): string | null {
-  if (!error || typeof error !== "object") {
-    return null;
-  }
-
-  const code = (error as { code?: unknown }).code;
-  return typeof code === "string" ? code : null;
-}
-
-function isPrismaSchemaMismatchError(error: unknown): boolean {
-  const code = toErrorCode(error);
-  if (code === "P2021" || code === "P2022") {
-    return true;
-  }
-
-  const message = toErrorMessage(error).toLowerCase();
-
-  return (
-    message.includes("does not exist") ||
-    message.includes("unknown column") ||
-    message.includes("invalid column") ||
-    message.includes("relation")
-  );
-}
-
 function isDodoApiError(error: unknown): boolean {
   const message = toErrorMessage(error);
   return (

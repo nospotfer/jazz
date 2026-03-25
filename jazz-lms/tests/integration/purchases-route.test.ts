@@ -477,6 +477,140 @@ describe("POST /api/purchases", () => {
     expect(response.status).toBe(202);
   });
 
+  test("reconciles webhook event when metadata userId is missing but customer email matches", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.paymentWebhookEventFindMany.mockResolvedValue([
+      {
+        eventId: "evt_email_match",
+        payload: {
+          type: "payment.succeeded",
+          data: {
+            payment: {
+              id: "pay_email_match",
+              amount: 2990,
+              customer: {
+                email: "admin@neurofactory.net",
+              },
+            },
+            metadata: {
+              courseId: "course-1",
+            },
+          },
+        },
+      },
+    ]);
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      purchased: true,
+      source: "reconciled_dodo_event",
+      providerReferenceId: "dodo-pay:pay_email_match",
+    });
+  });
+
+  test("returns pending when paymentId enforces provider reference mismatch in webhook events", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.paymentWebhookEventFindMany.mockResolvedValue([
+      {
+        eventId: "evt_other_payment",
+        payload: {
+          type: "payment.succeeded",
+          data: {
+            payment: {
+              id: "pay_other",
+              customer: {
+                email: "admin@neurofactory.net",
+              },
+            },
+            metadata: {
+              userId: "u1",
+              courseId: "course-1",
+            },
+          },
+        },
+      },
+    ]);
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_expected",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(202);
+    expect(body).toEqual({
+      purchased: false,
+      reason: "pending_webhook",
+      provider: "dodo",
+    });
+  });
+
+  test("accepts snake_case payment and attempt aliases for Dodo API reconciliation", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      id: "pay_alias_1",
+      status: "succeeded",
+      subtotal_amount: 2990,
+      total_amount: 1990,
+      amount: 1990,
+      customer_email: "admin@neurofactory.net",
+      metadata: {
+        userId: "u1",
+        courseId: "course-1",
+        checkoutAttemptId: "attempt-alias-1",
+      },
+      customer: {
+        email: "admin@neurofactory.net",
+      },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          checkout_attempt_id: "attempt-alias-1",
+          payment_id: "pay_alias_1",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      purchased: true,
+      source: "reconciled_dodo_api",
+      providerReferenceId: "dodo-pay:pay_alias_1",
+    });
+  });
+
   test("returns 503 when Dodo API is unavailable during reconcile", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "admin@neurofactory.net" } },
@@ -504,6 +638,50 @@ describe("POST /api/purchases", () => {
       reason: "provider_unavailable",
       provider: "dodo",
     });
+  });
+
+  test("returns 503 when Dodo API rejects with provider-unavailable string error", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockRejectedValue(
+      "Dodo payment retrieve failed: upstream timeout",
+    );
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_1",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(503);
+  });
+
+  test("returns 500 when Dodo API throws non-standard object error", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockRejectedValue({ type: "unexpected" });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_1",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(500);
   });
 
   test("returns 500 when Dodo API throws a non-provider error", async () => {
