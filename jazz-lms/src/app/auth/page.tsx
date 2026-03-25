@@ -1,53 +1,14 @@
 "use client";
 import { useLanguage } from "@/components/providers/language-provider";
+import { isLocalOrigin, normalizeBaseOrigin, resolveClientAppOrigin } from "@/lib/app-origin";
 import { languageToHtmlLang } from "@/lib/language";
 import { getRandomProfileAvatar } from "@/lib/profile-avatars";
 import { hasValidSupabasePublicConfig } from "@/lib/supabase-config";
 import { createClient } from "@/utils/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
+import { LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-
-function normalizeBaseOrigin(value?: string | null): string | null {
-  if (!value) return null;
-
-  try {
-    const url = new URL(value);
-    return `${url.protocol}//${url.host}`;
-  } catch {
-    return null;
-  }
-}
-
-function isLocalOrigin(origin?: string | null): boolean {
-  if (!origin) return false;
-
-  try {
-    const { hostname } = new URL(origin);
-    return hostname === "localhost" || hostname === "127.0.0.1";
-  } catch {
-    return false;
-  }
-}
-
-function resolveClientAppOrigin(currentOrigin: string): string {
-  const configuredOrigin = normalizeBaseOrigin(process.env.NEXT_PUBLIC_APP_URL);
-  const isDevelopment = process.env.NODE_ENV !== "production";
-
-  if (isDevelopment) {
-    if (isLocalOrigin(currentOrigin)) {
-      return currentOrigin;
-    }
-
-    if (configuredOrigin && isLocalOrigin(configuredOrigin)) {
-      return configuredOrigin;
-    }
-
-    return "http://localhost:3000";
-  }
-
-  return configuredOrigin || currentOrigin;
-}
 
 export default function AuthPage() {
   const supabase = useMemo(() => createClient(), []);
@@ -99,6 +60,9 @@ export default function AuthPage() {
       loginLink: "Inicia sesión",
       forgotPassword: "¿Olvidaste tu contraseña?",
       rememberMe: "Recordarme",
+      closeAuth: "Fechar",
+      exitAuth: "Sair",
+      exitingAuth: "Saindo...",
       signingIn: "Iniciando sesión...",
       signIn: "Iniciar sesión",
       noAccount: "¿No tienes una cuenta?",
@@ -142,6 +106,9 @@ export default function AuthPage() {
       loginLink: "Sign in",
       forgotPassword: "Forgot your password?",
       rememberMe: "Remember me",
+      closeAuth: "Close",
+      exitAuth: "Logout",
+      exitingAuth: "Logging out...",
       signingIn: "Signing in...",
       signIn: "Sign in",
       noAccount: "Don’t have an account?",
@@ -185,6 +152,9 @@ export default function AuthPage() {
       loginLink: "Se connecter",
       forgotPassword: "Mot de passe oublié ?",
       rememberMe: "Se souvenir de moi",
+      closeAuth: "Fermer",
+      exitAuth: "Se déconnecter",
+      exitingAuth: "Déconnexion...",
       signingIn: "Connexion en cours...",
       signIn: "Se connecter",
       noAccount: "Vous n’avez pas de compte ?",
@@ -228,6 +198,9 @@ export default function AuthPage() {
       loginLink: "Entrar",
       forgotPassword: "Esqueceu sua senha?",
       rememberMe: "Lembrar de mim",
+      closeAuth: "Fechar",
+      exitAuth: "Sair",
+      exitingAuth: "Saindo...",
       signingIn: "Entrando...",
       signIn: "Entrar",
       noAccount: "Não tem uma conta?",
@@ -254,6 +227,7 @@ export default function AuthPage() {
       const targetTab: "login" | "register" =
         flowParam === "register" ? "register" : "login";
       const message = oauthError.trim() || copy.googleStartError;
+      void supabase.auth.signOut();
 
       setActiveTab(targetTab);
       if (targetTab === "register") {
@@ -262,7 +236,7 @@ export default function AuthPage() {
         setLoginError(message);
       }
     }
-  }, []);
+  }, [copy.googleStartError, supabase]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -320,6 +294,7 @@ export default function AuthPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [isExitingAuth, setIsExitingAuth] = useState(false);
 
   const redirectTo = useMemo(() => {
     if (typeof window === "undefined") return undefined;
@@ -420,12 +395,15 @@ export default function AuthPage() {
     setLoginError("");
 
     try {
+      await supabase.auth.signOut();
+
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password: loginPassword,
       });
 
       if (signInError) {
+        await supabase.auth.signOut();
         setLoginError(signInError.message || copy.signInFailed);
         return;
       }
@@ -476,12 +454,22 @@ export default function AuthPage() {
     setGoogleLoading(true);
 
     try {
-      const callbackUrl =
-        redirectTo || `${window.location.origin}/auth/callback`;
+      await supabase.auth.signOut();
+
+      const callbackUrl = new URL(
+        redirectTo || `${window.location.origin}/auth/callback`,
+      );
+      callbackUrl.searchParams.set(
+        "flow",
+        activeTab === "register" ? "register" : "login",
+      );
+      callbackUrl.searchParams.set("lang", language);
+      callbackUrl.searchParams.set("next", "/dashboard");
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: callbackUrl,
+          redirectTo: callbackUrl.toString(),
           skipBrowserRedirect: true,
           queryParams: {
             prompt: "select_account",
@@ -521,6 +509,18 @@ export default function AuthPage() {
       }
     } finally {
       setGoogleLoading(false);
+    }
+  };
+
+  const handleExitAuth = async () => {
+    setIsExitingAuth(true);
+
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      router.replace("/");
+      router.refresh();
+      setIsExitingAuth(false);
     }
   };
 
@@ -567,6 +567,29 @@ export default function AuthPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border bg-card/80">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors"
+            aria-label={copy.closeAuth}
+          >
+            <X className="h-4 w-4" />
+            {copy.closeAuth}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExitAuth}
+            disabled={isExitingAuth}
+            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            aria-label={copy.exitAuth}
+          >
+            <LogOut className="h-4 w-4" />
+            {isExitingAuth ? copy.exitingAuth : copy.exitAuth}
+          </button>
+        </div>
+
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button

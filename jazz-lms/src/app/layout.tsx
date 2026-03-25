@@ -17,6 +17,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "La Cultura del Jazz",
   description: "Curso online con Enric Vázquez Ramonich",
+  icons: {
+    icon: "/images/Logo.jpeg",
+    shortcut: "/images/Logo.jpeg",
+    apple: "/images/Logo.jpeg",
+  },
 };
 
 export default function RootLayout({

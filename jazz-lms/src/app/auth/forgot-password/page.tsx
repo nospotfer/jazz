@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/language-provider';
+import { resolveClientAppOrigin } from '@/lib/app-origin';
+import { LogOut, X } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -20,6 +22,9 @@ export default function ForgotPasswordPage() {
       sending: 'Enviando...',
       sendResetLink: 'Enviar enlace de restablecimiento',
       backToLogin: 'Volver a iniciar sesión',
+      closeAuth: 'Fechar',
+      exitAuth: 'Sair',
+      exitingAuth: 'Saindo...',
       inboxTitle: '¡Revisa tu bandeja de entrada!',
       inboxDesc: 'Si existe una cuenta con ese correo, hemos enviado un enlace para restablecer la contraseña. Revisa también la carpeta de spam por si acaso.',
     },
@@ -33,6 +38,9 @@ export default function ForgotPasswordPage() {
       sending: 'Sending...',
       sendResetLink: 'Send reset link',
       backToLogin: 'Back to sign in',
+      closeAuth: 'Close',
+      exitAuth: 'Logout',
+      exitingAuth: 'Logging out...',
       inboxTitle: 'Check your inbox!',
       inboxDesc: 'If an account exists for that email, we sent a password reset link. Please also check your spam folder.',
     },
@@ -46,6 +54,9 @@ export default function ForgotPasswordPage() {
       sending: 'Envoi...',
       sendResetLink: 'Envoyer le lien de réinitialisation',
       backToLogin: 'Retour à la connexion',
+      closeAuth: 'Fermer',
+      exitAuth: 'Se déconnecter',
+      exitingAuth: 'Déconnexion...',
       inboxTitle: 'Vérifiez votre boîte de réception !',
       inboxDesc: 'Si un compte existe avec cet e-mail, nous avons envoyé un lien de réinitialisation. Vérifiez aussi votre dossier spam.',
     },
@@ -59,6 +70,9 @@ export default function ForgotPasswordPage() {
       sending: 'Enviando...',
       sendResetLink: 'Enviar link de redefinição',
       backToLogin: 'Voltar ao login',
+      closeAuth: 'Fechar',
+      exitAuth: 'Sair',
+      exitingAuth: 'Saindo...',
       inboxTitle: 'Confira sua caixa de entrada!',
       inboxDesc: 'Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha. Confira também a pasta de spam.',
     },
@@ -68,6 +82,12 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [isExitingAuth, setIsExitingAuth] = useState(false);
+  const resetRedirectTo = useMemo(() => {
+    if (typeof window === 'undefined') return '/auth/reset-password';
+    const appOrigin = resolveClientAppOrigin(window.location.origin);
+    return new URL('/auth/reset-password', appOrigin).toString();
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -80,6 +100,18 @@ export default function ForgotPasswordPage() {
 
   const inputClasses =
     'w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors';
+
+  const handleExitAuth = async () => {
+    setIsExitingAuth(true);
+
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      router.replace('/');
+      router.refresh();
+      setIsExitingAuth(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,7 +129,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: resetRedirectTo,
       });
 
       if (resetError) {
@@ -118,6 +150,29 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border bg-card/80">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors"
+            aria-label={copy.closeAuth}
+          >
+            <X className="h-4 w-4" />
+            {copy.closeAuth}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExitAuth}
+            disabled={isExitingAuth}
+            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            aria-label={copy.exitAuth}
+          >
+            <LogOut className="h-4 w-4" />
+            {isExitingAuth ? copy.exitingAuth : copy.exitAuth}
+          </button>
+        </div>
+
         <div className="p-5 sm:p-8">
           {!sent ? (
             <>

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/language-provider';
+import { LogOut, X } from 'lucide-react';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -20,6 +21,9 @@ export default function ResetPasswordPage() {
       invalidTitle: 'Enlace de restablecimiento inválido',
       requestNewLink: 'Solicitar nuevo enlace',
       backToLogin: 'Volver a iniciar sesión',
+      closeAuth: 'Fechar',
+      exitAuth: 'Sair',
+      exitingAuth: 'Saindo...',
       createNewPassword: 'Crear nueva contraseña',
       newPassword: 'Nueva contraseña',
       passwordPlaceholder: 'Tu nueva contraseña',
@@ -39,6 +43,9 @@ export default function ResetPasswordPage() {
       invalidTitle: 'Invalid reset link',
       requestNewLink: 'Request new link',
       backToLogin: 'Back to sign in',
+      closeAuth: 'Close',
+      exitAuth: 'Logout',
+      exitingAuth: 'Logging out...',
       createNewPassword: 'Create a new password',
       newPassword: 'New password',
       passwordPlaceholder: 'Your new password',
@@ -58,6 +65,9 @@ export default function ResetPasswordPage() {
       invalidTitle: 'Lien de réinitialisation invalide',
       requestNewLink: 'Demander un nouveau lien',
       backToLogin: 'Retour à la connexion',
+      closeAuth: 'Fermer',
+      exitAuth: 'Se déconnecter',
+      exitingAuth: 'Déconnexion...',
       createNewPassword: 'Créer un nouveau mot de passe',
       newPassword: 'Nouveau mot de passe',
       passwordPlaceholder: 'Votre nouveau mot de passe',
@@ -77,6 +87,9 @@ export default function ResetPasswordPage() {
       invalidTitle: 'Link de redefinição inválido',
       requestNewLink: 'Solicitar novo link',
       backToLogin: 'Voltar ao login',
+      closeAuth: 'Fechar',
+      exitAuth: 'Sair',
+      exitingAuth: 'Saindo...',
       createNewPassword: 'Criar nova senha',
       newPassword: 'Nova senha',
       passwordPlaceholder: 'Sua nova senha',
@@ -97,6 +110,19 @@ export default function ResetPasswordPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  const [isExitingAuth, setIsExitingAuth] = useState(false);
+
+  const handleExitAuth = async () => {
+    setIsExitingAuth(true);
+
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      router.replace('/');
+      router.refresh();
+      setIsExitingAuth(false);
+    }
+  };
 
   useEffect(() => {
     const bootstrapRecoverySession = async () => {
@@ -218,6 +244,29 @@ export default function ResetPasswordPage() {
       )}
 
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border bg-card/80">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors"
+            aria-label={copy.closeAuth}
+          >
+            <X className="h-4 w-4" />
+            {copy.closeAuth}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExitAuth}
+            disabled={isExitingAuth}
+            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            aria-label={copy.exitAuth}
+          >
+            <LogOut className="h-4 w-4" />
+            {isExitingAuth ? copy.exitingAuth : copy.exitAuth}
+          </button>
+        </div>
+
         <div className="p-5 sm:p-8 space-y-5">
           {loadingToken ? (
             <div className="text-center text-[#D1D5DB]">{copy.validatingLink}</div>
