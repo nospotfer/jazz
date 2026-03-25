@@ -25,6 +25,9 @@ const mocks = vi.hoisted(() => ({
   createProviderCheckout: vi.fn(),
   getProviderVoucherReferencePrefix: vi.fn(),
   isDodoWebhookConfigured: vi.fn(),
+  validateVoucherForCourse: vi.fn(),
+  isLocalTestRequest: vi.fn(),
+  voucherUpdate: vi.fn(),
 }));
 
 vi.mock("@/utils/supabase/server", () => ({
@@ -48,6 +51,9 @@ vi.mock("@/lib/db", () => ({
           upsert: mocks.purchaseUpsert,
         },
       }),
+    voucherCode: {
+      update: mocks.voucherUpdate,
+    },
   },
 }));
 
@@ -79,6 +85,14 @@ vi.mock("@/lib/payments/providers/dodo", () => ({
   isDodoWebhookConfigured: mocks.isDodoWebhookConfigured,
 }));
 
+vi.mock("@/lib/vouchers", () => ({
+  validateVoucherForCourse: mocks.validateVoucherForCourse,
+}));
+
+vi.mock("@/lib/test-mode", () => ({
+  isLocalTestRequest: mocks.isLocalTestRequest,
+}));
+
 describe("POST /api/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -98,6 +112,9 @@ describe("POST /api/checkout", () => {
     );
     mocks.getProviderVoucherReferencePrefix.mockReturnValue("dodo-voucher");
     mocks.isDodoWebhookConfigured.mockReturnValue(true);
+    mocks.validateVoucherForCourse.mockResolvedValue(null);
+    mocks.isLocalTestRequest.mockReturnValue(false);
+    mocks.voucherUpdate.mockResolvedValue(undefined);
   });
 
   test("returns 400 for missing courseId", async () => {
@@ -316,7 +333,7 @@ describe("POST /api/checkout", () => {
   });
 
   test("creates a local test checkout on localhost requests", async () => {
-    process.env.ENABLE_LOCAL_TEST_CHECKOUT = "1";
+    mocks.isLocalTestRequest.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
@@ -346,6 +363,278 @@ describe("POST /api/checkout", () => {
       "/dashboard?purchase=success&source=dashboard&test=1",
     );
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
-    delete process.env.ENABLE_LOCAL_TEST_CHECKOUT;
+  });
+
+  test("returns 400 when voucher validation fails", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: false,
+      message: "Voucher inválido",
+    });
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1", voucherCode: "bad" });
+
+    const res = await POST(req);
+    const text = await res.text();
+
+    expect(res.status).toBe(400);
+    expect(text).toContain("Voucher inválido");
+  });
+
+  test("creates free checkout when voucher makes final price zero", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: true,
+      originalPrice: 29.99,
+      discount: 29.99,
+      finalPrice: 0,
+      voucher: {
+        code: "FREE100",
+        providerDiscountCode: "FREE100_PROVIDER",
+      },
+    });
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+      source: "dashboard",
+      voucherCode: "free100",
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toContain("voucher=true&free=true");
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
+  });
+
+  test("falls back to checkout without voucher when provider rejects discount", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: false,
+      originalPrice: 29.99,
+      discount: 5,
+      finalPrice: 24.99,
+      voucher: {
+        id: "v1",
+        code: "JAZZ5",
+        providerDiscountCode: "DODO5",
+        maxUses: 100,
+        currentUses: 10,
+      },
+    });
+
+    mocks.createProviderCheckout
+      .mockRejectedValueOnce(new Error("discount does not exist"))
+      .mockResolvedValueOnce(
+        "https://test.checkout.dodopayments.com/session/cks_full_price",
+      );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+      voucherCode: "JAZZ5",
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toContain("cks_full_price");
+    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(2);
+  });
+
+  test("returns 400 when voucher fallback checkout also fails", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: false,
+      originalPrice: 29.99,
+      discount: 5,
+      finalPrice: 24.99,
+      voucher: {
+        id: "v1",
+        code: "JAZZ5",
+        providerDiscountCode: "DODO5",
+        maxUses: 100,
+        currentUses: 10,
+      },
+    });
+
+    mocks.createProviderCheckout
+      .mockRejectedValueOnce(new Error("discount does not exist"))
+      .mockRejectedValueOnce(new Error("fallback failed"));
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+      voucherCode: "JAZZ5",
+    });
+
+    const res = await POST(req);
+    const text = await res.text();
+
+    expect(res.status).toBe(400);
+    expect(text).toContain("voucher");
+  });
+
+  test("falls back without voucher context when provider rejects discount", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+
+    mocks.createProviderCheckout
+      .mockRejectedValueOnce(new Error("discount not valid"))
+      .mockResolvedValueOnce(
+        "https://test.checkout.dodopayments.com/session/cks_no_voucher",
+      );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toContain("cks_no_voucher");
+  });
+
+  test("returns 400 and syncs voucher usage when provider reports max redemptions", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: false,
+      originalPrice: 29.99,
+      discount: 5,
+      finalPrice: 24.99,
+      voucher: {
+        id: "v1",
+        code: "JAZZ5",
+        providerDiscountCode: "DODO5",
+        maxUses: 12,
+        currentUses: 11,
+      },
+    });
+
+    mocks.createProviderCheckout.mockRejectedValueOnce(
+      new Error("discount maximum redemptions reached"),
+    );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+      voucherCode: "JAZZ5",
+    });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(400);
+    expect(mocks.voucherUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  test("returns 503 when provider checkout reports missing dodo configuration", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.createProviderCheckout.mockRejectedValueOnce(
+      new Error("missing dodo api key"),
+    );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(503);
+  });
+
+  test("returns 500 when provider checkout fails with generic error", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.createProviderCheckout.mockRejectedValueOnce(new Error("timeout"));
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(500);
   });
 });

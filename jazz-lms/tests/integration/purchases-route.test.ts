@@ -80,6 +80,16 @@ describe("GET /api/purchases", () => {
       currency: "EUR",
     });
   });
+
+  test("returns 500 on internal errors", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mocks.purchaseFindMany.mockRejectedValue(new Error("db down"));
+
+    const { GET } = await import("@/app/api/purchases/route");
+    const response = await GET();
+
+    expect(response.status).toBe(500);
+  });
 });
 
 describe("POST /api/purchases", () => {
@@ -106,6 +116,55 @@ describe("POST /api/purchases", () => {
     );
 
     expect(response.status).toBe(400);
+  });
+
+  test("returns 401 when unauthenticated", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: null } });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({ action: "reconcile", courseId: "course-1" }),
+      }),
+    );
+
+    expect(response.status).toBe(401);
+  });
+
+  test("returns 400 when courseId is missing", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({ action: "reconcile" }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+  });
+
+  test("returns purchased=true from database when purchase already exists", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.purchaseFindUnique.mockResolvedValue({ id: "p1" });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({ action: "reconcile", courseId: "course-1" }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ purchased: true, source: "database" });
   });
 
   test("returns 503 when active provider is not dodo", async () => {
@@ -188,6 +247,71 @@ describe("POST /api/purchases", () => {
     });
   });
 
+  test("skips non-paid and mismatched webhook events and returns pending", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.paymentWebhookEventFindMany.mockResolvedValue([
+      {
+        eventId: "evt_not_paid",
+        payload: {
+          type: "payment.pending",
+          data: {
+            payment: { id: "pay_pending" },
+            metadata: { userId: "u1", courseId: "course-1" },
+          },
+        },
+      },
+      {
+        eventId: "evt_wrong_course",
+        payload: {
+          type: "payment.succeeded",
+          data: {
+            payment: { id: "pay_wrong_course" },
+            metadata: { userId: "u1", courseId: "course-2" },
+          },
+        },
+      },
+      {
+        eventId: "evt_wrong_attempt",
+        payload: {
+          type: "payment.succeeded",
+          data: {
+            payment: {
+              id: "pay_wrong_attempt",
+              customer: { email: "admin@neurofactory.net" },
+            },
+            metadata: {
+              userId: "u1",
+              courseId: "course-1",
+              checkoutAttemptId: "other-attempt",
+            },
+          },
+        },
+      },
+    ]);
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          checkoutAttemptId: "attempt-1",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(202);
+    expect(body).toEqual({
+      purchased: false,
+      reason: "pending_webhook",
+      provider: "dodo",
+    });
+  });
+
   test("returns 202 when no event/payment reconciliation is available", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "admin@neurofactory.net" } },
@@ -208,5 +332,215 @@ describe("POST /api/purchases", () => {
       reason: "pending_webhook",
       provider: "dodo",
     });
+  });
+
+  test("reconciles purchase from Dodo payment API when webhook event is absent", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      id: "pay_api_1",
+      status: "succeeded",
+      subtotal_amount: 2990,
+      total_amount: 2490,
+      amount: 2490,
+      customer_email: "admin@neurofactory.net",
+      metadata: {
+        userId: "u1",
+        courseId: "course-1",
+        checkoutAttemptId: "attempt-1",
+        voucherCode: "JAZZ50",
+        providerDiscountCode: "DODO50",
+      },
+      customer: {
+        email: "admin@neurofactory.net",
+      },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          checkoutAttemptId: "attempt-1",
+          paymentId: "pay_api_1",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      purchased: true,
+      source: "reconciled_dodo_api",
+      providerReferenceId: "dodo-pay:pay_api_1",
+    });
+  });
+
+  test("returns pending when payment API result is not paid", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      id: "pay_api_pending",
+      status: "pending",
+      customer_email: "admin@neurofactory.net",
+      metadata: {
+        userId: "u1",
+        courseId: "course-1",
+      },
+      customer: {
+        email: "admin@neurofactory.net",
+      },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_pending",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(202);
+  });
+
+  test("returns pending when payment API metadata does not match user/course/attempt", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      id: "pay_api_mismatch",
+      status: "succeeded",
+      customer_email: "other@neurofactory.net",
+      metadata: {
+        userId: "u2",
+        courseId: "course-2",
+        checkoutAttemptId: "attempt-2",
+      },
+      customer: {
+        email: "other@neurofactory.net",
+      },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          checkoutAttemptId: "attempt-1",
+          paymentId: "pay_api_mismatch",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(202);
+  });
+
+  test("returns pending when payment API cannot resolve provider reference", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      id: null,
+      status: "succeeded",
+      customer_email: "admin@neurofactory.net",
+      metadata: {
+        userId: "u1",
+        courseId: "course-1",
+      },
+      customer: {
+        email: "admin@neurofactory.net",
+      },
+    });
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_missing_ref",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(202);
+  });
+
+  test("returns 503 when Dodo API is unavailable during reconcile", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockRejectedValue(
+      new Error("Dodo payment retrieve failed: network"),
+    );
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_1",
+        }),
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body).toEqual({
+      purchased: false,
+      reason: "provider_unavailable",
+      provider: "dodo",
+    });
+  });
+
+  test("returns 500 when Dodo API throws a non-provider error", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.retrieveDodoPayment.mockRejectedValue(new Error("unexpected timeout"));
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "reconcile",
+          courseId: "course-1",
+          paymentId: "pay_api_1",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(500);
+  });
+
+  test("returns 500 on unexpected reconciliation errors", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@neurofactory.net" } },
+    });
+    mocks.paymentWebhookEventFindMany.mockRejectedValue(new Error("unexpected"));
+
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/purchases", {
+        method: "POST",
+        body: JSON.stringify({ action: "reconcile", courseId: "course-1" }),
+      }),
+    );
+
+    expect(response.status).toBe(500);
   });
 });

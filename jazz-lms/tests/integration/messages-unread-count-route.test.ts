@@ -66,4 +66,18 @@ describe('GET /api/messages/unread-count', () => {
     expect(response.status).toBe(200);
     expect(body.count).toBe(2);
   });
+
+  test('returns 500 when ensureMessagingTables fails', async () => {
+    mocks.ensureTables.mockRejectedValue(new Error('migration failed'));
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: 'u1', email: 'student@example.com' } },
+    });
+
+    const { GET } = await import('@/app/api/messages/unread-count/route');
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(body.count).toBe(0);
+  });
 });
