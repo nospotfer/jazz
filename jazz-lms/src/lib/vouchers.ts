@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { getVoucherProviderDiscountCode } from '@/lib/voucher-lemon-sync';
+import { getVoucherProviderDiscountCode } from '@/lib/voucher-provider-sync';
 
 export type VoucherTypeValue = 'FREE_ACCESS' | 'DISCOUNT_PERCENT' | 'DISCOUNT_FIXED';
 

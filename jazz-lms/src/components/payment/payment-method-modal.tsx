@@ -26,7 +26,7 @@ const copyByLanguage = {
   es: {
     title: "Activa tu descuento",
     subtitle:
-      "Ingresa tu voucher y continúa al checkout seguro de Lemon Squeezy.",
+      "Ingresa tu voucher y continúa al checkout seguro de Dodo Payments.",
     voucherHint: "Si no tienes voucher, el curso sigue con el precio normal.",
     summaryTitle: "Resumen de compra",
     basePrice: "Precio base",
@@ -38,7 +38,7 @@ const copyByLanguage = {
   en: {
     title: "Apply your discount",
     subtitle:
-      "Enter your voucher and continue to secure Lemon Squeezy checkout.",
+      "Enter your voucher and continue to secure Dodo Payments checkout.",
     voucherHint:
       "If you do not have a voucher, the course keeps the normal price.",
     summaryTitle: "Purchase summary",
@@ -51,7 +51,7 @@ const copyByLanguage = {
   fr: {
     title: "Activez votre remise",
     subtitle:
-      "Entrez votre code promo puis continuez vers le checkout Lemon Squeezy.",
+      "Entrez votre code promo puis continuez vers le checkout Dodo Payments.",
     voucherHint: "Sans code promo, le cours reste au prix normal.",
     summaryTitle: "Resume de l achat",
     basePrice: "Prix de base",
@@ -63,7 +63,7 @@ const copyByLanguage = {
   pt: {
     title: "Ative seu desconto",
     subtitle:
-      "Digite seu voucher e continue para o checkout seguro da Lemon Squeezy.",
+      "Digite seu voucher e continue para o checkout seguro da Dodo Payments.",
     voucherHint: "Sem voucher, o curso continua com o valor normal.",
     summaryTitle: "Resumo da compra",
     basePrice: "Preco base",

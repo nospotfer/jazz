@@ -74,15 +74,15 @@ async function resolveCheckoutEntryButton(page: Page) {
   );
 }
 
-test.describe("Payments E2E (real Lemon)", () => {
-  test("redirects authenticated user to Lemon checkout", async ({
+test.describe("Payments E2E (real Dodo)", () => {
+  test("redirects authenticated user to Dodo checkout", async ({
     browser,
   }) => {
     const config = getPaymentsE2EConfig();
 
     test.skip(
       !config.enabled,
-      "PAYMENTS_E2E_REAL_ENABLED!=1 (real Lemon E2E disabled).",
+      "PAYMENTS_E2E_REAL_ENABLED!=1 (real Dodo E2E disabled).",
     );
 
     const missing = getMissingPaymentsE2ERequirements(config);

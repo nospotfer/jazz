@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
-import { removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
+import { removeVoucherDiscountSync } from '@/lib/voucher-provider-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
       ? candidates
       : candidates.filter((voucher: any) => voucher.currentUses === 0 && voucher._count.redemptions === 0);
 
-    const lemonSyncResults = await Promise.all(
+    const providerSyncResults = await Promise.all(
       deletable.map((voucher: any) =>
         removeVoucherDiscountSync({
           id: voucher.id,
@@ -103,7 +103,7 @@ export async function POST(req: Request) {
       )
     );
 
-    const lemonSyncWarnings = lemonSyncResults
+    const providerSyncWarnings = providerSyncResults
       .map((result, index) => ({ result, code: deletable[index]?.code }))
       .filter((entry) => !entry.result.ok)
       .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       ...result,
-      lemonSyncWarnings,
+      providerSyncWarnings,
     });
   } catch (error) {
     console.error('[ADMIN_VOUCHERS_BULK_DELETE_ERROR]', error);

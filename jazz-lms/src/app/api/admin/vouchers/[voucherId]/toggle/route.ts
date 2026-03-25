@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import {
   ensureVoucherDiscountSynced,
   removeVoucherDiscountSync,
-} from "@/lib/voucher-lemon-sync";
+} from "@/lib/voucher-provider-sync";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -98,7 +98,7 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       voucher,
-      lemonSync: {
+      providerSync: {
         ok: syncResult.ok,
         reason: syncResult.reason || null,
       },

@@ -310,15 +310,6 @@ export async function POST(req: Request) {
       );
     }
 
-    if (
-      paymentProvider === "lemon" &&
-      !process.env.LEMON_SQUEEZY_WEBHOOK_SECRET?.trim()
-    ) {
-      console.warn(
-        "[CHECKOUT_WARNING] Lemon webhook secret is missing. Purchase unlock may not persist.",
-      );
-    }
-
     const encodedCourseId = encodeURIComponent(courseId);
     const checkoutAttemptId = randomUUID();
     const encodedCheckoutAttemptId = encodeURIComponent(checkoutAttemptId);
@@ -389,8 +380,6 @@ export async function POST(req: Request) {
             normalizedProviderError.includes("reached")));
 
       const providerConfigFailure =
-        errorMessage.includes("missing lemon_squeezy") ||
-        errorMessage.includes("missing lemon") ||
         errorMessage.includes("missing dodo");
 
       if (voucherMaxUsesReachedAtProvider) {

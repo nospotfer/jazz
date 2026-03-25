@@ -63,13 +63,22 @@ function normalizeCode(value: string | null | undefined): string | null {
   return normalized.length > 0 ? normalized : null;
 }
 
-function getMetadataLemonDiscountCode(metadata: unknown): string | null {
+function getMetadataProviderDiscountCode(metadata: unknown): string | null {
   if (!metadata || typeof metadata !== 'object') {
     return null;
   }
 
-  const lemonDiscountCode = (metadata as LooseObject).lemonDiscountCode;
-  return normalizeCode(typeof lemonDiscountCode === 'string' ? lemonDiscountCode : null);
+  const providerDiscountCode = (metadata as LooseObject).providerDiscountCode;
+  if (typeof providerDiscountCode === 'string') {
+    return normalizeCode(providerDiscountCode);
+  }
+
+  const dodoDiscountCode = (metadata as LooseObject).dodoDiscountCode;
+  if (typeof dodoDiscountCode === 'string') {
+    return normalizeCode(dodoDiscountCode);
+  }
+
+  return null;
 }
 
 async function findVoucherByCode(prisma: any, code: string): Promise<{ id: string } | null> {
@@ -139,7 +148,7 @@ async function resolveVoucherByInput(prisma: any, input: UpsertCoursePurchaseInp
   });
 
   const metadataMappedVoucher = voucherCandidates.find((candidate: { metadata: unknown }) => {
-    return getMetadataLemonDiscountCode(candidate.metadata) === providerCode;
+    return getMetadataProviderDiscountCode(candidate.metadata) === providerCode;
   });
 
   return metadataMappedVoucher?.id ?? null;

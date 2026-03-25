@@ -30,7 +30,7 @@ export default defineConfig({
         'src/app/api/messages/unread-count/route.ts',
         'src/app/api/purchases/route.ts',
         'src/app/api/lesson-checkout/route.ts',
-        'src/app/api/webhooks/lemon-squeezy/route.ts',
+        'src/app/api/webhooks/dodo-jazzlms/route.ts',
         'src/app/api/dev/reset-test-purchases/route.ts',
       ],
       thresholds: {

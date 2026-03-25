@@ -7,7 +7,7 @@ import {
   getVoucherArtistByKey,
   VOUCHER_ARTIST_TIERS,
 } from '@/lib/voucher-artists';
-import { ensureVoucherDiscountSynced } from '@/lib/voucher-lemon-sync';
+import { ensureVoucherDiscountSynced } from '@/lib/voucher-provider-sync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -234,7 +234,7 @@ export async function POST(req: Request) {
     });
 
     const syncWarnings: string[] = [];
-    let syncedWithLemon = 0;
+    let syncedWithProvider = 0;
 
     for (const createdVoucher of result.vouchers) {
       const syncResult = await ensureVoucherDiscountSynced({
@@ -256,7 +256,7 @@ export async function POST(req: Request) {
       });
 
       if (syncResult.ok) {
-        syncedWithLemon += 1;
+        syncedWithProvider += 1;
       } else {
         syncWarnings.push(`${createdVoucher.code}: ${syncResult.reason || 'sync failed'}`);
       }
@@ -266,7 +266,7 @@ export async function POST(req: Request) {
       success: true,
       created: result.vouchers.length,
       batchId: result.batch.id,
-      syncedWithLemon,
+      syncedWithProvider,
       syncWarnings,
       artists: VOUCHER_ARTIST_TIERS,
       vouchers: result.vouchers,

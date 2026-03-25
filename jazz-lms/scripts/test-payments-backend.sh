@@ -9,7 +9,7 @@ echo "▶ Running payment backend validation suite"
 npx vitest run \
   tests/integration/checkout-route.test.ts \
   tests/integration/purchases-route.test.ts \
-  tests/integration/lemon-webhook-route.test.ts \
+  tests/integration/dodo-webhook-route.test.ts \
   tests/integration/dev-reset-purchases-route.test.ts \
   tests/unit/course-purchase-sync.test.ts \
   tests/unit/checkout-helpers.test.ts \

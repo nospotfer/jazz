@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 echo "▶ Step 1/3: Payment backend tests"
 bash scripts/test-payments-backend.sh
 
-echo "▶ Step 2/3: Real Lemon frontend E2E"
+echo "▶ Step 2/3: Real Dodo frontend E2E"
 bash scripts/test-payments-frontend-real.sh
 
 echo "▶ Step 3/3: Production build"

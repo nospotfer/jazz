@@ -35,7 +35,7 @@ export function getPaymentsE2EConfig(): PaymentsE2EConfig {
     enabled: process.env.PAYMENTS_E2E_REAL_ENABLED === '1',
     storageStatePath: process.env.PAYMENTS_E2E_STORAGE_STATE || '',
     courseId: process.env.PAYMENTS_E2E_COURSE_ID || '',
-    expectedCheckoutHost: process.env.PAYMENTS_E2E_EXPECT_HOST || 'lemonsqueezy.com',
+    expectedCheckoutHost: process.env.PAYMENTS_E2E_EXPECT_HOST || 'dodopayments.com',
     voucherCodes: parseCsv(process.env.PAYMENTS_E2E_VOUCHER_CODES).map((code) => code.toUpperCase()),
     methods: parseMethods(process.env.PAYMENTS_E2E_METHODS),
   };

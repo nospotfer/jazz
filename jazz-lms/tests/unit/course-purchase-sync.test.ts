@@ -102,14 +102,14 @@ describe('upsertCoursePurchaseFromProvider', () => {
     );
   });
 
-  test('maps provider discount code via metadata lemonDiscountCode when direct match does not exist', async () => {
+  test('maps provider discount code via metadata dodoDiscountCode when direct match does not exist', async () => {
     const providerVoucherFindUnique = vi.fn().mockResolvedValue(null);
     const providerVoucherFindFirst = vi.fn().mockResolvedValue(null);
     const providerVoucherFindMany = vi.fn().mockResolvedValue([
       {
         id: 'voucher-meta',
         metadata: {
-          lemonDiscountCode: 'LeMon-Disc-42',
+          dodoDiscountCode: 'DODO-DISC-42',
         },
       },
     ]);
@@ -162,11 +162,11 @@ describe('upsertCoursePurchaseFromProvider', () => {
     await upsertCoursePurchaseFromProvider({
       userId: 'user-2',
       courseId: 'course-2',
-      providerReferenceId: 'ls-order:2',
+      providerReferenceId: 'dodo-pay:2',
       originalPrice: 75,
       discountAmount: 10,
       finalPrice: 65,
-      providerDiscountCode: 'lemon-disc-42',
+      providerDiscountCode: 'dodo-disc-42',
     });
 
     expect(providerVoucherFindMany).toHaveBeenCalledTimes(1);
