@@ -3,47 +3,7 @@ import { NextResponse } from 'next/server'
 import { syncUserWithDatabase } from '@/lib/sync-user'
 import { getRandomProfileAvatar } from '@/lib/profile-avatars'
 import { normalizeLanguage } from '@/lib/language'
-
-function normalizeBaseOrigin(value?: string | null): string | null {
-  if (!value) return null
-
-  try {
-    const url = new URL(value)
-    return `${url.protocol}//${url.host}`
-  } catch {
-    return null
-  }
-}
-
-function isLocalOrigin(origin?: string | null): boolean {
-  if (!origin) return false
-
-  try {
-    const { hostname } = new URL(origin)
-    return hostname === 'localhost' || hostname === '127.0.0.1'
-  } catch {
-    return false
-  }
-}
-
-function resolveServerAppOrigin(requestOrigin: string): string {
-  const isDevelopment = process.env.NODE_ENV !== 'production'
-  const configuredOrigin = normalizeBaseOrigin(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL)
-
-  if (isDevelopment) {
-    if (isLocalOrigin(requestOrigin)) {
-      return requestOrigin
-    }
-
-    if (configuredOrigin && isLocalOrigin(configuredOrigin)) {
-      return configuredOrigin
-    }
-
-    return 'http://localhost:3000'
-  }
-
-  return configuredOrigin || requestOrigin
-}
+import { isLocalOrigin, normalizeBaseOrigin, resolveServerAppOrigin } from '@/lib/app-origin'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
