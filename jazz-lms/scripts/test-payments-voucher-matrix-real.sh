@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 if [[ "${PAYMENTS_E2E_REAL_ENABLED:-0}" != "1" ]]; then
-  echo "❌ PAYMENTS_E2E_REAL_ENABLED must be 1 to run real Lemon E2E"
+  echo "❌ PAYMENTS_E2E_REAL_ENABLED must be 1 to run real Dodo E2E"
   exit 1
 fi
 
@@ -29,6 +29,6 @@ if [[ ! -f "$PAYMENTS_E2E_STORAGE_STATE" ]]; then
   exit 1
 fi
 
-echo "▶ Running real Lemon voucher matrix E2E"
+echo "▶ Running real Dodo voucher matrix E2E"
 npx playwright test tests/e2e/payments-voucher-matrix-real.spec.ts
-echo "✅ Real Lemon voucher matrix E2E passed"
+echo "✅ Real Dodo voucher matrix E2E passed"

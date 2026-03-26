@@ -10,9 +10,9 @@ const REQUIRED_ENV = [
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_STORAGE_BUCKET",
-  "LEMON_SQUEEZY_API_KEY",
-  "LEMON_SQUEEZY_STORE_ID",
-  "LEMON_SQUEEZY_VARIANT_ID",
+  "DODO_PAYMENTS_API_KEY",
+  "DODO_PRODUCT_ID",
+  "DODO_BUSINESS_ID",
   "MUX_SIGNING_KEY_ID",
   "MUX_SIGNING_PRIVATE_KEY",
 ] as const;
@@ -275,7 +275,7 @@ async function main() {
   console.log(`Attachments: ${attachmentCount}`);
   console.log(`Mux streams validated: ${muxOk}/${sampleSize}`);
   console.log("Supabase signed URL: OK");
-  console.log("Lemon checkout config: OK");
+  console.log("Dodo checkout config: OK");
 }
 
 main()

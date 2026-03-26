@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { isLegacyVoucherCode } from '@/lib/voucher-artists';
-import { removeVoucherDiscountSync } from '@/lib/voucher-lemon-sync';
+import { removeVoucherDiscountSync } from '@/lib/voucher-provider-sync';
 
 export const runtime = 'nodejs';
 
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     }
 
     const deletedIds = legacyVouchers.map((voucher: any) => voucher.id);
-    const lemonSyncResults = await Promise.all(
+    const providerSyncResults = await Promise.all(
       legacyVouchers.map((voucher: any) =>
         removeVoucherDiscountSync({
           id: voucher.id,
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
         })
       )
     );
-    const lemonSyncWarnings = lemonSyncResults
+    const providerSyncWarnings = providerSyncResults
       .map((result, index) => ({ result, code: legacyVouchers[index]?.code }))
       .filter((entry) => !entry.result.ok)
       .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
@@ -128,7 +128,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       deletedCount: deletedIds.length,
-      lemonSyncWarnings,
+      providerSyncWarnings,
       message: `Se eliminaron ${deletedIds.length} cupon(es) legado(s).`,
     });
   } catch (error) {

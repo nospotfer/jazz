@@ -703,9 +703,7 @@ export function CourseViewClient({ userName, hasPurchased: initialHasPurchased, 
 
       const orderId =
         searchParams.get('order_id') ||
-        searchParams.get('orderId') ||
-        searchParams.get('lemon_order_id') ||
-        searchParams.get('lemonOrderId');
+        searchParams.get('orderId');
       const checkoutAttemptId =
         searchParams.get('checkoutAttemptId') ||
         searchParams.get('checkout_attempt_id') ||

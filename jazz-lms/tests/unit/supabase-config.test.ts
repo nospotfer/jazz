@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { hasValidSupabasePublicConfig, hasValidSupabaseServerConfig } from '@/lib/supabase-config';
+import {
+  hasValidSupabasePublicConfig,
+  hasValidSupabaseServerConfig,
+  normalizeSupabaseUrl,
+} from '@/lib/supabase-config';
 
 describe('supabase-config', () => {
   test('accepts valid public config', () => {
@@ -28,6 +32,23 @@ describe('supabase-config', () => {
     ).toBe(false);
     expect(
       hasValidSupabaseServerConfig('https://your-project.supabase.co', 'anon_real_key', 'service_real_key')
+    ).toBe(false);
+  });
+
+  test('normalizes urls and trims trailing slashes', () => {
+    expect(normalizeSupabaseUrl('https://proj.supabase.co///')).toBe('https://proj.supabase.co');
+    expect(normalizeSupabaseUrl(' https://proj.supabase.co/ ')).toBe('https://proj.supabase.co');
+  });
+
+  test('returns null for empty or missing urls', () => {
+    expect(normalizeSupabaseUrl(undefined)).toBeNull();
+    expect(normalizeSupabaseUrl('')).toBeNull();
+    expect(normalizeSupabaseUrl('   ')).toBeNull();
+  });
+
+  test('rejects placeholder-like service role variations', () => {
+    expect(
+      hasValidSupabaseServerConfig('https://proj.supabase.co', 'anon_real_key', 'MY_YOUR_SERVICE_ROLE_KEY_VALUE')
     ).toBe(false);
   });
 });

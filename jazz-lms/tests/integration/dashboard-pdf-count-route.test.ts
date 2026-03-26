@@ -70,6 +70,55 @@ describe('GET /api/dashboard/pdf-count', () => {
     expect(body.count).toBe(0);
   });
 
+  test('handles authenticated user without email and returns zero', async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: 'u-no-email' } } });
+    mocks.findPurchaseFirst.mockResolvedValue(null);
+
+    const { GET } = await import('@/app/api/dashboard/pdf-count/route');
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.count).toBe(0);
+  });
+
+  test('returns zero when student purchases course but lesson has no note attachment', async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: 'u1', email: 'student@example.com' } },
+    });
+    mocks.findUser.mockResolvedValue({ role: 'USER' });
+    mocks.findPurchaseFirst.mockResolvedValue({ id: 'p1' });
+    mocks.findPurchases.mockResolvedValue([{ courseId: 'c1' }]);
+    mocks.findCourses.mockResolvedValue([
+      {
+        id: 'c1',
+        chapters: [
+          {
+            lessons: [
+              {
+                id: 'l1',
+                attachments: [
+                  {
+                    id: 'a1',
+                    name: 'slides-class-1.pdf',
+                    url: 'https://cdn.test/slides-class-1.pdf',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    const { GET } = await import('@/app/api/dashboard/pdf-count/route');
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.count).toBe(0);
+  });
+
   test('returns attachment count for privileged viewers', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u-admin', email: 'admin@example.com' } } });
     mocks.findUser.mockResolvedValue({ role: 'SUPER_ADMIN' });
@@ -108,5 +157,16 @@ describe('GET /api/dashboard/pdf-count', () => {
 
     expect(response.status).toBe(200);
     expect(body.count).toBe(3);
+  });
+
+  test('returns 500 with zero on internal errors', async () => {
+    mocks.getUser.mockRejectedValue(new Error('supabase down'));
+
+    const { GET } = await import('@/app/api/dashboard/pdf-count/route');
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(body.count).toBe(0);
   });
 });

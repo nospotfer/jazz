@@ -89,7 +89,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         voucherCode: appliedVoucher?.voucher.code,
       });
 
-      // Redirect to Lemon Squeezy Checkout
+      // Redirect to the hosted provider checkout URL
       window.location.assign(response.data.url);
     } catch (error) {
       if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {

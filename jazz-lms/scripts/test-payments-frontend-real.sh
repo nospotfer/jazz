@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 if [[ "${PAYMENTS_E2E_REAL_ENABLED:-0}" != "1" ]]; then
-  echo "❌ PAYMENTS_E2E_REAL_ENABLED must be 1 to run real Lemon E2E"
+  echo "❌ PAYMENTS_E2E_REAL_ENABLED must be 1 to run real Dodo E2E"
   exit 1
 fi
 
@@ -44,7 +44,7 @@ if is_port_3000_busy && [[ "${PAYMENTS_E2E_ALLOW_SERVER_REUSE:-0}" != "1" ]]; th
   exit 1
 fi
 
-echo "▶ Running real Lemon frontend E2E"
+echo "▶ Running real Dodo frontend E2E"
 PLAYWRIGHT_REUSE_EXISTING_SERVER="${PLAYWRIGHT_REUSE_EXISTING_SERVER:-0}" \
-  npx playwright test tests/e2e/payments-lemon-real.spec.ts
-echo "✅ Real Lemon frontend E2E passed"
+  npx playwright test tests/e2e/payments-dodo-real.spec.ts
+echo "✅ Real Dodo frontend E2E passed"

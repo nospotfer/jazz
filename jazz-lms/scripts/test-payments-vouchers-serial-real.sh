@@ -29,7 +29,7 @@ if [[ -z "${E2E_LOGIN_USER_ID:-}" ]]; then
   exit 1
 fi
 
-PAYMENTS_E2E_EXPECT_HOST="${PAYMENTS_E2E_EXPECT_HOST:-lemonsqueezy.com}"
+PAYMENTS_E2E_EXPECT_HOST="${PAYMENTS_E2E_EXPECT_HOST:-dodopayments.com}"
 
 IFS=',' read -r -a VOUCHERS <<< "$PAYMENTS_E2E_VOUCHER_CODES"
 IFS=',' read -r -a METHODS <<< "${PAYMENTS_E2E_METHODS:-card,paypal}"

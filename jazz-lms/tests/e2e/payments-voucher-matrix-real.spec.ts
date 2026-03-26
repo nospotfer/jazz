@@ -76,7 +76,7 @@ async function selectMethodAndContinue(
   method: 'card' | 'paypal',
   expectedCheckoutHost: string,
   allowDirectUnlock: boolean
-): Promise<'lemon' | 'unlock' | 'checkout_error'> {
+): Promise<'dodo' | 'unlock' | 'checkout_error'> {
   const methodButtonName = method === 'card' ? /tarjeta|card|carte|cartão/i : /paypal/i;
 
   const methodButton = page.getByRole('button', { name: methodButtonName }).first();
@@ -87,12 +87,12 @@ async function selectMethodAndContinue(
 
   await continueButton.click();
 
-  const lemonRedirect = page
+  const dodoRedirect = page
     .waitForURL(
       (url) => url.hostname === expectedCheckoutHost || url.hostname.endsWith(`.${expectedCheckoutHost}`),
       { timeout: 45_000 }
     )
-    .then(() => 'lemon' as const)
+    .then(() => 'dodo' as const)
     .catch(() => null);
 
   const checkoutError = page
@@ -103,14 +103,14 @@ async function selectMethodAndContinue(
     .catch(() => null);
 
   if (!allowDirectUnlock) {
-    const result = await Promise.race([lemonRedirect, checkoutError]);
+    const result = await Promise.race([dodoRedirect, checkoutError]);
     expect(result).not.toBeNull();
 
-    if (result === 'lemon') {
+    if (result === 'dodo') {
       expect(page.url()).toContain(expectedCheckoutHost);
     }
 
-    return result as 'lemon' | 'checkout_error';
+    return result as 'dodo' | 'checkout_error';
   }
 
   const directUnlock = page
@@ -120,16 +120,16 @@ async function selectMethodAndContinue(
     .then(() => 'unlock' as const)
     .catch(() => null);
 
-  const outcome = await Promise.race([lemonRedirect, directUnlock, checkoutError]);
+  const outcome = await Promise.race([dodoRedirect, directUnlock, checkoutError]);
   expect(outcome).not.toBeNull();
-  return outcome as 'lemon' | 'unlock' | 'checkout_error';
+  return outcome as 'dodo' | 'unlock' | 'checkout_error';
 }
 
-test.describe('Payments voucher matrix E2E (real Lemon)', () => {
+test.describe('Payments voucher matrix E2E (real Dodo)', () => {
   test.describe.configure({ timeout: 20 * 60 * 1000 });
   const config = getPaymentsE2EConfig();
 
-  test.skip(!config.enabled, 'PAYMENTS_E2E_REAL_ENABLED!=1 (real Lemon E2E disabled).');
+  test.skip(!config.enabled, 'PAYMENTS_E2E_REAL_ENABLED!=1 (real Dodo E2E disabled).');
 
   const missing = getMissingPaymentsE2ERequirements(config);
   test.skip(
@@ -137,7 +137,7 @@ test.describe('Payments voucher matrix E2E (real Lemon)', () => {
     `Missing required env vars for real payment E2E: ${missing.join(', ')}`
   );
 
-  test('redirects to Lemon for selected methods without voucher', async ({ browser }) => {
+  test('redirects to Dodo for selected methods without voucher', async ({ browser }) => {
     for (const method of config.methods) {
       const context = await browser.newContext({
         storageState: config.storageStatePath,

@@ -90,6 +90,55 @@ describe('POST /api/dev/reset-test-purchases', () => {
     expect(body.deletedDiscounts).toBe(2);
   });
 
+  test('skips null or missing vouchers while rolling back usage counters', async () => {
+    vi.doMock('@/lib/test-mode', () => ({
+      isLocalTestRequest: vi.fn().mockReturnValue(true),
+    }));
+    vi.doMock('@/utils/supabase/server', () => ({
+      createClient: () => ({
+        auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }) },
+      }),
+    }));
+
+    const updateVoucher = vi.fn().mockResolvedValue({ id: 'v1' });
+    const $transaction = vi.fn().mockImplementation(async (callback: (tx: any) => Promise<unknown>) =>
+      callback({
+        voucherRedemption: {
+          findMany: vi
+            .fn()
+            .mockResolvedValue([{ voucherId: null }, { voucherId: 'v-missing' }, { voucherId: 'v1' }]),
+          deleteMany: vi.fn().mockResolvedValue({ count: 3 }),
+        },
+        voucherCode: {
+          findUnique: vi
+            .fn()
+            .mockResolvedValueOnce(null)
+            .mockResolvedValueOnce({ currentUses: 2 }),
+          update: updateVoucher,
+        },
+        discountApplied: {
+          deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+        },
+        purchase: { deleteMany: vi.fn().mockResolvedValue({ count: 1 }) },
+        userProgress: { deleteMany: vi.fn().mockResolvedValue({ count: 1 }) },
+        lessonPurchase: { deleteMany: vi.fn().mockResolvedValue({ count: 1 }) },
+      })
+    );
+    vi.doMock('@/lib/db', () => ({
+      db: {
+        $transaction,
+      },
+    }));
+
+    const { POST } = await import('@/app/api/dev/reset-test-purchases/route');
+    const response = await POST(makeReq());
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(updateVoucher).toHaveBeenCalledTimes(1);
+  });
+
   test('returns 500 on internal error', async () => {
     vi.doMock('@/lib/test-mode', () => ({
       isLocalTestRequest: vi.fn().mockReturnValue(true),

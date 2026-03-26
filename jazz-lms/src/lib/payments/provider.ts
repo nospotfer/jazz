@@ -1,16 +1,10 @@
 import {
-  createLemonCheckout,
-  getLemonConfig,
-  isLemonConfigured,
-  type LemonCheckoutInput,
-} from "@/lib/lemon-squeezy";
-import {
   createDodoCheckout,
   getDodoConfig,
   isDodoConfigured,
 } from "@/lib/payments/providers/dodo";
 
-export type PaymentProvider = "dodo" | "lemon";
+export type PaymentProvider = "dodo";
 
 export type ProviderCheckoutInput = {
   email: string;
@@ -19,12 +13,7 @@ export type ProviderCheckoutInput = {
   providerDiscountCode?: string;
 };
 
-function normalizeProvider(value: string | null | undefined): PaymentProvider {
-  const normalized = value?.trim().toLowerCase();
-  if (normalized === "lemon") {
-    return "lemon";
-  }
-
+function normalizeProvider(_value: string | null | undefined): PaymentProvider {
   return "dodo";
 }
 
@@ -35,42 +24,29 @@ export function getPaymentProvider(): PaymentProvider {
 export function isActivePaymentProviderConfigured(
   provider = getPaymentProvider(),
 ): boolean {
-  if (provider === "lemon") {
-    return isLemonConfigured();
-  }
-
+  void provider;
   return isDodoConfigured();
 }
 
 export function getProviderVoucherReferencePrefix(
   provider = getPaymentProvider(),
 ): string {
-  return provider === "lemon" ? "ls-voucher" : "dodo-voucher";
+  void provider;
+  return "dodo-voucher";
 }
 
 export function getProviderOrderReferencePrefix(
   provider = getPaymentProvider(),
 ): string {
-  return provider === "lemon" ? "ls-order" : "dodo-pay";
+  void provider;
+  return "dodo-pay";
 }
 
 export async function createProviderCheckout(
   input: ProviderCheckoutInput,
   provider = getPaymentProvider(),
 ): Promise<string> {
-  if (provider === "lemon") {
-    const lemonConfig = getLemonConfig();
-    const lemonCheckoutInput: LemonCheckoutInput = {
-      storeId: lemonConfig.storeId as string,
-      variantId: lemonConfig.variantId as string,
-      email: input.email,
-      successUrl: input.successUrl,
-      customData: input.customData,
-      discountCode: input.providerDiscountCode,
-    };
-
-    return createLemonCheckout(lemonCheckoutInput);
-  }
+  void provider;
 
   const dodoConfig = getDodoConfig();
 

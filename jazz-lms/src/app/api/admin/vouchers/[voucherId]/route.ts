@@ -1,6 +1,6 @@
 import { ensureAdminApiPermission } from "@/lib/admin-api";
 import { db } from "@/lib/db";
-import { removeVoucherDiscountSync } from "@/lib/voucher-lemon-sync";
+import { removeVoucherDiscountSync } from "@/lib/voucher-provider-sync";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -158,7 +158,7 @@ export async function DELETE(
       );
     }
 
-    const lemonSync = await removeVoucherDiscountSync({
+    const providerSync = await removeVoucherDiscountSync({
       id: voucher.id,
       code: voucher.code,
       type: voucher.type,
@@ -200,9 +200,9 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       deletedCount: 1,
-      lemonSync: {
-        ok: lemonSync.ok,
-        reason: lemonSync.reason || null,
+      providerSync: {
+        ok: providerSync.ok,
+        reason: providerSync.reason || null,
       },
       message: force
         ? `Voucher ${result.code} eliminado en modo forzado.`

@@ -31,7 +31,7 @@ export default async function CourseDetailPage({
       contentTitle: "Contenido del curso",
       chapterLabel: "Capítulo",
       fullAccess: "Acceso completo a las 15 clases",
-      securePayment: "Pago seguro gestionado por Lemon Squeezy",
+      securePayment: "Pago seguro gestionado por Dodo Payments",
     },
     en: {
       chapter: "chapter",
@@ -41,7 +41,7 @@ export default async function CourseDetailPage({
       contentTitle: "Course content",
       chapterLabel: "Chapter",
       fullAccess: "Full access to all 15 classes",
-      securePayment: "Secure payment handled by Lemon Squeezy",
+      securePayment: "Secure payment handled by Dodo Payments",
     },
     fr: {
       chapter: "chapitre",
@@ -51,7 +51,7 @@ export default async function CourseDetailPage({
       contentTitle: "Contenu du cours",
       chapterLabel: "Chapitre",
       fullAccess: "Accès complet aux 15 cours",
-      securePayment: "Paiement sécurisé géré par Lemon Squeezy",
+      securePayment: "Paiement sécurisé géré par Dodo Payments",
     },
     pt: {
       chapter: "capítulo",
@@ -61,7 +61,7 @@ export default async function CourseDetailPage({
       contentTitle: "Conteúdo do curso",
       chapterLabel: "Capítulo",
       fullAccess: "Acesso completo às 15 aulas",
-      securePayment: "Pagamento seguro processado pelo Lemon Squeezy",
+      securePayment: "Pagamento seguro processado pelo Dodo Payments",
     },
   }[language];
 
