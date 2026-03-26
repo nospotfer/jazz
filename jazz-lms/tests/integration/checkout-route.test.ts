@@ -592,6 +592,78 @@ describe("POST /api/checkout", () => {
     expect(mocks.voucherUpdate).toHaveBeenCalledTimes(1);
   });
 
+  test("returns 400 and increments usage from currentUses when voucher has no maxUses", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: false,
+      originalPrice: 29.99,
+      discount: 5,
+      finalPrice: 24.99,
+      voucher: {
+        id: "v2",
+        code: "JAZZNOMAX",
+        providerDiscountCode: "DODO-NOMAX",
+        maxUses: null,
+        currentUses: 3,
+      },
+    });
+
+    mocks.createProviderCheckout.mockRejectedValueOnce(
+      new Error("discount usage limit reached"),
+    );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+      voucherCode: "JAZZNOMAX",
+    });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(400);
+    expect(mocks.voucherUpdate).toHaveBeenCalledWith({
+      where: { id: "v2" },
+      data: { currentUses: 4 },
+    });
+  });
+
+  test("returns 400 on fallback failure even when voucher is not locally validated", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.createProviderCheckout
+      .mockRejectedValueOnce(new Error("discount invalid"))
+      .mockRejectedValueOnce(new Error("fallback failed"));
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({
+      courseId: "c1",
+    });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(400);
+  });
+
   test("returns 503 when provider checkout reports missing dodo configuration", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
@@ -632,6 +704,44 @@ describe("POST /api/checkout", () => {
 
     const { POST } = await import("@/app/api/checkout/route");
     const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(500);
+  });
+
+  test("returns 500 when provider generic error occurs with validated voucher", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({
+      valid: true,
+      isFree: false,
+      originalPrice: 29.99,
+      discount: 5,
+      finalPrice: 24.99,
+      voucher: {
+        id: "v1",
+        code: "JAZZ5",
+        providerDiscountCode: "DODO5",
+        maxUses: 100,
+        currentUses: 10,
+      },
+    });
+    mocks.createProviderCheckout.mockRejectedValueOnce(
+      new Error("unexpected provider failure"),
+    );
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1", voucherCode: "JAZZ5" });
 
     const res = await POST(req);
 
