@@ -1,12 +1,16 @@
 "use client";
 import { useLanguage } from "@/components/providers/language-provider";
-import { isLocalOrigin, normalizeBaseOrigin, resolveClientAppOrigin } from "@/lib/app-origin";
+import {
+    isLocalOrigin,
+    normalizeBaseOrigin,
+    resolveClientAppOrigin,
+} from "@/lib/app-origin";
 import { languageToHtmlLang } from "@/lib/language";
 import { getRandomProfileAvatar } from "@/lib/profile-avatars";
 import { hasValidSupabasePublicConfig } from "@/lib/supabase-config";
 import { createClient } from "@/utils/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
-import { LogOut, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -61,8 +65,6 @@ export default function AuthPage() {
       forgotPassword: "¿Olvidaste tu contraseña?",
       rememberMe: "Recordarme",
       closeAuth: "Fechar",
-      exitAuth: "Sair",
-      exitingAuth: "Saindo...",
       signingIn: "Iniciando sesión...",
       signIn: "Iniciar sesión",
       noAccount: "¿No tienes una cuenta?",
@@ -107,8 +109,6 @@ export default function AuthPage() {
       forgotPassword: "Forgot your password?",
       rememberMe: "Remember me",
       closeAuth: "Close",
-      exitAuth: "Logout",
-      exitingAuth: "Logging out...",
       signingIn: "Signing in...",
       signIn: "Sign in",
       noAccount: "Don’t have an account?",
@@ -153,8 +153,6 @@ export default function AuthPage() {
       forgotPassword: "Mot de passe oublié ?",
       rememberMe: "Se souvenir de moi",
       closeAuth: "Fermer",
-      exitAuth: "Se déconnecter",
-      exitingAuth: "Déconnexion...",
       signingIn: "Connexion en cours...",
       signIn: "Se connecter",
       noAccount: "Vous n’avez pas de compte ?",
@@ -199,8 +197,6 @@ export default function AuthPage() {
       forgotPassword: "Esqueceu sua senha?",
       rememberMe: "Lembrar de mim",
       closeAuth: "Fechar",
-      exitAuth: "Sair",
-      exitingAuth: "Saindo...",
       signingIn: "Entrando...",
       signIn: "Entrar",
       noAccount: "Não tem uma conta?",
@@ -294,7 +290,6 @@ export default function AuthPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [isExitingAuth, setIsExitingAuth] = useState(false);
 
   const redirectTo = useMemo(() => {
     if (typeof window === "undefined") return undefined;
@@ -456,15 +451,18 @@ export default function AuthPage() {
     try {
       await supabase.auth.signOut();
 
+      const oauthFlow = activeTab === "register" ? "register" : "login";
+      const oauthCookieOptions = "path=/; max-age=600; samesite=lax";
+
+      // Keep OAuth context in short-lived cookies so callback can recover it
+      // even when providers strip custom query params from redirect URLs.
+      document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; ${oauthCookieOptions}`;
+      document.cookie = `oauth_lang=${encodeURIComponent(language)}; ${oauthCookieOptions}`;
+      document.cookie = `oauth_next=${encodeURIComponent("/dashboard")}; ${oauthCookieOptions}`;
+
       const callbackUrl = new URL(
         redirectTo || `${window.location.origin}/auth/callback`,
       );
-      callbackUrl.searchParams.set(
-        "flow",
-        activeTab === "register" ? "register" : "login",
-      );
-      callbackUrl.searchParams.set("lang", language);
-      callbackUrl.searchParams.set("next", "/dashboard");
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -509,18 +507,6 @@ export default function AuthPage() {
       }
     } finally {
       setGoogleLoading(false);
-    }
-  };
-
-  const handleExitAuth = async () => {
-    setIsExitingAuth(true);
-
-    try {
-      await supabase.auth.signOut();
-    } finally {
-      router.replace("/");
-      router.refresh();
-      setIsExitingAuth(false);
     }
   };
 
@@ -571,22 +557,11 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors"
             aria-label={copy.closeAuth}
           >
             <X className="h-4 w-4" />
             {copy.closeAuth}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleExitAuth}
-            disabled={isExitingAuth}
-            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            aria-label={copy.exitAuth}
-          >
-            <LogOut className="h-4 w-4" />
-            {isExitingAuth ? copy.exitingAuth : copy.exitAuth}
           </button>
         </div>
 
@@ -670,6 +645,8 @@ export default function AuthPage() {
                 <input
                   id="fullName"
                   type="text"
+                  name="fullName"
+                  autoComplete="name"
                   placeholder={copy.fullNamePlaceholder}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -685,6 +662,8 @@ export default function AuthPage() {
                 <input
                   id="registerEmail"
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   placeholder={copy.emailPlaceholder}
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
@@ -701,6 +680,8 @@ export default function AuthPage() {
                   <input
                     id="registerPassword"
                     type={showRegisterPassword ? "text" : "password"}
+                    name="newPassword"
+                    autoComplete="new-password"
                     placeholder={copy.passwordPlaceholder}
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
@@ -763,6 +744,8 @@ export default function AuthPage() {
                 <input
                   id="loginEmail"
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   placeholder={copy.emailPlaceholder}
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
@@ -796,6 +779,8 @@ export default function AuthPage() {
                   <input
                     id="loginPassword"
                     type={showLoginPassword ? "text" : "password"}
+                    name="password"
+                    autoComplete="current-password"
                     placeholder={copy.passwordPlaceholder}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}

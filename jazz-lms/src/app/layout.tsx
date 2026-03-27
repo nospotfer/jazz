@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
-import "./globals.css";
+import { LanguageProvider } from "@/components/providers/language-provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { LanguageProvider } from '@/components/providers/language-provider';
+import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         className={`${playfairDisplay.variable} ${inter.variable} font-sans antialiased`}
       >

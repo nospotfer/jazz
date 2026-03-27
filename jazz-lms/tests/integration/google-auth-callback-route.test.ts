@@ -40,43 +40,93 @@ describe("GET /auth/callback", () => {
 
   test("redirects back to auth with oauth_error when code is missing", async () => {
     const { GET } = await import("@/app/auth/callback/route");
-    const response = await GET(new Request("http://localhost:3000/auth/callback?flow=login&lang=pt"));
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/auth?flow=login&lang=pt&oauth_error=");
-  });
-
-  test("redirects back to auth when exchangeCodeForSession fails", async () => {
-    mocks.exchangeCodeForSession.mockResolvedValue({ error: new Error("exchange failed") });
-
-    const { GET } = await import("@/app/auth/callback/route");
     const response = await GET(
-      new Request("http://localhost:3000/auth/callback?code=abc123&flow=register&lang=en"),
+      new Request("http://localhost:3000/auth/callback?flow=login&lang=pt"),
     );
 
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/auth?flow=register&lang=en&oauth_error=");
+    expect(response.headers.get("location")).toContain(
+      "/auth?flow=login&lang=pt&oauth_error=",
+    );
+  });
+
+  test("uses oauth cookies as fallback when callback query is missing", async () => {
+    const { GET } = await import("@/app/auth/callback/route");
+    const response = await GET(
+      new Request("http://localhost:3000/auth/callback", {
+        headers: {
+          cookie: "oauth_flow=register; oauth_lang=fr",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain(
+      "/auth?flow=register&lang=fr&oauth_error=",
+    );
+  });
+
+  test("redirects back to auth when exchangeCodeForSession fails", async () => {
+    mocks.exchangeCodeForSession.mockResolvedValue({
+      error: new Error("exchange failed"),
+    });
+
+    const { GET } = await import("@/app/auth/callback/route");
+    const response = await GET(
+      new Request(
+        "http://localhost:3000/auth/callback?code=abc123&flow=register&lang=en",
+      ),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain(
+      "/auth?flow=register&lang=en&oauth_error=",
+    );
   });
 
   test("redirects to next path and syncs user on success", async () => {
     const { GET } = await import("@/app/auth/callback/route");
     const response = await GET(
-      new Request("http://localhost:3000/auth/callback?code=abc123&lang=es&next=/dashboard/courses"),
+      new Request(
+        "http://localhost:3000/auth/callback?code=abc123&lang=es&next=/dashboard/courses",
+      ),
     );
 
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe("http://localhost:3000/dashboard/courses");
+    expect(response.headers.get("location")).toBe(
+      "http://localhost:3000/dashboard/courses",
+    );
     expect(mocks.exchangeCodeForSession).toHaveBeenCalledWith("abc123");
     expect(mocks.syncUserWithDatabase).toHaveBeenCalledTimes(1);
+  });
+
+  test("uses oauth_next cookie when next query is absent", async () => {
+    const { GET } = await import("@/app/auth/callback/route");
+    const response = await GET(
+      new Request("http://localhost:3000/auth/callback?code=abc123", {
+        headers: {
+          cookie: "oauth_lang=pt; oauth_next=%2Fdashboard%2Fcourses",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "http://localhost:3000/dashboard/courses",
+    );
   });
 });
 
 describe("GET /api/auth/google/callback", () => {
   test("re-exports auth callback behavior", async () => {
     const { GET } = await import("@/app/api/auth/google/callback/route");
-    const response = await GET(new Request("http://localhost:3000/api/auth/google/callback?lang=pt"));
+    const response = await GET(
+      new Request("http://localhost:3000/api/auth/google/callback?lang=pt"),
+    );
 
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/auth?flow=login&lang=pt&oauth_error=");
+    expect(response.headers.get("location")).toContain(
+      "/auth?flow=login&lang=pt&oauth_error=",
+    );
   });
 });

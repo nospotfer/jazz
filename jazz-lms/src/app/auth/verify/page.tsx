@@ -1,116 +1,126 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useLanguage } from '@/components/providers/language-provider';
+import { useLanguage } from "@/components/providers/language-provider";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function VerifyCodePage() {
   const router = useRouter();
   const { language } = useLanguage();
   const copy = {
     es: {
-      invalidEmailCode: 'Introduce un correo y un código de verificación válidos',
-      invalidCode: 'Código de verificación inválido',
-      verified: '¡Correo verificado correctamente! Redirigiendo al inicio de sesión...',
-      verifyFailed: 'No se pudo verificar el código',
-      invalidEmailResend: 'Introduce un correo válido para reenviar el código',
-      resendFailed: 'No se pudo reenviar el código',
-      resendSuccess: 'Se envió un nuevo código de verificación a tu correo.',
-      title: 'Verifica tu correo',
-      subtitle: 'Te enviamos un código de verificación a tu correo. Introdúcelo abajo para activar tu cuenta.',
-      email: 'Correo',
-      emailPlaceholder: 'tu@correo.com',
-      code: 'Código de verificación',
-      codePlaceholder: 'Introduce el código',
-      verifying: 'Verificando...',
-      verifyButton: 'Verificar código',
-      resending: 'Enviando...',
-      resendButton: 'Reenviar código',
-      backToLogin: 'Volver a iniciar sesión',
+      invalidEmailCode:
+        "Introduce un correo y un código de verificación válidos",
+      invalidCode: "Código de verificación inválido",
+      verified:
+        "¡Correo verificado correctamente! Redirigiendo al inicio de sesión...",
+      verifyFailed: "No se pudo verificar el código",
+      invalidEmailResend: "Introduce un correo válido para reenviar el código",
+      resendFailed: "No se pudo reenviar el código",
+      resendSuccess: "Se envió un nuevo código de verificación a tu correo.",
+      title: "Verifica tu correo",
+      subtitle:
+        "Te enviamos un código de verificación a tu correo. Introdúcelo abajo para activar tu cuenta.",
+      email: "Correo",
+      emailPlaceholder: "tu@correo.com",
+      code: "Código de verificación",
+      codePlaceholder: "Introduce el código",
+      verifying: "Verificando...",
+      verifyButton: "Verificar código",
+      resending: "Enviando...",
+      resendButton: "Reenviar código",
+      backToLogin: "Volver a iniciar sesión",
     },
     en: {
-      invalidEmailCode: 'Enter a valid email and verification code',
-      invalidCode: 'Invalid verification code',
-      verified: 'Email verified successfully! Redirecting to sign in...',
-      verifyFailed: 'Unable to verify the code',
-      invalidEmailResend: 'Enter a valid email to resend the code',
-      resendFailed: 'Unable to resend the code',
-      resendSuccess: 'A new verification code was sent to your email.',
-      title: 'Verify your email',
-      subtitle: 'We sent a verification code to your email. Enter it below to activate your account.',
-      email: 'Email',
-      emailPlaceholder: 'you@email.com',
-      code: 'Verification code',
-      codePlaceholder: 'Enter the code',
-      verifying: 'Verifying...',
-      verifyButton: 'Verify code',
-      resending: 'Sending...',
-      resendButton: 'Resend code',
-      backToLogin: 'Back to sign in',
+      invalidEmailCode: "Enter a valid email and verification code",
+      invalidCode: "Invalid verification code",
+      verified: "Email verified successfully! Redirecting to sign in...",
+      verifyFailed: "Unable to verify the code",
+      invalidEmailResend: "Enter a valid email to resend the code",
+      resendFailed: "Unable to resend the code",
+      resendSuccess: "A new verification code was sent to your email.",
+      title: "Verify your email",
+      subtitle:
+        "We sent a verification code to your email. Enter it below to activate your account.",
+      email: "Email",
+      emailPlaceholder: "you@email.com",
+      code: "Verification code",
+      codePlaceholder: "Enter the code",
+      verifying: "Verifying...",
+      verifyButton: "Verify code",
+      resending: "Sending...",
+      resendButton: "Resend code",
+      backToLogin: "Back to sign in",
     },
     fr: {
-      invalidEmailCode: 'Entrez une adresse e-mail et un code de vérification valides',
-      invalidCode: 'Code de vérification invalide',
-      verified: 'E-mail vérifié avec succès ! Redirection vers la connexion...',
-      verifyFailed: 'Impossible de vérifier le code',
-      invalidEmailResend: 'Entrez une adresse e-mail valide pour renvoyer le code',
-      resendFailed: 'Impossible de renvoyer le code',
-      resendSuccess: 'Un nouveau code de vérification a été envoyé à votre e-mail.',
-      title: 'Vérifiez votre e-mail',
-      subtitle: 'Nous avons envoyé un code de vérification à votre e-mail. Saisissez-le ci-dessous pour activer votre compte.',
-      email: 'E-mail',
-      emailPlaceholder: 'vous@email.com',
-      code: 'Code de vérification',
-      codePlaceholder: 'Entrez le code',
-      verifying: 'Vérification...',
-      verifyButton: 'Vérifier le code',
-      resending: 'Envoi...',
-      resendButton: 'Renvoyer le code',
-      backToLogin: 'Retour à la connexion',
+      invalidEmailCode:
+        "Entrez une adresse e-mail et un code de vérification valides",
+      invalidCode: "Code de vérification invalide",
+      verified: "E-mail vérifié avec succès ! Redirection vers la connexion...",
+      verifyFailed: "Impossible de vérifier le code",
+      invalidEmailResend:
+        "Entrez une adresse e-mail valide pour renvoyer le code",
+      resendFailed: "Impossible de renvoyer le code",
+      resendSuccess:
+        "Un nouveau code de vérification a été envoyé à votre e-mail.",
+      title: "Vérifiez votre e-mail",
+      subtitle:
+        "Nous avons envoyé un code de vérification à votre e-mail. Saisissez-le ci-dessous pour activer votre compte.",
+      email: "E-mail",
+      emailPlaceholder: "vous@email.com",
+      code: "Code de vérification",
+      codePlaceholder: "Entrez le code",
+      verifying: "Vérification...",
+      verifyButton: "Vérifier le code",
+      resending: "Envoi...",
+      resendButton: "Renvoyer le code",
+      backToLogin: "Retour à la connexion",
     },
     pt: {
-      invalidEmailCode: 'Digite um e-mail e um código de verificação válidos',
-      invalidCode: 'Código de verificação inválido',
-      verified: 'E-mail verificado com sucesso! Redirecionando para o login...',
-      verifyFailed: 'Não foi possível verificar o código',
-      invalidEmailResend: 'Digite um e-mail válido para reenviar o código',
-      resendFailed: 'Não foi possível reenviar o código',
-      resendSuccess: 'Um novo código de verificação foi enviado para seu e-mail.',
-      title: 'Verifique seu e-mail',
-      subtitle: 'Enviamos um código de verificação para seu e-mail. Digite-o abaixo para ativar sua conta.',
-      email: 'E-mail',
-      emailPlaceholder: 'voce@email.com',
-      code: 'Código de verificação',
-      codePlaceholder: 'Digite o código',
-      verifying: 'Verificando...',
-      verifyButton: 'Verificar código',
-      resending: 'Enviando...',
-      resendButton: 'Reenviar código',
-      backToLogin: 'Voltar ao login',
+      invalidEmailCode: "Digite um e-mail e um código de verificação válidos",
+      invalidCode: "Código de verificação inválido",
+      verified: "E-mail verificado com sucesso! Redirecionando para o login...",
+      verifyFailed: "Não foi possível verificar o código",
+      invalidEmailResend: "Digite um e-mail válido para reenviar o código",
+      resendFailed: "Não foi possível reenviar o código",
+      resendSuccess:
+        "Um novo código de verificação foi enviado para seu e-mail.",
+      title: "Verifique seu e-mail",
+      subtitle:
+        "Enviamos um código de verificação para seu e-mail. Digite-o abaixo para ativar sua conta.",
+      email: "E-mail",
+      emailPlaceholder: "voce@email.com",
+      code: "Código de verificação",
+      codePlaceholder: "Digite o código",
+      verifying: "Verificando...",
+      verifyButton: "Verificar código",
+      resending: "Enviando...",
+      resendButton: "Reenviar código",
+      backToLogin: "Voltar ao login",
     },
   }[language];
 
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     const params = new URLSearchParams(window.location.search);
-    const emailParam = params.get('email');
+    const emailParam = params.get("email");
     if (emailParam) {
       setEmail(emailParam);
     }
   }, []);
 
   const inputClasses =
-    'w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors';
+    "w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
 
   const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -122,13 +132,13 @@ export default function VerifyCodePage() {
     }
 
     setSubmitting(true);
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
 
     try {
-      const res = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: normalizedEmail,
           code: code.trim(),
@@ -143,7 +153,9 @@ export default function VerifyCodePage() {
 
       setMessage(copy.verified);
       setTimeout(() => {
-        router.push(`/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}`);
+        router.push(
+          `/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}`,
+        );
       }, 1200);
     } catch {
       setError(copy.verifyFailed);
@@ -162,13 +174,13 @@ export default function VerifyCodePage() {
     }
 
     setResending(true);
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
 
     try {
-      const res = await fetch('/api/auth/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: normalizedEmail }),
       });
 
@@ -190,19 +202,24 @@ export default function VerifyCodePage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
         <div className="p-5 sm:p-8 space-y-5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">{copy.title}</h1>
-          <p className="text-sm text-[#9CA3AF] text-center">
-            {copy.subtitle}
-          </p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">
+            {copy.title}
+          </h1>
+          <p className="text-sm text-[#9CA3AF] text-center">{copy.subtitle}</p>
 
           <form onSubmit={handleVerify} className="space-y-4">
             <div>
-              <label htmlFor="verifyEmail" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
+              <label
+                htmlFor="verifyEmail"
+                className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+              >
                 {copy.email}
               </label>
               <input
                 id="verifyEmail"
                 type="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={inputClasses}
@@ -212,16 +229,21 @@ export default function VerifyCodePage() {
             </div>
 
             <div>
-              <label htmlFor="verifyCode" className="block text-sm font-medium text-[#D1D5DB] mb-1.5">
+              <label
+                htmlFor="verifyCode"
+                className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+              >
                 {copy.code}
               </label>
               <input
                 id="verifyCode"
                 type="text"
+                name="verificationCode"
+                autoComplete="one-time-code"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                 className={inputClasses}
                 placeholder={copy.codePlaceholder}
                 minLength={6}
@@ -260,7 +282,7 @@ export default function VerifyCodePage() {
             </button>
             <button
               type="button"
-              onClick={() => router.push('/auth?tab=login')}
+              onClick={() => router.push("/auth?tab=login")}
               className="text-sm text-[#9CA3AF] hover:text-white transition-colors"
             >
               {copy.backToLogin}

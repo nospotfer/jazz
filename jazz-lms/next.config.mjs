@@ -3,6 +3,7 @@ const nextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [60, 75, 80, 85, 90],
   },
   webpack: (config) => {
     config.resolve.alias = {
@@ -28,6 +29,15 @@ const nextConfig = {
       cspConnectSrc.push("ws://localhost:*", "http://localhost:*");
     }
 
+    const cspScriptSrc = [
+      "'self'",
+      "'unsafe-inline'",
+      "'unsafe-eval'",
+      "https://www.gstatic.com",
+    ];
+
+    cspConnectSrc.push("https://inferred.litix.io");
+
     const contentSecurityPolicy = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -37,7 +47,7 @@ const nextConfig = {
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      `script-src ${cspScriptSrc.join(" ")}`,
       `connect-src ${cspConnectSrc.join(" ")}`,
       "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://*.lemonsqueezy.com https://open.spotify.com",
       "media-src 'self' blob: https:",

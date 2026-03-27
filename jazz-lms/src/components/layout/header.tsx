@@ -20,6 +20,7 @@ export const Header = ({ authMode = "auto" }: HeaderProps) => {
               src="/images/Logo.jpeg"
               alt="La Cultura del Jazz"
               fill
+              sizes="36px"
               className="object-contain"
             />
           </div>
