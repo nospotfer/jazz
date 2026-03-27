@@ -115,6 +115,21 @@ describe("GET /auth/callback", () => {
       "http://localhost:3000/dashboard/courses",
     );
   });
+
+  test("redirects to reset-password when next path comes from recovery email callback", async () => {
+    const { GET } = await import("@/app/auth/callback/route");
+    const response = await GET(
+      new Request(
+        "http://localhost:3000/auth/callback?code=reset123&next=/auth/reset-password",
+      ),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "http://localhost:3000/auth/reset-password",
+    );
+    expect(mocks.exchangeCodeForSession).toHaveBeenCalledWith("reset123");
+  });
 });
 
 describe("GET /api/auth/google/callback", () => {

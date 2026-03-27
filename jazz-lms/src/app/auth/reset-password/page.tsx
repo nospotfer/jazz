@@ -2,13 +2,13 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { createClient } from "@/utils/supabase/client";
-import { X } from "lucide-react";
+import { LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createClient(), []);
+  const supabase = useMemo(() => createClient({ flowType: "implicit" }), []);
   const { language } = useLanguage();
   const copy = {
     es: {
@@ -24,9 +24,14 @@ export default function ResetPasswordPage() {
       requestNewLink: "Solicitar nuevo enlace",
       backToLogin: "Volver a iniciar sesión",
       closeAuth: "Fechar",
+      logout: "Salir",
+      exiting: "Saliendo...",
       createNewPassword: "Crear nueva contraseña",
       newPassword: "Nueva contraseña",
+      confirmNewPassword: "Confirmar nueva contraseña",
       passwordPlaceholder: "Tu nueva contraseña",
+      confirmPasswordPlaceholder: "Confirma tu nueva contraseña",
+      passwordMismatch: "Las contraseñas no coinciden",
       hidePassword: "Ocultar contraseña",
       showPassword: "Mostrar contraseña",
       minCharacters: "Mínimo 8 caracteres",
@@ -46,9 +51,14 @@ export default function ResetPasswordPage() {
       requestNewLink: "Request new link",
       backToLogin: "Back to sign in",
       closeAuth: "Close",
+      logout: "Sign out",
+      exiting: "Signing out...",
       createNewPassword: "Create a new password",
       newPassword: "New password",
+      confirmNewPassword: "Confirm new password",
       passwordPlaceholder: "Your new password",
+      confirmPasswordPlaceholder: "Confirm your new password",
+      passwordMismatch: "Passwords do not match",
       hidePassword: "Hide password",
       showPassword: "Show password",
       minCharacters: "Minimum 8 characters",
@@ -68,9 +78,14 @@ export default function ResetPasswordPage() {
       requestNewLink: "Demander un nouveau lien",
       backToLogin: "Retour à la connexion",
       closeAuth: "Fermer",
+      logout: "Se déconnecter",
+      exiting: "Déconnexion...",
       createNewPassword: "Créer un nouveau mot de passe",
       newPassword: "Nouveau mot de passe",
+      confirmNewPassword: "Confirmer le nouveau mot de passe",
       passwordPlaceholder: "Votre nouveau mot de passe",
+      confirmPasswordPlaceholder: "Confirmez votre nouveau mot de passe",
+      passwordMismatch: "Les mots de passe ne correspondent pas",
       hidePassword: "Masquer le mot de passe",
       showPassword: "Afficher le mot de passe",
       minCharacters: "Minimum 8 caractères",
@@ -90,9 +105,14 @@ export default function ResetPasswordPage() {
       requestNewLink: "Solicitar novo link",
       backToLogin: "Voltar ao login",
       closeAuth: "Fechar",
+      logout: "Sair",
+      exiting: "Saindo...",
       createNewPassword: "Criar nova senha",
       newPassword: "Nova senha",
+      confirmNewPassword: "Confirmar nova senha",
       passwordPlaceholder: "Sua nova senha",
+      confirmPasswordPlaceholder: "Confirme sua nova senha",
+      passwordMismatch: "As senhas nao coincidem",
       hidePassword: "Ocultar senha",
       showPassword: "Mostrar senha",
       minCharacters: "Mínimo de 8 caracteres",
@@ -106,71 +126,132 @@ export default function ResetPasswordPage() {
   const [tokenError, setTokenError] = useState("");
 
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isExitingAuth, setIsExitingAuth] = useState(false);
   const [error, setError] = useState("");
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const bootstrapRecoverySession = async () => {
       try {
-        const recoveryReloadKey = "auth:resetRecoveryReloaded";
-        const cameFromRecoveryVerify =
-          document.referrer.includes("/auth/v1/verify");
-
         const query = new URLSearchParams(window.location.search);
-        const authCode = query.get("code");
-        const recoveryTokenHash = query.get("token_hash") || query.get("token");
-        const recoveryType = query.get("type");
+        const hash = window.location.hash.startsWith("#")
+          ? new URLSearchParams(window.location.hash.slice(1))
+          : new URLSearchParams();
 
-        const codeMarker = authCode ? `auth:reset:code:${authCode}` : null;
-        const tokenMarker =
-          recoveryTokenHash && recoveryType === "recovery"
-            ? `auth:reset:token:${recoveryTokenHash}`
-            : null;
+        const readParam = (name: string) => query.get(name) || hash.get(name);
+
+        const resetError = readParam("reset_error");
+        const isFromCallback = readParam("recovery") === "1";
+
+        console.info("[auth/reset-password] bootstrap", {
+          hasResetError: Boolean(resetError),
+          isFromCallback,
+        });
+
+        // If callback reported an error during code exchange, show it
+        if (resetError) {
+          console.info("[auth/reset-password] callback error detected");
+          setTokenError(copy.tokenInvalid);
+          setTokenValid(false);
+          setLoadingToken(false);
+          return;
+        }
+
+        // If coming from callback route with recovery=1, the code was already
+        // validated on the server, so trust that and show the form
+        if (isFromCallback) {
+          console.info("[auth/reset-password] valid recovery session from callback");
+          setTokenValid(true);
+          setLoadingToken(false);
+          return;
+        }
+
+        // For backward compatibility: handle direct token/code in URL
+        const authCode = readParam("code");
+        const recoveryTokenHash = readParam("token_hash");
+        const recoveryToken = readParam("token");
+        const recoveryCredential = recoveryTokenHash || recoveryToken;
+        const recoveryType =
+          readParam("type") || (recoveryCredential ? "recovery" : null);
+        const cameFromRecoveryVerify =
+          document.referrer.includes("/auth/v1/verify") ||
+          recoveryType === "recovery" ||
+          Boolean(authCode);
+
+        if (authCode) {
+          console.info("[auth/reset-password] detected code in URL, redirecting to callback");
+          const callbackUrl = new URL(
+            "/auth/reset-password/callback",
+            window.location.origin,
+          );
+          callbackUrl.searchParams.set("code", authCode);
+          window.location.replace(callbackUrl.toString());
+          return;
+        }
+
+        const tokenMarker = recoveryCredential
+          ? `auth:reset:token:${recoveryCredential}`
+          : null;
+
+        const logRecoveryDebug = (
+          stage: string,
+          extra?: Record<string, unknown>,
+        ) => {
+          console.info("[auth/reset-password]", {
+            stage,
+            hasTokenHash: Boolean(recoveryTokenHash),
+            hasToken: Boolean(recoveryToken),
+            hasAccessToken: Boolean(readParam("access_token")),
+            hasRefreshToken: Boolean(readParam("refresh_token")),
+            recoveryType,
+            referrerHasSupabaseVerify: document.referrer.includes(
+              "/auth/v1/verify",
+            ),
+            ...extra,
+          });
+        };
 
         let hasRecoveryCredential = false;
         let hadCredentialValidationError = false;
 
-        if (authCode) {
-          hasRecoveryCredential = true;
-          if (codeMarker && window.sessionStorage.getItem(codeMarker) !== "1") {
-            const { error: codeError } =
-              await supabase.auth.exchangeCodeForSession(authCode);
-
-            if (codeError) {
-              hadCredentialValidationError = true;
-            } else {
-              window.sessionStorage.setItem(codeMarker, "1");
-            }
-          }
-        } else if (recoveryTokenHash && recoveryType === "recovery") {
+        if (recoveryCredential) {
           hasRecoveryCredential = true;
           if (
             tokenMarker &&
             window.sessionStorage.getItem(tokenMarker) !== "1"
           ) {
-            const { error: otpError } = await supabase.auth.verifyOtp({
-              type: "recovery",
-              token_hash: recoveryTokenHash,
-            });
+            const { error: otpError } = recoveryTokenHash
+              ? await supabase.auth.verifyOtp({
+                  type: "recovery",
+                  token_hash: recoveryTokenHash,
+                })
+              : await supabase.auth.verifyOtp({
+                  type: "recovery",
+                  token: recoveryToken as string,
+                });
 
             if (otpError) {
+              logRecoveryDebug("verify-otp-failed", {
+                errorMessage: otpError.message,
+              });
               hadCredentialValidationError = true;
             } else {
+              logRecoveryDebug("verify-otp-success");
               window.sessionStorage.setItem(tokenMarker, "1");
             }
           }
         } else {
-          const hash = window.location.hash.startsWith("#")
-            ? new URLSearchParams(window.location.hash.slice(1))
-            : new URLSearchParams();
-
-          const accessToken = hash.get("access_token");
-          const refreshToken = hash.get("refresh_token");
-          const hashErrorDescription = hash.get("error_description");
+          const accessToken = readParam("access_token");
+          const refreshToken = readParam("refresh_token");
+          const hashErrorDescription = readParam("error_description");
 
           if (hashErrorDescription) {
+            logRecoveryDebug("hash-error", {
+              hashErrorDescription,
+            });
             setTokenError(copy.tokenInvalid);
             setTokenValid(false);
             setLoadingToken(false);
@@ -185,12 +266,16 @@ export default function ResetPasswordPage() {
             });
 
             if (sessionError) {
+              logRecoveryDebug("set-session-failed", {
+                errorMessage: sessionError.message,
+              });
               setTokenError(copy.tokenInvalid);
               setTokenValid(false);
               setLoadingToken(false);
               return;
             }
 
+            logRecoveryDebug("set-session-success");
             window.history.replaceState(
               {},
               "",
@@ -199,6 +284,7 @@ export default function ResetPasswordPage() {
           }
         }
 
+        const recoveryReloadKey = "auth:resetRecoveryReloaded";
         let sessionData = (await supabase.auth.getSession()).data;
 
         // Supabase may hydrate the recovery session asynchronously right after
@@ -212,6 +298,10 @@ export default function ResetPasswordPage() {
           }
         }
 
+        logRecoveryDebug("session-check", {
+          hasSessionAfterRetries: Boolean(sessionData.session),
+        });
+
         if (
           !sessionData.session &&
           cameFromRecoveryVerify &&
@@ -223,6 +313,7 @@ export default function ResetPasswordPage() {
         }
 
         if (!hasRecoveryCredential && !sessionData.session) {
+          logRecoveryDebug("invalid-no-recovery-credential");
           setTokenError(copy.tokenInvalid);
           setTokenValid(false);
           setLoadingToken(false);
@@ -230,6 +321,9 @@ export default function ResetPasswordPage() {
         }
 
         if (hasRecoveryCredential && !sessionData.session) {
+          logRecoveryDebug("invalid-recovery-credential-without-session", {
+            hadCredentialValidationError,
+          });
           setTokenError(
             hadCredentialValidationError
               ? copy.tokenInvalid
@@ -242,8 +336,10 @@ export default function ResetPasswordPage() {
 
         window.sessionStorage.removeItem(recoveryReloadKey);
 
+        logRecoveryDebug("token-valid");
         setTokenValid(true);
-      } catch {
+      } catch (err) {
+        console.error("[auth/reset-password] unexpected-bootstrap-error", err);
         setTokenError(copy.tokenValidationFailed);
         setTokenValid(false);
       } finally {
@@ -262,6 +358,11 @@ export default function ResetPasswordPage() {
 
     if (password.length < 8) {
       setError(copy.minPassword);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError(copy.passwordMismatch);
       return;
     }
 
@@ -290,6 +391,18 @@ export default function ResetPasswordPage() {
     }
   };
 
+  const handleLogout = async () => {
+    setIsExitingAuth(true);
+    try {
+      await supabase.auth.signOut();
+      router.replace("/auth?tab=login");
+    } catch {
+      router.replace("/auth?tab=login");
+    } finally {
+      setIsExitingAuth(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       {toastMessage && (
@@ -308,6 +421,15 @@ export default function ResetPasswordPage() {
           >
             <X className="h-4 w-4" />
             {copy.closeAuth}
+          </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isExitingAuth}
+            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors disabled:opacity-60"
+          >
+            <LogOut className="h-4 w-4" />
+            {isExitingAuth ? copy.exiting : copy.logout}
           </button>
         </div>
 
@@ -407,6 +529,28 @@ export default function ResetPasswordPage() {
                   </p>
                 </div>
 
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                  >
+                    {copy.confirmNewPassword}
+                  </label>
+
+                  <input
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    placeholder={copy.confirmPasswordPlaceholder}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={inputClasses}
+                    minLength={8}
+                    required
+                  />
+                </div>
+
                 {error && (
                   <p className="text-sm text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
                     {error}
@@ -419,6 +563,14 @@ export default function ResetPasswordPage() {
                   className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {saving ? copy.updating : copy.updatePassword}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => router.push("/auth?tab=login")}
+                  className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-base font-medium transition-colors"
+                >
+                  {copy.backToLogin}
                 </button>
               </form>
             </>
