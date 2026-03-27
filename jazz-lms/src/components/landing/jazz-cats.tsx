@@ -49,7 +49,6 @@ export function JazzCats() {
               fill
               sizes="(max-width: 1024px) 100vw, 896px"
               className="object-contain"
-              quality={90}
             />
           </div>
 

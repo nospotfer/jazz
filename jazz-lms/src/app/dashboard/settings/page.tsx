@@ -1,45 +1,42 @@
-'use client';
+"use client";
 
-import { Moon, Sun, Monitor } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import {
-  useDashboardPreferences,
-} from '@/components/providers/dashboard-preferences-provider';
+import { useDashboardPreferences } from "@/components/providers/dashboard-preferences-provider";
+import { Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useId } from "react";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const {
-    t,
-    language,
-    setLanguage,
-    notifications,
-    updateNotification,
-  } = useDashboardPreferences();
+  const { t, language, setLanguage, notifications, updateNotification } =
+    useDashboardPreferences();
 
-  const languageOptions: Array<{ value: 'es' | 'en' | 'fr' | 'pt'; label: string }> = [
-    { value: 'es', label: 'Español' },
-    { value: 'en', label: 'English' },
-    { value: 'fr', label: 'Français' },
-    { value: 'pt', label: 'Português (Brasil)' },
+  const languageOptions: Array<{
+    value: "es" | "en" | "fr" | "pt";
+    label: string;
+  }> = [
+    { value: "es", label: "Español" },
+    { value: "en", label: "English" },
+    { value: "fr", label: "Français" },
+    { value: "pt", label: "Português (Brasil)" },
   ];
 
   const themeOptions = [
     {
-      value: 'dark',
-      label: t('dark', 'Oscuro'),
-      description: t('darkDesc', 'Fondo oscuro con texto claro'),
+      value: "dark",
+      label: t("dark", "Oscuro"),
+      description: t("darkDesc", "Fondo oscuro con texto claro"),
       icon: Moon,
     },
     {
-      value: 'light',
-      label: t('light', 'Claro'),
-      description: t('lightDesc', 'Fondo claro con texto oscuro'),
+      value: "light",
+      label: t("light", "Claro"),
+      description: t("lightDesc", "Fondo claro con texto oscuro"),
       icon: Sun,
     },
     {
-      value: 'system',
-      label: t('system', 'Sistema'),
-      description: t('systemDesc', 'Seguir preferencias del sistema'),
+      value: "system",
+      label: t("system", "Sistema"),
+      description: t("systemDesc", "Seguir preferencias del sistema"),
       icon: Monitor,
     },
   ];
@@ -48,17 +45,17 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-0.5 sm:px-0 space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
-          {t('settingsTitle', 'Configuración')}
+          {t("settingsTitle", "Configuración")}
         </h1>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          {t('settingsSubtitle', 'Personaliza tu experiencia')}
+          {t("settingsSubtitle", "Personaliza tu experiencia")}
         </p>
       </div>
 
       {/* Appearance */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('appearance', 'Apariencia')}
+          {t("appearance", "Apariencia")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {themeOptions.map((option) => {
@@ -70,8 +67,8 @@ export default function SettingsPage() {
                 onClick={() => setTheme(option.value)}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
                   isActive
-                    ? 'bg-primary/10 border-primary/40 text-primary'
-                    : 'border-primary/30 hover:border-primary/70 hover:bg-accent text-muted-foreground'
+                    ? "bg-primary/10 border-primary/40 text-primary"
+                    : "border-primary/30 hover:border-primary/70 hover:bg-accent text-muted-foreground"
                 }`}
               >
                 <Icon className="h-6 w-6" />
@@ -88,35 +85,37 @@ export default function SettingsPage() {
       {/* Notifications */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('notifications', 'Notificaciones')}
+          {t("notifications", "Notificaciones")}
         </h2>
         <div className="space-y-4">
           <ToggleSetting
-            label={t('emailNotifications', 'Notificaciones por correo')}
+            label={t("emailNotifications", "Notificaciones por correo")}
             description={t(
-              'emailNotificationsDesc',
-              'Recibe novedades sobre nuevos cursos y promociones'
+              "emailNotificationsDesc",
+              "Recibe novedades sobre nuevos cursos y promociones",
             )}
             checked={notifications.emailNotifications}
-            onChange={(value) => updateNotification('emailNotifications', value)}
+            onChange={(value) =>
+              updateNotification("emailNotifications", value)
+            }
           />
           <ToggleSetting
-            label={t('courseUpdates', 'Actualizaciones del curso')}
+            label={t("courseUpdates", "Actualizaciones del curso")}
             description={t(
-              'courseUpdatesDesc',
-              'Recibe avisos cuando tus cursos tengan contenido nuevo'
+              "courseUpdatesDesc",
+              "Recibe avisos cuando tus cursos tengan contenido nuevo",
             )}
             checked={notifications.courseUpdates}
-            onChange={(value) => updateNotification('courseUpdates', value)}
+            onChange={(value) => updateNotification("courseUpdates", value)}
           />
           <ToggleSetting
-            label={t('progressReminders', 'Recordatorios de progreso')}
+            label={t("progressReminders", "Recordatorios de progreso")}
             description={t(
-              'progressRemindersDesc',
-              'Recibe recordatorios para continuar aprendiendo'
+              "progressRemindersDesc",
+              "Recibe recordatorios para continuar aprendiendo",
             )}
             checked={notifications.progressReminders}
-            onChange={(value) => updateNotification('progressReminders', value)}
+            onChange={(value) => updateNotification("progressReminders", value)}
           />
         </div>
       </div>
@@ -124,7 +123,7 @@ export default function SettingsPage() {
       {/* Language */}
       <div className="bg-card border border-primary/40 hover:border-primary/70 transition-colors rounded-xl p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          {t('language', 'Idioma')}
+          {t("language", "Idioma")}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {languageOptions.map((option) => {
@@ -136,8 +135,8 @@ export default function SettingsPage() {
                 onClick={() => setLanguage(option.value)}
                 className={`px-3 py-2.5 rounded-lg border text-sm transition-colors ${
                   isActive
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-background border-primary/40 text-foreground hover:border-primary/70'
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background border-primary/40 text-foreground hover:border-primary/70"
                 }`}
               >
                 {option.label}
@@ -161,15 +160,21 @@ function ToggleSetting({
   checked: boolean;
   onChange: (checked: boolean) => void;
 }) {
+  const toggleId = useId();
+
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0 pr-1">
-        <p className="text-sm font-medium text-foreground leading-tight">{label}</p>
+        <p className="text-sm font-medium text-foreground leading-tight">
+          {label}
+        </p>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
       </div>
       <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
         <input
           type="checkbox"
+          id={toggleId}
+          name={toggleId}
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
           className="sr-only peer"

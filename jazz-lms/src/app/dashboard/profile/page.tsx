@@ -1,17 +1,33 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
-import { Camera, Save, Phone, Calendar, Shuffle, Check, CreditCard, Wallet, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import { getRandomProfileAvatar, PROFILE_AVATAR_OPTIONS } from '@/lib/profile-avatars';
-import { useLanguage } from '@/components/providers/language-provider';
-import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
-import { useUserJazzMedalProfile } from '@/hooks/use-user-jazz-medal-profile';
+import {
+    JazzMedalIcon,
+    JazzSupremeMedal,
+} from "@/components/course/lesson-quiz-medal";
+import { useLanguage } from "@/components/providers/language-provider";
+import { Button } from "@/components/ui/button";
+import { useUserJazzMedalProfile } from "@/hooks/use-user-jazz-medal-profile";
+import {
+    getRandomProfileAvatar,
+    PROFILE_AVATAR_OPTIONS,
+} from "@/lib/profile-avatars";
+import { createClient } from "@/utils/supabase/client";
+import {
+    Calendar,
+    Camera,
+    Check,
+    CreditCard,
+    Loader2,
+    Phone,
+    Save,
+    Shuffle,
+    Wallet,
+} from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
-type AvatarMode = 'random' | 'fixed';
+type AvatarMode = "random" | "fixed";
 
 interface ProfileFormData {
   fullName: string;
@@ -24,13 +40,13 @@ interface ProfileFormData {
 }
 
 const EMPTY_PROFILE_FORM: ProfileFormData = {
-  fullName: '',
-  headline: '',
-  bio: '',
-  phone: '',
-  dateOfBirth: '',
-  city: '',
-  country: '',
+  fullName: "",
+  headline: "",
+  bio: "",
+  phone: "",
+  dateOfBirth: "",
+  city: "",
+  country: "",
 };
 
 export default function ProfilePage() {
@@ -38,214 +54,232 @@ export default function ProfilePage() {
   const { language } = useLanguage();
   const copy = {
     es: {
-      avatarUpdateError: 'No se pudo actualizar el avatar',
-      profileUpdateError: 'No se pudo actualizar el perfil',
-      billingSupportError: 'No se pudo abrir el canal de soporte de pagos. Inténtalo más tarde.',
-      title: 'Perfil',
-      subtitle: 'Gestiona tu perfil, datos personales y preferencias de avatar',
-      profileIcon: 'Icono de perfil',
-      randomModeDesc: 'Modo aleatorio: cambia en cada inicio de sesión',
-      fixedModeDesc: 'Modo fijo: se mantiene hasta que lo cambies',
-      saving: 'Guardando...',
-      saveChanges: 'Guardar cambios',
-      profileUpdated: '¡Perfil actualizado correctamente!',
-      profileInfo: 'Información del perfil',
-      fullName: 'Nombre completo',
-      fullNamePlaceholder: 'Tu nombre completo',
-      headline: 'Titular',
-      bio: 'Biografía',
-      bioPlaceholder: 'Cuéntanos sobre ti...',
-      email: 'Correo',
-      contactData: 'Contacto y datos personales',
-      phone: 'Teléfono',
-      birthDate: 'Fecha de nacimiento',
-      city: 'Ciudad',
-      cityPlaceholder: 'Ciudad',
-      country: 'País',
-      countryPlaceholder: 'País',
-      paymentMethods: 'Métodos de pago',
-      paymentMethodsDesc: 'Para gestionar tus datos de facturación, contacta con nuestro soporte financiero.',
-      managePaymentMethods: 'Contactar soporte financiero',
-      chooseAvatarStyle: 'Elige tu estilo de avatar',
-      chooseAvatarDesc: 'Selecciona un icono fijo o mantén el modo aleatorio.',
-      randomAvatarOption: 'Avatar aleatorio en cada inicio de sesión',
-      avatarOptionAlt: 'Opción de avatar',
-      profileAvatarAlt: 'Avatar de perfil',
-      headlinePlaceholder: 'Aprendiz de jazz, músico, educador...',
-      phonePlaceholder: '+34 600 000 000',
-      cancel: 'Cancelar',
-      confirmAvatar: 'Confirmar avatar',
-      medalTooltipPrefix: 'Ganada en',
-      medalTooltipEmpty: 'Aun sin medalla',
-      medalShowcaseTitle: 'Vitrina de medallas',
-      platinumProgressLabel: 'Medallas de platino',
-      supremeUnlocked: 'Has desbloqueado tu medalla suprema.',
-      supremeLocked: 'Cuando completes las 15 medallas de platino, aparecerá aquí tu medalla suprema.',
-      supremeTitle: 'Especialista en jazz',
-      openSupremePage: 'Ver reconocimiento especial',
+      avatarUpdateError: "No se pudo actualizar el avatar",
+      profileUpdateError: "No se pudo actualizar el perfil",
+      billingSupportError:
+        "No se pudo abrir el canal de soporte de pagos. Inténtalo más tarde.",
+      title: "Perfil",
+      subtitle: "Gestiona tu perfil, datos personales y preferencias de avatar",
+      profileIcon: "Icono de perfil",
+      randomModeDesc: "Modo aleatorio: cambia en cada inicio de sesión",
+      fixedModeDesc: "Modo fijo: se mantiene hasta que lo cambies",
+      saving: "Guardando...",
+      saveChanges: "Guardar cambios",
+      profileUpdated: "¡Perfil actualizado correctamente!",
+      profileInfo: "Información del perfil",
+      fullName: "Nombre completo",
+      fullNamePlaceholder: "Tu nombre completo",
+      headline: "Titular",
+      bio: "Biografía",
+      bioPlaceholder: "Cuéntanos sobre ti...",
+      email: "Correo",
+      contactData: "Contacto y datos personales",
+      phone: "Teléfono",
+      birthDate: "Fecha de nacimiento",
+      city: "Ciudad",
+      cityPlaceholder: "Ciudad",
+      country: "País",
+      countryPlaceholder: "País",
+      paymentMethods: "Métodos de pago",
+      paymentMethodsDesc:
+        "Para gestionar tus datos de facturación, contacta con nuestro soporte financiero.",
+      managePaymentMethods: "Contactar soporte financiero",
+      chooseAvatarStyle: "Elige tu estilo de avatar",
+      chooseAvatarDesc: "Selecciona un icono fijo o mantén el modo aleatorio.",
+      randomAvatarOption: "Avatar aleatorio en cada inicio de sesión",
+      avatarOptionAlt: "Opción de avatar",
+      profileAvatarAlt: "Avatar de perfil",
+      headlinePlaceholder: "Aprendiz de jazz, músico, educador...",
+      phonePlaceholder: "+34 600 000 000",
+      cancel: "Cancelar",
+      confirmAvatar: "Confirmar avatar",
+      medalTooltipPrefix: "Ganada en",
+      medalTooltipEmpty: "Aun sin medalla",
+      medalShowcaseTitle: "Vitrina de medallas",
+      platinumProgressLabel: "Medallas de platino",
+      supremeUnlocked: "Has desbloqueado tu medalla suprema.",
+      supremeLocked:
+        "Cuando completes las 15 medallas de platino, aparecerá aquí tu medalla suprema.",
+      supremeTitle: "Especialista en jazz",
+      openSupremePage: "Ver reconocimiento especial",
     },
     en: {
-      avatarUpdateError: 'Unable to update avatar',
-      profileUpdateError: 'Unable to update profile',
-      billingSupportError: 'Unable to open billing support. Please try again later.',
-      title: 'Profile',
-      subtitle: 'Manage your profile, personal data, and avatar preferences',
-      profileIcon: 'Profile icon',
-      randomModeDesc: 'Random mode: changes on each sign-in',
-      fixedModeDesc: 'Fixed mode: stays until you change it',
-      saving: 'Saving...',
-      saveChanges: 'Save changes',
-      profileUpdated: 'Profile updated successfully!',
-      profileInfo: 'Profile information',
-      fullName: 'Full name',
-      fullNamePlaceholder: 'Your full name',
-      headline: 'Headline',
-      bio: 'Biography',
-      bioPlaceholder: 'Tell us about yourself...',
-      email: 'Email',
-      contactData: 'Contact and personal data',
-      phone: 'Phone',
-      birthDate: 'Date of birth',
-      city: 'City',
-      cityPlaceholder: 'City',
-      country: 'Country',
-      countryPlaceholder: 'Country',
-      paymentMethods: 'Payment methods',
-      paymentMethodsDesc: 'To manage billing details, contact our finance support channel.',
-      managePaymentMethods: 'Contact finance support',
-      chooseAvatarStyle: 'Choose your avatar style',
-      chooseAvatarDesc: 'Select a fixed icon or keep random mode.',
-      randomAvatarOption: 'Random avatar at each sign-in',
-      avatarOptionAlt: 'Avatar option',
-      profileAvatarAlt: 'Profile avatar',
-      headlinePlaceholder: 'Jazz learner, musician, educator...',
-      phonePlaceholder: '+1 555 123 4567',
-      cancel: 'Cancel',
-      confirmAvatar: 'Confirm avatar',
-      medalTooltipPrefix: 'Earned in',
-      medalTooltipEmpty: 'No medal yet',
-      medalShowcaseTitle: 'Medal showcase',
-      platinumProgressLabel: 'Platinum medals',
-      supremeUnlocked: 'You unlocked your supreme medal.',
-      supremeLocked: 'When you complete all 15 platinum medals, your supreme medal will appear here.',
-      supremeTitle: 'Jazz specialist',
-      openSupremePage: 'View special recognition',
+      avatarUpdateError: "Unable to update avatar",
+      profileUpdateError: "Unable to update profile",
+      billingSupportError:
+        "Unable to open billing support. Please try again later.",
+      title: "Profile",
+      subtitle: "Manage your profile, personal data, and avatar preferences",
+      profileIcon: "Profile icon",
+      randomModeDesc: "Random mode: changes on each sign-in",
+      fixedModeDesc: "Fixed mode: stays until you change it",
+      saving: "Saving...",
+      saveChanges: "Save changes",
+      profileUpdated: "Profile updated successfully!",
+      profileInfo: "Profile information",
+      fullName: "Full name",
+      fullNamePlaceholder: "Your full name",
+      headline: "Headline",
+      bio: "Biography",
+      bioPlaceholder: "Tell us about yourself...",
+      email: "Email",
+      contactData: "Contact and personal data",
+      phone: "Phone",
+      birthDate: "Date of birth",
+      city: "City",
+      cityPlaceholder: "City",
+      country: "Country",
+      countryPlaceholder: "Country",
+      paymentMethods: "Payment methods",
+      paymentMethodsDesc:
+        "To manage billing details, contact our finance support channel.",
+      managePaymentMethods: "Contact finance support",
+      chooseAvatarStyle: "Choose your avatar style",
+      chooseAvatarDesc: "Select a fixed icon or keep random mode.",
+      randomAvatarOption: "Random avatar at each sign-in",
+      avatarOptionAlt: "Avatar option",
+      profileAvatarAlt: "Profile avatar",
+      headlinePlaceholder: "Jazz learner, musician, educator...",
+      phonePlaceholder: "+1 555 123 4567",
+      cancel: "Cancel",
+      confirmAvatar: "Confirm avatar",
+      medalTooltipPrefix: "Earned in",
+      medalTooltipEmpty: "No medal yet",
+      medalShowcaseTitle: "Medal showcase",
+      platinumProgressLabel: "Platinum medals",
+      supremeUnlocked: "You unlocked your supreme medal.",
+      supremeLocked:
+        "When you complete all 15 platinum medals, your supreme medal will appear here.",
+      supremeTitle: "Jazz specialist",
+      openSupremePage: "View special recognition",
     },
     fr: {
-      avatarUpdateError: 'Impossible de mettre à jour l’avatar',
-      profileUpdateError: 'Impossible de mettre à jour le profil',
-      billingSupportError: 'Impossible d’ouvrir le support de facturation. Réessayez plus tard.',
-      title: 'Profil',
-      subtitle: 'Gérez votre profil, vos données personnelles et vos préférences d’avatar',
-      profileIcon: 'Icône de profil',
-      randomModeDesc: 'Mode aléatoire : change à chaque connexion',
-      fixedModeDesc: 'Mode fixe : reste identique jusqu’à modification',
-      saving: 'Enregistrement...',
-      saveChanges: 'Enregistrer les modifications',
-      profileUpdated: 'Profil mis à jour avec succès !',
-      profileInfo: 'Informations du profil',
-      fullName: 'Nom complet',
-      fullNamePlaceholder: 'Votre nom complet',
-      headline: 'Titre',
-      bio: 'Biographie',
-      bioPlaceholder: 'Parlez-nous de vous...',
-      email: 'E-mail',
-      contactData: 'Contact et données personnelles',
-      phone: 'Téléphone',
-      birthDate: 'Date de naissance',
-      city: 'Ville',
-      cityPlaceholder: 'Ville',
-      country: 'Pays',
-      countryPlaceholder: 'Pays',
-      paymentMethods: 'Moyens de paiement',
-      paymentMethodsDesc: 'Pour gérer la facturation, contactez notre support financier.',
-      managePaymentMethods: 'Contacter le support financier',
-      chooseAvatarStyle: 'Choisissez votre style d’avatar',
-      chooseAvatarDesc: 'Sélectionnez une icône fixe ou conservez le mode aléatoire.',
-      randomAvatarOption: 'Avatar aléatoire à chaque connexion',
-      avatarOptionAlt: 'Option d’avatar',
-      profileAvatarAlt: 'Avatar de profil',
-      headlinePlaceholder: 'Passionné de jazz, musicien, enseignant...',
-      phonePlaceholder: '+33 6 12 34 56 78',
-      cancel: 'Annuler',
-      confirmAvatar: 'Confirmer l’avatar',
-      medalTooltipPrefix: 'Gagnee dans',
-      medalTooltipEmpty: 'Pas encore de medaille',
-      medalShowcaseTitle: 'Vitrine des medailles',
-      platinumProgressLabel: 'Medailles platine',
-      supremeUnlocked: 'Votre medaille supreme est debloquee.',
-      supremeLocked: 'Quand vous aurez les 15 medailles platine, votre medaille supreme apparaitra ici.',
-      supremeTitle: 'Specialiste du jazz',
-      openSupremePage: 'Voir la reconnaissance speciale',
+      avatarUpdateError: "Impossible de mettre à jour l’avatar",
+      profileUpdateError: "Impossible de mettre à jour le profil",
+      billingSupportError:
+        "Impossible d’ouvrir le support de facturation. Réessayez plus tard.",
+      title: "Profil",
+      subtitle:
+        "Gérez votre profil, vos données personnelles et vos préférences d’avatar",
+      profileIcon: "Icône de profil",
+      randomModeDesc: "Mode aléatoire : change à chaque connexion",
+      fixedModeDesc: "Mode fixe : reste identique jusqu’à modification",
+      saving: "Enregistrement...",
+      saveChanges: "Enregistrer les modifications",
+      profileUpdated: "Profil mis à jour avec succès !",
+      profileInfo: "Informations du profil",
+      fullName: "Nom complet",
+      fullNamePlaceholder: "Votre nom complet",
+      headline: "Titre",
+      bio: "Biographie",
+      bioPlaceholder: "Parlez-nous de vous...",
+      email: "E-mail",
+      contactData: "Contact et données personnelles",
+      phone: "Téléphone",
+      birthDate: "Date de naissance",
+      city: "Ville",
+      cityPlaceholder: "Ville",
+      country: "Pays",
+      countryPlaceholder: "Pays",
+      paymentMethods: "Moyens de paiement",
+      paymentMethodsDesc:
+        "Pour gérer la facturation, contactez notre support financier.",
+      managePaymentMethods: "Contacter le support financier",
+      chooseAvatarStyle: "Choisissez votre style d’avatar",
+      chooseAvatarDesc:
+        "Sélectionnez une icône fixe ou conservez le mode aléatoire.",
+      randomAvatarOption: "Avatar aléatoire à chaque connexion",
+      avatarOptionAlt: "Option d’avatar",
+      profileAvatarAlt: "Avatar de profil",
+      headlinePlaceholder: "Passionné de jazz, musicien, enseignant...",
+      phonePlaceholder: "+33 6 12 34 56 78",
+      cancel: "Annuler",
+      confirmAvatar: "Confirmer l’avatar",
+      medalTooltipPrefix: "Gagnee dans",
+      medalTooltipEmpty: "Pas encore de medaille",
+      medalShowcaseTitle: "Vitrine des medailles",
+      platinumProgressLabel: "Medailles platine",
+      supremeUnlocked: "Votre medaille supreme est debloquee.",
+      supremeLocked:
+        "Quand vous aurez les 15 medailles platine, votre medaille supreme apparaitra ici.",
+      supremeTitle: "Specialiste du jazz",
+      openSupremePage: "Voir la reconnaissance speciale",
     },
     pt: {
-      avatarUpdateError: 'Não foi possível atualizar o avatar',
-      profileUpdateError: 'Não foi possível atualizar o perfil',
-      billingSupportError: 'Não foi possível abrir o suporte financeiro. Tente novamente mais tarde.',
-      title: 'Perfil',
-      subtitle: 'Gerencie seu perfil, dados pessoais e preferências de avatar',
-      profileIcon: 'Ícone de perfil',
-      randomModeDesc: 'Modo aleatório: muda a cada login',
-      fixedModeDesc: 'Modo fixo: permanece até você alterar',
-      saving: 'Salvando...',
-      saveChanges: 'Salvar alterações',
-      profileUpdated: 'Perfil atualizado com sucesso!',
-      profileInfo: 'Informações do perfil',
-      fullName: 'Nome completo',
-      fullNamePlaceholder: 'Seu nome completo',
-      headline: 'Título',
-      bio: 'Biografia',
-      bioPlaceholder: 'Conte-nos sobre você...',
-      email: 'E-mail',
-      contactData: 'Contato e dados pessoais',
-      phone: 'Telefone',
-      birthDate: 'Data de nascimento',
-      city: 'Cidade',
-      cityPlaceholder: 'Cidade',
-      country: 'País',
-      countryPlaceholder: 'País',
-      paymentMethods: 'Métodos de pagamento',
-      paymentMethodsDesc: 'Para gerenciar dados de cobrança, entre em contato com o suporte financeiro.',
-      managePaymentMethods: 'Contatar suporte financeiro',
-      chooseAvatarStyle: 'Escolha seu estilo de avatar',
-      chooseAvatarDesc: 'Selecione um ícone fixo ou mantenha o modo aleatório.',
-      randomAvatarOption: 'Avatar aleatório em cada login',
-      avatarOptionAlt: 'Opção de avatar',
-      profileAvatarAlt: 'Avatar de perfil',
-      headlinePlaceholder: 'Aprendiz de jazz, músico, educador...',
-      phonePlaceholder: '+55 11 99999-9999',
-      cancel: 'Cancelar',
-      confirmAvatar: 'Confirmar avatar',
-      medalTooltipPrefix: 'Ganha na',
-      medalTooltipEmpty: 'Sem medalha ainda',
-      medalShowcaseTitle: 'Vitrine de medalhas',
-      platinumProgressLabel: 'Medalhas de platina',
-      supremeUnlocked: 'Voce desbloqueou sua medalha suprema.',
-      supremeLocked: 'Quando completar as 15 medalhas de platina, sua medalha suprema vai aparecer aqui.',
-      supremeTitle: 'Especialista em jazz',
-      openSupremePage: 'Ver reconhecimento especial',
+      avatarUpdateError: "Não foi possível atualizar o avatar",
+      profileUpdateError: "Não foi possível atualizar o perfil",
+      billingSupportError:
+        "Não foi possível abrir o suporte financeiro. Tente novamente mais tarde.",
+      title: "Perfil",
+      subtitle: "Gerencie seu perfil, dados pessoais e preferências de avatar",
+      profileIcon: "Ícone de perfil",
+      randomModeDesc: "Modo aleatório: muda a cada login",
+      fixedModeDesc: "Modo fixo: permanece até você alterar",
+      saving: "Salvando...",
+      saveChanges: "Salvar alterações",
+      profileUpdated: "Perfil atualizado com sucesso!",
+      profileInfo: "Informações do perfil",
+      fullName: "Nome completo",
+      fullNamePlaceholder: "Seu nome completo",
+      headline: "Título",
+      bio: "Biografia",
+      bioPlaceholder: "Conte-nos sobre você...",
+      email: "E-mail",
+      contactData: "Contato e dados pessoais",
+      phone: "Telefone",
+      birthDate: "Data de nascimento",
+      city: "Cidade",
+      cityPlaceholder: "Cidade",
+      country: "País",
+      countryPlaceholder: "País",
+      paymentMethods: "Métodos de pagamento",
+      paymentMethodsDesc:
+        "Para gerenciar dados de cobrança, entre em contato com o suporte financeiro.",
+      managePaymentMethods: "Contatar suporte financeiro",
+      chooseAvatarStyle: "Escolha seu estilo de avatar",
+      chooseAvatarDesc: "Selecione um ícone fixo ou mantenha o modo aleatório.",
+      randomAvatarOption: "Avatar aleatório em cada login",
+      avatarOptionAlt: "Opção de avatar",
+      profileAvatarAlt: "Avatar de perfil",
+      headlinePlaceholder: "Aprendiz de jazz, músico, educador...",
+      phonePlaceholder: "+55 11 99999-9999",
+      cancel: "Cancelar",
+      confirmAvatar: "Confirmar avatar",
+      medalTooltipPrefix: "Ganha na",
+      medalTooltipEmpty: "Sem medalha ainda",
+      medalShowcaseTitle: "Vitrine de medalhas",
+      platinumProgressLabel: "Medalhas de platina",
+      supremeUnlocked: "Voce desbloqueou sua medalha suprema.",
+      supremeLocked:
+        "Quando completar as 15 medalhas de platina, sua medalha suprema vai aparecer aqui.",
+      supremeTitle: "Especialista em jazz",
+      openSupremePage: "Ver reconhecimento especial",
     },
   }[language];
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isSupportLoading, setIsSupportLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [avatarMode, setAvatarMode] = useState<AvatarMode>('random');
+  const [avatarMode, setAvatarMode] = useState<AvatarMode>("random");
   const [avatarUrl, setAvatarUrl] = useState(getRandomProfileAvatar());
-  const [draftAvatarMode, setDraftAvatarMode] = useState<AvatarMode>('random');
-  const [draftAvatarUrl, setDraftAvatarUrl] = useState(getRandomProfileAvatar());
-  const [activeMedalTooltip, setActiveMedalTooltip] = useState<string | null>(null);
+  const [draftAvatarMode, setDraftAvatarMode] = useState<AvatarMode>("random");
+  const [draftAvatarUrl, setDraftAvatarUrl] = useState(
+    getRandomProfileAvatar(),
+  );
+  const [activeMedalTooltip, setActiveMedalTooltip] = useState<string | null>(
+    null,
+  );
   const { profile: medalProfile } = useUserJazzMedalProfile(language);
 
   const [formData, setFormData] = useState<ProfileFormData>(EMPTY_PROFILE_FORM);
   const medalProgress = medalProfile?.progress ?? null;
   const medalLessons = medalProfile?.lessons ?? [];
-  const activeProfileMedal = medalProgress?.activeProfileMedal ?? 'NONE';
+  const activeProfileMedal = medalProgress?.activeProfileMedal ?? "NONE";
   const visibleMedalLessons = useMemo(
     () => medalLessons.slice(0, 15),
-    [medalLessons]
+    [medalLessons],
   );
 
   useEffect(() => {
@@ -258,23 +292,24 @@ export default function ProfilePage() {
       if (!user) return;
 
       const metadata = user.user_metadata || {};
-      const initialMode: AvatarMode = metadata.avatar_mode === 'fixed' ? 'fixed' : 'random';
+      const initialMode: AvatarMode =
+        metadata.avatar_mode === "fixed" ? "fixed" : "random";
       const initialAvatar = metadata.avatar_url || getRandomProfileAvatar();
 
-      setEmail(user.email || '');
+      setEmail(user.email || "");
       setAvatarMode(initialMode);
       setAvatarUrl(initialAvatar);
       setDraftAvatarMode(initialMode);
       setDraftAvatarUrl(initialAvatar);
 
       setFormData({
-        fullName: metadata.full_name || '',
-        headline: metadata.headline || '',
-        bio: metadata.bio || '',
-        phone: metadata.phone || '',
-        dateOfBirth: metadata.date_of_birth || '',
-        city: metadata.city || '',
-        country: metadata.country || '',
+        fullName: metadata.full_name || "",
+        headline: metadata.headline || "",
+        bio: metadata.bio || "",
+        phone: metadata.phone || "",
+        dateOfBirth: metadata.date_of_birth || "",
+        city: metadata.city || "",
+        country: metadata.country || "",
       });
     };
 
@@ -282,9 +317,12 @@ export default function ProfilePage() {
   }, []);
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setFormData((previous) => ({ ...previous, [event.target.name]: event.target.value }));
+    setFormData((previous) => ({
+      ...previous,
+      [event.target.name]: event.target.value,
+    }));
   };
 
   const openAvatarPicker = () => {
@@ -296,7 +334,7 @@ export default function ProfilePage() {
   const confirmAvatarSelection = async () => {
     const nextMode: AvatarMode = draftAvatarMode;
     const nextAvatar =
-      nextMode === 'random' ? getRandomProfileAvatar() : draftAvatarUrl;
+      nextMode === "random" ? getRandomProfileAvatar() : draftAvatarUrl;
 
     setAvatarMode(nextMode);
     setAvatarUrl(nextAvatar);
@@ -353,10 +391,15 @@ export default function ProfilePage() {
   const handleManagePayments = async () => {
     try {
       setIsSupportLoading(true);
-      const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'admin@neurofactory.net';
-      const subject = encodeURIComponent('Billing support request');
-      const body = encodeURIComponent(`Hello, I need help with my billing details for account: ${email || 'unknown'}.`);
-      window.location.assign(`mailto:${supportEmail}?subject=${subject}&body=${body}`);
+      const supportEmail =
+        process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "admin@neurofactory.net";
+      const subject = encodeURIComponent("Billing support request");
+      const body = encodeURIComponent(
+        `Hello, I need help with my billing details for account: ${email || "unknown"}.`,
+      );
+      window.location.assign(
+        `mailto:${supportEmail}?subject=${subject}&body=${body}`,
+      );
     } catch {
       alert(copy.billingSupportError);
     } finally {
@@ -367,10 +410,10 @@ export default function ProfilePage() {
   return (
     <div className="max-w-[1200px] mx-auto px-0.5 sm:px-0 space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">{copy.title}</h1>
-        <p className="text-muted-foreground mt-1">
-          {copy.subtitle}
-        </p>
+        <h1 className="text-2xl font-serif font-bold text-foreground">
+          {copy.title}
+        </h1>
+        <p className="text-muted-foreground mt-1">{copy.subtitle}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -399,9 +442,11 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">{copy.profileIcon}</p>
+                  <p className="font-medium text-foreground">
+                    {copy.profileIcon}
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    {avatarMode === 'random'
+                    {avatarMode === "random"
                       ? copy.randomModeDesc
                       : copy.fixedModeDesc}
                   </p>
@@ -410,14 +455,22 @@ export default function ProfilePage() {
                 <div className="w-full rounded-[28px] border border-primary/15 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.16),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.12),_transparent_24%),linear-gradient(145deg,rgba(15,23,42,0.96),rgba(24,24,27,0.92),rgba(30,41,59,0.96))] p-4 shadow-[0_22px_44px_rgba(15,23,42,0.26)]">
                   <div className="mb-4 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.28em] text-primary/80">{copy.medalShowcaseTitle}</p>
+                      <p className="text-[11px] uppercase tracking-[0.28em] text-primary/80">
+                        {copy.medalShowcaseTitle}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {medalProgress ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}` : '0/15'} {copy.platinumProgressLabel}
+                        {medalProgress
+                          ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}`
+                          : "0/15"}{" "}
+                        {copy.platinumProgressLabel}
                       </p>
                     </div>
-                    {activeProfileMedal !== 'NONE' ? (
-                      <div className="shrink-0 rounded-full border border-white/15 bg-card/90 p-2 shadow-lg" data-testid="profile-active-medal">
-                        {activeProfileMedal === 'SUPREME' ? (
+                    {activeProfileMedal !== "NONE" ? (
+                      <div
+                        className="shrink-0 rounded-full border border-white/15 bg-card/90 p-2 shadow-lg"
+                        data-testid="profile-active-medal"
+                      >
+                        {activeProfileMedal === "SUPREME" ? (
                           <JazzSupremeMedal language={language} size="sm" />
                         ) : (
                           <JazzMedalIcon medal={activeProfileMedal} size="sm" />
@@ -435,74 +488,117 @@ export default function ProfilePage() {
                       className="mx-auto grid w-full max-w-[18rem] grid-cols-5 gap-3"
                       data-testid="profile-medal-grid"
                     >
-                      {visibleMedalLessons.map((lesson: (typeof visibleMedalLessons)[number]) => {
-                        const isEarned = lesson.medal !== 'NONE';
+                      {visibleMedalLessons.map(
+                        (lesson: (typeof visibleMedalLessons)[number]) => {
+                          const isEarned = lesson.medal !== "NONE";
 
-                        if (!isEarned) {
+                          if (!isEarned) {
+                            return (
+                              <span
+                                key={`empty-medal-${lesson.classNumber}`}
+                                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-45"
+                                aria-label={copy.medalTooltipEmpty}
+                                data-testid={`profile-medal-slot-${lesson.classNumber}`}
+                              >
+                                <JazzMedalIcon medal="NONE" size="sm" />
+                              </span>
+                            );
+                          }
+
                           return (
-                            <span
-                              key={`empty-medal-${lesson.classNumber}`}
-                              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/10 bg-white/5 opacity-45"
-                              aria-label={copy.medalTooltipEmpty}
+                            <button
+                              key={`earned-medal-${lesson.classNumber}`}
+                              type="button"
+                              className={`group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-[transform,box-shadow,background-color] duration-200 focus-visible:scale-105 ${
+                                activeMedalTooltip ===
+                                `lesson-${lesson.classNumber}`
+                                  ? "z-30 scale-[1.22] bg-white/12 shadow-[0_14px_28px_rgba(15,23,42,0.42)] animate-medal-hover-wobble"
+                                  : "hover:scale-[1.16]"
+                              }`}
+                              onMouseEnter={() =>
+                                setActiveMedalTooltip(
+                                  `lesson-${lesson.classNumber}`,
+                                )
+                              }
+                              onMouseLeave={() =>
+                                setActiveMedalTooltip((current) =>
+                                  current === `lesson-${lesson.classNumber}`
+                                    ? null
+                                    : current,
+                                )
+                              }
+                              onFocus={() =>
+                                setActiveMedalTooltip(
+                                  `lesson-${lesson.classNumber}`,
+                                )
+                              }
+                              onBlur={() =>
+                                setActiveMedalTooltip((current) =>
+                                  current === `lesson-${lesson.classNumber}`
+                                    ? null
+                                    : current,
+                                )
+                              }
+                              onClick={() =>
+                                setActiveMedalTooltip((current) =>
+                                  current === `lesson-${lesson.classNumber}`
+                                    ? null
+                                    : `lesson-${lesson.classNumber}`,
+                                )
+                              }
+                              aria-label={`${copy.medalTooltipPrefix} ${lesson.title}`}
                               data-testid={`profile-medal-slot-${lesson.classNumber}`}
                             >
-                              <JazzMedalIcon medal="NONE" size="sm" />
-                            </span>
+                              <JazzMedalIcon medal={lesson.medal} size="sm" />
+                              {activeMedalTooltip ===
+                              `lesson-${lesson.classNumber}` ? (
+                                <span
+                                  className="pointer-events-none absolute left-1/2 top-0 z-40 w-max max-w-[13rem] -translate-x-1/2 -translate-y-[118%] rounded-2xl border border-white/15 bg-slate-950/95 px-4 py-2 text-center text-[12px] font-semibold leading-5 text-white shadow-[0_20px_40px_rgba(2,6,23,0.52)] backdrop-blur-md before:absolute before:-inset-2 before:-z-10 before:rounded-[1.15rem] before:bg-slate-950/72 before:blur-xl"
+                                  role="tooltip"
+                                >
+                                  {lesson.title}
+                                </span>
+                              ) : null}
+                            </button>
                           );
-                        }
-
-                        return (
-                          <button
-                            key={`earned-medal-${lesson.classNumber}`}
-                            type="button"
-                            className={`group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-white/5 transition-[transform,box-shadow,background-color] duration-200 focus-visible:scale-105 ${
-                              activeMedalTooltip === `lesson-${lesson.classNumber}`
-                                ? 'z-30 scale-[1.22] bg-white/12 shadow-[0_14px_28px_rgba(15,23,42,0.42)] animate-medal-hover-wobble'
-                                : 'hover:scale-[1.16]'
-                            }`}
-                            onMouseEnter={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
-                            onMouseLeave={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
-                            onFocus={() => setActiveMedalTooltip(`lesson-${lesson.classNumber}`)}
-                            onBlur={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : current))}
-                            onClick={() => setActiveMedalTooltip((current) => (current === `lesson-${lesson.classNumber}` ? null : `lesson-${lesson.classNumber}`))}
-                            aria-label={`${copy.medalTooltipPrefix} ${lesson.title}`}
-                            data-testid={`profile-medal-slot-${lesson.classNumber}`}
-                          >
-                            <JazzMedalIcon medal={lesson.medal} size="sm" />
-                            {activeMedalTooltip === `lesson-${lesson.classNumber}` ? (
-                              <span
-                                className="pointer-events-none absolute left-1/2 top-0 z-40 w-max max-w-[13rem] -translate-x-1/2 -translate-y-[118%] rounded-2xl border border-white/15 bg-slate-950/95 px-4 py-2 text-center text-[12px] font-semibold leading-5 text-white shadow-[0_20px_40px_rgba(2,6,23,0.52)] backdrop-blur-md before:absolute before:-inset-2 before:-z-10 before:rounded-[1.15rem] before:bg-slate-950/72 before:blur-xl"
-                                role="tooltip"
-                              >
-                                {lesson.title}
-                              </span>
-                            ) : null}
-                          </button>
-                        );
-                      })}
+                        },
+                      )}
                     </div>
                   ) : (
-                    <div className="flex justify-center" data-testid="profile-supreme-only">
+                    <div
+                      className="flex justify-center"
+                      data-testid="profile-supreme-only"
+                    >
                       <button
                         type="button"
-                        onMouseEnter={() => setActiveMedalTooltip('supreme')}
-                        onMouseLeave={() => setActiveMedalTooltip((current) => (current === 'supreme' ? null : current))}
-                        onFocus={() => setActiveMedalTooltip('supreme')}
-                        onBlur={() => setActiveMedalTooltip((current) => (current === 'supreme' ? null : current))}
+                        onMouseEnter={() => setActiveMedalTooltip("supreme")}
+                        onMouseLeave={() =>
+                          setActiveMedalTooltip((current) =>
+                            current === "supreme" ? null : current,
+                          )
+                        }
+                        onFocus={() => setActiveMedalTooltip("supreme")}
+                        onBlur={() =>
+                          setActiveMedalTooltip((current) =>
+                            current === "supreme" ? null : current,
+                          )
+                        }
                         onClick={() => {
-                          setActiveMedalTooltip((current) => (current === 'supreme' ? null : 'supreme'));
-                          router.push('/dashboard/jazz-specialist');
+                          setActiveMedalTooltip((current) =>
+                            current === "supreme" ? null : "supreme",
+                          );
+                          router.push("/dashboard/jazz-specialist");
                         }}
                         className={`group relative inline-flex h-16 w-16 items-center justify-center rounded-full border border-yellow-300/30 bg-yellow-300/10 transition-[transform,box-shadow,background-color] duration-200 focus-visible:scale-105 ${
-                          activeMedalTooltip === 'supreme'
-                            ? 'z-30 scale-[1.16] bg-yellow-300/16 shadow-[0_16px_34px_rgba(250,204,21,0.25)] animate-medal-hover-wobble'
-                            : 'hover:scale-[1.1]'
+                          activeMedalTooltip === "supreme"
+                            ? "z-30 scale-[1.16] bg-yellow-300/16 shadow-[0_16px_34px_rgba(250,204,21,0.25)] animate-medal-hover-wobble"
+                            : "hover:scale-[1.1]"
                         }`}
                         aria-label={copy.supremeTitle}
                         data-testid="profile-supreme-medal"
                       >
                         <JazzSupremeMedal language={language} size="sm" />
-                        {activeMedalTooltip === 'supreme' ? (
+                        {activeMedalTooltip === "supreme" ? (
                           <span
                             className="pointer-events-none absolute left-1/2 top-0 z-40 w-max max-w-[13rem] -translate-x-1/2 -translate-y-[112%] rounded-2xl border border-yellow-300/35 bg-slate-950/95 px-4 py-2 text-center text-[12px] font-semibold leading-5 text-yellow-100 shadow-[0_20px_40px_rgba(2,6,23,0.52)] backdrop-blur-md before:absolute before:-inset-2 before:-z-10 before:rounded-[1.15rem] before:bg-slate-950/72 before:blur-xl"
                             role="tooltip"
@@ -515,14 +611,20 @@ export default function ProfilePage() {
                   )}
 
                   <div className="mt-4 text-center text-xs text-muted-foreground">
-                    <span>{medalProgress?.hasSupremeMedal ? copy.supremeUnlocked : copy.supremeLocked}</span>
+                    <span>
+                      {medalProgress?.hasSupremeMedal
+                        ? copy.supremeUnlocked
+                        : copy.supremeLocked}
+                    </span>
                   </div>
 
                   {medalProgress?.hasSupremeMedal ? (
                     <div className="mt-4 flex justify-center">
                       <Button
                         type="button"
-                        onClick={() => router.push('/dashboard/jazz-specialist')}
+                        onClick={() =>
+                          router.push("/dashboard/jazz-specialist")
+                        }
                         className="rounded-xl bg-yellow-400 text-black hover:bg-yellow-300"
                       >
                         {copy.openSupremePage}
@@ -543,16 +645,23 @@ export default function ProfilePage() {
                 {loading ? copy.saving : copy.saveChanges}
               </Button>
               {success && (
-                <span className="text-sm text-green-500 font-medium text-center">{copy.profileUpdated}</span>
+                <span className="text-sm text-green-500 font-medium text-center">
+                  {copy.profileUpdated}
+                </span>
               )}
             </div>
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">{copy.profileInfo}</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              {copy.profileInfo}
+            </h2>
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-1.5">
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-foreground mb-1.5"
+              >
                 {copy.fullName}
               </label>
               <input
@@ -567,7 +676,10 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="headline" className="block text-sm font-medium text-foreground mb-1.5">
+              <label
+                htmlFor="headline"
+                className="block text-sm font-medium text-foreground mb-1.5"
+              >
                 {copy.headline}
               </label>
               <input
@@ -582,7 +694,10 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-foreground mb-1.5">
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium text-foreground mb-1.5"
+              >
                 {copy.bio}
               </label>
               <textarea
@@ -597,9 +712,14 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">{copy.email}</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">
+                {copy.email}
+              </label>
               <input
+                id="email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 disabled
                 className="w-full px-3 py-2.5 bg-muted border border-border rounded-lg text-muted-foreground cursor-not-allowed"
@@ -616,7 +736,10 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1.5">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-foreground mb-1.5"
+                  >
                     {copy.phone}
                   </label>
                   <input
@@ -630,7 +753,10 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-foreground mb-1.5">
+                  <label
+                    htmlFor="dateOfBirth"
+                    className="block text-sm font-medium text-foreground mb-1.5"
+                  >
                     <Calendar className="h-4 w-4 inline mr-1" />
                     {copy.birthDate}
                   </label>
@@ -647,7 +773,10 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-foreground mb-1.5">
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium text-foreground mb-1.5"
+                  >
                     {copy.city}
                   </label>
                   <input
@@ -661,7 +790,10 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-foreground mb-1.5">
+                  <label
+                    htmlFor="country"
+                    className="block text-sm font-medium text-foreground mb-1.5"
+                  >
                     {copy.country}
                   </label>
                   <input
@@ -701,7 +833,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-
       </form>
       {pickerOpen && (
         <div
@@ -713,43 +844,52 @@ export default function ProfilePage() {
             onClick={(event) => event.stopPropagation()}
           >
             <div>
-              <h2 className="text-lg font-semibold text-foreground">{copy.chooseAvatarStyle}</h2>
-              <p className="text-sm text-muted-foreground">{copy.chooseAvatarDesc}</p>
+              <h2 className="text-lg font-semibold text-foreground">
+                {copy.chooseAvatarStyle}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {copy.chooseAvatarDesc}
+              </p>
             </div>
 
             <button
               type="button"
               onClick={() => {
-                setDraftAvatarMode('random');
+                setDraftAvatarMode("random");
                 setDraftAvatarUrl(getRandomProfileAvatar());
               }}
               className={`w-full flex items-center justify-between rounded-lg border px-4 py-3 transition-colors ${
-                draftAvatarMode === 'random'
-                  ? 'border-primary bg-primary/10'
-                  : 'border-border hover:bg-accent/40'
+                draftAvatarMode === "random"
+                  ? "border-primary bg-primary/10"
+                  : "border-border hover:bg-accent/40"
               }`}
             >
               <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <Shuffle className="h-4 w-4" />
                 {copy.randomAvatarOption}
               </span>
-              {draftAvatarMode === 'random' && <Check className="h-4 w-4 text-primary" />}
+              {draftAvatarMode === "random" && (
+                <Check className="h-4 w-4 text-primary" />
+              )}
             </button>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {PROFILE_AVATAR_OPTIONS.map((option) => {
-                const isSelected = draftAvatarMode === 'fixed' && draftAvatarUrl === option;
+                const isSelected =
+                  draftAvatarMode === "fixed" && draftAvatarUrl === option;
 
                 return (
                   <button
                     key={option}
                     type="button"
                     onClick={() => {
-                      setDraftAvatarMode('fixed');
+                      setDraftAvatarMode("fixed");
                       setDraftAvatarUrl(option);
                     }}
                     className={`relative rounded-lg border p-2 transition-colors ${
-                      isSelected ? 'border-primary bg-primary/10' : 'border-border hover:bg-accent/40'
+                      isSelected
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:bg-accent/40"
                     }`}
                   >
                     <Image
@@ -770,7 +910,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setPickerOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setPickerOpen(false)}
+              >
                 {copy.cancel}
               </Button>
               <Button type="button" onClick={confirmAvatarSelection}>
