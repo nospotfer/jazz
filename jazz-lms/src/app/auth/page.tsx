@@ -803,6 +803,8 @@ export default function AuthPage() {
               <label className="flex items-center gap-2 text-sm text-[#D1D5DB] select-none">
                 <input
                   type="checkbox"
+                  id="rememberMe"
+                  name="rememberMe"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 rounded border-[#4B5563] bg-[#1f2937] text-[#FBBF24] focus:ring-[#FBBF24]"

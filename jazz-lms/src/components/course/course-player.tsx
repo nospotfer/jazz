@@ -433,6 +433,34 @@ export const CoursePlayer = ({
   const router = useRouter();
   const confetti = useConfettiStore();
 
+  const enforceNoRemotePlayback = useCallback(() => {
+    const playerElement = muxPlayerRef.current as
+      | (MuxPlayerElement & {
+          media?: HTMLMediaElement | null;
+          disableRemotePlayback?: boolean;
+        })
+      | null;
+
+    if (!playerElement) {
+      return;
+    }
+
+    try {
+      playerElement.setAttribute("disableremoteplayback", "");
+      playerElement.removeAttribute("cast-receiver");
+      playerElement.disableRemotePlayback = true;
+
+      const mediaElement = playerElement.media;
+      if (mediaElement) {
+        mediaElement.setAttribute("disableremoteplayback", "");
+        mediaElement.removeAttribute("cast-receiver");
+        mediaElement.disableRemotePlayback = true;
+      }
+    } catch {
+      // Keep playback resilient even if browser APIs differ.
+    }
+  }, []);
+
   const orderedLessons = useMemo(
     () => course.chapters.flatMap((chapter) => chapter.lessons),
     [course.chapters],
@@ -585,7 +613,8 @@ export const CoursePlayer = ({
     }
 
     muxPlayerRef.current.setAttribute("lang", languageToHtmlLang(language));
-  }, [language]);
+    enforceNoRemotePlayback();
+  }, [enforceNoRemotePlayback, language]);
 
   useEffect(() => {
     if (language === "en") {
@@ -1174,14 +1203,20 @@ export const CoursePlayer = ({
                       tokens={muxTokens}
                       poster={playbackPosterUrl || undefined}
                       accentColor="#d4af37"
-                      onCanPlay={() => setIsReady(true)}
+                      onCanPlay={() => {
+                        enforceNoRemotePlayback();
+                        setIsReady(true);
+                      }}
                       onEnded={(event) => onEnded(event as unknown as Event)}
                       onTimeUpdate={onTimeUpdate}
+                      onLoadStart={enforceNoRemotePlayback}
                       onError={() => {
                         setMuxRuntimeError(copy.muxTokenError);
                       }}
                       autoPlay
                       playsInline
+                      castReceiver=""
+                      disableTracking
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">

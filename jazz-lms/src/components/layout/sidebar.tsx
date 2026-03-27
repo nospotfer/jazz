@@ -1,30 +1,33 @@
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { useDashboardPreferences } from "@/components/providers/dashboard-preferences-provider";
+import { createClient } from "@/utils/supabase/client";
+import type { AuthChangeEvent } from "@supabase/supabase-js";
 import {
-  Menu,
-  X,
-  Home,
-  BookOpen,
-  MessageSquare,
-  LogOut,
-  Library,
-  ChevronDown,
-  FileText,
-} from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
+    BookOpen,
+    ChevronDown,
+    FileText,
+    Home,
+    Library,
+    LogOut,
+    Menu,
+    MessageSquare,
+    X,
+} from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const DashboardNotesNavPanel = dynamic(
-  () => import('@/components/layout/dashboard-notes-nav-panel').then((mod) => mod.DashboardNotesNavPanel),
+  () =>
+    import("@/components/layout/dashboard-notes-nav-panel").then(
+      (mod) => mod.DashboardNotesNavPanel,
+    ),
   {
     ssr: false,
-  }
+  },
 );
 
 export function Sidebar() {
@@ -35,132 +38,252 @@ export function Sidebar() {
   const router = useRouter();
 
   useEffect(() => {
+    const supabase = createClient();
     let isMounted = true;
     let intervalId: number | null = null;
+    let requestController: AbortController | null = null;
 
-    const loadPdfCount = () => {
-      if (document.visibilityState === 'hidden') {
+    const stopPolling = () => {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const hasSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      return Boolean(session);
+    };
+
+    const loadPdfCount = async () => {
+      if (document.visibilityState === "hidden") {
         return;
       }
 
-      fetch('/api/dashboard/pdf-count')
-        .then((response) => response.json())
-        .then((data) => {
-          if (!isMounted) return;
-          setPdfCount(typeof data.count === 'number' ? data.count : 0);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setPdfCount(0);
+      if (!(await hasSession())) {
+        stopPolling();
+        if (isMounted) setPdfCount(0);
+        return;
+      }
+
+      requestController?.abort();
+      requestController = new AbortController();
+
+      try {
+        const response = await fetch("/api/dashboard/pdf-count", {
+          signal: requestController.signal,
         });
+
+        if (!isMounted) return;
+
+        if (response.status === 401) {
+          setPdfCount(0);
+          stopPolling();
+          return;
+        }
+
+        const data = await response.json();
+        setPdfCount(typeof data.count === "number" ? data.count : 0);
+      } catch (error) {
+        if (!isMounted) return;
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        setPdfCount(0);
+      }
     };
 
     const startPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-      }
+      stopPolling();
 
-      intervalId = window.setInterval(loadPdfCount, 60000);
+      intervalId = window.setInterval(() => {
+        void loadPdfCount();
+      }, 60000);
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadPdfCount();
+      if (document.visibilityState === "visible") {
+        void loadPdfCount();
       }
     };
 
-    const idleCallback = window.requestIdleCallback?.(() => {
-      loadPdfCount();
-      startPolling();
-    }, { timeout: 1200 });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
+      if (!isMounted) return;
+
+      if (event === "SIGNED_OUT") {
+        stopPolling();
+        requestController?.abort();
+        setPdfCount(0);
+      }
+
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        void loadPdfCount();
+        startPolling();
+      }
+    });
+
+    const idleCallback = window.requestIdleCallback?.(
+      () => {
+        void loadPdfCount();
+        startPolling();
+      },
+      { timeout: 1200 },
+    );
 
     if (idleCallback !== undefined) {
-      document.addEventListener('visibilitychange', handleVisibilityChange);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
       return () => {
         isMounted = false;
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        subscription.unsubscribe();
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange,
+        );
         window.cancelIdleCallback?.(idleCallback);
-        if (intervalId !== null) {
-          window.clearInterval(intervalId);
-        }
+        requestController?.abort();
+        stopPolling();
       };
     }
 
-    loadPdfCount();
+    void loadPdfCount();
     startPolling();
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isMounted = false;
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-      }
+      subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      requestController?.abort();
+      stopPolling();
     };
   }, []);
 
   useEffect(() => {
+    const supabase = createClient();
     let isMounted = true;
     let intervalId: number | null = null;
+    let requestController: AbortController | null = null;
 
-    const loadUnreadMessages = () => {
-      if (document.visibilityState === 'hidden') {
+    const stopPolling = () => {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const hasSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      return Boolean(session);
+    };
+
+    const loadUnreadMessages = async () => {
+      if (document.visibilityState === "hidden") {
         return;
       }
 
-      fetch('/api/messages/unread-count')
-        .then((response) => response.json())
-        .then((data) => {
-          if (!isMounted) return;
-          setUnreadMessages(typeof data.count === 'number' ? data.count : 0);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setUnreadMessages(0);
+      if (!(await hasSession())) {
+        stopPolling();
+        if (isMounted) setUnreadMessages(0);
+        return;
+      }
+
+      requestController?.abort();
+      requestController = new AbortController();
+
+      try {
+        const response = await fetch("/api/messages/unread-count", {
+          signal: requestController.signal,
         });
+
+        if (!isMounted) return;
+
+        if (response.status === 401) {
+          setUnreadMessages(0);
+          stopPolling();
+          return;
+        }
+
+        const data = await response.json();
+        setUnreadMessages(typeof data.count === "number" ? data.count : 0);
+      } catch (error) {
+        if (!isMounted) return;
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        setUnreadMessages(0);
+      }
     };
 
     const startPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-      }
+      stopPolling();
 
-      intervalId = window.setInterval(loadUnreadMessages, 60000);
+      intervalId = window.setInterval(() => {
+        void loadUnreadMessages();
+      }, 60000);
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadUnreadMessages();
+      if (document.visibilityState === "visible") {
+        void loadUnreadMessages();
       }
     };
 
-    const idleCallback = window.requestIdleCallback?.(() => {
-      loadUnreadMessages();
-      startPolling();
-    }, { timeout: 1200 });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
+      if (!isMounted) return;
+
+      if (event === "SIGNED_OUT") {
+        stopPolling();
+        requestController?.abort();
+        setUnreadMessages(0);
+      }
+
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        void loadUnreadMessages();
+        startPolling();
+      }
+    });
+
+    const idleCallback = window.requestIdleCallback?.(
+      () => {
+        void loadUnreadMessages();
+        startPolling();
+      },
+      { timeout: 1200 },
+    );
 
     if (idleCallback !== undefined) {
-      document.addEventListener('visibilitychange', handleVisibilityChange);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
       return () => {
         isMounted = false;
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        subscription.unsubscribe();
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange,
+        );
         window.cancelIdleCallback?.(idleCallback);
-        if (intervalId !== null) {
-          window.clearInterval(intervalId);
-        }
+        requestController?.abort();
+        stopPolling();
       };
     }
 
-    loadUnreadMessages();
+    void loadUnreadMessages();
     startPolling();
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isMounted = false;
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-      }
+      subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      requestController?.abort();
+      stopPolling();
     };
   }, []);
 
@@ -172,19 +295,19 @@ export function Sidebar() {
   // Prevent body scroll when sidebar is open on mobile
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/');
+    router.push("/");
     router.refresh();
   };
 
@@ -210,7 +333,7 @@ export function Sidebar() {
       {/* Sidebar - Mobile (slide in) */}
       <aside
         className={`fixed top-0 left-0 h-full w-[90vw] max-w-72 bg-card border-r border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <SidebarContent
@@ -253,23 +376,23 @@ function SidebarContent({
 
   const menuItems = [
     {
-      label: t('lobby', 'Lobby'),
-      href: '/dashboard',
+      label: t("lobby", "Lobby"),
+      href: "/dashboard",
       icon: Home,
     },
     {
-      label: t('myCourses', 'My Courses'),
-      href: '/dashboard/courses',
+      label: t("myCourses", "My Courses"),
+      href: "/dashboard/courses",
       icon: BookOpen,
     },
     {
-      label: t('messages', 'Messages'),
-      href: '/dashboard/messages',
+      label: t("messages", "Messages"),
+      href: "/dashboard/messages",
       icon: MessageSquare,
     },
     {
-      label: t('courseNotes', 'Course Notes'),
-      href: '/dashboard/pdf-view',
+      label: t("courseNotes", "Course Notes"),
+      href: "/dashboard/pdf-view",
       icon: FileText,
     },
   ];
@@ -314,28 +437,32 @@ function SidebarContent({
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-primary/10 text-primary border border-primary/20'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}
             >
-              <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
+              <Icon className={`h-5 w-5 ${isActive ? "text-primary" : ""}`} />
               <span className="flex-1">{item.label}</span>
-              {item.href === '/dashboard/pdf-view' && pdfCount !== null && (
-                <span className={`text-xs px-2 py-0.5 rounded-full border ${
-                  isActive
-                    ? 'border-primary/40 text-primary'
-                    : 'border-border text-muted-foreground'
-                }`}>
+              {item.href === "/dashboard/pdf-view" && pdfCount !== null && (
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full border ${
+                    isActive
+                      ? "border-primary/40 text-primary"
+                      : "border-border text-muted-foreground"
+                  }`}
+                >
                   {pdfCount}
                 </span>
               )}
-              {item.href === '/dashboard/messages' && unreadMessages !== null && unreadMessages > 0 && (
-                <span
-                  className="h-2.5 w-2.5 rounded-full bg-yellow-400"
-                  aria-label="Unread messages"
-                  title="New message in inbox"
-                />
-              )}
+              {item.href === "/dashboard/messages" &&
+                unreadMessages !== null &&
+                unreadMessages > 0 && (
+                  <span
+                    className="h-2.5 w-2.5 rounded-full bg-yellow-400"
+                    aria-label="Unread messages"
+                    title="New message in inbox"
+                  />
+                )}
             </Link>
           );
         })}
@@ -347,9 +474,11 @@ function SidebarContent({
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors w-full"
             >
               <Library className="h-5 w-5 flex-shrink-0" />
-              <span className="flex-1 text-left">{t('myNotes', 'My Notes')}</span>
+              <span className="flex-1 text-left">
+                {t("myNotes", "My Notes")}
+              </span>
               <ChevronDown
-                className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${isNotesSectionOpen ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${isNotesSectionOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -365,7 +494,7 @@ function SidebarContent({
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors w-full"
         >
           <LogOut className="h-5 w-5" />
-          {t('logOut', 'Log out')}
+          {t("logOut", "Log out")}
         </button>
       </div>
     </div>

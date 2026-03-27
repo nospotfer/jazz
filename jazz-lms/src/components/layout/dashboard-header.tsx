@@ -1,26 +1,48 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { Bell, Search, User, Wallet, LogOut, X, Settings, ScrollText } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
-import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
-import { resolveProfileAvatar } from '@/lib/profile-avatars';
-import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
-import { useUserCourseCompletionRecognition } from '@/hooks/use-user-course-completion-recognition';
-import { useUserJazzMedalProgress } from '@/hooks/use-user-jazz-medal-progress';
-import type { UserJazzMedalProgress } from '@/lib/lesson-quiz';
+import {
+    JazzMedalIcon,
+    JazzSupremeMedal,
+} from "@/components/course/lesson-quiz-medal";
+import { useDashboardPreferences } from "@/components/providers/dashboard-preferences-provider";
+import { useUserCourseCompletionRecognition } from "@/hooks/use-user-course-completion-recognition";
+import { useUserJazzMedalProgress } from "@/hooks/use-user-jazz-medal-progress";
+import type { UserJazzMedalProgress } from "@/lib/lesson-quiz";
+import { resolveProfileAvatar } from "@/lib/profile-avatars";
+import { createClient } from "@/utils/supabase/client";
+import type { AuthChangeEvent } from "@supabase/supabase-js";
+import {
+    Bell,
+    LogOut,
+    ScrollText,
+    Search,
+    Settings,
+    User,
+    Wallet,
+    X,
+} from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then((mod) => mod.ThemeToggle), {
-  ssr: false,
-});
+const ThemeToggle = dynamic(
+  () => import("@/components/theme-toggle").then((mod) => mod.ThemeToggle),
+  {
+    ssr: false,
+  },
+);
 
-const LanguageSelector = dynamic(() => import('@/components/language-selector').then((mod) => mod.LanguageSelector), {
-  ssr: false,
-});
+const LanguageSelector = dynamic(
+  () =>
+    import("@/components/language-selector").then(
+      (mod) => mod.LanguageSelector,
+    ),
+  {
+    ssr: false,
+  },
+);
 
 // ── Notification types & mock data ──────────────────────────────────
 interface Notification {
@@ -39,7 +61,7 @@ interface DashboardHeaderProps {
     email: string;
     user_metadata: {
       full_name?: string;
-      avatar_mode?: 'random' | 'fixed';
+      avatar_mode?: "random" | "fixed";
       avatar_url?: string;
     };
   };
@@ -48,23 +70,31 @@ interface DashboardHeaderProps {
   initialMedalProgress?: UserJazzMedalProgress | null;
 }
 
-export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgress = null }: DashboardHeaderProps) {
+export function DashboardHeader({
+  user,
+  role,
+  isAdmin = false,
+  initialMedalProgress = null,
+}: DashboardHeaderProps) {
   const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
-  const { progress: medalProgress } = useUserJazzMedalProgress(initialMedalProgress);
+  const { progress: medalProgress } =
+    useUserJazzMedalProgress(initialMedalProgress);
   const { recognition } = useUserCourseCompletionRecognition();
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
-    resolveProfileAvatar(user.id, user.user_metadata?.avatar_url)
+    resolveProfileAvatar(user.id, user.user_metadata?.avatar_url),
   );
   const displayName =
-    user.user_metadata?.full_name || user.email?.split('@')[0] || t('userFallback', 'Usuario');
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    t("userFallback", "Usuario");
   const avatarUrl = currentAvatarUrl;
   const initials = displayName
-    .split(' ')
+    .split(" ")
     .map((n: string) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -74,25 +104,29 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
   const [activeNotif, setActiveNotif] = useState<Notification | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const notifications: Notification[] = unreadMessages > 0
-    ? [
-        {
-          id: 'inbox-unread',
-          title: t('inboxNewMessageTitle', 'Nuevo mensaje en la bandeja'),
-          preview: t('inboxNewMessagePreview', 'Tienes mensajes sin leer en tu bandeja.'),
-          body: t('inboxNewMessageTitle', 'Nuevo mensaje en la bandeja'),
-          date: t('now', 'Ahora'),
-          read: false,
-        },
-      ]
-    : [];
+  const notifications: Notification[] =
+    unreadMessages > 0
+      ? [
+          {
+            id: "inbox-unread",
+            title: t("inboxNewMessageTitle", "Nuevo mensaje en la bandeja"),
+            preview: t(
+              "inboxNewMessagePreview",
+              "Tienes mensajes sin leer en tu bandeja.",
+            ),
+            body: t("inboxNewMessageTitle", "Nuevo mensaje en la bandeja"),
+            date: t("now", "Ahora"),
+            read: false,
+          },
+        ]
+      : [];
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const openNotification = (notif: Notification) => {
     setShowNotifDropdown(false);
-    if (notif.id === 'inbox-unread') {
-      router.push('/dashboard/messages');
+    if (notif.id === "inbox-unread") {
+      router.push("/dashboard/messages");
       return;
     }
     setActiveNotif(notif);
@@ -106,7 +140,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
     const supabase = createClient();
     await supabase.auth.signOut();
     setShowUserMenu(false);
-    router.push('/');
+    router.push("/");
   };
 
   // ── Click outside to close ──────────────────────────────────────
@@ -118,7 +152,10 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
 
       if (latestUser) {
         setCurrentAvatarUrl(
-          resolveProfileAvatar(latestUser.id, latestUser.user_metadata?.avatar_url)
+          resolveProfileAvatar(
+            latestUser.id,
+            latestUser.user_metadata?.avatar_url,
+          ),
         );
       }
     };
@@ -133,78 +170,138 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifDropdown(false);
       }
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
         setShowUserMenu(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
       subscription.unsubscribe();
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [supabase]);
 
   useEffect(() => {
+    const supabase = createClient();
     let isMounted = true;
     let intervalId: number | null = null;
     let timeoutId: number | null = null;
     let idleCallbackId: number | null = null;
+    let requestController: AbortController | null = null;
 
-    const loadUnreadMessages = () => {
-      if (document.visibilityState === 'hidden') {
+    const stopPolling = () => {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const hasSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      return Boolean(session);
+    };
+
+    const loadUnreadMessages = async () => {
+      if (document.visibilityState === "hidden") {
         return;
       }
 
-      fetch('/api/messages/unread-count')
-        .then((response) => response.json())
-        .then((data) => {
-          if (!isMounted) return;
-          setUnreadMessages(typeof data.count === 'number' ? data.count : 0);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setUnreadMessages(0);
+      if (!(await hasSession())) {
+        stopPolling();
+        if (isMounted) setUnreadMessages(0);
+        return;
+      }
+
+      requestController?.abort();
+      requestController = new AbortController();
+
+      try {
+        const response = await fetch("/api/messages/unread-count", {
+          signal: requestController.signal,
         });
+
+        if (!isMounted) return;
+
+        if (response.status === 401) {
+          setUnreadMessages(0);
+          stopPolling();
+          return;
+        }
+
+        const data = await response.json();
+        setUnreadMessages(typeof data.count === "number" ? data.count : 0);
+      } catch (error) {
+        if (!isMounted) return;
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        setUnreadMessages(0);
+      }
     };
 
     const startPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-      }
+      stopPolling();
 
-      intervalId = window.setInterval(loadUnreadMessages, 180000);
+      intervalId = window.setInterval(() => {
+        void loadUnreadMessages();
+      }, 180000);
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadUnreadMessages();
+      if (document.visibilityState === "visible") {
+        void loadUnreadMessages();
       }
     };
 
-    if (typeof window.requestIdleCallback === 'function') {
-      idleCallbackId = window.requestIdleCallback(() => {
-        loadUnreadMessages();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
+      if (!isMounted) return;
+
+      if (event === "SIGNED_OUT") {
+        requestController?.abort();
+        stopPolling();
+        setUnreadMessages(0);
+      }
+
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        void loadUnreadMessages();
         startPolling();
-      }, { timeout: 1500 });
+      }
+    });
+
+    if (typeof window.requestIdleCallback === "function") {
+      idleCallbackId = window.requestIdleCallback(
+        () => {
+          void loadUnreadMessages();
+          startPolling();
+        },
+        { timeout: 1500 },
+      );
     } else {
       timeoutId = window.setTimeout(() => {
-        loadUnreadMessages();
+        void loadUnreadMessages();
         startPolling();
       }, 900);
     }
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isMounted = false;
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      requestController?.abort();
+      stopPolling();
       if (idleCallbackId !== null) {
         window.cancelIdleCallback?.(idleCallbackId);
       }
       if (timeoutId !== null) {
         window.clearTimeout(timeoutId);
-      }
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
       }
     };
   }, []);
@@ -222,15 +319,18 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder={t('courses', 'Cursos') + '...'}
+                id="dashboard-course-search"
+                name="courseSearch"
+                autoComplete="off"
+                placeholder={t("courses", "Cursos") + "..."}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
           </div>
 
-          {pathname === '/dashboard' && (
+          {pathname === "/dashboard" && (
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
-              {t('welcomeShort', 'Bienvenido,')} {displayName.split(' ')[0]}.
+              {t("welcomeShort", "Bienvenido,")} {displayName.split(" ")[0]}.
             </div>
           )}
 
@@ -240,8 +340,8 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
             {medalProgress?.hasSupremeMedal ? (
               <Link
                 href="/dashboard/jazz-specialist"
-                aria-label={t('supremeMedalPage', 'Jazz specialist medal')}
-                title={t('supremeMedalPage', 'Jazz specialist medal')}
+                aria-label={t("supremeMedalPage", "Jazz specialist medal")}
+                title={t("supremeMedalPage", "Jazz specialist medal")}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
               >
                 <JazzMedalIcon medal="GOLD" size="sm" />
@@ -250,8 +350,14 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
             {recognition.isEligible ? (
               <Link
                 href="/dashboard/course-completion-recognition"
-                aria-label={t('courseRecognitionPage', 'Course completion recognition')}
-                title={t('courseRecognitionPage', 'Course completion recognition')}
+                aria-label={t(
+                  "courseRecognitionPage",
+                  "Course completion recognition",
+                )}
+                title={t(
+                  "courseRecognitionPage",
+                  "Course completion recognition",
+                )}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
               >
                 <ScrollText className="h-5 w-5" />
@@ -259,8 +365,8 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
             ) : null}
             <Link
               href="/dashboard/settings"
-              aria-label={t('settings', 'Settings')}
-              title={t('settings', 'Settings')}
+              aria-label={t("settings", "Settings")}
+              title={t("settings", "Settings")}
               className="p-2 rounded-lg hover:bg-accent transition-colors"
             >
               <Settings className="h-5 w-5 text-muted-foreground" />
@@ -286,10 +392,12 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
               {showNotifDropdown && (
                 <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">{t('notifications', 'Notificaciones')}</h3>
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {t("notifications", "Notificaciones")}
+                    </h3>
                     {unreadCount > 0 && (
                       <span className="text-xs bg-yellow-400/20 text-yellow-500 font-medium px-2 py-0.5 rounded-full">
-                        {unreadCount} {t('newItems', 'nuevas')}
+                        {unreadCount} {t("newItems", "nuevas")}
                       </span>
                     )}
                   </div>
@@ -297,7 +405,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-6 text-center text-muted-foreground text-sm">
-                        {t('noNotifications', 'Sin notificaciones')}
+                        {t("noNotifications", "Sin notificaciones")}
                       </div>
                     ) : (
                       notifications.map((notif) => (
@@ -305,16 +413,20 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                           key={notif.id}
                           onClick={() => openNotification(notif)}
                           className={`w-full text-left px-4 py-3 border-b border-border last:border-b-0 hover:bg-accent/50 transition-colors ${
-                            notif.read ? 'bg-muted/30' : ''
+                            notif.read ? "bg-muted/30" : ""
                           }`}
                         >
                           <div className="flex items-start gap-3">
                             {!notif.read && (
                               <span className="mt-1.5 w-2 h-2 rounded-full bg-yellow-400 shrink-0" />
                             )}
-                            {notif.read && <span className="mt-1.5 w-2 h-2 shrink-0" />}
+                            {notif.read && (
+                              <span className="mt-1.5 w-2 h-2 shrink-0" />
+                            )}
                             <div className="min-w-0 flex-1">
-                              <p className={`text-sm font-medium truncate ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                              <p
+                                className={`text-sm font-medium truncate ${notif.read ? "text-muted-foreground" : "text-foreground"}`}
+                              >
                                 {notif.title}
                               </p>
                               <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
@@ -353,11 +465,11 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-primary text-xs font-bold">{initials}</span>
+                      <span className="text-primary text-xs font-bold">
+                        {initials}
+                      </span>
                     </div>
                   )}
-
-
                 </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-foreground leading-none">
@@ -374,23 +486,32 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                 <div className="absolute right-0 mt-2 w-[min(14rem,calc(100vw-1rem))] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-border">
-                    <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {displayName}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
                     {medalProgress ? (
                       <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                        {medalProgress.activeProfileMedal === 'SUPREME' ? (
+                        {medalProgress.activeProfileMedal === "SUPREME" ? (
                           <JazzSupremeMedal language={language} size="sm" />
                         ) : (
-                          <JazzMedalIcon medal={medalProgress.activeProfileMedal} size="sm" />
+                          <JazzMedalIcon
+                            medal={medalProgress.activeProfileMedal}
+                            size="sm"
+                          />
                         )}
                         <span>
-                          {medalProgress.platinumMedalCount}/{medalProgress.totalRequiredPlatinumMedals} {t('platinumMedals', 'platinum medals')}
+                          {medalProgress.platinumMedalCount}/
+                          {medalProgress.totalRequiredPlatinumMedals}{" "}
+                          {t("platinumMedals", "platinum medals")}
                         </span>
                       </div>
                     ) : null}
                     {isAdmin && (
                       <p className="text-xs font-semibold text-yellow-500 mt-1">
-                        🔑 {role || t('adminPanel', 'Admin')}
+                        🔑 {role || t("adminPanel", "Admin")}
                       </p>
                     )}
                   </div>
@@ -402,7 +523,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-500 hover:bg-accent transition-colors"
                       >
-                        🔐 {t('adminPanel', 'Panel de administración')}
+                        🔐 {t("adminPanel", "Panel de administración")}
                       </Link>
                     )}
                     <Link
@@ -411,7 +532,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <User className="h-4 w-4 text-muted-foreground" />
-                      {t('profile', 'Perfil')}
+                      {t("profile", "Perfil")}
                     </Link>
                     <Link
                       href="/dashboard/payment"
@@ -419,7 +540,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                     >
                       <Wallet className="h-4 w-4 text-muted-foreground" />
-                      {t('paymentHistory', 'Historial de pagos')}
+                      {t("paymentHistory", "Historial de pagos")}
                     </Link>
                   </div>
 
@@ -429,7 +550,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors w-full"
                     >
                       <LogOut className="h-4 w-4" />
-                      {t('logOut', 'Cerrar sesión')}
+                      {t("logOut", "Cerrar sesión")}
                     </button>
                   </div>
                 </div>
@@ -457,7 +578,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
               <button
                 onClick={() => setActiveNotif(null)}
                 className="p-1 hover:bg-accent rounded-md transition"
-                aria-label={t('close', 'Cerrar')}
+                aria-label={t("close", "Cerrar")}
               >
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>
@@ -479,7 +600,7 @@ export function DashboardHeader({ user, role, isAdmin = false, initialMedalProgr
                 onClick={() => setActiveNotif(null)}
                 className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                {t('close', 'Cerrar')}
+                {t("close", "Cerrar")}
               </button>
             </div>
           </div>
