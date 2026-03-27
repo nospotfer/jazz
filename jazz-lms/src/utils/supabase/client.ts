@@ -1,6 +1,8 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
+type SupabaseFlowType = 'pkce' | 'implicit'
+
 type MinimalSupabase = {
   auth: {
     getUser: () => Promise<{ data: { user: null } }>
@@ -17,7 +19,7 @@ type MinimalSupabase = {
   }
 }
 
-export function createClient(): any {
+export function createClient(options?: { flowType?: SupabaseFlowType }): any {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const normalizedUrl = normalizeSupabaseUrl(url)
@@ -69,5 +71,9 @@ export function createClient(): any {
     return stub
   }
 
-  return createBrowserClient(normalizedUrl!, key!)
+  return createBrowserClient(normalizedUrl!, key!, {
+    auth: {
+      flowType: options?.flowType,
+    },
+  })
 }

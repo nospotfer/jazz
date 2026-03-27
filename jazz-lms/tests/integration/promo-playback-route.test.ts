@@ -33,6 +33,7 @@ describe('GET /api/mux/promo-playback route', () => {
 
     vi.doMock('@/lib/mux', () => ({
       PROMO_MUX_PLAYBACK_ID: 'promo1234567890abcdef',
+      hasMuxSigningConfig: vi.fn(() => true),
       createMuxPlaybackTokens: vi.fn(() => ({
         playbackToken: 'playback-token',
         thumbnailToken: 'thumbnail-token',
@@ -56,6 +57,7 @@ describe('GET /api/mux/promo-playback route', () => {
 
     vi.doMock('@/lib/mux', () => ({
       PROMO_MUX_PLAYBACK_ID: 'promo1234567890abcdef',
+      hasMuxSigningConfig: vi.fn(() => true),
       createMuxPlaybackTokens: vi.fn(() => {
         throw new Error('boom');
       }),
