@@ -449,18 +449,18 @@ export default function AuthPage() {
     setGoogleLoading(true);
 
     try {
-      await supabase.auth.signOut();
+    await supabase.auth.signOut();
 
-      const oauthFlow = activeTab === "register" ? "register" : "login";
-      const oauthCookieOptions = "path=/; max-age=600; samesite=lax";
+    const oauthFlow = activeTab === "register" ? "register" : "login";
+    const oauthCookieOptions = "path=/; max-age=600; samesite=lax; secure";
 
-      // Keep OAuth context in short-lived cookies so callback can recover it
-      // even when providers strip custom query params from redirect URLs.
-      document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; ${oauthCookieOptions}`;
-      document.cookie = `oauth_lang=${encodeURIComponent(language)}; ${oauthCookieOptions}`;
-      document.cookie = `oauth_next=${encodeURIComponent("/dashboard")}; ${oauthCookieOptions}`;
+    // Keep OAuth context in short-lived cookies so callback can recover it
+    // even when providers strip custom query params from redirect URLs.
+    document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; ${oauthCookieOptions}`;
+    document.cookie = `oauth_lang=${encodeURIComponent(language)}; ${oauthCookieOptions}`;
+    document.cookie = `oauth_next=${encodeURIComponent("/dashboard")}; ${oauthCookieOptions}`;
 
-      const callbackUrl = new URL(
+    const callbackUrl = new URL(
         redirectTo || `${window.location.origin}/auth/callback`,
       );
 
