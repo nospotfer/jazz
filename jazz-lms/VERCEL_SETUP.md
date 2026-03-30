@@ -3,6 +3,8 @@
 ## Overview
 Your Supabase database is **IPv6-only**, which means Vercel (IPv4-only platform) must use the **Session Pooler** to connect.
 
+Use **Node.js 20.x** in Vercel Project Settings -> General -> Node.js Version.
+
 > For full go-live (including Mux, PDFs, admin roles and messaging), use: `PRODUCTION_GO_LIVE_CHECKLIST.md`.
 
 ---

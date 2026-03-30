@@ -2,6 +2,11 @@
 
 This is a custom, high-performance video course platform built with Next.js, Tailwind CSS, Shadcn UI, Supabase, Prisma, Mux, and Lemon Squeezy.
 
+## Prerequisites
+
+- Node.js 20.x
+- npm 9+
+
 ## Getting Started
 
 ### 1. Clone the repository
