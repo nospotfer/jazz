@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createClient(), []);
+  const supabase = useMemo(() => createClient({ flowType: "implicit" }), []);
   const { language } = useLanguage();
   const copy = {
     es: {
@@ -95,9 +95,11 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const resetRedirectTo = useMemo(() => {
-    if (typeof window === "undefined") return "/auth/reset-password";
+    if (typeof window === "undefined")
+      return "/auth/reset-password/callback";
     const appOrigin = resolveClientAppOrigin(window.location.origin);
-    return new URL("/auth/reset-password", appOrigin).toString();
+    const callbackUrl = new URL("/auth/reset-password/callback", appOrigin);
+    return callbackUrl.toString();
   }, []);
 
   useEffect(() => {
