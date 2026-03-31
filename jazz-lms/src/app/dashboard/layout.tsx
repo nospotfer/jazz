@@ -28,6 +28,7 @@ export default async function DashboardLayout({
   ]);
   const role = dbUser?.role ?? null;
   const isAdmin = isAdminRole(role);
+  const hasPaidCourseOrAdmin = hasPaidCourse || isAdmin;
 
   return (
     <DashboardPreferencesProvider>
@@ -37,7 +38,10 @@ export default async function DashboardLayout({
         <div className="lg:pl-64 h-full flex flex-col">
           <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
           <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <DashboardPaywallWrapper hasPaidCourse={hasPaidCourse} courseId={firstCourseId}>
+            <DashboardPaywallWrapper
+              hasPaidCourse={hasPaidCourseOrAdmin}
+              courseId={firstCourseId}
+            >
               {children}
             </DashboardPaywallWrapper>
           </main>

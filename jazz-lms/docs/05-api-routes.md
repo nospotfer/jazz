@@ -150,6 +150,9 @@ Content-Type: application/json
 #### Why return a hosted checkout URL?
 The backend keeps credentials secure and the frontend only receives a safe redirect URL.
 
+#### Admin checkout testing behavior
+When an authenticated admin user already has a purchase record for the same course, the checkout route allows the flow to continue (admin bypass) instead of returning `already purchased`. This is intended to support payment-flow testing from admin accounts.
+
 #### Why store `userId` and `courseId` in metadata?
 When Lemon sends the webhook after payment, we need to know:
 - Who paid (userId)
