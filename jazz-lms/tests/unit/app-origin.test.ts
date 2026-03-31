@@ -85,7 +85,8 @@ describe("app-origin helpers", () => {
 });
 
 afterAll(() => {
-  process.env.NODE_ENV = originalEnv.NODE_ENV;
-  process.env.NEXT_PUBLIC_APP_URL = originalEnv.NEXT_PUBLIC_APP_URL;
-  process.env.APP_URL = originalEnv.APP_URL;
+  const mutableEnv = process.env as Record<string, string | undefined>;
+  mutableEnv.NODE_ENV = originalEnv.NODE_ENV;
+  mutableEnv.NEXT_PUBLIC_APP_URL = originalEnv.NEXT_PUBLIC_APP_URL;
+  mutableEnv.APP_URL = originalEnv.APP_URL;
 });

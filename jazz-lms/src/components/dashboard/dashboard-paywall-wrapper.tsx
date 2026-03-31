@@ -146,6 +146,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
               {copy.description}
             </p>
             <Button
+              type="button"
               onClick={openPaymentModal}
               onMouseEnter={primePaymentModal}
               onFocus={primePaymentModal}

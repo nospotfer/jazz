@@ -1,0 +1,14 @@
+
+> jazz-lms@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3003
+   - Network:      http://192.168.0.28:3003
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+SyntaxError: Unexpected string in JSON at position 206948
+    at JSON.parse (<anonymous>)
+ ✓ Ready in 7.3s

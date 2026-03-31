@@ -1238,6 +1238,7 @@ export const CoursePlayer = ({
                             {copy.lessonLockedDesc}
                           </p>
                           <Button
+                            type="button"
                             onClick={openPaymentModal}
                             onMouseEnter={primePaymentModal}
                             onFocus={primePaymentModal}
@@ -1343,6 +1344,7 @@ export const CoursePlayer = ({
                         <li>• {copy.unlockNotes}</li>
                       </ul>
                       <Button
+                        type="button"
                         onClick={openPaymentModal}
                         onMouseEnter={primePaymentModal}
                         onFocus={primePaymentModal}

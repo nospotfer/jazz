@@ -121,6 +121,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   return (
     <div className="space-y-3">
       <Button
+        type="button"
         onClick={onClick}
         onMouseEnter={primePaymentModal}
         onFocus={primePaymentModal}

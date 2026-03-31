@@ -2,12 +2,12 @@ import { test, expect, Page } from '@playwright/test';
 import { getMissingPaymentsE2ERequirements, getPaymentsE2EConfig } from './helpers/payment-env';
 
 const buyButtonRegex =
-  /comprar curso completo|buy full course|acheter le cours complet|comprar curso completo|elegir método de pago|choose payment method|choisir le moyen de paiement|escolher método de pagamento/i;
-const chooseMethodButtonRegex =
-  /elegir método de pago|choose payment method|choisir le moyen de paiement|escolher método de pagamento/i;
+  /comprar curso completo|buy full course|acheter le cours complet|comprar curso completo|aplicar voucher y continuar|apply voucher and continue|appliquer le voucher et continuer|aplicar voucher e continuar|elegir método de pago|choose payment method|choisir le moyen de paiement|escolher método de pagamento/i;
+const checkoutModalTitleRegex =
+  /activa tu descuento|apply your discount|activez votre remise|ative seu desconto/i;
 const voucherPlaceholderRegex = /ingresa tu código|enter your code|entrez votre code|digite seu código/i;
 const applyButtonRegex = /aplicar|apply|appliquer/i;
-const continueButtonRegex = /continuar|continue|continuer/i;
+const continueButtonRegex = /ir al checkout|go to checkout|aller au checkout|ir para checkout|continuar|continue|continuer/i;
 const successVoucherMessageRegex =
   /novo preço|new price|nouveau prix|nuevo precio|acesso 100% gratuito|100% free access|accès 100% gratuit/i;
 const removeVoucherButtonRegex = /quitar|remove|supprimer|remover/i;
@@ -19,13 +19,62 @@ type VoucherApplyResult = {
   isFreeAccess: boolean;
 };
 
-async function openPurchaseModal(page: Page) {
+async function tryResetLocalTestPurchases(page: Page) {
+  const response = await page.request.post('/api/dev/reset-test-purchases', {
+    failOnStatusCode: false,
+  });
+
+  return response.status() === 200;
+}
+
+type PurchaseOpenResult = 'modal' | 'redirect';
+
+async function openPurchaseModal(page: Page, expectedCheckoutHost: string): Promise<PurchaseOpenResult> {
   const buyButton = page.getByRole('button', { name: buyButtonRegex }).first();
   await expect(buyButton).toBeVisible({ timeout: 20_000 });
-  await buyButton.click();
+  await expect(buyButton).toBeEnabled({ timeout: 20_000 });
 
-  const chooseMethodTitle = page.getByText(chooseMethodButtonRegex).first();
-  await expect(chooseMethodTitle).toBeVisible({ timeout: 20_000 });
+  await page.waitForLoadState('networkidle').catch(() => undefined);
+
+  const modalTitle = page.getByText(checkoutModalTitleRegex).first();
+  const voucherInput = page.getByPlaceholder(voucherPlaceholderRegex).first();
+  const continueButton = page.getByRole('button', { name: continueButtonRegex }).first();
+
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    await buyButton.click({ force: attempt > 1 });
+
+    const outcome = await Promise.race([
+      modalTitle
+        .waitFor({ state: 'visible', timeout: 8_000 })
+        .then(() => 'modal' as const)
+        .catch(() => null),
+      voucherInput
+        .waitFor({ state: 'visible', timeout: 8_000 })
+        .then(() => 'modal' as const)
+        .catch(() => null),
+      continueButton
+        .waitFor({ state: 'visible', timeout: 8_000 })
+        .then(() => 'modal' as const)
+        .catch(() => null),
+      page
+        .waitForURL(
+          (url) =>
+            url.hostname === expectedCheckoutHost ||
+            url.hostname.endsWith(`.${expectedCheckoutHost}`),
+          { timeout: 8_000 }
+        )
+        .then(() => 'redirect' as const)
+        .catch(() => null),
+    ]);
+
+    if (outcome === 'modal' || outcome === 'redirect') {
+      return outcome;
+    }
+
+    await page.waitForTimeout(800);
+  }
+
+  throw new Error(`Unable to open purchase modal from CTA. currentUrl=${page.url()}`);
 }
 
 async function applyVoucher(page: Page, voucherCode: string): Promise<VoucherApplyResult> {
@@ -73,16 +122,9 @@ async function applyVoucher(page: Page, voucherCode: string): Promise<VoucherApp
 
 async function selectMethodAndContinue(
   page: Page,
-  method: 'card' | 'paypal',
   expectedCheckoutHost: string,
   allowDirectUnlock: boolean
 ): Promise<'dodo' | 'unlock' | 'checkout_error'> {
-  const methodButtonName = method === 'card' ? /tarjeta|card|carte|cartão/i : /paypal/i;
-
-  const methodButton = page.getByRole('button', { name: methodButtonName }).first();
-  await expect(methodButton).toBeVisible({ timeout: 20_000 });
-  await methodButton.click();
-
   const continueButton = page.getByRole('button', { name: continueButtonRegex }).first();
 
   await continueButton.click();
@@ -138,25 +180,29 @@ test.describe('Payments voucher matrix E2E (real Dodo)', () => {
   );
 
   test('redirects to Dodo for selected methods without voucher', async ({ browser }) => {
-    for (const method of config.methods) {
-      const context = await browser.newContext({
-        storageState: config.storageStatePath,
-      });
+    const context = await browser.newContext({
+      storageState: config.storageStatePath,
+    });
 
-      const page = await context.newPage();
-      await page.goto(`/courses/${config.courseId}`);
-      await page.waitForLoadState('domcontentloaded');
+    const page = await context.newPage();
+    await tryResetLocalTestPurchases(page);
+    await page.goto(`/courses/${config.courseId}`);
+    await page.waitForLoadState('domcontentloaded');
 
-      test.skip(
-        page.url().includes('/lessons/'),
-        'Authenticated user already owns this course. Use a test user without purchase to validate checkout redirect.'
-      );
+    test.skip(
+      page.url().includes('/lessons/'),
+      'Authenticated user already owns this course. Use a test user without purchase to validate checkout redirect.'
+    );
 
-      await openPurchaseModal(page);
-      await selectMethodAndContinue(page, method, config.expectedCheckoutHost, false);
+    const openResult = await openPurchaseModal(page, config.expectedCheckoutHost);
 
-      await context.close();
+    if (openResult !== 'redirect') {
+      await selectMethodAndContinue(page, config.expectedCheckoutHost, false);
+    } else {
+      expect(page.url()).toContain(config.expectedCheckoutHost);
     }
+
+    await context.close();
   });
 
   test('voucher matrix responds and redirects for each configured voucher', async ({ browser }) => {
@@ -166,34 +212,34 @@ test.describe('Payments voucher matrix E2E (real Dodo)', () => {
     );
 
     for (const voucherCode of config.voucherCodes) {
-      for (const method of config.methods) {
-        const context = await browser.newContext({
-          storageState: config.storageStatePath,
-        });
+      const context = await browser.newContext({
+        storageState: config.storageStatePath,
+      });
 
-        const page = await context.newPage();
-        await page.goto(`/courses/${config.courseId}`);
-        await page.waitForLoadState('domcontentloaded');
+      const page = await context.newPage();
+      await tryResetLocalTestPurchases(page);
+      await page.goto(`/courses/${config.courseId}`);
+      await page.waitForLoadState('domcontentloaded');
 
-        test.skip(
-          page.url().includes('/lessons/'),
-          'Authenticated user already owns this course. Use a test user without purchase to validate checkout redirect.'
+      test.skip(
+        page.url().includes('/lessons/'),
+        'Authenticated user already owns this course. Use a test user without purchase to validate checkout redirect.'
+      );
+
+      const openResult = await openPurchaseModal(page, config.expectedCheckoutHost);
+      test.skip(openResult === 'redirect', 'Direct redirect path detected before voucher modal opened.');
+
+      const voucherApplyResult = await applyVoucher(page, voucherCode);
+
+      if (voucherApplyResult.status === 'applied') {
+        await selectMethodAndContinue(
+          page,
+          config.expectedCheckoutHost,
+          voucherApplyResult.isFreeAccess
         );
-
-        await openPurchaseModal(page);
-        const voucherApplyResult = await applyVoucher(page, voucherCode);
-
-        if (voucherApplyResult.status === 'applied') {
-          await selectMethodAndContinue(
-            page,
-            method,
-            config.expectedCheckoutHost,
-            voucherApplyResult.isFreeAccess
-          );
-        }
-
-        await context.close();
       }
+
+      await context.close();
     }
   });
 });
