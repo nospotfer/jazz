@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-    VoucherInput,
-    type AppliedVoucher,
+  VoucherInput,
+  type AppliedVoucher,
 } from "@/components/vouchers/voucher-input";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
 
@@ -109,7 +109,10 @@ export function PaymentMethodModal({
   const formatMoney = (value: number) => `EUR ${value.toFixed(2)}`;
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6">
+    <div
+      data-testid="payment-method-modal-overlay"
+      className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6"
+    >
       <button
         type="button"
         aria-label="close"
@@ -117,7 +120,10 @@ export function PaymentMethodModal({
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
       />
 
-      <div className="relative w-full max-w-xl rounded-2xl border border-border bg-card shadow-2xl p-5 sm:p-6 md:p-7 animate-fade-scale-in">
+      <div
+        data-testid="payment-method-modal"
+        className="relative w-full max-w-xl rounded-2xl border border-border bg-card shadow-2xl p-5 sm:p-6 md:p-7 animate-fade-scale-in"
+      >
         <button
           type="button"
           onClick={onClose}
@@ -179,12 +185,18 @@ export function PaymentMethodModal({
           <Button
             type="button"
             variant="ghost"
+            data-testid="payment-method-modal-cancel"
             onClick={onClose}
             disabled={isLoading}
           >
             {copy.cancel}
           </Button>
-          <Button type="button" onClick={onConfirm} disabled={isLoading}>
+          <Button
+            type="button"
+            data-testid="payment-method-modal-continue"
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
             {copy.continue}
           </Button>
         </div>
