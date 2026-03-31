@@ -167,10 +167,14 @@ export async function POST(req: Request) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
 
-    const dbUser = await db.user.findUnique({
-      where: { email: user.email },
-      select: { role: true },
-    });
+    const dbUserModel = (db as any).user;
+    const dbUser =
+      dbUserModel && typeof dbUserModel.findUnique === "function"
+        ? await dbUserModel.findUnique({
+            where: { email: user.email },
+            select: { role: true },
+          })
+        : null;
     const isAdminUser = isAdminRole(dbUser?.role ?? null);
 
     const [course, existingPurchase] = await Promise.all([
@@ -203,14 +207,14 @@ export async function POST(req: Request) {
           role: dbUser?.role ?? null,
         });
       } else {
-      console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
-        userId: user.id,
-        userEmail: user.email,
-        courseId,
-        purchaseId: existingPurchase.id,
-        providerReferenceId: existingPurchase.providerReferenceId ?? null,
-      });
-      return new NextResponse(copy.alreadyPurchased, { status: 400 });
+        console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
+          userId: user.id,
+          userEmail: user.email,
+          courseId,
+          purchaseId: existingPurchase.id,
+          providerReferenceId: existingPurchase.providerReferenceId ?? null,
+        });
+        return new NextResponse(copy.alreadyPurchased, { status: 400 });
       }
     }
 
