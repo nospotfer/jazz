@@ -1,6 +1,16 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from "vitest";
 
-describe('GET /api/mux/promo-playback route', () => {
+function makeJwt(payload: Record<string, unknown>) {
+  const header = Buffer.from(
+    JSON.stringify({ alg: "none", typ: "JWT" }),
+  ).toString("base64url");
+  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString(
+    "base64url",
+  );
+  return `${header}.${encodedPayload}.signature`;
+}
+
+describe("GET /api/mux/promo-playback route", () => {
   const originalEnv = {
     keyId: process.env.MUX_SIGNING_KEY_ID,
     privateKey: process.env.MUX_SIGNING_PRIVATE_KEY,
@@ -11,64 +21,130 @@ describe('GET /api/mux/promo-playback route', () => {
     process.env.MUX_SIGNING_PRIVATE_KEY = originalEnv.privateKey;
     vi.resetModules();
     vi.clearAllMocks();
-    vi.unmock('@/lib/mux');
+    vi.unmock("@/lib/mux");
   });
 
-  test('returns unsigned fallback payload when mux env is missing', async () => {
-    process.env.MUX_SIGNING_KEY_ID = '';
-    process.env.MUX_SIGNING_PRIVATE_KEY = '';
+  test("returns unsigned fallback payload when mux env is missing", async () => {
+    process.env.MUX_SIGNING_KEY_ID = "";
+    process.env.MUX_SIGNING_PRIVATE_KEY = "";
 
-    const { GET } = await import('@/app/api/mux/promo-playback/route');
+    const { GET } = await import("@/app/api/mux/promo-playback/route");
     const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.tokenMode).toBe('none');
-    expect(data.playbackToken).toBe('');
+    expect(data.tokenMode).toBe("none");
+    expect(data.playbackToken).toBe("");
   });
 
-  test('returns tokens when mux config exists', async () => {
-    process.env.MUX_SIGNING_KEY_ID = 'key';
-    process.env.MUX_SIGNING_PRIVATE_KEY = 'private';
+  test("returns tokens when mux config exists", async () => {
+    process.env.MUX_SIGNING_KEY_ID = "key";
+    process.env.MUX_SIGNING_PRIVATE_KEY = "private";
 
-    vi.doMock('@/lib/mux', () => ({
-      PROMO_MUX_PLAYBACK_ID: 'promo1234567890abcdef',
+    const playbackId = "promo1234567890abcdef";
+    const exp = Math.floor(Date.now() / 1000) + 300;
+
+    vi.doMock("@/lib/mux", () => ({
+      PROMO_MUX_PLAYBACK_ID: playbackId,
       hasMuxSigningConfig: vi.fn(() => true),
       createMuxPlaybackTokens: vi.fn(() => ({
-        playbackToken: 'playback-token',
-        thumbnailToken: 'thumbnail-token',
-        storyboardToken: 'storyboard-token',
+        playbackToken: makeJwt({ aud: "v", sub: playbackId, exp }),
+        thumbnailToken: makeJwt({ aud: "t", sub: playbackId, exp }),
+        storyboardToken: makeJwt({ aud: "s", sub: playbackId, exp }),
       })),
     }));
 
-    const { GET } = await import('@/app/api/mux/promo-playback/route');
+    const { GET } = await import("@/app/api/mux/promo-playback/route");
     const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.playbackId).toBe('promo1234567890abcdef');
-    expect(data.playbackToken).toBe('playback-token');
-    expect(response.headers.get('cache-control')).toContain('no-store');
+    expect(data.playbackId).toBe(playbackId);
+    expect(data.tokenMode).toBe("signed");
+    expect(data.playbackToken).toContain(".");
+    expect(response.headers.get("cache-control")).toContain("no-store");
   });
 
-  test('returns unsigned fallback payload when token generation throws', async () => {
-    process.env.MUX_SIGNING_KEY_ID = 'key';
-    process.env.MUX_SIGNING_PRIVATE_KEY = 'private';
+  test("returns unsigned fallback payload when token payload has no JWT segments", async () => {
+    process.env.MUX_SIGNING_KEY_ID = "key";
+    process.env.MUX_SIGNING_PRIVATE_KEY = "private";
 
-    vi.doMock('@/lib/mux', () => ({
-      PROMO_MUX_PLAYBACK_ID: 'promo1234567890abcdef',
+    vi.doMock("@/lib/mux", () => ({
+      PROMO_MUX_PLAYBACK_ID: "promo1234567890abcdef",
+      hasMuxSigningConfig: vi.fn(() => true),
+      createMuxPlaybackTokens: vi.fn(() => ({
+        playbackToken: "invalid-token-without-segments",
+        thumbnailToken: makeJwt({
+          aud: "t",
+          sub: "promo1234567890abcdef",
+          exp: 123456,
+        }),
+        storyboardToken: makeJwt({
+          aud: "s",
+          sub: "promo1234567890abcdef",
+          exp: 123456,
+        }),
+      })),
+    }));
+
+    const { GET } = await import("@/app/api/mux/promo-playback/route");
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.tokenMode).toBe("none");
+    expect(data.playbackToken).toBe("");
+  });
+
+  test("returns unsigned fallback payload when token payload cannot be parsed as JSON", async () => {
+    process.env.MUX_SIGNING_KEY_ID = "key";
+    process.env.MUX_SIGNING_PRIVATE_KEY = "private";
+
+    vi.doMock("@/lib/mux", () => ({
+      PROMO_MUX_PLAYBACK_ID: "promo1234567890abcdef",
+      hasMuxSigningConfig: vi.fn(() => true),
+      createMuxPlaybackTokens: vi.fn(() => ({
+        playbackToken: "header.bm90LWpzb24.signature",
+        thumbnailToken: makeJwt({
+          aud: "t",
+          sub: "promo1234567890abcdef",
+          exp: 123456,
+        }),
+        storyboardToken: makeJwt({
+          aud: "s",
+          sub: "promo1234567890abcdef",
+          exp: 123456,
+        }),
+      })),
+    }));
+
+    const { GET } = await import("@/app/api/mux/promo-playback/route");
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.tokenMode).toBe("none");
+    expect(data.playbackToken).toBe("");
+  });
+
+  test("returns unsigned fallback payload when token generation throws", async () => {
+    process.env.MUX_SIGNING_KEY_ID = "key";
+    process.env.MUX_SIGNING_PRIVATE_KEY = "private";
+
+    vi.doMock("@/lib/mux", () => ({
+      PROMO_MUX_PLAYBACK_ID: "promo1234567890abcdef",
       hasMuxSigningConfig: vi.fn(() => true),
       createMuxPlaybackTokens: vi.fn(() => {
-        throw new Error('boom');
+        throw new Error("boom");
       }),
     }));
 
-    const { GET } = await import('@/app/api/mux/promo-playback/route');
+    const { GET } = await import("@/app/api/mux/promo-playback/route");
     const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.tokenMode).toBe('none');
-    expect(data.playbackToken).toBe('');
+    expect(data.tokenMode).toBe("none");
+    expect(data.playbackToken).toBe("");
   });
 });
