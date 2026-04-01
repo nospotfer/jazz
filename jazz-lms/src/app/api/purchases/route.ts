@@ -57,9 +57,8 @@ async function reconcileDodoFromWebhookEvents(input: {
   checkoutAttemptId: string | null;
   paymentId: string | null;
 }) {
-  const prisma = db as any;
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-  const events = (await prisma.paymentWebhookEvent.findMany({
+  const events = await db.paymentWebhookEvent.findMany({
     where: {
       provider: "dodo",
       status: "PROCESSED",
@@ -75,7 +74,7 @@ async function reconcileDodoFromWebhookEvents(input: {
       eventId: true,
       payload: true,
     },
-  })) as Array<{ eventId: string; payload: unknown }>;
+  });
 
   const expectedProviderReferenceId = input.paymentId
     ? `dodo-pay:${input.paymentId}`
