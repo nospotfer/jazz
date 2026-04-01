@@ -10,6 +10,7 @@ regexes = [
   '''your_[a-z0-9_]+''',
   '''your-project-ref''',
   '''\[YOUR-PASSWORD\]''',
+  '''header\.bm90LWpzb24\.signature''',
 ]
 paths = [
   '''(^|/)docs/.*\.md$''',

@@ -104,7 +104,7 @@ describe("GET /api/mux/promo-playback route", () => {
       PROMO_MUX_PLAYBACK_ID: "promo1234567890abcdef",
       hasMuxSigningConfig: vi.fn(() => true),
       createMuxPlaybackTokens: vi.fn(() => ({
-        playbackToken: "header.bm90LWpzb24.signature",
+        playbackToken: "YOUR_HEADER.YOUR_PAYLOAD.YOUR_SIGNATURE",
         thumbnailToken: makeJwt({
           aud: "t",
           sub: "promo1234567890abcdef",
