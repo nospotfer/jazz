@@ -91,7 +91,11 @@ export function PaymentMethodModal({
 
   useEffect(() => {
     if (isOpen) {
-      setAppliedVoucher(null);
+      const frame = window.requestAnimationFrame(() => {
+        setAppliedVoucher(null);
+      });
+
+      return () => window.cancelAnimationFrame(frame);
     }
   }, [isOpen]);
 
