@@ -8,7 +8,6 @@ import {
   Music2,
   RefreshCw,
   Sparkles,
-  Star,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';

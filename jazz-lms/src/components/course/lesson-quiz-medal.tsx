@@ -1,4 +1,4 @@
-import { Award, Music2, Sparkles } from 'lucide-react';
+import { Award, Sparkles } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { SupportedLanguage } from '@/lib/language';

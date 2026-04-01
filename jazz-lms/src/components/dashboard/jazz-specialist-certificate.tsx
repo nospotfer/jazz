@@ -107,7 +107,6 @@ export function JazzSpecialistCertificate({
       pdf.setFontSize(13);
       pdf.setTextColor(228, 231, 235);
       let textY = cardY + 292;
-      const textX = cardX + 108;
       const textWidth = cardWidth - 216;
 
       for (const line of lines) {

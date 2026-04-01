@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { isLocalhostHost } from '@/lib/test-mode';
 import { isValidMuxPlaybackId, extractMuxPlaybackId } from '@/lib/mux-playback';
 import { hasValidSupabasePublicConfig, hasValidSupabaseServerConfig } from '@/lib/supabase-config';

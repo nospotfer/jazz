@@ -41,10 +41,6 @@ function isDodoApiError(error: unknown): boolean {
   );
 }
 
-function asObject(value: unknown): LooseObject {
-  return value && typeof value === "object" ? (value as LooseObject) : {};
-}
-
 function asString(value: unknown): string | null {
   if (typeof value !== "string") {
     return null;

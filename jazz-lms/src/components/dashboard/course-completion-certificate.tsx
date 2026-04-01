@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { Download, Loader2, ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
@@ -164,12 +165,13 @@ export function CourseCompletionCertificate({
           <div className="mx-auto mt-auto w-full max-w-[480px] pt-8 text-center">
             <div className="h-px w-full bg-[#5f4b2f]/80" />
             <div className="flex justify-center pt-4">
-              <img
+              <Image
                 src={signatureSrc}
                 alt={teacherName}
                 className="h-20 w-auto object-contain sm:h-24"
+                width={192}
+                height={96}
                 loading="eager"
-                decoding="async"
               />
             </div>
             <p className="pt-2 text-base font-semibold tracking-[0.06em] text-[#46341f] sm:text-lg">{teacherName}</p>

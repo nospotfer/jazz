@@ -13,12 +13,12 @@ export type ProviderCheckoutInput = {
   providerDiscountCode?: string;
 };
 
-function normalizeProvider(_value: string | null | undefined): PaymentProvider {
+function normalizeProvider(): PaymentProvider {
   return "dodo";
 }
 
 export function getPaymentProvider(): PaymentProvider {
-  return normalizeProvider(process.env.PAYMENT_PROVIDER);
+  return normalizeProvider();
 }
 
 export function isActivePaymentProviderConfigured(

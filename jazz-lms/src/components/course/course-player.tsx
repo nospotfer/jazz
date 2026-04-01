@@ -125,24 +125,6 @@ function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
 }
 
-function getAttachmentDisplayName(
-  name: string,
-  classNumber: number | null,
-  noteLabel: string,
-) {
-  const withoutExtension = name.replace(/\.pdf$/i, "").trim();
-  const simplified = withoutExtension
-    .replace(/^apuntes?\s*(auxiliares?)?\s*\d*\s*[-–—:]\s*/i, "")
-    .replace(/^apunte\s*(da|de)?\s*(aula|classe)?\s*\d*\s*[-–—:]\s*/i, "")
-    .trim();
-
-  if (!simplified) {
-    return classNumber ? `${noteLabel} ${classNumber}` : noteLabel;
-  }
-
-  return simplified;
-}
-
 export const CoursePlayer = ({
   course,
   lesson,

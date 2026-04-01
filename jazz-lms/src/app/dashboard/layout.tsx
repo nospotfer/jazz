@@ -1,6 +1,5 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
-import { createClient } from '@/utils/supabase/server';
 import { getCurrentUser } from '@/lib/admin';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { redirect } from 'next/navigation';
