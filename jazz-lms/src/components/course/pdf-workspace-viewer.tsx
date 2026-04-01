@@ -4,11 +4,11 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { Viewer, Worker, type RenderPageProps } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import {
-  highlightPlugin,
-  Trigger,
-  type HighlightArea,
-  type RenderHighlightsProps,
-  type RenderHighlightTargetProps,
+    highlightPlugin,
+    Trigger,
+    type HighlightArea,
+    type RenderHighlightsProps,
+    type RenderHighlightTargetProps,
 } from "@react-pdf-viewer/highlight";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -262,7 +262,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
       ref={containerRef}
       className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden"
     >
-      <Worker workerUrl="/pdf.worker.min.mjs">
+      <Worker workerUrl="/pdf.worker.min.js">
         <Viewer
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}

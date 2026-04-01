@@ -4,6 +4,11 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  turbopack: {
+    resolveAlias: {
+      canvas: "./src/lib/shims/canvas.js",
+    },
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...(config.resolve.alias ?? {}),
