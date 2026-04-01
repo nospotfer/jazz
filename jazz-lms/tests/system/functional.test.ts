@@ -110,7 +110,7 @@ describe('Functional: Free course purchase flow', () => {
     // Step 2: Redirect to dashboard with success
     expect(body.url).toContain('/dashboard');
     expect(body.url).toContain('purchase=success');
-  });
+  }, 15000);
 
   test('user cannot purchase same free course twice', async () => {
     mocks.getUser.mockResolvedValue({

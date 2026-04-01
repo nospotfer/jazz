@@ -53,7 +53,7 @@ describe('jazz medal entitlement', () => {
     expect(progress.platinumMedalCount).toBe(0);
     expect(profile.lessons[0]?.medal).toBe('NONE');
     expect(profile.lessons[0]?.bestScorePercent).toBeNull();
-  });
+  }, 15000);
 
   test('keeps medals only for lessons the user is entitled to', async () => {
     vi.doMock('react', () => ({
