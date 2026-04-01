@@ -3,6 +3,7 @@ const nextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [100, 75],
   },
   turbopack: {
     resolveAlias: {

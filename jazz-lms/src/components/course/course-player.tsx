@@ -99,6 +99,7 @@ const PaymentMethodModal = dynamic(
 
 const SPOTIFY_WEB_PLAYER_URL =
   "https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp";
+const PLAYBACK_ERROR_FALLBACK = "__mux_playback_unavailable__";
 
 interface CoursePlayerProps {
   course: Course & {
@@ -140,21 +141,6 @@ function getAttachmentDisplayName(
   }
 
   return simplified;
-}
-
-type MusicPlatform = "spotify";
-
-function PlatformIcon({ platform }: { platform: MusicPlatform }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      aria-hidden="true"
-      fill="currentColor"
-    >
-      <path d="M12 1.5a10.5 10.5 0 1 0 10.5 10.5A10.51 10.51 0 0 0 12 1.5Zm4.82 15.16a.78.78 0 0 1-1.08.26 9.63 9.63 0 0 0-9.72-.54.78.78 0 1 1-.66-1.41 11.2 11.2 0 0 1 11.3.63.78.78 0 0 1 .16 1.06Zm1.54-2.42a.97.97 0 0 1-1.34.32 11.8 11.8 0 0 0-11.93-.67.97.97 0 1 1-.83-1.75 13.75 13.75 0 0 1 13.9.79.97.97 0 0 1 .2 1.31Zm.13-2.61A14.1 14.1 0 0 0 4.1 10.8a1.16 1.16 0 1 1-.98-2.11 16.42 16.42 0 0 1 16.76 1.02 1.16 1.16 0 0 1-1.39 1.92Z" />
-    </svg>
-  );
 }
 
 export const CoursePlayer = ({
@@ -501,6 +487,10 @@ export const CoursePlayer = ({
   const canRenderMuxPlayer = Boolean(
     canAccessLesson && effectivePlaybackId && playbackToken && !muxRuntimeError,
   );
+  const playbackErrorMessage =
+    playbackError === PLAYBACK_ERROR_FALLBACK
+      ? copy.unableSignedPlayback
+      : playbackError;
   const muxTokens = useMemo(() => {
     const hasAnyToken = Boolean(
       playbackToken || thumbnailToken || storyboardToken,
@@ -723,7 +713,7 @@ export const CoursePlayer = ({
         setPlaybackToken("");
         setThumbnailToken("");
         setStoryboardToken("");
-        setPlaybackError(copy.unableSignedPlayback);
+        setPlaybackError(PLAYBACK_ERROR_FALLBACK);
       }
     };
 
@@ -732,12 +722,7 @@ export const CoursePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [
-    canAccessLesson,
-    lesson.id,
-    shouldLoadPlayback,
-    copy.unableSignedPlayback,
-  ]);
+  }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
 
   const getAttachmentSignedUrl = async (
     attachmentId: string,
@@ -905,18 +890,6 @@ export const CoursePlayer = ({
       ),
     };
   }, []);
-
-  const musicSearch = encodeURIComponent(`${lesson.title} ${course.title}`);
-  const musicLinks = [
-    {
-      label: "Spotify",
-      href: `https://open.spotify.com/search/${musicSearch}`,
-      tooltip: copy.musicSpotify,
-      platform: "spotify" as const,
-      colorClass: "text-emerald-500",
-      tooltipClass: "from-emerald-500 to-emerald-400",
-    },
-  ];
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
@@ -1115,26 +1088,6 @@ export const CoursePlayer = ({
                         </svg>
                         <span>Spotify</span>
                       </a>
-                      {musicLinks.map((platform) => (
-                        <a
-                          key={platform.label}
-                          href={platform.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={platform.tooltip}
-                          aria-label={platform.tooltip}
-                          className="relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors"
-                        >
-                          <span className={platform.colorClass}>
-                            <PlatformIcon platform={platform.platform} />
-                          </span>
-                          <span
-                            className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${platform.tooltipClass}`}
-                          >
-                            {platform.tooltip}
-                          </span>
-                        </a>
-                      ))}
 
                       <button
                         type="button"
@@ -1222,7 +1175,7 @@ export const CoursePlayer = ({
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                       {canAccessLesson ? (
                         <p className="text-sm text-muted-foreground">
-                          {playbackError ||
+                          {playbackErrorMessage ||
                             muxRuntimeError ||
                             copy.loadingSignedVideo}
                         </p>

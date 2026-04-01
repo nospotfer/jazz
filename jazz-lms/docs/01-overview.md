@@ -10,7 +10,7 @@ The platform provides the following core features:
 
 1. **Landing Page** - A beautiful homepage that showcases the course and encourages visitors to enroll
 2. **User Authentication** - Users can sign up and log in using their GitHub account (or email)
-3. **Payment Processing** - Users can purchase courses through Lemon Squeezy checkout
+3. **Payment Processing** - Users can purchase courses through Dodo Payments checkout
 4. **Video Streaming** - Premium video content is streamed securely using Mux
 5. **Progress Tracking** - Users can track their progress through the course
 6. **Dashboard** - Users can see all their purchased courses and completion status
@@ -28,9 +28,9 @@ The platform provides the following core features:
 │                                                                  │
 │  3. User logs in via GitHub ──► Supabase handles authentication │
 │                                                                  │
-│  4. User proceeds to checkout ──► Lemon checkout page            │
+│  4. User proceeds to checkout ──► Dodo checkout page            │
 │                                                                  │
-│  5. Payment successful ──► Lemon webhook notifies our server    │
+│  5. Payment successful ──► Dodo webhook notifies our server    │
 │                                                                  │
 │  6. Server creates Purchase record in database                  │
 │                                                                  │
@@ -52,7 +52,7 @@ The platform provides the following core features:
 | **Supabase** | Authentication & Database hosting | Handles user login and hosts our PostgreSQL database |
 | **Prisma** | Database ORM | Makes it easy to interact with the database using TypeScript |
 | **Mux** | Video hosting & streaming | Professional video delivery without buffering issues |
-| **Lemon Squeezy** | Payment processing | Secure hosted checkout and payment events |
+| **Dodo Payments** | Payment processing | Secure hosted checkout and payment events |
 | **Vercel** | Hosting platform | Where the website lives on the internet |
 
 ## Architecture Overview
@@ -83,7 +83,7 @@ The platform provides the following core features:
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
 │  │  /checkout  │  │  /progress  │  │  /webhooks  │              │
-│  │   (Lemon)   │  │  (Save)     │  │   (Lemon)   │              │
+│  │   (Dodo)   │  │  (Save)     │  │   (Dodo)   │              │
 │  └─────────────┘  └─────────────┘  └─────────────┘              │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -92,7 +92,7 @@ The platform provides the following core features:
 │                    EXTERNAL SERVICES                             │
 │                                                                  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
-│  │  Supabase   │  │    Lemon    │  │     Mux     │              │
+│  │  Supabase   │  │    Dodo    │  │     Mux     │              │
 │  │  (Auth +    │  │  (Payments) │  │  (Videos)   │              │
 │  │  Database)  │  │             │  │             │              │
 │  └─────────────┘  └─────────────┘  └─────────────┘              │
@@ -118,7 +118,7 @@ These are backend endpoints built into Next.js. They live in `/app/api/` folder 
 - Updating user progress
 
 ### Webhooks
-A way for external services (like Lemon Squeezy) to notify your application when something happens. For example, when a payment is completed, Lemon sends a POST request to your webhook URL.
+A way for external services (like Dodo Payments) to notify your application when something happens. For example, when a payment is completed, Dodo sends a POST request to your webhook URL.
 
 ## File Structure Summary
 

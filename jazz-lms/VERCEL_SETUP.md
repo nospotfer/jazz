@@ -1,6 +1,7 @@
 # Vercel Environment Variables Setup Guide
 
 ## Overview
+
 Your Supabase database is **IPv6-only**, which means Vercel (IPv4-only platform) must use the **Session Pooler** to connect.
 
 Use **Node.js 20.x** in Vercel Project Settings -> General -> Node.js Version.
@@ -12,6 +13,7 @@ Use **Node.js 20.x** in Vercel Project Settings -> General -> Node.js Version.
 ## Required Environment Variables
 
 ### How to Add Environment Variables in Vercel:
+
 1. Go to your Vercel project dashboard
 2. Click on "Settings" tab
 3. Click on "Environment Variables" in the left sidebar
@@ -23,66 +25,83 @@ Use **Node.js 20.x** in Vercel Project Settings -> General -> Node.js Version.
 ## Variables to Add (core for app/auth/checkout):
 
 ### 1. Supabase URL
-**Name:** `NEXT_PUBLIC_SUPABASE_URL`  
+
+**Name:** `NEXT_PUBLIC_SUPABASE_URL`
 **Value:** Get from your Supabase project settings
+
 ```
 https://your-project-ref.supabase.co
 ```
 
 ### 2. Supabase Anon Key
-**Name:** `NEXT_PUBLIC_SUPABASE_ANON_KEY`  
+
+**Name:** `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 **Value:** Get from Supabase Dashboard → Settings → API → Project API keys → anon public
+
 ```
 your_supabase_anon_key
 ```
 
 ### 3. Database URL (Session Pooler) 🔴 CRITICAL
-**Name:** `DATABASE_URL`  
+
+**Name:** `DATABASE_URL`
 **Value:** Get from Supabase Dashboard → Settings → Database → Connection Pooling → Session
+
 ```
 postgresql://postgres.your-project-ref:[YOUR-PASSWORD]@aws-0-region.pooler.supabase.com:5432/postgres
 ```
 
-**⚠️ Important:** 
+**⚠️ Important:**
+
 - Must use the **Session Pooler** host (ends with `.pooler.supabase.com`)
 - User format is: `postgres.{your-project-ref}`
 - Your Supabase database is IPv6-only, Vercel is IPv4-only
 - Session Pooler bridges this compatibility gap
 - Replace `[YOUR-PASSWORD]` with your actual database password
 
-### 4. Lemon Squeezy API Key
-**Name:** `LEMON_SQUEEZY_API_KEY`  
-**Value:** Lemon Squeezy Dashboard → Settings → API
+### 4. Dodo Payments API Key
+
+**Name:** `DODO_PAYMENTS_API_KEY`
+**Value:** Dodo Payments Dashboard → Settings → API
+
 ```
-your_lemon_squeezy_api_key_here
+your_dodo_payments_api_key_here
 ```
 
-### 5. Lemon Squeezy Store ID
-**Name:** `LEMON_SQUEEZY_STORE_ID`  
-**Value:** Your Lemon store id
+### 5. Dodo Payments Business ID
+
+**Name:** `DODO_BUSINESS_ID`
+**Value:** Your Dodo business id
+
 ```
-317886
+bus_xxx
 ```
 
-### 6. Lemon Squeezy Product ID
-**Name:** `LEMON_SQUEEZY_PRODUCT_ID`  
-**Value:** Your Lemon product id
+### 6. Dodo Payments Product ID
+
+**Name:** `DODO_PRODUCT_ID`
+**Value:** Your Dodo product id
+
 ```
 896872
 ```
 
-### 7. Lemon Squeezy Variant ID
-**Name:** `LEMON_SQUEEZY_VARIANT_ID`  
-**Value:** Your Lemon variant id
+### 7. Dodo Payments Environment
+
+**Name:** `DODO_ENVIRONMENT`
+**Value:** `test_mode` for local/staging, `live_mode` for production
+
 ```
-1411237
+test_mode
 ```
 
-### 8. Lemon Squeezy Webhook Secret
-**Name:** `LEMON_SQUEEZY_WEBHOOK_SECRET`  
-**Value:** Lemon Squeezy Dashboard → Settings → Webhooks
+### 8. Dodo Payments Webhook Secret
+
+**Name:** `DODO_PAYMENTS_WEBHOOK_SECRET`
+**Value:** Dodo Payments Dashboard → Settings → Webhooks
+
 ```
-your_lemon_squeezy_webhook_secret_here
+your_dodo_payments_webhook_secret_here
 ```
 
 ---
@@ -101,7 +120,7 @@ your_lemon_squeezy_webhook_secret_here
 From your Supabase dashboard screenshot:
 
 - **IPv6-only database** - Your Supabase database doesn't support IPv4
-- **Vercel is IPv4-only** - Cannot directly connect to IPv6 databases  
+- **Vercel is IPv4-only** - Cannot directly connect to IPv6 databases
 - **Solution:** Session Pooler (port 6543) provides IPv4 → IPv6 translation
 - **Bonus:** Also provides connection pooling for serverless efficiency
 
@@ -115,8 +134,8 @@ Before deploying, verify:
 - [ ] Each variable has Production, Preview, AND Development selected
 - [ ] DATABASE_URL uses Session Pooler host (ends with `.pooler.supabase.com`)
 - [ ] DATABASE_URL user format is: `postgres.{your-project-ref}`
-- [ ] Lemon webhook points to `/api/webhooks/lemon-squeezy`
-- [ ] Lemon webhook events enabled: `order_created`, `order_refunded`
+- [ ] Dodo webhook points to `/api/webhooks/dodo-jazzlms`
+- [ ] Dodo webhook events enabled: `order_created`, `order_refunded`
 - [ ] Database tables created in Supabase (see SUPABASE_DATABASE_SETUP.md)
 
 ---
@@ -130,7 +149,7 @@ Before deploying, verify:
    - User must be: `postgres.{your-project-ref}` (not just `postgres`)
    - Port is 5432 (the Session Pooler uses this port)
    - Copy the connection string from Supabase Dashboard → Database → Connection Pooling → Session
-   
+
 2. **Verify Supabase database is running**
    - Check Supabase dashboard
    - Database shouldn't be paused
@@ -153,4 +172,3 @@ Before deploying, verify:
 4. ✅ Test your application
 
 **Ready to deploy!** 🚀
-

@@ -1,6 +1,6 @@
 # La Cultura del Jazz - LMS Platform
 
-This is a custom, high-performance video course platform built with Next.js, Tailwind CSS, Shadcn UI, Supabase, Prisma, Mux, and Lemon Squeezy.
+This is a custom, high-performance video course platform built with Next.js, Tailwind CSS, Shadcn UI, Supabase, Prisma, Mux, and Dodo Payments.
 
 ## Prerequisites
 
@@ -34,12 +34,12 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 APP_URL=http://localhost:3000
 DATABASE_URL="postgresql://user:password@host:port/database"
 
-# Lemon Squeezy
-LEMON_SQUEEZY_API_KEY=YOUR_LEMON_SQUEEZY_API_KEY
-LEMON_SQUEEZY_WEBHOOK_SECRET=YOUR_LEMON_SQUEEZY_WEBHOOK_SECRET
-LEMON_SQUEEZY_STORE_ID=YOUR_STORE_ID
-LEMON_SQUEEZY_PRODUCT_ID=YOUR_PRODUCT_ID
-LEMON_SQUEEZY_VARIANT_ID=YOUR_VARIANT_ID
+# Dodo Payments
+DODO_PAYMENTS_API_KEY=YOUR_DODO_PAYMENTS_API_KEY
+DODO_PAYMENTS_WEBHOOK_SECRET=YOUR_DODO_PAYMENTS_WEBHOOK_SECRET
+DODO_BUSINESS_ID=YOUR_DODO_BUSINESS_ID
+DODO_PRODUCT_ID=YOUR_PRODUCT_ID
+DODO_ENVIRONMENT=test_mode
 ```
 
 ### 4. Seed the database
@@ -93,13 +93,13 @@ Go to **Google Auth Platform → Branding** and set:
 > Note: For Supabase OAuth providers, Google redirects back to Supabase (`/auth/v1/callback`), and Supabase then redirects to your app callback (`/auth/callback`).
 > Note: In Google's account selector, "Continue to ...supabase.co" is expected when using Supabase-hosted OAuth endpoints.
 
-## Lemon Squeezy Webhook (MVP)
+## Dodo Payments Webhook (MVP)
 
-Use Lemon Squeezy test mode and configure your webhook endpoint:
+Use Dodo Payments test mode and configure your webhook endpoint:
 
-- Endpoint: `/api/webhooks/lemon-squeezy`
+- Endpoint: `/api/webhooks/dodo-jazzlms`
 - Required events: `order_created`, `order_refunded`
-- Signature header: `X-Signature` (validated against `LEMON_SQUEEZY_WEBHOOK_SECRET`)
+- Signature header: `X-Signature` (validated against `DODO_PAYMENTS_WEBHOOK_SECRET`)
 
 Local automated checkout tests still support a localhost-only fallback path that creates a synthetic purchase record without calling the payment provider. This is intended for QA and Playwright/Vitest flows only and stays disabled in production.
 

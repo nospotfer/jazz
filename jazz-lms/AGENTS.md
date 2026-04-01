@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 14 (App Router), Supabase Auth, Prisma (SQLite), Lemon Squeezy payments, and Tailwind CSS. Single-course sales model with chapter/lesson hierarchy.
+Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 14 (App Router), Supabase Auth, Prisma (SQLite), Dodo Payments payments, and Tailwind CSS. Single-course sales model with chapter/lesson hierarchy.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 
 - **Database**: Prisma with SQLite. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models: `User`, `Course → Chapter → Lesson → Attachment`, `Purchase`, `UserProgress`.
 - **Admin system**: Role-based via `User.role` field (string: `"USER" | "SUPER_ADMIN" | "COURSE_ADMIN" | "CONTENT_CREATOR" | "MODERATOR"`). Guard helpers in `src/lib/admin.ts` (`requireAdmin()`/`requirePermission()`). Admin pages under `src/app/admin/` are layout-protected.
 - **User sync**: On auth callback (`src/app/auth/callback/route.ts`), `syncUserWithDatabase()` from `src/lib/sync-user.ts` creates a Prisma `User` record matching the Supabase user.
-- **Payments**: Lemon Squeezy checkout in `src/app/api/checkout/route.ts`. Webhook at `src/app/api/webhooks/lemon-squeezy/route.ts` creates and reverts `Purchase` records for paid/refunded orders.
+- **Payments**: Dodo Payments checkout in `src/app/api/checkout/route.ts`. Webhook at `src/app/api/webhooks/dodo-jazzlms/route.ts` creates and reverts `Purchase` records for paid/refunded orders.
 
 ## Key Conventions
 
@@ -33,7 +33,7 @@ npm run admin:create # Create admin user (needs ADMIN_EMAIL env var)
 npm run admin:studio # Open Prisma Studio
 npm run check:integrations # Validate Mux + Supabase storage + env
 npm run test:payments:backend # Targeted backend payment validation
-npm run test:payments:frontend:real # Real Lemon checkout frontend E2E
+npm run test:payments:frontend:real # Real Dodo checkout frontend E2E
 npm run test:payments:all # Backend + frontend real + build
 npx prisma migrate dev --name <name>  # Apply migrations
 npx prisma generate  # Regenerate Prisma Client after schema changes
@@ -46,7 +46,7 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 | Pages (server) | `src/app/**/page.tsx` |
 | API routes | `src/app/api/**/route.ts` |
 | Server actions | `src/actions/*.ts` |
-| Shared libs | `src/lib/*.ts` (db, lemon-squeezy, admin, sync-user, utils) |
+| Shared libs | `src/lib/*.ts` (db, dodo-jazzlms, admin, sync-user, utils) |
 | Auth utilities | `src/utils/supabase/{client,server,middleware}.ts` |
 | UI primitives | `src/components/ui/*.tsx` (shadcn/radix-based) |
 
@@ -56,5 +56,5 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 - **Prisma Client must be regenerated** after any `schema.prisma` change: run `npx prisma generate`.
 - **Middleware runs on all routes** (except static/image/favicon). Session refresh happens via `src/utils/supabase/middleware.ts`.
 - **Test framework is configured**: Vitest for unit/integration/contract/security/system and Playwright for E2E.
-- **Real Lemon frontend E2E requires env preconditions** (`PAYMENTS_E2E_REAL_ENABLED=1`, `PAYMENTS_E2E_STORAGE_STATE`, `PAYMENTS_E2E_COURSE_ID`).
+- **Real Dodo frontend E2E requires env preconditions** (`PAYMENTS_E2E_REAL_ENABLED=1`, `PAYMENTS_E2E_STORAGE_STATE`, `PAYMENTS_E2E_COURSE_ID`).
 - **Admin pages are layout-protected** — the `src/app/admin/layout.tsx` calls `requireAdmin()` which redirects non-admins. Individual admin pages don't need their own auth checks.

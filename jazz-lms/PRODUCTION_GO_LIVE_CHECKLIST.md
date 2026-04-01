@@ -38,11 +38,11 @@ Configurar no Vercel (Production + Preview + Development):
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_STORAGE_BUCKET`
 - `SIGNED_URL_TTL_SECONDS`
-- `LEMON_SQUEEZY_API_KEY`
-- `LEMON_SQUEEZY_WEBHOOK_SECRET`
-- `LEMON_SQUEEZY_STORE_ID`
-- `LEMON_SQUEEZY_PRODUCT_ID`
-- `LEMON_SQUEEZY_VARIANT_ID`
+- `DODO_PAYMENTS_API_KEY`
+- `DODO_PAYMENTS_WEBHOOK_SECRET`
+- `DODO_BUSINESS_ID`
+- `DODO_PRODUCT_ID`
+- `DODO_ENVIRONMENT`
 - `MUX_SIGNING_KEY_ID`
 - `MUX_SIGNING_PRIVATE_KEY`
 - `PROFESSOR_EMAIL`
@@ -87,21 +87,21 @@ Critério de aceite:
 - [ ] Login com Google cria sessão e redireciona para `/dashboard`
 - [ ] Falhas OAuth retornam para `/auth` com mensagem amigável
 
-## 5) Lemon Squeezy (pagamentos)
+## 5) Dodo Payments (pagamentos)
 
-### 5.1 Dashboard Lemon Squeezy
+### 5.1 Dashboard Dodo Payments
 
-- [ ] Chaves corretas (`LEMON_SQUEEZY_API_KEY`, `LEMON_SQUEEZY_WEBHOOK_SECRET`)
-- [ ] Store/Product/Variant corretos no Vercel (`LEMON_SQUEEZY_STORE_ID`, `LEMON_SQUEEZY_PRODUCT_ID`, `LEMON_SQUEEZY_VARIANT_ID`)
-- [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/lemon-squeezy`
+- [ ] Chaves corretas (`DODO_PAYMENTS_API_KEY`, `DODO_PAYMENTS_WEBHOOK_SECRET`)
+- [ ] Business/Product/Environment corretos no Vercel (`DODO_BUSINESS_ID`, `DODO_PRODUCT_ID`, `DODO_ENVIRONMENT`)
+- [ ] Webhook cadastrado para `https://seu-dominio.com/api/webhooks/dodo-jazzlms`
 - [ ] Eventos ativos: `order_created`, `order_refunded`
-- [ ] `LEMON_SQUEEZY_WEBHOOK_SECRET` atualizado no Vercel
+- [ ] `DODO_PAYMENTS_WEBHOOK_SECRET` atualizado no Vercel
 
 ### 5.2 Fluxo funcional
 
 - [ ] Usuário sem compra não acessa aulas bloqueadas
 - [ ] Primeira aula segue liberada (preview)
-- [ ] Checkout cria URL no Lemon Squeezy
+- [ ] Checkout cria URL no Dodo Payments
 - [ ] Webhook grava/reverte compra em `Purchase`
 - [ ] Após compra, acesso liberado corretamente
 
@@ -143,8 +143,8 @@ npm run lint
 npm run build
 npm run check:integrations
 
-# lemon local (consulte docs/10-lemon-local-setup.md)
-# configurar webhook local para /api/webhooks/lemon-squeezy
+# dodo local (consulte docs/10-dodo-local-setup.md)
+# configurar webhook local para /api/webhooks/dodo-jazzlms
 
 # deploy assistido
 npm run deploy:prod

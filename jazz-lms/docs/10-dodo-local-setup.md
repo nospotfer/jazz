@@ -1,4 +1,4 @@
-# Lemon Squeezy local setup (jazz-lms)
+# Dodo Payments local setup (jazz-lms)
 
 ## 1) Create local env
 
@@ -11,13 +11,13 @@ Copy `.env.example` to `.env.local` and fill only what is needed to run checkout
 - `NEXT_PUBLIC_APP_URL=http://localhost:3000`
 - `APP_URL=http://localhost:3000`
 
-Lemon:
+Dodo:
 
-- `LEMON_SQUEEZY_API_KEY`
-- `LEMON_SQUEEZY_WEBHOOK_SECRET`
-- `LEMON_SQUEEZY_STORE_ID=317886`
-- `LEMON_SQUEEZY_PRODUCT_ID=896872`
-- `LEMON_SQUEEZY_VARIANT_ID=1411237`
+- `DODO_PAYMENTS_API_KEY`
+- `DODO_PAYMENTS_WEBHOOK_SECRET`
+- `DODO_BUSINESS_ID=bus_xxx`
+- `DODO_PRODUCT_ID=896872`
+- `DODO_ENVIRONMENT=test_mode`
 
 Payment methods in app are currently limited to:
 
@@ -37,13 +37,14 @@ Run:
 Set `ENABLE_LOCAL_TEST_CHECKOUT=1` in `.env.local`.
 
 Behavior:
+
 - only works outside production
 - only on localhost
-- creates a synthetic purchase record without calling Lemon
+- creates a synthetic purchase record without calling Dodo
 
-### Option B (real Lemon checkout + webhook)
+### Option B (real Dodo checkout + webhook)
 
-Use a tunnel so Lemon can reach your local webhook route.
+Use a tunnel so Dodo can reach your local webhook route.
 
 Example with Cloudflare tunnel:
 
@@ -53,38 +54,39 @@ You will get an https URL such as:
 
 `https://your-random-subdomain.trycloudflare.com`
 
-In Lemon Webhooks, set callback to:
+In Dodo Webhooks, set callback to:
 
-`https://your-random-subdomain.trycloudflare.com/api/webhooks/lemon-squeezy`
+`https://your-random-subdomain.trycloudflare.com/api/webhooks/dodo-jazzlms`
 
 Enable events:
+
 - `order_created`
 - `order_refunded`
 
 ## 4) Verify webhook quickly
 
-- In Lemon dashboard, send test event `order_created`
-- Check app logs for HTTP 200 on `/api/webhooks/lemon-squeezy`
+- In Dodo dashboard, send test event `order_created`
+- Check app logs for HTTP 200 on `/api/webhooks/dodo-jazzlms`
 - Complete a test checkout and confirm `Purchase` is created in DB
 
 ## 5) Voucher behavior
 
 - Voucher input on purchase screen validates against local DB
-- If voucher is discount (not free), checkout sends `discount_code` to Lemon
-- Voucher must exist in Lemon discounts with the same code
+- If voucher is discount (not free), checkout sends `discount_code` to Dodo
+- Voucher must exist in Dodo discounts with the same code
 - `FREE_ACCESS` vouchers are handled directly by app (no provider payment)
 
 ## 6) Security notes
 
 - Never commit `.env.local`
 - If any API key was shared in chat/screenshots, rotate it before production
-- Use a strong random `LEMON_SQUEEZY_WEBHOOK_SECRET` for production
+- Use a strong random `DODO_PAYMENTS_WEBHOOK_SECRET` for production
 
 ## 7) Payment test agents
 
 - Backend payment validation:
-	- `npm run test:payments:backend`
-- Frontend real Lemon checkout validation:
-	- `npm run test:payments:frontend:real`
+  - `npm run test:payments:backend`
+- Frontend real Dodo checkout validation:
+  - `npm run test:payments:frontend:real`
 - Full critical pass (backend + frontend real + build):
-	- `npm run test:payments:all`
+  - `npm run test:payments:all`

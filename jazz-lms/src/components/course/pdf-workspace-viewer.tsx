@@ -34,6 +34,9 @@ const HIGHLIGHT_COLORS = [
   "#14b8a6",
 ];
 
+const PDF_WORKER_URL =
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+
 export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();
   const [highlights, setHighlights] = useState<SavedHighlight[]>([]);
@@ -262,7 +265,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
       ref={containerRef}
       className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden"
     >
-      <Worker workerUrl="/pdf.worker.min.js">
+      <Worker workerUrl={PDF_WORKER_URL}>
         <Viewer
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}

@@ -19,13 +19,13 @@ API routes live in the `/app/api/` folder. Each `route.ts` file defines the endp
 
 ## Overview of All Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/checkout` | POST | Create a Lemon Squeezy checkout URL |
-| `/api/contact` | POST | Send contact form submission as email via Resend |
-| `/api/mux/promo-playback` | GET | Return promo playbackId and signed Mux tokens |
-| `/api/courses/[courseId]/lessons/[lessonId]/progress` | PUT | Update lesson completion status |
-| `/api/webhooks/lemon-squeezy` | POST | Receive Lemon Squeezy payment notifications |
+| Endpoint                                              | Method | Purpose                                          |
+| ----------------------------------------------------- | ------ | ------------------------------------------------ |
+| `/api/checkout`                                       | POST   | Create a Dodo Payments checkout URL              |
+| `/api/contact`                                        | POST   | Send contact form submission as email via Resend |
+| `/api/mux/promo-playback`                             | GET    | Return promo playbackId and signed Mux tokens    |
+| `/api/courses/[courseId]/lessons/[lessonId]/progress` | PUT    | Update lesson completion status                  |
+| `/api/webhooks/dodo-jazzlms`                          | POST   | Receive Dodo Payments payment notifications      |
 
 ---
 
@@ -35,12 +35,12 @@ API routes live in the `/app/api/` folder. Each `route.ts` file defines the endp
 
 **URL**: `POST /api/checkout`
 
-**Purpose**: Creates a Lemon Squeezy checkout URL and returns it for redirect.
+**Purpose**: Creates a Dodo Payments checkout URL and returns it for redirect.
 
 ### How it works
 
 ```
-Frontend                          Backend                  Lemon Squeezy
+Frontend                          Backend                  Dodo Payments
    │                                │                               │
    │  POST /api/checkout            │                               │
    │  { courseId: "abc123" }        │                               │
@@ -66,27 +66,29 @@ Frontend                          Backend                  Lemon Squeezy
 ```typescript
 // src/app/api/checkout/route.ts
 
-import { createClient } from '@/utils/supabase/server';
-import { createLemonCheckout } from '@/lib/lemon-squeezy';
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { createClient } from "@/utils/supabase/server";
+import { createDodoCheckout } from "@/lib/dodo-jazzlms";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
     // Step 1: Get the current user
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // Step 2: Check if user is logged in
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // Step 3: Get courseId from request body
     const { courseId } = await req.json();
 
     if (!courseId) {
-      return new NextResponse('Bad Request', { status: 400 });
+      return new NextResponse("Bad Request", { status: 400 });
     }
 
     // Step 4: Get course from database
@@ -95,16 +97,15 @@ export async function POST(req: Request) {
     });
 
     if (!course) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
 
-    // Step 5: Create Lemon checkout URL
-    const checkoutUrl = await createLemonCheckout({
-      storeId: process.env.LEMON_SQUEEZY_STORE_ID!,
-      variantId: process.env.LEMON_SQUEEZY_VARIANT_ID!,
+    // Step 5: Create Dodo checkout URL
+    const checkoutUrl = await createDodoCheckout({
+      productId: process.env.DODO_PRODUCT_ID!,
       email: user.email!,
-      successUrl: `${req.headers.get('origin')}/courses/${courseId}?success=true`,
-      customData: {
+      returnUrl: `${req.headers.get("origin")}/courses/${courseId}?success=true`,
+      metadata: {
         courseId: course.id,
         userId: user.id,
       },
@@ -112,10 +113,9 @@ export async function POST(req: Request) {
 
     // Step 6: Return checkout URL
     return NextResponse.json({ url: checkoutUrl });
-    
   } catch (error) {
-    console.log('[CHECKOUT_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.log("[CHECKOUT_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 ```
@@ -123,6 +123,7 @@ export async function POST(req: Request) {
 ### Request/Response
 
 **Request**:
+
 ```json
 POST /api/checkout
 Content-Type: application/json
@@ -133,13 +134,15 @@ Content-Type: application/json
 ```
 
 **Response (Success)**:
+
 ```json
 {
-  "url": "https://checkout.lemonsqueezy.com/checkout/..."
+  "url": "https://checkout.dodopayments.com/checkout/..."
 }
 ```
 
 **Response (Error)**:
+
 - `401 Unauthorized` - User not logged in
 - `400 Bad Request` - Missing courseId
 - `404 Not Found` - Course doesn't exist
@@ -148,13 +151,17 @@ Content-Type: application/json
 ### Key Concepts
 
 #### Why return a hosted checkout URL?
+
 The backend keeps credentials secure and the frontend only receives a safe redirect URL.
 
 #### Admin checkout testing behavior
+
 When an authenticated admin user already has a purchase record for the same course, the checkout route allows the flow to continue (admin bypass) instead of returning `already purchased`. This is intended to support payment-flow testing from admin accounts.
 
 #### Why store `userId` and `courseId` in metadata?
-When Lemon sends the webhook after payment, we need to know:
+
+When Dodo sends the webhook after payment, we need to know:
+
 - Who paid (userId)
 - What they paid for (courseId)
 
@@ -173,6 +180,7 @@ Metadata is passed through the entire checkout flow.
 ### Security and Consistency Validation
 
 The route validates generated JWT payloads before returning them:
+
 - `playbackToken` must have `aud: "v"` and `sub` equal to the promo playbackId.
 - `thumbnailToken` must have `aud: "t"` and matching `sub`.
 - `storyboardToken` must have `aud: "s"` and matching `sub`.
@@ -241,16 +249,18 @@ Frontend                          Backend
 
 export async function PUT(
   req: Request,
-  { params }: { params: { courseId: string; lessonId: string } }
+  { params }: { params: { courseId: string; lessonId: string } },
 ) {
   try {
     // Step 1: Get current user
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const { isCompleted } = await req.json();
 
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // Step 2: Upsert (update or insert) progress
@@ -263,19 +273,19 @@ export async function PUT(
         },
       },
       update: {
-        isCompleted,  // Update existing record
+        isCompleted, // Update existing record
       },
       create: {
         userId: user.id,
         lessonId: params.lessonId,
-        isCompleted,  // Create new record
+        isCompleted, // Create new record
       },
     });
 
     return NextResponse.json(userProgress);
   } catch (error) {
-    console.log('[LESSON_PROGRESS_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.log("[LESSON_PROGRESS_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 ```
@@ -283,6 +293,7 @@ export async function PUT(
 ### Request/Response
 
 **Request**:
+
 ```json
 PUT /api/courses/abc123/lessons/xyz789/progress
 Content-Type: application/json
@@ -293,6 +304,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "id": "progress123",
@@ -307,13 +319,17 @@ Content-Type: application/json
 ### Key Concepts
 
 #### Dynamic Route Parameters
+
 The folder structure `[courseId]` and `[lessonId]` creates dynamic URL segments:
+
 - `/api/courses/abc/lessons/xyz/progress`
 - `params.courseId` = "abc"
 - `params.lessonId` = "xyz"
 
 #### Upsert Pattern
+
 `upsert` = "update or insert":
+
 - If a record exists with that `userId_lessonId` combo → update it
 - If no record exists → create it
 
@@ -321,13 +337,13 @@ This prevents errors when marking a lesson complete for the first time.
 
 ---
 
-## 3. Lemon Squeezy Webhook Endpoint
+## 3. Dodo Payments Webhook Endpoint
 
-**File**: `src/app/api/webhooks/lemon-squeezy/route.ts`
+**File**: `src/app/api/webhooks/dodo-jazzlms/route.ts`
 
-**URL**: `POST /api/webhooks/lemon-squeezy`
+**URL**: `POST /api/webhooks/dodo-jazzlms`
 
-**Purpose**: Receives notifications from Lemon Squeezy when events happen (like paid/refunded orders).
+**Purpose**: Receives notifications from Dodo Payments when events happen (like paid/refunded orders).
 
 ### Why Webhooks?
 
@@ -335,18 +351,18 @@ This prevents errors when marking a lesson complete for the first time.
 Without webhooks (Bad):
   User pays → Redirect to success page → Hope user doesn't close browser
                                          Hope network doesn't fail
-                                         
+
 With webhooks (Good):
-  User pays → Lemon Squeezy notifies YOUR SERVER → Server creates purchase
+  User pays → Dodo Payments notifies YOUR SERVER → Server creates purchase
                                                     100% reliable
 ```
 
 ### How it works
 
 ```
-Lemon Squeezy                     Backend                       Database
+Dodo Payments                     Backend                       Database
    │                                │                              │
-  │  POST /api/webhooks/lemon-squeezy│                            │
+  │  POST /api/webhooks/dodo-jazzlms│                            │
    │  (signed payload)              │                              │
    ├───────────────────────────────►│                              │
    │                                │                              │
@@ -368,16 +384,16 @@ Lemon Squeezy                     Backend                       Database
 ### Code Breakdown
 
 ```typescript
-// src/app/api/webhooks/lemon-squeezy/route.ts
+// src/app/api/webhooks/dodo-jazzlms/route.ts
 
 export async function POST(req: Request) {
   // Step 1: Get raw body and signature
-  const body = await req.text();  // Must be raw text, not JSON
-  const signature = (await headers()).get('x-signature') as string;
+  const body = await req.text(); // Must be raw text, not JSON
+  const signature = (await headers()).get("x-signature") as string;
 
   let payload: Record<string, unknown>;
 
-  // Step 2: Verify the webhook is really from Lemon Squeezy
+  // Step 2: Verify the webhook is really from Dodo Payments
   try {
     payload = JSON.parse(body);
   } catch (error: unknown) {
@@ -391,9 +407,9 @@ export async function POST(req: Request) {
   const courseId = (payload.meta as any)?.custom_data?.courseId;
 
   // Step 4: Handle the event
-  if (eventName === 'order_created') {
+  if (eventName === "order_created") {
     if (!userId || !courseId) {
-      return new NextResponse('Missing metadata', { status: 400 });
+      return new NextResponse("Missing metadata", { status: 400 });
     }
 
     // Step 5: Create purchase record
@@ -405,7 +421,9 @@ export async function POST(req: Request) {
     });
   } else {
     // Unknown event type - just acknowledge it
-    return new NextResponse(`Unhandled event type ${event.type}`, { status: 200 });
+    return new NextResponse(`Unhandled event type ${event.type}`, {
+      status: 200,
+    });
   }
 
   // Step 6: Return success
@@ -416,16 +434,18 @@ export async function POST(req: Request) {
 ### Why Verify the Signature?
 
 Anyone could send a POST request to your webhook URL. Without verification, an attacker could:
+
 1. Send fake "payment completed" events
 2. Get free access to courses
 
-The signature proves the request came from Lemon Squeezy.
+The signature proves the request came from Dodo Payments.
 
 ### Request/Response
 
-**Request** (from Lemon Squeezy):
+**Request** (from Dodo Payments):
+
 ```
-POST /api/webhooks/lemon-squeezy
+POST /api/webhooks/dodo-jazzlms
 x-signature: abc123...
 Content-Type: application/json
 
@@ -445,27 +465,29 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 - `200 OK` - Event processed successfully
 - `400 Bad Request` - Invalid signature or missing data
 
 ### Testing Webhooks Locally
 
 Use your local webhook forwarding setup:
+
 ```bash
-# See docs/10-lemon-local-setup.md
-# Forward events to /api/webhooks/lemon-squeezy
+# See docs/10-dodo-local-setup.md
+# Forward events to /api/webhooks/dodo-jazzlms
 ```
 
 ---
 
 ## HTTP Methods Reference
 
-| Method | Purpose | Body |
-|--------|---------|------|
-| GET | Retrieve data | No body |
-| POST | Create new resource | JSON body |
-| PUT | Update existing resource | JSON body |
-| DELETE | Remove resource | Usually no body |
+| Method | Purpose                  | Body            |
+| ------ | ------------------------ | --------------- |
+| GET    | Retrieve data            | No body         |
+| POST   | Create new resource      | JSON body       |
+| PUT    | Update existing resource | JSON body       |
+| DELETE | Remove resource          | Usually no body |
 
 ---
 
@@ -478,17 +500,17 @@ export async function POST(req: Request) {
   try {
     // 1. Authenticate
     if (!user) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // 2. Validate input
     if (!requiredField) {
-      return new NextResponse('Bad Request', { status: 400 });
+      return new NextResponse("Bad Request", { status: 400 });
     }
 
     // 3. Check resource exists
     if (!resource) {
-      return new NextResponse('Not Found', { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     // 4. Do the thing
@@ -496,11 +518,10 @@ export async function POST(req: Request) {
 
     // 5. Return success
     return NextResponse.json(result);
-
   } catch (error) {
     // 6. Log and return error
-    console.log('[ENDPOINT_ERROR]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.log("[ENDPOINT_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 ```
@@ -510,36 +531,44 @@ export async function POST(req: Request) {
 ## Security Considerations
 
 ### 1. Always Authenticate
+
 Check `user` before doing anything sensitive:
+
 ```typescript
 if (!user) {
-  return new NextResponse('Unauthorized', { status: 401 });
+  return new NextResponse("Unauthorized", { status: 401 });
 }
 ```
 
 ### 2. Validate Input
+
 Never trust user input:
+
 ```typescript
 const { courseId } = await req.json();
 if (!courseId) {
-  return new NextResponse('Bad Request', { status: 400 });
+  return new NextResponse("Bad Request", { status: 400 });
 }
 ```
 
 ### 3. Use Environment Variables
+
 Never hardcode secrets:
+
 ```typescript
 // ❌ Bad
-const apiKey = 'YOUR_LEMON_SQUEEZY_API_KEY';
+const apiKey = "YOUR_DODO_PAYMENTS_API_KEY";
 
 // ✅ Good
-const apiKey = process.env.LEMON_SQUEEZY_API_KEY!;
+const apiKey = process.env.DODO_PAYMENTS_API_KEY!;
 ```
 
 ### 4. Verify Webhook Signatures
+
 Always verify webhooks are from who they claim:
+
 ```typescript
-const isValid = verifyLemonSignature(body, signature);
+const isValid = verifyDodoSignature(body, signature);
 ```
 
 ---
@@ -587,18 +616,18 @@ Frontend (Home Page)          API Handler              Resend              Email
 ```typescript
 // src/app/api/contact/route.ts
 
-import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 export async function POST(request: Request) {
   try {
     // Step 1: Parse and validate request
     const body = await request.json();
-    
+
     if (!body.messageType || !body.message || !body.email) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: "Missing required fields" },
+        { status: 400 },
       );
     }
 
@@ -606,26 +635,26 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(body.email)) {
       return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
+        { error: "Invalid email format" },
+        { status: 400 },
       );
     }
 
     // Step 3: Validate message length
     if (body.message.length > 1000) {
       return NextResponse.json(
-        { error: 'Message exceeds maximum length' },
-        { status: 400 }
+        { error: "Message exceeds maximum length" },
+        { status: 400 },
       );
     }
 
     // Step 4: Get Resend API key
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      console.error('[contact] RESEND_API_KEY not configured');
+      console.error("[contact] RESEND_API_KEY not configured");
       return NextResponse.json(
-        { error: 'Email service not configured' },
-        { status: 500 }
+        { error: "Email service not configured" },
+        { status: 500 },
       );
     }
 
@@ -633,7 +662,7 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
     const response = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
-      to: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'admin@neurofactory.net',
+      to: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "admin@neurofactory.net",
       subject: `Nuevo mensaje de contacto de ${body.email}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -655,14 +684,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { success: true, messageId: response.data?.id },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('[contact] Error:', error);
+    console.error("[contact] Error:", error);
     return NextResponse.json(
-      { error: 'Failed to send email' },
-      { status: 500 }
+      { error: "Failed to send email" },
+      { status: 500 },
     );
   }
 }
@@ -671,6 +699,7 @@ export async function POST(request: Request) {
 ### Request/Response
 
 **Request**:
+
 ```json
 POST /api/contact
 Content-Type: application/json
@@ -683,6 +712,7 @@ Content-Type: application/json
 ```
 
 **Response (Success)**:
+
 ```json
 {
   "success": true,
@@ -691,6 +721,7 @@ Content-Type: application/json
 ```
 
 **Response (Error)**:
+
 - `400 Bad Request` - Invalid email format or missing fields
 - `500 Internal Server Error` - Resend API key not configured or email send failed
 
@@ -716,6 +747,7 @@ NEXT_PUBLIC_SUPPORT_EMAIL=admin@neurofactory.net
    - `/api/users/[userId]/settings` → `/app/api/users/[userId]/settings/route.ts`
 
 2. Export functions for HTTP methods:
+
    ```typescript
    export async function GET(req: Request) { ... }
    export async function POST(req: Request) { ... }
@@ -728,4 +760,3 @@ NEXT_PUBLIC_SUPPORT_EMAIL=admin@neurofactory.net
 4. Always authenticate when needed
 
 5. Return appropriate status codes
-
