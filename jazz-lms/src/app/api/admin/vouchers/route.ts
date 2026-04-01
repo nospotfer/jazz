@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { getVoucherArtistByKey } from '@/lib/voucher-artists';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,7 +22,7 @@ export async function GET(req: Request) {
     const discountPercentParam = url.searchParams.get('discountPercent');
 
     const now = new Date();
-    const filters: any[] = [];
+    const filters: Prisma.VoucherCodeWhereInput[] = [];
 
     if (search) {
       filters.push({
@@ -76,7 +77,7 @@ export async function GET(req: Request) {
 
     const where = filters.length > 0 ? { AND: filters } : {};
 
-    const prisma = db as any;
+    const prisma = db;
     const [vouchers, generatedCount, usedCount, activeCount, activeVoucherUsageRows, expiredCount] = await Promise.all([
       prisma.voucherCode.findMany({
         where,

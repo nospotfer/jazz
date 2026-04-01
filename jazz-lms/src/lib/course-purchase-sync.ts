@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 type UpsertCoursePurchaseInput = {
   userId: string;
@@ -86,7 +87,7 @@ function getMetadataProviderDiscountCode(metadata: unknown): string | null {
 }
 
 async function findVoucherByCode(
-  prisma: any,
+  prisma: typeof db,
   code: string,
 ): Promise<{ id: string } | null> {
   const directMatch = await prisma.voucherCode.findUnique({
@@ -116,7 +117,7 @@ async function findVoucherByCode(
 }
 
 async function resolveVoucherByInput(
-  prisma: any,
+  prisma: typeof db,
   input: UpsertCoursePurchaseInput,
 ): Promise<string | null> {
   const localCode = normalizeCode(input.localVoucherCode ?? input.voucherCode);
@@ -148,7 +149,7 @@ async function resolveVoucherByInput(
         },
       ],
       metadata: {
-        not: null,
+        not: Prisma.JsonNull,
       },
     },
     select: {
@@ -168,7 +169,7 @@ async function resolveVoucherByInput(
   return metadataMappedVoucher?.id ?? null;
 }
 
-async function incrementVoucherUsage(tx: any, voucherId: string) {
+async function incrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string) {
   await tx.voucherCode.update({
     where: { id: voucherId },
     data: {
@@ -179,7 +180,7 @@ async function incrementVoucherUsage(tx: any, voucherId: string) {
   });
 }
 
-async function decrementVoucherUsage(tx: any, voucherId: string) {
+async function decrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string) {
   await tx.voucherCode.updateMany({
     where: {
       id: voucherId,
@@ -198,14 +199,14 @@ async function decrementVoucherUsage(tx: any, voucherId: string) {
 export async function upsertCoursePurchaseFromProvider(
   input: UpsertCoursePurchaseInput,
 ) {
-  const prisma = db as any;
+  const prisma = db;
   const desiredVoucherId = await resolveVoucherByInput(prisma, input);
   const originalPrice = toMoney(input.originalPrice);
   const discountAmount = toMoney(input.discountAmount);
   const finalPrice = toMoney(input.finalPrice);
   const preserveExistingVoucher = input.preserveExistingVoucher !== false;
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existingPurchase = await tx.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -372,9 +373,9 @@ export async function upsertCoursePurchaseFromProvider(
 export async function revertCoursePurchaseByProviderReferenceId(
   providerReferenceId: string,
 ) {
-  const prisma = db as any;
+  const prisma = db;
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const purchase = await tx.purchase.findFirst({
       where: {
         providerReferenceId,

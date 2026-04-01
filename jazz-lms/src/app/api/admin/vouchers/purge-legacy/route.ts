@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { isLegacyVoucherCode } from '@/lib/voucher-artists';
 import { removeVoucherDiscountSync } from '@/lib/voucher-provider-sync';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const vouchers = await prisma.voucherCode.findMany({
       select: {
         id: true,
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const legacyVouchers = vouchers.filter((voucher: any) => isLegacyVoucherCode(voucher.code));
+    const legacyVouchers = vouchers.filter((voucher) => isLegacyVoucherCode(voucher.code));
 
     if (!legacyVouchers.length) {
       return NextResponse.json({
@@ -61,9 +62,9 @@ export async function POST(req: Request) {
       });
     }
 
-    const deletedIds = legacyVouchers.map((voucher: any) => voucher.id);
+    const deletedIds = legacyVouchers.map((voucher) => voucher.id);
     const providerSyncResults = await Promise.all(
-      legacyVouchers.map((voucher: any) =>
+      legacyVouchers.map((voucher) =>
         removeVoucherDiscountSync({
           id: voucher.id,
           code: voucher.code,
@@ -84,12 +85,12 @@ export async function POST(req: Request) {
     const affectedBatchIds = Array.from(
       new Set(
         legacyVouchers
-          .map((voucher: any) => voucher.batchId)
+              .map((voucher) => voucher.batchId)
           .filter((value: string | null) => Boolean(value))
       )
     ) as string[];
 
-    await prisma.$transaction(async (tx: any) => {
+            await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.voucherCode.deleteMany({
         where: {
           id: {

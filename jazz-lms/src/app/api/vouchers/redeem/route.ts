@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { validateVoucherForCourse } from '@/lib/vouchers';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.$transaction(async (tx: any) => {
+    await db.$transaction(async (tx: Prisma.TransactionClient) => {
       const latestVoucher = await tx.voucherCode.findUnique({
         where: { id: result.voucher.id },
         select: {

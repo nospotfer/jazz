@@ -75,7 +75,7 @@ export async function validateVoucherForCourse({
   }
 
   const normalizedCode = code.toUpperCase().trim();
-  const prisma = db as any;
+  const prisma = db;
   const voucher = await prisma.voucherCode.findFirst({
     where: {
       code: normalizedCode,
