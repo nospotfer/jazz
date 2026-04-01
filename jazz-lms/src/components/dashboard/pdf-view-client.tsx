@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { FileText, Loader2 } from 'lucide-react';
 import axios from 'axios';
@@ -132,7 +132,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     [localizedItems, selected?.id]
   );
 
-  const loadSignedUrl = async (item: PdfItem) => {
+  const loadSignedUrl = useCallback(async (item: PdfItem) => {
     setIsLoading(true);
     setLoadError('');
 
@@ -148,14 +148,16 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       );
 
       setSignedUrl(response.data?.signedUrl || item.url);
-    } catch (error: any) {
-      const message = error?.response?.data?.error || copy.loadPdfError;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error)
+        ? (error.response?.data?.error as string | undefined) || copy.loadPdfError
+        : copy.loadPdfError;
       setLoadError(message);
       setSignedUrl(item.url);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [copy.loadPdfError, language]);
 
   const handleSelect = (item: PdfItem) => {
     setShouldPrefetchFirstPdf(true);
@@ -217,7 +219,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     }
 
     void loadSignedUrl(selected);
-  }, [selected?.id, shouldPrefetchFirstPdf, language]);
+  }, [loadSignedUrl, selected, shouldPrefetchFirstPdf]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">

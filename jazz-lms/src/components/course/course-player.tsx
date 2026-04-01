@@ -677,10 +677,12 @@ export const CoursePlayer = ({
         setPlaybackToken(response.data.playbackToken || "");
         setThumbnailToken(response.data.thumbnailToken || "");
         setStoryboardToken(response.data.storyboardToken || "");
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (cancelled) return;
 
-        const responseError = error?.response?.data?.error;
+        const responseError = axios.isAxiosError(error)
+          ? error.response?.data?.error
+          : null;
 
         if (responseError) {
           setPlaybackId("");
@@ -706,7 +708,7 @@ export const CoursePlayer = ({
     };
   }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
 
-  const getAttachmentSignedUrl = async (
+  const getAttachmentSignedUrl = useCallback(async (
     attachmentId: string,
     download = false,
   ) => {
@@ -725,9 +727,9 @@ export const CoursePlayer = ({
       name: string;
       storagePath: string;
     };
-  };
+  }, [language, lesson.id]);
 
-  const openPdfPreview = async (attachmentId: string) => {
+  const openPdfPreview = useCallback(async (attachmentId: string) => {
     if (!canAccessAttachments) return;
 
     setIsLoadingPdf(true);
@@ -743,8 +745,10 @@ export const CoursePlayer = ({
         }
         return data.signedUrl;
       });
-    } catch (error: any) {
-      const message = error?.response?.data?.error || copy.unableLoadPdf;
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.error || copy.unableLoadPdf
+        : copy.unableLoadPdf;
       const fallbackAttachment = lesson.attachments.find(
         (item) => item.id === attachmentId,
       );
@@ -765,7 +769,7 @@ export const CoursePlayer = ({
     } finally {
       setIsLoadingPdf(false);
     }
-  };
+  }, [canAccessAttachments, copy.loadedLegacyPdf, copy.unableLoadPdf, getAttachmentSignedUrl, lesson.attachments]);
 
   const downloadPdf = async (attachmentId: string) => {
     if (!canAccessAttachments) return;
@@ -773,7 +777,7 @@ export const CoursePlayer = ({
     try {
       const data = await getAttachmentSignedUrl(attachmentId, true);
       window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-    } catch (error: any) {
+    } catch (error: unknown) {
       const fallbackAttachment = lesson.attachments.find(
         (item) => item.id === attachmentId,
       );
@@ -783,7 +787,9 @@ export const CoursePlayer = ({
         return;
       }
 
-      const message = error?.response?.data?.error || copy.unableDownloadPdf;
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.error || copy.unableDownloadPdf
+        : copy.unableDownloadPdf;
       toast.error(message);
     }
   };
