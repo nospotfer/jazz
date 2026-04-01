@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-04-01T11:53:49.387Z",
+  "projectRef": "feavujcllgbzlvdvkkxx",
+  "results": [
+    {
+      "role": "anon",
+      "table": "_prisma_migrations",
+      "status": "ok",
+      "rowCountVisible": 0
+    },
+    {
+      "role": "anon",
+      "table": "VoucherBatch",
+      "status": "ok",
+      "rowCountVisible": 0
+    },
+    {
+      "role": "anon",
+      "table": "LessonQuizQuestion",
+      "status": "ok",
+      "rowCountVisible": 0
+    },
+    {
+      "role": "authenticated",
+      "table": "_prisma_migrations",
+      "status": "ok",
+      "rowCountVisible": 0
+    },
+    {
+      "role": "authenticated",
+      "table": "VoucherBatch",
+      "status": "ok",
+      "rowCountVisible": 0
+    },
+    {
+      "role": "authenticated",
+      "table": "LessonQuizQuestion",
+      "status": "ok",
+      "rowCountVisible": 0
+    }
+  ]
+}
