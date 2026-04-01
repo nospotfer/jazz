@@ -258,7 +258,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
     });
 
     return () => observer.disconnect();
-  }, [language, tooltipMap, fileUrl]);
+  }, [language, tooltipMap, fileUrl, downloadLabels]);
 
   return (
     <div

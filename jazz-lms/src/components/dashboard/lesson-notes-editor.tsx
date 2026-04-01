@@ -130,7 +130,7 @@ export function LessonNotesEditor({
     return () => {
       cancelled = true;
     };
-  }, [notesStorageKey, styleStorageKey]);
+  }, [courseId, lessonId, notesStorageKey, styleStorageKey]);
 
   const persistStyle = (next: NotesStyleState) => {
     setStyleState(next);

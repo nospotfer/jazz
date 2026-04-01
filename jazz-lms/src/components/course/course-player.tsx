@@ -1026,11 +1026,10 @@ export const CoursePlayer = ({
 
     void openPdfPreview(firstAttachmentId);
   }, [
-    lesson.id,
     canAccessAttachments,
     firstAttachmentId,
     shouldLoadPdfPreview,
-    language,
+    openPdfPreview,
   ]);
 
   return (
