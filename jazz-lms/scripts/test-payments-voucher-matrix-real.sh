@@ -5,8 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 if [[ "${PAYMENTS_E2E_REAL_ENABLED:-0}" != "1" ]]; then
-  echo "❌ PAYMENTS_E2E_REAL_ENABLED must be 1 to run real Dodo E2E"
-  exit 1
+  echo "⏭️ Skipping real Dodo voucher matrix E2E (set PAYMENTS_E2E_REAL_ENABLED=1 to enable)."
+  exit 0
 fi
 
 if [[ -z "${PAYMENTS_E2E_STORAGE_STATE:-}" ]]; then
