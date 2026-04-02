@@ -9,29 +9,29 @@ import { useConfettiStore } from "@/hooks/use-confetti-store";
 import { getCanonicalJazzClass } from "@/lib/course-lessons";
 import { languageToHtmlLang } from "@/lib/language";
 import {
-  calculateLessonMinutesRemaining,
-  calculateLessonProgressPercent,
-  shouldAutoCompleteLessonByPlayback,
-  shouldPersistLessonProgress,
+    calculateLessonMinutesRemaining,
+    calculateLessonProgressPercent,
+    shouldAutoCompleteLessonByPlayback,
+    shouldPersistLessonProgress,
 } from "@/lib/lesson-progress";
 import type { LessonQuizSummarySnapshot } from "@/lib/lesson-quiz";
 import { extractMuxPlaybackId } from "@/lib/mux-playback";
 import {
-  loadPaymentMethodModal,
-  warmPaymentMethodModal,
+    loadPaymentMethodModal,
+    warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
 import { DEFAULT_LESSON_DURATION_MINUTES } from "@/lib/pricing";
 import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
 import {
-  CheckCircle,
-  FileText,
-  Loader2,
-  Lock,
-  PanelRightClose,
-  PanelRightOpen,
-  ShoppingCart,
+    CheckCircle,
+    FileText,
+    Loader2,
+    Lock,
+    PanelRightClose,
+    PanelRightOpen,
+    ShoppingCart,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -680,7 +680,10 @@ export const CoursePlayer = ({
       } catch (error: unknown) {
         if (cancelled) return;
 
-        const responseError = axios.isAxiosError(error)
+        const isAxiosErrorFn =
+          typeof axios.isAxiosError === "function" ? axios.isAxiosError : null;
+
+        const responseError = isAxiosErrorFn?.(error)
           ? error.response?.data?.error
           : null;
 
@@ -708,68 +711,77 @@ export const CoursePlayer = ({
     };
   }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
 
-  const getAttachmentSignedUrl = useCallback(async (
-    attachmentId: string,
-    download = false,
-  ) => {
-    const response = await axios.get(
-      `/api/lessons/${lesson.id}/attachments/${attachmentId}`,
-      {
-        params: {
-          download: download ? 1 : 0,
-          language,
+  const getAttachmentSignedUrl = useCallback(
+    async (attachmentId: string, download = false) => {
+      const response = await axios.get(
+        `/api/lessons/${lesson.id}/attachments/${attachmentId}`,
+        {
+          params: {
+            download: download ? 1 : 0,
+            language,
+          },
         },
-      },
-    );
-
-    return response.data as {
-      signedUrl: string;
-      name: string;
-      storagePath: string;
-    };
-  }, [language, lesson.id]);
-
-  const openPdfPreview = useCallback(async (attachmentId: string) => {
-    if (!canAccessAttachments) return;
-
-    setIsLoadingPdf(true);
-    setPdfError("");
-
-    try {
-      const data = await getAttachmentSignedUrl(attachmentId, false);
-
-      setSelectedAttachmentId(attachmentId);
-      setPreviewUrl((currentUrl) => {
-        if (currentUrl.startsWith("blob:")) {
-          URL.revokeObjectURL(currentUrl);
-        }
-        return data.signedUrl;
-      });
-    } catch (error: unknown) {
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.error || copy.unableLoadPdf
-        : copy.unableLoadPdf;
-      const fallbackAttachment = lesson.attachments.find(
-        (item) => item.id === attachmentId,
       );
-      if (fallbackAttachment?.url) {
+
+      return response.data as {
+        signedUrl: string;
+        name: string;
+        storagePath: string;
+      };
+    },
+    [language, lesson.id],
+  );
+
+  const openPdfPreview = useCallback(
+    async (attachmentId: string) => {
+      if (!canAccessAttachments) return;
+
+      setIsLoadingPdf(true);
+      setPdfError("");
+
+      try {
+        const data = await getAttachmentSignedUrl(attachmentId, false);
+
         setSelectedAttachmentId(attachmentId);
         setPreviewUrl((currentUrl) => {
           if (currentUrl.startsWith("blob:")) {
             URL.revokeObjectURL(currentUrl);
           }
-          return fallbackAttachment.url;
+          return data.signedUrl;
         });
-        setPdfError("");
-        toast.info(copy.loadedLegacyPdf);
-      } else {
-        setPdfError(message);
-        toast.error(message);
+      } catch (error: unknown) {
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.error || copy.unableLoadPdf
+          : copy.unableLoadPdf;
+        const fallbackAttachment = lesson.attachments.find(
+          (item) => item.id === attachmentId,
+        );
+        if (fallbackAttachment?.url) {
+          setSelectedAttachmentId(attachmentId);
+          setPreviewUrl((currentUrl) => {
+            if (currentUrl.startsWith("blob:")) {
+              URL.revokeObjectURL(currentUrl);
+            }
+            return fallbackAttachment.url;
+          });
+          setPdfError("");
+          toast.info(copy.loadedLegacyPdf);
+        } else {
+          setPdfError(message);
+          toast.error(message);
+        }
+      } finally {
+        setIsLoadingPdf(false);
       }
-    } finally {
-      setIsLoadingPdf(false);
-    }
-  }, [canAccessAttachments, copy.loadedLegacyPdf, copy.unableLoadPdf, getAttachmentSignedUrl, lesson.attachments]);
+    },
+    [
+      canAccessAttachments,
+      copy.loadedLegacyPdf,
+      copy.unableLoadPdf,
+      getAttachmentSignedUrl,
+      lesson.attachments,
+    ],
+  );
 
   const downloadPdf = async (attachmentId: string) => {
     if (!canAccessAttachments) return;
