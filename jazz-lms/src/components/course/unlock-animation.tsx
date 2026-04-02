@@ -81,7 +81,11 @@ export function UnlockAnimation({ isVisible, onComplete, language }: UnlockAnima
 
   useEffect(() => {
     if (isVisible) {
-      startAnimation();
+      const timer = window.setTimeout(() => {
+        startAnimation();
+      }, 0);
+
+      return () => window.clearTimeout(timer);
     }
   }, [isVisible, startAnimation]);
 

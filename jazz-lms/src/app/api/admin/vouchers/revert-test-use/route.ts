@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const purchase = await prisma.purchase.findFirst({
       where: {
         userId: targetUserId,
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const reverted = await prisma.$transaction(async (tx: any) => {
+    const reverted = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const redemption = purchase.redemption
         ? purchase.redemption
         : await tx.voucherRedemption.findFirst({

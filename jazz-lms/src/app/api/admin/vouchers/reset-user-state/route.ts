@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const purchases = await prisma.purchase.findMany({
       where: {
         userId: targetUserId,
@@ -177,7 +178,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const mutationSummary = await prisma.$transaction(async (tx: any) => {
+    const mutationSummary = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       for (const adjustment of voucherAdjustments) {
         await tx.voucherCode.update({
           where: {

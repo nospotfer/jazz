@@ -4,6 +4,7 @@ import {
   ensureVoucherDiscountSynced,
   removeVoucherDiscountSync,
 } from "@/lib/voucher-provider-sync";
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -32,7 +33,7 @@ export async function PATCH(
       );
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const currentVoucher = await prisma.voucherCode.findUnique({
       where: { id: voucherId },
       select: {
@@ -86,7 +87,7 @@ export async function PATCH(
       where: { id: voucherId },
       data: {
         isActive,
-        metadata: syncResult.metadata,
+        metadata: (syncResult.metadata ?? Prisma.JsonNull) as Prisma.InputJsonValue | typeof Prisma.JsonNull,
       },
       select: {
         id: true,

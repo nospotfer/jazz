@@ -8,7 +8,6 @@ import {
   normalizeLanguage,
   type SupportedLanguage,
 } from '@/lib/language';
-import type { QuizMedalTierValue } from '@/lib/lesson-quiz';
 import { getServerUser } from '@/lib/server-user';
 
 type CompletionCopy = {

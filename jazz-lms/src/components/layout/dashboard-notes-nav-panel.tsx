@@ -82,27 +82,38 @@ export function DashboardNotesNavPanel() {
 
   useEffect(() => {
     if (!notesVideos.length) {
-      setSelectedNote(null);
-      setNoteContent('');
-      return;
+      const frame = window.requestAnimationFrame(() => {
+        setSelectedNote(null);
+        setNoteContent('');
+      });
+
+      return () => window.cancelAnimationFrame(frame);
     }
 
-    setSelectedNote((current) => {
-      if (current && notesVideos.some((video) => video.courseId === current.courseId && video.lessonId === current.lessonId)) {
-        return current;
-      }
+    const frame = window.requestAnimationFrame(() => {
+      setSelectedNote((current) => {
+        if (current && notesVideos.some((video) => video.courseId === current.courseId && video.lessonId === current.lessonId)) {
+          return current;
+        }
 
-      const first = notesVideos[0];
-      return { courseId: first.courseId, lessonId: first.lessonId };
+        const first = notesVideos[0];
+        return { courseId: first.courseId, lessonId: first.lessonId };
+      });
     });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [notesVideos]);
 
   useEffect(() => {
     if (!selectedNote) return;
 
-    const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
-    const saved = window.localStorage.getItem(storageKey) || '';
-    setNoteContent(saved);
+    const frame = window.requestAnimationFrame(() => {
+      const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
+      const saved = window.localStorage.getItem(storageKey) || '';
+      setNoteContent(saved);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [selectedNote]);
 
   const onChangeSidebarNotes = (value: string) => {

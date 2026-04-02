@@ -19,6 +19,7 @@ import {
   resolveDodoProviderReferenceId,
   type LooseObject,
 } from "@/lib/payments/providers/dodo-events";
+import { Prisma } from "@prisma/client";
 import crypto from "crypto";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -47,7 +48,9 @@ async function upsertWebhookEvent(input: {
   signature: string | null;
   headersForAudit: Record<string, string | null>;
 }) {
-  const prisma = db as any;
+  const prisma = db;
+  const payloadJson = input.payload as Prisma.InputJsonValue;
+  const headersJson = input.headersForAudit as Prisma.InputJsonValue;
   const existing = await prisma.paymentWebhookEvent.findUnique({
     where: { eventKey: input.eventKey },
     select: { id: true, status: true, attemptCount: true },
@@ -62,8 +65,8 @@ async function upsertWebhookEvent(input: {
       where: { id: existing.id },
       data: {
         status: "PROCESSING",
-        payload: input.payload,
-        headers: input.headersForAudit,
+        payload: payloadJson,
+        headers: headersJson,
         signature: input.signature,
         payloadHash: input.payloadHash,
         attemptCount: existing.attemptCount + 1,
@@ -82,8 +85,8 @@ async function upsertWebhookEvent(input: {
       eventType: input.eventType,
       eventKey: input.eventKey,
       status: "PROCESSING",
-      payload: input.payload,
-      headers: input.headersForAudit,
+      payload: payloadJson,
+      headers: headersJson,
       signature: input.signature,
       payloadHash: input.payloadHash,
       attemptCount: 1,
@@ -98,7 +101,7 @@ async function markWebhookEventStatus(
   status: "PROCESSED" | "FAILED" | "IGNORED",
   error?: string,
 ) {
-  const prisma = db as any;
+  const prisma = db;
   await prisma.paymentWebhookEvent.update({
     where: { eventKey },
     data: {

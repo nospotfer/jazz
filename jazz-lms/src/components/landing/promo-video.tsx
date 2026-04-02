@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import MuxPlayer from "@mux/mux-player-react";
+import type MuxPlayerElement from "@mux/mux-player";
 import { LogIn, Volume2, VolumeX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -11,7 +12,8 @@ export function PromoVideo() {
   const { language } = useLanguage();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const playerRef = useRef<any>(null);
+  const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
+  const nativeVideoRef = useRef<HTMLVideoElement | null>(null);
   const [shouldLoadPlayer, setShouldLoadPlayer] = useState(false);
   const [shouldUseMuxPlayer, setShouldUseMuxPlayer] = useState(true);
   const [playbackId, setPlaybackId] = useState("");
@@ -146,9 +148,13 @@ export function PromoVideo() {
   }, [copy.muxError, shouldLoadPlayer]);
 
   const toggleMute = () => {
-    if (!playerRef.current) return;
-    // Works for both MuxPlayer and HTML video
-    playerRef.current.muted = !isMuted;
+    const nextMuted = !isMuted;
+    if (muxPlayerRef.current) {
+      muxPlayerRef.current.muted = nextMuted;
+    }
+    if (nativeVideoRef.current) {
+      nativeVideoRef.current.muted = nextMuted;
+    }
     setIsMuted(!isMuted);
   };
 
@@ -197,7 +203,7 @@ export function PromoVideo() {
             {hasMuxPlayback ? (
               shouldUseMuxPlayer ? (
                 <MuxPlayer
-                  ref={playerRef}
+                  ref={muxPlayerRef}
                   playbackId={playbackId}
                   tokens={{
                     playback: playbackToken || undefined,
@@ -220,7 +226,7 @@ export function PromoVideo() {
                 />
               ) : (
                 <video
-                  ref={playerRef}
+                  ref={nativeVideoRef}
                   className="absolute inset-0 w-full h-full object-cover"
                   poster={posterUrl || undefined}
                   autoPlay

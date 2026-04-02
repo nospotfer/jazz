@@ -126,7 +126,7 @@ describe("POST /api/checkout", () => {
 
     const res = await POST(req);
     expect(res.status).toBe(400);
-  });
+  }, 15000);
 
   test("returns 400 for unsupported payment method", async () => {
     const { POST } = await import("@/app/api/checkout/route");

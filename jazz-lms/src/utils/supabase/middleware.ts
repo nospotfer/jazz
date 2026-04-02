@@ -67,7 +67,6 @@ export async function updateSession(request: NextRequest) {
     return { response, user }
   } catch (err) {
     // If Supabase request fails, ignore in dev so page can render
-    // eslint-disable-next-line no-console
     console.warn('Supabase auth.getUser failed:', err)
   }
 

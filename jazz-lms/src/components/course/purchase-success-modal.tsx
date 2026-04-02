@@ -46,7 +46,8 @@ export function PurchaseSuccessModal({ isVisible, onClose, language }: PurchaseS
       const timer = setTimeout(() => setShowContent(true), 100);
       return () => clearTimeout(timer);
     } else {
-      setShowContent(false);
+      const timer = setTimeout(() => setShowContent(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [isVisible]);
 

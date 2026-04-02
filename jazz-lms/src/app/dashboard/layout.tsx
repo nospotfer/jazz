@@ -1,6 +1,5 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
-import { createClient } from '@/utils/supabase/server';
 import { getCurrentUser } from '@/lib/admin';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { redirect } from 'next/navigation';
@@ -17,7 +16,7 @@ export default async function DashboardLayout({
 }) {
   const user = await getServerUser();
 
-  if (!user) {
+  if (!user || !user.email) {
     redirect('/auth');
   }
 
@@ -29,6 +28,15 @@ export default async function DashboardLayout({
   const role = dbUser?.role ?? null;
   const isAdmin = isAdminRole(role);
   const hasPaidCourseOrAdmin = hasPaidCourse || isAdmin;
+  const dashboardHeaderUser = {
+    id: user.id,
+    email: user.email,
+    user_metadata: {
+      full_name: user.user_metadata?.full_name,
+      avatar_mode: user.user_metadata?.avatar_mode,
+      avatar_url: user.user_metadata?.avatar_url,
+    },
+  };
 
   return (
     <DashboardPreferencesProvider>
@@ -36,7 +44,7 @@ export default async function DashboardLayout({
         <DashboardLocalTestReset />
         <Sidebar />
         <div className="lg:pl-64 h-full flex flex-col">
-          <DashboardHeader user={user} role={role} isAdmin={isAdmin} />
+          <DashboardHeader user={dashboardHeaderUser} role={role} isAdmin={isAdmin} />
           <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <DashboardPaywallWrapper
               hasPaidCourse={hasPaidCourseOrAdmin}

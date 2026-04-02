@@ -166,6 +166,7 @@ export async function POST(req: Request) {
     if (!user.email) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
+    const userEmail = user.email;
 
     const dbUserModel = (db as any).user;
     const dbUser =
@@ -353,7 +354,7 @@ export async function POST(req: Request) {
 
       return createProviderCheckout(
         {
-          email: user.email,
+          email: userEmail,
           successUrl:
             source === "dashboard" ? dashboardSuccessUrl : courseSuccessUrl,
           customData: withVoucher

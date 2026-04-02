@@ -289,7 +289,11 @@ export function Sidebar() {
 
   // Close sidebar on route change
   useEffect(() => {
-    setIsOpen(false);
+    const frame = window.requestAnimationFrame(() => {
+      setIsOpen(false);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   // Prevent body scroll when sidebar is open on mobile

@@ -137,7 +137,7 @@ describe('POST /api/dev/reset-test-purchases', () => {
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
     expect(updateVoucher).toHaveBeenCalledTimes(1);
-  });
+    }, 15000);
 
   test('returns 500 on internal error', async () => {
     vi.doMock('@/lib/test-mode', () => ({

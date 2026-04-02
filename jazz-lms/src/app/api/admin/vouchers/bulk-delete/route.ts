@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { removeVoucherDiscountSync } from '@/lib/voucher-provider-sync';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const where = batchId
       ? { batchId }
       : {
@@ -83,13 +84,13 @@ export async function POST(req: Request) {
 
     const blocked = force
       ? []
-      : candidates.filter((voucher: any) => voucher.currentUses > 0 || voucher._count.redemptions > 0);
+      : candidates.filter((voucher) => voucher.currentUses > 0 || voucher._count.redemptions > 0);
     const deletable = force
       ? candidates
-      : candidates.filter((voucher: any) => voucher.currentUses === 0 && voucher._count.redemptions === 0);
+      : candidates.filter((voucher) => voucher.currentUses === 0 && voucher._count.redemptions === 0);
 
     const providerSyncResults = await Promise.all(
-      deletable.map((voucher: any) =>
+      deletable.map((voucher) =>
         removeVoucherDiscountSync({
           id: voucher.id,
           code: voucher.code,
@@ -108,12 +109,12 @@ export async function POST(req: Request) {
       .filter((entry) => !entry.result.ok)
       .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
 
-    const result = await prisma.$transaction(async (tx: any) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       if (deletable.length) {
         await tx.voucherCode.deleteMany({
           where: {
             id: {
-              in: deletable.map((voucher: any) => voucher.id),
+              in: deletable.map((voucher) => voucher.id),
             },
           },
         });
@@ -122,7 +123,7 @@ export async function POST(req: Request) {
       const affectedBatchIds = Array.from(
         new Set(
           candidates
-            .map((voucher: any) => voucher.batchId)
+            .map((voucher) => voucher.batchId)
             .filter((value: string | null) => Boolean(value))
         )
       ) as string[];
@@ -147,7 +148,7 @@ export async function POST(req: Request) {
       return {
         deletedCount: deletable.length,
         blockedCount: blocked.length,
-        blockedCodes: blocked.map((voucher: any) => voucher.code),
+        blockedCodes: blocked.map((voucher) => voucher.code),
         message:
           blocked.length > 0
             ? `Se eliminaron ${deletable.length} voucher(s). ${blocked.length} no se pudieron eliminar por uso.`

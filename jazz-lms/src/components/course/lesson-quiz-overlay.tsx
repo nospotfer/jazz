@@ -1,14 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import {
   Loader2,
   Music2,
   RefreshCw,
   Sparkles,
-  Star,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -428,7 +427,7 @@ export function LessonQuizOverlay({
     return Math.round((attempt.answeredCount / attempt.questionCount) * 100);
   }, [attempt]);
 
-  const openQuiz = async (restart = false) => {
+  const openQuiz = useCallback(async (restart = false) => {
     if (!hasQuizAvailable) {
       return;
     }
@@ -464,7 +463,7 @@ export function LessonQuizOverlay({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [copy.startError, courseId, hasQuizAvailable, language, lessonId, onSummaryChange]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -478,7 +477,7 @@ export function LessonQuizOverlay({
     }
 
     void openQuiz(false);
-  }, [isOpen]);
+  }, [isOpen, openQuiz]);
 
   useEffect(() => {
     if (!isOpen || !hasQuizAvailable) {
@@ -486,7 +485,7 @@ export function LessonQuizOverlay({
     }
 
     void openQuiz(false);
-  }, [language]);
+  }, [hasQuizAvailable, isOpen, language, openQuiz]);
 
   useEffect(() => {
     if (!currentQuestion) {
@@ -494,7 +493,7 @@ export function LessonQuizOverlay({
     }
 
     setSelectedOptionId(currentQuestion.selectedOptionId ?? null);
-  }, [currentQuestion?.questionId]);
+  }, [currentQuestion]);
 
   const handleAnswerSubmit = async () => {
     if (!attempt || !currentQuestion) {

@@ -11,7 +11,7 @@ export default async function AdminVoucherDetailPage({
   await requirePermission("vouchers.read");
   const { voucherId } = await params;
 
-  const prisma = db as any;
+  const prisma = db;
   const voucher = await prisma.voucherCode.findUnique({
     where: { id: voucherId },
     include: {
@@ -46,7 +46,7 @@ export default async function AdminVoucherDetailPage({
 
   const userIds: string[] = Array.from(
     new Set(
-      voucher.redemptions.map((redemption: any) => String(redemption.userId)),
+      voucher.redemptions.map((redemption) => String(redemption.userId)),
     ),
   );
   const users = userIds.length
@@ -135,7 +135,7 @@ export default async function AdminVoucherDetailPage({
                 </tr>
               </thead>
               <tbody>
-                {voucher.redemptions.map((redemption: any) => {
+                {voucher.redemptions.map((redemption) => {
                   const user = usersMap.get(redemption.userId);
                   return (
                     <tr key={redemption.id} className="border-t border-border">

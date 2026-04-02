@@ -11,7 +11,7 @@ import {
     type RenderHighlightTargetProps,
 } from "@react-pdf-viewer/highlight";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface PdfWorkspaceViewerProps {
   fileUrl: string;
@@ -41,6 +41,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();
   const [highlights, setHighlights] = useState<SavedHighlight[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const highlightCounterRef = useRef(0);
 
   const storageKey = useMemo(
     () => `pdf-highlights:${encodeURIComponent(fileUrl)}`,
@@ -48,32 +49,39 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   );
 
   useEffect(() => {
+    const deferSetHighlights = (next: SavedHighlight[]) => {
+      const frame = window.requestAnimationFrame(() => {
+        setHighlights(next);
+      });
+      return () => window.cancelAnimationFrame(frame);
+    };
+
     try {
       const saved = window.localStorage.getItem(storageKey);
       if (!saved) {
-        setHighlights([]);
-        return;
+        return deferSetHighlights([]);
       }
 
       const parsed = JSON.parse(saved) as SavedHighlight[];
-      setHighlights(parsed);
+      return deferSetHighlights(parsed);
     } catch {
-      setHighlights([]);
+      return deferSetHighlights([]);
     }
   }, [storageKey]);
 
-  const persistHighlights = (next: SavedHighlight[]) => {
+  const persistHighlights = useCallback((next: SavedHighlight[]) => {
     setHighlights(next);
     window.localStorage.setItem(storageKey, JSON.stringify(next));
-  };
+  }, [storageKey]);
 
   const zoomPluginInstance = zoomPlugin();
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-  const addHighlight = (props: RenderHighlightTargetProps, color: string) => {
+  const addHighlight = useCallback((props: RenderHighlightTargetProps, color: string) => {
+    highlightCounterRef.current += 1;
     const newHighlight: SavedHighlight = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      id: `highlight-${highlightCounterRef.current}`,
       color,
       quote: props.selectedText,
       highlightAreas: props.highlightAreas,
@@ -81,7 +89,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
 
     persistHighlights([...highlights, newHighlight]);
     props.cancel();
-  };
+  }, [highlights, persistHighlights]);
 
   const renderHighlightTarget = (props: RenderHighlightTargetProps) => (
     <div
@@ -258,7 +266,7 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
     });
 
     return () => observer.disconnect();
-  }, [language, tooltipMap, fileUrl]);
+  }, [language, tooltipMap, fileUrl, downloadLabels]);
 
   return (
     <div

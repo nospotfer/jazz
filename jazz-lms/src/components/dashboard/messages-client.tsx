@@ -4,7 +4,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Loader2, Mail, Send, X } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type Thread = {
@@ -217,7 +217,7 @@ export function MessagesClient() {
     [threads, selectedThreadId],
   );
 
-  const loadThreads = async () => {
+  const loadThreads = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get("/api/messages");
@@ -236,9 +236,9 @@ export function MessagesClient() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [copy.loadThreadsError]);
 
-  const loadThreadMessages = async (threadId: string) => {
+  const loadThreadMessages = useCallback(async (threadId: string) => {
     try {
       const response = await axios.get(`/api/messages/${threadId}`);
       setMessages(response.data.messages || []);
@@ -246,11 +246,11 @@ export function MessagesClient() {
     } catch {
       toast.error(copy.loadThreadError);
     }
-  };
+  }, [copy.loadThreadError, professorEmail]);
 
   useEffect(() => {
     loadThreads();
-  }, []);
+  }, [loadThreads]);
 
   useEffect(() => {
     if (!selectedThreadId) {
@@ -259,7 +259,7 @@ export function MessagesClient() {
     }
 
     loadThreadMessages(selectedThreadId);
-  }, [selectedThreadId]);
+  }, [loadThreadMessages, selectedThreadId]);
 
   const handleCreateThread = async (event: FormEvent) => {
     event.preventDefault();

@@ -3,33 +3,19 @@ import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supaba
 
 type SupabaseFlowType = 'pkce' | 'implicit'
 
-type MinimalSupabase = {
-  auth: {
-    getUser: () => Promise<{ data: { user: null } }>
-    getSession: () => Promise<{ data: { session: null } }>
-    signOut: () => Promise<{ error: null }>
-    signInWithPassword: () => Promise<{ data: { user: null; session: null }; error: Error }>
-    signUp: () => Promise<{ data: { user: null; session: null }; error: Error }>
-    signInWithOAuth: () => Promise<{ data: null; error: Error }>
-    resetPasswordForEmail: () => Promise<{ data: null; error: Error }>
-    updateUser: () => Promise<{ data: { user: null }; error: Error }>
-    setSession: () => Promise<{ data: { session: null; user: null }; error: Error }>
-    exchangeCodeForSession: () => Promise<{ data: { session: null; user: null }; error: Error }>
-    onAuthStateChange: () => { data: { subscription: { unsubscribe: () => void } } }
-  }
-}
+type BrowserSupabaseClient = ReturnType<typeof createBrowserClient>
 
-export function createClient(options?: { flowType?: SupabaseFlowType }): any {
+export function createClient(options?: { flowType?: SupabaseFlowType }): BrowserSupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const normalizedUrl = normalizeSupabaseUrl(url)
 
   if (!hasValidSupabasePublicConfig(normalizedUrl ?? undefined, key)) {
     // Return a minimal stub so client-side code won't crash in local dev
-    const stub: MinimalSupabase = {
+    const stub = {
       auth: {
-        getUser: async () => ({ data: { user: null } }),
-        getSession: async () => ({ data: { session: null } }),
+        getUser: async () => ({ data: { user: null }, error: null }),
+        getSession: async () => ({ data: { session: null }, error: null }),
         signOut: async () => ({ error: null }),
         signInWithPassword: async () => ({
           data: { user: null, session: null },
@@ -68,7 +54,7 @@ export function createClient(options?: { flowType?: SupabaseFlowType }): any {
         }),
       },
     }
-    return stub
+    return stub as unknown as BrowserSupabaseClient
   }
 
   return createBrowserClient(normalizedUrl!, key!, {

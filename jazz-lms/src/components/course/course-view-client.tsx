@@ -200,147 +200,7 @@ const lessonsData: LessonItem[] = [
   },
 ];
 
-const LESSON_SUBTITLES: Record<"es" | "en" | "fr" | "pt", string[]> = {
-  es: [
-    "Introducción a la cultura del jazz",
-    "El lenguaje del jazz 1: heterogeneidad sonora",
-    "El lenguaje del jazz 2: antecedentes",
-    "El lenguaje del jazz 3: improvisación",
-    "Un antecedente decisivo: ragtime",
-    "El lenguaje del jazz 4: ritmo",
-    "Jamming y blowing",
-    "Composición y arreglos en jazz",
-    "De las marching bands a los primeros grupos de jazz",
-    "Swing y combos clásicos",
-    "Combos modernos e instrumentos de sección rítmica",
-    "Improvisación",
-    "Jazz y entretenimiento",
-    "Canto jazz 1",
-    "Canto jazz 2",
-  ],
-  en: [
-    "Introduction to jazz culture",
-    "The language of jazz 1: sonic heterogeneity",
-    "The language of jazz 2: roots",
-    "The language of jazz 3: improvisation",
-    "A decisive precursor: ragtime",
-    "The language of jazz 4: rhythm",
-    "Jamming and blowing",
-    "Composition and arrangements in jazz",
-    "From marching bands to early jazz groups",
-    "Swing and classic combos",
-    "Modern combos and rhythm-section instruments",
-    "Improvisation",
-    "Jazz and entertainment",
-    "Jazz singing 1",
-    "Jazz singing 2",
-  ],
-  fr: [
-    "Introduction à la culture du jazz",
-    "Le langage du jazz 1 : hétérogénéité sonore",
-    "Le langage du jazz 2 : antécédents",
-    "Le langage du jazz 3 : improvisation",
-    "Un antécédent décisif : le ragtime",
-    "Le langage du jazz 4 : rythme",
-    "Jamming et blowing",
-    "Composition et arrangements en jazz",
-    "Des marching bands aux premiers groupes de jazz",
-    "Swing et combos classiques",
-    "Combos modernes et instruments de section rythmique",
-    "Improvisation",
-    "Jazz et divertissement",
-    "Chant jazz 1",
-    "Chant jazz 2",
-  ],
-  pt: [
-    "Introdução à cultura do jazz",
-    "A linguagem do jazz 1: heterogeneidade sonora",
-    "A linguagem do jazz 2: antecedentes",
-    "A linguagem do jazz 3: improvisação",
-    "Um antecedente decisivo: ragtime",
-    "A linguagem do jazz 4: ritmo",
-    "Jamming e blowing",
-    "Composição e arranjos no jazz",
-    "Das marching bands aos primeiros grupos de jazz",
-    "Swing e combos clássicos",
-    "Combos modernos e instrumentos da seção rítmica",
-    "Improvisação",
-    "Jazz e entretenimento",
-    "Canto jazz 1",
-    "Canto jazz 2",
-  ],
-};
 
-const LESSON_DESCRIPTIONS: Record<"es" | "en" | "fr" | "pt", string[]> = {
-  es: [
-    "Introducción general a la cultura del jazz, su origen histórico y sus bases estéticas.",
-    "La heterogeneidad sonora y la personalización del sonido como rasgo esencial del jazz.",
-    "Antecedentes afroamericanos: gospel y blues como raíces fundamentales del lenguaje jazzístico.",
-    "La improvisación y sus formas principales dentro del repertorio del jazz.",
-    "Ragtime como antecedente clave y su relación con el surgimiento del jazz temprano.",
-    "Evolución del ritmo y de la sección rítmica desde el jazz temprano hasta el bop.",
-    "La cultura de las jam sessions y su impacto en la consolidación del jazz moderno.",
-    "Composición y arreglos pensados para timbres y personalidades musicales concretas.",
-    "De las marching bands a las primeras formaciones que definieron el sonido del jazz.",
-    "El swing y los combos clásicos en la expansión internacional del género.",
-    "Combos modernos y nuevas funciones instrumentales en el hard bop y el jazz modal.",
-    "Procedimientos improvisatorios: paráfrasis, fórmula, motivo, modalidad y libertad.",
-    "Relación entre jazz y entretenimiento en su proceso de consolidación cultural.",
-    "El canto jazzístico en su primera etapa y sus principales referentes históricos.",
-    "Grandes voces del swing y su influencia en la evolución de la voz como instrumento.",
-  ],
-  en: [
-    "A broad introduction to jazz culture, its historical roots, and core aesthetic principles.",
-    "How sonic diversity and personal tone shape the identity of jazz language.",
-    "African American roots: gospel and blues as key foundations of jazz expression.",
-    "Improvisation as a central pillar of jazz, including its main approaches and forms.",
-    "Ragtime as a key precursor and its link to the rise of early jazz.",
-    "The evolution of rhythm and the rhythm section from early jazz to bebop.",
-    "Jam-session culture and its role in consolidating modern jazz practice.",
-    "Composition and arranging focused on specific timbres and performer identities.",
-    "From marching bands to the first ensembles that defined the early jazz sound.",
-    "Swing and classic combos in the international expansion of the genre.",
-    "Modern combos and new instrumental roles in hard bop and modal jazz.",
-    "Improvisational tools: paraphrase, patterns, motifs, modality, and freedom.",
-    "Jazz and entertainment in the genre’s broader cultural consolidation.",
-    "Early stages of jazz singing and its leading historical references.",
-    "Major swing voices and their impact on the voice as an instrument.",
-  ],
-  fr: [
-    "Introduction générale à la culture du jazz, à ses origines historiques et à ses bases esthétiques.",
-    "L’hétérogénéité sonore et la personnalisation du son comme marque essentielle du jazz.",
-    "Racines afro-américaines : gospel et blues comme fondements du langage jazzistique.",
-    "L’improvisation comme axe central du jazz et ses formes principales.",
-    "Le ragtime comme antécédent clé et son lien avec la naissance du jazz ancien.",
-    "Évolution du rythme et de la section rythmique du jazz ancien au bebop.",
-    "La culture des jam sessions et son impact sur le jazz moderne.",
-    "Composition et arrangements pensés pour des timbres et personnalités musicales précises.",
-    "Des marching bands aux premières formations qui ont défini le son du jazz.",
-    "Le swing et les combos classiques dans l’expansion internationale du genre.",
-    "Combos modernes et nouveaux rôles instrumentaux dans le hard bop et le jazz modal.",
-    "Procédés d’improvisation : paraphrase, formules, motifs, modalité et liberté.",
-    "Le lien entre jazz et divertissement dans sa consolidation culturelle.",
-    "Le chant jazz à ses débuts et ses principales figures historiques.",
-    "Grandes voix du swing et influence sur l’évolution de la voix comme instrument.",
-  ],
-  pt: [
-    "Introdução geral à cultura do jazz, às suas origens históricas e bases estéticas.",
-    "A heterogeneidade sonora e a personalização do timbre como marca essencial do jazz.",
-    "Raízes afro-americanas: gospel e blues como fundamentos da linguagem jazzística.",
-    "A improvisação como eixo central do jazz e suas principais formas.",
-    "O ragtime como antecedente-chave e sua relação com o nascimento do jazz inicial.",
-    "Evolução do ritmo e da seção rítmica do jazz inicial ao bebop.",
-    "A cultura das jam sessions e seu impacto na consolidação do jazz moderno.",
-    "Composição e arranjos pensados para timbres e personalidades musicais específicas.",
-    "Das marching bands às primeiras formações que definiram o som do jazz.",
-    "Swing e combos clássicos na expansão internacional do gênero.",
-    "Combos modernos e novas funções instrumentais no hard bop e no jazz modal.",
-    "Procedimentos de improvisação: paráfrase, fórmulas, motivo, modalidade e liberdade.",
-    "Relação entre jazz e entretenimento no processo de consolidação cultural.",
-    "O canto jazz em sua primeira fase e seus principais referenciais históricos.",
-    "Grandes vozes do swing e sua influência na evolução da voz como instrumento.",
-  ],
-};
 
 // ─── Float Popup Component ──────────────────────────────────────────────────
 
@@ -541,7 +401,8 @@ export function CourseViewClient({
   lessonIdsInOrder,
   lessonTitlesInOrder,
 }: CourseViewProps) {
-  const { t, language } = useDashboardPreferences();
+  const { language } = useDashboardPreferences();
+  void userName;
   const copy = {
     es: {
       classPrefix: "Clase",
@@ -939,8 +800,6 @@ export function CourseViewClient({
       getLocalizedJazzDescription(index + 1, language) || lesson.description,
     isFree: hasPurchased,
   }));
-
-  const firstName = userName.split(" ")[0];
 
   return (
     <>
