@@ -1,0 +1,71 @@
+{
+  "capturedAt": "2026-04-01T11:48:58.896Z",
+  "projectRef": "feavujcllgbzlvdvkkxx",
+  "rls": [
+    {
+      "schema_name": "public",
+      "table_name": "DiscountApplied",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "LessonQuizAttempt",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "LessonQuizAttemptAnswer",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "LessonQuizOption",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "LessonQuizQuestion",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "LessonQuizSummary",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "VoucherBatch",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "VoucherRedemption",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "_prisma_migrations",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "message",
+      "rls_enabled": true
+    },
+    {
+      "schema_name": "public",
+      "table_name": "messagethread",
+      "rls_enabled": true
+    }
+  ],
+  "policiesCount": 40,
+  "functionConfig": [
+    {
+      "schema_name": "public",
+      "proname": "update_updated_at_column",
+      "proconfig": [
+        "search_path=public, pg_catalog"
+      ]
+    }
+  ]
+}

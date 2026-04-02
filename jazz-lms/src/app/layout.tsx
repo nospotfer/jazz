@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   title: "La Cultura del Jazz",
   description: "Curso online con Enric Vázquez Ramonich",
   icons: {
-    icon: "/images/Logo.jpeg",
-    shortcut: "/images/Logo.jpeg",
-    apple: "/images/Logo.jpeg",
+    icon: "/images/logo-mark.png",
+    shortcut: "/images/logo-mark.png",
+    apple: "/images/logo-mark.png",
   },
 };
 

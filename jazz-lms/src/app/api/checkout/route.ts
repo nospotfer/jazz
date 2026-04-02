@@ -2,6 +2,7 @@ import { isSupportedPaymentMethod } from "@/lib/checkout-helpers";
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { normalizeLanguage } from "@/lib/language";
+import { isAdminRole } from "@/lib/admin/permissions";
 import {
   createProviderCheckout,
   getPaymentProvider,
@@ -165,6 +166,17 @@ export async function POST(req: Request) {
     if (!user.email) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
+    const userEmail = user.email;
+
+    const dbUserModel = (db as any).user;
+    const dbUser =
+      dbUserModel && typeof dbUserModel.findUnique === "function"
+        ? await dbUserModel.findUnique({
+            where: { email: user.email },
+            select: { role: true },
+          })
+        : null;
+    const isAdminUser = isAdminRole(dbUser?.role ?? null);
 
     const [course, existingPurchase] = await Promise.all([
       db.course.findUnique({
@@ -187,14 +199,24 @@ export async function POST(req: Request) {
     }
 
     if (existingPurchase) {
-      console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
-        userId: user.id,
-        userEmail: user.email,
-        courseId,
-        purchaseId: existingPurchase.id,
-        providerReferenceId: existingPurchase.providerReferenceId ?? null,
-      });
-      return new NextResponse(copy.alreadyPurchased, { status: 400 });
+      if (isAdminUser) {
+        console.warn("[CHECKOUT_ALREADY_PURCHASED_ADMIN_BYPASS]", {
+          userId: user.id,
+          userEmail: user.email,
+          courseId,
+          purchaseId: existingPurchase.id,
+          role: dbUser?.role ?? null,
+        });
+      } else {
+        console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
+          userId: user.id,
+          userEmail: user.email,
+          courseId,
+          purchaseId: existingPurchase.id,
+          providerReferenceId: existingPurchase.providerReferenceId ?? null,
+        });
+        return new NextResponse(copy.alreadyPurchased, { status: 400 });
+      }
     }
 
     const configuredPrice = Number(course.price ?? 0);
@@ -332,7 +354,7 @@ export async function POST(req: Request) {
 
       return createProviderCheckout(
         {
-          email: user.email,
+          email: userEmail,
           successUrl:
             source === "dashboard" ? dashboardSuccessUrl : courseSuccessUrl,
           customData: withVoucher

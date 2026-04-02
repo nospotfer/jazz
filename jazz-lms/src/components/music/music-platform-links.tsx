@@ -4,7 +4,7 @@ import type { MusicPlatform, MusicPlatformLink } from "@/lib/jazz-playlist";
 import { getMusicPlatformTooltip } from "@/lib/jazz-playlist";
 import type { SupportedLanguage } from "@/lib/language";
 
-function MusicPlatformIcon({ platform }: { platform: MusicPlatform }) {
+function MusicPlatformIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -56,7 +56,7 @@ export function MusicPlatformLinks({
             className={`relative group inline-flex shrink-0 items-center justify-center h-8 w-8 rounded-md border border-primary/40 bg-background/95 hover:bg-accent text-sm transition-colors ${buttonClassName ?? ""}`.trim()}
           >
             <span className={platformColorClass[platformLink.platform]}>
-              <MusicPlatformIcon platform={platformLink.platform} />
+              <MusicPlatformIcon />
             </span>
             <span
               className={`pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5 ${tooltipGradientClass[platformLink.platform]}`}

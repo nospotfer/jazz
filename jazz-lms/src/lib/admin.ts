@@ -1,6 +1,5 @@
 import { cache } from 'react';
 
-import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { hasPermission, isAdminRole } from '@/lib/admin/permissions';

@@ -36,7 +36,9 @@ prisma/
 ### Key Files
 
 #### `schema.prisma`
+
 Defines the structure of your database tables:
+
 - **Course** - The main course (e.g., "La Cultura del Jazz")
 - **Chapter** - Sections within a course
 - **Lesson** - Individual video lessons
@@ -45,7 +47,9 @@ Defines the structure of your database tables:
 - **UserProgress** - Tracks completed lessons
 
 #### `seed.ts`
+
 Populates the database with initial data. Run with:
+
 ```bash
 npm run seed
 ```
@@ -126,18 +130,18 @@ src/app/
     │                   └── route.ts    # PUT /api/courses/.../progress
     │
     └── webhooks/
-      └── lemon-squeezy/
-        └── route.ts  # POST /api/webhooks/lemon-squeezy
+      └── dodo-jazzlms/
+        └── route.ts  # POST /api/webhooks/dodo-jazzlms
 ```
 
 ### Understanding the Naming Convention
 
-| File/Folder | Purpose |
-|-------------|---------|
-| `page.tsx` | Defines a page component (creates a route) |
-| `layout.tsx` | Wraps child pages (shared UI like headers) |
-| `route.ts` | Defines an API endpoint |
-| `[param]` | Dynamic route segment (e.g., `[courseId]` matches any value) |
+| File/Folder  | Purpose                                                      |
+| ------------ | ------------------------------------------------------------ |
+| `page.tsx`   | Defines a page component (creates a route)                   |
+| `layout.tsx` | Wraps child pages (shared UI like headers)                   |
+| `route.ts`   | Defines an API endpoint                                      |
+| `[param]`    | Dynamic route segment (e.g., `[courseId]` matches any value) |
 
 ### How Routes Work
 
@@ -200,7 +204,9 @@ src/hooks/
 ```
 
 ### `use-confetti-store.ts`
+
 A global state store using Zustand:
+
 ```typescript
 // Open confetti animation
 confetti.onOpen();
@@ -221,28 +227,34 @@ Configuration and utility functions.
 ```
 src/lib/
 ├── db.ts           # Prisma client singleton
-├── lemon-squeezy.ts # Lemon Squeezy client configuration
+├── dodo-jazzlms.ts # Dodo Payments client configuration
 └── utils.ts        # Utility functions (cn for classnames)
 ```
 
 ### Key Files
 
 #### `db.ts` - Database Client
+
 ```typescript
 // Singleton pattern prevents multiple Prisma instances in development
 export const db = globalThis.prisma || new PrismaClient();
 
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = db;
+if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
 ```
 
-#### `lemon-squeezy.ts` - Lemon Squeezy Client
+#### `dodo-jazzlms.ts` - Dodo Payments Client
+
 ```typescript
-export function isLemonConfigured() {
-  return Boolean(process.env.LEMON_SQUEEZY_API_KEY?.trim());
+export function isDodoConfigured() {
+  return Boolean(
+    process.env.DODO_PAYMENTS_API_KEY?.trim() &&
+    process.env.DODO_PRODUCT_ID?.trim(),
+  );
 }
 ```
 
 #### `utils.ts` - Utility Functions
+
 ```typescript
 // Combines class names conditionally (from shadcn/ui)
 export function cn(...inputs: ClassValue[]) {
@@ -266,9 +278,9 @@ src/utils/
 
 ### Why Two Clients?
 
-| Client | When to Use | Can Access |
-|--------|-------------|------------|
-| `client.ts` | In `'use client'` components | Browser cookies |
+| Client      | When to Use                       | Can Access          |
+| ----------- | --------------------------------- | ------------------- |
+| `client.ts` | In `'use client'` components      | Browser cookies     |
 | `server.ts` | In Server Components & API routes | Server-side cookies |
 
 ---
@@ -283,9 +295,14 @@ src/actions/
 ```
 
 ### `get-progress.ts`
+
 Calculates what percentage of the course a user has completed:
+
 ```typescript
-export const getProgress = async (userId: string, courseId: string): Promise<number> => {
+export const getProgress = async (
+  userId: string,
+  courseId: string,
+): Promise<number> => {
   // Count completed lessons / total lessons * 100
   return progressPercentage;
 };
@@ -296,34 +313,41 @@ export const getProgress = async (userId: string, courseId: string): Promise<num
 ## 📄 Root Configuration Files
 
 ### `package.json`
+
 Defines dependencies and npm scripts:
+
 ```json
 {
   "scripts": {
-    "dev": "next dev",          // Start development server
-    "build": "next build",      // Build for production
-    "start": "next start",      // Start production server
-    "seed": "ts-node prisma/seed.ts",  // Seed database
-    "postinstall": "prisma generate"   // Generate Prisma client
+    "dev": "next dev", // Start development server
+    "build": "next build", // Build for production
+    "start": "next start", // Start production server
+    "seed": "ts-node prisma/seed.ts", // Seed database
+    "postinstall": "prisma generate" // Generate Prisma client
   }
 }
 ```
 
 ### `tailwind.config.ts`
+
 Configures Tailwind CSS with custom colors, fonts, and animations.
 
 ### `tsconfig.json`
+
 TypeScript configuration with path aliases:
+
 ```json
 {
   "paths": {
-    "@/*": ["./src/*"]  // Import with @/components/... instead of ../../../
+    "@/*": ["./src/*"] // Import with @/components/... instead of ../../../
   }
 }
 ```
 
 ### `middleware.ts`
+
 Runs before every request to refresh Supabase session cookies:
+
 ```typescript
 export async function middleware(request: NextRequest) {
   return await updateSession(request);
@@ -334,13 +358,13 @@ export async function middleware(request: NextRequest) {
 
 ## File Naming Conventions
 
-| Convention | Example | Purpose |
-|------------|---------|---------|
-| kebab-case | `course-player.tsx` | Component files |
-| PascalCase | `CoursePlayer` | Component names |
-| camelCase | `getProgress` | Function names |
-| `use-*.ts` | `use-confetti-store.ts` | Custom hooks |
-| `*.d.ts` | `next-env.d.ts` | TypeScript declarations |
+| Convention | Example                 | Purpose                 |
+| ---------- | ----------------------- | ----------------------- |
+| kebab-case | `course-player.tsx`     | Component files         |
+| PascalCase | `CoursePlayer`          | Component names         |
+| camelCase  | `getProgress`           | Function names          |
+| `use-*.ts` | `use-confetti-store.ts` | Custom hooks            |
+| `*.d.ts`   | `next-env.d.ts`         | TypeScript declarations |
 
 ---
 
@@ -350,10 +374,10 @@ The project uses TypeScript path aliases for cleaner imports:
 
 ```typescript
 // Instead of this:
-import { Button } from '../../../components/ui/button';
+import { Button } from "../../../components/ui/button";
 
 // You can write this:
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 ```
 
 The `@/` alias points to the `src/` folder.
@@ -377,4 +401,3 @@ The `@/` alias points to the `src/` folder.
 │  docs/           → Documentation                   │
 └────────────────────────────────────────────────────┘
 ```
-

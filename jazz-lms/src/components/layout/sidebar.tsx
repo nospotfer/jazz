@@ -289,7 +289,11 @@ export function Sidebar() {
 
   // Close sidebar on route change
   useEffect(() => {
-    setIsOpen(false);
+    const frame = window.requestAnimationFrame(() => {
+      setIsOpen(false);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   // Prevent body scroll when sidebar is open on mobile
@@ -402,13 +406,14 @@ function SidebarContent({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/40">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-primary/40">
             <Image
-              src="/images/Logo.jpeg"
+              src="/images/logo-mark.png"
               alt="Jazz Culture logo"
               fill
               className="object-cover"
-              sizes="32px"
+              sizes="36px"
+              quality={100}
             />
           </div>
           <span className="font-serif font-bold text-foreground text-lg">

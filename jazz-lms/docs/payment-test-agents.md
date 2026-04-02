@@ -1,4 +1,4 @@
-# Payment Test Agents (Lemon-only)
+# Payment Test Agents (Dodo-only)
 
 Este documento define os “agentes operacionais” de validação de pagamentos que podem ser acionados rapidamente quando uma solicitação exigir validação crítica.
 
@@ -11,17 +11,17 @@ Comando:
 Executa:
 - checkout route
 - purchases route
-- lemon webhook route
+- dodo webhook route
 - reset dev route
 - helpers/sync de compra/voucher
 - contratos e segurança relacionados a pagamentos
 
 Quando usar:
 - qualquer alteração em `src/app/api/checkout/route.ts`
-- qualquer alteração em `src/app/api/webhooks/lemon-squeezy/route.ts`
+- qualquer alteração em `src/app/api/webhooks/dodo-jazzlms/route.ts`
 - qualquer alteração em `src/lib/course-purchase-sync.ts`
 
-## 2) Agente frontend real (Lemon sandbox)
+## 2) Agente frontend real (Dodo sandbox)
 
 Comando:
 
@@ -32,7 +32,7 @@ Pré-requisitos obrigatórios:
 - `PAYMENTS_E2E_STORAGE_STATE` apontando para arquivo válido do Playwright com sessão autenticada
 - `PAYMENTS_E2E_COURSE_ID` de curso ainda não comprado pelo usuário do storage state
 - porta `3000` livre (por padrão o script não reutiliza servidor já aberto)
-- opcional: `PAYMENTS_E2E_EXPECT_HOST` (default `checkout.lemonsqueezy.com`)
+- opcional: `PAYMENTS_E2E_EXPECT_HOST` (default `checkout.dodopayments.com`)
 - opcional: `PAYMENTS_E2E_ALLOW_SERVER_REUSE=1` para reutilizar servidor já em execução em `:3000`
 - opcional: `PLAYWRIGHT_REUSE_EXISTING_SERVER=1` para forçar reuse no Playwright
 
@@ -40,9 +40,9 @@ Fluxo validado:
 - usuário autenticado abre página do curso
 - abre modal de método de pagamento
 - escolhe cartão e continua
-- redireciona para host de checkout Lemon
+- redireciona para host de checkout Dodo
 
-## 2.1) Agente matrix de vouchers (Lemon sandbox)
+## 2.1) Agente matrix de vouchers (Dodo sandbox)
 
 Comando:
 
@@ -58,7 +58,7 @@ Pré-requisitos obrigatórios:
 Fluxo validado:
 - abre modal de pagamento
 - aplica voucher e valida resposta visual
-- testa redirecionamento para checkout Lemon por método (card/paypal)
+- testa redirecionamento para checkout Dodo por método (card/paypal)
 - executa um a um para cada voucher configurado
 
 ## 3) Agente full crítico
@@ -69,7 +69,7 @@ Comando:
 
 Executa em sequência:
 1. backend payment suite
-2. frontend real Lemon E2E
+2. frontend real Dodo E2E
 3. build completo (`npm run build`)
 
 Use este comando quando a solicitação for “passada final” ou “certificar que tudo está funcionando”.

@@ -37,11 +37,20 @@ export function toMoney(value: unknown): number {
     return 0;
   }
 
-  if (typeof value === "string" && value.includes(".")) {
-    return Number(parsed.toFixed(2));
+  return Number(parsed.toFixed(2));
+}
+
+function toProviderMoney(value: unknown): number {
+  const parsed = toNumber(value);
+  if (parsed === null) {
+    return 0;
   }
 
-  if (parsed > 1000) {
+  const hasDecimalSeparator =
+    typeof value === "string" && (value.includes(".") || value.includes(","));
+
+  // Dodo webhook/payment API integer amounts are minor units (e.g. cents).
+  if (!hasDecimalSeparator && Number.isInteger(parsed)) {
     return Number((parsed / 100).toFixed(2));
   }
 
@@ -162,13 +171,13 @@ export function extractDodoPricing(payload: LooseObject): {
   const payment = asObject(data.payment);
 
   const totalAmount =
-    toMoney(payment.amount) ||
-    toMoney(data.amount) ||
-    toMoney(payment.total_amount) ||
-    toMoney(data.total_amount);
+    toProviderMoney(payment.amount) ||
+    toProviderMoney(data.amount) ||
+    toProviderMoney(payment.total_amount) ||
+    toProviderMoney(data.total_amount);
   const subtotalAmount =
-    toMoney(payment.subtotal_amount) ||
-    toMoney(data.subtotal_amount) ||
+    toProviderMoney(payment.subtotal_amount) ||
+    toProviderMoney(data.subtotal_amount) ||
     toMoney(metadata.originalPrice) ||
     totalAmount;
   const discountAmount = Number(

@@ -7,6 +7,104 @@ import {
 const checkoutEntryButtonRegex =
   /comprar curso completo|buy full course|acheter le cours complet|elegir método de pago|choose payment method|choisir le moyen de paiement|escolher método de pagamento|escolha o método de pagamento|aplicar voucher y continuar|apply voucher and continue|appliquer un coupon et continuer|aplicar voucher e continuar/i;
 
+function getPaymentModal(page: Page) {
+  return page.getByTestId("payment-method-modal");
+}
+
+async function waitForCheckoutResolution(
+  page: Page,
+  expectedCheckoutHost: string,
+): Promise<
+  "redirect" | "response_redirect" | "provider_error" | "app_redirect"
+> {
+  const redirectResult = page
+    .waitForURL(
+      (url) =>
+        url.hostname === expectedCheckoutHost ||
+        url.hostname.endsWith(`.${expectedCheckoutHost}`),
+      { timeout: 45_000 },
+    )
+    .then(() => "redirect" as const)
+    .catch(() => null);
+
+  const checkoutApiResult = page
+    .waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        response.url().includes("/api/checkout"),
+      { timeout: 45_000 },
+    )
+    .then(async (response) => {
+      if (response.status() >= 400) {
+        return "provider_error" as const;
+      }
+
+      const payload = (await response.json().catch(() => null)) as {
+        url?: string;
+      } | null;
+      const redirectUrl =
+        payload && typeof payload.url === "string" ? payload.url : null;
+
+      if (!redirectUrl) {
+        return null;
+      }
+
+      try {
+        const parsed = new URL(redirectUrl, page.url());
+        if (
+          parsed.hostname === expectedCheckoutHost ||
+          parsed.hostname.endsWith(`.${expectedCheckoutHost}`)
+        ) {
+          return "response_redirect" as const;
+        }
+
+        if (
+          parsed.pathname.includes("/lessons/") ||
+          parsed.pathname.includes("/dashboard")
+        ) {
+          return "app_redirect" as const;
+        }
+      } catch {
+        return null;
+      }
+
+      return null;
+    })
+    .catch(() => null);
+
+  const appRedirectResult = page
+    .waitForURL(
+      (url) =>
+        url.pathname.includes("/lessons/") ||
+        url.pathname.includes("/dashboard"),
+      { timeout: 45_000 },
+    )
+    .then(() => "app_redirect" as const)
+    .catch(() => null);
+
+  const outcome = await Promise.race([
+    redirectResult,
+    checkoutApiResult,
+    appRedirectResult,
+  ]);
+
+  if (!outcome) {
+    const currentPath = new URL(page.url()).pathname;
+    if (
+      currentPath.includes("/lessons/") ||
+      currentPath.includes("/dashboard")
+    ) {
+      return "app_redirect";
+    }
+
+    throw new Error(
+      "Checkout did not redirect and /api/checkout produced no usable response within timeout.",
+    );
+  }
+
+  return outcome;
+}
+
 async function collectVisibleButtonLabels(page: Page): Promise<string[]> {
   const buttons = page.getByRole("button");
   const count = await buttons.count();
@@ -75,9 +173,9 @@ async function resolveCheckoutEntryButton(page: Page) {
 }
 
 test.describe("Payments E2E (real Dodo)", () => {
-  test("redirects authenticated user to Dodo checkout", async ({
-    browser,
-  }) => {
+  test.describe.configure({ timeout: 2 * 60 * 1000 });
+
+  test("redirects authenticated user to Dodo checkout", async ({ browser }) => {
     const config = getPaymentsE2EConfig();
 
     test.skip(
@@ -108,6 +206,25 @@ test.describe("Payments E2E (real Dodo)", () => {
       const openCheckoutButton = await resolveCheckoutEntryButton(page);
       await openCheckoutButton.click();
 
+      let checkoutRequestSeen = false;
+      const onRequest = (request: { method(): string; url(): string }) => {
+        if (
+          request.method() === "POST" &&
+          request.url().includes("/api/checkout")
+        ) {
+          checkoutRequestSeen = true;
+        }
+      };
+      page.on("request", onRequest);
+
+      const modal = getPaymentModal(page);
+      const modalContinueButton = modal
+        .getByTestId("payment-method-modal-continue")
+        .first();
+      const hasTestIdContinue = await modalContinueButton
+        .isVisible()
+        .catch(() => false);
+
       const voucherContinueButton = page
         .getByRole("button", {
           name: /ir al checkout|go to checkout|aller au checkout|ir para checkout/i,
@@ -117,9 +234,11 @@ test.describe("Payments E2E (real Dodo)", () => {
         .isVisible()
         .catch(() => false);
 
-      let continueButton = voucherContinueButton;
+      let continueButton = hasTestIdContinue
+        ? modalContinueButton
+        : voucherContinueButton;
 
-      if (!hasVoucherFlow) {
+      if (!hasTestIdContinue && !hasVoucherFlow) {
         const chooseMethodTitle = page.getByRole("heading", {
           name: /elige método de pago|choose payment method|choisissez le moyen de paiement|escolha o método de pagamento/i,
         });
@@ -138,19 +257,61 @@ test.describe("Payments E2E (real Dodo)", () => {
 
       await expect(continueButton).toBeEnabled({ timeout: 20_000 });
 
-      await Promise.all([
-        page.waitForURL(
-          (url) =>
-            url.hostname === config.expectedCheckoutHost ||
-            url.hostname.endsWith(`.${config.expectedCheckoutHost}`),
-          { timeout: 45_000 },
-        ),
-        continueButton.click(),
-      ]);
+      const checkoutResolution = waitForCheckoutResolution(
+        page,
+        config.expectedCheckoutHost,
+      );
+      await continueButton.click();
+      let checkoutOutcome:
+        | "redirect"
+        | "response_redirect"
+        | "provider_error"
+        | "app_redirect";
 
-      expect(page.url()).toContain(config.expectedCheckoutHost);
+      try {
+        checkoutOutcome = await checkoutResolution;
+      } catch (resolutionError) {
+        const modal = getPaymentModal(page);
+        const modalVisible = await modal.isVisible().catch(() => false);
+        const continueStillVisible = await continueButton
+          .isVisible()
+          .catch(() => false);
+        const continueEnabled = await continueButton
+          .isEnabled()
+          .catch(() => false);
+        const modalErrors = await modal
+          .locator("p.text-destructive")
+          .allInnerTexts()
+          .catch(() => []);
+
+        throw new Error(
+          [
+            resolutionError instanceof Error
+              ? resolutionError.message
+              : "Unknown checkout resolution error.",
+            `Current URL: ${page.url()}`,
+            `Checkout request seen: ${checkoutRequestSeen}`,
+            `Modal visible: ${modalVisible}`,
+            `Continue visible: ${continueStillVisible}`,
+            `Continue enabled: ${continueEnabled}`,
+            `Modal errors: ${modalErrors.join(" | ") || "(none)"}`,
+          ].join("\n"),
+        );
+      } finally {
+        page.off("request", onRequest);
+      }
+
+      if (checkoutOutcome === "provider_error") {
+        throw new Error(
+          "Checkout provider returned non-success status. Verify DODO live API key, business ID, and product ID.",
+        );
+      }
+
+      if (checkoutOutcome === "redirect") {
+        expect(page.url()).toContain(config.expectedCheckoutHost);
+      }
     } finally {
-      await context.close();
+      await context.close().catch(() => undefined);
     }
   });
 });

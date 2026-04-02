@@ -1,6 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/language-provider";
+import MuxPlayer from "@mux/mux-player-react";
+import type MuxPlayerElement from "@mux/mux-player";
 import { LogIn, Volume2, VolumeX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -10,8 +12,10 @@ export function PromoVideo() {
   const { language } = useLanguage();
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
+  const nativeVideoRef = useRef<HTMLVideoElement | null>(null);
   const [shouldLoadPlayer, setShouldLoadPlayer] = useState(false);
+  const [shouldUseMuxPlayer, setShouldUseMuxPlayer] = useState(true);
   const [playbackId, setPlaybackId] = useState("");
   const [playbackToken, setPlaybackToken] = useState("");
   const [thumbnailToken, setThumbnailToken] = useState("");
@@ -127,6 +131,7 @@ export function PromoVideo() {
         setPlaybackToken(data.playbackToken || "");
         setThumbnailToken(data.thumbnailToken || "");
         setStoryboardToken(data.storyboardToken || "");
+        setShouldUseMuxPlayer(true);
         setMuxRuntimeError("");
         setPlayerRetryCount(0);
       } catch {
@@ -143,8 +148,13 @@ export function PromoVideo() {
   }, [copy.muxError, shouldLoadPlayer]);
 
   const toggleMute = () => {
-    if (!playerRef.current) return;
-    playerRef.current.muted = !isMuted;
+    const nextMuted = !isMuted;
+    if (muxPlayerRef.current) {
+      muxPlayerRef.current.muted = nextMuted;
+    }
+    if (nativeVideoRef.current) {
+      nativeVideoRef.current.muted = nextMuted;
+    }
     setIsMuted(!isMuted);
   };
 
@@ -191,62 +201,80 @@ export function PromoVideo() {
             onMouseLeave={() => setIsHovered(false)}
           >
             {hasMuxPlayback ? (
-              <video
-                ref={playerRef}
-                className="absolute inset-0 w-full h-full object-cover"
-                poster={posterUrl || undefined}
-                autoPlay
-                muted={isMuted}
-                loop
-                playsInline
-                preload="auto"
-                disableRemotePlayback
-                controlsList="noremoteplayback nodownload noplaybackrate"
-                onLoadedData={() => {
-                  setMuxRuntimeError("");
-                }}
-                onError={async () => {
-                  if (playbackToken) {
-                    setPlaybackToken("");
-                    setThumbnailToken("");
-                    setStoryboardToken("");
+              shouldUseMuxPlayer ? (
+                <MuxPlayer
+                  ref={muxPlayerRef}
+                  playbackId={playbackId}
+                  tokens={{
+                    playback: playbackToken || undefined,
+                    thumbnail: thumbnailToken || undefined,
+                    storyboard: storyboardToken || undefined,
+                  }}
+                  poster={posterUrl || undefined}
+                  autoPlay
+                  muted={isMuted}
+                  loop
+                  playsInline
+                  preload="auto"
+                  primaryColor="#FBBF24"
+                  secondaryColor="#1f2937"
+                  className="absolute inset-0 w-full h-full"
+                  onError={() => {
+                    // Fallback to native video player
+                    setShouldUseMuxPlayer(false);
+                  }}
+                />
+              ) : (
+                <video
+                  ref={nativeVideoRef}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster={posterUrl || undefined}
+                  autoPlay
+                  muted={isMuted}
+                  loop
+                  playsInline
+                  preload="auto"
+                  disableRemotePlayback
+                  controlsList="noremoteplayback nodownload noplaybackrate"
+                  onLoadedData={() => {
                     setMuxRuntimeError("");
-                    return;
-                  }
+                  }}
+                  onError={async () => {
+                    if (playerRetryCount < 1) {
+                      try {
+                        const response = await fetch(
+                          "/api/mux/promo-playback?retry=1",
+                          { cache: "no-store" },
+                        );
+                        if (!response.ok) {
+                          throw new Error("Promo playback retry request failed");
+                        }
 
-                  if (playerRetryCount < 1) {
-                    try {
-                      const response = await fetch(
-                        "/api/mux/promo-playback?retry=1",
-                        { cache: "no-store" },
-                      );
-                      if (!response.ok) {
-                        throw new Error("Promo playback retry request failed");
+                        const data = await response.json();
+                        setPlaybackId(data.playbackId || "");
+                        setPlaybackToken(data.playbackToken || "");
+                        setThumbnailToken(data.thumbnailToken || "");
+                        setStoryboardToken(data.storyboardToken || "");
+                        setShouldUseMuxPlayer(true);
+                        setMuxRuntimeError("");
+                        setPlayerRetryCount(1);
+                        return;
+                      } catch {
+                        // Fall through and show the error message below.
                       }
-
-                      const data = await response.json();
-                      setPlaybackId(data.playbackId || "");
-                      setPlaybackToken(data.playbackToken || "");
-                      setThumbnailToken(data.thumbnailToken || "");
-                      setStoryboardToken(data.storyboardToken || "");
-                      setMuxRuntimeError("");
-                      setPlayerRetryCount(1);
-                      return;
-                    } catch {
-                      // Fall through and show the error message below.
                     }
-                  }
 
-                  setMuxRuntimeError(copy.muxError);
-                }}
-              >
-                {promoHlsUrl ? (
-                  <source src={promoHlsUrl} type="application/x-mpegURL" />
-                ) : null}
-                {promoMp4Url ? (
-                  <source src={promoMp4Url} type="video/mp4" />
-                ) : null}
-              </video>
+                    setMuxRuntimeError(copy.muxError);
+                  }}
+                >
+                  {promoHlsUrl ? (
+                    <source src={promoHlsUrl} type="application/x-mpegURL" />
+                  ) : null}
+                  {promoMp4Url ? (
+                    <source src={promoMp4Url} type="video/mp4" />
+                  ) : null}
+                </video>
+              )
             ) : muxRuntimeError ? (
               <div className="absolute inset-0 flex items-center justify-center bg-black text-white text-center px-6">
                 <p className="text-sm sm:text-base text-red-300">

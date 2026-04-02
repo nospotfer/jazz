@@ -3,6 +3,12 @@ const nextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [100, 75],
+  },
+  turbopack: {
+    resolveAlias: {
+      canvas: "./src/lib/shims/canvas.js",
+    },
   },
   webpack: (config) => {
     config.resolve.alias = {

@@ -75,11 +75,18 @@ export function MyCoursesClient({ videos }: MyCoursesClientProps) {
   const completionAttentionActive = effectiveCompletionRate >= 100 && completionAlertPending;
 
   useEffect(() => {
+    const deferSetCompletionAlert = (value: boolean) => {
+      const frame = window.requestAnimationFrame(() => {
+        setCompletionAlertPending(value);
+      });
+      return () => window.cancelAnimationFrame(frame);
+    };
+
     if (effectiveCompletionRate < 100) {
       window.localStorage.removeItem(COMPLETION_ALERT_KEY);
       window.localStorage.removeItem(COMPLETION_ALERT_ACK_KEY);
       if (completionAlertPending) {
-        setCompletionAlertPending(false);
+        return deferSetCompletionAlert(false);
       }
       window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
       return;
@@ -90,17 +97,18 @@ export function MyCoursesClient({ videos }: MyCoursesClientProps) {
 
     if (isPending) {
       if (!completionAlertPending) {
-        setCompletionAlertPending(true);
+        return deferSetCompletionAlert(true);
       }
       return;
     }
 
     if (!isAcknowledged) {
       window.localStorage.setItem(COMPLETION_ALERT_KEY, '1');
-      setCompletionAlertPending(true);
+      const cleanup = deferSetCompletionAlert(true);
       window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
+      return cleanup;
     } else if (completionAlertPending) {
-      setCompletionAlertPending(false);
+      return deferSetCompletionAlert(false);
     }
   }, [effectiveCompletionRate, completionAlertPending]);
 

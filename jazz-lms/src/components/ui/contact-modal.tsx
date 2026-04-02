@@ -218,12 +218,18 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     setLoading(true);
     try {
-      // TODO: Integrate with your backend API to send the message
-      // For now, just simulate the submission
-      console.log('Formulario de contacto enviado:', formData);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || copy.submitError);
+      }
 
       setSuccess(true);
       setFormData({ messageType: '', message: '', email: '' });

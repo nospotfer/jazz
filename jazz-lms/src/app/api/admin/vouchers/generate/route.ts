@@ -8,6 +8,7 @@ import {
   VOUCHER_ARTIST_TIERS,
 } from '@/lib/voucher-artists';
 import { ensureVoucherDiscountSynced } from '@/lib/voucher-provider-sync';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
       : null;
 
     const metadata = typeof body.metadata === 'object' && body.metadata !== null ? body.metadata : null;
-    const prisma = db as any;
+    const prisma = db;
 
     let codes: string[] = [];
 
@@ -190,16 +191,18 @@ export async function POST(req: Request) {
       normalizedMetadata.voucherArtistVersion = '2026-03-12';
     }
 
+    const normalizedMetadataJson = normalizedMetadata as Prisma.InputJsonValue;
+
     const plannedVouchers = codes.map((code) => ({ id: crypto.randomUUID(), code }));
 
-    const result = await prisma.$transaction(async (tx: any) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const batch = await tx.voucherBatch.create({
         data: {
           name: batchName || (artistForMetadata ? artistForMetadata.name : null),
           codePrefix: artistForMetadata ? `${artistForMetadata.key}${artistForMetadata.discountPercent}` : prefix || 'JAZZ',
           quantity: count,
           createdBy: auth.userId,
-          metadata: normalizedMetadata,
+          metadata: normalizedMetadataJson,
         },
       });
 
@@ -218,7 +221,7 @@ export async function POST(req: Request) {
               maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
               maxUsesPerUser,
               expiresAt,
-              metadata: normalizedMetadata,
+              metadata: normalizedMetadataJson,
             },
             select: {
               id: true,
@@ -245,13 +248,13 @@ export async function POST(req: Request) {
         discountAmount: type === 'DISCOUNT_FIXED' ? discountAmount : null,
         maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
         expiresAt,
-        metadata: normalizedMetadata,
+        metadata: normalizedMetadataJson,
       });
 
       await prisma.voucherCode.update({
         where: { id: createdVoucher.id },
         data: {
-          metadata: syncResult.metadata,
+          metadata: (syncResult.metadata ?? Prisma.JsonNull) as Prisma.InputJsonValue | typeof Prisma.JsonNull,
         },
       });
 

@@ -163,7 +163,7 @@ Generate PDF certificates when a user completes a course.
 Track payment-method availability by market and show country-aware checkout guidance when PayPal is not available.
 
 #### 13. Add Coupons/Discounts
-Beyond Lemon Squeezy discount codes, implement custom discount logic.
+Beyond Dodo Payments discount codes, implement custom discount logic.
 
 #### 14. Add Notifications
 Email notifications for:
@@ -202,12 +202,12 @@ Mux playback IDs are technically public. For sensitive content, consider:
 - Token-based authentication
 - Domain restrictions
 
-#### 3. Validate Lemon Webhook Signatures
-Always verify webhooks come from Lemon Squeezy:
+#### 3. Validate Dodo Webhook Signatures
+Always verify webhooks come from Dodo Payments:
 
 ```typescript
 // Always do this!
-const isValid = verifyLemonSignature(body, signature);
+const isValid = verifyDodoSignature(body, signature);
 ```
 
 #### 4. Rate Limit API Routes
@@ -316,13 +316,13 @@ model Purchase {
 
 ---
 
-### Lemon Squeezy
+### Dodo Payments
 
 #### 1. Test in Sandbox First
-Always use Lemon Squeezy sandbox mode during development.
+Always use Dodo Payments sandbox mode during development.
 
 #### 2. Handle Webhook Failures
-Lemon Squeezy may retry failed webhooks. Make your handler idempotent:
+Dodo Payments may retry failed webhooks. Make your handler idempotent:
 
 ```typescript
 // Check if purchase already exists
@@ -336,7 +336,7 @@ if (existingPurchase) {
 ```
 
 #### 3. Set Up Webhook Endpoint in Production
-Don't forget to configure the webhook URL in Lemon dashboard for production.
+Don't forget to configure the webhook URL in Dodo dashboard for production.
 
 ---
 
@@ -348,7 +348,7 @@ Ensure `.env` is in `.gitignore`.
 #### 2. Use Different Keys for Production
 Development and production should use different:
 - Supabase projects
-- Lemon Squeezy environment (sandbox vs live)
+- Dodo Payments environment (sandbox vs live)
 - Database instances
 
 #### 3. Validate Environment Variables
@@ -368,10 +368,10 @@ if (!process.env.DATABASE_URL) {
 ### Before Going Live
 
 - [ ] Verify all environment variables are set in Vercel
-- [ ] Set up Lemon Squeezy webhook for production URL
+- [ ] Set up Dodo Payments webhook for production URL
 - [ ] Configure OAuth redirect URLs for production domain
 - [ ] Enable HTTPS (automatic on Vercel)
-- [ ] Test complete purchase flow with Lemon sandbox mode
+- [ ] Test complete purchase flow with Dodo sandbox mode
 - [ ] Seed production database with real course content
 - [ ] Update Mux video IDs in database
 - [ ] Remove placeholder content (Lorem ipsum, etc.)
@@ -385,7 +385,7 @@ if (!process.env.DATABASE_URL) {
 ### Ongoing Maintenance
 
 - [ ] Monitor error logs
-- [ ] Check Lemon dashboard for failed payments
+- [ ] Check Dodo dashboard for failed payments
 - [ ] Back up database regularly
 - [ ] Keep dependencies updated
 - [ ] Monitor for security advisories
@@ -424,7 +424,7 @@ if (!process.env.DATABASE_URL) {
 - **Next.js**: [nextjs.org/docs](https://nextjs.org/docs)
 - **Supabase**: [supabase.com/docs](https://supabase.com/docs)
 - **Prisma**: [prisma.io/docs](https://www.prisma.io/docs)
-- **Lemon Squeezy**: [docs.lemonsqueezy.com](https://docs.lemonsqueezy.com)
+- **Dodo Payments**: [docs.dodopayments.com](https://docs.dodopayments.com)
 - **Mux**: [docs.mux.com](https://docs.mux.com)
 - **Tailwind CSS**: [tailwindcss.com/docs](https://tailwindcss.com/docs)
 
@@ -432,7 +432,7 @@ if (!process.env.DATABASE_URL) {
 
 - [Next.js App Router Tutorial](https://nextjs.org/learn)
 - [Supabase Auth Tutorial](https://supabase.com/docs/guides/auth)
-- [Lemon Squeezy API docs](https://docs.lemonsqueezy.com/api)
+- [Dodo Payments API docs](https://docs.dodopayments.com/api)
 
 ---
 

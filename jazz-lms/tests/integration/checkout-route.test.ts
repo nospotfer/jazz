@@ -12,6 +12,7 @@ function createCheckoutRequest(body: Record<string, unknown>) {
 
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
+  userFindUnique: vi.fn(),
   courseFindUnique: vi.fn(),
   purchaseFindUnique: vi.fn(),
   purchaseUpsert: vi.fn(),
@@ -40,6 +41,7 @@ vi.mock("@/utils/supabase/server", () => ({
 
 vi.mock("@/lib/db", () => ({
   db: {
+    user: { findUnique: mocks.userFindUnique },
     course: { findUnique: mocks.courseFindUnique },
     purchase: {
       findUnique: mocks.purchaseFindUnique,
@@ -98,6 +100,7 @@ describe("POST /api/checkout", () => {
     vi.clearAllMocks();
 
     mocks.cookies.mockResolvedValue({ get: vi.fn(() => undefined) });
+    mocks.userFindUnique.mockResolvedValue(null);
     mocks.normalizeLanguage.mockReturnValue("es");
     mocks.getCourseTranslationBundle.mockResolvedValue({ courses: new Map() });
     mocks.resolveCourseText.mockReturnValue({
@@ -123,7 +126,7 @@ describe("POST /api/checkout", () => {
 
     const res = await POST(req);
     expect(res.status).toBe(400);
-  });
+  }, 15000);
 
   test("returns 400 for unsupported payment method", async () => {
     const { POST } = await import("@/app/api/checkout/route");
@@ -173,6 +176,27 @@ describe("POST /api/checkout", () => {
 
     const res = await POST(req);
     expect(res.status).toBe(400);
+  });
+
+  test("allows admin checkout flow even when already purchased", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "admin@example.com" } },
+    });
+    mocks.userFindUnique.mockResolvedValue({ role: "SUPER_ADMIN" });
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Curso",
+      description: "",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue({ id: "p1" });
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(false);
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+    expect(res.status).toBe(503);
   });
 
   test("creates purchase immediately for free courses", async () => {

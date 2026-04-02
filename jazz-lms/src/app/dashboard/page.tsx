@@ -6,6 +6,8 @@ import {
 import { hasAnyCoursePurchase } from "@/lib/dashboard-server-data";
 import { db } from "@/lib/db";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
+import { getCurrentUser } from "@/lib/admin";
+import { isAdminRole } from "@/lib/admin/permissions";
 import { getServerUser } from "@/lib/server-user";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -19,6 +21,17 @@ export default async function DashboardPage() {
 
   if (!user) {
     return redirect("/auth");
+  }
+
+  let isAdmin = false;
+  try {
+    const dbUser = await getCurrentUser();
+    isAdmin = isAdminRole(dbUser?.role ?? null);
+  } catch (error) {
+    console.error(
+      "[dashboard] Unable to resolve admin role. Falling back to non-admin.",
+      error,
+    );
   }
 
   let course: {
@@ -52,7 +65,8 @@ export default async function DashboardPage() {
       },
     });
 
-    hasPurchased = await hasAnyCoursePurchase(user.id);
+    const [purchased] = await Promise.all([hasAnyCoursePurchase(user.id)]);
+    hasPurchased = purchased;
   } catch (error) {
     console.error(
       "[dashboard] Database unavailable. Rendering fallback state.",
@@ -109,7 +123,7 @@ export default async function DashboardPage() {
       userName={
         user.user_metadata?.full_name || user.email || "Estudiante de Jazz"
       }
-      hasPurchased={hasPurchased}
+      hasPurchased={hasPurchased || isAdmin}
       courseId={course?.id ?? null}
       lessonRoutesByTitle={lessonRoutesByTitle}
       lessonRoutesInOrder={lessonRoutesInOrder}

@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { getVoucherArtistByKey } from '@/lib/voucher-artists';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-function csvEscape(value: string | number | null) {
+function csvEscape(value: string | number | boolean | null) {
   if (value === null || value === undefined) {
     return '';
   }
@@ -15,6 +16,15 @@ function csvEscape(value: string | number | null) {
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
   return stringValue;
+}
+
+function readMetadataText(metadata: unknown, key: string): string | null {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    return null;
+  }
+
+  const value = (metadata as Record<string, unknown>)[key];
+  return typeof value === 'string' ? value : null;
 }
 
 export async function GET(req: Request) {
@@ -32,7 +42,7 @@ export async function GET(req: Request) {
     const discountPercentParam = url.searchParams.get('discountPercent');
 
     const now = new Date();
-    const filters: any[] = [];
+    const filters: Prisma.VoucherCodeWhereInput[] = [];
 
     if (search) {
       filters.push({
@@ -87,7 +97,7 @@ export async function GET(req: Request) {
 
     const where = filters.length > 0 ? { AND: filters } : undefined;
 
-    const prisma = db as any;
+    const prisma = db;
     const vouchers = await prisma.voucherCode.findMany({
       where,
       include: {
@@ -117,11 +127,11 @@ export async function GET(req: Request) {
       'createdAt',
     ];
 
-    const rows = vouchers.map((voucher: any) => [
+    const rows = vouchers.map((voucher) => [
       csvEscape(voucher.code),
       csvEscape(voucher.type),
-      csvEscape(voucher.metadata?.voucherArtistName || null),
-      csvEscape(voucher.metadata?.voucherArtistKey || null),
+      csvEscape(readMetadataText(voucher.metadata, 'voucherArtistName')),
+      csvEscape(readMetadataText(voucher.metadata, 'voucherArtistKey')),
       csvEscape(voucher.course?.title || 'ALL_COURSES'),
       csvEscape(voucher.discountPercent),
       csvEscape(voucher.discountAmount),

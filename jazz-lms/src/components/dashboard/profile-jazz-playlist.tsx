@@ -85,7 +85,11 @@ export function ProfileJazzPlaylist({ language, earnedClassNumbers = [] }: Profi
   const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
-    setActiveIndex((current) => Math.min(current, Math.max(playlist.length - 1, 0)));
+    const frame = window.requestAnimationFrame(() => {
+      setActiveIndex((current) => Math.min(current, Math.max(playlist.length - 1, 0)));
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [playlist.length]);
 
   useEffect(() => {

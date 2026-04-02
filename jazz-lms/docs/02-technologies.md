@@ -7,9 +7,11 @@ This document explains each technology used in the Jazz LMS project, why it was 
 ## 1. Next.js (v14.2.5)
 
 ### What is it?
+
 Next.js is a **React framework** that makes building web applications easier. It's built on top of React and adds powerful features like server-side rendering, routing, and API routes.
 
 ### Why use it?
+
 - **All-in-one solution**: Both frontend and backend in one project
 - **File-based routing**: Create a file in `/app/courses/page.tsx` and you automatically get a `/courses` route
 - **Server Components**: Fetch data on the server, keeping your code fast and secure
@@ -30,12 +32,15 @@ src/app/
 ### Key Concepts
 
 #### App Router (New in Next.js 13+)
+
 The project uses the new App Router which uses the `/app` directory. Each folder can have:
+
 - `page.tsx` - The page component (what users see)
 - `layout.tsx` - A wrapper around pages (shared UI)
 - `route.ts` - An API endpoint
 
 #### Server vs Client Components
+
 ```tsx
 // Server Component (default) - can fetch data directly
 export default async function DashboardPage() {
@@ -56,12 +61,15 @@ export const Button = () => {
 ## 2. React (v18.3.1)
 
 ### What is it?
+
 React is a **JavaScript library** for building user interfaces. It lets you create reusable UI components that update efficiently when data changes.
 
 ### Core Concepts
 
 #### Components
+
 Everything in React is a component - a reusable piece of UI:
+
 ```tsx
 // A simple component
 const Button = ({ text }) => {
@@ -69,14 +77,16 @@ const Button = ({ text }) => {
 };
 
 // Using it
-<Button text="Click me!" />
+<Button text="Click me!" />;
 ```
 
 #### Props
+
 Data passed from parent to child components:
+
 ```tsx
 // Parent passes data
-<Hero course={courseData} />
+<Hero course={courseData} />;
 
 // Child receives it
 const Hero = ({ course }) => {
@@ -85,7 +95,9 @@ const Hero = ({ course }) => {
 ```
 
 #### Hooks
+
 Special functions that let you use React features in functional components:
+
 - `useState` - Manage component state
 - `useEffect` - Perform side effects
 - `useRouter` - Access Next.js router
@@ -95,9 +107,11 @@ Special functions that let you use React features in functional components:
 ## 3. TypeScript (v5.5.4)
 
 ### What is it?
+
 TypeScript is **JavaScript with types**. It adds optional static typing, which helps catch errors before your code runs.
 
 ### Why use it?
+
 - **Catch bugs early**: TypeScript tells you about errors while you're coding
 - **Better autocomplete**: Your editor knows what properties and methods are available
 - **Self-documenting code**: Types serve as documentation
@@ -128,15 +142,18 @@ function Hero({ course }: { course: Course | null }) {
 ## 4. Tailwind CSS (v4.0.0-beta)
 
 ### What is it?
+
 Tailwind is a **utility-first CSS framework**. Instead of writing custom CSS, you apply pre-built classes directly in your HTML.
 
 ### Why use it?
+
 - **Fast development**: No need to switch between files
 - **Consistent design**: Use predefined spacing, colors, etc.
 - **No CSS conflicts**: Classes are scoped to elements
 - **Small bundle size**: Only used classes are included
 
 ### Example
+
 ```tsx
 // Traditional CSS approach
 <div className="hero-container">
@@ -150,7 +167,9 @@ Tailwind is a **utility-first CSS framework**. Instead of writing custom CSS, yo
 ```
 
 ### How it's configured
+
 Check `tailwind.config.ts` for custom colors and themes that use CSS variables:
+
 ```typescript
 colors: {
   primary: {
@@ -166,13 +185,16 @@ colors: {
 ## 5. Supabase
 
 ### What is it?
+
 Supabase is an **open-source Firebase alternative**. It provides:
+
 - Authentication (login/signup)
 - PostgreSQL database
 - Real-time subscriptions
 - Storage for files
 
 ### Why use it?
+
 - **Easy authentication**: Google, GitHub, email login out of the box
 - **PostgreSQL**: Industry-standard database
 - **Free tier**: Generous free tier for small projects
@@ -181,21 +203,26 @@ Supabase is an **open-source Firebase alternative**. It provides:
 ### How it's used in this project
 
 #### Authentication
+
 ```typescript
 // Get current user
 const supabase = createClient();
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 // Sign out
 await supabase.auth.signOut();
 ```
 
 #### Database Hosting
+
 The PostgreSQL database is hosted on Supabase. We connect to it using Prisma with the `DATABASE_URL` environment variable.
 
 ### Important Files
+
 - `src/utils/supabase/client.ts` - Browser-side Supabase client
-- `src/utils/supabase/server.ts` - Server-side Supabase client  
+- `src/utils/supabase/server.ts` - Server-side Supabase client
 - `src/utils/supabase/middleware.ts` - Session management
 
 ---
@@ -203,9 +230,11 @@ The PostgreSQL database is hosted on Supabase. We connect to it using Prisma wit
 ## 6. Prisma (v5.17.0)
 
 ### What is it?
+
 Prisma is an **ORM (Object-Relational Mapper)**. It lets you interact with your database using TypeScript instead of raw SQL.
 
 ### Why use it?
+
 - **Type safety**: Database queries are type-safe
 - **Auto-generated types**: Prisma generates TypeScript types from your schema
 - **Easy migrations**: Change your schema and Prisma updates the database
@@ -219,14 +248,14 @@ const course = await db.course.findUnique({
   where: { id: courseId },
   include: {
     chapters: {
-      orderBy: { position: 'asc' },
+      orderBy: { position: "asc" },
       include: {
         lessons: {
-          orderBy: { position: 'asc' }
-        }
-      }
-    }
-  }
+          orderBy: { position: "asc" },
+        },
+      },
+    },
+  },
 });
 
 // Create a purchase
@@ -234,11 +263,12 @@ await db.purchase.create({
   data: {
     courseId: course.id,
     userId: user.id,
-  }
+  },
 });
 ```
 
 ### Important Files
+
 - `prisma/schema.prisma` - Database schema definition
 - `prisma/seed.ts` - Initial data for the database
 - `src/lib/db.ts` - Prisma client singleton
@@ -248,9 +278,11 @@ await db.purchase.create({
 ## 7. Mux
 
 ### What is it?
+
 Mux is a **video infrastructure platform**. It handles video uploading, encoding, and streaming.
 
 ### Why use it?
+
 - **Professional streaming**: Adaptive bitrate streaming (adjusts quality based on connection)
 - **Global CDN**: Videos load fast anywhere in the world
 - **Easy integration**: Simple React player component
@@ -264,17 +296,18 @@ Mux is a **video infrastructure platform**. It handles video uploading, encoding
 4. Use the Mux Player to display the video
 
 ```tsx
-import MuxPlayer from '@mux/mux-player-react';
+import MuxPlayer from "@mux/mux-player-react";
 
 <MuxPlayer
-  playbackId={lesson.videoUrl}  // e.g., "a4nOgmxGWg00R5VLg9w6Vx01gH3cPYnZ"
-  accentColor="#d4af37"          // Player accent color
-  onEnded={onEnded}              // Called when video ends
+  playbackId={lesson.videoUrl} // e.g., "a4nOgmxGWg00R5VLg9w6Vx01gH3cPYnZ"
+  accentColor="#d4af37" // Player accent color
+  onEnded={onEnded} // Called when video ends
   autoPlay
-/>
+/>;
 ```
 
 ### Why not just use YouTube embeds?
+
 - **Control**: You own the player experience
 - **Analytics**: Detailed viewing statistics
 - **No ads**: YouTube might show competitor ads
@@ -282,13 +315,15 @@ import MuxPlayer from '@mux/mux-player-react';
 
 ---
 
-## 8. Lemon Squeezy
+## 8. Dodo Payments
 
 ### What is it?
-Lemon Squeezy is a **payment processing platform**. It handles hosted checkout and payment events.
+
+Dodo Payments is a **payment processing platform**. It handles hosted checkout and payment events.
 
 ### Why use it?
-- **Security**: Lemon Squeezy handles sensitive payment data (PCI compliance)
+
+- **Security**: Dodo Payments handles sensitive payment data (PCI compliance)
 - **Easy integration**: Well-documented APIs and libraries
 - **Checkout**: Pre-built checkout pages
 - **Webhooks**: Get notified when payments complete
@@ -296,17 +331,17 @@ Lemon Squeezy is a **payment processing platform**. It handles hosted checkout a
 ### How it works in this project
 
 ```
-User clicks "Enroll" 
+User clicks "Enroll"
     ↓
 App creates a Checkout Session
     ↓
-User is redirected to Lemon Squeezy checkout page
+User is redirected to Dodo Payments checkout page
     ↓
 User enters payment info
     ↓
-Lemon Squeezy processes payment
+Dodo Payments processes payment
     ↓
-Lemon Squeezy sends webhook to /api/webhooks/lemon-squeezy
+Dodo Payments sends webhook to /api/webhooks/dodo-jazzlms
     ↓
 App creates Purchase record in database
     ↓
@@ -316,36 +351,43 @@ User can now access the course
 ### Important Concepts
 
 #### Checkout Session
+
 A temporary object that represents the customer's intent to pay:
+
 ```typescript
-const checkoutUrl = await createLemonCheckout({
+const checkoutUrl = await createDodoCheckout({
   storeId,
   variantId,
   email,
-  successUrl: 'https://yoursite.com/success',
+  successUrl: "https://yoursite.com/success",
   customData: { courseId, userId },
 });
 ```
 
 #### Webhooks
-Lemon Squeezy sends events to your server. You must verify the signature:
+
+Dodo Payments sends events to your server. You must verify the signature:
+
 ```typescript
-const isValid = verifyLemonSignature(body, signature);
+const isValid = verifyDodoWebhookSignature(input);
 ```
 
 ### Important Files
-- `src/lib/lemon-squeezy.ts` - Lemon Squeezy API/webhook helpers
+
+- `src/lib/payments/providers/dodo.ts` - Dodo Payments API/webhook helpers
 - `src/app/api/checkout/route.ts` - Create checkout sessions
-- `src/app/api/webhooks/lemon-squeezy/route.ts` - Handle payment events
+- `src/app/api/webhooks/dodo-jazzlms/route.ts` - Handle payment events
 
 ---
 
 ## 9. Vercel
 
 ### What is it?
+
 Vercel is a **cloud platform** for deploying web applications. It was created by the same team that makes Next.js.
 
 ### Why use it?
+
 - **Optimized for Next.js**: Perfect integration
 - **Zero configuration**: Just push to Git and it deploys
 - **Global CDN**: Fast worldwide
@@ -355,7 +397,7 @@ Vercel is a **cloud platform** for deploying web applications. It was created by
 ### Deployment Process
 
 ```
-Push to GitHub 
+Push to GitHub
     ↓
 Vercel detects changes
     ↓
@@ -367,21 +409,26 @@ Your site is live!
 ```
 
 ### Environment Variables
+
 Set these in Vercel dashboard:
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `DATABASE_URL`
-- `LEMON_SQUEEZY_API_KEY`
-- `LEMON_SQUEEZY_WEBHOOK_SECRET`
-- `LEMON_SQUEEZY_STORE_ID`
-- `LEMON_SQUEEZY_VARIANT_ID`
+- `DODO_PAYMENTS_API_KEY`
+- `DODO_PAYMENTS_WEBHOOK_SECRET`
+- `DODO_BUSINESS_ID`
+- `DODO_PRODUCT_ID`
+- `DODO_ENVIRONMENT`
 
 ---
 
 ## 10. Supporting Libraries
 
 ### Zustand (v5.0.8)
+
 A minimal state management library. Used for the confetti store:
+
 ```typescript
 const useConfettiStore = create((set) => ({
   isOpen: false,
@@ -391,30 +438,38 @@ const useConfettiStore = create((set) => ({
 ```
 
 ### Lucide React (v0.414.0)
-Beautiful icon library:
-```tsx
-import { PlayCircle, CheckCircle, Download } from 'lucide-react';
 
-<PlayCircle className="h-4 w-4" />
+Beautiful icon library:
+
+```tsx
+import { PlayCircle, CheckCircle, Download } from "lucide-react";
+
+<PlayCircle className="h-4 w-4" />;
 ```
 
 ### Axios (v1.7.2)
+
 HTTP client for making API requests:
+
 ```typescript
-const response = await axios.post('/api/checkout', { courseId });
+const response = await axios.post("/api/checkout", { courseId });
 ```
 
 ### Sonner (v2.0.7)
-Toast notifications:
-```typescript
-import { toast } from 'sonner';
 
-toast.success('Lesson completed!');
-toast.error('Something went wrong');
+Toast notifications:
+
+```typescript
+import { toast } from "sonner";
+
+toast.success("Lesson completed!");
+toast.error("Something went wrong");
 ```
 
 ### Radix UI
+
 Accessible, unstyled UI components:
+
 - `@radix-ui/react-avatar` - User avatars
 - `@radix-ui/react-dropdown-menu` - Dropdown menus
 - `@radix-ui/react-separator` - Visual separators
@@ -423,14 +478,13 @@ Accessible, unstyled UI components:
 
 ## Technology Decision Summary
 
-| Decision | Why |
-|----------|-----|
-| Next.js over plain React | Need SSR, API routes, and easy deployment |
-| TypeScript over JavaScript | Type safety prevents bugs |
-| Supabase over Firebase | Open-source, PostgreSQL, great auth |
-| Prisma over raw SQL | Type-safe queries, easy migrations |
-| Mux over YouTube | Professional streaming, no ads |
-| Lemon Squeezy as processor (with card/PayPal in hosted checkout) | Single hosted integration with broad payment coverage |
-| Vercel over AWS | Simpler deployment, optimized for Next.js |
-| Tailwind over CSS-in-JS | Faster development, smaller bundle |
-
+| Decision                                                         | Why                                                   |
+| ---------------------------------------------------------------- | ----------------------------------------------------- |
+| Next.js over plain React                                         | Need SSR, API routes, and easy deployment             |
+| TypeScript over JavaScript                                       | Type safety prevents bugs                             |
+| Supabase over Firebase                                           | Open-source, PostgreSQL, great auth                   |
+| Prisma over raw SQL                                              | Type-safe queries, easy migrations                    |
+| Mux over YouTube                                                 | Professional streaming, no ads                        |
+| Dodo Payments as processor (with card/PayPal in hosted checkout) | Single hosted integration with broad payment coverage |
+| Vercel over AWS                                                  | Simpler deployment, optimized for Next.js             |
+| Tailwind over CSS-in-JS                                          | Faster development, smaller bundle                    |

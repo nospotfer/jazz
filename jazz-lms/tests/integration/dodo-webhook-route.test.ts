@@ -145,6 +145,41 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     });
   });
 
+  test("processes paid event and normalizes low-value cent amounts", async () => {
+    const payload = {
+      business_id: "bus_123",
+      type: "payment.succeeded",
+      data: {
+        payment: {
+          id: "pay_124",
+          amount: 990,
+        },
+        metadata: {
+          userId: "user-2",
+          courseId: "course-2",
+        },
+      },
+    };
+
+    const { POST } = await import("@/app/api/webhooks/dodo-jazzlms/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/webhooks/dodo-jazzlms", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerReferenceId: "dodo-pay:pay_124",
+        originalPrice: 9.9,
+        finalPrice: 9.9,
+        discountAmount: 0,
+      }),
+    );
+  });
+
   test("marks event ignored when provider reference id is missing", async () => {
     const payload = {
       type: "payment.succeeded",

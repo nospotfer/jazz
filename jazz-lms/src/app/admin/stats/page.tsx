@@ -32,6 +32,8 @@ export default async function AdminStatsPage() {
     return acc + (purchase.course.price || 0);
   }, 0);
 
+  type PurchasedCourse = (typeof purchases)[number]['course'];
+
   // Curso más vendido
   const courseSales = purchases.reduce((acc, purchase) => {
     const courseId = purchase.courseId;
@@ -45,7 +47,7 @@ export default async function AdminStatsPage() {
     acc[courseId].count += 1;
     acc[courseId].revenue += purchase.course.price || 0;
     return acc;
-  }, {} as Record<string, { course: any; count: number; revenue: number }>);
+  }, {} as Record<string, { course: PurchasedCourse; count: number; revenue: number }>);
 
   const topCourses = Object.values(courseSales)
     .sort((a, b) => b.count - a.count)

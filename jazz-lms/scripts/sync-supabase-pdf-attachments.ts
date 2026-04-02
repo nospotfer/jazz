@@ -86,7 +86,7 @@ const detectAuxOrder = (input: string) => {
 async function listPdfPaths(options: {
   bucket: string;
   prefix: string;
-  supabase: SupabaseClient<any, 'public', any>;
+  supabase: SupabaseClient;
 }) {
   const { bucket, prefix, supabase } = options;
   const output: string[] = [];

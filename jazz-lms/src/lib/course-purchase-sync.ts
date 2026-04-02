@@ -1,4 +1,5 @@
-import { db } from '@/lib/db';
+import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 type UpsertCoursePurchaseInput = {
   userId: string;
@@ -16,12 +17,12 @@ type UpsertCoursePurchaseInput = {
 type LooseObject = Record<string, unknown>;
 
 function toErrorCode(error: unknown): string | null {
-  if (!error || typeof error !== 'object') {
+  if (!error || typeof error !== "object") {
     return null;
   }
 
   const code = (error as { code?: unknown }).code;
-  return typeof code === 'string' ? code : null;
+  return typeof code === "string" ? code : null;
 }
 
 function toErrorMessage(error: unknown): string {
@@ -29,21 +30,25 @@ function toErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
-  return '';
+  return "";
 }
 
 function isMissingRelationOrColumnError(error: unknown): boolean {
   const code = toErrorCode(error);
-  if (code === 'P2021' || code === 'P2022') {
+  if (code === "P2021" || code === "P2022") {
     return true;
   }
 
   const message = toErrorMessage(error).toLowerCase();
-  return message.includes('does not exist') || message.includes('unknown column') || message.includes('invalid column');
+  return (
+    message.includes("does not exist") ||
+    message.includes("unknown column") ||
+    message.includes("invalid column")
+  );
 }
 
 function toMoney(value: number): number {
@@ -55,7 +60,7 @@ function toMoney(value: number): number {
 }
 
 function normalizeCode(value: string | null | undefined): string | null {
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return null;
   }
 
@@ -64,24 +69,27 @@ function normalizeCode(value: string | null | undefined): string | null {
 }
 
 function getMetadataProviderDiscountCode(metadata: unknown): string | null {
-  if (!metadata || typeof metadata !== 'object') {
+  if (!metadata || typeof metadata !== "object") {
     return null;
   }
 
   const providerDiscountCode = (metadata as LooseObject).providerDiscountCode;
-  if (typeof providerDiscountCode === 'string') {
+  if (typeof providerDiscountCode === "string") {
     return normalizeCode(providerDiscountCode);
   }
 
   const dodoDiscountCode = (metadata as LooseObject).dodoDiscountCode;
-  if (typeof dodoDiscountCode === 'string') {
+  if (typeof dodoDiscountCode === "string") {
     return normalizeCode(dodoDiscountCode);
   }
 
   return null;
 }
 
-async function findVoucherByCode(prisma: any, code: string): Promise<{ id: string } | null> {
+async function findVoucherByCode(
+  prisma: typeof db,
+  code: string,
+): Promise<{ id: string } | null> {
   const directMatch = await prisma.voucherCode.findUnique({
     where: {
       code,
@@ -99,7 +107,7 @@ async function findVoucherByCode(prisma: any, code: string): Promise<{ id: strin
     where: {
       code: {
         equals: code,
-        mode: 'insensitive',
+        mode: "insensitive",
       },
     },
     select: {
@@ -108,7 +116,10 @@ async function findVoucherByCode(prisma: any, code: string): Promise<{ id: strin
   });
 }
 
-async function resolveVoucherByInput(prisma: any, input: UpsertCoursePurchaseInput): Promise<string | null> {
+async function resolveVoucherByInput(
+  prisma: typeof db,
+  input: UpsertCoursePurchaseInput,
+): Promise<string | null> {
   const localCode = normalizeCode(input.localVoucherCode ?? input.voucherCode);
   if (localCode) {
     const localVoucher = await findVoucherByCode(prisma, localCode);
@@ -138,7 +149,7 @@ async function resolveVoucherByInput(prisma: any, input: UpsertCoursePurchaseInp
         },
       ],
       metadata: {
-        not: null,
+        not: Prisma.JsonNull,
       },
     },
     select: {
@@ -147,22 +158,55 @@ async function resolveVoucherByInput(prisma: any, input: UpsertCoursePurchaseInp
     },
   });
 
-  const metadataMappedVoucher = voucherCandidates.find((candidate: { metadata: unknown }) => {
-    return getMetadataProviderDiscountCode(candidate.metadata) === providerCode;
-  });
+  const metadataMappedVoucher = voucherCandidates.find(
+    (candidate: { metadata: unknown }) => {
+      return (
+        getMetadataProviderDiscountCode(candidate.metadata) === providerCode
+      );
+    },
+  );
 
   return metadataMappedVoucher?.id ?? null;
 }
 
-export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurchaseInput) {
-  const prisma = db as any;
+async function incrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string) {
+  await tx.voucherCode.update({
+    where: { id: voucherId },
+    data: {
+      currentUses: {
+        increment: 1,
+      },
+    },
+  });
+}
+
+async function decrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string) {
+  await tx.voucherCode.updateMany({
+    where: {
+      id: voucherId,
+      currentUses: {
+        gt: 0,
+      },
+    },
+    data: {
+      currentUses: {
+        decrement: 1,
+      },
+    },
+  });
+}
+
+export async function upsertCoursePurchaseFromProvider(
+  input: UpsertCoursePurchaseInput,
+) {
+  const prisma = db;
   const desiredVoucherId = await resolveVoucherByInput(prisma, input);
   const originalPrice = toMoney(input.originalPrice);
   const discountAmount = toMoney(input.discountAmount);
   const finalPrice = toMoney(input.finalPrice);
   const preserveExistingVoucher = input.preserveExistingVoucher !== false;
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existingPurchase = await tx.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -188,17 +232,19 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
         })
       : null;
 
-    const existingVoucherId = existingRedemption?.voucherId ?? existingPurchase?.voucherId ?? null;
+    const existingVoucherId =
+      existingRedemption?.voucherId ?? existingPurchase?.voucherId ?? null;
     const hasVoucherConflict =
       Boolean(existingVoucherId) &&
       (desiredVoucherId === null || desiredVoucherId !== existingVoucherId);
 
-    const effectiveVoucherId = preserveExistingVoucher && existingVoucherId && hasVoucherConflict
-      ? existingVoucherId
-      : desiredVoucherId;
+    const effectiveVoucherId =
+      preserveExistingVoucher && existingVoucherId && hasVoucherConflict
+        ? existingVoucherId
+        : desiredVoucherId;
 
     if (preserveExistingVoucher && hasVoucherConflict) {
-      console.info('[COURSE_PURCHASE_SYNC_VOUCHER_CONFLICT_PRESERVED]', {
+      console.info("[COURSE_PURCHASE_SYNC_VOUCHER_CONFLICT_PRESERVED]", {
         userId: input.userId,
         courseId: input.courseId,
         providerReferenceId: input.providerReferenceId,
@@ -243,47 +289,10 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
           },
         });
 
-        const voucher = await tx.voucherCode.findUnique({
-          where: { id: effectiveVoucherId },
-          select: { currentUses: true },
-        });
-
-        if (voucher) {
-          await tx.voucherCode.update({
-            where: { id: effectiveVoucherId },
-            data: {
-              currentUses: voucher.currentUses + 1,
-            },
-          });
-        }
+        await incrementVoucherUsage(tx, effectiveVoucherId);
       } else if (existingRedemption.voucherId !== effectiveVoucherId) {
-        const previousVoucher = await tx.voucherCode.findUnique({
-          where: { id: existingRedemption.voucherId },
-          select: { currentUses: true },
-        });
-
-        if (previousVoucher) {
-          await tx.voucherCode.update({
-            where: { id: existingRedemption.voucherId },
-            data: {
-              currentUses: Math.max(0, previousVoucher.currentUses - 1),
-            },
-          });
-        }
-
-        const nextVoucher = await tx.voucherCode.findUnique({
-          where: { id: effectiveVoucherId },
-          select: { currentUses: true },
-        });
-
-        if (nextVoucher) {
-          await tx.voucherCode.update({
-            where: { id: effectiveVoucherId },
-            data: {
-              currentUses: nextVoucher.currentUses + 1,
-            },
-          });
-        }
+        await decrementVoucherUsage(tx, existingRedemption.voucherId);
+        await incrementVoucherUsage(tx, effectiveVoucherId);
 
         await tx.voucherRedemption.update({
           where: {
@@ -295,19 +304,7 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
         });
       }
     } else if (existingRedemption) {
-      const previousVoucher = await tx.voucherCode.findUnique({
-        where: { id: existingRedemption.voucherId },
-        select: { currentUses: true },
-      });
-
-      if (previousVoucher) {
-        await tx.voucherCode.update({
-          where: { id: existingRedemption.voucherId },
-          data: {
-            currentUses: Math.max(0, previousVoucher.currentUses - 1),
-          },
-        });
-      }
+      await decrementVoucherUsage(tx, existingRedemption.voucherId);
 
       await tx.voucherRedemption.delete({
         where: {
@@ -316,7 +313,10 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
       });
     }
 
-    const runDiscountSyncStep = async (operation: string, callback: () => Promise<void>) => {
+    const runDiscountSyncStep = async (
+      operation: string,
+      callback: () => Promise<void>,
+    ) => {
       try {
         await callback();
       } catch (error) {
@@ -324,7 +324,7 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
           throw error;
         }
 
-        console.warn('[COURSE_PURCHASE_SYNC_DISCOUNT_SCHEMA_MISMATCH]', {
+        console.warn("[COURSE_PURCHASE_SYNC_DISCOUNT_SCHEMA_MISMATCH]", {
           operation,
           userId: input.userId,
           courseId: input.courseId,
@@ -336,7 +336,7 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
     };
 
     if (discountAmount > 0 || existingPurchase || effectiveVoucherId) {
-      await runDiscountSyncStep('upsert', async () => {
+      await runDiscountSyncStep("upsert", async () => {
         await tx.discountApplied.upsert({
           where: {
             purchaseId: purchase.id,
@@ -359,7 +359,7 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
     }
 
     if (discountAmount <= 0 && !effectiveVoucherId) {
-      await runDiscountSyncStep('deleteMany', async () => {
+      await runDiscountSyncStep("deleteMany", async () => {
         await tx.discountApplied.deleteMany({
           where: {
             purchaseId: purchase.id,
@@ -370,10 +370,12 @@ export async function upsertCoursePurchaseFromProvider(input: UpsertCoursePurcha
   });
 }
 
-export async function revertCoursePurchaseByProviderReferenceId(providerReferenceId: string) {
-  const prisma = db as any;
+export async function revertCoursePurchaseByProviderReferenceId(
+  providerReferenceId: string,
+) {
+  const prisma = db;
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const purchase = await tx.purchase.findFirst({
       where: {
         providerReferenceId,
@@ -393,19 +395,7 @@ export async function revertCoursePurchaseByProviderReferenceId(providerReferenc
     }
 
     if (purchase.redemption?.voucherId) {
-      const voucher = await tx.voucherCode.findUnique({
-        where: { id: purchase.redemption.voucherId },
-        select: { currentUses: true },
-      });
-
-      if (voucher) {
-        await tx.voucherCode.update({
-          where: { id: purchase.redemption.voucherId },
-          data: {
-            currentUses: Math.max(0, voucher.currentUses - 1),
-          },
-        });
-      }
+      await decrementVoucherUsage(tx, purchase.redemption.voucherId);
     }
 
     await tx.discountApplied.deleteMany({

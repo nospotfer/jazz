@@ -1,6 +1,7 @@
 import { ensureAdminApiPermission } from "@/lib/admin-api";
 import { db } from "@/lib/db";
 import { removeVoucherDiscountSync } from "@/lib/voucher-provider-sync";
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -17,7 +18,7 @@ export async function GET(
       return auth.response;
     }
 
-    const prisma = db as any;
+    const prisma = db;
     const voucher = await prisma.voucherCode.findUnique({
       where: { id: voucherId },
       include: {
@@ -57,7 +58,7 @@ export async function GET(
     }
 
     const userIds: string[] = Array.from(
-      new Set(voucher.redemptions.map((item: any) => String(item.userId))),
+      new Set(voucher.redemptions.map((item) => String(item.userId))),
     );
     const users = userIds.length
       ? await db.user.findMany({
@@ -73,7 +74,7 @@ export async function GET(
       : [];
 
     const usersMap = new Map(users.map((user) => [user.id, user]));
-    const redemptions = voucher.redemptions.map((redemption: any) => ({
+    const redemptions = voucher.redemptions.map((redemption) => ({
       ...redemption,
       user: usersMap.get(redemption.userId) || null,
     }));
@@ -112,7 +113,7 @@ export async function DELETE(
     const url = new URL(req.url);
     const force = url.searchParams.get("force") === "true";
 
-    const prisma = db as any;
+    const prisma = db;
     const voucher = await prisma.voucherCode.findUnique({
       where: { id: voucherId },
       select: {
@@ -169,7 +170,7 @@ export async function DELETE(
       metadata: voucher.metadata,
     });
 
-    const result = await prisma.$transaction(async (tx: any) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.voucherCode.delete({
         where: { id: voucher.id },
       });

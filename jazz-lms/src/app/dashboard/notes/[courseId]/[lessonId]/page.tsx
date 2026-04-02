@@ -75,7 +75,6 @@ export default async function LessonNotesPage({
   }
 
   const lesson = orderedLessons[lessonIndex];
-  const firstLessonId = orderedLessons[0]?.id;
 
   const translationBundle = await getCourseTranslationBundle({
     language,

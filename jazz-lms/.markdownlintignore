@@ -1,0 +1,2 @@
+# Ignore Playwright-generated failure artifacts
+test-results/**/error-context.md

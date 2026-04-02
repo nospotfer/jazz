@@ -275,11 +275,10 @@ export default function ProfilePage() {
 
   const [formData, setFormData] = useState<ProfileFormData>(EMPTY_PROFILE_FORM);
   const medalProgress = medalProfile?.progress ?? null;
-  const medalLessons = medalProfile?.lessons ?? [];
   const activeProfileMedal = medalProgress?.activeProfileMedal ?? "NONE";
   const visibleMedalLessons = useMemo(
-    () => medalLessons.slice(0, 15),
-    [medalLessons],
+    () => (medalProfile?.lessons ?? []).slice(0, 15),
+    [medalProfile?.lessons],
   );
 
   useEffect(() => {

@@ -16,12 +16,12 @@ const faqs: FAQItem[] = [
   {
     pregunta: "¿Cuánto cuesta el curso?",
     respuesta:
-      "El precio depende de las ofertas activas en Udemy, que lanza promociones frecuentes. A menudo puedes encontrarlo con descuento respecto al precio regular. Lo mejor es revisar la página del curso para ver el precio actual.",
+      "El precio depende de las ofertas activas que lanzamos frecuentemente. A menudo encontrarás promociones especiales. Lo mejor es revisar la página del curso para ver el precio actual.",
   },
   {
     pregunta: "¿Qué pasa si me doy cuenta de que el curso no es para mí?",
     respuesta:
-      "No hay problema. Queremos que disfrutes aprendiendo y tengas una experiencia positiva. Si no es lo que esperabas, Udemy ofrece una garantía de devolución de 30 días, sin riesgo y sin preguntas incómodas.",
+      "No hay problema. Queremos que disfrutes aprendiendo y tengas una experiencia positiva. Si cambias de opinión, ofrecemos una garantía de devolución de 30 días, sin riesgo y sin preguntas incómodas.",
   },
   {
     pregunta: "¿Qué aprenderé en este curso?",
@@ -177,10 +177,10 @@ export function FAQFooter() {
                   : "Quanto custa o curso?",
             respuesta:
               language === "en"
-                ? "Pricing may vary according to active promotions. Check the course page for the current amount."
+                ? "Pricing may vary according to active promotions we frequently offer. Check the course page for the current amount."
                 : language === "fr"
-                  ? "Le prix peut varier selon les promotions actives. Consultez la page du cours pour le montant actuel."
-                  : "O preço pode variar conforme promoções ativas. Confira a página do curso para o valor atual.",
+                  ? "Le prix peut varier selon les promotions actives que nous proposons fréquemment. Consultez la page du cours pour le montant actuel."
+                  : "O preço pode variar conforme promoções ativas que oferecemos com frequência. Confira a página do curso para o valor atual.",
           },
           {
             pregunta:
@@ -191,10 +191,10 @@ export function FAQFooter() {
                   : "E se eu perceber que este curso não é para mim?",
             respuesta:
               language === "en"
-                ? "You can use the platform refund policies when available. We want your learning experience to be positive."
+                ? "No problem. We want you to enjoy learning and have a positive experience. If you change your mind, we offer a 30-day refund guarantee, risk-free and no questions asked."
                 : language === "fr"
-                  ? "Vous pouvez utiliser les politiques de remboursement de la plateforme lorsque disponibles. Nous voulons que votre expérience soit positive."
-                  : "Você pode usar as políticas de reembolso da plataforma quando disponíveis. Queremos que sua experiência seja positiva.",
+                  ? "Aucun problème. Nous voulons que vous profitiez de l'apprentissage et que vous ayez une expérience positive. Si vous changez d'avis, nous offrons une garantie de remboursement de 30 jours, sans risque et sans questions."
+                  : "Sem problema. Queremos que você aproveite o aprendizado e tenha uma experiência positiva. Se mudar de ideia, oferecemos garantia de devolução de 30 dias, sem risco e sem perguntas.",
           },
           {
             pregunta:

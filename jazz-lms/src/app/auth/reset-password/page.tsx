@@ -230,7 +230,7 @@ export default function ResetPasswordPage() {
                 })
               : await supabase.auth.verifyOtp({
                   type: "recovery",
-                  token: recoveryToken as string,
+                  token_hash: recoveryToken as string,
                 });
 
             if (otpError) {

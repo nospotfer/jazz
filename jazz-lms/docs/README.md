@@ -9,7 +9,7 @@ Welcome to the Jazz LMS documentation! This guide is designed for junior develop
 | Document | Description |
 |----------|-------------|
 | [01. Overview](./01-overview.md) | What the project is, what it does, and how it all fits together |
-| [02. Technologies](./02-technologies.md) | Deep dive into each technology: Next.js, Supabase, Prisma, Mux, Lemon Squeezy, Vercel |
+| [02. Technologies](./02-technologies.md) | Deep dive into each technology: Next.js, Supabase, Prisma, Mux, Dodo Payments, Vercel |
 | [03. Project Structure](./03-project-structure.md) | How the folders and files are organized |
 | [04. Components](./04-components.md) | All UI components explained with code examples |
 | [05. API Routes](./05-api-routes.md) | Backend endpoints: checkout, progress, webhooks |
@@ -87,9 +87,9 @@ npx prisma generate
 npx prisma studio
 ```
 
-### Test Lemon Squeezy Webhooks Locally
+### Test Dodo Payments Webhooks Locally
 ```bash
-# See docs/10-lemon-local-setup.md for webhook forwarding setup
+# See docs/10-dodo-local-setup.md for webhook forwarding setup
 ```
 
 ---
@@ -104,7 +104,7 @@ npx prisma studio
 | Database client | `src/lib/db.ts` |
 | Auth page | `src/app/auth/page.tsx` |
 | Checkout API | `src/app/api/checkout/route.ts` |
-| Lemon webhook | `src/app/api/webhooks/lemon-squeezy/route.ts` |
+| Dodo webhook | `src/app/api/webhooks/dodo-jazzlms/route.ts` |
 | Environment variables | `.env` (not in git) |
 
 ---
