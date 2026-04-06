@@ -531,6 +531,26 @@ export function CourseViewClient({
   }, [initialHasPurchased]);
 
   useEffect(() => {
+    const handlePageShow = () => {
+      const purchaseStatus = searchParams.get("purchase");
+      const source = searchParams.get("source");
+      const hasSuccessfulCheckoutReturn =
+        purchaseStatus === "success" && source === "dashboard";
+
+      if (!hasSuccessfulCheckoutReturn) {
+        setIsPurchasing(false);
+        setIsVerifyingPurchase(false);
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [searchParams]);
+
+  useEffect(() => {
     if (!hasPurchased) {
       setProgressByLessonId({});
       return;
@@ -724,6 +744,8 @@ export function CourseViewClient({
       });
 
       if (response.data?.url) {
+        setIsMethodModalOpen(false);
+        setIsPurchasing(false);
         window.location.assign(response.data.url);
         return;
       }
