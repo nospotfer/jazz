@@ -10,6 +10,7 @@ import {
   loadPaymentMethodModal,
   warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
+import { shouldResetCheckoutTransientState } from "@/lib/checkout-return";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
 import axios from "axios";
 import {
@@ -532,12 +533,7 @@ export function CourseViewClient({
 
   useEffect(() => {
     const handlePageShow = () => {
-      const purchaseStatus = searchParams.get("purchase");
-      const source = searchParams.get("source");
-      const hasSuccessfulCheckoutReturn =
-        purchaseStatus === "success" && source === "dashboard";
-
-      if (!hasSuccessfulCheckoutReturn) {
+      if (shouldResetCheckoutTransientState(searchParams)) {
         setIsPurchasing(false);
         setIsVerifyingPurchase(false);
       }
