@@ -48,6 +48,19 @@ function isProviderCheckoutFailure(error: unknown) {
   );
 }
 
+function isInvalidJsonBodyError(error: unknown) {
+  if (!(error instanceof SyntaxError)) {
+    return false;
+  }
+
+  const message = error.message.toLowerCase();
+  return (
+    message.includes("json") ||
+    message.includes("unexpected token") ||
+    message.includes("unexpected end")
+  );
+}
+
 export async function POST(req: Request) {
   const paymentProvider = getPaymentProvider();
   let copy = {
@@ -496,6 +509,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
     console.log("[CHECKOUT_ERROR]", error);
+    if (isInvalidJsonBodyError(error)) {
+      return new NextResponse(copy.invalidRequest, { status: 400 });
+    }
     if (isProviderCheckoutFailure(error)) {
       return new NextResponse(copy.paymentsUnavailable, { status: 503 });
     }

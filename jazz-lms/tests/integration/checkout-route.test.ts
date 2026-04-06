@@ -128,6 +128,19 @@ describe("POST /api/checkout", () => {
     expect(res.status).toBe(400);
   }, 15000);
 
+  test("returns 400 for malformed json body", async () => {
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = new Request(`${APP_URL}/api/checkout`, {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: APP_URL },
+      body: "{invalid",
+    });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(400);
+  });
+
   test("returns 400 for unsupported payment method", async () => {
     const { POST } = await import("@/app/api/checkout/route");
     const req = createCheckoutRequest({ courseId: "c1", paymentMethod: "pix" });
