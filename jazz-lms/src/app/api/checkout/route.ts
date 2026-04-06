@@ -37,6 +37,17 @@ function normalizeOrigin(value: string | null | undefined) {
   }
 }
 
+function isProviderCheckoutFailure(error: unknown) {
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  return (
+    message.includes("dodo checkout create failed") ||
+    message.includes("missing dodo") ||
+    message.includes("fetch failed") ||
+    message.includes("aborted") ||
+    message.includes("timeout")
+  );
+}
+
 export async function POST(req: Request) {
   const paymentProvider = getPaymentProvider();
   let copy = {
@@ -404,6 +415,8 @@ export async function POST(req: Request) {
       const providerConfigFailure =
         errorMessage.includes("missing dodo");
 
+      const providerCheckoutFailure = isProviderCheckoutFailure(error);
+
       if (voucherMaxUsesReachedAtProvider) {
         if (voucherValidation?.valid) {
           const nextCurrentUses =
@@ -463,6 +476,10 @@ export async function POST(req: Request) {
         return new NextResponse(copy.paymentsUnavailable, { status: 503 });
       }
 
+      if (providerCheckoutFailure) {
+        return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+      }
+
       console.error("[CHECKOUT_PROVIDER_CREATE_ERROR]", {
         courseId,
         userId: user.id,
@@ -479,6 +496,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
     console.log("[CHECKOUT_ERROR]", error);
+    if (isProviderCheckoutFailure(error)) {
+      return new NextResponse(copy.paymentsUnavailable, { status: 503 });
+    }
     return new NextResponse(copy.internalError, { status: 500 });
   }
 }
