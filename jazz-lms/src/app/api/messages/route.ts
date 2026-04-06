@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { ensureMessagingTables } from '@/lib/messages-db';
 import { randomUUID } from 'crypto';
 import { Resend } from 'resend';
+import { Prisma } from '@prisma/client';
 
 type ThreadRow = {
   id: string;
@@ -34,6 +35,28 @@ const professorEmail = (
   process.env.PROFESSOR_EMAIL?.trim() ||
   'culturadeljazz@gmail.com'
 ).toLowerCase();
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  if (
+    error instanceof Prisma.PrismaClientInitializationError
+    || error instanceof Prisma.PrismaClientRustPanicError
+  ) {
+    return true;
+  }
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return ['P1001', 'P1002', 'P1008', 'P1017'].includes(error.code);
+  }
+
+  const message = error instanceof Error ? error.message.toLowerCase() : '';
+  return (
+    message.includes('database')
+    || message.includes('connection')
+    || message.includes('connect')
+    || message.includes('timeout')
+    || message.includes('pool')
+  );
+}
 
 async function notifyProfessor(params: {
   subject: string;
@@ -92,8 +115,6 @@ function subjectSimilarityScore(a: string, b: string) {
 
 export async function GET() {
   try {
-    await ensureMessagingTables();
-
     const supabase = createClient();
     const {
       data: { user },
@@ -102,6 +123,8 @@ export async function GET() {
     if (!user?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
+
+    await ensureMessagingTables();
 
     const isProfessor = user.email.toLowerCase() === professorEmail;
 
@@ -190,6 +213,11 @@ export async function GET() {
       threads: rows,
     });
   } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      console.error('[messages:get:db-unavailable]', error);
+      return new NextResponse('Messaging temporarily unavailable', { status: 503 });
+    }
+
     console.error('[messages:get]', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
@@ -197,8 +225,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await ensureMessagingTables();
-
     const supabase = createClient();
     const {
       data: { user },
@@ -213,6 +239,8 @@ export async function POST(req: Request) {
         status: 403,
       });
     }
+
+    await ensureMessagingTables();
 
     const body = await req.json();
     const subject = String(body?.subject || '').trim();
@@ -342,6 +370,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ id: threadId, createdAt: now, createdNewThread: !matchedThread });
   } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      console.error('[messages:create:db-unavailable]', error);
+      return new NextResponse('Messaging temporarily unavailable', { status: 503 });
+    }
+
     console.error('[messages:create]', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
