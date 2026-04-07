@@ -401,6 +401,27 @@ export default function AuthPage() {
         return;
       }
 
+      // Ensure server-rendered routes can read the authenticated session
+      // right after password login by syncing tokens into http cookies.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      const refreshToken = sessionData.session?.refresh_token;
+
+      if (accessToken && refreshToken) {
+        const sessionSyncResponse = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ accessToken, refreshToken }),
+        });
+
+        if (!sessionSyncResponse.ok) {
+          setLoginError(copy.signInFailedRetry);
+          return;
+        }
+      }
+
       const { data: signedInUserData } = await supabase.auth.getUser();
       const currentMetadata = signedInUserData.user?.user_metadata || {};
       if (currentMetadata.avatar_mode !== "fixed") {
