@@ -159,6 +159,28 @@ describe("POST /api/checkout", () => {
     expect(res.status).toBe(401);
   });
 
+  test("continues checkout flow when prisma user lookup fails", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(false);
+    mocks.getUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "student@example.com" } },
+    });
+    mocks.userFindUnique.mockRejectedValue(new Error("relation User missing"));
+    mocks.courseFindUnique.mockResolvedValue({
+      id: "c1",
+      title: "Jazz",
+      description: "Desc",
+      price: 29.99,
+    });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+
+    const { POST } = await import("@/app/api/checkout/route");
+    const req = createCheckoutRequest({ courseId: "c1" });
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(503);
+  });
+
   test("returns 404 when course does not exist", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },

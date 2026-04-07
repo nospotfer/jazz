@@ -1,0 +1,1716 @@
+=== QA RERUN START Wed 01 Apr 2026 03:54:20 PM -03 ===
+===== RUNNING: npm run lint =====
+
+> jazz-lms@0.1.0 lint
+> eslint .
+
+
+/home/dudu/git/jazz/jazz-lms/coverage/block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/home/dudu/git/jazz/jazz-lms/coverage/lcov-report/block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/home/dudu/git/jazz/jazz-lms/scripts/sync-supabase-pdf-attachments.ts
+  89:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/admin/stats/page.tsx
+  48:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/admin/vouchers/[voucherId]/page.tsx
+   14:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   49:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/[voucherId]/route.ts
+   20:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   60:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/[voucherId]/toggle/route.ts
+  35:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/bulk-delete/route.ts
+   42:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/export/route.ts
+   35:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/generate/route.ts
+  130:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  195:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/purge-legacy/route.ts
+  34:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  66:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  87:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  92:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/reset-user-state/route.ts
+   41:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/revert-test-use/route.ts
+  32:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/route.ts
+  24:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/checkout/route.ts
+  170:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  247:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  248:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/dev/reset-test-purchases/route.ts
+  21:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/purchases/route.ts
+  44:10  warning  'asObject' is defined but never used      @typescript-eslint/no-unused-vars
+  64:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/vouchers/redeem/route.ts
+  71:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/webhooks/dodo-jazzlms/route.ts
+   50:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/course-completion-recognition/page.tsx
+  11:15  warning  'QuizMedalTierValue' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/layout.tsx
+  3:10  warning  'createClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/notes/[courseId]/[lessonId]/page.tsx
+  78:9  warning  'firstLessonId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/profile/page.tsx
+  278:9  warning  The 'medalLessons' logical expression could make the dependencies of useMemo Hook (at line 282) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'medalLessons' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/course-player.tsx
+   128:10  warning  'getAttachmentDisplayName' is defined but never used                                                               @typescript-eslint/no-unused-vars
+   698:23  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+   764:21  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+   794:21  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+  1046:6   warning  React Hook useEffect has a missing dependency: 'openPdfPreview'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/course-view-client.tsx
+  203:7   warning  'LESSON_SUBTITLES' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  274:7   warning  'LESSON_DESCRIPTIONS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  544:11  warning  't' is assigned a value but never used                    @typescript-eslint/no-unused-vars
+  943:9   warning  'firstName' is assigned a value but never used            @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/lesson-quiz-medal.tsx
+  1:17  warning  'Music2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/lesson-quiz-overlay.tsx
+   11:3  warning  'Star' is defined but never used                                                                                                                 @typescript-eslint/no-unused-vars
+  481:6  warning  React Hook useEffect has a missing dependency: 'openQuiz'. Either include it or remove the dependency array                                      react-hooks/exhaustive-deps
+  489:6  warning  React Hook useEffect has missing dependencies: 'hasQuizAvailable', 'isOpen', and 'openQuiz'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  497:6  warning  React Hook useEffect has a missing dependency: 'currentQuestion'. Either include it or remove the dependency array                               react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx
+   76:14  warning  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx:76:14
+  74 |   const addHighlight = (props: RenderHighlightTargetProps, color: string) => {
+  75 |     const newHighlight: SavedHighlight = {
+> 76 |       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+     |              ^^^^^^^^^^ Cannot call impure function
+  77 |       color,
+  78 |       quote: props.selectedText,
+  79 |       highlightAreas: props.highlightAreas,                      react-hooks/purity
+   76:28  warning  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx:76:28
+  74 |   const addHighlight = (props: RenderHighlightTargetProps, color: string) => {
+  75 |     const newHighlight: SavedHighlight = {
+> 76 |       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+     |                            ^^^^^^^^^^^^^ Cannot call impure function
+  77 |       color,
+  78 |       quote: props.selectedText,
+  79 |       highlightAreas: props.highlightAreas,  react-hooks/purity
+  261:6   warning  React Hook useEffect has a missing dependency: 'downloadLabels'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/purchase-success-modal.tsx
+  49:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/purchase-success-modal.tsx:49:7
+  47 |       return () => clearTimeout(timer);
+  48 |     } else {
+> 49 |       setShowContent(false);
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |     }
+  51 |   }, [isVisible]);
+  52 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/unlock-animation.tsx
+  84:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/unlock-animation.tsx:84:7
+  82 |   useEffect(() => {
+  83 |     if (isVisible) {
+> 84 |       startAnimation();
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  85 |     }
+  86 |   }, [isVisible, startAnimation]);
+  87 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/course-completion-certificate.tsx
+  167:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/jazz-specialist-certificate.tsx
+  110:13  warning  'textX' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/lesson-notes-editor.tsx
+  133:6  warning  React Hook useEffect has missing dependencies: 'courseId' and 'lessonId'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/messages-client.tsx
+  253:6  warning  React Hook useEffect has a missing dependency: 'loadThreads'. Either include it or remove the dependency array         react-hooks/exhaustive-deps
+  262:6  warning  React Hook useEffect has a missing dependency: 'loadThreadMessages'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/my-courses-client.tsx
+  82:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/my-courses-client.tsx:82:9
+  80 |       window.localStorage.removeItem(COMPLETION_ALERT_ACK_KEY);
+  81 |       if (completionAlertPending) {
+> 82 |         setCompletionAlertPending(false);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  83 |       }
+  84 |       window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
+  85 |       return;  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/pdf-view-client.tsx
+  151:21  warning  Unexpected any. Specify a different type                                                                                           @typescript-eslint/no-explicit-any
+  220:6   warning  React Hook useEffect has missing dependencies: 'loadSignedUrl' and 'selected'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/profile-jazz-playlist.tsx
+  88:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/profile-jazz-playlist.tsx:88:5
+  86 |
+  87 |   useEffect(() => {
+> 88 |     setActiveIndex((current) => Math.min(current, Math.max(playlist.length - 1, 0)));
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  89 |   }, [playlist.length]);
+  90 |
+  91 |   useEffect(() => {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/landing/promo-video.tsx
+  14:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx
+   85:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx:85:7
+  83 |   useEffect(() => {
+  84 |     if (!notesVideos.length) {
+> 85 |       setSelectedNote(null);
+     |       ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  86 |       setNoteContent('');
+  87 |       return;
+  88 |     }                                                                                                                                        react-hooks/set-state-in-effect
+  105:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx:105:5
+  103 |     const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
+  104 |     const saved = window.localStorage.getItem(storageKey) || '';
+> 105 |     setNoteContent(saved);
+      |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  106 |   }, [selectedNote]);
+  107 |
+  108 |   const onChangeSidebarNotes = (value: string) => {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/sidebar.tsx
+  292:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/sidebar.tsx:292:5
+  290 |   // Close sidebar on route change
+  291 |   useEffect(() => {
+> 292 |     setIsOpen(false);
+      |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  293 |   }, [pathname]);
+  294 |
+  295 |   // Prevent body scroll when sidebar is open on mobile  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/music/music-platform-links.tsx
+  7:30  warning  'platform' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/payment/payment-method-modal.tsx
+  94:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/payment/payment-method-modal.tsx:94:7
+  92 |   useEffect(() => {
+  93 |     if (isOpen) {
+> 94 |       setAppliedVoucher(null);
+     |       ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  95 |     }
+  96 |   }, [isOpen]);
+  97 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/theme-toggle.tsx
+  12:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/theme-toggle.tsx:12:5
+  10 |
+  11 |   useEffect(() => {
+> 12 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  13 |   }, []);
+  14 |
+  15 |   if (!mounted) {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/lib/admin.ts
+  3:10  warning  'createClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/lib/course-purchase-sync.ts
+   89:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  171:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  201:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  375:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  377:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/lib/payments/provider.ts
+  16:28  warning  '_value' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/lib/vouchers.ts
+  78:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/client.ts
+  22:74  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/middleware.ts
+  70:5  warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/server.ts
+  12:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:20  warning  '_' is defined but never used             @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/tests/regression/regression.test.ts
+  1:34  warning  'vi' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/tests/security/security.test.ts
+  1:10  warning  'afterEach' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 104 problems (0 errors, 104 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+
+===== EXIT CODE: 0 (npm run lint) =====
+===== RUNNING: npm run test =====
+
+> jazz-lms@0.1.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/dudu/git/jazz/jazz-lms
+
+ ✓ tests/unit/course-purchase-sync.test.ts (3 tests) 472ms
+   ✓ upsertCoursePurchaseFromProvider > preserves existing voucher redemption on conflicting later write by default 349ms
+stderr | tests/integration/dashboard-pdf-count-route.test.ts > GET /api/dashboard/pdf-count > returns 500 with zero on internal errors
+[pdf-count] Error: supabase down
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/dashboard-pdf-count-route.test.ts:163:37
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+ ✓ tests/integration/dashboard-pdf-count-route.test.ts (6 tests) 884ms
+   ✓ GET /api/dashboard/pdf-count > returns 401 with zero when unauthenticated 811ms
+stdout | tests/integration/purchases-route.test.ts > GET /api/purchases > returns 500 on internal errors
+[PURCHASES_GET_ERROR] Error: db down
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:86:46
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 503 when Dodo API is unavailable during reconcile
+[PURCHASES_RECONCILE_DODO_PROVIDER_UNAVAILABLE] {
+  userId: 'u1',
+  courseId: 'course-1',
+  paymentId: 'pay_api_1',
+  message: 'Dodo payment retrieve failed: network'
+}
+
+stderr | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 503 when Dodo API rejects with provider-unavailable string error
+[PURCHASES_RECONCILE_DODO_PROVIDER_UNAVAILABLE] {
+  userId: 'u1',
+  courseId: 'course-1',
+  paymentId: 'pay_api_1',
+  message: 'Dodo payment retrieve failed: upstream timeout'
+}
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 when Dodo API throws non-standard object error
+[PURCHASES_POST_ERROR] { type: 'unexpected' }
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 when Dodo API throws a non-provider error
+[PURCHASES_POST_ERROR] Error: unexpected timeout
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:787:49
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 on unexpected reconciliation errors
+[PURCHASES_POST_ERROR] Error: unexpected
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:808:57
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/integration/purchases-route.test.ts (26 tests) 818ms
+   ✓ GET /api/purchases > returns 401 when unauthenticated 584ms
+stderr | tests/integration/dodo-webhook-route.test.ts > POST /api/webhooks/dodo-jazzlms > returns 500 when processing fails after event upsert
+[DODO_WEBHOOK_PROCESSING_ERROR] {
+  eventType: 'payment.succeeded',
+  eventId: 'wh_evt_1',
+  error: Error: db down
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/dodo-webhook-route.test.ts:360:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stderr | tests/integration/dodo-webhook-route.test.ts > POST /api/webhooks/dodo-jazzlms > returns 500 even when marking event as failed also throws
+[DODO_WEBHOOK_PROCESSING_ERROR] {
+  eventType: 'payment.succeeded',
+  eventId: 'wh_evt_1',
+  error: Error: db down
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/dodo-webhook-route.test.ts:396:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+ ✓ tests/integration/dodo-webhook-route.test.ts (13 tests) 959ms
+   ✓ POST /api/webhooks/dodo-jazzlms > returns 401 for stale timestamp 609ms
+stderr | tests/integration/dev-reset-purchases-route.test.ts > POST /api/dev/reset-test-purchases > returns 500 on internal error
+[DEV_RESET_TEST_PURCHASES_ERROR] Error: db error
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/dev-reset-purchases-route.test.ts:153:49
+    at ManualMockedModule.factory (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/vi.DgezovHB.js:3839:47)
+    at ManualMockedModule.resolve (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/mocker/dist/chunk-registry.js:144:28)
+    at VitestMocker.callFunctionMock (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:377:32)
+    at VitestMocker.requestWithMock (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:514:27)
+    at VitestExecutor.dependencyRequest (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:792:38)
+    at request (file:///home/dudu/git/jazz/jazz-lms/node_modules/vite-node/dist/client.mjs:271:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at /home/dudu/git/jazz/jazz-lms/src/app/api/dev/reset-test-purchases/route.ts:3:31
+    at VitestExecutor.runModule (file:///home/dudu/git/jazz/jazz-lms/node_modules/vite-node/dist/client.mjs:399:5)
+
+ ✓ tests/integration/dev-reset-purchases-route.test.ts (5 tests) 1184ms
+   ✓ POST /api/dev/reset-test-purchases > returns 404 for non-local requests 683ms
+stderr | tests/system/functional.test.ts > Functional: Free course purchase flow > user cannot purchase same free course twice
+[CHECKOUT_ALREADY_PURCHASED] {
+  userId: 'u1',
+  userEmail: 'student@example.com',
+  courseId: 'c1',
+  purchaseId: 'existing-purchase',
+  providerReferenceId: null
+}
+
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token payload has no JWT segments
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: [MUX_PROMO_TOKEN_VALIDATION_FAILED] {"playbackValid":false,"thumbnailValid":true,"storyboardValid":true}
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:88:13)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:91:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/unit/jazz-medal-progress.test.ts (4 tests) 1384ms
+   ✓ jazz medal entitlement > returns no active medal when user has no course or lesson purchase 934ms
+ ✓ tests/system/functional.test.ts (5 tests) 1524ms
+   ✓ Functional: Free course purchase flow > user can checkout and get redirected for a free course 1323ms
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token payload cannot be parsed as JSON
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: [MUX_PROMO_TOKEN_VALIDATION_FAILED] {"playbackValid":false,"thumbnailValid":true,"storyboardValid":true}
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:88:13)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:122:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token generation throws
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: boom
+    at Proxy.<anonymous> (/home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:138:15)
+    at Proxy.mockCall (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/spy/dist/index.js:61:17)
+    at Proxy.spy (file:///home/dudu/git/jazz/jazz-lms/node_modules/tinyspy/dist/index.js:45:80)
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:81:20)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:143:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+
+ ✓ tests/integration/promo-playback-route.test.ts (5 tests) 1429ms
+   ✓ GET /api/mux/promo-playback route > returns unsigned fallback payload when mux env is missing 1001ms
+ ✓ tests/contract/api-contracts.test.ts (5 tests) 1431ms
+   ✓ API Contract: /api/purchases response shape > each purchase has required fields with correct types 1152ms
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 when already purchased
+[CHECKOUT_ALREADY_PURCHASED] {
+  userId: 'u1',
+  userEmail: 'student@example.com',
+  courseId: 'c1',
+  purchaseId: 'p1',
+  providerReferenceId: null
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > allows admin checkout flow even when already purchased
+[CHECKOUT_ALREADY_PURCHASED_ADMIN_BYPASS] {
+  userId: 'u1',
+  userEmail: 'admin@example.com',
+  courseId: 'c1',
+  purchaseId: 'p1',
+  role: 'SUPER_ADMIN'
+}
+
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 on unexpected error
+[CHECKOUT_ERROR] Error: unexpected
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:350:37
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > falls back to checkout without voucher when provider rejects discount
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: 'JAZZ5' }
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 when voucher fallback checkout also fails
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: 'JAZZ5' }
+[CHECKOUT_FALLBACK_FULL_PRICE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  voucherCode: 'JAZZ5',
+  fallbackError: Error: fallback failed
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:532:30
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > falls back without voucher context when provider rejects discount
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: null }
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 and syncs voucher usage when provider reports max redemptions
+[CHECKOUT_VOUCHER_MAX_USES_SYNCED] {
+  voucherId: 'v1',
+  voucherCode: 'JAZZ5',
+  localMaxUses: 12,
+  localCurrentUsesBefore: 11,
+  localCurrentUsesAfter: 12
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 and increments usage from currentUses when voucher has no maxUses
+[CHECKOUT_VOUCHER_MAX_USES_SYNCED] {
+  voucherId: 'v2',
+  voucherCode: 'JAZZNOMAX',
+  localMaxUses: null,
+  localCurrentUsesBefore: 3,
+  localCurrentUsesAfter: 4
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 on fallback failure even when voucher is not locally validated
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: null }
+[CHECKOUT_FALLBACK_FULL_PRICE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  voucherCode: null,
+  fallbackError: Error: fallback failed
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:679:30
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider checkout fails with generic error
+[CHECKOUT_ERROR] Error: timeout
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:727:56
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider checkout fails with generic error
+[CHECKOUT_PROVIDER_CREATE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  provider: 'dodo',
+  voucherCode: null,
+  error: Error: timeout
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:727:56
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider generic error occurs with validated voucher
+[CHECKOUT_ERROR] Error: unexpected provider failure
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:764:7
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider generic error occurs with validated voucher
+[CHECKOUT_PROVIDER_CREATE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  provider: 'dodo',
+  voucherCode: 'JAZZ5',
+  error: Error: unexpected provider failure
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:764:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+ ✓ tests/integration/checkout-route.test.ts (25 tests) 1365ms
+   ✓ POST /api/checkout > returns 400 for missing courseId 1080ms
+ ✓ tests/security/security.test.ts (12 tests) 1638ms
+   ✓ Security: Authentication enforcement > purchases route rejects unauthenticated requests 1016ms
+ ✓ tests/unit/permissions.test.ts (10 tests) 71ms
+ ✓ tests/regression/regression.test.ts (13 tests) 153ms
+ ✓ tests/unit/test-mode.test.ts (6 tests) 154ms
+ ✓ tests/unit/app-origin.test.ts (5 tests) 157ms
+ ✓ tests/unit/language.test.ts (12 tests) 42ms
+ ✓ tests/unit/profile-avatars.test.ts (13 tests) 47ms
+stderr | tests/integration/google-auth-callback-route.test.ts > GET /auth/callback > redirects back to auth when exchangeCodeForSession fails
+Error exchanging auth code for session: Error: exchange failed
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/google-auth-callback-route.test.ts:71:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/unit/supabase-config.test.ts (7 tests) 26ms
+ ✓ tests/integration/admin-voucher-revert-test-use-route.test.ts (3 tests) 799ms
+   ✓ POST /api/admin/vouchers/revert-test-use > returns auth response when admin permission fails 559ms
+ ✓ tests/integration/google-auth-callback-route.test.ts (7 tests) 1409ms
+   ✓ GET /auth/callback > redirects back to auth with oauth_error when code is missing 1143ms
+stderr | tests/integration/messages-unread-count-route.test.ts > GET /api/messages/unread-count > returns 500 when ensureMessagingTables fails
+[messages:unread-count] Error: migration failed
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/messages-unread-count-route.test.ts:71:42
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/integration/messages-unread-count-route.test.ts (4 tests) 613ms
+   ✓ GET /api/messages/unread-count > returns 401 when unauthenticated 540ms
+ ✓ tests/integration/admin-vouchers-route.test.ts (2 tests) 737ms
+   ✓ GET /api/admin/vouchers > returns auth response when admin permission fails 626ms
+ ✓ tests/unit/jazz-playlist.test.ts (4 tests) 61ms
+ ✓ tests/unit/dodo-events.test.ts (4 tests) 46ms
+ ✓ tests/unit/lesson-quiz.test.ts (3 tests) 43ms
+ ✓ tests/unit/dodo-provider.test.ts (3 tests) 46ms
+ ✓ tests/unit/lesson-progress.test.ts (4 tests) 27ms
+ ✓ tests/unit/mux-playback.test.ts (4 tests) 55ms
+ ✓ tests/unit/email-validation.test.ts (4 tests) 44ms
+ ✓ tests/unit/voucher-artists.test.ts (3 tests) 48ms
+ ✓ tests/unit/utils.test.ts (6 tests) 61ms
+ ✓ tests/unit/pricing.test.ts (3 tests) 30ms
+ ✓ tests/unit/checkout-helpers.test.ts (2 tests) 39ms
+ ✓ tests/integration/lesson-checkout-route.test.ts (1 test) 394ms
+   ✓ POST /api/lesson-checkout (deprecated) > returns 410 Gone 382ms
+ ✓ tests/integration/course-player-language-switch.test.tsx (2 tests) 554ms
+   ✓ CoursePlayer language switch behavior > does not refetch mux playback when language changes, but refreshes PDF language 340ms
+stdout | tests/integration/auth-password-reset-flow.test.tsx > Password reset QA flow > reset page validates mismatch and updates password without errors
+[auth/reset-password] bootstrap { hasResetError: false, isFromCallback: false }
+[auth/reset-password] {
+  stage: 'set-session-success',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+[auth/reset-password] {
+  stage: 'session-check',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false,
+  hasSessionAfterRetries: true
+}
+[auth/reset-password] {
+  stage: 'token-valid',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+
+stdout | tests/integration/auth-password-reset-flow.test.tsx > Password reset QA flow > reset page has explicit sign-out button
+[auth/reset-password] bootstrap { hasResetError: false, isFromCallback: false }
+[auth/reset-password] {
+  stage: 'set-session-success',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+[auth/reset-password] {
+  stage: 'session-check',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false,
+  hasSessionAfterRetries: true
+}
+[auth/reset-password] {
+  stage: 'token-valid',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+
+ ✓ tests/integration/auth-password-reset-flow.test.tsx (5 tests) 4138ms
+   ✓ Password reset QA flow > opens forgot password from auth screen 1780ms
+   ✓ Password reset QA flow > reset page validates mismatch and updates password without errors 1787ms
+
+ Test Files  36 passed (36)
+      Tests  239 passed (239)
+   Start at  15:55:18
+   Duration  16.91s (transform 10.80s, setup 0ms, collect 15.61s, tests 22.88s, environment 6.88s, prepare 21.20s)
+
+===== EXIT CODE: 0 (npm run test) =====
+===== RUNNING: npm run test:integration =====
+
+> jazz-lms@0.1.0 test:integration
+> vitest run tests/integration
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/dudu/git/jazz/jazz-lms
+
+stderr | tests/integration/messages-unread-count-route.test.ts > GET /api/messages/unread-count > returns 500 when ensureMessagingTables fails
+[messages:unread-count] Error: migration failed
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/messages-unread-count-route.test.ts:71:42
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/integration/messages-unread-count-route.test.ts (4 tests) 717ms
+   ✓ GET /api/messages/unread-count > returns 401 when unauthenticated 658ms
+stderr | tests/integration/dashboard-pdf-count-route.test.ts > GET /api/dashboard/pdf-count > returns 500 with zero on internal errors
+[pdf-count] Error: supabase down
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/dashboard-pdf-count-route.test.ts:163:37
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+ ✓ tests/integration/dashboard-pdf-count-route.test.ts (6 tests) 784ms
+   ✓ GET /api/dashboard/pdf-count > returns 401 with zero when unauthenticated 715ms
+ ✓ tests/integration/lesson-checkout-route.test.ts (1 test) 892ms
+   ✓ POST /api/lesson-checkout (deprecated) > returns 410 Gone 882ms
+ ✓ tests/integration/admin-vouchers-route.test.ts (2 tests) 908ms
+   ✓ GET /api/admin/vouchers > returns auth response when admin permission fails 712ms
+ ✓ tests/integration/admin-voucher-revert-test-use-route.test.ts (3 tests) 1075ms
+   ✓ POST /api/admin/vouchers/revert-test-use > returns auth response when admin permission fails 788ms
+stderr | tests/integration/google-auth-callback-route.test.ts > GET /auth/callback > redirects back to auth when exchangeCodeForSession fails
+Error exchanging auth code for session: Error: exchange failed
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/google-auth-callback-route.test.ts:71:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/dodo-webhook-route.test.ts > POST /api/webhooks/dodo-jazzlms > returns 500 when processing fails after event upsert
+[DODO_WEBHOOK_PROCESSING_ERROR] {
+  eventType: 'payment.succeeded',
+  eventId: 'wh_evt_1',
+  error: Error: db down
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/dodo-webhook-route.test.ts:360:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stderr | tests/integration/dodo-webhook-route.test.ts > POST /api/webhooks/dodo-jazzlms > returns 500 even when marking event as failed also throws
+[DODO_WEBHOOK_PROCESSING_ERROR] {
+  eventType: 'payment.succeeded',
+  eventId: 'wh_evt_1',
+  error: Error: db down
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/dodo-webhook-route.test.ts:396:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+ ✓ tests/integration/dodo-webhook-route.test.ts (13 tests) 1166ms
+   ✓ POST /api/webhooks/dodo-jazzlms > returns 401 for stale timestamp 966ms
+stderr | tests/integration/dev-reset-purchases-route.test.ts > POST /api/dev/reset-test-purchases > returns 500 on internal error
+[DEV_RESET_TEST_PURCHASES_ERROR] Error: db error
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/dev-reset-purchases-route.test.ts:153:49
+    at ManualMockedModule.factory (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/vi.DgezovHB.js:3839:47)
+    at ManualMockedModule.resolve (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/mocker/dist/chunk-registry.js:144:28)
+    at VitestMocker.callFunctionMock (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:377:32)
+    at VitestMocker.requestWithMock (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:514:27)
+    at VitestExecutor.dependencyRequest (file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:792:38)
+    at request (file:///home/dudu/git/jazz/jazz-lms/node_modules/vite-node/dist/client.mjs:271:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at /home/dudu/git/jazz/jazz-lms/src/app/api/dev/reset-test-purchases/route.ts:3:31
+    at VitestExecutor.runModule (file:///home/dudu/git/jazz/jazz-lms/node_modules/vite-node/dist/client.mjs:399:5)
+
+ ✓ tests/integration/dev-reset-purchases-route.test.ts (5 tests) 1140ms
+   ✓ POST /api/dev/reset-test-purchases > returns 404 for non-local requests 592ms
+stdout | tests/integration/purchases-route.test.ts > GET /api/purchases > returns 500 on internal errors
+[PURCHASES_GET_ERROR] Error: db down
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:86:46
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 503 when Dodo API is unavailable during reconcile
+[PURCHASES_RECONCILE_DODO_PROVIDER_UNAVAILABLE] {
+  userId: 'u1',
+  courseId: 'course-1',
+  paymentId: 'pay_api_1',
+  message: 'Dodo payment retrieve failed: network'
+}
+
+stderr | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 503 when Dodo API rejects with provider-unavailable string error
+[PURCHASES_RECONCILE_DODO_PROVIDER_UNAVAILABLE] {
+  userId: 'u1',
+  courseId: 'course-1',
+  paymentId: 'pay_api_1',
+  message: 'Dodo payment retrieve failed: upstream timeout'
+}
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 when Dodo API throws non-standard object error
+[PURCHASES_POST_ERROR] { type: 'unexpected' }
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 when Dodo API throws a non-provider error
+[PURCHASES_POST_ERROR] Error: unexpected timeout
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:787:49
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stdout | tests/integration/purchases-route.test.ts > POST /api/purchases > returns 500 on unexpected reconciliation errors
+[PURCHASES_POST_ERROR] Error: unexpected
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/purchases-route.test.ts:808:57
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 when already purchased
+[CHECKOUT_ALREADY_PURCHASED] {
+  userId: 'u1',
+  userEmail: 'student@example.com',
+  courseId: 'c1',
+  purchaseId: 'p1',
+  providerReferenceId: null
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > allows admin checkout flow even when already purchased
+[CHECKOUT_ALREADY_PURCHASED_ADMIN_BYPASS] {
+  userId: 'u1',
+  userEmail: 'admin@example.com',
+  courseId: 'c1',
+  purchaseId: 'p1',
+  role: 'SUPER_ADMIN'
+}
+
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 on unexpected error
+[CHECKOUT_ERROR] Error: unexpected
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:350:37
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > falls back to checkout without voucher when provider rejects discount
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: 'JAZZ5' }
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 when voucher fallback checkout also fails
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: 'JAZZ5' }
+[CHECKOUT_FALLBACK_FULL_PRICE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  voucherCode: 'JAZZ5',
+  fallbackError: Error: fallback failed
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:532:30
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > falls back without voucher context when provider rejects discount
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: null }
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 and syncs voucher usage when provider reports max redemptions
+[CHECKOUT_VOUCHER_MAX_USES_SYNCED] {
+  voucherId: 'v1',
+  voucherCode: 'JAZZ5',
+  localMaxUses: 12,
+  localCurrentUsesBefore: 11,
+  localCurrentUsesAfter: 12
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 and increments usage from currentUses when voucher has no maxUses
+[CHECKOUT_VOUCHER_MAX_USES_SYNCED] {
+  voucherId: 'v2',
+  voucherCode: 'JAZZNOMAX',
+  localMaxUses: null,
+  localCurrentUsesBefore: 3,
+  localCurrentUsesAfter: 4
+}
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 400 on fallback failure even when voucher is not locally validated
+[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK] { courseId: 'c1', userId: 'u1', voucherCode: null }
+[CHECKOUT_FALLBACK_FULL_PRICE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  voucherCode: null,
+  fallbackError: Error: fallback failed
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:679:30
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider checkout fails with generic error
+[CHECKOUT_ERROR] Error: timeout
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:727:56
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider checkout fails with generic error
+[CHECKOUT_PROVIDER_CREATE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  provider: 'dodo',
+  voucherCode: null,
+  error: Error: timeout
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:727:56
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+ ✓ tests/integration/purchases-route.test.ts (26 tests) 1259ms
+   ✓ GET /api/purchases > returns 401 when unauthenticated 965ms
+ ✓ tests/integration/google-auth-callback-route.test.ts (7 tests) 1255ms
+   ✓ GET /auth/callback > redirects back to auth with oauth_error when code is missing 938ms
+stdout | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider generic error occurs with validated voucher
+[CHECKOUT_ERROR] Error: unexpected provider failure
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:764:7
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/checkout-route.test.ts > POST /api/checkout > returns 500 when provider generic error occurs with validated voucher
+[CHECKOUT_PROVIDER_CREATE_ERROR] {
+  courseId: 'c1',
+  userId: 'u1',
+  provider: 'dodo',
+  voucherCode: 'JAZZ5',
+  error: Error: unexpected provider failure
+      at /home/dudu/git/jazz/jazz-lms/tests/integration/checkout-route.test.ts:764:7
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:146:14
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:11
+      at runWithTimeout (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:39:7)
+      at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:17)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+      at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+      at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+      at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+}
+
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token payload has no JWT segments
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: [MUX_PROMO_TOKEN_VALIDATION_FAILED] {"playbackValid":false,"thumbnailValid":true,"storyboardValid":true}
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:88:13)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:91:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ ✓ tests/integration/checkout-route.test.ts (25 tests) 1221ms
+   ✓ POST /api/checkout > returns 400 for missing courseId 929ms
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token payload cannot be parsed as JSON
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: [MUX_PROMO_TOKEN_VALIDATION_FAILED] {"playbackValid":false,"thumbnailValid":true,"storyboardValid":true}
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:88:13)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:122:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/integration/promo-playback-route.test.ts > GET /api/mux/promo-playback route > returns unsigned fallback payload when token generation throws
+[MUX_PROMO_PLAYBACK_ROUTE_ERROR] Error: boom
+    at Proxy.<anonymous> (/home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:138:15)
+    at Proxy.mockCall (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/spy/dist/index.js:61:17)
+    at Proxy.spy (file:///home/dudu/git/jazz/jazz-lms/node_modules/tinyspy/dist/index.js:45:80)
+    at GET (/home/dudu/git/jazz/jazz-lms/src/app/api/mux/promo-playback/route.ts:81:20)
+    at /home/dudu/git/jazz/jazz-lms/tests/integration/promo-playback-route.test.ts:143:28
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///home/dudu/git/jazz/jazz-lms/node_modules/@vitest/runner/dist/index.js:1205:15)
+
+ ✓ tests/integration/promo-playback-route.test.ts (5 tests) 1635ms
+   ✓ GET /api/mux/promo-playback route > returns unsigned fallback payload when mux env is missing 1057ms
+ ✓ tests/integration/course-player-language-switch.test.tsx (2 tests) 601ms
+   ✓ CoursePlayer language switch behavior > does not refetch mux playback when language changes, but refreshes PDF language 363ms
+stdout | tests/integration/auth-password-reset-flow.test.tsx > Password reset QA flow > reset page validates mismatch and updates password without errors
+[auth/reset-password] bootstrap { hasResetError: false, isFromCallback: false }
+[auth/reset-password] {
+  stage: 'set-session-success',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+[auth/reset-password] {
+  stage: 'session-check',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false,
+  hasSessionAfterRetries: true
+}
+[auth/reset-password] {
+  stage: 'token-valid',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+
+stdout | tests/integration/auth-password-reset-flow.test.tsx > Password reset QA flow > reset page has explicit sign-out button
+[auth/reset-password] bootstrap { hasResetError: false, isFromCallback: false }
+[auth/reset-password] {
+  stage: 'set-session-success',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+[auth/reset-password] {
+  stage: 'session-check',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false,
+  hasSessionAfterRetries: true
+}
+[auth/reset-password] {
+  stage: 'token-valid',
+  hasTokenHash: false,
+  hasToken: false,
+  hasAccessToken: true,
+  hasRefreshToken: true,
+  recoveryType: null,
+  referrerHasSupabaseVerify: false
+}
+
+ ✓ tests/integration/auth-password-reset-flow.test.tsx (5 tests) 4034ms
+   ✓ Password reset QA flow > opens forgot password from auth screen 1726ms
+   ✓ Password reset QA flow > reset page validates mismatch and updates password without errors 1744ms
+
+ Test Files  13 passed (13)
+      Tests  104 passed (104)
+   Start at  15:55:38
+   Duration  12.74s (transform 10.15s, setup 0ms, collect 12.06s, tests 16.69s, environment 6.74s, prepare 7.00s)
+
+===== EXIT CODE: 0 (npm run test:integration) =====
+===== RUNNING: npm run test:unit =====
+
+> jazz-lms@0.1.0 test:unit
+> vitest run tests/unit
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/dudu/git/jazz/jazz-lms
+
+ ✓ tests/unit/profile-avatars.test.ts (13 tests) 50ms
+ ✓ tests/unit/supabase-config.test.ts (7 tests) 31ms
+ ✓ tests/unit/dodo-events.test.ts (4 tests) 29ms
+ ✓ tests/unit/permissions.test.ts (10 tests) 50ms
+ ✓ tests/unit/language.test.ts (12 tests) 69ms
+ ✓ tests/unit/test-mode.test.ts (6 tests) 161ms
+ ✓ tests/unit/course-purchase-sync.test.ts (3 tests) 552ms
+   ✓ upsertCoursePurchaseFromProvider > preserves existing voucher redemption on conflicting later write by default 314ms
+ ✓ tests/unit/dodo-provider.test.ts (3 tests) 27ms
+ ✓ tests/unit/app-origin.test.ts (5 tests) 455ms
+   ✓ app-origin helpers > normalizeBaseOrigin handles plain domain and malformed slashes 425ms
+ ✓ tests/unit/jazz-playlist.test.ts (4 tests) 57ms
+ ✓ tests/unit/jazz-medal-progress.test.ts (4 tests) 1596ms
+   ✓ jazz medal entitlement > returns no active medal when user has no course or lesson purchase 1206ms
+ ✓ tests/unit/lesson-progress.test.ts (4 tests) 26ms
+ ✓ tests/unit/lesson-quiz.test.ts (3 tests) 42ms
+ ✓ tests/unit/voucher-artists.test.ts (3 tests) 27ms
+ ✓ tests/unit/email-validation.test.ts (4 tests) 26ms
+ ✓ tests/unit/mux-playback.test.ts (4 tests) 30ms
+ ✓ tests/unit/checkout-helpers.test.ts (2 tests) 28ms
+ ✓ tests/unit/utils.test.ts (6 tests) 58ms
+ ✓ tests/unit/pricing.test.ts (3 tests) 22ms
+
+ Test Files  19 passed (19)
+      Tests  100 passed (100)
+   Start at  15:55:53
+   Duration  4.82s (transform 5.86s, setup 0ms, collect 9.50s, tests 3.34s, environment 20ms, prepare 10.09s)
+
+===== EXIT CODE: 0 (npm run test:unit) =====
+===== RUNNING: npm run lint =====
+
+> jazz-lms@0.1.0 lint
+> eslint .
+
+
+/home/dudu/git/jazz/jazz-lms/coverage/block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/home/dudu/git/jazz/jazz-lms/coverage/lcov-report/block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/home/dudu/git/jazz/jazz-lms/scripts/sync-supabase-pdf-attachments.ts
+  89:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/admin/stats/page.tsx
+  48:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/admin/vouchers/[voucherId]/page.tsx
+   14:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   49:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/[voucherId]/route.ts
+   20:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   60:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/[voucherId]/toggle/route.ts
+  35:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/bulk-delete/route.ts
+   42:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/export/route.ts
+   35:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/generate/route.ts
+  130:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  195:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/purge-legacy/route.ts
+  34:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  66:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  87:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  92:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/reset-user-state/route.ts
+   41:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/revert-test-use/route.ts
+  32:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/admin/vouchers/route.ts
+  24:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/checkout/route.ts
+  170:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  247:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  248:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/dev/reset-test-purchases/route.ts
+  21:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/purchases/route.ts
+  44:10  warning  'asObject' is defined but never used      @typescript-eslint/no-unused-vars
+  64:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/vouchers/redeem/route.ts
+  71:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/api/webhooks/dodo-jazzlms/route.ts
+   50:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/course-completion-recognition/page.tsx
+  11:15  warning  'QuizMedalTierValue' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/layout.tsx
+  3:10  warning  'createClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/notes/[courseId]/[lessonId]/page.tsx
+  78:9  warning  'firstLessonId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/app/dashboard/profile/page.tsx
+  278:9  warning  The 'medalLessons' logical expression could make the dependencies of useMemo Hook (at line 282) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'medalLessons' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/course-player.tsx
+   128:10  warning  'getAttachmentDisplayName' is defined but never used                                                               @typescript-eslint/no-unused-vars
+   698:23  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+   764:21  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+   794:21  warning  Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+  1046:6   warning  React Hook useEffect has a missing dependency: 'openPdfPreview'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/course-view-client.tsx
+  203:7   warning  'LESSON_SUBTITLES' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  274:7   warning  'LESSON_DESCRIPTIONS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  544:11  warning  't' is assigned a value but never used                    @typescript-eslint/no-unused-vars
+  943:9   warning  'firstName' is assigned a value but never used            @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/lesson-quiz-medal.tsx
+  1:17  warning  'Music2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/lesson-quiz-overlay.tsx
+   11:3  warning  'Star' is defined but never used                                                                                                                 @typescript-eslint/no-unused-vars
+  481:6  warning  React Hook useEffect has a missing dependency: 'openQuiz'. Either include it or remove the dependency array                                      react-hooks/exhaustive-deps
+  489:6  warning  React Hook useEffect has missing dependencies: 'hasQuizAvailable', 'isOpen', and 'openQuiz'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  497:6  warning  React Hook useEffect has a missing dependency: 'currentQuestion'. Either include it or remove the dependency array                               react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx
+   76:14  warning  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx:76:14
+  74 |   const addHighlight = (props: RenderHighlightTargetProps, color: string) => {
+  75 |     const newHighlight: SavedHighlight = {
+> 76 |       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+     |              ^^^^^^^^^^ Cannot call impure function
+  77 |       color,
+  78 |       quote: props.selectedText,
+  79 |       highlightAreas: props.highlightAreas,                      react-hooks/purity
+   76:28  warning  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/pdf-workspace-viewer.tsx:76:28
+  74 |   const addHighlight = (props: RenderHighlightTargetProps, color: string) => {
+  75 |     const newHighlight: SavedHighlight = {
+> 76 |       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+     |                            ^^^^^^^^^^^^^ Cannot call impure function
+  77 |       color,
+  78 |       quote: props.selectedText,
+  79 |       highlightAreas: props.highlightAreas,  react-hooks/purity
+  261:6   warning  React Hook useEffect has a missing dependency: 'downloadLabels'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/purchase-success-modal.tsx
+  49:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/purchase-success-modal.tsx:49:7
+  47 |       return () => clearTimeout(timer);
+  48 |     } else {
+> 49 |       setShowContent(false);
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |     }
+  51 |   }, [isVisible]);
+  52 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/unlock-animation.tsx
+  84:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/course/unlock-animation.tsx:84:7
+  82 |   useEffect(() => {
+  83 |     if (isVisible) {
+> 84 |       startAnimation();
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  85 |     }
+  86 |   }, [isVisible, startAnimation]);
+  87 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/course-completion-certificate.tsx
+  167:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/jazz-specialist-certificate.tsx
+  110:13  warning  'textX' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/lesson-notes-editor.tsx
+  133:6  warning  React Hook useEffect has missing dependencies: 'courseId' and 'lessonId'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/messages-client.tsx
+  253:6  warning  React Hook useEffect has a missing dependency: 'loadThreads'. Either include it or remove the dependency array         react-hooks/exhaustive-deps
+  262:6  warning  React Hook useEffect has a missing dependency: 'loadThreadMessages'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/my-courses-client.tsx
+  82:9  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/my-courses-client.tsx:82:9
+  80 |       window.localStorage.removeItem(COMPLETION_ALERT_ACK_KEY);
+  81 |       if (completionAlertPending) {
+> 82 |         setCompletionAlertPending(false);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  83 |       }
+  84 |       window.dispatchEvent(new Event(COMPLETION_ALERT_EVENT));
+  85 |       return;  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/pdf-view-client.tsx
+  151:21  warning  Unexpected any. Specify a different type                                                                                           @typescript-eslint/no-explicit-any
+  220:6   warning  React Hook useEffect has missing dependencies: 'loadSignedUrl' and 'selected'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/profile-jazz-playlist.tsx
+  88:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/dashboard/profile-jazz-playlist.tsx:88:5
+  86 |
+  87 |   useEffect(() => {
+> 88 |     setActiveIndex((current) => Math.min(current, Math.max(playlist.length - 1, 0)));
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  89 |   }, [playlist.length]);
+  90 |
+  91 |   useEffect(() => {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/landing/promo-video.tsx
+  14:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx
+   85:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx:85:7
+  83 |   useEffect(() => {
+  84 |     if (!notesVideos.length) {
+> 85 |       setSelectedNote(null);
+     |       ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  86 |       setNoteContent('');
+  87 |       return;
+  88 |     }                                                                                                                                        react-hooks/set-state-in-effect
+  105:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/dashboard-notes-nav-panel.tsx:105:5
+  103 |     const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
+  104 |     const saved = window.localStorage.getItem(storageKey) || '';
+> 105 |     setNoteContent(saved);
+      |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  106 |   }, [selectedNote]);
+  107 |
+  108 |   const onChangeSidebarNotes = (value: string) => {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/sidebar.tsx
+  292:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/layout/sidebar.tsx:292:5
+  290 |   // Close sidebar on route change
+  291 |   useEffect(() => {
+> 292 |     setIsOpen(false);
+      |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  293 |   }, [pathname]);
+  294 |
+  295 |   // Prevent body scroll when sidebar is open on mobile  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/music/music-platform-links.tsx
+  7:30  warning  'platform' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/components/payment/payment-method-modal.tsx
+  94:7  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/payment/payment-method-modal.tsx:94:7
+  92 |   useEffect(() => {
+  93 |     if (isOpen) {
+> 94 |       setAppliedVoucher(null);
+     |       ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  95 |     }
+  96 |   }, [isOpen]);
+  97 |  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/components/theme-toggle.tsx
+  12:5  warning  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/dudu/git/jazz/jazz-lms/src/components/theme-toggle.tsx:12:5
+  10 |
+  11 |   useEffect(() => {
+> 12 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  13 |   }, []);
+  14 |
+  15 |   if (!mounted) {  react-hooks/set-state-in-effect
+
+/home/dudu/git/jazz/jazz-lms/src/lib/admin.ts
+  3:10  warning  'createClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/lib/course-purchase-sync.ts
+   89:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  171:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  201:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  375:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  377:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/lib/payments/provider.ts
+  16:28  warning  '_value' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/src/lib/vouchers.ts
+  78:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/client.ts
+  22:74  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/middleware.ts
+  70:5  warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+
+/home/dudu/git/jazz/jazz-lms/src/utils/supabase/server.ts
+  12:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:20  warning  '_' is defined but never used             @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/tests/regression/regression.test.ts
+  1:34  warning  'vi' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/dudu/git/jazz/jazz-lms/tests/security/security.test.ts
+  1:10  warning  'afterEach' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 104 problems (0 errors, 104 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+
+===== EXIT CODE: 0 (npm run lint) =====

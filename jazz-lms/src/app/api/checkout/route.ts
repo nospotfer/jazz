@@ -193,13 +193,20 @@ export async function POST(req: Request) {
     const userEmail = user.email;
 
     const dbUserModel = (db as any).user;
-    const dbUser =
-      dbUserModel && typeof dbUserModel.findUnique === "function"
-        ? await dbUserModel.findUnique({
-            where: { email: user.email },
-            select: { role: true },
-          })
-        : null;
+    let dbUser = null;
+    if (dbUserModel && typeof dbUserModel.findUnique === "function") {
+      try {
+        dbUser = await dbUserModel.findUnique({
+          where: { email: user.email },
+          select: { role: true },
+        });
+      } catch (dbUserLookupError) {
+        console.warn("[CHECKOUT_DB_USER_LOOKUP_FAILED]", {
+          email: user.email,
+          error: dbUserLookupError,
+        });
+      }
+    }
     const isAdminUser = isAdminRole(dbUser?.role ?? null);
 
     const [course, existingPurchase] = await Promise.all([
