@@ -9,6 +9,8 @@ import { DashboardLocalTestReset } from '@/components/dashboard/dashboard-local-
 import { getServerUser } from '@/lib/server-user';
 import { getFirstPublishedCourseId, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({
   children,
 }: {
