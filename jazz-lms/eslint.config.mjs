@@ -23,6 +23,7 @@ export default defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
     "next-env.d.ts",
     "public/pdf.worker.min.js",
     "public/pdf.worker.min.mjs",

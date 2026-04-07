@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const summary = await db.$transaction(async (tx: any) => {
+    const summary = await db.$transaction(async (tx) => {
       const redemptions = await tx.voucherRedemption.findMany({
         where: {
           userId: user.id,
