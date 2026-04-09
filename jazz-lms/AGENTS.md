@@ -17,6 +17,7 @@ Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 
 - **Server Components by default**. Only add `'use client'` when needed (interactivity, browser APIs). See `src/app/auth/page.tsx` for client example.
 - **Import alias**: `@/*` maps to `./src/*`. Always use `@/` imports.
 - **Auth pattern in pages**: Call `createClient()` → `supabase.auth.getUser()` → redirect to `/auth` if null. See `src/app/dashboard/page.tsx`.
+- **Release flow policy**: All fixes/config changes are developed and deployed as preview from `jazz-lms-dev-vercel`; `main` is reserved for reviewed merges and production deploys only.
 - **Supabase stubs**: Both Supabase client factories return minimal stubs when `NEXT_PUBLIC_SUPABASE_URL` is unset, allowing the app to render without Supabase configured.
 - **Component organization**: `src/components/landing/` (homepage sections), `src/components/course/` (player/sidebar), `src/components/layout/` (header, nav), `src/components/ui/` (shadcn primitives).
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.

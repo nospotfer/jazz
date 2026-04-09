@@ -1,4 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+while read -r local_ref local_sha remote_ref remote_sha; do
+	if [[ "$remote_ref" == "refs/heads/main" ]]; then
+		echo "❌ Direct push to main is blocked by policy."
+		echo "   Push to jazz-lms-dev-vercel and open PR for superior review/merge."
+		exit 1
+	fi
+done
+
 bash scripts/precommit-secret-scan.sh --all
+
+current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [[ "$current_branch" == "jazz-lms-dev-vercel" ]]; then
+	echo "▶ Pre-push quality gate (jazz-lms-dev-vercel)"
+	npm run lint
+	npm run test:integration
+fi

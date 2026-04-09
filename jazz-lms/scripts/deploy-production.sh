@@ -12,6 +12,12 @@ if [[ "$current_branch" != "main" ]]; then
   exit 1
 fi
 
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+  echo "❌ Tracked local changes detected. Commit/stash before production deploy."
+  git status --short
+  exit 1
+fi
+
 required_envs=(
   NEXT_PUBLIC_SUPABASE_URL
   NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -45,6 +51,12 @@ if (( ${#missing[@]} > 0 )); then
   echo "   Load production envs first, then rerun."
   exit 1
 fi
+
+echo "▶ Lint preflight"
+npm run lint
+
+echo "▶ Integration tests"
+npm run test:integration
 
 echo "▶ Build production"
 npm run build
