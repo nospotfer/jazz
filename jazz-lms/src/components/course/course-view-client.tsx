@@ -393,6 +393,8 @@ interface CourseViewProps {
   lessonTitlesInOrder: string[];
 }
 
+const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
+
 export function CourseViewClient({
   userName,
   hasPurchased: initialHasPurchased,
@@ -424,6 +426,8 @@ export function CourseViewClient({
       purchaseVerifying: "Verificando tu pago y desbloqueo del curso...",
       purchasePending:
         "Pago recibido. La confirmación aún está pendiente, seguimos verificando automáticamente...",
+      registrationUnlockMessage:
+        "Gracias por registrarte. Esperamos que disfrutes la primera clase gratis del curso de jazz que preparamos para ti.",
     },
     en: {
       classPrefix: "Class",
@@ -444,6 +448,8 @@ export function CourseViewClient({
       purchaseVerifying: "Verifying your payment and course unlock...",
       purchasePending:
         "Payment received. Confirmation is still pending, we are still checking automatically...",
+      registrationUnlockMessage:
+        "Thank you for registering. We hope you enjoy the free first class of the jazz course we prepared for you.",
     },
     fr: {
       classPrefix: "Cours",
@@ -464,6 +470,8 @@ export function CourseViewClient({
       purchaseVerifying: "Vérification du paiement et du déblocage du cours...",
       purchasePending:
         "Paiement reçu. La confirmation est encore en attente, nous continuons la vérification automatiquement...",
+      registrationUnlockMessage:
+        "Merci pour votre inscription. Nous espérons que vous apprécierez le premier cours gratuit de jazz que nous avons préparé pour vous.",
     },
     pt: {
       classPrefix: "Aula",
@@ -484,6 +492,8 @@ export function CourseViewClient({
       purchaseVerifying: "Verificando seu pagamento e desbloqueio do curso...",
       purchasePending:
         "Pagamento recebido. A confirmação ainda está pendente, seguimos verificando automaticamente...",
+      registrationUnlockMessage:
+        "Obrigado por se cadastrar. Esperamos que voce aproveite a primeira aula gratis do curso de jazz que preparamos para voce.",
     },
   }[language];
   const router = useRouter();
@@ -494,6 +504,9 @@ export function CourseViewClient({
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isVerifyingPurchase, setIsVerifyingPurchase] = useState(false);
   const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
+  const [unlockAnimationContext, setUnlockAnimationContext] = useState<
+    "purchase" | "registration" | null
+  >(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [progressByLessonId, setProgressByLessonId] = useState<
@@ -506,6 +519,7 @@ export function CourseViewClient({
   );
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const handledPurchaseParamsRef = useRef<string | null>(null);
+  const handledRegistrationWelcomeRef = useRef<string | null>(null);
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -598,6 +612,7 @@ export function CourseViewClient({
       setHasPurchased(true);
       setIsVerifyingPurchase(false);
       setPaymentError("");
+      setUnlockAnimationContext("purchase");
       setShowUnlockAnimation(true);
       router.refresh();
       router.replace("/dashboard");
@@ -704,6 +719,26 @@ export function CourseViewClient({
     };
   }, [searchParams, hasPurchased, router, courseId, copy.purchasePending]);
 
+  useEffect(() => {
+    if (hasPurchased) {
+      return;
+    }
+
+    const welcomeValue = searchParams.get("welcome");
+    if (welcomeValue !== REGISTRATION_WELCOME_VALUE) {
+      return;
+    }
+
+    const welcomeKey = searchParams.toString();
+    if (handledRegistrationWelcomeRef.current === welcomeKey) {
+      return;
+    }
+
+    handledRegistrationWelcomeRef.current = welcomeKey;
+    setUnlockAnimationContext("registration");
+    setShowUnlockAnimation(true);
+  }, [hasPurchased, searchParams]);
+
   const handleMouseEnter = useCallback(
     (index: number, isLocked: boolean, e: React.MouseEvent) => {
       if (hasPurchased || !isLocked) return;
@@ -801,8 +836,16 @@ export function CourseViewClient({
 
   const handleUnlockAnimationComplete = useCallback(() => {
     setShowUnlockAnimation(false);
-    setShowSuccessModal(true);
-  }, []);
+    if (unlockAnimationContext === "purchase") {
+      setShowSuccessModal(true);
+    }
+
+    if (unlockAnimationContext === "registration") {
+      router.replace("/dashboard");
+    }
+
+    setUnlockAnimationContext(null);
+  }, [router, unlockAnimationContext]);
 
   const handleSuccessModalClose = useCallback(() => {
     setShowSuccessModal(false);
@@ -1036,6 +1079,11 @@ export function CourseViewClient({
         isVisible={showUnlockAnimation}
         onComplete={handleUnlockAnimationComplete}
         language={language}
+        message={
+          unlockAnimationContext === "registration"
+            ? copy.registrationUnlockMessage
+            : undefined
+        }
       />
 
       <PurchaseSuccessModal

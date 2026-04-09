@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -10,17 +10,29 @@ const mocks = vi.hoisted(() => ({
   push: vi.fn(),
   refresh: vi.fn(),
   replace: vi.fn(),
+  searchParams: {} as Record<string, string>,
 }));
 
 vi.mock("next/dynamic", async () => {
-  const react = await vi.importActual<typeof import("react")>("react");
-
   return {
     __esModule: true,
     default: () =>
-      react.forwardRef(function DynamicStub() {
+      function DynamicStub(props: Record<string, unknown>) {
+        if ("onComplete" in props) {
+          return (
+            <div
+              data-testid="unlock-animation-stub"
+              data-visible={String(Boolean(props.isVisible))}
+            >
+              <span data-testid="unlock-animation-message">
+                {typeof props.message === "string" ? props.message : ""}
+              </span>
+            </div>
+          );
+        }
+
         return null;
-      }),
+      },
   };
 });
 
@@ -31,8 +43,8 @@ vi.mock("next/navigation", () => ({
     replace: mocks.replace,
   }),
   useSearchParams: () => ({
-    get: () => null,
-    toString: () => "",
+    get: (key: string) => mocks.searchParams[key] ?? null,
+    toString: () => new URLSearchParams(mocks.searchParams).toString(),
   }),
 }));
 
@@ -83,6 +95,7 @@ vi.mock("next/image", () => ({
 describe("CourseViewClient free first class behavior", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.searchParams = {};
 
     Object.defineProperty(window, "requestIdleCallback", {
       writable: true,
@@ -152,5 +165,23 @@ describe("CourseViewClient free first class behavior", () => {
 
     expect(mocks.push).not.toHaveBeenCalled();
     expect(screen.getByText(/contenido premium/i)).toBeTruthy();
+  });
+
+  test("shows registration unlock animation when welcome query is present", async () => {
+    mocks.searchParams = {
+      welcome: "registration-free-first-class",
+    };
+
+    renderView();
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("unlock-animation-stub").getAttribute("data-visible"),
+      ).toBe("true");
+    });
+
+    expect(screen.getByTestId("unlock-animation-message").textContent).toMatch(
+      /gracias por registrarte/i,
+    );
   });
 });

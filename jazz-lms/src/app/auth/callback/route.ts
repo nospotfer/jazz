@@ -34,6 +34,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const origin = resolveServerAppOrigin(requestUrl.origin);
+  const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
   const configuredOrigin = normalizeBaseOrigin(
     process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL,
   );
@@ -50,8 +51,24 @@ export async function GET(request: Request) {
   );
   const nextPathRaw =
     requestUrl.searchParams.get("next") || readCookie(request, "oauth_next");
-  const nextPath =
+  const sanitizedNextPath =
     nextPathRaw && nextPathRaw.startsWith("/") ? nextPathRaw : "/dashboard";
+  const nextPath = (() => {
+    if (flow !== "register") {
+      return sanitizedNextPath;
+    }
+
+    const targetUrl = new URL(sanitizedNextPath, origin);
+    if (targetUrl.pathname !== "/dashboard") {
+      return sanitizedNextPath;
+    }
+
+    if (!targetUrl.searchParams.get("welcome")) {
+      targetUrl.searchParams.set("welcome", REGISTRATION_WELCOME_VALUE);
+    }
+
+    return `${targetUrl.pathname}${targetUrl.search}`;
+  })();
 
   if (
     process.env.NODE_ENV !== "production" &&

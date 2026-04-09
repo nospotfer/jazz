@@ -93,6 +93,12 @@ Go to **Google Auth Platform → Branding** and set:
 > Note: For Supabase OAuth providers, Google redirects back to Supabase (`/auth/v1/callback`), and Supabase then redirects to your app callback (`/auth/callback`).
 > Note: In Google's account selector, "Continue to ...supabase.co" is expected when using Supabase-hosted OAuth endpoints.
 
+## Registration Onboarding
+
+- After a new user verifies email and signs in, the dashboard receives a one-time welcome query flag.
+- This triggers the same unlock animation used for purchases, with a registration-specific message.
+- Only the first class remains free; all other classes stay locked and purchasable.
+
 ## Dodo Payments Webhook (MVP)
 
 Use Dodo Payments test mode and configure your webhook endpoint:

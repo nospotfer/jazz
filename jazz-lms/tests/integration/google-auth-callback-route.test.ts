@@ -116,6 +116,20 @@ describe("GET /auth/callback", () => {
     );
   });
 
+  test("adds registration welcome query when register flow redirects to dashboard", async () => {
+    const { GET } = await import("@/app/auth/callback/route");
+    const response = await GET(
+      new Request(
+        "http://localhost:3000/auth/callback?code=abc123&flow=register",
+      ),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "http://localhost:3000/dashboard?welcome=registration-free-first-class",
+    );
+  });
+
   test("redirects to reset-password when next path comes from recovery email callback", async () => {
     const { GET } = await import("@/app/auth/callback/route");
     const response = await GET(

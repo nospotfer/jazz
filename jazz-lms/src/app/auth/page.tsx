@@ -19,11 +19,13 @@ export default function AuthPage() {
   const router = useRouter();
   const { language } = useLanguage();
   const REMEMBER_EMAIL_KEY = "auth:rememberEmail";
+  const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
   const hasSupabaseConfig = hasValidSupabasePublicConfig(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   );
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [justRegistered, setJustRegistered] = useState(false);
 
   const copy = {
     es: {
@@ -210,7 +212,10 @@ export default function AuthPage() {
     const urlEmail = params.get("email");
     const tabParam = params.get("tab");
     const flowParam = params.get("flow");
+    const justRegisteredParam = params.get("just_registered");
     const oauthError = params.get("oauth_error");
+
+    setJustRegistered(justRegisteredParam === "1");
 
     if (tabParam === "register" || flowParam === "register") {
       setActiveTab("register");
@@ -252,7 +257,10 @@ export default function AuthPage() {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (isMounted && data.session?.user) {
-        router.replace("/dashboard");
+        const dashboardTarget = justRegistered
+          ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
+          : "/dashboard";
+        router.replace(dashboardTarget);
       }
     };
 
@@ -262,7 +270,10 @@ export default function AuthPage() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
       if (event === "SIGNED_IN") {
-        router.replace("/dashboard");
+        const dashboardTarget = justRegistered
+          ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
+          : "/dashboard";
+        router.replace(dashboardTarget);
         router.refresh();
       }
     });
@@ -271,7 +282,7 @@ export default function AuthPage() {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [router, supabase]);
+  }, [router, supabase, justRegistered]);
 
   // Sign up state
   const [fullName, setFullName] = useState("");
@@ -297,6 +308,10 @@ export default function AuthPage() {
     const callbackUrl = new URL("/auth/callback", appOrigin);
     return callbackUrl.toString();
   }, []);
+
+  const dashboardTarget = justRegistered
+    ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
+    : "/dashboard";
 
   useEffect(() => {
     if (process.env.NODE_ENV === "production") return;
@@ -408,10 +423,10 @@ export default function AuthPage() {
       const refreshToken = sessionData.session?.refresh_token;
 
       if (accessToken && refreshToken) {
-        const sessionSyncResponse = await fetch('/api/auth/session', {
-          method: 'POST',
+        const sessionSyncResponse = await fetch("/api/auth/session", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ accessToken, refreshToken }),
         });
@@ -442,7 +457,7 @@ export default function AuthPage() {
         }
       }
 
-      router.replace("/dashboard");
+      router.replace(dashboardTarget);
       router.refresh();
     } catch {
       setLoginError(copy.signInFailedRetry);
@@ -471,13 +486,17 @@ export default function AuthPage() {
       await supabase.auth.signOut();
 
       const oauthFlow = activeTab === "register" ? "register" : "login";
+      const oauthNextPath =
+        oauthFlow === "register"
+          ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
+          : "/dashboard";
       const oauthCookieOptions = "path=/; max-age=600; samesite=lax; secure";
 
       // Keep OAuth context in short-lived cookies so callback can recover it
       // even when providers strip custom query params from redirect URLs.
       document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; ${oauthCookieOptions}`;
       document.cookie = `oauth_lang=${encodeURIComponent(language)}; ${oauthCookieOptions}`;
-      document.cookie = `oauth_next=${encodeURIComponent("/dashboard")}; ${oauthCookieOptions}`;
+      document.cookie = `oauth_next=${encodeURIComponent(oauthNextPath)}; ${oauthCookieOptions}`;
 
       const callbackUrl = new URL(
         redirectTo || `${window.location.origin}/auth/callback`,

@@ -19,6 +19,7 @@ interface UnlockAnimationProps {
   isVisible: boolean;
   onComplete: () => void;
   language: SupportedLanguage;
+  message?: string;
 }
 
 const CONFETTI_COLORS = [
@@ -46,7 +47,12 @@ function generateConfetti(count: number): ConfettiPiece[] {
   }));
 }
 
-export function UnlockAnimation({ isVisible, onComplete, language }: UnlockAnimationProps) {
+export function UnlockAnimation({
+  isVisible,
+  onComplete,
+  language,
+  message,
+}: UnlockAnimationProps) {
   const [phase, setPhase] = useState<'key-insert' | 'turning' | 'opening' | 'confetti' | 'done'>('key-insert');
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
 
@@ -251,6 +257,18 @@ export function UnlockAnimation({ isVisible, onComplete, language }: UnlockAnima
         >
           {copy.unlocked}
         </p>
+
+        {message ? (
+          <p
+            className={`mt-3 max-w-[28rem] px-4 text-center text-sm sm:text-base leading-relaxed text-white/90 transition-all duration-700 ${
+              phase === 'confetti' || phase === 'done'
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'
+            }`}
+          >
+            {message}
+          </p>
+        ) : null}
       </div>
     </div>
   );

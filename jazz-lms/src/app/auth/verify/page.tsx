@@ -154,7 +154,7 @@ export default function VerifyCodePage() {
       setMessage(copy.verified);
       setTimeout(() => {
         router.push(
-          `/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}`,
+          `/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}&just_registered=1`,
         );
       }, 1200);
     } catch {
