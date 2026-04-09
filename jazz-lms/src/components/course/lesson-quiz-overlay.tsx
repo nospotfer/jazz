@@ -204,7 +204,7 @@ function QuizPlaylistPanel({
   }[language];
 
   return (
-    <aside className="hidden self-stretch xl:mt-[5.5rem] xl:flex xl:w-[300px] xl:shrink-0 xl:-ml-4 xl:flex-col 2xl:-ml-8">
+    <aside className="hidden self-stretch xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col 2xl:w-[360px] 2xl:-ml-8">
       <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-primary/20 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(34,211,238,0.12),_transparent_30%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(17,24,39,0.95),rgba(30,41,59,0.92))] p-3.5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -236,7 +236,7 @@ function QuizPlaylistPanel({
 
         <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
-          <div className="mt-2 min-h-[152px] flex-1 overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+          <div className="mt-2 h-[clamp(220px,36vh,340px)] overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
             {embedFailed ? (
               <div className="flex h-full items-center justify-center px-4">
                 <a
@@ -253,7 +253,7 @@ function QuizPlaylistPanel({
                 title="Quiz Spotify playlist"
                 src={SPOTIFY_PLAYLIST_EMBED_URL}
                 width="100%"
-                height="152"
+                height="340"
                 frameBorder="0"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
