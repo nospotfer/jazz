@@ -4,6 +4,14 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [[ "$current_branch" != "main" ]]; then
+  echo "❌ Production deploy is only allowed from branch 'main'."
+  echo "   Current branch: '${current_branch:-unknown}'"
+  echo "   Switch with: git checkout main"
+  exit 1
+fi
+
 required_envs=(
   NEXT_PUBLIC_SUPABASE_URL
   NEXT_PUBLIC_SUPABASE_ANON_KEY
