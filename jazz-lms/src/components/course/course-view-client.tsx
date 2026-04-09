@@ -705,8 +705,8 @@ export function CourseViewClient({
   }, [searchParams, hasPurchased, router, courseId, copy.purchasePending]);
 
   const handleMouseEnter = useCallback(
-    (index: number, e: React.MouseEvent) => {
-      if (hasPurchased) return;
+    (index: number, isLocked: boolean, e: React.MouseEvent) => {
+      if (hasPurchased || !isLocked) return;
       if (pinnedIndex !== null) return;
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       setPopupPosition({ x: rect.left + rect.width / 2, y: rect.top });
@@ -774,7 +774,9 @@ export function CourseViewClient({
         lessonRoutesInOrder[index] ||
         lessonRoutesByTitle[lesson.subtitle.toLowerCase().trim()];
 
-      if (hasPurchased) {
+      const isFreeLesson = lesson.isFree;
+
+      if (hasPurchased || isFreeLesson) {
         if (lessonRoute) {
           router.push(lessonRoute);
           return;
@@ -816,7 +818,7 @@ export function CourseViewClient({
       lesson.subtitle,
     description:
       getLocalizedJazzDescription(index + 1, language) || lesson.description,
-    isFree: hasPurchased,
+    isFree: lesson.isFree || hasPurchased,
   }));
 
   return (
@@ -879,7 +881,7 @@ export function CourseViewClient({
                 <div
                   key={lesson.id}
                   className="relative"
-                  onMouseEnter={(e) => handleMouseEnter(index, e)}
+                  onMouseEnter={(e) => handleMouseEnter(index, isLocked, e)}
                   onMouseLeave={handleMouseLeave}
                 >
                   <button
@@ -997,6 +999,7 @@ export function CourseViewClient({
 
                   {/* Float popup on hover */}
                   {!hasPurchased &&
+                    isLocked &&
                     hoveredIndex === index &&
                     pinnedIndex === null && (
                       <FloatPopup

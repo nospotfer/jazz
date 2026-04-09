@@ -123,6 +123,7 @@ const baseProps = {
   initialProgressPercent: 0,
   initialQuizSummary: null,
   hasQuizAvailable: false,
+  canUseGamification: true,
   canAccessLesson: true,
   canAccessAttachments: true,
 };

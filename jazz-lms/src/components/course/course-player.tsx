@@ -117,6 +117,7 @@ interface CoursePlayerProps {
   initialProgressPercent: number;
   initialQuizSummary: LessonQuizSummarySnapshot | null;
   hasQuizAvailable: boolean;
+  canUseGamification: boolean;
   canAccessLesson: boolean;
   canAccessAttachments: boolean;
 }
@@ -139,6 +140,7 @@ export const CoursePlayer = ({
   initialProgressPercent,
   initialQuizSummary,
   hasQuizAvailable,
+  canUseGamification,
   canAccessLesson,
   canAccessAttachments,
 }: CoursePlayerProps) => {
@@ -1008,7 +1010,7 @@ export const CoursePlayer = ({
       return;
     }
 
-    await completeLesson({ openQuizAfter: true });
+    await completeLesson({ openQuizAfter: canUseGamification });
   };
 
   const handleQuizClose = () => {

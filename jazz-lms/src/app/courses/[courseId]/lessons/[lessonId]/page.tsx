@@ -11,6 +11,7 @@ import {
   getLessonQuizQuestionBankCount,
   getLessonQuizSummary,
 } from "@/lib/lesson-quiz-server";
+import { resolveLessonAccessPolicy } from "@/lib/lesson-access";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -128,11 +129,22 @@ const LessonPage = async ({
     },
   });
 
-  const canAccessLesson = !!hasFullPurchase || !!hasLessonPurchase;
   const isAdminOwner =
     user.email?.toLowerCase() ===
     (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
-  const canAccessAttachments = Boolean(canAccessLesson || isAdminOwner);
+  const firstPublishedLesson = localizedCourse.chapters
+    .filter((chapter) => chapter.isPublished)
+    .flatMap((chapter) =>
+      chapter.lessons.filter((item) => item.isPublished),
+    )
+    .at(0);
+  const isFreePreviewLesson = firstPublishedLesson?.id === lesson.id;
+  const accessPolicy = resolveLessonAccessPolicy({
+    isAdminOwner,
+    hasFullPurchase: Boolean(hasFullPurchase),
+    hasLessonPurchase: Boolean(hasLessonPurchase),
+    isFreePreviewLesson,
+  });
 
   const [userProgress, initialQuizSummary, quizQuestionBankCount] =
     await Promise.all([
@@ -148,8 +160,12 @@ const LessonPage = async ({
           progressPercent: true,
         },
       }),
-      getLessonQuizSummary(user.id, lessonId),
-      getLessonQuizQuestionBankCount(lessonId),
+      accessPolicy.canUseGamification
+        ? getLessonQuizSummary(user.id, lessonId)
+        : Promise.resolve(null),
+      accessPolicy.canUseGamification
+        ? getLessonQuizQuestionBankCount(lessonId)
+        : Promise.resolve(0),
     ]);
 
   const initialIsCompleted =
@@ -158,9 +174,11 @@ const LessonPage = async ({
   const initialProgressPercent = initialIsCompleted
     ? 100
     : (userProgress?.progressPercent ?? 0);
-  const hasQuizAvailable = quizQuestionBankCount >= LESSON_QUIZ_QUESTION_COUNT;
+  const hasQuizAvailable =
+    accessPolicy.canUseGamification &&
+    quizQuestionBankCount >= LESSON_QUIZ_QUESTION_COUNT;
 
-  if (!canAccessLesson) {
+  if (!accessPolicy.canAccessLesson) {
     return redirect(`/courses/${courseId}?locked=true`);
   }
 
@@ -174,8 +192,9 @@ const LessonPage = async ({
         initialProgressPercent={initialProgressPercent}
         initialQuizSummary={initialQuizSummary}
         hasQuizAvailable={hasQuizAvailable}
-        canAccessLesson={canAccessLesson}
-        canAccessAttachments={canAccessAttachments}
+        canUseGamification={accessPolicy.canUseGamification}
+        canAccessLesson={accessPolicy.canAccessLesson}
+        canAccessAttachments={accessPolicy.canAccessAttachments}
       />
     </div>
   );
