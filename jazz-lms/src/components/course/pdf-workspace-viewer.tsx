@@ -34,8 +34,7 @@ const HIGHLIGHT_COLORS = [
   "#14b8a6",
 ];
 
-const PDF_WORKER_URL =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+const PDF_WORKER_URL = "/pdf.worker.min.js";
 
 export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();

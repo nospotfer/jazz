@@ -53,6 +53,7 @@ const nextConfig = {
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       `script-src ${cspScriptSrc.join(" ")}`,
+      "worker-src 'self' blob:",
       `connect-src ${cspConnectSrc.join(" ")}`,
       "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://*.dodopayments.com https://open.spotify.com",
       "media-src 'self' blob: https:",
