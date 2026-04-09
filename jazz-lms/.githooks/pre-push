@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
 while read -r local_ref local_sha remote_ref remote_sha; do
 	if [[ "$remote_ref" == "refs/heads/main" ]]; then
 		echo "❌ Direct push to main is blocked by policy."
