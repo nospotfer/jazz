@@ -1,7 +1,12 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/language-provider";
-import { Viewer, Worker, type RenderPageProps } from "@react-pdf-viewer/core";
+import {
+  SpecialZoomLevel,
+  Viewer,
+  Worker,
+  type RenderPageProps,
+} from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import {
     highlightPlugin,
@@ -15,6 +20,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface PdfWorkspaceViewerProps {
   fileUrl: string;
+  compact?: boolean;
 }
 
 interface SavedHighlight {
@@ -36,7 +42,10 @@ const HIGHLIGHT_COLORS = [
 
 const PDF_WORKER_URL = "/pdf.worker.min.js";
 
-export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
+export function PdfWorkspaceViewer({
+  fileUrl,
+  compact = false,
+}: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();
   const [highlights, setHighlights] = useState<SavedHighlight[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -75,7 +84,13 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
 
   const zoomPluginInstance = zoomPlugin();
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const defaultLayoutPluginInstance = useMemo(
+    () =>
+      defaultLayoutPlugin({
+        sidebarTabs: (tabs) => (compact ? [] : tabs),
+      }),
+    [compact],
+  );
 
   const addHighlight = useCallback((props: RenderHighlightTargetProps, color: string) => {
     highlightCounterRef.current += 1;
@@ -267,16 +282,18 @@ export function PdfWorkspaceViewer({ fileUrl }: PdfWorkspaceViewerProps) {
     return () => observer.disconnect();
   }, [language, tooltipMap, fileUrl, downloadLabels]);
 
+  const viewerScale = compact ? SpecialZoomLevel.PageFit : 1.3;
+
   return (
     <div
       ref={containerRef}
-      className="pdf-workspace-viewer h-full w-full overflow-y-auto overflow-x-hidden"
+      className={`pdf-workspace-viewer h-full w-full ${compact ? "overflow-auto" : "overflow-y-auto overflow-x-hidden"}`}
     >
       <Worker workerUrl={PDF_WORKER_URL}>
         <Viewer
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}
-          defaultScale={1.3}
+          defaultScale={viewerScale}
           plugins={[
             defaultLayoutPluginInstance,
             zoomPluginInstance,

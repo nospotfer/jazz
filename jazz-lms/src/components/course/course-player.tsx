@@ -125,6 +125,12 @@ function isAuxiliaryAttachment(name: string) {
   return /auxiliar|auxiliares|auxiliary|support/i.test(name);
 }
 
+function isPdfAttachment(attachment: Attachment) {
+  const name = (attachment.name || "").toLowerCase();
+  const url = (attachment.url || "").toLowerCase();
+  return name.endsWith(".pdf") || url.includes(".pdf");
+}
+
 export const CoursePlayer = ({
   course,
   lesson,
@@ -452,7 +458,9 @@ export const CoursePlayer = ({
   const visibleAttachments = useMemo(
     () =>
       lesson.attachments.filter(
-        (attachment) => !isAuxiliaryAttachment(attachment.name),
+        (attachment) =>
+          isPdfAttachment(attachment) &&
+          !isAuxiliaryAttachment(attachment.name),
       ),
     [lesson.attachments],
   );
@@ -753,7 +761,7 @@ export const CoursePlayer = ({
         const message = axios.isAxiosError(error)
           ? error.response?.data?.error || copy.unableLoadPdf
           : copy.unableLoadPdf;
-        const fallbackAttachment = lesson.attachments.find(
+        const fallbackAttachment = visibleAttachments.find(
           (item) => item.id === attachmentId,
         );
         if (fallbackAttachment?.url) {
@@ -779,7 +787,7 @@ export const CoursePlayer = ({
       copy.loadedLegacyPdf,
       copy.unableLoadPdf,
       getAttachmentSignedUrl,
-      lesson.attachments,
+      visibleAttachments,
     ],
   );
 
@@ -790,7 +798,7 @@ export const CoursePlayer = ({
       const data = await getAttachmentSignedUrl(attachmentId, true);
       window.open(data.signedUrl, "_blank", "noopener,noreferrer");
     } catch (error: unknown) {
-      const fallbackAttachment = lesson.attachments.find(
+      const fallbackAttachment = visibleAttachments.find(
         (item) => item.id === attachmentId,
       );
       if (fallbackAttachment?.url) {
@@ -1264,7 +1272,7 @@ export const CoursePlayer = ({
                               {pdfError}
                             </div>
                           ) : previewUrl ? (
-                            <PdfWorkspaceViewer fileUrl={previewUrl} />
+                            <PdfWorkspaceViewer fileUrl={previewUrl} compact />
                           ) : (
                             <div className="h-full flex items-center justify-center px-4 text-center text-sm text-muted-foreground">
                               {copy.selectPdf}

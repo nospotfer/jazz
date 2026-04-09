@@ -241,4 +241,48 @@ describe("CoursePlayer language switch behavior", () => {
     expect(await screen.findByText(/playback assinado/i)).toBeTruthy();
     expect(muxPlaybackCalls()).toHaveLength(1);
   });
+
+  test("loads the first PDF attachment when non-PDF files exist", async () => {
+    const lessonWithMixedAttachments = {
+      ...lesson,
+      id: "lesson-2",
+      attachments: [
+        {
+          id: "att-video",
+          name: "intro.mp4",
+          url: "https://files.example.com/intro.mp4",
+        },
+        {
+          id: "att-note",
+          name: "Apunte principal.pdf",
+          url: "https://files.example.com/apunte-principal.pdf",
+        },
+      ],
+    } as any;
+
+    const courseWithMixedAttachments = {
+      ...course,
+      chapters: [
+        {
+          ...course.chapters[0],
+          lessons: [lessonWithMixedAttachments],
+        },
+      ],
+    } as any;
+
+    render(
+      <CoursePlayer
+        {...baseProps}
+        course={courseWithMixedAttachments}
+        lesson={lessonWithMixedAttachments}
+        lessonId="lesson-2"
+      />,
+    );
+
+    await waitFor(() => {
+      expect(attachmentCalls()).toHaveLength(1);
+    });
+
+    expect(String(attachmentCalls()[0]?.[0])).toContain("/attachments/att-note");
+  });
 });
