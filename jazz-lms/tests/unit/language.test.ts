@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import {
+  DEFAULT_LANGUAGE,
+  detectLanguageFromAcceptLanguage,
+  detectLanguageFromCountry,
   normalizeLanguage,
+  resolvePreferredLanguage,
+  matchSupportedLanguageTag,
   languageToHtmlLang,
   languageToCheckoutLocale,
   SUPPORTED_LANGUAGES,
@@ -42,6 +47,83 @@ describe('normalizeLanguage', () => {
     expect(normalizeLanguage('ES')).toBe('es');
     expect(normalizeLanguage('En')).toBe('en');
     expect(normalizeLanguage('FR')).toBe('fr');
+  });
+
+  test('normalizes regional language tags', () => {
+    expect(normalizeLanguage('en-US')).toBe('en');
+    expect(normalizeLanguage('fr-FR')).toBe('fr');
+    expect(normalizeLanguage('es-MX')).toBe('es');
+    expect(normalizeLanguage('pt-PT')).toBe('pt');
+  });
+});
+
+describe('matchSupportedLanguageTag', () => {
+  test('returns null for unknown values', () => {
+    expect(matchSupportedLanguageTag('de-DE')).toBeNull();
+    expect(matchSupportedLanguageTag('')).toBeNull();
+    expect(matchSupportedLanguageTag(null)).toBeNull();
+  });
+
+  test('accepts both language-only and regional tags', () => {
+    expect(matchSupportedLanguageTag('en')).toBe('en');
+    expect(matchSupportedLanguageTag('en-US')).toBe('en');
+    expect(matchSupportedLanguageTag('fr-CA')).toBe('fr');
+    expect(matchSupportedLanguageTag('pt-BR')).toBe('pt');
+  });
+});
+
+describe('detectLanguageFromAcceptLanguage', () => {
+  test('returns highest-priority supported language', () => {
+    expect(detectLanguageFromAcceptLanguage('fr-FR,fr;q=0.9,en;q=0.8')).toBe('fr');
+    expect(detectLanguageFromAcceptLanguage('en-US,en;q=0.9,es;q=0.8')).toBe('en');
+    expect(detectLanguageFromAcceptLanguage('de-DE,de;q=0.9,es;q=0.7')).toBe('es');
+  });
+
+  test('returns null when no supported language is found', () => {
+    expect(detectLanguageFromAcceptLanguage('de-DE,de;q=0.9,it;q=0.8')).toBeNull();
+    expect(detectLanguageFromAcceptLanguage(undefined)).toBeNull();
+  });
+});
+
+describe('detectLanguageFromCountry', () => {
+  test('maps supported country fallbacks', () => {
+    expect(detectLanguageFromCountry('US')).toBe('en');
+    expect(detectLanguageFromCountry('fr')).toBe('fr');
+    expect(detectLanguageFromCountry('BR')).toBe('pt');
+  });
+
+  test('returns null for unknown countries', () => {
+    expect(detectLanguageFromCountry('DE')).toBeNull();
+    expect(detectLanguageFromCountry(undefined)).toBeNull();
+  });
+});
+
+describe('resolvePreferredLanguage', () => {
+  test('prefers accept-language over country fallback', () => {
+    expect(
+      resolvePreferredLanguage({
+        acceptLanguageHeader: 'fr-FR,fr;q=0.9,en;q=0.8',
+        countryCode: 'US',
+      }),
+    ).toBe('fr');
+  });
+
+  test('uses country fallback when accept-language is unsupported', () => {
+    expect(
+      resolvePreferredLanguage({
+        acceptLanguageHeader: 'de-DE,de;q=0.9',
+        countryCode: 'US',
+      }),
+    ).toBe('en');
+  });
+
+  test('falls back to default language when no signal is available', () => {
+    expect(
+      resolvePreferredLanguage({
+        acceptLanguageHeader: null,
+        countryCode: null,
+      }),
+    ).toBe(DEFAULT_LANGUAGE);
   });
 });
 
@@ -85,5 +167,6 @@ describe('language constants', () => {
   test('storage and cookie keys are defined', () => {
     expect(LANGUAGE_STORAGE_KEY).toBe('jazz-language-v1');
     expect(LANGUAGE_COOKIE_KEY).toBe('jazz_lang');
+    expect(DEFAULT_LANGUAGE).toBe('es');
   });
 });

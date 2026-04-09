@@ -2,6 +2,19 @@ import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 import { NextResponse } from 'next/server'
 import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import {
+  LANGUAGE_COOKIE_KEY,
+  normalizeLanguage,
+  resolvePreferredLanguage,
+  type SupportedLanguage,
+} from '@/lib/language'
+
+const LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+
+type LanguageCookieState = {
+  language: SupportedLanguage
+  shouldPersist: boolean
+}
 
 function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) {
   const isLocalhost = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
@@ -16,7 +29,63 @@ function applyLocalNoStoreHeaders(request: NextRequest, response: NextResponse) 
   return response
 }
 
+function resolveLanguageCookieState(request: NextRequest): LanguageCookieState {
+  const currentCookie = request.cookies.get(LANGUAGE_COOKIE_KEY)?.value
+
+  if (currentCookie) {
+    const normalizedCookie = normalizeLanguage(currentCookie)
+    const normalizedRaw = currentCookie.toLowerCase().trim().replace(/_/g, '-')
+    const shouldPersist = normalizedRaw !== normalizedCookie
+
+    return {
+      language: normalizedCookie,
+      shouldPersist,
+    }
+  }
+
+  return {
+    language: resolvePreferredLanguage({
+      acceptLanguageHeader: request.headers.get('accept-language'),
+      countryCode: request.headers.get('x-vercel-ip-country'),
+    }),
+    shouldPersist: true,
+  }
+}
+
+function applyLanguageCookie(response: NextResponse, cookieState: LanguageCookieState) {
+  if (!cookieState.shouldPersist) {
+    return response
+  }
+
+  response.cookies.set(LANGUAGE_COOKIE_KEY, cookieState.language, {
+    path: '/',
+    maxAge: LANGUAGE_COOKIE_MAX_AGE,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+
+  return response
+}
+
 export async function proxy(request: NextRequest) {
+  const languageCookieState = resolveLanguageCookieState(request)
+
+  if (languageCookieState.shouldPersist) {
+    request.cookies.set({
+      name: LANGUAGE_COOKIE_KEY,
+      value: languageCookieState.language,
+    })
+  }
+
+  const finalizeResponse = (response: NextResponse, withNoStoreHeaders = false) => {
+    const responseWithLanguage = applyLanguageCookie(response, languageCookieState)
+    if (!withNoStoreHeaders) {
+      return responseWithLanguage
+    }
+
+    return applyLocalNoStoreHeaders(request, responseWithLanguage)
+  }
+
   const pathname = request.nextUrl.pathname
   const isRootPath = pathname === '/'
   const needsAuthProcessing =
@@ -25,7 +94,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/admin')
 
   if (!needsAuthProcessing) {
-    return applyLocalNoStoreHeaders(request, NextResponse.next())
+    return finalizeResponse(NextResponse.next(), true)
   }
 
   const { response, user } = await updateSession(request)
@@ -35,34 +104,34 @@ export async function proxy(request: NextRequest) {
 
   if (!hasSupabaseConfig) {
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
-      return NextResponse.redirect(new URL('/auth', request.url))
+      return finalizeResponse(NextResponse.redirect(new URL('/auth', request.url)))
     }
-    return applyLocalNoStoreHeaders(request, response)
+    return finalizeResponse(response, true)
   }
 
   if (pathname.startsWith('/dashboard') || isRootPath) {
     if (!user) {
       if (pathname.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/auth', request.url))
+        return finalizeResponse(NextResponse.redirect(new URL('/auth', request.url)))
       }
     } else if (isRootPath) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return finalizeResponse(NextResponse.redirect(new URL('/dashboard', request.url)))
     }
   }
 
   if (!pathname.startsWith('/admin')) {
-    return applyLocalNoStoreHeaders(request, response)
+    return finalizeResponse(response, true)
   }
 
   if (!hasSupabaseConfig) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return finalizeResponse(NextResponse.redirect(new URL('/dashboard', request.url)))
   }
 
   if (!user?.email) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return finalizeResponse(NextResponse.redirect(new URL('/dashboard', request.url)))
   }
 
-  return applyLocalNoStoreHeaders(request, response)
+  return finalizeResponse(response, true)
 }
 
 export const config = {
