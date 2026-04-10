@@ -5,7 +5,6 @@ import {
   SpecialZoomLevel,
   Viewer,
   Worker,
-  type RenderPageProps,
 } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import {
@@ -15,7 +14,6 @@ import {
     type RenderHighlightsProps,
     type RenderHighlightTargetProps,
 } from "@react-pdf-viewer/highlight";
-import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface PdfWorkspaceViewerProps {
@@ -77,13 +75,6 @@ export function PdfWorkspaceViewer({
     }
   }, [storageKey]);
 
-  const persistHighlights = useCallback((next: SavedHighlight[]) => {
-    setHighlights(next);
-    window.localStorage.setItem(storageKey, JSON.stringify(next));
-  }, [storageKey]);
-
-  const zoomPluginInstance = zoomPlugin();
-
   const defaultLayoutPluginInstance = useMemo(
     () =>
       defaultLayoutPlugin({
@@ -101,11 +92,15 @@ export function PdfWorkspaceViewer({
       highlightAreas: props.highlightAreas,
     };
 
-    persistHighlights([...highlights, newHighlight]);
+    setHighlights(prev => {
+      const next = [...prev, newHighlight];
+      window.localStorage.setItem(storageKey, JSON.stringify(next));
+      return next;
+    });
     props.cancel();
-  }, [highlights, persistHighlights]);
+  }, [storageKey]);
 
-  const renderHighlightTarget = (props: RenderHighlightTargetProps) => (
+  const renderHighlightTarget = useCallback((props: RenderHighlightTargetProps) => (
     <div
       style={{
         left: `${props.selectionRegion.left}%`,
@@ -127,9 +122,9 @@ export function PdfWorkspaceViewer({
         ))}
       </div>
     </div>
-  );
+  ), [addHighlight]);
 
-  const renderHighlights = (props: RenderHighlightsProps) => (
+  const renderHighlights = useCallback((props: RenderHighlightsProps) => (
     <>
       {highlights.map((highlight) => (
         <div key={highlight.id}>
@@ -148,13 +143,22 @@ export function PdfWorkspaceViewer({
         </div>
       ))}
     </>
+  ), [highlights]);
+
+  const highlightPluginInstance = useMemo(
+    () =>
+      highlightPlugin({
+        trigger: Trigger.TextSelection,
+        renderHighlightTarget,
+        renderHighlights,
+      }),
+    [renderHighlightTarget, renderHighlights],
   );
 
-  const highlightPluginInstance = highlightPlugin({
-    trigger: Trigger.TextSelection,
-    renderHighlightTarget,
-    renderHighlights,
-  });
+  const plugins = useMemo(
+    () => [defaultLayoutPluginInstance, highlightPluginInstance],
+    [defaultLayoutPluginInstance, highlightPluginInstance],
+  );
 
   const tooltipMap = useMemo(() => {
     if (language === "pt") {
@@ -294,18 +298,7 @@ export function PdfWorkspaceViewer({
           key={`${language}:${fileUrl}`}
           fileUrl={fileUrl}
           defaultScale={viewerScale}
-          plugins={[
-            defaultLayoutPluginInstance,
-            zoomPluginInstance,
-            highlightPluginInstance,
-          ]}
-          renderPage={(props: RenderPageProps) => (
-            <>
-              {props.canvasLayer.children}
-              {props.textLayer.children}
-              {props.annotationLayer.children}
-            </>
-          )}
+          plugins={plugins}
         />
       </Worker>
     </div>

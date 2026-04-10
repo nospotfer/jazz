@@ -263,8 +263,8 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
             </div>
           </aside>
 
-          <div className="rounded-xl border border-border bg-card overflow-hidden min-h-[72dvh]">
-            <div className="px-4 py-3 border-b border-border bg-card/80">
+          <div className="rounded-xl border border-border bg-card overflow-hidden min-h-[72dvh] flex flex-col">
+            <div className="px-4 py-3 border-b border-border bg-card/80 shrink-0">
               <p className="text-sm font-medium text-foreground">{selectedLocalized?.displayClassLabel}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{selectedLocalized?.displayTitle}</p>
               {selectedLocalized ? (
@@ -282,20 +282,20 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
 
             {selectedLocalized ? (
               isLoading ? (
-                <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
+                <div className="flex-1 min-h-0 flex items-center justify-center text-muted-foreground">
                   {copy.loadingPdf}
                 </div>
               ) : loadError && !signedUrl ? (
-                <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground px-4 text-center">
+                <div className="flex-1 min-h-0 flex items-center justify-center text-muted-foreground px-4 text-center">
                   {loadError}
                 </div>
               ) : (
-                <div className="h-[calc(72dvh-58px)]">
+                <div className="flex-1 min-h-0">
                   <PdfWorkspaceViewer fileUrl={signedUrl || selectedLocalized.url} />
                 </div>
               )
             ) : (
-              <div className="h-[calc(72dvh-58px)] flex items-center justify-center text-muted-foreground">
+              <div className="flex-1 min-h-0 flex items-center justify-center text-muted-foreground">
                 {copy.selectPdf}
               </div>
             )}
