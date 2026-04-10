@@ -132,12 +132,22 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     [localizedItems, selected?.id]
   );
 
+  const buildInlineProxyUrl = useCallback((item: PdfItem) => {
+    const params = new URLSearchParams({
+      download: '0',
+      language,
+      proxy: '1',
+    });
+
+    return `/api/lessons/${item.lessonId}/attachments/${item.id}?${params.toString()}`;
+  }, [language]);
+
   const loadSignedUrl = useCallback(async (item: PdfItem) => {
     setIsLoading(true);
     setLoadError('');
 
     try {
-      const response = await axios.get(
+      await axios.get(
         `/api/lessons/${item.lessonId}/attachments/${item.id}`,
         {
           params: {
@@ -147,17 +157,17 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
         }
       );
 
-      setSignedUrl(response.data?.signedUrl || item.url);
+      setSignedUrl(buildInlineProxyUrl(item));
     } catch (error: unknown) {
       const message = axios.isAxiosError(error)
         ? (error.response?.data?.error as string | undefined) || copy.loadPdfError
         : copy.loadPdfError;
       setLoadError(message);
-      setSignedUrl(item.url);
+      setSignedUrl('');
     } finally {
       setIsLoading(false);
     }
-  }, [copy.loadPdfError, language]);
+  }, [buildInlineProxyUrl, copy.loadPdfError, language]);
 
   const handleSelect = (item: PdfItem) => {
     setShouldPrefetchFirstPdf(true);
