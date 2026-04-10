@@ -15,8 +15,8 @@ export async function ensureLessonNotesTable() {
           "isBold" INTEGER NOT NULL DEFAULT 0,
           "isItalic" INTEGER NOT NULL DEFAULT 0,
           "fontSize" INTEGER NOT NULL DEFAULT 13,
-          "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+          "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       `);
 
