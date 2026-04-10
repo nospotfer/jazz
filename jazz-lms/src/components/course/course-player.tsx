@@ -1067,7 +1067,7 @@ export const CoursePlayer = ({
 
         <div className="lg:pl-56 h-full overflow-hidden p-2 pb-[168px] sm:p-3 sm:pb-[168px] lg:p-4 lg:pb-[168px]">
           <div
-            className={`mx-auto h-full grid grid-cols-1 gap-3 lg:gap-4 min-h-0 ${isNotesPanelOpen ? "xl:grid-cols-2" : "xl:grid-cols-1"}`}
+            className={`mx-auto h-full grid grid-cols-1 gap-3 lg:gap-4 min-h-0 ${isNotesPanelOpen ? "xl:grid-cols-2 xl:grid-rows-[1fr]" : "xl:grid-cols-1"}`}
           >
             <div className="min-w-0 min-h-0 flex flex-col gap-4">
               <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
@@ -1248,7 +1248,7 @@ export const CoursePlayer = ({
                     ) : (
                       <>
                         {selectedAttachment ? (
-                          <div className="rounded-lg border border-border p-2.5 bg-background/80">
+                          <div className="shrink-0 rounded-lg border border-border p-2.5 bg-background/80">
                             <div className="flex justify-end">
                               <Button
                                 type="button"
@@ -1264,7 +1264,7 @@ export const CoursePlayer = ({
                           </div>
                         ) : null}
 
-                        <div className="mt-2 flex-1 min-h-0 rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
+                        <div className="mt-2 flex-1 min-h-[200px] rounded-lg border-2 border-primary/40 bg-background overflow-hidden">
                           {isLoadingPdf ? (
                             <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
                               {copy.loadingPdfPreview}
