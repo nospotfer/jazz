@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bold, Italic, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
@@ -108,13 +108,14 @@ export function LessonNotesEditor({
   const [pdfLoadError, setPdfLoadError] = useState('');
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pdfRequestIdRef = useRef(0);
 
   const selectedPdf = useMemo(
     () => pdfAttachments.find((attachment) => attachment.id === selectedPdfId) ?? pdfAttachments[0] ?? null,
     [pdfAttachments, selectedPdfId],
   );
 
-  const buildInlineProxyUrl = (attachment: {
+  const buildInlineProxyUrl = useCallback((attachment: {
     lessonId: string;
     id: string;
   }) => {
@@ -125,54 +126,73 @@ export function LessonNotesEditor({
     });
 
     return `/api/lessons/${attachment.lessonId}/attachments/${attachment.id}?${params.toString()}`;
-  };
+  }, [language]);
 
-  const loadSignedPdfUrl = async (attachment: {
-    lessonId: string;
-    id: string;
-    url: string;
-  }) => {
-    setIsLoadingPdf(true);
-    setPdfLoadError('');
-
-    try {
-      await axios.get(
+  const getAttachmentSignedUrl = useCallback(
+    async (attachment: { lessonId: string; id: string }, download = false) => {
+      const response = await axios.get(
         `/api/lessons/${attachment.lessonId}/attachments/${attachment.id}`,
         {
           params: {
-            download: 0,
+            download: download ? 1 : 0,
             language,
           },
         },
       );
 
+      return response.data as {
+        signedUrl?: string;
+      };
+    },
+    [language],
+  );
+
+  const loadSignedPdfUrl = useCallback(async (attachment: {
+    lessonId: string;
+    id: string;
+    url: string;
+  }) => {
+    const requestId = ++pdfRequestIdRef.current;
+    setIsLoadingPdf(true);
+    setPdfLoadError('');
+
+    try {
+      const response = await getAttachmentSignedUrl(attachment, false);
+      if (requestId !== pdfRequestIdRef.current) return;
+
+      if (response.signedUrl) {
+        setPdfSignedUrl(response.signedUrl);
+        return;
+      }
+
       setPdfSignedUrl(buildInlineProxyUrl(attachment));
     } catch (error: unknown) {
+      if (requestId !== pdfRequestIdRef.current) return;
+
+      if (attachment.url) {
+        setPdfSignedUrl(attachment.url);
+        setPdfLoadError('');
+        return;
+      }
+
       const message = axios.isAxiosError(error)
         ? (error.response?.data?.error as string | undefined) || copy.loadPdfError
         : copy.loadPdfError;
       setPdfLoadError(message);
       setPdfSignedUrl('');
     } finally {
-      setIsLoadingPdf(false);
+      if (requestId === pdfRequestIdRef.current) {
+        setIsLoadingPdf(false);
+      }
     }
-  };
+  }, [buildInlineProxyUrl, copy.loadPdfError, getAttachmentSignedUrl]);
 
   const downloadSelectedPdf = async () => {
     if (!selectedPdf) return;
 
     try {
-      const response = await axios.get(
-        `/api/lessons/${selectedPdf.lessonId}/attachments/${selectedPdf.id}`,
-        {
-          params: {
-            download: 1,
-            language,
-          },
-        },
-      );
-
-      const signedUrl = response.data?.signedUrl || selectedPdf.url;
+      const response = await getAttachmentSignedUrl(selectedPdf, true);
+      const signedUrl = response.signedUrl || selectedPdf.url;
       window.open(signedUrl, '_blank', 'noopener,noreferrer');
     } catch {
       window.open(selectedPdf.url, '_blank', 'noopener,noreferrer');
@@ -180,7 +200,13 @@ export function LessonNotesEditor({
   };
 
   useEffect(() => {
-    setSelectedPdfId(pdfAttachments[0]?.id ?? null);
+    setSelectedPdfId((current) => {
+      if (!pdfAttachments.length) return null;
+      if (current && pdfAttachments.some((attachment) => attachment.id === current)) {
+        return current;
+      }
+      return pdfAttachments[0].id;
+    });
   }, [lessonId, pdfAttachments]);
 
   useEffect(() => {
@@ -191,7 +217,7 @@ export function LessonNotesEditor({
     }
 
     void loadSignedPdfUrl(selectedPdf);
-  }, [selectedPdf, language]);
+  }, [loadSignedPdfUrl, selectedPdf]);
 
   useEffect(() => {
     let cancelled = false;
