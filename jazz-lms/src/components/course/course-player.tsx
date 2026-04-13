@@ -1284,9 +1284,10 @@ export const CoursePlayer = ({
                               : "border-primary/30 bg-background/80 text-muted-foreground"
                           }`}
                         >
-                        
+                        <span>{copy.gamificationAction}</span> 
                         </button>
                       ) : null}
+                      <button>test test</button>
 
                       {quizSummary && quizSummary.totalAttempts > 0 ? (
                         <LessonQuizMedalBadge
