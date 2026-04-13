@@ -1296,7 +1296,6 @@ export const CoursePlayer = ({
                         <span>{copy.gamificationAction}</span> 
                         </button>
                       ) : null}
-                      <button>test test</button>
 
                       {quizSummary && quizSummary.totalAttempts > 0 ? (
                         <LessonQuizMedalBadge
