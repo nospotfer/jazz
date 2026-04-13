@@ -1284,7 +1284,7 @@ export const CoursePlayer = ({
                               : "border-primary/30 bg-background/80 text-muted-foreground"
                           }`}
                         >
-                          <span>{copy.gamificationAction}</span>
+                        
                         </button>
                       ) : null}
 
