@@ -486,8 +486,9 @@ export async function assertLessonQuizAccess(params: {
   userId: string;
   courseId: string;
   lessonId: string;
+  userEmail?: string | null;
 }) {
-  const { userId, courseId, lessonId } = params;
+  const { userId, courseId, lessonId, userEmail } = params;
 
   const lesson = await db.lesson.findFirst({
     where: {
@@ -495,6 +496,7 @@ export async function assertLessonQuizAccess(params: {
       isPublished: true,
       chapter: {
         courseId,
+        isPublished: true,
       },
     },
     select: {
@@ -511,7 +513,7 @@ export async function assertLessonQuizAccess(params: {
     throw new LessonQuizError('Lesson not found.', 404, 'LESSON_NOT_FOUND');
   }
 
-  const [fullPurchase, singleLessonPurchase] = await Promise.all([
+  const [fullPurchase, singleLessonPurchase, firstPublishedLesson] = await Promise.all([
     db.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -534,9 +536,37 @@ export async function assertLessonQuizAccess(params: {
         id: true,
       },
     }),
+    db.lesson.findFirst({
+      where: {
+        isPublished: true,
+        chapter: {
+          courseId,
+          isPublished: true,
+        },
+      },
+      orderBy: [
+        {
+          chapter: {
+            position: 'asc',
+          },
+        },
+        {
+          position: 'asc',
+        },
+      ],
+      select: {
+        id: true,
+      },
+    }),
   ]);
 
-  if (!fullPurchase && !singleLessonPurchase) {
+  const normalizedOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? '').trim().toLowerCase();
+  const normalizedUserEmail = (userEmail ?? '').trim().toLowerCase();
+  const isAdminOwner =
+    normalizedOwnerEmail.length > 0 && normalizedOwnerEmail === normalizedUserEmail;
+  const isFreePreviewLesson = firstPublishedLesson?.id === lessonId;
+
+  if (!isAdminOwner && !fullPurchase && !singleLessonPurchase && !isFreePreviewLesson) {
     throw new LessonQuizError('Unauthorized', 401, 'LESSON_QUIZ_UNAUTHORIZED');
   }
 

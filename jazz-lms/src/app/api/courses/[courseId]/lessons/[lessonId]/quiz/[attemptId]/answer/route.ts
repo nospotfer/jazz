@@ -67,6 +67,7 @@ export async function POST(
       userId: user.id,
       courseId,
       lessonId,
+      userEmail: user.email,
     });
 
     const payload = await submitLessonQuizAnswer({
