@@ -166,6 +166,16 @@ export const CoursePlayer = ({
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
+      completedLabel: "Concluida",
+      gamificationAction: "Gamificacion",
+      gamificationReadyTooltip: "Ir a gamificacion",
+      gamificationLockedTooltip:
+        "Completa la clase para desbloquear la gamificacion",
+      confirmCompleteTitle: "Confirmar finalizacion de la clase",
+      confirmCompleteMessage:
+        "Quieres marcar esta clase como completada? Esta accion habilitara la gamificacion.",
+      confirmCompleteConfirm: "Si, completar clase",
+      confirmCompleteCancel: "Cancelar",
       musicSpotify: "Abrir en Spotify",
       loadingPlayer: "Cargando reproductor de la lección...",
       unableSignedPlayback:
@@ -217,6 +227,16 @@ export const CoursePlayer = ({
       hidePdfAction: "Hide PDF",
       showPdfAction: "Show PDF",
       completeAction: "Complete",
+      completedLabel: "Completed",
+      gamificationAction: "Gamification",
+      gamificationReadyTooltip: "Go to gamification",
+      gamificationLockedTooltip:
+        "Complete this class to unlock gamification",
+      confirmCompleteTitle: "Confirm class completion",
+      confirmCompleteMessage:
+        "Do you want to mark this class as completed? This will unlock gamification.",
+      confirmCompleteConfirm: "Yes, complete class",
+      confirmCompleteCancel: "Cancel",
       musicSpotify: "Open in Spotify",
       loadingPlayer: "Loading lesson player...",
       unableSignedPlayback:
@@ -267,6 +287,16 @@ export const CoursePlayer = ({
       hidePdfAction: "Masquer PDF",
       showPdfAction: "Afficher PDF",
       completeAction: "Valider",
+      completedLabel: "Terminee",
+      gamificationAction: "Gamification",
+      gamificationReadyTooltip: "Aller a la gamification",
+      gamificationLockedTooltip:
+        "Terminez ce cours pour debloquer la gamification",
+      confirmCompleteTitle: "Confirmer la fin du cours",
+      confirmCompleteMessage:
+        "Voulez-vous marquer ce cours comme termine ? Cette action debloquera la gamification.",
+      confirmCompleteConfirm: "Oui, terminer le cours",
+      confirmCompleteCancel: "Annuler",
       musicSpotify: "Ouvrir dans Spotify",
       loadingPlayer: "Chargement du lecteur de leçon...",
       unableSignedPlayback:
@@ -318,6 +348,16 @@ export const CoursePlayer = ({
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
+      completedLabel: "Concluida",
+      gamificationAction: "Gamificacao",
+      gamificationReadyTooltip: "Ir para gamificacao",
+      gamificationLockedTooltip:
+        "Conclua a aula para desbloquear a gamificacao",
+      confirmCompleteTitle: "Confirmar conclusao da aula",
+      confirmCompleteMessage:
+        "Voce deseja marcar esta aula como concluida? Essa acao vai liberar a gamificacao.",
+      confirmCompleteConfirm: "Sim, concluir aula",
+      confirmCompleteCancel: "Cancelar",
       musicSpotify: "Abrir no Spotify",
       loadingPlayer: "Carregando player da aula...",
       unableSignedPlayback:
@@ -399,6 +439,7 @@ export const CoursePlayer = ({
   const [pdfError, setPdfError] = useState("");
   const [isNotesPanelOpen, setIsNotesPanelOpen] = useState(true);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isConfirmCompleteOpen, setIsConfirmCompleteOpen] = useState(false);
   const [quizSummary, setQuizSummary] =
     useState<LessonQuizSummarySnapshot | null>(initialQuizSummary);
   const [shouldRefreshAfterQuizClose, setShouldRefreshAfterQuizClose] =
@@ -930,9 +971,7 @@ export const CoursePlayer = ({
     }
   };
 
-  const completeLesson = async ({
-    openQuizAfter = false,
-  }: { openQuizAfter?: boolean } = {}) => {
+  const completeLesson = async () => {
     if (isCompleting || isCompleted || !canAccessLesson) return;
 
     setIsCompleting(true);
@@ -949,38 +988,6 @@ export const CoursePlayer = ({
       setIsCompleted(true);
       confetti.onOpen();
       toast.success(copy.lessonCompleted);
-
-      if (openQuizAfter) {
-        setShouldRefreshAfterQuizClose(true);
-        setIsQuizOpen(true);
-      } else {
-        router.refresh();
-      }
-    } catch {
-      toast.error(copy.somethingWrong);
-    } finally {
-      setIsCompleting(false);
-    }
-  };
-
-  const resetLessonCompletion = async () => {
-    if (isCompleting || !canAccessLesson) return;
-
-    setIsCompleting(true);
-    try {
-      await axios.put(
-        `/api/courses/${course.id}/lessons/${lesson.id}/progress`,
-        {
-          isCompleted: false,
-          progressPercent: 0,
-          minutesRemaining: DEFAULT_LESSON_DURATION_MINUTES,
-        },
-      );
-
-      setIsCompleted(false);
-      setLastSavedPercent(0);
-      setIsQuizOpen(false);
-      toast.success(copy.lessonReset);
       router.refresh();
     } catch {
       toast.error(copy.somethingWrong);
@@ -999,18 +1006,20 @@ export const CoursePlayer = ({
     );
     if (!shouldCompleteByPlayback) return;
 
-    await completeLesson({ openQuizAfter: false });
+    await completeLesson();
   };
 
-  const onMarkAsComplete = async () => {
-    if (!canAccessLesson) return;
-
-    if (isCompleted) {
-      await resetLessonCompletion();
+  const onMarkAsComplete = () => {
+    if (!canAccessLesson || isCompleting || isCompleted) {
       return;
     }
 
-    await completeLesson({ openQuizAfter: canUseGamification });
+    setIsConfirmCompleteOpen(true);
+  };
+
+  const onConfirmCompleteLesson = async () => {
+    setIsConfirmCompleteOpen(false);
+    await completeLesson();
   };
 
   const handleQuizClose = () => {
@@ -1021,6 +1030,8 @@ export const CoursePlayer = ({
       router.refresh();
     }
   };
+
+  const canLaunchGamification = isCompleted && hasQuizAvailable;
 
   const firstAttachmentId = visibleAttachments[0]?.id;
 
@@ -1125,21 +1136,50 @@ export const CoursePlayer = ({
                       <button
                         type="button"
                         onClick={onMarkAsComplete}
-                        disabled={isCompleting || !canAccessLesson}
+                        disabled={isCompleting || !canAccessLesson || isCompleted}
                         title={copy.completeTooltip}
                         aria-label={copy.completeTooltip}
-                        className="relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border border-primary/40 bg-background/95 px-2.5 text-[11px] font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+                        className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
+                          isCompleted
+                            ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20"
+                            : "border-primary/40 bg-background/95 text-foreground hover:bg-accent"
+                        }`}
                       >
-                        <CheckCircle className="h-4 w-4" />
-                        <span>{copy.completeAction}</span>
+                        {isCompleted ? (
+                          <CheckCircle className="h-4 w-4 text-emerald-400" />
+                        ) : null}
+                        <span>
+                          {isCompleted ? copy.completedLabel : copy.completeAction}
+                        </span>
                         <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-amber-500 to-yellow-400 px-2 py-1 text-[10px] font-semibold text-black opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
                           {isCompleting
                             ? copy.saving
                             : isCompleted
-                              ? copy.completedReset
+                              ? copy.completedLabel
                               : copy.completeTooltip}
                         </span>
                       </button>
+
+                      {canUseGamification ? (
+                        <button
+                          type="button"
+                          onClick={() => setIsQuizOpen(true)}
+                          disabled={!canLaunchGamification}
+                          title={
+                            canLaunchGamification
+                              ? copy.gamificationReadyTooltip
+                              : copy.gamificationLockedTooltip
+                          }
+                          aria-label={copy.gamificationAction}
+                          className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
+                            canLaunchGamification
+                              ? "border-yellow-400/60 bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:brightness-105"
+                              : "border-primary/30 bg-background/80 text-muted-foreground"
+                          }`}
+                        >
+                          <span>{copy.gamificationAction}</span>
+                        </button>
+                      ) : null}
 
                       {quizSummary && quizSummary.totalAttempts > 0 ? (
                         <LessonQuizMedalBadge
@@ -1340,6 +1380,39 @@ export const CoursePlayer = ({
 
         <SpotifyPlaylistFooter className="fixed bottom-0 left-0 right-0 z-30 lg:left-56" />
       </div>
+
+      {isConfirmCompleteOpen ? (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border border-primary/35 bg-card p-5 shadow-2xl">
+            <h3 className="text-lg font-semibold text-foreground">
+              {copy.confirmCompleteTitle}
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+              {copy.confirmCompleteMessage}
+            </p>
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsConfirmCompleteOpen(false)}
+                disabled={isCompleting}
+              >
+                {copy.confirmCompleteCancel}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  void onConfirmCompleteLesson();
+                }}
+                disabled={isCompleting}
+                className="bg-primary text-primary-foreground"
+              >
+                {isCompleting ? copy.saving : copy.confirmCompleteConfirm}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <LessonQuizOverlay
         courseId={course.id}
