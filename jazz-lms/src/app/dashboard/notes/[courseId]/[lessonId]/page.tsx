@@ -1,5 +1,6 @@
 import { LessonNotesEditor } from "@/components/dashboard/lesson-notes-editor";
 import { isAdminRole } from "@/lib/admin/permissions";
+import { isCourseNoteAttachment } from "@/lib/course-notes";
 import { getLocalizedJazzClassLabel } from "@/lib/course-lessons";
 import {
   getCourseTranslationBundle,
@@ -19,6 +20,13 @@ interface RawLessonNote {
   isItalic: number;
   fontSize: number;
   updatedAt: string;
+}
+
+interface LessonPdfAttachment {
+  id: string;
+  lessonId: string;
+  name: string;
+  url: string;
 }
 
 export default async function LessonNotesPage({
@@ -49,6 +57,14 @@ export default async function LessonNotesPage({
             select: {
               id: true,
               title: true,
+              attachments: {
+                select: {
+                  id: true,
+                  lessonId: true,
+                  name: true,
+                  url: true,
+                },
+              },
             },
           },
         },
@@ -75,6 +91,24 @@ export default async function LessonNotesPage({
   }
 
   const lesson = orderedLessons[lessonIndex];
+
+  const lessonPdfAttachments: LessonPdfAttachment[] = lesson.attachments
+    .filter((attachment) => {
+      const loweredName = (attachment.name || "").toLowerCase();
+      const loweredUrl = (attachment.url || "").toLowerCase();
+
+      if (isCourseNoteAttachment(attachment.name || "", attachment.url || "")) {
+        return true;
+      }
+
+      return loweredName.endsWith(".pdf") || loweredUrl.includes(".pdf");
+    })
+    .map((attachment) => ({
+      id: attachment.id,
+      lessonId: attachment.lessonId,
+      name: attachment.name,
+      url: attachment.url,
+    }));
 
   const translationBundle = await getCourseTranslationBundle({
     language,
@@ -180,6 +214,7 @@ export default async function LessonNotesPage({
       lessonId={lessonId}
       classLabel={getLocalizedJazzClassLabel(lessonIndex + 1, language)}
       lessonTitle={localizedLessonTitle}
+      pdfAttachments={lessonPdfAttachments}
       isPrivilegedViewer={isPrivilegedViewer}
       studentNotes={notesForViewer}
     />

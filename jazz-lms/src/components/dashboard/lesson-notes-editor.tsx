@@ -1,8 +1,11 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bold, Italic, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/components/providers/language-provider';
+import { PdfWorkspaceViewer } from '@/components/course/pdf-workspace-viewer';
 
 interface StudentNote {
   userId: string;
@@ -20,6 +23,12 @@ interface LessonNotesEditorProps {
   lessonId: string;
   classLabel: string;
   lessonTitle: string;
+  pdfAttachments?: {
+    id: string;
+    lessonId: string;
+    name: string;
+    url: string;
+  }[];
   isPrivilegedViewer?: boolean;
   studentNotes?: StudentNote[];
 }
@@ -38,9 +47,42 @@ export function LessonNotesEditor({
   lessonId,
   classLabel,
   lessonTitle,
+  pdfAttachments = [],
   isPrivilegedViewer = false,
   studentNotes = [],
 }: LessonNotesEditorProps) {
+  const { language } = useLanguage();
+  const copy = {
+    es: {
+      pdfTitle: 'PDF de la clase',
+      loadPdfError: 'No se puede cargar este PDF ahora mismo.',
+      loadingPdf: 'Cargando PDF...',
+      noPdf: 'No hay PDFs disponibles para esta clase.',
+      downloadPdf: 'Descargar PDF seleccionado',
+    },
+    en: {
+      pdfTitle: 'Class PDF',
+      loadPdfError: 'Unable to load this PDF right now.',
+      loadingPdf: 'Loading PDF...',
+      noPdf: 'No PDFs are available for this lesson.',
+      downloadPdf: 'Download selected PDF',
+    },
+    fr: {
+      pdfTitle: 'PDF du cours',
+      loadPdfError: 'Impossible de charger ce PDF pour le moment.',
+      loadingPdf: 'Chargement du PDF...',
+      noPdf: 'Aucun PDF disponible pour cette leçon.',
+      downloadPdf: 'Télécharger le PDF sélectionné',
+    },
+    pt: {
+      pdfTitle: 'PDF da aula',
+      loadPdfError: 'Não foi possível carregar este PDF agora.',
+      loadingPdf: 'Carregando PDF...',
+      noPdf: 'Não há PDFs disponíveis para esta aula.',
+      downloadPdf: 'Baixar PDF selecionado',
+    },
+  }[language];
+
   const notesStorageKey = useMemo(
     () => `lesson-notes:${courseId}:${lessonId}`,
     [courseId, lessonId]
@@ -58,8 +100,98 @@ export function LessonNotesEditor({
     fontSize: 13,
   });
   const [isHydrated, setIsHydrated] = useState(false);
+  const [selectedPdfId, setSelectedPdfId] = useState<string | null>(
+    pdfAttachments[0]?.id ?? null,
+  );
+  const [pdfSignedUrl, setPdfSignedUrl] = useState('');
+  const [isLoadingPdf, setIsLoadingPdf] = useState(false);
+  const [pdfLoadError, setPdfLoadError] = useState('');
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const selectedPdf = useMemo(
+    () => pdfAttachments.find((attachment) => attachment.id === selectedPdfId) ?? pdfAttachments[0] ?? null,
+    [pdfAttachments, selectedPdfId],
+  );
+
+  const buildInlineProxyUrl = (attachment: {
+    lessonId: string;
+    id: string;
+  }) => {
+    const params = new URLSearchParams({
+      download: '0',
+      language,
+      proxy: '1',
+    });
+
+    return `/api/lessons/${attachment.lessonId}/attachments/${attachment.id}?${params.toString()}`;
+  };
+
+  const loadSignedPdfUrl = async (attachment: {
+    lessonId: string;
+    id: string;
+    url: string;
+  }) => {
+    setIsLoadingPdf(true);
+    setPdfLoadError('');
+
+    try {
+      await axios.get(
+        `/api/lessons/${attachment.lessonId}/attachments/${attachment.id}`,
+        {
+          params: {
+            download: 0,
+            language,
+          },
+        },
+      );
+
+      setPdfSignedUrl(buildInlineProxyUrl(attachment));
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error)
+        ? (error.response?.data?.error as string | undefined) || copy.loadPdfError
+        : copy.loadPdfError;
+      setPdfLoadError(message);
+      setPdfSignedUrl('');
+    } finally {
+      setIsLoadingPdf(false);
+    }
+  };
+
+  const downloadSelectedPdf = async () => {
+    if (!selectedPdf) return;
+
+    try {
+      const response = await axios.get(
+        `/api/lessons/${selectedPdf.lessonId}/attachments/${selectedPdf.id}`,
+        {
+          params: {
+            download: 1,
+            language,
+          },
+        },
+      );
+
+      const signedUrl = response.data?.signedUrl || selectedPdf.url;
+      window.open(signedUrl, '_blank', 'noopener,noreferrer');
+    } catch {
+      window.open(selectedPdf.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  useEffect(() => {
+    setSelectedPdfId(pdfAttachments[0]?.id ?? null);
+  }, [lessonId, pdfAttachments]);
+
+  useEffect(() => {
+    if (!selectedPdf) {
+      setPdfSignedUrl('');
+      setPdfLoadError('');
+      return;
+    }
+
+    void loadSignedPdfUrl(selectedPdf);
+  }, [selectedPdf, language]);
 
   useEffect(() => {
     let cancelled = false;
@@ -255,6 +387,62 @@ export function LessonNotesEditor({
             lineHeight: 1.6,
           }}
         />
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-foreground">{copy.pdfTitle}</h2>
+          {selectedPdf ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={downloadSelectedPdf}
+            >
+              {copy.downloadPdf}
+            </Button>
+          ) : null}
+        </div>
+
+        {pdfAttachments.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{copy.noPdf}</p>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2">
+              {pdfAttachments.map((attachment) => {
+                const isActive = selectedPdf?.id === attachment.id;
+                return (
+                  <Button
+                    key={attachment.id}
+                    type="button"
+                    variant={isActive ? 'default' : 'outline'}
+                    className="max-w-full"
+                    onClick={() => setSelectedPdfId(attachment.id)}
+                  >
+                    <span className="truncate max-w-[240px]">{attachment.name}</span>
+                  </Button>
+                );
+              })}
+            </div>
+
+            <div className="h-[72dvh] rounded-lg border border-border overflow-hidden bg-background">
+              {isLoadingPdf ? (
+                <div className="h-full flex items-center justify-center text-muted-foreground">
+                  {copy.loadingPdf}
+                </div>
+              ) : pdfLoadError && !pdfSignedUrl ? (
+                <div className="h-full flex items-center justify-center text-muted-foreground px-4 text-center">
+                  {pdfLoadError}
+                </div>
+              ) : selectedPdf ? (
+                <PdfWorkspaceViewer fileUrl={pdfSignedUrl || selectedPdf.url} compact />
+              ) : (
+                <div className="h-full flex items-center justify-center text-muted-foreground px-4 text-center">
+                  {copy.noPdf}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {isPrivilegedViewer && (
