@@ -7,7 +7,7 @@ import {
 import { db } from "@/lib/db";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
-import { createClient } from "@/utils/supabase/server";
+import { getServerUser } from "@/lib/server-user";
 import { BookOpen, CheckCircle, Clock } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -65,10 +65,7 @@ export default async function CourseDetailPage({
     },
   }[language];
 
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return redirect("/auth");

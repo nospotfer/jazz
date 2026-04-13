@@ -3,8 +3,10 @@ import {
   getCourseTranslationBundle,
   resolveLessonTitle,
 } from "@/lib/course-translations";
-import { hasAnyCoursePurchase } from "@/lib/dashboard-server-data";
-import { db } from "@/lib/db";
+import {
+  getPublishedCourseOutline,
+  hasAnyCoursePurchase,
+} from "@/lib/dashboard-server-data";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
 import { getCurrentUser } from "@/lib/admin";
 import { isAdminRole } from "@/lib/admin/permissions";
@@ -23,56 +25,40 @@ export default async function DashboardPage() {
     return redirect("/auth");
   }
 
-  let isAdmin = false;
-  try {
-    const dbUser = await getCurrentUser();
-    isAdmin = isAdminRole(dbUser?.role ?? null);
-  } catch (error) {
+  const [dbUserResult, courseResult, purchasedResult] = await Promise.allSettled([
+    getCurrentUser(),
+    getPublishedCourseOutline(),
+    hasAnyCoursePurchase(user.id),
+  ]);
+
+  if (dbUserResult.status === "rejected") {
     console.error(
       "[dashboard] Unable to resolve admin role. Falling back to non-admin.",
-      error,
+      dbUserResult.reason,
     );
   }
 
-  let course: {
-    id: string;
-    chapters: { id: string; lessons: { id: string; title: string }[] }[];
-  } | null = null;
-
-  let hasPurchased = false;
-
-  try {
-    course = await db.course.findFirst({
-      where: { isPublished: true },
-      orderBy: { createdAt: "asc" },
-      select: {
-        id: true,
-        chapters: {
-          where: { isPublished: true },
-          orderBy: { position: "asc" },
-          select: {
-            id: true,
-            lessons: {
-              where: { isPublished: true },
-              orderBy: { position: "asc" },
-              select: {
-                id: true,
-                title: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    const [purchased] = await Promise.all([hasAnyCoursePurchase(user.id)]);
-    hasPurchased = purchased;
-  } catch (error) {
+  if (courseResult.status === "rejected") {
     console.error(
-      "[dashboard] Database unavailable. Rendering fallback state.",
-      error,
+      "[dashboard] Database unavailable while loading course. Rendering fallback state.",
+      courseResult.reason,
     );
   }
+
+  if (purchasedResult.status === "rejected") {
+    console.error(
+      "[dashboard] Failed loading purchase state. Falling back to locked mode.",
+      purchasedResult.reason,
+    );
+  }
+
+  const isAdmin =
+    dbUserResult.status === "fulfilled"
+      ? isAdminRole(dbUserResult.value?.role ?? null)
+      : false;
+
+  const course = courseResult.status === "fulfilled" ? courseResult.value : null;
+  const hasPurchased = purchasedResult.status === "fulfilled" ? purchasedResult.value : false;
 
   const lessonRoutesByTitle = course
     ? Object.fromEntries(

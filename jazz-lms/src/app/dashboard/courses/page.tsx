@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { getServerUser } from '@/lib/server-user';
 import { db } from '@/lib/db';
 import { MyCoursesClient, type PurchasedVideoItem } from '@/components/dashboard/my-courses-client';
 import {
@@ -10,12 +10,9 @@ import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
 
 export default async function MyCoursesPage() {
-  const supabase = createClient();
   const cookieStore = await cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return redirect('/auth');
@@ -24,16 +21,29 @@ export default async function MyCoursesPage() {
   const [fullCoursePurchases, singleLessonPurchases, userProgress] = await Promise.all([
     db.purchase.findMany({
       where: { userId: user.id },
-      include: {
+      select: {
+        courseId: true,
         course: {
-          include: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
             chapters: {
               where: { isPublished: true },
               orderBy: { position: 'asc' },
-              include: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                position: true,
                 lessons: {
                   where: { isPublished: true },
                   orderBy: { position: 'asc' },
+                  select: {
+                    id: true,
+                    title: true,
+                    position: true,
+                  },
                 },
               },
             },
@@ -43,12 +53,26 @@ export default async function MyCoursesPage() {
     }),
     db.lessonPurchase.findMany({
       where: { userId: user.id },
-      include: {
+      select: {
+        lessonId: true,
         lesson: {
-          include: {
+          select: {
+            id: true,
+            title: true,
+            position: true,
             chapter: {
-              include: {
-                course: true,
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                position: true,
+                course: {
+                  select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                  },
+                },
               },
             },
           },
@@ -57,6 +81,12 @@ export default async function MyCoursesPage() {
     }),
     db.userProgress.findMany({
       where: { userId: user.id },
+      select: {
+        lessonId: true,
+        isCompleted: true,
+        progressPercent: true,
+        minutesRemaining: true,
+      },
     }),
   ]);
 

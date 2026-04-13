@@ -21,10 +21,13 @@ export async function GET(
 
     const lesson = await db.lesson.findUnique({
       where: { id: lessonId },
-      include: {
+      select: {
+        id: true,
+        isPublished: true,
+        videoUrl: true,
         chapter: {
-          include: {
-            course: true,
+          select: {
+            courseId: true,
           },
         },
       },
@@ -34,9 +37,9 @@ export async function GET(
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
     }
 
-    const courseId = lesson.chapter.course.id;
+    const courseId = lesson.chapter.courseId;
 
-    const [hasCoursePurchase, hasLessonPurchase, courseWithLessons] =
+    const [hasCoursePurchase, hasLessonPurchase, firstLessonInCourse] =
       await Promise.all([
         db.purchase.findUnique({
           where: {
@@ -54,28 +57,21 @@ export async function GET(
             },
           },
         }),
-        db.course.findUnique({
+        db.lesson.findFirst({
           where: {
-            id: courseId,
-          },
-          include: {
-            chapters: {
-              where: { isPublished: true },
-              orderBy: { position: "asc" },
-              include: {
-                lessons: {
-                  where: { isPublished: true },
-                  orderBy: { position: "asc" },
-                },
-              },
+            isPublished: true,
+            chapter: {
+              courseId,
+              isPublished: true,
             },
+          },
+          orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
+          select: {
+            id: true,
           },
         }),
       ]);
 
-    const firstLessonInCourse = courseWithLessons?.chapters
-      .flatMap((chapter) => chapter.lessons)
-      .at(0);
     const isFreePreview = firstLessonInCourse?.id === lesson.id;
     const canAccess = Boolean(
       isFreePreview || hasCoursePurchase || hasLessonPurchase,

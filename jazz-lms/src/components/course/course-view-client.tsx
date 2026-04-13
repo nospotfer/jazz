@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SaxLoadingOverlay } from "@/components/ui/sax-loading-overlay";
 
 const UnlockAnimation = dynamic(
   () => import("./unlock-animation").then((mod) => mod.UnlockAnimation),
@@ -394,6 +395,7 @@ interface CourseViewProps {
 }
 
 const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
+const LESSON_NAVIGATION_OVERLAY_THRESHOLD_MS = 2000;
 
 export function CourseViewClient({
   userName,
@@ -518,8 +520,11 @@ export function CourseViewClient({
     null,
   );
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lessonNavigationTimeoutRef = useRef<number | null>(null);
   const handledPurchaseParamsRef = useRef<string | null>(null);
   const handledRegistrationWelcomeRef = useRef<string | null>(null);
+  const [showLessonNavigationOverlay, setShowLessonNavigationOverlay] =
+    useState(false);
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -544,6 +549,18 @@ export function CourseViewClient({
   useEffect(() => {
     setHasPurchased(initialHasPurchased);
   }, [initialHasPurchased]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+
+      if (lessonNavigationTimeoutRef.current !== null) {
+        window.clearTimeout(lessonNavigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handlePageShow = () => {
@@ -811,14 +828,27 @@ export function CourseViewClient({
 
       const isFreeLesson = lesson.isFree;
 
+      const beginLessonNavigation = (target: string) => {
+        if (lessonNavigationTimeoutRef.current !== null) {
+          window.clearTimeout(lessonNavigationTimeoutRef.current);
+        }
+
+        setShowLessonNavigationOverlay(false);
+        lessonNavigationTimeoutRef.current = window.setTimeout(() => {
+          setShowLessonNavigationOverlay(true);
+        }, LESSON_NAVIGATION_OVERLAY_THRESHOLD_MS);
+
+        router.push(target);
+      };
+
       if (hasPurchased || isFreeLesson) {
         if (lessonRoute) {
-          router.push(lessonRoute);
+          beginLessonNavigation(lessonRoute);
           return;
         }
 
         if (courseId) {
-          router.push(`/courses/${courseId}`);
+          beginLessonNavigation(`/courses/${courseId}`);
         }
         return;
       }
@@ -1112,6 +1142,14 @@ export function CourseViewClient({
           void handlePurchaseClick();
         }}
       />
+
+      {showLessonNavigationOverlay ? (
+        <SaxLoadingOverlay
+          onClose={() => {
+            setShowLessonNavigationOverlay(false);
+          }}
+        />
+      ) : null}
     </>
   );
 }

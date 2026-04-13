@@ -4,6 +4,7 @@ import {
   resolveCourseText,
   resolveLessonTitle,
 } from "@/lib/course-translations";
+import { getPublishedCourseForLessonPage } from "@/lib/dashboard-server-data";
 import { db } from "@/lib/db";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
 import { LESSON_QUIZ_QUESTION_COUNT } from "@/lib/lesson-quiz";
@@ -12,7 +13,7 @@ import {
   getLessonQuizSummary,
 } from "@/lib/lesson-quiz-server";
 import { resolveLessonAccessPolicy } from "@/lib/lesson-access";
-import { createClient } from "@/utils/supabase/server";
+import { getServerUser } from "@/lib/server-user";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -22,37 +23,31 @@ const LessonPage = async ({
   params: Promise<{ courseId: string; lessonId: string }>;
 }) => {
   const { courseId, lessonId } = await params;
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return redirect("/auth");
   }
 
-  const course = await db.course.findUnique({
-    where: {
-      id: courseId,
-    },
-    include: {
-      chapters: {
-        orderBy: {
-          position: "asc",
-        },
-        include: {
-          lessons: {
-            orderBy: {
-              position: "asc",
-            },
-            include: {
-              attachments: true,
-            },
-          },
+  const [course, hasFullPurchase, hasLessonPurchase] = await Promise.all([
+    getPublishedCourseForLessonPage(courseId),
+    db.purchase.findUnique({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId,
         },
       },
-    },
-  });
+    }),
+    db.lessonPurchase.findUnique({
+      where: {
+        userId_lessonId: {
+          userId: user.id,
+          lessonId,
+        },
+      },
+    }),
+  ]);
 
   if (!course) {
     return redirect("/dashboard");
@@ -107,37 +102,14 @@ const LessonPage = async ({
     .flatMap((chapter) => chapter.lessons)
     .find((lesson) => lesson.id === lessonId);
 
-  if (!lesson || !lesson.isPublished) {
+  if (!lesson) {
     return redirect("/dashboard");
   }
-
-  const hasFullPurchase = await db.purchase.findUnique({
-    where: {
-      userId_courseId: {
-        userId: user.id,
-        courseId,
-      },
-    },
-  });
-
-  const hasLessonPurchase = await db.lessonPurchase.findUnique({
-    where: {
-      userId_lessonId: {
-        userId: user.id,
-        lessonId,
-      },
-    },
-  });
 
   const isAdminOwner =
     user.email?.toLowerCase() ===
     (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
-  const firstPublishedLesson = localizedCourse.chapters
-    .filter((chapter) => chapter.isPublished)
-    .flatMap((chapter) =>
-      chapter.lessons.filter((item) => item.isPublished),
-    )
-    .at(0);
+  const firstPublishedLesson = orderedLessons.at(0);
   const isFreePreviewLesson = firstPublishedLesson?.id === lesson.id;
   const accessPolicy = resolveLessonAccessPolicy({
     isAdminOwner,

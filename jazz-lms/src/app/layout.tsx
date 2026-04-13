@@ -1,4 +1,5 @@
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { GlobalLoadingProvider } from "@/components/providers/global-loading-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
@@ -40,7 +41,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LanguageProvider>{children}</LanguageProvider>
+          <LanguageProvider>
+            <GlobalLoadingProvider>{children}</GlobalLoadingProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { PdfViewClient } from '@/components/dashboard/pdf-view-client';
 import { isAdminRole } from '@/lib/admin/permissions';
+import { getPublishedCoursesForPdfView } from '@/lib/dashboard-server-data';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
+import { getServerUser } from '@/lib/server-user';
 import { getLocalizedJazzClassLabel } from '@/lib/course-lessons';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 import {
@@ -15,12 +16,9 @@ import {
 } from '@/lib/course-notes';
 
 export default async function PdfViewPage() {
-  const supabase = createClient();
   const cookieStore = await cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
   if (!user) {
     return redirect('/auth');
@@ -42,24 +40,7 @@ export default async function PdfViewPage() {
       where: { userId: user.id },
       select: { courseId: true },
     }),
-    db.course.findMany({
-      where: { isPublished: true },
-      include: {
-        chapters: {
-          where: { isPublished: true },
-          orderBy: { position: 'asc' },
-          include: {
-            lessons: {
-              where: { isPublished: true },
-              orderBy: { position: 'asc' },
-              include: {
-                attachments: true,
-              },
-            },
-          },
-        },
-      },
-    }),
+    getPublishedCoursesForPdfView(),
   ]);
 
   const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));

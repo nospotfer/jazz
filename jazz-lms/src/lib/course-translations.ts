@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/db';
 import { SupportedLanguage } from '@/lib/language';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
@@ -10,6 +11,12 @@ interface TranslationBundle {
   chapters: TranslationMap;
   lessons: TranslationMap;
 }
+
+type SerializedTranslationBundle = {
+  courses: Array<[string, { title: string; description: string | null }]>;
+  chapters: Array<[string, { title: string; description: string | null }]>;
+  lessons: Array<[string, { title: string; description: string | null }]>;
+};
 
 function withFallback(
   preferred: TranslationMap,
@@ -69,6 +76,20 @@ async function queryLessonTranslations(ids: string[], language: SupportedLanguag
   return new Map(rows.map((row) => [row.lessonId, { title: row.title, description: row.description }]));
 }
 
+function stableIds(ids: string[]) {
+  return [...new Set(ids)].sort();
+}
+
+function getBundleCacheKey(language: SupportedLanguage, courseIds: string[], chapterIds: string[], lessonIds: string[]) {
+  return [
+    'course-translation-bundle',
+    language,
+    `c:${courseIds.join(',')}`,
+    `ch:${chapterIds.join(',')}`,
+    `l:${lessonIds.join(',')}`,
+  ];
+}
+
 export async function getCourseTranslationBundle(options: {
   language: SupportedLanguage;
   courseIds: string[];
@@ -85,21 +106,39 @@ export async function getCourseTranslationBundle(options: {
     };
   }
 
+  const normalizedCourseIds = stableIds(courseIds);
+  const normalizedChapterIds = stableIds(chapterIds);
+  const normalizedLessonIds = stableIds(lessonIds);
+
   try {
-    const [coursePreferred, chapterPreferred, lessonPreferred, courseSpanish, chapterSpanish, lessonSpanish] =
-      await Promise.all([
-        queryCourseTranslations(courseIds, language),
-        queryChapterTranslations(chapterIds, language),
-        queryLessonTranslations(lessonIds, language),
-        queryCourseTranslations(courseIds, 'es'),
-        queryChapterTranslations(chapterIds, 'es'),
-        queryLessonTranslations(lessonIds, 'es'),
-      ]);
+    const loadBundle = unstable_cache(
+      async (): Promise<SerializedTranslationBundle> => {
+        const [coursePreferred, chapterPreferred, lessonPreferred, courseSpanish, chapterSpanish, lessonSpanish] =
+          await Promise.all([
+            queryCourseTranslations(normalizedCourseIds, language),
+            queryChapterTranslations(normalizedChapterIds, language),
+            queryLessonTranslations(normalizedLessonIds, language),
+            queryCourseTranslations(normalizedCourseIds, 'es'),
+            queryChapterTranslations(normalizedChapterIds, 'es'),
+            queryLessonTranslations(normalizedLessonIds, 'es'),
+          ]);
+
+        return {
+          courses: Array.from(withFallback(coursePreferred, courseSpanish).entries()),
+          chapters: Array.from(withFallback(chapterPreferred, chapterSpanish).entries()),
+          lessons: Array.from(withFallback(lessonPreferred, lessonSpanish).entries()),
+        };
+      },
+      getBundleCacheKey(language, normalizedCourseIds, normalizedChapterIds, normalizedLessonIds),
+      { revalidate: 300 },
+    );
+
+    const bundle = await loadBundle();
 
     return {
-      courses: withFallback(coursePreferred, courseSpanish),
-      chapters: withFallback(chapterPreferred, chapterSpanish),
-      lessons: withFallback(lessonPreferred, lessonSpanish),
+      courses: new Map(bundle.courses),
+      chapters: new Map(bundle.chapters),
+      lessons: new Map(bundle.lessons),
     };
   } catch {
     return {
