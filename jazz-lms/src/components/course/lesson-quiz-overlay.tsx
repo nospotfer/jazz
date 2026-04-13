@@ -236,7 +236,7 @@ function QuizPlaylistPanel({
 
         <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
-          <div className="mt-2 h-[clamp(220px,36vh,340px)] overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+          <div className="mt-2 aspect-square w-full max-h-[340px] self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
             {embedFailed ? (
               <div className="flex h-full items-center justify-center px-4">
                 <a
@@ -253,7 +253,7 @@ function QuizPlaylistPanel({
                 title="Quiz Spotify playlist"
                 src={SPOTIFY_PLAYLIST_EMBED_URL}
                 width="100%"
-                height="340"
+                height="100%"
                 frameBorder="0"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
