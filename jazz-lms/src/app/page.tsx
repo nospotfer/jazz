@@ -2,6 +2,7 @@ import { BoardNavigation } from "@/components/landing/board-navigation";
 import { PromoVideo } from "@/components/landing/promo-video";
 import { Header } from "@/components/layout/header";
 import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
 
 function SectionLoadingFallback() {
   return (
@@ -51,7 +52,36 @@ const FAQFooter = dynamic(
   },
 );
 
-export default function Home() {
+type HomePageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function Home({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = await searchParams;
+  const oauthCode =
+    typeof resolvedSearchParams.code === "string"
+      ? resolvedSearchParams.code
+      : null;
+
+  // Fallback for providers that return to the site root with OAuth query params.
+  // We forward everything to the callback route that exchanges code -> session.
+  if (oauthCode) {
+    const callbackSearchParams = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(resolvedSearchParams)) {
+      if (typeof value === "string") {
+        callbackSearchParams.append(key, value);
+        continue;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => callbackSearchParams.append(key, item));
+      }
+    }
+
+    redirect(`/auth/callback?${callbackSearchParams.toString()}`);
+  }
+
   return (
     <>
       <Header authMode="guest" />

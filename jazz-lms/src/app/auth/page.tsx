@@ -209,6 +209,17 @@ export default function AuthPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
+    const oauthCode = params.get("code");
+
+    if (oauthCode) {
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      params.forEach((value, key) => {
+        callbackUrl.searchParams.append(key, value);
+      });
+      window.location.replace(callbackUrl.toString());
+      return;
+    }
+
     const urlEmail = params.get("email");
     const tabParam = params.get("tab");
     const flowParam = params.get("flow");
