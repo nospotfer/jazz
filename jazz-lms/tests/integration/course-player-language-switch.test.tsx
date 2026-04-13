@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { CoursePlayer } from "@/components/course/course-player";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   currentLanguage: "es",
   axiosGet: vi.fn(),
   axiosPost: vi.fn(),
+  axiosPut: vi.fn(),
   setLanguage: vi.fn(),
   routerRefresh: vi.fn(),
   confettiOpen: vi.fn(),
@@ -32,6 +33,7 @@ vi.mock("axios", () => ({
   default: {
     get: mocks.axiosGet,
     post: mocks.axiosPost,
+    put: mocks.axiosPut,
   },
 }));
 
@@ -162,6 +164,7 @@ describe("CoursePlayer language switch behavior", () => {
     });
 
     mocks.axiosPost.mockResolvedValue({ data: {} });
+    mocks.axiosPut.mockResolvedValue({ data: {} });
     mocks.axiosGet.mockImplementation((url: string) => {
       if (url.includes("/mux-playback")) {
         return Promise.resolve({
@@ -285,5 +288,46 @@ describe("CoursePlayer language switch behavior", () => {
     });
 
     expect(String(attachmentCalls()[0]?.[0])).toContain("/attachments/att-note");
+  });
+
+  test("requires confirmation to complete lesson and unlocks gamification after confirmation", async () => {
+    render(<CoursePlayer {...baseProps} hasQuizAvailable />);
+
+    const completeButton = screen.getByRole("button", {
+      name: /marcar como completada/i,
+    });
+    const gamificationButton = screen.getByRole("button", {
+      name: /gamificacion/i,
+    });
+
+    expect(gamificationButton).toHaveProperty("disabled", true);
+
+    fireEvent.click(completeButton);
+
+    expect(
+      await screen.findByText(/confirmar finalizacion de la clase/i),
+    ).toBeTruthy();
+
+    const confirmButton = screen.getByRole("button", {
+      name: /si, completar clase/i,
+    });
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+      expect(mocks.axiosPut).toHaveBeenCalledWith(
+        "/api/courses/course-1/lessons/lesson-1/progress",
+        {
+          isCompleted: true,
+          progressPercent: 100,
+          minutesRemaining: 0,
+        },
+      );
+    });
+
+    await waitFor(() => {
+      expect(gamificationButton).toHaveProperty("disabled", false);
+      expect(gamificationButton.className).toContain("from-yellow-400");
+      expect(completeButton.className).toContain("text-emerald-400");
+    });
   });
 });

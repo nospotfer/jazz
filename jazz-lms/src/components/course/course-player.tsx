@@ -11,7 +11,6 @@ import { languageToHtmlLang } from "@/lib/language";
 import {
     calculateLessonMinutesRemaining,
     calculateLessonProgressPercent,
-    shouldAutoCompleteLessonByPlayback,
     shouldPersistLessonProgress,
 } from "@/lib/lesson-progress";
 import type { LessonQuizSummarySnapshot } from "@/lib/lesson-quiz";
@@ -1093,19 +1092,6 @@ export const CoursePlayer = ({
     }
   };
 
-  const onEnded = async (event: Event) => {
-    if (isCompleted || !canAccessLesson) return;
-
-    const { percent: watchedPercent } = getPlaybackMetrics(event);
-    const shouldCompleteByPlayback = shouldAutoCompleteLessonByPlayback(
-      watchedPercent,
-      lastSavedPercent,
-    );
-    if (!shouldCompleteByPlayback) return;
-
-    await completeLesson();
-  };
-
   const onMarkAsComplete = () => {
     if (!canAccessLesson || isCompleting || isCompleted) {
       return;
@@ -1246,7 +1232,7 @@ export const CoursePlayer = ({
                           <CheckCircle className="h-4 w-4 text-emerald-400" />
                         ) : null}
                         <span>
-                          {isCompleted ? copy.completedLabel : copy.completeAction}
+                          {copy.completeAction}
                         </span>
                         <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-amber-500 to-yellow-400 px-2 py-1 text-[10px] font-semibold text-black opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
                           {isCompleting
@@ -1307,7 +1293,6 @@ export const CoursePlayer = ({
                         enforceNoRemotePlayback();
                         setIsReady(true);
                       }}
-                      onEnded={(event) => onEnded(event as unknown as Event)}
                       onTimeUpdate={onTimeUpdate}
                       onLoadStart={enforceNoRemotePlayback}
                       onError={() => {
