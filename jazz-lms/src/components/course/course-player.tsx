@@ -25,7 +25,6 @@ import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
 import {
-    CheckCircle,
     FileText,
     Loader2,
     Lock,
@@ -1135,8 +1134,6 @@ export const CoursePlayer = ({
     isCompleting ||
     !canAccessLesson ||
     (!isCompleted && !hasReachedCompletionThreshold);
-  const shouldShowCompleteCheck =
-    isCompleted || hasReachedCompletionThreshold;
   const completeButtonTooltip = isCompleting
     ? copy.saving
     : !isCompleted && !hasReachedCompletionThreshold
@@ -1259,9 +1256,6 @@ export const CoursePlayer = ({
                               : "border-slate-500/35 bg-slate-500/10 text-slate-400 cursor-not-allowed"
                         }`}
                       >
-                        {shouldShowCompleteCheck ? (
-                          <CheckCircle className="h-4 w-4 text-emerald-400" />
-                        ) : null}
                         <span>
                           {copy.completeAction}
                         </span>

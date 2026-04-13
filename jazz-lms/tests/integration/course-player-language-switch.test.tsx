@@ -359,13 +359,13 @@ describe("CoursePlayer language switch behavior", () => {
     expect(completeButton.querySelector("svg")).toBeNull();
   });
 
-  test("shows check and enables complete button at 95% watch threshold", async () => {
+  test("keeps complete button enabled and without icon at 95% watch threshold", async () => {
     render(<CoursePlayer {...baseProps} initialProgressPercent={95} />);
 
     const completeButton = getCompleteButton();
 
     expect(completeButton).toHaveProperty("disabled", false);
-    expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
+    expect(completeButton.querySelector("svg")).toBeNull();
   });
 
   test("keeps completed button green and clickable on revisit", async () => {
@@ -381,6 +381,7 @@ describe("CoursePlayer language switch behavior", () => {
 
     expect(completeButton).toHaveProperty("disabled", false);
     expect(completeButton.className).toContain("text-emerald-400");
+    expect(completeButton.querySelector("svg")).toBeNull();
 
     fireEvent.click(completeButton);
 
