@@ -28,14 +28,16 @@ echo "▶ Build preflight"
 npm run build
 
 echo "▶ Deploy to Vercel preview (test)"
-deploy_output="$(vercel --yes)"
+deploy_output_raw="$(NO_COLOR=1 vercel --yes)"
+deploy_output="$(printf '%s\n' "$deploy_output_raw" | tr -d '\r' | sed -E 's/\x1B\[[0-9;?]*[ -\/]*[@-~]//g')"
 echo "$deploy_output"
 
 deployment_url="$(printf '%s\n' "$deploy_output" | grep -Eo 'https://[^[:space:]]+\.vercel\.app' | tail -n1 || true)"
 stable_test_url=""
 
 if [[ -n "$deployment_url" ]]; then
-  inspect_output="$(vercel inspect "$deployment_url" || true)"
+  inspect_output_raw="$(NO_COLOR=1 vercel inspect "$deployment_url" || true)"
+  inspect_output="$(printf '%s\n' "$inspect_output_raw" | tr -d '\r' | sed -E 's/\x1B\[[0-9;?]*[ -\/]*[@-~]//g')"
   stable_test_url="$(printf '%s\n' "$inspect_output" | awk '
     /Aliases/ { in_aliases=1; next }
     /Builds/ { in_aliases=0 }
@@ -52,10 +54,10 @@ fi
 
 if [[ -n "$stable_test_url" ]]; then
   echo "✅ Preview deployment finished"
-  echo "🔗 Stable test URL: $stable_test_url"
+  echo "🔗 Link de teste (estavel): $stable_test_url"
 elif [[ -n "$deployment_url" ]]; then
   echo "✅ Preview deployment finished"
-  echo "🔗 Preview URL: $deployment_url"
+  echo "🔗 Link de teste (estavel): $deployment_url"
 else
   echo "✅ Preview deployment finished"
   echo "⚠ Could not detect deployment URL from Vercel output."
