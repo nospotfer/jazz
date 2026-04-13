@@ -7,7 +7,6 @@ import {
   Loader2,
   Music2,
   RefreshCw,
-  Sparkles,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -44,7 +43,6 @@ interface LessonQuizOverlayProps {
   lessonId: string;
   currentLessonClassNumber?: number | null;
   isOpen: boolean;
-  hasQuizAvailable: boolean;
   initialSummary: LessonQuizSummarySnapshot | null;
   onClose: () => void;
   onSummaryChange?: (summary: LessonQuizSummarySnapshot | null) => void;
@@ -273,7 +271,6 @@ export function LessonQuizOverlay({
   courseId,
   lessonId,
   isOpen,
-  hasQuizAvailable,
   initialSummary,
   onClose,
   onSummaryChange,
@@ -312,8 +309,6 @@ export function LessonQuizOverlay({
       startError: 'No se pudo abrir el quiz en este momento.',
       answerError: 'No se pudo registrar tu respuesta.',
       noOption: 'Selecciona una alternativa antes de confirmar.',
-      quizNotReadyTitle: 'Este quiz aún no está listo',
-      quizNotReadyBody: 'Faltan preguntas validadas para esta lección. La estructura ya está preparada, pero todavía no hay un banco completo para lanzar las 12 cuestiones.',
       resumeTitle: 'Modo jazz arcade',
       bestResultEmpty: 'Tu mejor medalla aparecerá aquí cuando cierres una ronda completa.',
       closeQuiz: 'Cerrar quiz',
@@ -338,8 +333,6 @@ export function LessonQuizOverlay({
       startError: 'Unable to open the quiz right now.',
       answerError: 'Unable to save your answer.',
       noOption: 'Select one option before confirming.',
-      quizNotReadyTitle: 'This quiz is not ready yet',
-      quizNotReadyBody: 'This lesson still needs a validated question bank. The feature is wired in, but the full 12-question set is not available yet.',
       resumeTitle: 'Jazz arcade mode',
       bestResultEmpty: 'Your best medal will appear here after your first full run.',
       closeQuiz: 'Close quiz',
@@ -364,8 +357,6 @@ export function LessonQuizOverlay({
       startError: 'Impossible d’ouvrir le quiz pour le moment.',
       answerError: 'Impossible d’enregistrer votre réponse.',
       noOption: 'Sélectionnez une option avant de confirmer.',
-      quizNotReadyTitle: 'Ce quiz n’est pas encore prêt',
-      quizNotReadyBody: 'Cette leçon a encore besoin d’un lot complet de questions validées. L’interface est prête, mais le set de 12 questions n’est pas encore disponible.',
       resumeTitle: 'Mode jazz arcade',
       bestResultEmpty: 'Votre meilleure médaille apparaîtra ici après une première tentative complète.',
       closeQuiz: 'Fermer le quiz',
@@ -390,8 +381,6 @@ export function LessonQuizOverlay({
       startError: 'Não foi possível abrir o quiz agora.',
       answerError: 'Não foi possível registrar sua resposta.',
       noOption: 'Selecione uma alternativa antes de confirmar.',
-      quizNotReadyTitle: 'Este quiz ainda não está pronto',
-      quizNotReadyBody: 'Esta aula ainda precisa de um banco validado de perguntas. A interface já está conectada, mas o conjunto completo de 12 questões ainda não está disponível.',
       resumeTitle: 'Modo jazz arcade',
       bestResultEmpty: 'Sua melhor medalha vai aparecer aqui depois da primeira rodada completa.',
       closeQuiz: 'Fechar quiz',
@@ -428,10 +417,6 @@ export function LessonQuizOverlay({
   }, [attempt]);
 
   const openQuiz = useCallback(async (restart = false) => {
-    if (!hasQuizAvailable) {
-      return;
-    }
-
     if (advanceTimerRef.current) {
       clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
@@ -463,7 +448,7 @@ export function LessonQuizOverlay({
     } finally {
       setIsLoading(false);
     }
-  }, [copy.startError, courseId, hasQuizAvailable, language, lessonId, onSummaryChange]);
+  }, [copy.startError, courseId, language, lessonId, onSummaryChange]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -478,14 +463,6 @@ export function LessonQuizOverlay({
 
     void openQuiz(false);
   }, [isOpen, openQuiz]);
-
-  useEffect(() => {
-    if (!isOpen || !hasQuizAvailable) {
-      return;
-    }
-
-    void openQuiz(false);
-  }, [hasQuizAvailable, isOpen, language, openQuiz]);
 
   useEffect(() => {
     if (!currentQuestion) {
@@ -672,18 +649,7 @@ export function LessonQuizOverlay({
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[1460px] flex-1 items-start justify-start py-1.5">
-          {!hasQuizAvailable ? (
-            <div className="animate-fade-scale-in w-full max-w-2xl rounded-[28px] border border-white/10 bg-[linear-gradient(145deg,rgba(17,24,39,0.96),rgba(24,24,27,0.95),rgba(51,65,85,0.92))] p-8 text-center shadow-2xl">
-              <div className="mx-auto flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-3xl border border-primary/25 bg-primary/10 text-primary">
-                <Sparkles className="h-8 w-8" />
-              </div>
-              <h2 className="mt-6 text-3xl font-serif font-bold text-white">{copy.quizNotReadyTitle}</h2>
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/70">{copy.quizNotReadyBody}</p>
-              <Button onClick={onClose} className="mt-8 min-w-40">
-                {copy.closeQuiz}
-              </Button>
-            </div>
-          ) : isLoading || !attempt ? (
+          {isLoading || !attempt ? (
             <div className="animate-fade-scale-in rounded-[28px] border border-white/10 bg-card/80 px-8 py-10 text-center shadow-2xl backdrop-blur-sm">
               <Loader2 className="mx-auto h-7 w-7 animate-spin text-primary" />
               <p className="mt-4 text-sm text-muted-foreground">{error || copy.loading}</p>

@@ -175,8 +175,8 @@ export const CoursePlayer = ({
         "Completa la clase para desbloquear la gamificacion",
       confirmCompleteTitle: "Confirmar finalizacion de la clase",
       confirmCompleteMessage:
-        "Quieres marcar esta clase como completada? Esta accion habilitara la gamificacion.",
-      confirmCompleteConfirm: "Si, completar clase",
+        "Quieres marcar esta clase como completada e ir al quiz ahora?",
+      confirmCompleteConfirm: "Si, completar e ir al quiz",
       confirmCompleteCancel: "Cancelar",
       musicSpotify: "Abrir en Spotify",
       loadingPlayer: "Cargando reproductor de la lección...",
@@ -238,8 +238,8 @@ export const CoursePlayer = ({
         "Complete this class to unlock gamification",
       confirmCompleteTitle: "Confirm class completion",
       confirmCompleteMessage:
-        "Do you want to mark this class as completed? This will unlock gamification.",
-      confirmCompleteConfirm: "Yes, complete class",
+        "Do you want to mark this class as completed and go to the quiz now?",
+      confirmCompleteConfirm: "Yes, complete and go to quiz",
       confirmCompleteCancel: "Cancel",
       musicSpotify: "Open in Spotify",
       loadingPlayer: "Loading lesson player...",
@@ -300,8 +300,8 @@ export const CoursePlayer = ({
         "Terminez ce cours pour debloquer la gamification",
       confirmCompleteTitle: "Confirmer la fin du cours",
       confirmCompleteMessage:
-        "Voulez-vous marquer ce cours comme termine ? Cette action debloquera la gamification.",
-      confirmCompleteConfirm: "Oui, terminer le cours",
+        "Voulez-vous marquer ce cours comme termine et aller au quiz maintenant ?",
+      confirmCompleteConfirm: "Oui, terminer et aller au quiz",
       confirmCompleteCancel: "Annuler",
       musicSpotify: "Ouvrir dans Spotify",
       loadingPlayer: "Chargement du lecteur de leçon...",
@@ -363,8 +363,8 @@ export const CoursePlayer = ({
         "Conclua a aula para desbloquear a gamificacao",
       confirmCompleteTitle: "Confirmar conclusao da aula",
       confirmCompleteMessage:
-        "Voce deseja marcar esta aula como concluida? Essa acao vai liberar a gamificacao.",
-      confirmCompleteConfirm: "Sim, concluir aula",
+        "Voce deseja marcar esta aula como concluida e ir para o quiz agora?",
+      confirmCompleteConfirm: "Sim, concluir e ir ao quiz",
       confirmCompleteCancel: "Cancelar",
       musicSpotify: "Abrir no Spotify",
       loadingPlayer: "Carregando player da aula...",
@@ -1080,7 +1080,7 @@ export const CoursePlayer = ({
     lastSavedPercent >= COMPLETE_BUTTON_UNLOCK_PERCENT;
 
   const completeLesson = async () => {
-    if (isCompleting || !canAccessLesson) return;
+    if (isCompleting || !canAccessLesson) return false;
 
     setIsCompleting(true);
     try {
@@ -1097,8 +1097,10 @@ export const CoursePlayer = ({
       confetti.onOpen();
       toast.success(copy.lessonCompleted);
       router.refresh();
+      return true;
     } catch {
       toast.error(copy.somethingWrong);
+      return false;
     } finally {
       setIsCompleting(false);
     }
@@ -1109,12 +1111,19 @@ export const CoursePlayer = ({
       return;
     }
 
-    setIsQuizOpen(true);
+    setIsConfirmCompleteOpen(true);
   };
 
   const onConfirmCompleteLesson = async () => {
     setIsConfirmCompleteOpen(false);
-    await completeLesson();
+
+    const didCompleteLesson = await completeLesson();
+    if (!didCompleteLesson) {
+      return;
+    }
+
+    setShouldRefreshAfterQuizClose(true);
+    setIsQuizOpen(true);
   };
 
   const handleQuizClose = () => {
@@ -1526,7 +1535,6 @@ export const CoursePlayer = ({
         courseId={course.id}
         lessonId={lesson.id}
         isOpen={isQuizOpen}
-        hasQuizAvailable={hasQuizAvailable}
         initialSummary={quizSummary}
         onClose={handleQuizClose}
         onSummaryChange={setQuizSummary}

@@ -318,31 +318,34 @@ describe("CoursePlayer language switch behavior", () => {
     expect(String(attachmentCalls()[0]?.[0])).toContain("/attachments/att-note");
   });
 
-  test("enables complete button at 80% and routes to gamification without confirmation modal", async () => {
+  test("opens confirmation modal at 80% and completes lesson only after confirm", async () => {
     render(
       <CoursePlayer
         {...baseProps}
-        hasQuizAvailable
         initialProgressPercent={80}
       />,
     );
 
     const completeButton = getCompleteButton();
     const gamificationButton = getGamificationButton();
-
-    expect(gamificationButton).toHaveProperty("disabled", false);
+    expect(gamificationButton).toHaveProperty("disabled", true);
 
     fireEvent.click(completeButton);
 
     expect(
-      screen.queryByText(/confirmar finalizacion de la clase/i),
-    ).toBeNull();
+      screen.getByText(/confirmar finalizacion de la clase/i),
+    ).toBeTruthy();
     expect(mocks.axiosPut).not.toHaveBeenCalled();
 
+    fireEvent.click(
+      screen.getByRole("button", { name: /si, completar e ir al quiz/i }),
+    );
+
     await waitFor(() => {
-      expect(gamificationButton).toHaveProperty("disabled", false);
-      expect(gamificationButton.className).toContain("from-yellow-400");
+      expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
     });
+
+    expect(gamificationButton).toHaveProperty("disabled", true);
   });
 
   test("keeps complete button disabled, gray and without icon below watch threshold", async () => {
@@ -382,8 +385,16 @@ describe("CoursePlayer language switch behavior", () => {
     fireEvent.click(completeButton);
 
     expect(
-      screen.queryByText(/confirmar finalizacion de la clase/i),
-    ).toBeNull();
+      screen.getByText(/confirmar finalizacion de la clase/i),
+    ).toBeTruthy();
     expect(mocks.axiosPut).not.toHaveBeenCalled();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /si, completar e ir al quiz/i }),
+    );
+
+    await waitFor(() => {
+      expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
+    });
   });
 });
