@@ -478,6 +478,70 @@ export const CoursePlayer = ({
     }
   }, []);
 
+  const applyPreferredSubtitleTrack = useCallback(() => {
+    const playerElement = muxPlayerRef.current as
+      | (MuxPlayerElement & {
+          textTracks?: TextTrackList | null;
+        })
+      | null;
+
+    const textTracks = playerElement?.textTracks;
+    if (!textTracks || textTracks.length === 0) {
+      return;
+    }
+
+    const preferredLanguage = languageToHtmlLang(language).toLowerCase();
+    const preferredBaseLanguage = preferredLanguage.split("-")[0];
+
+    let exactTrack: TextTrack | null = null;
+    let baseTrack: TextTrack | null = null;
+    let fallbackTrack: TextTrack | null = null;
+
+    for (let index = 0; index < textTracks.length; index += 1) {
+      const track = textTracks[index];
+      if (!track) {
+        continue;
+      }
+
+      const isSubtitleTrack =
+        track.kind === "subtitles" || track.kind === "captions";
+      if (!isSubtitleTrack) {
+        continue;
+      }
+
+      const trackLanguage = (track.language || "").toLowerCase();
+      const trackBaseLanguage = trackLanguage.split("-")[0];
+
+      if (!fallbackTrack) {
+        fallbackTrack = track;
+      }
+
+      if (!exactTrack && trackLanguage === preferredLanguage) {
+        exactTrack = track;
+      }
+
+      if (!baseTrack && trackBaseLanguage === preferredBaseLanguage) {
+        baseTrack = track;
+      }
+    }
+
+    const preferredTrack = exactTrack || baseTrack || fallbackTrack;
+    if (!preferredTrack) {
+      return;
+    }
+
+    for (let index = 0; index < textTracks.length; index += 1) {
+      const track = textTracks[index];
+      if (!track) {
+        continue;
+      }
+
+      if (track.kind === "subtitles" || track.kind === "captions") {
+        track.mode = track === preferredTrack ? "showing" : "disabled";
+      }
+    }
+  }, [language]);
+
   const orderedLessons = useMemo(
     () => course.chapters.flatMap((chapter) => chapter.lessons),
     [course.chapters],
@@ -637,7 +701,40 @@ export const CoursePlayer = ({
 
     muxPlayerRef.current.setAttribute("lang", languageToHtmlLang(language));
     enforceNoRemotePlayback();
-  }, [enforceNoRemotePlayback, language]);
+    applyPreferredSubtitleTrack();
+  }, [applyPreferredSubtitleTrack, enforceNoRemotePlayback, language]);
+
+  useEffect(() => {
+    const playerElement = muxPlayerRef.current as
+      | (MuxPlayerElement & {
+          textTracks?: TextTrackList | null;
+        })
+      | null;
+
+    if (!playerElement) {
+      return;
+    }
+
+    const handleLoadedMetadata = () => {
+      enforceNoRemotePlayback();
+      applyPreferredSubtitleTrack();
+    };
+
+    const textTracks = playerElement.textTracks;
+    const handleTrackListChange = () => {
+      applyPreferredSubtitleTrack();
+    };
+
+    playerElement.addEventListener("loadedmetadata", handleLoadedMetadata);
+    textTracks?.addEventListener("addtrack", handleTrackListChange);
+    textTracks?.addEventListener("change", handleTrackListChange);
+
+    return () => {
+      playerElement.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      textTracks?.removeEventListener("addtrack", handleTrackListChange);
+      textTracks?.removeEventListener("change", handleTrackListChange);
+    };
+  }, [applyPreferredSubtitleTrack, enforceNoRemotePlayback, effectivePlaybackId]);
 
   useEffect(() => {
     if (language === "en") {
@@ -1204,6 +1301,7 @@ export const CoursePlayer = ({
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
                       poster={playbackPosterUrl || undefined}
+                      defaultHiddenCaptions={false}
                       accentColor="#d4af37"
                       onCanPlay={() => {
                         enforceNoRemotePlayback();
