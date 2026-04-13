@@ -121,7 +121,7 @@ Local automated checkout tests still support a localhost-only fallback path that
 - The profile now includes a shared jazz playlist widget with previous/play-next controls, and the lesson player uses the same music-link source as the profile.
 - The jazz arcade quiz overlay now uses the course playlist as an interactive left-side panel, with track switching and platform links tied to the current lesson flow.
 - The Spotify player inside the gamification quiz overlay keeps a stable embedded size across desktop breakpoints to avoid stretched or compressed rendering.
-- The Complete button stays gray, disabled, and without icon until the student watches at least 95% of the lesson. After reaching this threshold, the button becomes enabled in normal color and remains without icon. For already completed lessons on revisit, the button remains green and clickable, still without icon.
+- The Complete button stays gray, disabled, and text-only until the student watches at least 80% of the lesson. After reaching this threshold, the button becomes enabled and shows the check icon next to the label, opening gamification on click. For already completed lesson+quiz revisits, the button remains green and clickable.
 - A second recognition icon (scroll style) appears in the dashboard header when the student has 100% watched lessons and completed all lesson quizzes with at least a medal; this opens the course completion recognition page.
 - The course completion recognition certificate now follows an A4-style formal layout, uses a larger professor signature with teacher name, highlights the supreme medal tier visually, and downloads directly as PDF from the same page.
 

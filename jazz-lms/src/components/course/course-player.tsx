@@ -11,7 +11,6 @@ import { languageToHtmlLang } from "@/lib/language";
 import {
     calculateLessonMinutesRemaining,
     calculateLessonProgressPercent,
-  LESSON_PROGRESS_AUTOCOMPLETE_PERCENT,
     shouldPersistLessonProgress,
 } from "@/lib/lesson-progress";
 import type { LessonQuizSummarySnapshot } from "@/lib/lesson-quiz";
@@ -25,6 +24,7 @@ import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
 import {
+  CheckCircle,
     FileText,
     Loader2,
     Lock,
@@ -99,6 +99,7 @@ const PaymentMethodModal = dynamic(
 const SPOTIFY_WEB_PLAYER_URL =
   "https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp";
 const PLAYBACK_ERROR_FALLBACK = "__mux_playback_unavailable__";
+const COMPLETE_BUTTON_UNLOCK_PERCENT = 80;
 
 interface CoursePlayerProps {
   course: Course & {
@@ -163,7 +164,7 @@ export const CoursePlayer = ({
       toggleNotesTooltip: "Mostrar u ocultar apuntes",
       completeTooltip: "Marcar como completada",
       completeLockedTooltip:
-        "Mira al menos el 95% de la clase para habilitar Concluir",
+        "Mira al menos el 80% de la clase para habilitar Concluir",
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
@@ -226,7 +227,7 @@ export const CoursePlayer = ({
       toggleNotesTooltip: "Show or hide notes panel",
       completeTooltip: "Mark lesson as complete",
       completeLockedTooltip:
-        "Watch at least 95% of the lesson to enable Complete",
+        "Watch at least 80% of the lesson to enable Complete",
       hidePdfAction: "Hide PDF",
       showPdfAction: "Show PDF",
       completeAction: "Complete",
@@ -288,7 +289,7 @@ export const CoursePlayer = ({
       toggleNotesTooltip: "Afficher ou masquer les notes",
       completeTooltip: "Marquer la leçon comme terminée",
       completeLockedTooltip:
-        "Regardez au moins 95% de la leçon pour activer Valider",
+        "Regardez au moins 80% de la leçon pour activer Valider",
       hidePdfAction: "Masquer PDF",
       showPdfAction: "Afficher PDF",
       completeAction: "Valider",
@@ -351,7 +352,7 @@ export const CoursePlayer = ({
       toggleNotesTooltip: "Mostrar ou ocultar anotações",
       completeTooltip: "Marcar aula como concluída",
       completeLockedTooltip:
-        "Assista pelo menos 95% da aula para habilitar Concluir",
+        "Assista pelo menos 80% da aula para habilitar Concluir",
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
@@ -1076,7 +1077,7 @@ export const CoursePlayer = ({
   };
 
   const hasReachedCompletionThreshold =
-    lastSavedPercent >= LESSON_PROGRESS_AUTOCOMPLETE_PERCENT;
+    lastSavedPercent >= COMPLETE_BUTTON_UNLOCK_PERCENT;
 
   const completeLesson = async () => {
     if (isCompleting || !canAccessLesson) return;
@@ -1104,15 +1105,11 @@ export const CoursePlayer = ({
   };
 
   const onMarkAsComplete = () => {
-    if (
-      !canAccessLesson ||
-      isCompleting ||
-      (!isCompleted && !hasReachedCompletionThreshold)
-    ) {
+    if (!canAccessLesson || isCompleting || !hasReachedCompletionThreshold) {
       return;
     }
 
-    setIsConfirmCompleteOpen(true);
+    setIsQuizOpen(true);
   };
 
   const onConfirmCompleteLesson = async () => {
@@ -1129,18 +1126,21 @@ export const CoursePlayer = ({
     }
   };
 
-  const canLaunchGamification = isCompleted && hasQuizAvailable;
+  const hasCompletedQuiz = (quizSummary?.totalAttempts ?? 0) > 0;
+  const isLessonAndQuizCompleted =
+    isCompleted || (hasReachedCompletionThreshold && hasCompletedQuiz);
+  const canLaunchGamification = hasReachedCompletionThreshold && hasQuizAvailable;
   const isCompleteButtonDisabled =
     isCompleting ||
     !canAccessLesson ||
-    (!isCompleted && !hasReachedCompletionThreshold);
+    !hasReachedCompletionThreshold;
   const completeButtonTooltip = isCompleting
     ? copy.saving
-    : !isCompleted && !hasReachedCompletionThreshold
+    : !hasReachedCompletionThreshold
       ? copy.completeLockedTooltip
-      : isCompleted
+      : isLessonAndQuizCompleted
         ? copy.completedLabel
-        : copy.completeTooltip;
+        : copy.gamificationReadyTooltip;
 
   const firstAttachmentId = visibleAttachments[0]?.id;
 
@@ -1249,13 +1249,16 @@ export const CoursePlayer = ({
                         title={completeButtonTooltip}
                         aria-label={completeButtonTooltip}
                         className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
-                          isCompleted
+                          isLessonAndQuizCompleted
                             ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20"
                             : hasReachedCompletionThreshold
                               ? "border-primary/40 bg-background/95 text-foreground hover:bg-accent"
                               : "border-slate-500/35 bg-slate-500/10 text-slate-400 cursor-not-allowed"
                         }`}
                       >
+                        {hasReachedCompletionThreshold ? (
+                          <CheckCircle className="h-4 w-4 text-emerald-400" />
+                        ) : null}
                         <span>
                           {copy.completeAction}
                         </span>

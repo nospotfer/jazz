@@ -156,6 +156,20 @@ function getCompleteButton() {
   return button as HTMLButtonElement;
 }
 
+function getGamificationButton() {
+  const button = screen
+    .getAllByRole("button")
+    .find((candidate) =>
+      (candidate.textContent || "").trim().startsWith("Gamificacion"),
+    );
+
+  if (!button) {
+    throw new Error("Gamification button not found");
+  }
+
+  return button as HTMLButtonElement;
+}
+
 describe("CoursePlayer language switch behavior", () => {
   beforeEach(() => {
     vi.useRealTimers();
@@ -304,48 +318,30 @@ describe("CoursePlayer language switch behavior", () => {
     expect(String(attachmentCalls()[0]?.[0])).toContain("/attachments/att-note");
   });
 
-  test("requires confirmation to complete lesson and unlocks gamification after confirmation", async () => {
+  test("enables complete button at 80% and routes to gamification without confirmation modal", async () => {
     render(
       <CoursePlayer
         {...baseProps}
         hasQuizAvailable
-        initialProgressPercent={95}
+        initialProgressPercent={80}
       />,
     );
 
     const completeButton = getCompleteButton();
-    const gamificationButton = screen.getByRole("button", {
-      name: /gamificacion/i,
-    });
+    const gamificationButton = getGamificationButton();
 
-    expect(gamificationButton).toHaveProperty("disabled", true);
+    expect(gamificationButton).toHaveProperty("disabled", false);
 
     fireEvent.click(completeButton);
 
     expect(
-      await screen.findByText(/confirmar finalizacion de la clase/i),
-    ).toBeTruthy();
-
-    const confirmButton = screen.getByRole("button", {
-      name: /si, completar clase/i,
-    });
-    fireEvent.click(confirmButton);
-
-    await waitFor(() => {
-      expect(mocks.axiosPut).toHaveBeenCalledWith(
-        "/api/courses/course-1/lessons/lesson-1/progress",
-        {
-          isCompleted: true,
-          progressPercent: 100,
-          minutesRemaining: 0,
-        },
-      );
-    });
+      screen.queryByText(/confirmar finalizacion de la clase/i),
+    ).toBeNull();
+    expect(mocks.axiosPut).not.toHaveBeenCalled();
 
     await waitFor(() => {
       expect(gamificationButton).toHaveProperty("disabled", false);
       expect(gamificationButton.className).toContain("from-yellow-400");
-      expect(completeButton.className).toContain("text-emerald-400");
     });
   });
 
@@ -359,13 +355,13 @@ describe("CoursePlayer language switch behavior", () => {
     expect(completeButton.querySelector("svg")).toBeNull();
   });
 
-  test("keeps complete button enabled and without icon at 95% watch threshold", async () => {
-    render(<CoursePlayer {...baseProps} initialProgressPercent={95} />);
+  test("shows icon and enables complete button at 80% watch threshold", async () => {
+    render(<CoursePlayer {...baseProps} initialProgressPercent={80} />);
 
     const completeButton = getCompleteButton();
 
     expect(completeButton).toHaveProperty("disabled", false);
-    expect(completeButton.querySelector("svg")).toBeNull();
+    expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
   });
 
   test("keeps completed button green and clickable on revisit", async () => {
@@ -381,12 +377,13 @@ describe("CoursePlayer language switch behavior", () => {
 
     expect(completeButton).toHaveProperty("disabled", false);
     expect(completeButton.className).toContain("text-emerald-400");
-    expect(completeButton.querySelector("svg")).toBeNull();
+    expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
 
     fireEvent.click(completeButton);
 
     expect(
-      await screen.findByText(/confirmar finalizacion de la clase/i),
-    ).toBeTruthy();
+      screen.queryByText(/confirmar finalizacion de la clase/i),
+    ).toBeNull();
+    expect(mocks.axiosPut).not.toHaveBeenCalled();
   });
 });
