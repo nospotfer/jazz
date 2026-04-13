@@ -11,6 +11,7 @@ import { languageToHtmlLang } from "@/lib/language";
 import {
     calculateLessonMinutesRemaining,
     calculateLessonProgressPercent,
+  LESSON_PROGRESS_AUTOCOMPLETE_PERCENT,
     shouldPersistLessonProgress,
 } from "@/lib/lesson-progress";
 import type { LessonQuizSummarySnapshot } from "@/lib/lesson-quiz";
@@ -162,6 +163,8 @@ export const CoursePlayer = ({
       selectPdf: "Selecciona un PDF para previsualizarlo aquí.",
       toggleNotesTooltip: "Mostrar u ocultar apuntes",
       completeTooltip: "Marcar como completada",
+      completeLockedTooltip:
+        "Mira al menos el 95% de la clase para habilitar Concluir",
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
@@ -223,6 +226,8 @@ export const CoursePlayer = ({
       selectPdf: "Select a PDF to preview it here.",
       toggleNotesTooltip: "Show or hide notes panel",
       completeTooltip: "Mark lesson as complete",
+      completeLockedTooltip:
+        "Watch at least 95% of the lesson to enable Complete",
       hidePdfAction: "Hide PDF",
       showPdfAction: "Show PDF",
       completeAction: "Complete",
@@ -283,6 +288,8 @@ export const CoursePlayer = ({
       selectPdf: "Sélectionnez un PDF pour l’aperçu ici.",
       toggleNotesTooltip: "Afficher ou masquer les notes",
       completeTooltip: "Marquer la leçon comme terminée",
+      completeLockedTooltip:
+        "Regardez au moins 95% de la leçon pour activer Valider",
       hidePdfAction: "Masquer PDF",
       showPdfAction: "Afficher PDF",
       completeAction: "Valider",
@@ -344,6 +351,8 @@ export const CoursePlayer = ({
       selectPdf: "Selecione um PDF para pré-visualizá-lo aqui.",
       toggleNotesTooltip: "Mostrar ou ocultar anotações",
       completeTooltip: "Marcar aula como concluída",
+      completeLockedTooltip:
+        "Assista pelo menos 95% da aula para habilitar Concluir",
       hidePdfAction: "Ocultar PDF",
       showPdfAction: "Mostrar PDF",
       completeAction: "Concluir",
@@ -1067,8 +1076,11 @@ export const CoursePlayer = ({
     }
   };
 
+  const hasReachedCompletionThreshold =
+    lastSavedPercent >= LESSON_PROGRESS_AUTOCOMPLETE_PERCENT;
+
   const completeLesson = async () => {
-    if (isCompleting || isCompleted || !canAccessLesson) return;
+    if (isCompleting || !canAccessLesson) return;
 
     setIsCompleting(true);
     try {
@@ -1093,7 +1105,11 @@ export const CoursePlayer = ({
   };
 
   const onMarkAsComplete = () => {
-    if (!canAccessLesson || isCompleting || isCompleted) {
+    if (
+      !canAccessLesson ||
+      isCompleting ||
+      (!isCompleted && !hasReachedCompletionThreshold)
+    ) {
       return;
     }
 
@@ -1115,6 +1131,19 @@ export const CoursePlayer = ({
   };
 
   const canLaunchGamification = isCompleted && hasQuizAvailable;
+  const isCompleteButtonDisabled =
+    isCompleting ||
+    !canAccessLesson ||
+    (!isCompleted && !hasReachedCompletionThreshold);
+  const shouldShowCompleteCheck =
+    isCompleted || hasReachedCompletionThreshold;
+  const completeButtonTooltip = isCompleting
+    ? copy.saving
+    : !isCompleted && !hasReachedCompletionThreshold
+      ? copy.completeLockedTooltip
+      : isCompleted
+        ? copy.completedLabel
+        : copy.completeTooltip;
 
   const firstAttachmentId = visibleAttachments[0]?.id;
 
@@ -1219,27 +1248,25 @@ export const CoursePlayer = ({
                       <button
                         type="button"
                         onClick={onMarkAsComplete}
-                        disabled={isCompleting || !canAccessLesson || isCompleted}
-                        title={copy.completeTooltip}
-                        aria-label={copy.completeTooltip}
+                        disabled={isCompleteButtonDisabled}
+                        title={completeButtonTooltip}
+                        aria-label={completeButtonTooltip}
                         className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
                           isCompleted
                             ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20"
-                            : "border-primary/40 bg-background/95 text-foreground hover:bg-accent"
+                            : hasReachedCompletionThreshold
+                              ? "border-primary/40 bg-background/95 text-foreground hover:bg-accent"
+                              : "border-slate-500/35 bg-slate-500/10 text-slate-400 cursor-not-allowed"
                         }`}
                       >
-                        {isCompleted ? (
+                        {shouldShowCompleteCheck ? (
                           <CheckCircle className="h-4 w-4 text-emerald-400" />
                         ) : null}
                         <span>
                           {copy.completeAction}
                         </span>
                         <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gradient-to-r from-amber-500 to-yellow-400 px-2 py-1 text-[10px] font-semibold text-black opacity-0 shadow-md transition-all duration-100 group-hover:opacity-100 group-hover:-translate-y-0.5">
-                          {isCompleting
-                            ? copy.saving
-                            : isCompleted
-                              ? copy.completedLabel
-                              : copy.completeTooltip}
+                          {completeButtonTooltip}
                         </span>
                       </button>
 

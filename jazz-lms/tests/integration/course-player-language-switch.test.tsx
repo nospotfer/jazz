@@ -142,6 +142,20 @@ function attachmentCalls() {
   );
 }
 
+function getCompleteButton() {
+  const button = screen
+    .getAllByRole("button")
+    .find((candidate) =>
+      (candidate.textContent || "").trim().startsWith("Concluir"),
+    );
+
+  if (!button) {
+    throw new Error("Complete button not found");
+  }
+
+  return button as HTMLButtonElement;
+}
+
 describe("CoursePlayer language switch behavior", () => {
   beforeEach(() => {
     vi.useRealTimers();
@@ -291,11 +305,15 @@ describe("CoursePlayer language switch behavior", () => {
   });
 
   test("requires confirmation to complete lesson and unlocks gamification after confirmation", async () => {
-    render(<CoursePlayer {...baseProps} hasQuizAvailable />);
+    render(
+      <CoursePlayer
+        {...baseProps}
+        hasQuizAvailable
+        initialProgressPercent={95}
+      />,
+    );
 
-    const completeButton = screen.getByRole("button", {
-      name: /marcar como completada/i,
-    });
+    const completeButton = getCompleteButton();
     const gamificationButton = screen.getByRole("button", {
       name: /gamificacion/i,
     });
@@ -329,5 +347,45 @@ describe("CoursePlayer language switch behavior", () => {
       expect(gamificationButton.className).toContain("from-yellow-400");
       expect(completeButton.className).toContain("text-emerald-400");
     });
+  });
+
+  test("keeps complete button disabled, gray and without icon below watch threshold", async () => {
+    render(<CoursePlayer {...baseProps} initialProgressPercent={0} />);
+
+    const completeButton = getCompleteButton();
+
+    expect(completeButton).toHaveProperty("disabled", true);
+    expect(completeButton.className).toContain("text-slate-400");
+    expect(completeButton.querySelector("svg")).toBeNull();
+  });
+
+  test("shows check and enables complete button at 95% watch threshold", async () => {
+    render(<CoursePlayer {...baseProps} initialProgressPercent={95} />);
+
+    const completeButton = getCompleteButton();
+
+    expect(completeButton).toHaveProperty("disabled", false);
+    expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
+  });
+
+  test("keeps completed button green and clickable on revisit", async () => {
+    render(
+      <CoursePlayer
+        {...baseProps}
+        initialIsCompleted
+        initialProgressPercent={100}
+      />, 
+    );
+
+    const completeButton = getCompleteButton();
+
+    expect(completeButton).toHaveProperty("disabled", false);
+    expect(completeButton.className).toContain("text-emerald-400");
+
+    fireEvent.click(completeButton);
+
+    expect(
+      await screen.findByText(/confirmar finalizacion de la clase/i),
+    ).toBeTruthy();
   });
 });
