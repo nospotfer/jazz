@@ -503,13 +503,7 @@ export const CoursePlayer = ({
       return;
     }
 
-    const preferredLanguage = languageToHtmlLang(language).toLowerCase();
-    const preferredBaseLanguage = preferredLanguage.split("-")[0];
-
-    let muxConfiguredTrack: TextTrack | null = null;
-    let exactTrack: TextTrack | null = null;
-    let baseTrack: TextTrack | null = null;
-    let fallbackTrack: TextTrack | null = null;
+    let hasSubtitleTrack = false;
 
     for (let index = 0; index < textTracks.length; index += 1) {
       const track = textTracks[index];
@@ -523,51 +517,16 @@ export const CoursePlayer = ({
         continue;
       }
 
-      const trackLanguage = (track.language || "").toLowerCase();
-      const trackBaseLanguage = trackLanguage.split("-")[0];
-      const trackLabel = (track.label || "").toLowerCase();
-
-      if (
-        !muxConfiguredTrack &&
-        (track.mode === "showing" ||
-          trackLabel.includes("main config") ||
-          trackLabel.includes("default"))
-      ) {
-        muxConfiguredTrack = track;
-      }
-
-      if (!fallbackTrack) {
-        fallbackTrack = track;
-      }
-
-      if (!exactTrack && trackLanguage === preferredLanguage) {
-        exactTrack = track;
-      }
-
-      if (!baseTrack && trackBaseLanguage === preferredBaseLanguage) {
-        baseTrack = track;
-      }
+      hasSubtitleTrack = true;
+      track.mode = "disabled";
     }
 
-    const preferredTrack =
-      muxConfiguredTrack || exactTrack || baseTrack || fallbackTrack;
-    if (!preferredTrack) {
+    if (!hasSubtitleTrack) {
       return;
     }
 
-    for (let index = 0; index < textTracks.length; index += 1) {
-      const track = textTracks[index];
-      if (!track) {
-        continue;
-      }
-
-      if (track.kind === "subtitles" || track.kind === "captions") {
-        track.mode = track === preferredTrack ? "showing" : "disabled";
-      }
-    }
-
     hasAppliedMuxDefaultSubtitleRef.current = true;
-  }, [language]);
+  }, []);
 
   const orderedLessons = useMemo(
     () => course.chapters.flatMap((chapter) => chapter.lessons),
@@ -1343,7 +1302,7 @@ export const CoursePlayer = ({
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
                       poster={playbackPosterUrl || undefined}
-                      defaultHiddenCaptions={false}
+                      defaultHiddenCaptions
                       accentColor="#d4af37"
                       onCanPlay={() => {
                         enforceNoRemotePlayback();
