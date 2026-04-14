@@ -1354,7 +1354,6 @@ export const CoursePlayer = ({
                       onError={() => {
                         setMuxRuntimeError(copy.muxTokenError);
                       }}
-                      autoPlay
                       playsInline
                       castReceiver=""
                       disableTracking
