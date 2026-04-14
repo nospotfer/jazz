@@ -1288,7 +1288,7 @@ export const CoursePlayer = ({
                               : "border-slate-500/35 bg-slate-500/10 text-slate-400 cursor-not-allowed"
                         }`}
                       >
-                        {hasReachedCompletionThreshold ? (
+                        {isCompleted ? (
                           <CheckCircle className="h-4 w-4 text-emerald-400" />
                         ) : null}
                         <span>

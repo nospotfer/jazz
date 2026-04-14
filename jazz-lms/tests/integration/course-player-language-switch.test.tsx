@@ -362,13 +362,13 @@ describe("CoursePlayer language switch behavior", () => {
     expect(completeButton.querySelector("svg")).toBeNull();
   });
 
-  test("shows icon and enables complete button at 80% watch threshold", async () => {
+  test("keeps complete button enabled at 80% but icon appears only after completion", async () => {
     render(<CoursePlayer {...baseProps} initialProgressPercent={80} />);
 
     const completeButton = getCompleteButton();
 
     expect(completeButton).toHaveProperty("disabled", false);
-    expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
+    expect(completeButton.querySelector(".lucide-circle-check-big")).toBeNull();
   });
 
   test("keeps completed button green and clickable on revisit", async () => {
