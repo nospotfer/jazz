@@ -1161,7 +1161,7 @@ export const CoursePlayer = ({
   const hasCompletedQuiz = (quizSummary?.totalAttempts ?? 0) > 0;
   const isLessonAndQuizCompleted =
     isCompleted || (hasReachedCompletionThreshold && hasCompletedQuiz);
-  const canLaunchGamification = hasReachedCompletionThreshold && hasQuizAvailable;
+  const canLaunchGamification = isCompleted && hasQuizAvailable;
   const isCompleteButtonDisabled =
     isCompleting ||
     !canAccessLesson ||
@@ -1313,7 +1313,7 @@ export const CoursePlayer = ({
                           className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
                             canLaunchGamification
                               ? "border-yellow-400/60 bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:brightness-105"
-                              : "border-primary/30 bg-background/80 text-muted-foreground"
+                              : "border-slate-500/35 bg-slate-500/10 text-slate-400 cursor-not-allowed"
                           }`}
                         >
                         <span>{copy.gamificationAction}</span> 

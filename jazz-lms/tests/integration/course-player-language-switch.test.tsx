@@ -322,6 +322,7 @@ describe("CoursePlayer language switch behavior", () => {
     render(
       <CoursePlayer
         {...baseProps}
+        hasQuizAvailable
         initialProgressPercent={80}
       />,
     );
@@ -345,7 +346,10 @@ describe("CoursePlayer language switch behavior", () => {
       expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
     });
 
-    expect(gamificationButton).toHaveProperty("disabled", true);
+    await waitFor(() => {
+      expect(gamificationButton).toHaveProperty("disabled", false);
+      expect(gamificationButton.className).toContain("from-yellow-400");
+    });
   });
 
   test("keeps complete button disabled, gray and without icon below watch threshold", async () => {
