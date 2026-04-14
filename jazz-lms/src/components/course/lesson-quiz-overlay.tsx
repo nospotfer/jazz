@@ -234,7 +234,7 @@ function QuizPlaylistPanel({
 
         <div className="mt-3 flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
-          <div className="mt-2 h-[320px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220] 2xl:h-[352px]">
+          <div className="mt-2 h-[152px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
             {embedFailed ? (
               <div className="flex h-full items-center justify-center px-4">
                 <a
