@@ -455,6 +455,7 @@ export const CoursePlayer = ({
   const previewUrlRef = useRef("");
   const muxContainerRef = useRef<HTMLDivElement | null>(null);
   const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
+  const hasAppliedMuxDefaultSubtitleRef = useRef(false);
   const router = useRouter();
   const confetti = useConfettiStore();
 
@@ -487,6 +488,10 @@ export const CoursePlayer = ({
   }, []);
 
   const applyPreferredSubtitleTrack = useCallback(() => {
+    if (hasAppliedMuxDefaultSubtitleRef.current) {
+      return;
+    }
+
     const playerElement = muxPlayerRef.current as
       | (MuxPlayerElement & {
           textTracks?: TextTrackList | null;
@@ -501,6 +506,7 @@ export const CoursePlayer = ({
     const preferredLanguage = languageToHtmlLang(language).toLowerCase();
     const preferredBaseLanguage = preferredLanguage.split("-")[0];
 
+    let muxConfiguredTrack: TextTrack | null = null;
     let exactTrack: TextTrack | null = null;
     let baseTrack: TextTrack | null = null;
     let fallbackTrack: TextTrack | null = null;
@@ -519,6 +525,16 @@ export const CoursePlayer = ({
 
       const trackLanguage = (track.language || "").toLowerCase();
       const trackBaseLanguage = trackLanguage.split("-")[0];
+      const trackLabel = (track.label || "").toLowerCase();
+
+      if (
+        !muxConfiguredTrack &&
+        (track.mode === "showing" ||
+          trackLabel.includes("main config") ||
+          trackLabel.includes("default"))
+      ) {
+        muxConfiguredTrack = track;
+      }
 
       if (!fallbackTrack) {
         fallbackTrack = track;
@@ -533,7 +549,8 @@ export const CoursePlayer = ({
       }
     }
 
-    const preferredTrack = exactTrack || baseTrack || fallbackTrack;
+    const preferredTrack =
+      muxConfiguredTrack || exactTrack || baseTrack || fallbackTrack;
     if (!preferredTrack) {
       return;
     }
@@ -548,6 +565,8 @@ export const CoursePlayer = ({
         track.mode = track === preferredTrack ? "showing" : "disabled";
       }
     }
+
+    hasAppliedMuxDefaultSubtitleRef.current = true;
   }, [language]);
 
   const orderedLessons = useMemo(
@@ -697,6 +716,10 @@ export const CoursePlayer = ({
   useEffect(() => {
     previewUrlRef.current = previewUrl;
   }, [previewUrl]);
+
+  useEffect(() => {
+    hasAppliedMuxDefaultSubtitleRef.current = false;
+  }, [effectivePlaybackId]);
 
   useEffect(() => {
     setQuizSummary(initialQuizSummary);
