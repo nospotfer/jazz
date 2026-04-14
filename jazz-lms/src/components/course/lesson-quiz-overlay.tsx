@@ -202,8 +202,8 @@ function QuizPlaylistPanel({
   }[language];
 
   return (
-    <aside className="hidden self-start xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col 2xl:w-[360px] 2xl:-ml-8">
-      <div className="flex flex-col overflow-hidden rounded-[28px] border border-primary/20 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(34,211,238,0.12),_transparent_30%),linear-gradient(180deg,rgba(15,23,42,0.96),rgba(17,24,39,0.95),rgba(30,41,59,0.92))] p-3.5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
+    <aside className="hidden self-start xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col xl:gap-2.5 2xl:w-[360px] 2xl:-ml-8">
+      <div className="rounded-[24px] border border-primary/20 bg-[linear-gradient(180deg,rgba(15,23,42,0.94),rgba(17,24,39,0.92))] p-3.5 text-white shadow-[0_16px_45px_rgba(0,0,0,0.32)] backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.34em] text-primary/90">{copy.title}</p>
@@ -220,8 +220,10 @@ function QuizPlaylistPanel({
             Spotify
           </a>
         </div>
+      </div>
 
-        <div className="mt-3 flex items-center gap-3 rounded-[22px] border border-white/10 bg-white/8 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
+      <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.9),rgba(17,24,39,0.86))] px-3 py-2.5 text-white shadow-[0_14px_38px_rgba(0,0,0,0.28)] backdrop-blur-sm">
+        <div className="flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/8 px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[18px] bg-primary/20 shadow-inner">
             <Image src="/images/clase1.jpg" alt={copy.currentTrack} fill sizes="64px" className="object-cover" />
           </div>
@@ -231,37 +233,36 @@ function QuizPlaylistPanel({
             <p className="truncate text-xs text-slate-300">{copy.fullPlaylist}</p>
           </div>
         </div>
+      </div>
 
-        <div className="mt-3 flex flex-col rounded-[16px] border border-white/10 bg-black/45 p-2.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
-          <div className="mt-2 h-[352px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
-            {embedFailed ? (
-              <div className="flex h-full items-center justify-center px-4">
-                <a
-                  href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
-                >
-                  {copy.openSpotify}
-                </a>
-              </div>
-            ) : (
-              <iframe
-                title="Quiz Spotify playlist"
-                src={SPOTIFY_PLAYLIST_EMBED_URL}
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                className="block h-full w-full bg-[#0b1220]"
-                onError={() => setEmbedFailed(true)}
-              />
-            )}
-          </div>
+      <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(17,24,39,0.88))] p-2.5 text-white shadow-[0_20px_42px_rgba(0,0,0,0.32)] backdrop-blur-sm">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
+        <div className="mt-2 h-[352px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+          {embedFailed ? (
+            <div className="flex h-full items-center justify-center px-4">
+              <a
+                href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+              >
+                {copy.openSpotify}
+              </a>
+            </div>
+          ) : (
+            <iframe
+              title="Quiz Spotify playlist"
+              src={SPOTIFY_PLAYLIST_EMBED_URL}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              className="block h-full w-full bg-[#0b1220]"
+              onError={() => setEmbedFailed(true)}
+            />
+          )}
         </div>
-
       </div>
     </aside>
   );
