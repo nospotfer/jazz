@@ -164,62 +164,40 @@ function QuizPlaylistPanel({
 
   const copy = {
     es: {
-      title: 'Playlist del curso',
-      subtitle: 'Controla la escucha mientras respondes el jazz arcade.',
       nowPlaying: 'Sonando ahora',
       currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
-      fullPlaylist: 'Playlist completa no player Spotify',
       openSpotify: 'Abrir en Spotify',
-      player: 'Player Spotify',
     },
     en: {
-      title: 'Course playlist',
-      subtitle: 'Control the listening flow while you answer the jazz arcade quiz.',
       nowPlaying: 'Now playing',
       currentTrack: "After You've Gone — Benny Goodman Trio",
-      fullPlaylist: 'Full playlist inside Spotify player',
       openSpotify: 'Open in Spotify',
-      player: 'Playlist player',
     },
     fr: {
-      title: 'Playlist du cours',
-      subtitle: 'Pilotez l ecoute pendant que vous repondez au quiz jazz arcade.',
       nowPlaying: 'En lecture',
       currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
-      fullPlaylist: 'Playlist complete dans le player Spotify',
       openSpotify: 'Ouvrir dans Spotify',
-      player: 'Player Spotify',
     },
     pt: {
-      title: 'Playlist do curso',
-      subtitle: 'Controle a escuta enquanto responde o quiz jazz arcade.',
       nowPlaying: 'Tocando agora',
       currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
-      fullPlaylist: 'Playlist completa no player do Spotify',
       openSpotify: 'Abrir no Spotify',
-      player: 'Player Spotify',
     },
   }[language];
 
   return (
     <aside className="hidden self-start xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col xl:gap-2.5 2xl:w-[360px] 2xl:-ml-8">
-      <div className="rounded-[24px] border border-primary/20 bg-[linear-gradient(180deg,rgba(15,23,42,0.94),rgba(17,24,39,0.92))] p-3.5 text-white shadow-[0_16px_45px_rgba(0,0,0,0.32)] backdrop-blur-sm">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.34em] text-primary/90">{copy.title}</p>
-            <p className="mt-1 text-xs leading-5 text-slate-300">{copy.subtitle}</p>
-          </div>
-          <a
-            href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={copy.openSpotify}
-            className="inline-flex h-9 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
-          >
-            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954] text-[9px] font-black text-black">S</span>
-            Spotify
-          </a>
-        </div>
+      <div className="self-start rounded-full border border-white/15 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(17,24,39,0.92))] p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.28)] backdrop-blur-sm">
+        <a
+          href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={copy.openSpotify}
+          className="inline-flex h-8 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+        >
+          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954] text-[9px] font-black text-black">S</span>
+          Spotify
+        </a>
       </div>
 
       <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.9),rgba(17,24,39,0.86))] px-3 py-2.5 text-white shadow-[0_14px_38px_rgba(0,0,0,0.28)] backdrop-blur-sm">
@@ -230,14 +208,12 @@ function QuizPlaylistPanel({
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80">{copy.nowPlaying}</p>
             <p className="truncate text-sm font-bold text-white">{copy.currentTrack}</p>
-            <p className="truncate text-xs text-slate-300">{copy.fullPlaylist}</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(17,24,39,0.88))] p-2.5 text-white shadow-[0_20px_42px_rgba(0,0,0,0.32)] backdrop-blur-sm">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-300">{copy.player}</p>
-        <div className="mt-2 h-[352px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+      <div className="rounded-[20px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(17,24,39,0.88))] p-2 text-white shadow-[0_20px_42px_rgba(0,0,0,0.32)] backdrop-blur-sm">
+        <div className="h-[152px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
           {embedFailed ? (
             <div className="flex h-full items-center justify-center px-4">
               <a
