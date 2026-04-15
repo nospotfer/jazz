@@ -3,9 +3,9 @@ import { updateSession } from '@/utils/supabase/middleware'
 import { NextResponse } from 'next/server'
 import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
 import {
+  DEFAULT_LANGUAGE,
   LANGUAGE_COOKIE_KEY,
   normalizeLanguage,
-  resolvePreferredLanguage,
   type SupportedLanguage,
 } from '@/lib/language'
 
@@ -44,10 +44,7 @@ function resolveLanguageCookieState(request: NextRequest): LanguageCookieState {
   }
 
   return {
-    language: resolvePreferredLanguage({
-      acceptLanguageHeader: request.headers.get('accept-language'),
-      countryCode: request.headers.get('x-vercel-ip-country'),
-    }),
+    language: DEFAULT_LANGUAGE,
     shouldPersist: true,
   }
 }

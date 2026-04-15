@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
-  detectLanguageFromAcceptLanguage,
   LANGUAGE_COOKIE_KEY,
   DEFAULT_LANGUAGE,
   LANGUAGE_STORAGE_KEY,
@@ -34,15 +33,8 @@ export function LanguageProvider({
         .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE_KEY}=`))
         ?.split('=')[1];
 
-      const browserLocale =
-        typeof navigator !== 'undefined'
-          ? detectLanguageFromAcceptLanguage(
-              navigator.languages?.join(',') || navigator.language,
-            )
-          : null;
-
       const initialLanguage = normalizeLanguage(
-        cookieValue || local || browserLocale || DEFAULT_LANGUAGE,
+        cookieValue || local || DEFAULT_LANGUAGE,
       );
       setLanguage(initialLanguage);
     } finally {

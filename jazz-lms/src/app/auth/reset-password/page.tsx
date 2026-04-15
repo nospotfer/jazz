@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
       invalidTitle: "Enlace de restablecimiento inválido",
       requestNewLink: "Solicitar nuevo enlace",
       backToLogin: "Volver a iniciar sesión",
-      closeAuth: "Fechar",
+      closeAuth: "Cerrar",
       logout: "Salir",
       exiting: "Saliendo...",
       createNewPassword: "Crear nueva contraseña",

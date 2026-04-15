@@ -66,7 +66,7 @@ export default function AuthPage() {
       loginLink: "Inicia sesión",
       forgotPassword: "¿Olvidaste tu contraseña?",
       rememberMe: "Recordarme",
-      closeAuth: "Fechar",
+      closeAuth: "Cerrar",
       signingIn: "Iniciando sesión...",
       signIn: "Iniciar sesión",
       noAccount: "¿No tienes una cuenta?",
