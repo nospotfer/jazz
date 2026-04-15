@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { FileText, Loader2 } from 'lucide-react';
 import axios from 'axios';
@@ -90,7 +90,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   const [signedUrl, setSignedUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
-  const [shouldPrefetchFirstPdf, setShouldPrefetchFirstPdf] = useState(false);
+  const pdfRequestIdRef = useRef(0);
 
   const selected = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0],
@@ -142,76 +142,73 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     return `/api/lessons/${item.lessonId}/attachments/${item.id}?${params.toString()}`;
   }, [language]);
 
+  const getAttachmentSignedUrl = useCallback(async (item: PdfItem, download = false) => {
+    const response = await axios.get(
+      `/api/lessons/${item.lessonId}/attachments/${item.id}`,
+      {
+        params: {
+          download: download ? 1 : 0,
+          language,
+        },
+      }
+    );
+
+    return response.data as {
+      signedUrl?: string;
+    };
+  }, [language]);
+
   const loadSignedUrl = useCallback(async (item: PdfItem) => {
+    const requestId = ++pdfRequestIdRef.current;
     setIsLoading(true);
     setLoadError('');
+    setSignedUrl('');
 
     try {
-      await axios.get(
-        `/api/lessons/${item.lessonId}/attachments/${item.id}`,
-        {
-          params: {
-            download: 0,
-            language,
-          },
-        }
-      );
+      const response = await getAttachmentSignedUrl(item, false);
+      if (requestId !== pdfRequestIdRef.current) {
+        return;
+      }
+
+      if (response.signedUrl) {
+        setSignedUrl(response.signedUrl);
+        return;
+      }
 
       setSignedUrl(buildInlineProxyUrl(item));
     } catch (error: unknown) {
+      if (requestId !== pdfRequestIdRef.current) {
+        return;
+      }
+
       const message = axios.isAxiosError(error)
         ? (error.response?.data?.error as string | undefined) || copy.loadPdfError
         : copy.loadPdfError;
       setLoadError(message);
       setSignedUrl('');
     } finally {
-      setIsLoading(false);
+      if (requestId === pdfRequestIdRef.current) {
+        setIsLoading(false);
+      }
     }
-  }, [buildInlineProxyUrl, copy.loadPdfError, language]);
+  }, [buildInlineProxyUrl, copy.loadPdfError, getAttachmentSignedUrl]);
 
   const handleSelect = (item: PdfItem) => {
-    setShouldPrefetchFirstPdf(true);
     setSelectedId(item.id);
   };
-
-  useEffect(() => {
-    if (!items[0]?.id) {
-      return;
-    }
-
-    const idleCallback = window.requestIdleCallback?.(() => {
-      setShouldPrefetchFirstPdf(true);
-    }, { timeout: 1500 });
-
-    if (idleCallback !== undefined) {
-      return () => window.cancelIdleCallback?.(idleCallback);
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setShouldPrefetchFirstPdf(true);
-    }, 1200);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [items]);
 
   const downloadSelected = async () => {
     if (!selected) return;
 
-    try {
-      const response = await axios.get(
-        `/api/lessons/${selected.lessonId}/attachments/${selected.id}`,
-        {
-          params: {
-            download: 1,
-            language,
-          },
-        }
-      );
+    const fallbackDownloadUrl = `/api/lessons/${selected.lessonId}/attachments/${selected.id}?download=1&language=${encodeURIComponent(language)}`;
 
-      const signed = response.data?.signedUrl || selected.url;
+    try {
+      const response = await getAttachmentSignedUrl(selected, true);
+
+      const signed = response.signedUrl || fallbackDownloadUrl;
       window.open(signed, '_blank', 'noopener,noreferrer');
     } catch {
-      window.open(selected.url, '_blank', 'noopener,noreferrer');
+      window.open(fallbackDownloadUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -219,17 +216,12 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     if (!selected) {
       setSignedUrl('');
       setLoadError('');
-      return;
-    }
-
-    if (!shouldPrefetchFirstPdf) {
-      setSignedUrl('');
-      setLoadError('');
+      setIsLoading(false);
       return;
     }
 
     void loadSignedUrl(selected);
-  }, [loadSignedUrl, selected, shouldPrefetchFirstPdf]);
+  }, [loadSignedUrl, selected]);
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
@@ -299,9 +291,13 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
                 <div className="flex-1 min-h-0 flex items-center justify-center text-muted-foreground px-4 text-center">
                   {loadError}
                 </div>
+              ) : !signedUrl ? (
+                <div className="flex-1 min-h-0 flex items-center justify-center text-muted-foreground">
+                  {copy.loadingPdf}
+                </div>
               ) : (
                 <div className="flex-1 min-h-0">
-                  <PdfWorkspaceViewer fileUrl={signedUrl || selectedLocalized.url} />
+                  <PdfWorkspaceViewer fileUrl={signedUrl} />
                 </div>
               )
             ) : (
