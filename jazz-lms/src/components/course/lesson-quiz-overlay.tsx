@@ -159,7 +159,7 @@ function QuizPlaylistPanel({
 }) {
   const SPOTIFY_PLAYLIST_WEBPLAYER_URL = 'https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp';
   const SPOTIFY_PLAYLIST_EMBED_URL =
-    'https://open.spotify.com/embed/playlist/2SL42Fq3AgVvnJb7RixOvp?utm_source=generator&theme=0';
+    'https://open.spotify.com/embed/playlist/2SL42Fq3AgVvnJb7RixOvp?utm_source=generator';
   const [embedFailed, setEmbedFailed] = useState(false);
 
   const copy = {
@@ -213,9 +213,9 @@ function QuizPlaylistPanel({
       </div>
 
       <div className="rounded-[20px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(17,24,39,0.88))] p-2 text-white shadow-[0_20px_42px_rgba(0,0,0,0.32)] backdrop-blur-sm">
-        <div className="h-[152px] w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
+        <div className="w-full self-center overflow-hidden rounded-[14px] border border-white/10 bg-[#0b1220]">
           {embedFailed ? (
-            <div className="flex h-full items-center justify-center px-4">
+            <div className="flex h-[352px] items-center justify-center px-4">
               <a
                 href={SPOTIFY_PLAYLIST_WEBPLAYER_URL}
                 target="_blank"
@@ -227,14 +227,17 @@ function QuizPlaylistPanel({
             </div>
           ) : (
             <iframe
+              data-testid="embed-iframe"
               title="Quiz Spotify playlist"
               src={SPOTIFY_PLAYLIST_EMBED_URL}
               width="100%"
-              height="100%"
+              height="352"
               frameBorder="0"
+              allowFullScreen
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="lazy"
-              className="block h-full w-full bg-[#0b1220]"
+              style={{ borderRadius: '12px' }}
+              className="block w-full bg-[#0b1220]"
               onError={() => setEmbedFailed(true)}
             />
           )}
