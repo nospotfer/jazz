@@ -155,3 +155,14 @@ Current repository security automation:
 - Static code scanning with CodeQL (JavaScript/TypeScript): `../.github/workflows/codeql-analysis.yml`
 - CodeQL query and scope configuration: `../.github/codeql/codeql-config.yml`
 - Dependency and GitHub Actions update monitoring via Dependabot: `../.github/dependabot.yml`
+
+## Admin — Painel de Métricas
+
+Em `/admin/stats` os administradores (permissão `analytics.read`) veem um **Painel de Métricas** otimizado para leitura rápida por gestores 50+:
+
+- 8 KPIs em cartões grandes (receita total, matrículas pagas, vouchers, ticket médio, conclusão média, alunos ativos, sessões e conversão — os dois últimos via GA4).
+- 3 gráficos (receita, matrículas pagas vs. voucher, conclusão por curso) com Recharts.
+- Filtro de período (7d / 30d / 90d / 12m) via query string `?range=`.
+- Dados do banco em tempo real (Prisma) + integração opcional com Google Analytics 4. Na ausência das variáveis `GA4_PROPERTY_ID`, `GA4_SERVICE_ACCOUNT_EMAIL`, `GA4_PRIVATE_KEY`, o painel exibe o KPI correspondente como "Indisponível" sem travar a página.
+
+Documentação completa: `docs/painel-metricas-admin.md`.
