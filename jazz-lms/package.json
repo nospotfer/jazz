@@ -48,6 +48,7 @@
     "test:payments:all": "bash scripts/test-payments-all.sh"
   },
   "dependencies": {
+    "@google-analytics/data": "^5.2.1",
     "@mux/mux-player-react": "^3.9.0",
     "@prisma/client": "5.17.0",
     "@radix-ui/react-avatar": "1.1.0",
@@ -74,6 +75,7 @@
     "pdfjs-dist": "3.11.174",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "recharts": "^3.8.1",
     "resend": "^6.9.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "2.4.0",

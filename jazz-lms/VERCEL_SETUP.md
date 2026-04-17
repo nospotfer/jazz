@@ -140,6 +140,39 @@ Before deploying, verify:
 
 ---
 
+## Admin Analytic Metrics Dashboard — Google Analytics 4 (optional)
+
+The admin metrics panel at `/admin/stats` can integrate with GA4 for traffic
+data. All three variables below are **server-only** (never prefix with
+`NEXT_PUBLIC_`). If any is missing, the panel degrades gracefully and shows
+"Indisponível" for the traffic KPI while keeping all database-sourced KPIs
+working normally.
+
+### `GA4_PROPERTY_ID`
+
+- **Format:** `properties/123456789`
+- **Where:** GA4 Admin → Property Settings → Property ID.
+
+### `GA4_SERVICE_ACCOUNT_EMAIL`
+
+- **Format:** `jazz-metrics@your-project.iam.gserviceaccount.com`
+- **Where:** Google Cloud → IAM & Admin → Service Accounts. The account must
+  be granted the **Viewer** role on the GA4 property (GA4 Admin → Property
+  Access Management).
+
+### `GA4_PRIVATE_KEY`
+
+- **Format:** full PEM string. Escape newlines as `\n` when pasting into the
+  Vercel dashboard (the runtime restores them before the GA4 client uses the
+  key).
+- **Where:** generated together with the service account key JSON; copy the
+  `private_key` field value.
+
+> Reference documents: [docs/painel-metricas-admin.md](docs/painel-metricas-admin.md)
+> and [docs/painel-metricas-admin-estrutura.md](docs/painel-metricas-admin-estrutura.md).
+
+---
+
 ## Troubleshooting
 
 ### Still getting database connection errors?

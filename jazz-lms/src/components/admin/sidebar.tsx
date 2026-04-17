@@ -18,7 +18,7 @@ const MENU_ITEMS: MenuItem[] = [
   { href: '/admin', label: 'Panel', permission: 'admin.access' },
   { href: '/admin/courses', label: 'Cursos', permission: 'courses.read' },
   { href: '/admin/users', label: 'Usuarios', permission: 'users.read' },
-  { href: '/admin/stats', label: 'Analíticas', permission: 'analytics.read' },
+  { href: '/admin/stats', label: 'Métricas', permission: 'analytics.read' },
   { href: '/admin/vouchers', label: 'Vouchers', permission: 'vouchers.read' },
 ];
 

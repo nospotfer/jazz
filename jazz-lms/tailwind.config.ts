@@ -30,6 +30,20 @@ const config: Config = {
         },
         burgundy: '#8B3A3A',
         cream: '#F5EBE0',
+        // Tokens do Painel de Metricas (Admin) — contraste AA+ verificado em light/dark
+        metric: {
+          success: { light: '#166534', dark: '#4ADE80' },
+          warn: { light: '#92400E', dark: '#FBBF24' },
+          danger: { light: '#991B1B', dark: '#F87171' },
+          info: { light: '#1E3A8A', dark: '#93C5FD' },
+          neutral: { light: '#4B5563', dark: '#D1D5DB' },
+        },
+        chart: {
+          1: { light: '#B8860B', dark: '#E5B84B' },
+          2: { light: '#1F4E79', dark: '#7FB3FF' },
+          3: { light: '#4B5563', dark: '#D1D5DB' },
+          4: { light: '#8B3A3A', dark: '#F87171' },
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
