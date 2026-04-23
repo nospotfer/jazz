@@ -190,6 +190,24 @@ operator data).
 
 ---
 
+## Google Analytics 4 — client-side gtag (optional)
+
+Complements the server-side GA4 Data API already used by `/admin/stats` (via
+`GA4_PROPERTY_ID` / `GA4_SERVICE_ACCOUNT_EMAIL` / `GA4_PRIVATE_KEY`). This
+client-side loader collects real browser traffic. Like Clarity, it is
+**never** injected on `/admin/*` and is **fail-safe**: without the env below
+nothing is loaded.
+
+### `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+
+- **Format:** `G-XXXXXXXXXX` (GA4 Measurement ID, not the tracking ID).
+- **Where:** https://analytics.google.com/ → Admin → Data Streams →
+  select the Jazz LMS stream → copy Measurement ID.
+- **Behavior:** `anonymize_ip: true` enabled by default (GDPR-friendly).
+- **Scope:** Public area only (landing, auth, courses, student dashboard).
+
+---
+
 ## Troubleshooting
 
 ### Still getting database connection errors?

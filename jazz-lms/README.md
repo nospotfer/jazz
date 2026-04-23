@@ -186,3 +186,13 @@ pública do site (landing, auth, cursos, dashboard do aluno). O admin
 - Requer env `NEXT_PUBLIC_CLARITY_PROJECT_ID`.
 - Sem o ID configurado, o script não é injetado (fail-safe).
 - Código: `src/components/third-parties/clarity-script.tsx`.
+
+## Google Analytics 4 — gtag no browser (opcional)
+
+Coleta de tráfego client-side via `gtag.js`, complementar ao GA4 Data API
+usado pelo painel admin. Também excluído de `/admin/*`.
+
+- Requer env `NEXT_PUBLIC_GA_MEASUREMENT_ID` (formato `G-XXXXXXXXXX`).
+- Sem o ID configurado, o script não é injetado (fail-safe).
+- `anonymize_ip: true` por padrão.
+- Código: `src/components/third-parties/google-analytics-script.tsx`.
