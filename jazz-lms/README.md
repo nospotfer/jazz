@@ -166,3 +166,13 @@ Em `/admin/stats` os administradores (permissão `analytics.read`) veem um **Pai
 - Dados do banco em tempo real (Prisma) + integração opcional com Google Analytics 4. Na ausência das variáveis `GA4_PROPERTY_ID`, `GA4_SERVICE_ACCOUNT_EMAIL`, `GA4_PRIVATE_KEY`, o painel exibe o KPI correspondente como "Indisponível" sem travar a página.
 
 Documentação completa: `docs/painel-metricas-admin.md`.
+
+## Heatmap — Microsoft Clarity (opcional)
+
+Coleta de heatmap e gravação de sessões via Microsoft Clarity apenas na área
+pública do site (landing, auth, cursos, dashboard do aluno). O admin
+(`/admin/*`) é deliberadamente excluído.
+
+- Requer env `NEXT_PUBLIC_CLARITY_PROJECT_ID`.
+- Sem o ID configurado, o script não é injetado (fail-safe).
+- Código: `src/components/third-parties/clarity-script.tsx`.

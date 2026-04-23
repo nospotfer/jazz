@@ -1,6 +1,7 @@
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { GlobalLoadingProvider } from "@/components/providers/global-loading-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ClarityScript } from "@/components/third-parties/clarity-script";
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
@@ -45,6 +46,7 @@ export default function RootLayout({
             <GlobalLoadingProvider>{children}</GlobalLoadingProvider>
           </LanguageProvider>
         </ThemeProvider>
+        <ClarityScript />
       </body>
     </html>
   );

@@ -173,6 +173,23 @@ working normally.
 
 ---
 
+## Heatmap — Microsoft Clarity (optional)
+
+Public-area heatmap and session recording for 50+ UX research. The script
+only loads when the env below is present, and is **never** injected under
+`/admin/*` (admin activity is intentionally excluded to avoid recording
+operator data).
+
+### `NEXT_PUBLIC_CLARITY_PROJECT_ID`
+
+- **Format:** 10-character alphanumeric ID (ex.: `abc123xyz0`).
+- **Where:** https://clarity.microsoft.com/ → create project → Settings →
+  Setup → copy the project ID from the install snippet.
+- **Scope:** Applies to landing, auth, courses, and student dashboard only.
+  Absence disables the feature silently — no console errors.
+
+---
+
 ## Troubleshooting
 
 ### Still getting database connection errors?
