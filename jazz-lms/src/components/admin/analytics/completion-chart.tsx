@@ -45,14 +45,14 @@ export function CompletionChart({ data, ariaLabel }: { data: Point[]; ariaLabel:
             contentStyle={{ fontSize: 15, padding: 12 }}
             formatter={((_value: unknown, _name: unknown, entry: unknown) => {
               const payload = (entry as { payload?: Point & { percent: number } })?.payload;
-              if (!payload) return ['0%', 'Conclusão'];
+              if (!payload) return ['0%', 'Finalización'];
               return [
                 `${payload.percent}% (${payload.completedCount}/${payload.startedCount})`,
-                'Conclusão',
+                'Finalización',
               ];
             }) as never}
           />
-          <Bar dataKey="percent" fill="#B8860B" name="Conclusão" />
+          <Bar dataKey="percent" fill="#B8860B" name="Finalización" />
         </BarChart>
       </ResponsiveContainer>
     </div>

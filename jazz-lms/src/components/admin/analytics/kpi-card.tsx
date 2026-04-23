@@ -29,8 +29,8 @@ function formatValue(value: number, format: KpiFormat, currency: 'EUR' | 'USD' |
 }
 
 function formatDelta(delta: number | null): { label: string; tone: KpiTone; symbol: string } {
-  if (delta === null) return { label: 'Novo', tone: 'neutral', symbol: '•' };
-  if (delta === 0) return { label: 'sem variação', tone: 'neutral', symbol: '•' };
+  if (delta === null) return { label: 'Nuevo', tone: 'neutral', symbol: '•' };
+  if (delta === 0) return { label: 'sin variación', tone: 'neutral', symbol: '•' };
   if (delta > 0) {
     const pct = (delta * 100).toFixed(0);
     return { label: `+${pct}% vs. período anterior`, tone: 'positive', symbol: '▲' };
@@ -65,7 +65,7 @@ export function KpiCard({
     return (
       <div
         className="rounded-xl border border-border bg-white p-5 shadow-sm dark:bg-card"
-        aria-label={`${label}: indisponível`}
+        aria-label={`${label}: no disponible`}
       >
         <div className="flex items-start justify-between">
           <p className="text-[17px] font-medium text-muted-foreground">{label}</p>
@@ -76,7 +76,7 @@ export function KpiCard({
           ) : null}
         </div>
         <p className="mt-3 text-[28px] font-semibold leading-tight text-[#4B5563] dark:text-[#D1D5DB]">
-          Indisponível
+          No disponible
         </p>
         <p className="mt-1 text-[14px] text-muted-foreground">{unavailable.reason}</p>
       </div>

@@ -34,7 +34,7 @@ export function RevenueChart({ data, ariaLabel }: { data: Point[]; ariaLabel: st
             labelStyle={{ fontWeight: 600 }}
             formatter={((value: unknown) => [
               formatCurrency(typeof value === 'number' ? value : Number(value) || 0),
-              'Receita',
+              'Ingresos',
             ]) as never}
           />
           <Line
@@ -44,7 +44,7 @@ export function RevenueChart({ data, ariaLabel }: { data: Point[]; ariaLabel: st
             strokeWidth={3}
             dot={{ r: 4, fill: '#B8860B' }}
             activeDot={{ r: 6 }}
-            name="Receita"
+            name="Ingresos"
           />
         </LineChart>
       </ResponsiveContainer>

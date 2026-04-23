@@ -22,22 +22,22 @@ describe('KpiCard', () => {
     expect(screen.getByText('▼')).toBeTruthy();
   });
 
-  test('renders "Novo" when delta is null', () => {
+  test('renders "Nuevo" when delta is null', () => {
     render(<KpiCard label="Matrículas" value={5} format="number" delta={null} />);
-    expect(screen.getByText(/Novo/)).toBeTruthy();
+    expect(screen.getByText(/Nuevo/)).toBeTruthy();
   });
 
   test('renders unavailable state with reason', () => {
     render(
       <KpiCard
-        label="Sessões no site"
+        label="Sesiones en el sitio"
         value={0}
         format="number"
         delta={null}
-        unavailable={{ reason: 'GA4 não configurado.' }}
+        unavailable={{ reason: 'GA4 no configurado.' }}
       />,
     );
-    expect(screen.getByText('Indisponível')).toBeTruthy();
-    expect(screen.getByText('GA4 não configurado.')).toBeTruthy();
+    expect(screen.getByText('No disponible')).toBeTruthy();
+    expect(screen.getByText('GA4 no configurado.')).toBeTruthy();
   });
 });

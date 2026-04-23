@@ -21,9 +21,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 300;
 
 const RANGE_LABELS: Record<RangeKey, string> = {
-  '7d': 'últimos 7 dias',
-  '30d': 'últimos 30 dias',
-  '90d': 'últimos 90 dias',
+  '7d': 'últimos 7 días',
+  '30d': 'últimos 30 días',
+  '90d': 'últimos 90 días',
   '12m': 'últimos 12 meses',
 };
 
@@ -63,63 +63,63 @@ export default async function AdminStatsPage({
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-[28px] font-bold leading-[40px] text-jazz-dark dark:text-white">
-            Painel de Métricas
+            Panel de Métricas
           </h1>
           <p className="mt-1 text-[18px] text-muted-foreground">
-            Como está o Jazz LMS nos {RANGE_LABELS[rangeKey]}.
+            Cómo está el Jazz LMS en los {RANGE_LABELS[rangeKey]}.
           </p>
         </div>
         <PeriodFilter current={rangeKey} />
       </header>
 
       <section
-        aria-label="Indicadores principais"
+        aria-label="Indicadores principales"
         className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4"
       >
         <KpiCard
-          label="Receita total"
+          label="Ingresos totales"
           value={overview.revenue.value}
           format="currency"
           delta={overview.revenue.delta}
           icon="💰"
         />
         <KpiCard
-          label="Matrículas"
+          label="Inscripciones"
           value={overview.enrollments.value}
           format="number"
           delta={overview.enrollments.delta}
           icon="🎟️"
         />
         <KpiCard
-          label="Ticket médio"
+          label="Ticket promedio"
           value={overview.averageTicket.value}
           format="currency"
           delta={overview.averageTicket.delta}
           icon="💳"
         />
         <KpiCard
-          label="Novos alunos"
+          label="Nuevos estudiantes"
           value={overview.newStudents.value}
           format="number"
           delta={overview.newStudents.delta}
           icon="👤"
         />
         <KpiCard
-          label="Taxa de conclusão"
+          label="Tasa de finalización"
           value={overview.completionRate.value}
           format="percent"
           delta={overview.completionRate.delta}
           icon="🎯"
         />
         <KpiCard
-          label="Vouchers resgatados"
+          label="Cupones canjeados"
           value={overview.vouchersRedeemed.value}
           format="number"
           delta={overview.vouchersRedeemed.delta}
           icon="🏷️"
         />
         <KpiCard
-          label="Medalhas conquistadas"
+          label="Medallas conseguidas"
           value={overview.medalsEarned.value}
           format="number"
           delta={overview.medalsEarned.delta}
@@ -127,16 +127,16 @@ export default async function AdminStatsPage({
         />
         {'unavailable' in traffic ? (
           <KpiCard
-            label="Sessões no site"
+            label="Sesiones en el sitio"
             value={0}
             format="number"
             delta={null}
             icon="🌐"
-            unavailable={{ reason: 'Integração com Google Analytics não configurada.' }}
+            unavailable={{ reason: 'Integración con Google Analytics no configurada.' }}
           />
         ) : (
           <KpiCard
-            label="Sessões no site"
+            label="Sesiones en el sitio"
             value={traffic.data.sessions}
             format="number"
             delta={null}
@@ -153,18 +153,18 @@ export default async function AdminStatsPage({
           id="grafico-receita"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
-          Receita por{' '}
-          {range.granularity === 'day' ? 'dia' : range.granularity === 'week' ? 'semana' : 'mês'}
+          Ingresos por{' '}
+          {range.granularity === 'day' ? 'día' : range.granularity === 'week' ? 'semana' : 'mes'}
         </h2>
         {hasAnyRevenue ? (
           <RevenueChart
             data={revenue.map((r) => ({ bucket: r.bucket, revenue: r.value }))}
-            ariaLabel={`Receita ao longo dos ${RANGE_LABELS[rangeKey]}`}
+            ariaLabel={`Ingresos a lo largo de los ${RANGE_LABELS[rangeKey]}`}
           />
         ) : (
           <EmptyState
-            title="Nenhuma receita no período"
-            description="Selecione um período maior ou volte após novas matrículas."
+            title="Sin ingresos en el período"
+            description="Selecciona un período mayor o vuelve tras nuevas inscripciones."
           />
         )}
       </section>
@@ -177,17 +177,17 @@ export default async function AdminStatsPage({
           id="grafico-matriculas"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
-          Matrículas (pagas × vouchers)
+          Inscripciones (pagadas × cupones)
         </h2>
         {hasAnyEnrollments ? (
           <EnrollmentsChart
             data={enrollments}
-            ariaLabel={`Matrículas pagas e por voucher nos ${RANGE_LABELS[rangeKey]}`}
+            ariaLabel={`Inscripciones pagadas y por cupón en los ${RANGE_LABELS[rangeKey]}`}
           />
         ) : (
           <EmptyState
-            title="Nenhuma matrícula no período"
-            description="Os dados aparecerão aqui a partir da primeira matrícula no intervalo escolhido."
+            title="Sin inscripciones en el período"
+            description="Los datos aparecerán aquí a partir de la primera inscripción en el intervalo elegido."
           />
         )}
       </section>
@@ -200,17 +200,17 @@ export default async function AdminStatsPage({
           id="grafico-conclusao"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
-          Conclusão por curso
+          Finalización por curso
         </h2>
         {hasAnyCompletion ? (
           <CompletionChart
             data={completion}
-            ariaLabel="Top cursos por taxa de conclusão no período"
+            ariaLabel="Cursos destacados por tasa de finalización en el período"
           />
         ) : (
           <EmptyState
-            title="Sem dados de conclusão"
-            description="Não há progresso registrado nos cursos para o período selecionado."
+            title="Sin datos de finalización"
+            description="No hay progreso registrado en los cursos para el período seleccionado."
           />
         )}
       </section>
@@ -224,7 +224,7 @@ export default async function AdminStatsPage({
             id="tabela-top-cursos"
             className="text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
           >
-            Top cursos no período
+            Cursos destacados del período
           </h2>
         </div>
         <div className="overflow-x-auto">
@@ -233,15 +233,15 @@ export default async function AdminStatsPage({
               <tr>
                 <th className="px-5 py-3">Curso</th>
                 <th className="px-5 py-3">Iniciadas</th>
-                <th className="px-5 py-3">Concluídas</th>
-                <th className="px-5 py-3">Conclusão</th>
+                <th className="px-5 py-3">Completadas</th>
+                <th className="px-5 py-3">Finalización</th>
               </tr>
             </thead>
             <tbody>
               {completion.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-5 py-6 text-center text-[17px] text-muted-foreground">
-                    Nenhum curso com atividade no período.
+                    Ningún curso con actividad en el período.
                   </td>
                 </tr>
               ) : (
@@ -269,8 +269,8 @@ export default async function AdminStatsPage({
       </section>
 
       <footer className="pt-4 text-[14px] text-muted-foreground">
-        Receita apresentada em EUR. Ticket médio exclui matrículas gratuitas (vouchers 100%). Dados
-        atualizados a cada 5 minutos. Receita total no período:{' '}
+        Ingresos en EUR. El ticket promedio excluye inscripciones gratuitas (cupones 100%). Datos
+        actualizados cada 5 minutos. Ingresos totales del período:{' '}
         <strong>{formatCurrency(overview.revenue.value)}</strong>.
       </footer>
     </div>

@@ -45,10 +45,10 @@ export default async function AdminCoursesPage() {
               <thead>
                 <tr>
                   <th className="px-4 py-3">Título</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Estrutura</th>
-                  <th className="px-4 py-3">Alunos</th>
-                  <th className="px-4 py-3">Preço</th>
+                  <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3">Estructura</th>
+                  <th className="px-4 py-3">Estudiantes</th>
+                  <th className="px-4 py-3">Precio</th>
                   <th className="px-4 py-3 text-right">Acciones</th>
                 </tr>
               </thead>
@@ -67,7 +67,7 @@ export default async function AdminCoursesPage() {
                         {course.isPublished ? (
                           <span className="badge-success">Publicado</span>
                         ) : (
-                          <span className="badge-warning">Rascunho</span>
+                          <span className="badge-warning">Borrador</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">

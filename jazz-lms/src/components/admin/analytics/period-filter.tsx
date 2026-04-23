@@ -5,9 +5,9 @@ import { useTransition } from 'react';
 import type { RangeKey } from '@/lib/admin/metrics-db';
 
 const OPTIONS: Array<{ value: RangeKey; label: string; aria: string }> = [
-  { value: '7d', label: '7 dias', aria: 'Últimos 7 dias' },
-  { value: '30d', label: '30 dias', aria: 'Últimos 30 dias' },
-  { value: '90d', label: '90 dias', aria: 'Últimos 90 dias' },
+  { value: '7d', label: '7 días', aria: 'Últimos 7 días' },
+  { value: '30d', label: '30 días', aria: 'Últimos 30 días' },
+  { value: '90d', label: '90 días', aria: 'Últimos 90 días' },
   { value: '12m', label: '12 meses', aria: 'Últimos 12 meses' },
 ];
 
@@ -28,7 +28,7 @@ export function PeriodFilter({ current }: { current: RangeKey }) {
   return (
     <div
       role="tablist"
-      aria-label="Período do painel"
+      aria-label="Período del panel"
       aria-busy={isPending}
       className="inline-flex flex-wrap gap-2 rounded-lg border border-border bg-white p-1 dark:bg-card"
     >

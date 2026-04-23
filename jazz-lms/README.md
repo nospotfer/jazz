@@ -168,6 +168,13 @@ Em `/admin/stats` os administradores (permissão `analytics.read`) veem um **Pai
 
 Documentação completa: `docs/painel-metricas-admin.md`.
 
+## Idiomas
+
+- Idioma padrão: **Español (es)**.
+- A área administrativa (`/admin/*`) é 100% em espanhol e **não expõe** o seletor de idioma — o idioma fica fixo em `es`.
+- A área pública (landing, auth, dashboard do aluno) suporta ES/EN/FR/PT via `LanguageProvider` (`src/lib/language.ts`) e oferece o `<LanguageSelector />` no topo.
+- Cookie `jazz_lang` e `localStorage.jazz-language-v1` persistem a escolha do usuário. Quando ausentes, `detectLanguageFromAcceptLanguage` recai em `es`.
+
 ## Heatmap — Microsoft Clarity (opcional)
 
 Coleta de heatmap e gravação de sessões via Microsoft Clarity apenas na área

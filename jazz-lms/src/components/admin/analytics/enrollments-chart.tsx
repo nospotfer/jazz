@@ -24,8 +24,8 @@ export function EnrollmentsChart({ data, ariaLabel }: { data: Point[]; ariaLabel
           <YAxis tick={{ fontSize: 14 }} allowDecimals={false} />
           <Tooltip contentStyle={{ fontSize: 15, padding: 12 }} labelStyle={{ fontWeight: 600 }} />
           <Legend wrapperStyle={{ fontSize: 15 }} />
-          <Bar dataKey="paid" stackId="a" fill="#B8860B" name="Pagas" />
-          <Bar dataKey="voucher" stackId="a" fill="#1F4E79" name="Voucher" />
+          <Bar dataKey="paid" stackId="a" fill="#B8860B" name="Pagadas" />
+          <Bar dataKey="voucher" stackId="a" fill="#1F4E79" name="Cupón" />
         </BarChart>
       </ResponsiveContainer>
     </div>
