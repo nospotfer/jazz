@@ -31,6 +31,7 @@
     "postinstall": "npm run pdf:worker:sync && prisma generate",
     "admin:create": "npx tsx scripts/create-admin.ts",
     "admin:seed-test-voucher": "npx tsx scripts/seed-admin-test-voucher.ts",
+    "admin:wipe-user-activity": "npx tsx scripts/wipe-user-activity.ts",
     "admin:studio": "npx prisma studio",
     "check:integrations": "npx tsx scripts/check-integrations.ts",
     "course:price:fix": "npx tsx scripts/fix-course-price.ts",

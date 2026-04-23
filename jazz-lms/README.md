@@ -196,3 +196,9 @@ usado pelo painel admin. Também excluído de `/admin/*`.
 - Sem o ID configurado, o script não é injetado (fail-safe).
 - `anonymize_ip: true` por padrão.
 - Código: `src/components/third-parties/google-analytics-script.tsx`.
+
+## Scripts administrativos
+
+- `npm run admin:create` — cria/atualiza usuário admin (lê `ADMIN_EMAIL`/`ADMIN_USER_ID`/`ADMIN_ROLE`).
+- `npm run admin:seed-test-voucher` — upsert idempotente do cupom interno `ADMIN99TEST` (99,98% de desconto).
+- `npm run admin:wipe-user-activity` — **destrutivo.** Limpa todas as atividades de usuário (compras, progresso, redempções, quizzes) preservando conteúdo (cursos, lições, traduções), vouchers configurados e usuários admin. Requer `CONFIRM=WIPE-USER-ACTIVITY`; opcional `DELETE_REGULAR_USERS=true`.
