@@ -7,6 +7,7 @@ import type { RangeKey } from '@/lib/admin/metrics-db';
 const OPTIONS: Array<{ value: RangeKey; label: string; aria: string }> = [
   { value: '7d', label: '7 días', aria: 'Últimos 7 días' },
   { value: '30d', label: '30 días', aria: 'Últimos 30 días' },
+  { value: '60d', label: '60 días', aria: 'Últimos 60 días' },
   { value: '90d', label: '90 días', aria: 'Últimos 90 días' },
   { value: '12m', label: '12 meses', aria: 'Últimos 12 meses' },
 ];

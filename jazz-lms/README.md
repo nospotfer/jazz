@@ -162,8 +162,10 @@ Em `/admin/stats` os administradores (permissão `analytics.read`) veem um **Pai
 
 - 8 KPIs em cartões grandes (receita total, matrículas pagas, vouchers, ticket médio, conclusão média, alunos ativos, sessões e conversão — os dois últimos via GA4).
 - 3 gráficos (receita, matrículas pagas vs. voucher, conclusão por curso) com Recharts.
-- Filtro de período (7d / 30d / 90d / 12m) via query string `?range=`.
+- Filtro de período (7d / 30d / 60d / 90d / 12m) via query string `?range=`.
 - Moeda oficial: **EUR (€)** com locale `es-ES` em toda formatação de valores.
+- Cache de 5 minutos (`unstable_cache` do Next.js) em todas as agregações, invalidável por tag `admin-metrics`.
+- Índices dedicados em `Purchase.createdAt`, `User.createdAt`, `UserProgress.createdAt`, `UserProgress.updatedAt`, `VoucherRedemption.redeemedAt` e `LessonQuizSummary.lastAttemptAt` — aplique `prisma/migrations/202604220001_admin_metrics_indexes/migration.sql` em Supabase antes de usar em produção.
 - Dados do banco em tempo real (Prisma) + integração opcional com Google Analytics 4. Na ausência das variáveis `GA4_PROPERTY_ID`, `GA4_SERVICE_ACCOUNT_EMAIL`, `GA4_PRIVATE_KEY`, o painel exibe o KPI correspondente como "Indisponível" sem travar a página.
 
 Documentação completa: `docs/painel-metricas-admin.md`.

@@ -11,9 +11,24 @@
  * - Ticket medio ignora matriculas gratuitas (voucher 100%).
  */
 
+import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/db';
 
-export type RangeKey = '7d' | '30d' | '90d' | '12m';
+// Admin metrics cache: 5 minutes, keyed by range. Matches the footer
+// promise shown on the Panel de Métricas ("actualizados cada 5 minutos").
+const METRICS_CACHE_TTL_SECONDS = 300;
+const METRICS_CACHE_TAG = 'admin-metrics';
+
+function buildCacheKey(prefix: string, range: Range): string[] {
+  return [
+    prefix,
+    range.key,
+    range.from.toISOString(),
+    range.to.toISOString(),
+  ];
+}
+
+export type RangeKey = '7d' | '30d' | '60d' | '90d' | '12m';
 export type Granularity = 'day' | 'week' | 'month';
 
 export type Range = {
@@ -25,7 +40,7 @@ export type Range = {
   granularity: Granularity;
 };
 
-const VALID_RANGES: RangeKey[] = ['7d', '30d', '90d', '12m'];
+const VALID_RANGES: RangeKey[] = ['7d', '30d', '60d', '90d', '12m'];
 
 export function isRangeKey(value: unknown): value is RangeKey {
   return typeof value === 'string' && (VALID_RANGES as string[]).includes(value);
@@ -50,6 +65,10 @@ export function resolveRange(key: RangeKey, now: Date = new Date()): Range {
       break;
     case '30d':
       from.setUTCDate(from.getUTCDate() - 30);
+      granularity = 'day';
+      break;
+    case '60d':
+      from.setUTCDate(from.getUTCDate() - 60);
       granularity = 'day';
       break;
     case '90d':
@@ -206,6 +225,15 @@ export type OverviewMetrics = {
 };
 
 export async function getOverview(range: Range): Promise<OverviewMetrics> {
+  const cached = unstable_cache(
+    () => getOverviewUncached(range),
+    buildCacheKey('admin-metrics:overview', range),
+    { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
+  );
+  return cached();
+}
+
+async function getOverviewUncached(range: Range): Promise<OverviewMetrics> {
   const [
     revenueCurrent,
     revenuePrev,
@@ -283,6 +311,15 @@ export async function getOverview(range: Range): Promise<OverviewMetrics> {
 }
 
 export async function getRevenueTimeseries(range: Range): Promise<TimeseriesBucket[]> {
+  const cached = unstable_cache(
+    () => getRevenueTimeseriesUncached(range),
+    buildCacheKey('admin-metrics:revenue', range),
+    { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
+  );
+  return cached();
+}
+
+async function getRevenueTimeseriesUncached(range: Range): Promise<TimeseriesBucket[]> {
   const rows = await db.purchase.findMany({
     where: { createdAt: { gte: range.from, lt: range.to } },
     select: { createdAt: true, finalPrice: true },
@@ -298,6 +335,15 @@ export async function getRevenueTimeseries(range: Range): Promise<TimeseriesBuck
 export type EnrollmentBucket = { bucket: string; paid: number; voucher: number; total: number };
 
 export async function getEnrollmentsTimeseries(range: Range): Promise<EnrollmentBucket[]> {
+  const cached = unstable_cache(
+    () => getEnrollmentsTimeseriesUncached(range),
+    buildCacheKey('admin-metrics:enrollments', range),
+    { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
+  );
+  return cached();
+}
+
+async function getEnrollmentsTimeseriesUncached(range: Range): Promise<EnrollmentBucket[]> {
   const rows = await db.purchase.findMany({
     where: { createdAt: { gte: range.from, lt: range.to } },
     select: { createdAt: true, finalPrice: true, voucherId: true },
@@ -339,6 +385,15 @@ export type CompletionByCourse = {
 };
 
 export async function getCompletionByCourse(range: Range): Promise<CompletionByCourse[]> {
+  const cached = unstable_cache(
+    () => getCompletionByCourseUncached(range),
+    buildCacheKey('admin-metrics:completion', range),
+    { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
+  );
+  return cached();
+}
+
+async function getCompletionByCourseUncached(range: Range): Promise<CompletionByCourse[]> {
   // Busca progresso no periodo e junta via aula->capitulo->curso.
   const rows = await db.userProgress.findMany({
     where: {

@@ -49,6 +49,8 @@ model User {
   role          String   @default("USER") // USER | SUPER_ADMIN | COURSE_ADMIN | CONTENT_CREATOR | MODERATOR
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model EmailVerification {
@@ -63,48 +65,48 @@ model EmailVerification {
 }
 
 model Course {
-  id          String     @id @default(uuid())
-  title       String
-  description String?
-  imageUrl    String?
-  price       Float?
-  isPublished Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  chapters    Chapter[]
-  purchases   Purchase[]
-  vouchers    VoucherCode[]
+  id           String              @id @default(uuid())
+  title        String
+  description  String?
+  imageUrl     String?
+  price        Float?
+  isPublished  Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  chapters     Chapter[]
+  purchases    Purchase[]
+  vouchers     VoucherCode[]
   translations CourseTranslation[]
 }
 
 model Chapter {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  position    Int
-  isPublished Boolean  @default(false)
-  courseId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  lessons     Lesson[]
+  id           String               @id @default(uuid())
+  title        String
+  description  String?
+  position     Int
+  isPublished  Boolean              @default(false)
+  courseId     String
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  course       Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons      Lesson[]
   translations ChapterTranslation[]
 
   @@unique([courseId, position])
 }
 
 model Lesson {
-  id              String           @id @default(uuid())
+  id              String               @id @default(uuid())
   title           String
   description     String?
   videoUrl        String?
   position        Int
-  isPublished     Boolean          @default(false)
+  isPublished     Boolean              @default(false)
   chapterId       String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
   attachments     Attachment[]
-  chapter         Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapter         Chapter              @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   quizQuestions   LessonQuizQuestion[]
   quizAttempts    LessonQuizAttempt[]
   quizSummaries   LessonQuizSummary[]
@@ -176,25 +178,26 @@ model Attachment {
 }
 
 model Purchase {
-  id             String           @id @default(uuid())
-  userId         String
-  courseId       String
-  voucherId      String?
-  originalPrice  Float?
-  finalPrice     Float?
-  discountAmount Float?
+  id                  String             @id @default(uuid())
+  userId              String
+  courseId            String
+  voucherId           String?
+  originalPrice       Float?
+  finalPrice          Float?
+  discountAmount      Float?
   providerReferenceId String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  voucher        VoucherCode?     @relation(fields: [voucherId], references: [id], onDelete: SetNull)
-  discount       DiscountApplied?
-  redemption     VoucherRedemption?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  course              Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  voucher             VoucherCode?       @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  discount            DiscountApplied?
+  redemption          VoucherRedemption?
 
   @@unique([userId, courseId])
   @@index([courseId])
   @@index([voucherId])
   @@index([providerReferenceId])
+  @@index([createdAt])
 }
 
 model VoucherBatch {
@@ -212,27 +215,27 @@ model VoucherBatch {
 }
 
 model VoucherCode {
-  id              String              @id @default(uuid())
-  code            String              @unique
-  type            VoucherType
-  discountPercent Float?
-  discountAmount  Float?
-  minOrderValue   Float?
-  courseId        String?
-  batchId         String?
-  maxUses         Int?
-  currentUses     Int                 @default(0)
-  maxUsesPerUser  Int                 @default(1)
-  isActive        Boolean             @default(true)
-  expiresAt       DateTime?
-  metadata        Json?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  course          Course?             @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  batch           VoucherBatch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
-  redemptions     VoucherRedemption[]
+  id               String              @id @default(uuid())
+  code             String              @unique
+  type             VoucherType
+  discountPercent  Float?
+  discountAmount   Float?
+  minOrderValue    Float?
+  courseId         String?
+  batchId          String?
+  maxUses          Int?
+  currentUses      Int                 @default(0)
+  maxUsesPerUser   Int                 @default(1)
+  isActive         Boolean             @default(true)
+  expiresAt        DateTime?
+  metadata         Json?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  course           Course?             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  batch            VoucherBatch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  redemptions      VoucherRedemption[]
   discountsApplied DiscountApplied[]
-  purchases       Purchase[]
+  purchases        Purchase[]
 
   @@index([code])
   @@index([isActive, expiresAt])
@@ -241,29 +244,30 @@ model VoucherCode {
 }
 
 model VoucherRedemption {
-  id           String      @id @default(uuid())
-  voucherId    String
-  userId       String
-  purchaseId   String?     @unique
-  redeemedAt   DateTime    @default(now())
-  voucher      VoucherCode @relation(fields: [voucherId], references: [id], onDelete: Cascade)
-  purchase     Purchase?   @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+  id         String      @id @default(uuid())
+  voucherId  String
+  userId     String
+  purchaseId String?     @unique
+  redeemedAt DateTime    @default(now())
+  voucher    VoucherCode @relation(fields: [voucherId], references: [id], onDelete: Cascade)
+  purchase   Purchase?   @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
 
   @@index([voucherId, userId])
   @@index([userId])
   @@index([voucherId])
   @@index([purchaseId])
+  @@index([redeemedAt])
 }
 
 model DiscountApplied {
-  id             String      @id @default(uuid())
-  purchaseId     String      @unique
+  id             String       @id @default(uuid())
+  purchaseId     String       @unique
   voucherId      String?
   originalPrice  Float
   discountAmount Float
   finalPrice     Float
-  createdAt      DateTime    @default(now())
-  purchase       Purchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  purchase       Purchase     @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   voucher        VoucherCode? @relation(fields: [voucherId], references: [id], onDelete: SetNull)
 
   @@index([purchaseId])
@@ -308,6 +312,8 @@ model UserProgress {
 
   @@unique([userId, lessonId])
   @@index([lessonId])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 model LessonPurchase {
@@ -340,15 +346,15 @@ model LessonNote {
 }
 
 model LessonQuizQuestion {
-  id             String                   @id @default(uuid())
+  id             String                    @id @default(uuid())
   lessonId       String
   prompt         String
   explanation    String?
   sourceLabel    String?
-  isActive       Boolean                  @default(true)
-  createdAt      DateTime                 @default(now())
-  updatedAt      DateTime                 @updatedAt
-  lesson         Lesson                   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  isActive       Boolean                   @default(true)
+  createdAt      DateTime                  @default(now())
+  updatedAt      DateTime                  @updatedAt
+  lesson         Lesson                    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   options        LessonQuizOption[]
   attemptAnswers LessonQuizAttemptAnswer[]
 
@@ -373,17 +379,17 @@ model LessonQuizOption {
 }
 
 model LessonQuizAttempt {
-  id            String                   @id @default(uuid())
+  id            String                    @id @default(uuid())
   userId        String
   lessonId      String
   scorePercent  Int?
-  correctCount  Int                      @default(0)
-  questionCount Int                      @default(12)
-  medal         QuizMedalTier            @default(NONE)
+  correctCount  Int                       @default(0)
+  questionCount Int                       @default(12)
+  medal         QuizMedalTier             @default(NONE)
   completedAt   DateTime?
-  createdAt     DateTime                 @default(now())
-  updatedAt     DateTime                 @updatedAt
-  lesson        Lesson                   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+  lesson        Lesson                    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   answers       LessonQuizAttemptAnswer[]
 
   @@index([userId, lessonId, createdAt])
@@ -428,4 +434,5 @@ model LessonQuizSummary {
   @@unique([userId, lessonId])
   @@index([lessonId])
   @@index([bestAttemptId])
+  @@index([lastAttemptAt])
 }

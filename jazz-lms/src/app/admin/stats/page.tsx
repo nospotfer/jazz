@@ -23,6 +23,7 @@ export const revalidate = 300;
 const RANGE_LABELS: Record<RangeKey, string> = {
   '7d': 'últimos 7 días',
   '30d': 'últimos 30 días',
+  '60d': 'últimos 60 días',
   '90d': 'últimos 90 días',
   '12m': 'últimos 12 meses',
 };
