@@ -13,9 +13,9 @@ import {
 type Point = { bucket: string; revenue: number };
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString('pt-BR', {
+  return value.toLocaleString('es-ES', {
     style: 'currency',
-    currency: 'BRL',
+    currency: 'EUR',
     maximumFractionDigits: 0,
   });
 }

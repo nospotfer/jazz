@@ -8,15 +8,15 @@ export type KpiCardProps = {
   value: number;
   format: KpiFormat;
   delta: number | null;
-  currency?: 'BRL' | 'USD';
+  currency?: 'EUR' | 'USD' | 'BRL';
   icon?: ReactNode;
   /** Exibido em vez do valor quando o KPI nao esta disponivel (ex.: GA4 offline). */
   unavailable?: { reason: string };
 };
 
-function formatValue(value: number, format: KpiFormat, currency: 'BRL' | 'USD' = 'BRL'): string {
+function formatValue(value: number, format: KpiFormat, currency: 'EUR' | 'USD' | 'BRL' = 'EUR'): string {
   if (format === 'currency') {
-    return value.toLocaleString('pt-BR', {
+    return value.toLocaleString('es-ES', {
       style: 'currency',
       currency,
       maximumFractionDigits: 0,
@@ -25,7 +25,7 @@ function formatValue(value: number, format: KpiFormat, currency: 'BRL' | 'USD' =
   if (format === 'percent') {
     return `${(value * 100).toFixed(0)}%`;
   }
-  return value.toLocaleString('pt-BR');
+  return value.toLocaleString('es-ES');
 }
 
 function formatDelta(delta: number | null): { label: string; tone: KpiTone; symbol: string } {
@@ -57,7 +57,7 @@ export function KpiCard({
   value,
   format,
   delta,
-  currency = 'BRL',
+  currency = 'EUR',
   icon,
   unavailable,
 }: KpiCardProps) {

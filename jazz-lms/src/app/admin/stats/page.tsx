@@ -28,9 +28,9 @@ const RANGE_LABELS: Record<RangeKey, string> = {
 };
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString('pt-BR', {
+  return value.toLocaleString('es-ES', {
     style: 'currency',
-    currency: 'BRL',
+    currency: 'EUR',
     maximumFractionDigits: 0,
   });
 }
@@ -255,8 +255,8 @@ export default async function AdminStatsPage({
                         {row.courseTitle}
                       </Link>
                     </td>
-                    <td className="px-5 py-3">{row.startedCount.toLocaleString('pt-BR')}</td>
-                    <td className="px-5 py-3">{row.completedCount.toLocaleString('pt-BR')}</td>
+                    <td className="px-5 py-3">{row.startedCount.toLocaleString('es-ES')}</td>
+                    <td className="px-5 py-3">{row.completedCount.toLocaleString('es-ES')}</td>
                     <td className="px-5 py-3 font-semibold">
                       {Math.round(row.completionRate * 100)}%
                     </td>
@@ -269,7 +269,7 @@ export default async function AdminStatsPage({
       </section>
 
       <footer className="pt-4 text-[14px] text-muted-foreground">
-        Receita apresentada em BRL. Ticket médio exclui matrículas gratuitas (vouchers 100%). Dados
+        Receita apresentada em EUR. Ticket médio exclui matrículas gratuitas (vouchers 100%). Dados
         atualizados a cada 5 minutos. Receita total no período:{' '}
         <strong>{formatCurrency(overview.revenue.value)}</strong>.
       </footer>

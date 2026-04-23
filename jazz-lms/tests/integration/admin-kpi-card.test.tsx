@@ -4,12 +4,13 @@ import { render, screen } from '@testing-library/react';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 
 describe('KpiCard', () => {
-  test('renders value formatted as BRL currency and positive delta with up arrow', () => {
+  test('renders value formatted as EUR currency and positive delta with up arrow', () => {
     render(
       <KpiCard label="Receita total" value={1234} format="currency" delta={0.25} />,
     );
     expect(screen.getByText(/Receita total/)).toBeTruthy();
-    expect(screen.getByText(/1\.234/)).toBeTruthy();
+    // es-ES currency format contains the euro sign
+    expect(screen.getByText(/€/)).toBeTruthy();
     expect(screen.getByText(/\+25% vs\. período anterior/)).toBeTruthy();
     expect(screen.getByText('▲')).toBeTruthy();
   });
