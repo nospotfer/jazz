@@ -149,12 +149,16 @@ export function VoucherInput({
           id="voucher-code"
           name="voucherCode"
           autoComplete="off"
+          inputMode="text"
+          maxLength={12}
+          pattern="[A-Z0-9]{10,12}"
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           value={code}
           placeholder={copy.placeholder}
           disabled={isLoading || disabled}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setCode(event.target.value.toUpperCase());
+            const next = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+            setCode(next);
             setStatus("idle");
           }}
           onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {

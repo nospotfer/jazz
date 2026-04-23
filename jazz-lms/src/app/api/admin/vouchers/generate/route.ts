@@ -16,23 +16,33 @@ export const dynamic = 'force-dynamic';
 const VOUCHER_TYPES = ['FREE_ACCESS', 'DISCOUNT_PERCENT', 'DISCOUNT_FIXED'] as const;
 type VoucherType = (typeof VOUCHER_TYPES)[number];
 
-function randomToken(size = 6) {
-  return crypto.randomBytes(size).toString('base64url').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, size);
+function randomToken(size: number) {
+  if (size <= 0) return '';
+  return crypto
+    .randomBytes(size * 2)
+    .toString('base64url')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, size);
 }
 
+// Generic voucher code: always 12 chars. Prefix clamped to 2-4 chars (default 'JAZZ').
 function buildVoucherCode(prefix: string) {
-  return `${prefix}-${randomToken(8)}`;
+  const safePrefix = (prefix || 'JAZZ').replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'JAZZ';
+  const paddedPrefix = safePrefix.length < 2 ? (safePrefix + 'JAZZ').slice(0, 2) : safePrefix;
+  return `${paddedPrefix}${randomToken(12 - paddedPrefix.length)}`;
 }
 
-function randomDigits(size = 4) {
+function randomDigits(size = 3) {
   const max = 10 ** size;
   const value = crypto.randomInt(0, max);
   return String(value).padStart(size, '0');
 }
 
-function extractArtistSequence(code: string, artistKey: string, discountPercent: number) {
+function extractArtistSequence(code: string, shortKey: string, discountPercent: number) {
   const normalizedCode = code.trim().toUpperCase();
-  const pattern = new RegExp(`^${artistKey}${discountPercent}(\\d{2,})\\d{4}$`);
+  // New compact format: {shortKey:3}{discount:2-3}{sequence:2}{random:3}
+  const pattern = new RegExp(`^${shortKey}${discountPercent}(\\d{2})\\d{3}$`);
   const match = normalizedCode.match(pattern);
 
   if (!match) {
@@ -43,9 +53,12 @@ function extractArtistSequence(code: string, artistKey: string, discountPercent:
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
-function buildArtistVoucherCode(artistKey: string, discountPercent: number, sequence: number) {
-  const sequencePart = String(sequence).padStart(2, '0');
-  return `${artistKey}${discountPercent}${sequencePart}${randomDigits(4)}`;
+// Artist voucher code: 10-12 chars depending on discount digits.
+// 2-digit discount (10..90) → 3+2+2+3 = 10 chars.
+// 3-digit discount (100)    → 3+3+2+3 = 11 chars.
+function buildArtistVoucherCode(shortKey: string, discountPercent: number, sequence: number) {
+  const sequencePart = String(sequence).padStart(2, '0').slice(-2);
+  return `${shortKey}${discountPercent}${sequencePart}${randomDigits(3)}`;
 }
 
 export async function POST(req: Request) {
@@ -133,7 +146,7 @@ export async function POST(req: Request) {
     let codes: string[] = [];
 
     if (type === 'DISCOUNT_PERCENT' && selectedArtist && discountPercent !== null) {
-      const deterministicBaseCode = `${selectedArtist.key}${discountPercent}`;
+      const deterministicBaseCode = `${selectedArtist.shortKey}${discountPercent}`;
       const existingCodes = await prisma.voucherCode.findMany({
         where: {
           code: {
@@ -147,7 +160,7 @@ export async function POST(req: Request) {
 
       let maxSequence = 0;
       for (const item of existingCodes) {
-        const sequence = extractArtistSequence(item.code, selectedArtist.key, discountPercent);
+        const sequence = extractArtistSequence(item.code, selectedArtist.shortKey, discountPercent);
         if (sequence !== null && sequence > maxSequence) {
           maxSequence = sequence;
         }
@@ -156,10 +169,21 @@ export async function POST(req: Request) {
       const generatedCodes = new Set<string>();
       for (let offset = 1; offset <= count; offset += 1) {
         const sequence = maxSequence + offset;
-        let nextCode = buildArtistVoucherCode(selectedArtist.key, discountPercent, sequence);
+        if (sequence > 99) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Sequence limit reached',
+              message:
+                'Límite de 99 cupones por artista y descuento alcanzado. Elimina o archiva cupones antiguos antes de generar más.',
+            },
+            { status: 409 }
+          );
+        }
+        let nextCode = buildArtistVoucherCode(selectedArtist.shortKey, discountPercent, sequence);
 
         while (generatedCodes.has(nextCode)) {
-          nextCode = buildArtistVoucherCode(selectedArtist.key, discountPercent, sequence);
+          nextCode = buildArtistVoucherCode(selectedArtist.shortKey, discountPercent, sequence);
         }
 
         generatedCodes.add(nextCode);
@@ -185,10 +209,11 @@ export async function POST(req: Request) {
 
     if (type === 'DISCOUNT_PERCENT' && artistForMetadata) {
       normalizedMetadata.voucherArtistKey = artistForMetadata.key;
+      normalizedMetadata.voucherArtistShortKey = artistForMetadata.shortKey;
       normalizedMetadata.voucherArtistName = artistForMetadata.name;
       normalizedMetadata.voucherArtistDiscountPercent = artistForMetadata.discountPercent;
-      normalizedMetadata.voucherCodeFormat = 'ARTIST_PERCENT_SEQUENCE_RANDOM4';
-      normalizedMetadata.voucherArtistVersion = '2026-03-12';
+      normalizedMetadata.voucherCodeFormat = 'SHORTKEY_PERCENT_SEQ2_RAND3';
+      normalizedMetadata.voucherArtistVersion = '2026-04-22';
     }
 
     const normalizedMetadataJson = normalizedMetadata as Prisma.InputJsonValue;
