@@ -51,7 +51,7 @@ export async function GET(
         {
           success: false,
           error: "Not found",
-          message: "Voucher não encontrado.",
+          message: "Voucher no encontrado.",
         },
         { status: 404 },
       );
@@ -92,7 +92,7 @@ export async function GET(
       {
         success: false,
         error: "Server error",
-        message: "Erro ao carregar voucher.",
+        message: "Error al cargar voucher.",
       },
       { status: 500 },
     );

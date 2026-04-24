@@ -158,11 +158,11 @@ export default async function AdminStatsPage({
       </section>
 
       <section
-        aria-labelledby="grafico-receita"
+        aria-labelledby="grafico-ingresos"
         className="rounded-xl border border-border bg-white p-5 dark:bg-card"
       >
         <h2
-          id="grafico-receita"
+          id="grafico-ingresos"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
           Ingresos por{' '}
@@ -182,11 +182,11 @@ export default async function AdminStatsPage({
       </section>
 
       <section
-        aria-labelledby="grafico-matriculas"
+        aria-labelledby="grafico-inscripciones"
         className="rounded-xl border border-border bg-white p-5 dark:bg-card"
       >
         <h2
-          id="grafico-matriculas"
+          id="grafico-inscripciones"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
           Inscripciones (pagadas × cupones)
@@ -205,11 +205,11 @@ export default async function AdminStatsPage({
       </section>
 
       <section
-        aria-labelledby="grafico-conclusao"
+        aria-labelledby="grafico-finalizacion"
         className="rounded-xl border border-border bg-white p-5 dark:bg-card"
       >
         <h2
-          id="grafico-conclusao"
+          id="grafico-finalizacion"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
           Finalización por curso

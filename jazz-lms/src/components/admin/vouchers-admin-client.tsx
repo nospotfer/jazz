@@ -614,7 +614,7 @@ export function VouchersAdminClient({ courses }: Props) {
           </div>
           <div className="flex flex-col items-end gap-1">
             {clearSuccessVisible ? (
-              <span className="text-xs font-medium text-emerald-600">Limpo com sucesso</span>
+              <span className="text-xs font-medium text-emerald-600">Limpiado con éxito</span>
             ) : null}
             <Button variant="secondary" onClick={() => void clearFilters()}>
               Limpiar filtros
@@ -624,11 +624,11 @@ export function VouchersAdminClient({ courses }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
           <div className="rounded-md border border-border p-4">
-            <p className="text-xs text-muted-foreground">Vouchers gerados</p>
+            <p className="text-xs text-muted-foreground">Vouchers generados</p>
             <p className="text-3xl font-bold mt-2">{stats.generated}</p>
           </div>
           <div className="rounded-md border border-border p-4">
-            <p className="text-xs text-muted-foreground">Vouchers disponíveis</p>
+            <p className="text-xs text-muted-foreground">Vouchers disponibles</p>
             <p className="text-3xl font-bold mt-2">{stats.available}</p>
           </div>
           <div className="rounded-md border border-border p-4">
@@ -636,7 +636,7 @@ export function VouchersAdminClient({ courses }: Props) {
             <p className="text-3xl font-bold mt-2">{stats.used}</p>
           </div>
           <div className="rounded-md border border-border p-4">
-            <p className="text-xs text-muted-foreground">Vouchers expirados</p>
+            <p className="text-xs text-muted-foreground">Vouchers vencidos</p>
             <p className="text-3xl font-bold mt-2">{stats.expired}</p>
           </div>
         </div>
@@ -835,7 +835,7 @@ export function VouchersAdminClient({ courses }: Props) {
               Copiar últimos códigos
             </Button>
             {copySuccessVisible ? (
-              <span className="text-xs font-medium text-emerald-600">Copiado com sucesso</span>
+              <span className="text-xs font-medium text-emerald-600">Copiado con éxito</span>
             ) : null}
           </div>
         </div>
@@ -954,7 +954,7 @@ export function VouchersAdminClient({ courses }: Props) {
               Restablecer
             </Button>
             {resetSuccessVisible ? (
-              <span className="text-xs font-medium text-emerald-600">Restabelecido com sucesso</span>
+              <span className="text-xs font-medium text-emerald-600">Restablecido con éxito</span>
             ) : null}
           </div>
         </div>
