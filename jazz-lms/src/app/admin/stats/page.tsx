@@ -12,6 +12,7 @@ import {
 import { getTrafficOverview } from '@/lib/admin/metrics-ga';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { PeriodFilter } from '@/components/admin/analytics/period-filter';
+import { RefreshMetricsButton } from '@/components/admin/analytics/refresh-metrics-button';
 import { RevenueChart } from '@/components/admin/analytics/revenue-chart';
 import { EnrollmentsChart } from '@/components/admin/analytics/enrollments-chart';
 import { CompletionChart } from '@/components/admin/analytics/completion-chart';
@@ -70,7 +71,10 @@ export default async function AdminStatsPage({
             Cómo está el Jazz LMS en los {RANGE_LABELS[rangeKey]}.
           </p>
         </div>
-        <PeriodFilter current={rangeKey} />
+        <div className="flex flex-wrap items-center gap-3">
+          <PeriodFilter current={rangeKey} />
+          <RefreshMetricsButton />
+        </div>
       </header>
 
       <section

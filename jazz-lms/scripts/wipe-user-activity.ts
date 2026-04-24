@@ -1,39 +1,3 @@
-/**
- * WIPE USER ACTIVITY — cleans the database of all user-generated activity
- * while preserving content (courses, lessons, quizzes, translations) and
- * admin-configured resources (voucher codes, voucher batches, admin users).
- *
- * SAFETY:
- *   - This script MUST NOT be executed automatically. It requires
- *     `CONFIRM=WIPE-USER-ACTIVITY` in the environment to proceed.
- *   - Does NOT drop tables or run raw SQL. Uses Prisma deleteMany with
- *     a transaction so partial failures roll back.
- *   - Preserves admin users (role !== 'USER'); deletes regular users only
- *     when `DELETE_REGULAR_USERS=true` is set explicitly.
- *
- * USAGE (production):
- *   CONFIRM=WIPE-USER-ACTIVITY npx tsx scripts/wipe-user-activity.ts
- *
- *   # Also delete regular (non-admin) users:
- *   CONFIRM=WIPE-USER-ACTIVITY DELETE_REGULAR_USERS=true \
- *     npx tsx scripts/wipe-user-activity.ts
- *
- * PRESERVED (content + admin config):
- *   - Course, Chapter, Lesson
- *   - CourseTranslation, ChapterTranslation, LessonTranslation
- *   - Attachment (lesson attachments)
- *   - LessonQuizQuestion, LessonQuizOption (quiz bank)
- *   - VoucherCode, VoucherBatch (admin-defined)
- *   - User (admins only by default)
- *
- * WIPED (user activity):
- *   - Purchase, DiscountApplied, VoucherRedemption
- *   - UserProgress, LessonNote, LessonPurchase
- *   - LessonQuizAttemptAnswer, LessonQuizAttempt, LessonQuizSummary
- *   - PaymentWebhookEvent, EmailVerification
- *   - User (non-admin, only when DELETE_REGULAR_USERS=true)
- */
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -106,6 +70,15 @@ async function main() {
   console.table(after);
 
   console.log('\nDone. Content, admin users, and voucher configuration preserved.');
+  console.log(
+    '\nNOTE: the admin panel caches metrics for 5 minutes (tag `admin-metrics`).'
+  );
+  console.log(
+    '      Click "Refrescar" at /admin/stats to see empty numbers immediately,'
+  );
+  console.log(
+    '      or wait up to 5 minutes for the cache to expire naturally.'
+  );
 }
 
 async function collectCounts() {
