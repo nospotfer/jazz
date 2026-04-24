@@ -173,20 +173,42 @@ working normally.
 
 ---
 
-## Heatmap — Microsoft Clarity (optional)
+## Heatmap — Microsoft Clarity
 
-Public-area heatmap and session recording for 50+ UX research. The script
-only loads when the env below is present, and is **never** injected under
-`/admin/*` (admin activity is intentionally excluded to avoid recording
-operator data).
+Public-area heatmap and session recording for 50+ UX research. The script is
+**never** injected under `/admin/*` (admin activity is intentionally excluded
+to avoid recording operator data).
 
-### `NEXT_PUBLIC_CLARITY_PROJECT_ID`
+> Production project ID `wgmaqx3k1n` is baked into the client loader as a
+> default — Clarity starts collecting as soon as the site deploys, no Vercel
+> config is strictly required for the tag itself.
 
-- **Format:** 10-character alphanumeric ID (ex.: `abc123xyz0`).
-- **Where:** https://clarity.microsoft.com/ → create project → Settings →
+### `NEXT_PUBLIC_CLARITY_PROJECT_ID` (optional override)
+
+- **Format:** 10-character alphanumeric ID (ex.: `wgmaqx3k1n`).
+- **Purpose:** Only set this to point a non-production environment at a
+  different Clarity project (staging / QA). Leave unset in production.
+- **Where:** https://clarity.microsoft.com/ → project → Settings →
   Setup → copy the project ID from the install snippet.
 - **Scope:** Applies to landing, auth, courses, and student dashboard only.
-  Absence disables the feature silently — no console errors.
+
+### `CLARITY_DATA_EXPORT_TOKEN` (secret — recommended)
+
+- **Format:** Bearer JWT issued by Clarity (long string, `eyJ...`).
+- **Purpose:** Server-side token to call
+  `https://www.clarity.ms/export-data/api/v1/project-live-insights`
+  (and other Data Export endpoints) from our backend for reporting.
+- **Where:** https://clarity.microsoft.com/ → project →
+  Settings → Data Export → **Generate new API token**.
+- **How to add in Vercel:**
+  1. Project → Settings → Environment Variables.
+  2. Name: `CLARITY_DATA_EXPORT_TOKEN`.
+  3. Value: paste the full JWT (no quotes).
+  4. Environments: check **Production**, **Preview**, **Development**.
+  5. Sensitivity: mark as **Secret** (Vercel UI option — hides value after save).
+  6. Save → redeploy so the variable is picked up.
+- **Security:** Never commit this token. If it leaks, rotate it in Clarity
+  (Settings → Data Export → Revoke) and update Vercel.
 
 ---
 

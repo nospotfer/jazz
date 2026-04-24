@@ -177,14 +177,17 @@ Documentação completa: `docs/painel-metricas-admin.md`.
 - A área pública (landing, auth, dashboard do aluno) suporta ES/EN/FR/PT via `LanguageProvider` (`src/lib/language.ts`) e oferece o `<LanguageSelector />` no topo.
 - Cookie `jazz_lang` e `localStorage.jazz-language-v1` persistem a escolha do usuário. Quando ausentes, `detectLanguageFromAcceptLanguage` recai em `es`.
 
-## Heatmap — Microsoft Clarity (opcional)
+## Heatmap — Microsoft Clarity
 
 Coleta de heatmap e gravação de sessões via Microsoft Clarity apenas na área
 pública do site (landing, auth, cursos, dashboard do aluno). O admin
 (`/admin/*`) é deliberadamente excluído.
 
-- Requer env `NEXT_PUBLIC_CLARITY_PROJECT_ID`.
-- Sem o ID configurado, o script não é injetado (fail-safe).
+- Project ID padrão embutido: `wgmaqx3k1n` (produção Jazz LMS).
+- Override opcional via `NEXT_PUBLIC_CLARITY_PROJECT_ID` (staging/QA).
+- Data Export API (server-side): `CLARITY_DATA_EXPORT_TOKEN` — JWT secreto,
+  configurado apenas como env no Vercel. Endpoint:
+  `https://www.clarity.ms/export-data/api/v1/project-live-insights`.
 - Código: `src/components/third-parties/clarity-script.tsx`.
 
 ## Google Analytics 4 — gtag no browser (opcional)
