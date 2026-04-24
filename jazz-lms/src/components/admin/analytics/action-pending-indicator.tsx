@@ -18,7 +18,16 @@ export function ActionPendingIndicator({
 
   useEffect(() => {
     if (!busy) {
-      setVisible(false);
+      const timeoutId = window.setTimeout(() => {
+        setVisible(false);
+      }, 0);
+
+      return () => {
+        window.clearTimeout(timeoutId);
+      };
+    }
+
+    if (visible) {
       return;
     }
 
@@ -29,7 +38,7 @@ export function ActionPendingIndicator({
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [busy, delayMs]);
+  }, [busy, delayMs, visible]);
 
   if (!visible) return null;
 
