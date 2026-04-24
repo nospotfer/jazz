@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
 import type { RangeKey } from '@/lib/admin/metrics-db';
+import { ActionPendingIndicator } from '@/components/admin/analytics/action-pending-indicator';
 
 const OPTIONS: Array<{ value: RangeKey; label: string; aria: string }> = [
   { value: '7d', label: '7 días', aria: 'Últimos 7 días' },
@@ -19,43 +20,49 @@ export function PeriodFilter({ current }: { current: RangeKey }) {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div
-      role="tablist"
-      aria-label="Período del panel"
-      className="inline-flex flex-wrap gap-2 rounded-lg border border-border bg-white p-1 dark:bg-card"
-    >
-      {OPTIONS.map((opt) => {
-        const active = current === opt.value;
-        const next = new URLSearchParams(params.toString());
-        next.set('range', opt.value);
-        next.delete('_refresh');
-        const href = `${pathname}?${next.toString()}`;
+    <div className="inline-flex flex-col">
+      <div
+        role="tablist"
+        aria-label="Período del panel"
+        className="inline-flex flex-wrap gap-2 rounded-lg border border-border bg-white p-1 dark:bg-card"
+      >
+        {OPTIONS.map((opt) => {
+          const active = current === opt.value;
+          const next = new URLSearchParams(params.toString());
+          next.set('range', opt.value);
+          next.delete('_refresh');
+          const href = `${pathname}?${next.toString()}`;
 
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            role="tab"
-            aria-selected={active}
-            aria-label={opt.aria}
-            disabled={isPending || active}
-            onClick={() => {
-              if (active) return;
-              startTransition(() => {
-                router.replace(href, { scroll: false });
-                router.refresh();
-              });
-            }}
-            className={`min-h-[44px] min-w-[88px] rounded-md px-4 text-[17px] font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-jazz-accent focus-visible:ring-offset-2 ${
-              active
-                ? 'bg-jazz-accent text-jazz-dark shadow-sm'
-                : 'text-muted-foreground hover:bg-muted disabled:cursor-wait disabled:opacity-60'
-            }`}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              aria-label={opt.aria}
+              disabled={isPending || active}
+              onClick={() => {
+                if (active) return;
+                startTransition(() => {
+                  router.replace(href, { scroll: false });
+                  router.refresh();
+                });
+              }}
+              className={`min-h-[44px] min-w-[88px] rounded-md px-4 text-[17px] font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-jazz-accent focus-visible:ring-offset-2 ${
+                active
+                  ? 'bg-jazz-accent text-jazz-dark shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted disabled:cursor-wait disabled:opacity-60'
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+      <ActionPendingIndicator
+        busy={isPending}
+        label="Aplicando filtro de período..."
+      />
     </div>
   );
 }

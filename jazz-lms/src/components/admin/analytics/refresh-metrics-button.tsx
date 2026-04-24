@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
+import { ActionPendingIndicator } from '@/components/admin/analytics/action-pending-indicator';
 
 export function RefreshMetricsButton() {
   const router = useRouter();
@@ -38,15 +39,21 @@ export function RefreshMetricsButton() {
   };
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={busy}
-      aria-busy={busy}
-      className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-border bg-white px-4 text-[16px] font-medium text-jazz-dark transition hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-jazz-accent focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60 dark:bg-card dark:text-white"
-    >
-      <span aria-hidden="true">{busy ? '⏳' : '🔄'}</span>
-      {busy ? 'Actualizando…' : 'Refrescar'}
-    </button>
+    <div className="inline-flex flex-col">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={busy}
+        aria-busy={busy}
+        className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-border bg-white px-4 text-[16px] font-medium text-jazz-dark transition hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-jazz-accent focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60 dark:bg-card dark:text-white"
+      >
+        <span aria-hidden="true">{busy ? '⏳' : '🔄'}</span>
+        {busy ? 'Actualizando…' : 'Refrescar'}
+      </button>
+      <ActionPendingIndicator
+        busy={busy}
+        label="Actualizando métricas..."
+      />
+    </div>
   );
 }
