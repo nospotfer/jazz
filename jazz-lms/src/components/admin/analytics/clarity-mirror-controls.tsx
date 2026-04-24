@@ -38,7 +38,6 @@ export function ClarityMirrorControls({
   const pushWithParams = (mutate: (next: URLSearchParams) => void) => {
     const next = new URLSearchParams(searchParams.toString());
     mutate(next);
-    next.set('_refresh', Date.now().toString());
 
     startTransition(() => {
       router.replace(`${pathname}?${next.toString()}`, { scroll: false });
@@ -64,8 +63,8 @@ export function ClarityMirrorControls({
   };
 
   const refreshNow = () => {
-    pushWithParams(() => {
-      // _refresh is enough to force transition+refresh.
+    startTransition(() => {
+      router.refresh();
     });
   };
 
