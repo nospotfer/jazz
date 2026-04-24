@@ -1,10 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 export function RefreshMetricsButton() {
   const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [isRevalidating, setIsRevalidating] = useState(false);
   const busy = isPending || isRevalidating;
@@ -15,13 +17,21 @@ export function RefreshMetricsButton() {
       const res = await fetch('/api/admin/metrics/revalidate', { method: 'POST' });
       if (!res.ok) {
         console.error('revalidate metrics failed', await res.text());
-        return;
       }
+
+      const next = new URLSearchParams(params.toString());
+      next.set('_refresh', Date.now().toString());
+      const href = `${pathname}?${next.toString()}`;
+
       startTransition(() => {
+        router.replace(href, { scroll: false });
         router.refresh();
       });
     } catch (err) {
       console.error('revalidate metrics error', err);
+      startTransition(() => {
+        router.refresh();
+      });
     } finally {
       setIsRevalidating(false);
     }

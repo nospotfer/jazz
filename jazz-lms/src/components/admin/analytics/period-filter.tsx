@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTransition } from 'react';
 import type { RangeKey } from '@/lib/admin/metrics-db';
 
 const OPTIONS: Array<{ value: RangeKey; label: string; aria: string }> = [
@@ -13,8 +13,10 @@ const OPTIONS: Array<{ value: RangeKey; label: string; aria: string }> = [
 ];
 
 export function PeriodFilter({ current }: { current: RangeKey }) {
+  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <div
@@ -26,24 +28,32 @@ export function PeriodFilter({ current }: { current: RangeKey }) {
         const active = current === opt.value;
         const next = new URLSearchParams(params.toString());
         next.set('range', opt.value);
+        next.delete('_refresh');
         const href = `${pathname}?${next.toString()}`;
 
         return (
-          <Link
+          <button
             key={opt.value}
-            href={href}
-            prefetch={false}
+            type="button"
             role="tab"
             aria-selected={active}
             aria-label={opt.aria}
+            disabled={isPending || active}
+            onClick={() => {
+              if (active) return;
+              startTransition(() => {
+                router.replace(href, { scroll: false });
+                router.refresh();
+              });
+            }}
             className={`min-h-[44px] min-w-[88px] rounded-md px-4 text-[17px] font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-jazz-accent focus-visible:ring-offset-2 ${
               active
                 ? 'bg-jazz-accent text-jazz-dark shadow-sm'
-                : 'text-muted-foreground hover:bg-muted'
+                : 'text-muted-foreground hover:bg-muted disabled:cursor-wait disabled:opacity-60'
             }`}
           >
             {opt.label}
-          </Link>
+          </button>
         );
       })}
     </div>
