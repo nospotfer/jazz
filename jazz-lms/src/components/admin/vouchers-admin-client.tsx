@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -48,12 +48,33 @@ type Props = {
   courses: CourseOption[];
 };
 
+type StatusFilter = 'all' | 'active' | 'inactive' | 'expired';
+type UsageFilter = 'all' | 'used' | 'unused';
+
+type VoucherFilters = {
+  search: string;
+  status: StatusFilter;
+  usage: UsageFilter;
+  filterArtistKey: string;
+  filterDiscountPercent: string;
+};
+
+const DEFAULT_FILTERS: VoucherFilters = {
+  search: '',
+  status: 'all',
+  usage: 'all',
+  filterArtistKey: 'all',
+  filterDiscountPercent: 'all',
+};
+
+const NOTICE_TIMEOUT_MS = 7000;
+
 export function VouchersAdminClient({ courses }: Props) {
   const quickArtistTiers = [...VOUCHER_ARTIST_TIERS].sort((a, b) => a.discountPercent - b.discountPercent);
   const initialArtist = getVoucherArtistByDiscount(20);
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
-  const [usage, setUsage] = useState<'all' | 'used' | 'unused'>('all');
+  const [status, setStatus] = useState<StatusFilter>('all');
+  const [usage, setUsage] = useState<UsageFilter>('all');
   const [filterArtistKey, setFilterArtistKey] = useState<string>('all');
   const [filterDiscountPercent, setFilterDiscountPercent] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +92,13 @@ export function VouchersAdminClient({ courses }: Props) {
   });
   const [lastGeneratedCodes, setLastGeneratedCodes] = useState<string[]>([]);
   const [selectedVoucherIds, setSelectedVoucherIds] = useState<string[]>([]);
+  const [copySuccessVisible, setCopySuccessVisible] = useState(false);
+  const [clearSuccessVisible, setClearSuccessVisible] = useState(false);
+  const [resetSuccessVisible, setResetSuccessVisible] = useState(false);
+
+  const copySuccessTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearSuccessTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetSuccessTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [form, setForm] = useState({
     type: 'DISCOUNT_PERCENT',
@@ -87,30 +115,39 @@ export function VouchersAdminClient({ courses }: Props) {
     batchName: '',
   });
 
-  const buildQuery = useCallback(() => {
+  const buildQuery = useCallback((filters: VoucherFilters) => {
     const params = new URLSearchParams();
-    if (status !== 'all') {
-      params.set('status', status);
+    if (filters.status !== 'all') {
+      params.set('status', filters.status);
     }
-    if (usage !== 'all') {
-      params.set('usage', usage);
+    if (filters.usage !== 'all') {
+      params.set('usage', filters.usage);
     }
-    if (search.trim()) {
-      params.set('search', search.trim());
+    if (filters.search.trim()) {
+      params.set('search', filters.search.trim());
     }
-    if (filterArtistKey !== 'all') {
-      params.set('artistKey', filterArtistKey);
+    if (filters.filterArtistKey !== 'all') {
+      params.set('artistKey', filters.filterArtistKey);
     }
-    if (filterDiscountPercent !== 'all') {
-      params.set('discountPercent', filterDiscountPercent);
+    if (filters.filterDiscountPercent !== 'all') {
+      params.set('discountPercent', filters.filterDiscountPercent);
     }
     return params.toString();
-  }, [filterArtistKey, filterDiscountPercent, search, status, usage]);
+  }, []);
 
-  const loadVouchers = useCallback(async () => {
+  const loadVouchers = useCallback(async (filtersOverride?: Partial<VoucherFilters>) => {
+    const activeFilters: VoucherFilters = {
+      search,
+      status,
+      usage,
+      filterArtistKey,
+      filterDiscountPercent,
+      ...filtersOverride,
+    };
+
     setIsLoading(true);
     try {
-      const query = buildQuery();
+      const query = buildQuery(activeFilters);
       const response = await fetch(`/api/admin/vouchers${query ? `?${query}` : ''}`, {
         method: 'GET',
         cache: 'no-store',
@@ -133,6 +170,7 @@ export function VouchersAdminClient({ courses }: Props) {
         used: Number(data.stats?.used || 0),
         expired: Number(data.stats?.expired || 0),
       });
+      return true;
     } catch (error) {
       console.error(error);
       toast.error('Error al cargar vouchers.');
@@ -145,14 +183,62 @@ export function VouchersAdminClient({ courses }: Props) {
         used: 0,
         expired: 0,
       });
+      return false;
     } finally {
       setIsLoading(false);
     }
-  }, [buildQuery]);
+  }, [buildQuery, filterArtistKey, filterDiscountPercent, search, status, usage]);
 
   useEffect(() => {
     void loadVouchers();
   }, [loadVouchers]);
+
+  useEffect(() => {
+    return () => {
+      if (copySuccessTimeoutRef.current) {
+        clearTimeout(copySuccessTimeoutRef.current);
+      }
+      if (clearSuccessTimeoutRef.current) {
+        clearTimeout(clearSuccessTimeoutRef.current);
+      }
+      if (resetSuccessTimeoutRef.current) {
+        clearTimeout(resetSuccessTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showCopySuccess = () => {
+    if (copySuccessTimeoutRef.current) {
+      clearTimeout(copySuccessTimeoutRef.current);
+    }
+    setCopySuccessVisible(true);
+    copySuccessTimeoutRef.current = setTimeout(() => {
+      setCopySuccessVisible(false);
+      copySuccessTimeoutRef.current = null;
+    }, NOTICE_TIMEOUT_MS);
+  };
+
+  const showClearSuccess = () => {
+    if (clearSuccessTimeoutRef.current) {
+      clearTimeout(clearSuccessTimeoutRef.current);
+    }
+    setClearSuccessVisible(true);
+    clearSuccessTimeoutRef.current = setTimeout(() => {
+      setClearSuccessVisible(false);
+      clearSuccessTimeoutRef.current = null;
+    }, NOTICE_TIMEOUT_MS);
+  };
+
+  const showResetSuccess = () => {
+    if (resetSuccessTimeoutRef.current) {
+      clearTimeout(resetSuccessTimeoutRef.current);
+    }
+    setResetSuccessVisible(true);
+    resetSuccessTimeoutRef.current = setTimeout(() => {
+      setResetSuccessVisible(false);
+      resetSuccessTimeoutRef.current = null;
+    }, NOTICE_TIMEOUT_MS);
+  };
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -439,23 +525,51 @@ export function VouchersAdminClient({ courses }: Props) {
     }
   };
 
-  const clearFilters = () => {
-    setSearch('');
-    setStatus('all');
-    setUsage('all');
-    setFilterArtistKey('all');
-    setFilterDiscountPercent('all');
+  const clearFilters = async () => {
+    setSearch(DEFAULT_FILTERS.search);
+    setStatus(DEFAULT_FILTERS.status);
+    setUsage(DEFAULT_FILTERS.usage);
+    setFilterArtistKey(DEFAULT_FILTERS.filterArtistKey);
+    setFilterDiscountPercent(DEFAULT_FILTERS.filterDiscountPercent);
+    setSelectedVoucherIds([]);
+
+    const loaded = await loadVouchers(DEFAULT_FILTERS);
+    if (loaded) {
+      showClearSuccess();
+    }
+  };
+
+  const resetFilters = async () => {
+    setSearch(DEFAULT_FILTERS.search);
+    setStatus(DEFAULT_FILTERS.status);
+    setUsage(DEFAULT_FILTERS.usage);
+    setFilterArtistKey(DEFAULT_FILTERS.filterArtistKey);
+    setFilterDiscountPercent(DEFAULT_FILTERS.filterDiscountPercent);
+    setSelectedVoucherIds([]);
+
+    const loaded = await loadVouchers(DEFAULT_FILTERS);
+    if (loaded) {
+      showResetSuccess();
+    }
   };
 
   const copyLastGeneratedCodes = async () => {
-    if (!lastGeneratedCodes.length) {
+    const codesToCopy =
+      lastGeneratedCodes.length > 0
+        ? [...lastGeneratedCodes]
+        : [...vouchers]
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 10)
+            .map((voucher) => voucher.code);
+
+    if (!codesToCopy.length) {
       toast.info('Todavía no hay códigos nuevos para copiar.');
       return;
     }
 
     try {
-      await navigator.clipboard.writeText(lastGeneratedCodes.join('\n'));
-      toast.success('Códigos copiados al portapapeles.');
+      await navigator.clipboard.writeText(codesToCopy.join('\n'));
+      showCopySuccess();
     } catch {
       toast.error('No se pudo copiar al portapapeles.');
     }
@@ -498,9 +612,14 @@ export function VouchersAdminClient({ courses }: Props) {
             <h2 className="text-xl font-semibold">Información general</h2>
             <p className="text-xs text-muted-foreground mt-1">{statusLabel}</p>
           </div>
-          <Button variant="secondary" onClick={clearFilters}>
-            Limpiar filtros
-          </Button>
+          <div className="flex flex-col items-end gap-1">
+            {clearSuccessVisible ? (
+              <span className="text-xs font-medium text-emerald-600">Limpo com sucesso</span>
+            ) : null}
+            <Button variant="secondary" onClick={() => void clearFilters()}>
+              Limpiar filtros
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
@@ -711,9 +830,14 @@ export function VouchersAdminClient({ courses }: Props) {
           <Button onClick={handleGenerate} disabled={isGenerating}>
             {isGenerating ? 'Creando...' : 'Crear lote'}
           </Button>
-          <Button variant="secondary" onClick={copyLastGeneratedCodes}>
-            Copiar últimos códigos
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" onClick={copyLastGeneratedCodes}>
+              Copiar últimos códigos
+            </Button>
+            {copySuccessVisible ? (
+              <span className="text-xs font-medium text-emerald-600">Copiado com sucesso</span>
+            ) : null}
+          </div>
         </div>
 
         <div className="rounded-md border border-border p-3">
@@ -766,7 +890,7 @@ export function VouchersAdminClient({ courses }: Props) {
           <select
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             value={status}
-            onChange={(event) => setStatus(event.target.value as 'all' | 'active' | 'inactive' | 'expired')}
+            onChange={(event) => setStatus(event.target.value as StatusFilter)}
           >
             <option value="all">Estado: todos</option>
             <option value="active">Estado: activos</option>
@@ -776,7 +900,7 @@ export function VouchersAdminClient({ courses }: Props) {
           <select
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             value={usage}
-            onChange={(event) => setUsage(event.target.value as 'all' | 'used' | 'unused')}
+            onChange={(event) => setUsage(event.target.value as UsageFilter)}
           >
             <option value="all">Uso: todos</option>
             <option value="used">Uso: usados</option>
@@ -824,8 +948,15 @@ export function VouchersAdminClient({ courses }: Props) {
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={loadVouchers}>Aplicar filtros</Button>
-          <Button variant="secondary" onClick={clearFilters}>Restablecer</Button>
+          <Button onClick={() => void loadVouchers()}>Aplicar filtros</Button>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" onClick={() => void resetFilters()}>
+              Restablecer
+            </Button>
+            {resetSuccessVisible ? (
+              <span className="text-xs font-medium text-emerald-600">Restabelecido com sucesso</span>
+            ) : null}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
