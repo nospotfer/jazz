@@ -24,22 +24,25 @@ describe('voucher artist mapping', () => {
   });
 
   test('parses new compact voucher format and flags legacy codes', () => {
-    // LOU + 100 + 01 (sequence) + 123 (random) = 11 chars
-    const parsed = getVoucherArtistFromCode('LOU10001123');
+    // Louis (100%): LOU + 100 + 01 (seq) + 12 (random) = 10 chars
+    const parsed = getVoucherArtistFromCode('LOU1000112');
 
     expect(parsed?.artist.key).toBe('LOUISARMSTRONG');
     expect(parsed?.artist.shortKey).toBe('LOU');
     expect(parsed?.sequence).toBe(1);
-    expect(parsed?.randomSuffix).toBe('123');
+    expect(parsed?.randomSuffix).toBe('12');
 
-    // Peggy Lee: PEG + 10 + 01 + 123 = 10 chars
+    // Peggy Lee (10%): PEG + 10 + 01 (seq) + 123 (random) = 10 chars
     const peggy = getVoucherArtistFromCode('PEG1001123');
     expect(peggy?.artist.shortKey).toBe('PEG');
     expect(peggy?.sequence).toBe(1);
+    expect(peggy?.randomSuffix).toBe('123');
 
     expect(isLegacyVoucherCode('JAZZABCD1234')).toBe(true);
     expect(isLegacyVoucherCode('LOUISARMSTRONG100010123')).toBe(true);
-    expect(isLegacyVoucherCode('LOU10001123')).toBe(false);
+    // Pre-compaction 11-char artist codes are now legacy
+    expect(isLegacyVoucherCode('LOU10001123')).toBe(true);
+    expect(isLegacyVoucherCode('LOU1000112')).toBe(false);
     // Internal admin test codes are exempt from legacy classification
     expect(isLegacyVoucherCode('ADMIN99TEST')).toBe(false);
   });

@@ -9,7 +9,7 @@ import {
   resolveRange,
   type RangeKey,
 } from '@/lib/admin/metrics-db';
-import { getTrafficOverview } from '@/lib/admin/metrics-ga';
+import { getClarityTrafficOverview } from '@/lib/admin/metrics-clarity';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { PeriodFilter } from '@/components/admin/analytics/period-filter';
 import { RefreshMetricsButton } from '@/components/admin/analytics/refresh-metrics-button';
@@ -53,7 +53,7 @@ export default async function AdminStatsPage({
     getRevenueTimeseries(range),
     getEnrollmentsTimeseries(range),
     getCompletionByCourse(range),
-    getTrafficOverview(range),
+    getClarityTrafficOverview(range),
   ]);
 
   const hasAnyRevenue = revenue.some((r) => r.value > 0);
@@ -137,11 +137,18 @@ export default async function AdminStatsPage({
             format="number"
             delta={null}
             icon="🌐"
-            unavailable={{ reason: 'Integración con Google Analytics no configurada.' }}
+            unavailable={{
+              reason:
+                traffic.reason === 'missing_env'
+                  ? 'Microsoft Clarity no configurado (falta CLARITY_DATA_EXPORT_TOKEN).'
+                  : traffic.reason === 'rate_limited'
+                    ? 'Clarity: límite diario alcanzado. Intenta más tarde.'
+                    : 'No se pudo obtener datos de Clarity.',
+            }}
           />
         ) : (
           <KpiCard
-            label="Sesiones en el sitio"
+            label="Sesiones (últimos 3 días)"
             value={traffic.data.sessions}
             format="number"
             delta={null}

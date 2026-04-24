@@ -26,11 +26,11 @@ function randomToken(size: number) {
     .slice(0, size);
 }
 
-// Generic voucher code: always 12 chars. Prefix clamped to 2-4 chars (default 'JAZZ').
+// Generic voucher code: always 10 chars. Prefix clamped to 2-4 chars (default 'JAZZ').
 function buildVoucherCode(prefix: string) {
   const safePrefix = (prefix || 'JAZZ').replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'JAZZ';
   const paddedPrefix = safePrefix.length < 2 ? (safePrefix + 'JAZZ').slice(0, 2) : safePrefix;
-  return `${paddedPrefix}${randomToken(12 - paddedPrefix.length)}`;
+  return `${paddedPrefix}${randomToken(10 - paddedPrefix.length)}`;
 }
 
 function randomDigits(size = 3) {
@@ -41,8 +41,11 @@ function randomDigits(size = 3) {
 
 function extractArtistSequence(code: string, shortKey: string, discountPercent: number) {
   const normalizedCode = code.trim().toUpperCase();
-  // New compact format: {shortKey:3}{discount:2-3}{sequence:2}{random:3}
-  const pattern = new RegExp(`^${shortKey}${discountPercent}(\\d{2})\\d{3}$`);
+  // Compact format (<=10 chars): {shortKey:3}{discount:2-3}{sequence:2}{random:2-3}
+  // 2-digit discount → 3+2+2+3 = 10 chars.
+  // 3-digit discount → 3+3+2+2 = 10 chars.
+  const randomLen = discountPercent >= 100 ? 2 : 3;
+  const pattern = new RegExp(`^${shortKey}${discountPercent}(\\d{2})\\d{${randomLen}}$`);
   const match = normalizedCode.match(pattern);
 
   if (!match) {
@@ -53,12 +56,13 @@ function extractArtistSequence(code: string, shortKey: string, discountPercent: 
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
-// Artist voucher code: 10-12 chars depending on discount digits.
+// Artist voucher code: exactly 10 chars.
 // 2-digit discount (10..90) → 3+2+2+3 = 10 chars.
-// 3-digit discount (100)    → 3+3+2+3 = 11 chars.
+// 3-digit discount (100)    → 3+3+2+2 = 10 chars.
 function buildArtistVoucherCode(shortKey: string, discountPercent: number, sequence: number) {
   const sequencePart = String(sequence).padStart(2, '0').slice(-2);
-  return `${shortKey}${discountPercent}${sequencePart}${randomDigits(3)}`;
+  const randomLen = discountPercent >= 100 ? 2 : 3;
+  return `${shortKey}${discountPercent}${sequencePart}${randomDigits(randomLen)}`;
 }
 
 export async function POST(req: Request) {

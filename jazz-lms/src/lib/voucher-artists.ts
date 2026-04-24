@@ -49,8 +49,12 @@ export function getVoucherArtistFromCode(code: string) {
   const normalizedCode = code.trim().toUpperCase();
 
   for (const artist of VOUCHER_ARTIST_TIERS) {
-    // New compact format (10-12 chars): {shortKey:3}{discount:2-3}{sequence:2}{random:3}
-    const pattern = new RegExp(`^${artist.shortKey}${artist.discountPercent}(\\d{2})(\\d{3})$`);
+    // Compact format (exactly 10 chars): {shortKey:3}{discount:2-3}{sequence:2}{random:2-3}
+    // 2-digit discount → 3+2+2+3 = 10 chars. 3-digit discount → 3+3+2+2 = 10 chars.
+    const randomLen = artist.discountPercent >= 100 ? 2 : 3;
+    const pattern = new RegExp(
+      `^${artist.shortKey}${artist.discountPercent}(\\d{2})(\\d{${randomLen}})$`
+    );
     const match = normalizedCode.match(pattern);
 
     if (!match) {

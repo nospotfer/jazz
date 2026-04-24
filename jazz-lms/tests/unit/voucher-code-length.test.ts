@@ -7,15 +7,15 @@ import {
 } from '@/lib/voucher-artists';
 
 /**
- * Contract tests for the new compact voucher code format (10-12 chars).
+ * Contract tests for the compact voucher code format (exactly 10 chars).
  *
  * Format rules:
- *   - Artist codes:  {shortKey:3}{discount:2-3}{sequence:2}{random:3}
- *                    \u2192 10 chars (discount 10..90) | 11 chars (discount 100)
- *   - Generic codes: {prefix:2-4}{random:8-10} \u2192 exactly 12 chars total
- *   - Internal admin test code: ADMIN99TEST (11 chars)
+ *   - Artist codes:  {shortKey:3}{discount:2-3}{sequence:2}{random:2-3}
+ *                    -> 10 chars (discount 10..90)  | 10 chars (discount 100)
+ *   - Generic codes: {prefix:2-4}{random:6-8} -> exactly 10 chars total
+ *   - Internal admin test code: ADMIN99TEST (11 chars, legacy exception)
  */
-describe('voucher code length contract (10-12 chars)', () => {
+describe('voucher code length contract (10 chars)', () => {
   test('every artist shortKey is exactly 3 alphabetic characters and unique', () => {
     const shortKeys = VOUCHER_ARTIST_TIERS.map((a) => a.shortKey);
     for (const key of shortKeys) {
@@ -24,28 +24,24 @@ describe('voucher code length contract (10-12 chars)', () => {
     expect(new Set(shortKeys).size).toBe(shortKeys.length);
   });
 
-  test('artist code format matches 10-12 character range for every tier', () => {
+  test('artist code format is exactly 10 characters for every tier', () => {
     for (const artist of VOUCHER_ARTIST_TIERS) {
       const disc = String(artist.discountPercent);
-      // Sequence padded to 2 digits, random 3 digits \u2192 lengths:
-      //   10 chars for 2-digit discounts, 11 chars for 3-digit discount.
-      const expectedLength = artist.shortKey.length + disc.length + 2 + 3;
-      expect(expectedLength).toBeGreaterThanOrEqual(10);
-      expect(expectedLength).toBeLessThanOrEqual(12);
+      const randomLen = artist.discountPercent >= 100 ? 2 : 3;
+      const expectedLength = artist.shortKey.length + disc.length + 2 + randomLen;
+      expect(expectedLength).toBe(10);
 
-      const sample = `${artist.shortKey}${disc}01000`;
-      expect(sample.length).toBe(expectedLength);
+      const sample = `${artist.shortKey}${disc}01${'0'.repeat(randomLen)}`;
+      expect(sample.length).toBe(10);
       const parsed = getVoucherArtistFromCode(sample);
       expect(parsed?.artist.shortKey).toBe(artist.shortKey);
     }
   });
 
-  test('internal ADMIN99TEST code is recognized and exempt from legacy', () => {
+  test('internal ADMIN99TEST code is recognized (legacy exception)', () => {
     expect(isInternalVoucherCode('ADMIN99TEST')).toBe(true);
     expect(isLegacyVoucherCode('ADMIN99TEST')).toBe(false);
     expect('ADMIN99TEST'.length).toBe(11);
-    expect('ADMIN99TEST'.length).toBeGreaterThanOrEqual(10);
-    expect('ADMIN99TEST'.length).toBeLessThanOrEqual(12);
   });
 
   test('rejects old-format codes as legacy (pre 2026-04 format)', () => {

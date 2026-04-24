@@ -26,8 +26,6 @@ async function main() {
   console.log('\nStarting wipe (transaction)...');
 
   await prisma.$transaction(async (tx) => {
-    // Order matters — delete children before parents to respect FK constraints
-    // even though most relations are set to Cascade.
 
     // Quiz activity (children → parent)
     await tx.lessonQuizAttemptAnswer.deleteMany({});
@@ -63,7 +61,7 @@ async function main() {
     } else {
       console.log('  - kept all User records (set DELETE_REGULAR_USERS=true to wipe them)');
     }
-  });
+  }, { timeout: 120_000, maxWait: 10_000 });
 
   console.log('\nPost-wipe counts:');
   const after = await collectCounts();
@@ -82,39 +80,22 @@ async function main() {
 }
 
 async function collectCounts() {
-  const [
-    users,
-    purchases,
-    voucherRedemptions,
-    discounts,
-    userProgress,
-    lessonNotes,
-    lessonPurchases,
-    quizAttempts,
-    quizAttemptAnswers,
-    quizSummaries,
-    webhookEvents,
-    emailVerifications,
-    voucherCodes,
-    voucherBatches,
-    courses,
-  ] = await Promise.all([
-    prisma.user.count(),
-    prisma.purchase.count(),
-    prisma.voucherRedemption.count(),
-    prisma.discountApplied.count(),
-    prisma.userProgress.count(),
-    prisma.lessonNote.count(),
-    prisma.lessonPurchase.count(),
-    prisma.lessonQuizAttempt.count(),
-    prisma.lessonQuizAttemptAnswer.count(),
-    prisma.lessonQuizSummary.count(),
-    prisma.paymentWebhookEvent.count(),
-    prisma.emailVerification.count(),
-    prisma.voucherCode.count(),
-    prisma.voucherBatch.count(),
-    prisma.course.count(),
-  ]);
+  // Sequential counts to avoid saturating Supabase session-mode pool.
+  const users = await prisma.user.count();
+  const purchases = await prisma.purchase.count();
+  const voucherRedemptions = await prisma.voucherRedemption.count();
+  const discounts = await prisma.discountApplied.count();
+  const userProgress = await prisma.userProgress.count();
+  const lessonNotes = await prisma.lessonNote.count();
+  const lessonPurchases = await prisma.lessonPurchase.count();
+  const quizAttempts = await prisma.lessonQuizAttempt.count();
+  const quizAttemptAnswers = await prisma.lessonQuizAttemptAnswer.count();
+  const quizSummaries = await prisma.lessonQuizSummary.count();
+  const webhookEvents = await prisma.paymentWebhookEvent.count();
+  const emailVerifications = await prisma.emailVerification.count();
+  const voucherCodes = await prisma.voucherCode.count();
+  const voucherBatches = await prisma.voucherBatch.count();
+  const courses = await prisma.course.count();
 
   return {
     User: users,

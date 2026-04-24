@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { isRangeKey, resolveRange, type RangeKey } from '@/lib/admin/metrics-db';
-import { getTrafficOverview } from '@/lib/admin/metrics-ga';
+import { getClarityTrafficOverview } from '@/lib/admin/metrics-clarity';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const rangeKey: RangeKey = isRangeKey(rangeParam) ? rangeParam : '30d';
   const range = resolveRange(rangeKey);
 
-  const traffic = await getTrafficOverview(range);
+  const traffic = await getClarityTrafficOverview(range);
 
   const serializedRange = {
     key: range.key,

@@ -150,14 +150,14 @@ export function VoucherInput({
           name="voucherCode"
           autoComplete="off"
           inputMode="text"
-          maxLength={12}
-          pattern="[A-Z0-9]{10,12}"
+          maxLength={10}
+          pattern="[A-Z0-9]{5,10}"
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           value={code}
           placeholder={copy.placeholder}
           disabled={isLoading || disabled}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const next = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+            const next = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
             setCode(next);
             setStatus("idle");
           }}
