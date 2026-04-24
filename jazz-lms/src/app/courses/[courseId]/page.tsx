@@ -63,7 +63,7 @@ export default async function CourseDetailPage({
       fullAccess: "Acesso completo às 15 aulas",
       securePayment: "Pagamento seguro processado pelo Dodo Payments",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const user = await getServerUser();
 

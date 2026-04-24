@@ -8,7 +8,7 @@ import Script from 'next/script';
  *
  * Regras:
  * - Só renderiza se `NEXT_PUBLIC_GA_MEASUREMENT_ID` estiver definido (fail-safe).
- * - NUNCA carrega em rotas `/admin/*` — admins não são trackeados como visitantes.
+ * - NUNCA carga en rutas `/admin/*` — los administradores no se rastrean como visitantes.
  * - Complementa o GA4 Data API já usado em /admin/stats (server-side, via
  *   service account). Este script é o inverso: coleta tráfego real no browser.
  */

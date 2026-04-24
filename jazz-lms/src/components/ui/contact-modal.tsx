@@ -117,8 +117,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       invalidEmail: 'Formato de e-mail inválido',
       selectType: 'Selecione um tipo de mensagem',
       messageRequired: 'A mensagem é obrigatória',
-      messageTooLong: 'A mensagem não pode ultrapassar 1000 caracteres',
-      submitError: 'Não foi possível enviar a mensagem',
+      messageTooLong: 'El mensaje no puede superar 1000 caracteres',
+      submitError: 'No fue posible enviar el mensaje',
       close: 'Fechar',
       title: 'Fale conosco',
       sentSuccess: '✓ Mensagem enviada com sucesso!',
@@ -136,7 +136,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       sending: 'Enviando...',
       send: 'Enviar mensagem',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [formData, setFormData] = useState({
     messageType: '' as MessageType,

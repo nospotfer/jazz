@@ -46,10 +46,10 @@ export default function PaymentPage() {
       title: 'Histórico de pagamentos',
       subtitle: 'Consulte seus pagamentos com data, horário e valor',
       records: 'Registros',
-      noPurchasesTitle: 'Ainda não há compras',
+      noPurchasesTitle: 'Aún no hay compras',
       noPurchasesDesc: 'Seus registros de pagamento aparecerão aqui',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
   const dateLocale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US';
 
   const [purchases, setPurchases] = useState<PurchaseRecord[]>([]);

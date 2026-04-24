@@ -83,21 +83,21 @@ export function PromoVideo() {
       unmute: "Activer le son",
     },
     pt: {
-      promotionMessage: "Cadastre-se e receba a primeira aula gratuitamente",
-      pretitle: "Curso Online · Com Enric Vazquez Ramonich",
-      titleTop: "A Cultura",
-      titleBottomPrefix: "do",
-      subtitle: "Entre no mundo do jazz",
+      promotionMessage: "Regístrate y recibe la primera clase gratis",
+      pretitle: "Curso Online · Con Enric Vazquez Ramonich",
+      titleTop: "La Cultura",
+      titleBottomPrefix: "del",
+      subtitle: "Entra en el mundo del jazz",
       paragraph:
-        "Viva uma experiência que vai mudar para sempre a forma como você sente a música. Você não precisa ser músico nem especialista para curtir jazz.",
-      cta: "Cadastrar",
-      muxError: "Não foi possível carregar o vídeo promocional do Mux.",
-      fallbackLabel: "Prévia da primeira aula",
-      loading: "Carregando vídeo promocional...",
+        "Vive una experiencia que cambiará para siempre la forma en que sientes la música. No necesitas ser músico ni especialista para disfrutar el jazz.",
+      cta: "Regístrate",
+      muxError: "No fue posible cargar el video promocional de Mux.",
+      fallbackLabel: "Vista previa de la primera clase",
+      loading: "Cargando video promocional...",
       mute: "Silenciar",
-      unmute: "Ativar som",
+      unmute: "Activar sonido",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(

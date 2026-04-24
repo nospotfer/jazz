@@ -170,18 +170,18 @@ export default function AuthPage() {
         "Conta criada. Verifique o código enviado para seu e-mail para continuar.",
       registerFailedRetry: "Falha no cadastro. Tente novamente.",
       emailPasswordRequired: "E-mail e senha são obrigatórios",
-      signInFailed: "Não foi possível entrar",
-      signInFailedRetry: "Não foi possível entrar. Tente novamente.",
+      signInFailed: "No fue posible iniciar sesión",
+      signInFailedRetry: "No fue posible iniciar sesión. Tente novamente.",
       googleNotConfigured:
-        "A autenticação com Google não está configurada neste ambiente.",
-      googleAuthFailed: "Não foi possível entrar com Google",
+        "La autenticación con Google no está configurada en este entorno.",
+      googleAuthFailed: "No fue posible iniciar sesión com Google",
       tabLogin: "Entrar",
       tabRegister: "Cadastrar",
       googleRedirecting: "Redirecionando para o Google...",
       googleRegister: "Cadastrar com Google",
       googleLogin: "Entrar com Google",
       authMissingConfig:
-        "A autenticação não está configurada. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY válidos no seu ambiente local.",
+        "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.",
       or: "OU",
       fullName: "Nome completo",
       fullNamePlaceholder: "Seu nome completo",
@@ -193,7 +193,7 @@ export default function AuthPage() {
       showPassword: "Mostrar senha",
       minChars: "Mínimo de 8 caracteres",
       creatingAccount: "Criando conta...",
-      createAccount: "Criar conta",
+      createAccount: "Crear cuenta",
       haveAccount: "Já tem uma conta?",
       loginLink: "Entrar",
       forgotPassword: "Esqueceu sua senha?",
@@ -201,10 +201,10 @@ export default function AuthPage() {
       closeAuth: "Fechar",
       signingIn: "Entrando...",
       signIn: "Entrar",
-      noAccount: "Não tem uma conta?",
+      noAccount: "¿No tienes una cuenta?",
       registerLink: "Cadastre-se",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   useEffect(() => {
     if (typeof window === "undefined") return;

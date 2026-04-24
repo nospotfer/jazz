@@ -73,10 +73,10 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       auxiliaryTitle: 'Note auxiliaire',
     },
     pt: {
-      loadPdfError: 'Não foi possível carregar este PDF agora.',
+      loadPdfError: 'No fue posible cargar este PDF ahora.',
       title: 'Visualização de PDFs',
       subtitle: 'Acesso rápido aos PDFs das aulas dentro do seu painel',
-      noPdfsTitle: 'Ainda não há PDFs disponíveis',
+      noPdfsTitle: 'Aún no hay PDF disponibles',
       noPdfsDesc: 'Os PDFs das aulas aparecerão aqui quando forem adicionados.',
       loadingPdf: 'Carregando PDF...',
       selectPdf: 'Selecione um PDF',
@@ -84,7 +84,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       auxiliaryLabel: 'Notas auxiliares',
       auxiliaryTitle: 'Nota auxiliar',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   const [signedUrl, setSignedUrl] = useState<string>('');

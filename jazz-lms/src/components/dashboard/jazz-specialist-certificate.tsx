@@ -127,7 +127,7 @@ export function JazzSpecialistCertificate({
 
       await pdf.save(`jazz-specialist-${sanitizeFileName(studentName || 'student')}.pdf`, { returnPromise: true });
     } catch {
-      toast.error('Nao foi possivel gerar o PDF agora.');
+      toast.error('No fue posible generar el PDF ahora.');
     } finally {
       setIsDownloading(false);
     }

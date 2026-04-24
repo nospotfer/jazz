@@ -80,9 +80,9 @@ export default function VerifyCodePage() {
       invalidEmailCode: "Digite um e-mail e um código de verificação válidos",
       invalidCode: "Código de verificação inválido",
       verified: "E-mail verificado com sucesso! Redirecionando para o login...",
-      verifyFailed: "Não foi possível verificar o código",
+      verifyFailed: "No fue posible verificar el código",
       invalidEmailResend: "Digite um e-mail válido para reenviar o código",
-      resendFailed: "Não foi possível reenviar o código",
+      resendFailed: "No fue posible reenviar el código",
       resendSuccess:
         "Um novo código de verificação foi enviado para seu e-mail.",
       title: "Verifique seu e-mail",
@@ -98,7 +98,7 @@ export default function VerifyCodePage() {
       resendButton: "Reenviar código",
       backToLogin: "Voltar ao login",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");

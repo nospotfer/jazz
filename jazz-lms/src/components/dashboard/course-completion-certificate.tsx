@@ -104,7 +104,7 @@ export function CourseCompletionCertificate({
         : language === 'fr'
           ? 'Impossible de generer le PDF pour le moment.'
           : language === 'pt'
-            ? 'Nao foi possivel gerar o PDF agora.'
+            ? 'No fue posible generar el PDF ahora.'
             : 'No fue posible generar el PDF ahora.';
       toast.error(errorMessage);
     } finally {

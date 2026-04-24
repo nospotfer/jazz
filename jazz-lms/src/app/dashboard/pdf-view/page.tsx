@@ -61,7 +61,7 @@ export default async function PdfViewPage() {
     en: 'Auxiliary Notes',
     fr: 'Notes auxiliaires',
     pt: 'Notas auxiliares',
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const dedupedItems = new Map<string, {
     id: string;

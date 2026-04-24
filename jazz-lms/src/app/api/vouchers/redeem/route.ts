@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized', message: 'Não autorizado.' },
+        { success: false, error: 'Unauthorized', message: 'No autorizado.' },
         { status: 401 }
       );
     }
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         {
           success: false,
           error: 'Already purchased',
-          message: 'Você já tem acesso a este curso.',
+          message: 'Ya tienes acceso a este curso.',
         },
         { status: 409 }
       );
@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       });
 
       if (userRedemptions >= latestVoucher.maxUsesPerUser) {
-        throw new VoucherRedeemError('Você já atingiu o limite de uso deste voucher.', 409);
+        throw new VoucherRedeemError('Ya alcanzaste el límite de uso de este cupón.', 409);
       }
 
       const purchase = await tx.purchase.create({

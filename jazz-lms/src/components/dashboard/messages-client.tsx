@@ -151,31 +151,31 @@ export function MessagesClient() {
         "Sélectionnez une conversation dans la boîte de réception pour ouvrir le chat.",
     },
     pt: {
-      loadThreadsError: "Não foi possível carregar as conversas.",
-      loadThreadError: "Não foi possível carregar esta conversa.",
+      loadThreadsError: "No fue posible cargar las conversaciones.",
+      loadThreadError: "No fue posible cargar esta conversación.",
       sending: "Enviando...",
       sent: "Enviado",
       generalMessage: "Mensagem geral",
-      you: "Você",
+      you: "Tú",
       createdThreadToast:
         "Enviado. Uma nova conversa foi criada na caixa de entrada.",
       appendedThreadToast:
         "Enviado. A mensagem foi adicionada à conversa existente.",
-      sendMessageError: "Não foi possível enviar a mensagem.",
+      sendMessageError: "No fue posible enviar el mensaje.",
       sendFailed: "Erro ao enviar",
       replySent: "Resposta enviada com sucesso.",
-      replyError: "Não foi possível enviar a resposta.",
+      replyError: "No fue posible enviar la respuesta.",
       title: "Mensagens",
       professorSubtitle:
         "Caixa de entrada — responda às mensagens dos alunos diretamente pela plataforma.",
       studentSubtitle: "Envie perguntas ao Professor Enric Vázquez.",
       inboxConversations: "Conversas da caixa de entrada",
       loading: "Carregando…",
-      noMessagesYet: "Ainda não há mensagens.",
+      noMessagesYet: "Aún no hay mensajes.",
       noMessages: "Sem mensagens",
-      unread: "não lidas",
+      unread: "no leídas",
       compose: "Escrever",
-      subjectOptional: "Assunto (opcional)",
+      subjectOptional: "Asunto (opcional)",
       writeToProfessor: "Escreva sua mensagem ao Professor Enric Vázquez...",
       send: "Enviar",
       status: "Status",
@@ -189,7 +189,7 @@ export function MessagesClient() {
       selectConversation:
         "Selecione uma conversa da caixa de entrada para abrir o chat.",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
   const dateLocale =
     language === "pt"
       ? "pt-BR"

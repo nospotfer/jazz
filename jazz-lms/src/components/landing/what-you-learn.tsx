@@ -81,30 +81,30 @@ export function WhatYouLearn() {
       cta: 'S’inscrire',
     },
     pt: {
-      title: 'O que você vai aprender',
+      title: 'Lo que aprenderás',
       intro:
-        'Este curso foi desenhado para que você não apenas escute jazz, mas viva e sinta o gênero. Você vai descobrir sua essência real, sua história e os elementos que o tornam único e emocionante.',
+        'Este curso está diseñado para que no solo escuches jazz, sino que lo vivas y lo sientas. Descubrirás su verdadera esencia, su historia y los elementos que lo hacen único y emocionante.',
       points: [
         {
-          title: 'O jazz como cultura independente',
-          desc: 'Entenda que o jazz é uma cultura musical própria e influenciou profundamente toda a música popular moderna.',
+          title: 'El jazz como cultura independiente',
+          desc: 'Comprende que el jazz es una cultura musical propia que ha influido profundamente en toda la música popular moderna.',
         },
         {
-          title: 'Improvisação como criação original',
-          desc: 'Aprenda como a improvisação se torna autoria musical em cada interpretação de jazz.',
+          title: 'Improvisación como creación original',
+          desc: 'Aprende cómo la improvisación se convierte en autoría musical en cada interpretación de jazz.',
         },
         {
-          title: 'O “som” pessoal do músico',
-          desc: 'Descubra como identificar um músico por seu som único, timbre, cor e personalidade artística.',
+          title: 'El “sonido” personal del músico',
+          desc: 'Descubre cómo identificar a un músico por su sonido único, timbre, color y personalidad artística.',
         },
         {
-          title: 'Liberdade criativa e composição colaborativa',
-          desc: 'Entenda como o jazz integra sonoridades diversas e combina composição com improvisação.',
+          title: 'Libertad creativa y composición colaborativa',
+          desc: 'Entiende cómo el jazz integra sonoridades diversas y combina composición con improvisación.',
         },
       ],
-      cta: 'Cadastrar',
+      cta: 'Regístrate',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   return (
     <>

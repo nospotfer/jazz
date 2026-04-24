@@ -105,11 +105,11 @@ export async function GET(request: Request) {
         "Impossible de récupérer votre compte après la connexion Google.",
     },
     pt: {
-      missingCode: "O código de autenticação do Google não foi recebido.",
+      missingCode: "No se recibió el código de autenticación de Google.",
       exchangeFailed:
-        "Não foi possível concluir o login com Google. Tente novamente.",
+        "No fue posible completar el inicio de sesión con Google. Inténtalo de nuevo.",
       userLoadFailed:
-        "Não foi possível carregar sua conta após o login com Google.",
+        "No fue posible cargar tu cuenta después del inicio de sesión con Google.",
     },
   }[selectedLanguage];
 

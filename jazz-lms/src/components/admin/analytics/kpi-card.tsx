@@ -10,7 +10,7 @@ export type KpiCardProps = {
   delta: number | null;
   currency?: 'EUR' | 'USD' | 'BRL';
   icon?: ReactNode;
-  /** Exibido em vez do valor quando o KPI nao esta disponivel (ex.: GA4 offline). */
+  /** Se muestra en lugar del valor cuando el KPI no está disponible (p. ej.: GA4 offline). */
   unavailable?: { reason: string };
 };
 

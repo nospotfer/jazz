@@ -147,17 +147,17 @@ export async function POST(req: Request) {
         internalError: "Erreur interne du serveur",
       },
       pt: {
-        unauthorized: "Não autorizado",
+        unauthorized: "No autorizado",
         emailRequired: "O e-mail do usuário é obrigatório",
         invalidRequest: "Solicitação inválida",
-        courseNotFound: "Curso não encontrado",
+        courseNotFound: "Curso no encontrado",
         alreadyPurchased: "O curso já foi comprado",
         paymentsUnavailable: "Pagamentos temporariamente indisponíveis",
         paymentMethodUnavailable:
-          "O método de pagamento não está disponível para esta compra",
+          "El método de pago no está disponible para esta compra",
         invalidVoucher: "Código de voucher inválido",
         voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
-        voucherNotConfigured: "Este voucher não está configurado no checkout",
+        voucherNotConfigured: "Este cupón no está configurado en el checkout",
         internalError: "Erro interno do servidor",
       },
     }[selectedLanguage];

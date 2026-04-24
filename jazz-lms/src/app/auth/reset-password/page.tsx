@@ -96,9 +96,9 @@ export default function ResetPasswordPage() {
       tokenInvalid:
         "Este link de redefinição é inválido ou expirou. Solicite um novo.",
       tokenValidationFailed:
-        "Não foi possível validar o link de redefinição. Solicite um novo.",
+        "No fue posible validar el enlace de restablecimiento. Solicita uno nuevo.",
       minPassword: "A senha deve ter pelo menos 8 caracteres",
-      updateFailed: "Não foi possível atualizar a senha",
+      updateFailed: "No fue posible actualizar la contraseña",
       updated: "Senha atualizada com sucesso!",
       validatingLink: "Validando link de redefinição...",
       invalidTitle: "Link de redefinição inválido",
@@ -112,14 +112,14 @@ export default function ResetPasswordPage() {
       confirmNewPassword: "Confirmar nova senha",
       passwordPlaceholder: "Sua nova senha",
       confirmPasswordPlaceholder: "Confirme sua nova senha",
-      passwordMismatch: "As senhas nao coincidem",
+      passwordMismatch: "Las contraseñas no coinciden",
       hidePassword: "Ocultar senha",
       showPassword: "Mostrar senha",
       minCharacters: "Mínimo de 8 caracteres",
       updating: "Atualizando...",
       updatePassword: "Atualizar senha",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [loadingToken, setLoadingToken] = useState(true);
   const [tokenValid, setTokenValid] = useState(false);

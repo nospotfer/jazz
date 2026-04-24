@@ -369,12 +369,12 @@ export const CoursePlayer = ({
       musicSpotify: "Abrir no Spotify",
       loadingPlayer: "Carregando player da aula...",
       unableSignedPlayback:
-        "Não foi possível carregar o playback assinado desta aula agora.",
-      unableLoadPdf: "Não foi possível carregar este PDF agora.",
+        "No fue posible cargar el playback firmado de esta lección ahora.",
+      unableLoadPdf: "No fue posible cargar este PDF ahora.",
       loadedLegacyPdf: "PDF carregado usando URL direta legada.",
       loadedLegacyDownload: "Download aberto usando URL direta legada.",
-      unableDownloadPdf: "Não foi possível baixar este PDF agora.",
-      unableCheckout: "Não foi possível iniciar o checkout agora.",
+      unableDownloadPdf: "No fue posible descargar este PDF ahora.",
+      unableCheckout: "No fue posible iniciar el checkout ahora.",
       lessonCompleted: "Aula concluída!",
       somethingWrong: "Algo deu errado",
       lessonReset: "Progresso da aula redefinido.",
@@ -390,14 +390,14 @@ export const CoursePlayer = ({
       loadingPdfPreview: "Carregando prévia do PDF...",
       premiumAccessRequired: "Acesso premium necessário",
       lessonAreaLockedDesc:
-        "Você está na área da aula, mas vídeo e anotações estão disponíveis apenas para alunos com o curso completo.",
-      whatYouUnlock: "O que você desbloqueia:",
+        "Estás en el área de la lección, pero video y notas solo están disponibles para alumnos con el curso completo.",
+      whatYouUnlock: "Qué desbloqueas:",
       unlockAllClasses: "Acesso completo às 15 aulas",
       unlockMuxPlayback: "Reprodução Mux HD segura",
       unlockNotes: "Anotações pessoais por aula",
       buyNowUnlock: "Comprar e desbloquear",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [isReady, setIsReady] = useState(false);
   const [lastSavedPercent, setLastSavedPercent] = useState(

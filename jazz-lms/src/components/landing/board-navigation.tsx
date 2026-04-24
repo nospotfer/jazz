@@ -23,7 +23,7 @@ export function BoardNavigation() {
     en: { prev: 'Previous section', next: 'Next section' },
     fr: { prev: 'Section précédente', next: 'Section suivante' },
     pt: { prev: 'Seção anterior', next: 'Próxima seção' },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   useEffect(() => {
     const handleScroll = () => {

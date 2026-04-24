@@ -135,34 +135,35 @@ export function FAQFooter() {
       topAria: "Retour en haut",
     },
     pt: {
-      faqTitle: "Perguntas frequentes",
-      faqSubtitle: "Se você não encontrar a resposta, entre em contato abaixo.",
-      contact: "Fale conosco",
-      afterTitle: "O que poderei fazer depois de concluir?",
+      faqTitle: "Preguntas frecuentes",
+      faqSubtitle:
+        "Si no encuentras la respuesta que buscas, contáctanos aquí abajo.",
+      contact: "Contáctanos",
+      afterTitle: "¿Qué podré hacer después de completarlo?",
       afterItems: [
-        "Ir a um clube de jazz e curtir a experiência com uma nova perspectiva.",
-        "Ouvir os grandes clássicos e entender por que são fundamentais.",
-        'Reconhecer estilos, épocas e músicos pelo "som".',
-        "Sentir-se parte da cultura do jazz, entendendo sua linguagem e liberdade criativa.",
+        "Ir a un club de jazz y disfrutar la experiencia con una nueva perspectiva.",
+        "Escuchar los grandes clásicos y entender por qué son fundamentales.",
+        'Reconocer estilos, épocas y músicos por su "sonido".',
+        "Sentirte parte de la cultura del jazz, comprendiendo su lenguaje y libertad creativa.",
       ],
-      ctaTitle: "Não espere mais!",
-      ctaSubtitle: "Comece hoje sua jornada no jazz.",
-      cta: "Cadastrar",
+      ctaTitle: "¡No esperes más!",
+      ctaSubtitle: "Empieza hoy tu viaje por el jazz.",
+      cta: "Regístrate",
       ctaFoot:
-        "Junte-se a milhares de amantes de jazz que já fazem parte desta experiência única.",
+        "Únete a miles de amantes del jazz que ya forman parte de esta experiencia única.",
       nav: [
-        "Início",
+        "Inicio",
         "Professor",
         "Aprender",
         "Cursos",
-        "Imprensa",
+        "Prensa",
         "Jazz Cats",
         "FAQ",
       ],
-      topLabel: "Topo",
-      topAria: "Voltar ao topo",
+      topLabel: "Top",
+      topAria: "Volver arriba",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const localizedFaqs =
     language === "es"
@@ -174,13 +175,13 @@ export function FAQFooter() {
                 ? "How much does the course cost?"
                 : language === "fr"
                   ? "Combien coûte le cours ?"
-                  : "Quanto custa o curso?",
+                  : "¿Cuánto cuesta el curso?",
             respuesta:
               language === "en"
                 ? "Pricing may vary according to active promotions we frequently offer. Check the course page for the current amount."
                 : language === "fr"
                   ? "Le prix peut varier selon les promotions actives que nous proposons fréquemment. Consultez la page du cours pour le montant actuel."
-                  : "O preço pode variar conforme promoções ativas que oferecemos com frequência. Confira a página do curso para o valor atual.",
+                  : "El precio depende de las ofertas activas que lanzamos frecuentemente. A menudo encontrarás promociones especiales. Lo mejor es revisar la página del curso para ver el precio actual.",
           },
           {
             pregunta:
@@ -188,13 +189,13 @@ export function FAQFooter() {
                 ? "What if I realize this course is not for me?"
                 : language === "fr"
                   ? "Et si je constate que ce cours n’est pas pour moi ?"
-                  : "E se eu perceber que este curso não é para mim?",
+                  : "¿Qué pasa si me doy cuenta de que el curso no es para mí?",
             respuesta:
               language === "en"
                 ? "No problem. We want you to enjoy learning and have a positive experience. If you change your mind, we offer a 30-day refund guarantee, risk-free and no questions asked."
                 : language === "fr"
                   ? "Aucun problème. Nous voulons que vous profitiez de l'apprentissage et que vous ayez une expérience positive. Si vous changez d'avis, nous offrons une garantie de remboursement de 30 jours, sans risque et sans questions."
-                  : "Sem problema. Queremos que você aproveite o aprendizado e tenha uma experiência positiva. Se mudar de ideia, oferecemos garantia de devolução de 30 dias, sem risco e sem perguntas.",
+                  : "No hay problema. Queremos que disfrutes aprendiendo y tengas una experiencia positiva. Si cambias de opinión, ofrecemos una garantía de devolución de 30 días, sin riesgo y sin preguntas incómodas.",
           },
           {
             pregunta:
@@ -202,13 +203,13 @@ export function FAQFooter() {
                 ? "What will I learn in this course?"
                 : language === "fr"
                   ? "Que vais-je apprendre dans ce cours ?"
-                  : "O que vou aprender neste curso?",
+                  : "¿Qué aprenderé en este curso?",
             respuesta:
               language === "en"
                 ? "You will learn jazz fundamentals, history, improvisation, listening, and practical understanding of key styles and artists."
                 : language === "fr"
                   ? "Vous apprendrez les fondamentaux du jazz, son histoire, l’improvisation, l’écoute et la compréhension pratique des styles et artistes clés."
-                  : "Você vai aprender fundamentos do jazz, história, improvisação, escuta e compreensão prática dos principais estilos e artistas.",
+                  : "Comenzaremos desde lo esencial para entender qué es el jazz, su historia y su cultura. Aprenderás la importancia de la improvisación, a reconocer estilos y músicos por su sonido, y a disfrutar mucho más de los grandes clásicos y de cualquier concierto en vivo.",
           },
         ];
 

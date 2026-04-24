@@ -114,11 +114,11 @@ export function getLessonQuizResultMessage(language: SupportedLanguage, medal: Q
       PLATINUM: 'Tu as absorbé la leçon à 100 %. Rythme, mémoire et attention sont parfaitement alignés.',
     },
     pt: {
-      NONE: 'Você já entrou no clima da aula, mas esse conteúdo pede mais uma passada com foco total. Refaça o quiz e volte mais afiado.',
-      BRONZE: 'Você concluiu com uma base real. O groove apareceu; agora é hora de lapidar os detalhes para subir de nível.',
-      SILVER: 'O caminho é esse. Sua leitura da aula já tem swing, e com mais prática direcionada você rompe a próxima barreira.',
-      GOLD: 'Você já está entre os melhores desta aula. Com mais um pouco de treino, esse resultado forte vira domínio completo.',
-      PLATINUM: 'Você absorveu 100% do conteúdo. Ritmo, memória e atenção tocaram juntos do início ao fim.',
+      NONE: 'Ya entraste en el ritmo de la lección, pero este contenido pide una nueva pasada con foco total. Repite el cuestionario y vuelve más afilado.',
+      BRONZE: 'Completaste con una base real. El groove apareció; ahora es hora de pulir los detalles para subir de nivel.',
+      SILVER: 'Vas por buen camino. Tu lectura de la lección ya tiene swing, y con más práctica dirigida romperás la próxima barrera.',
+      GOLD: 'Ya estás entre los mejores de esta lección. Con un poco más de práctica, este resultado sólido se convierte en dominio completo.',
+      PLATINUM: 'Absorbiste el 100% del contenido. Ritmo, memoria y atención tocaron juntos de principio a fin.',
     },
   };
 

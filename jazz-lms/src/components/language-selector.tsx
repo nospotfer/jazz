@@ -10,7 +10,7 @@ export function LanguageSelector() {
     en: 'Language selector',
     fr: 'Sélecteur de langue',
     pt: 'Seletor de idioma',
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   return (
     <div

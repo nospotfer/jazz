@@ -65,7 +65,7 @@ function getCertificateCopy(language: SupportedLanguage, studentName: string) {
     lines: string[];
   }>;
 
-  return content[language];
+  return content[language === 'pt' ? 'es' : language];
 }
 
 export default async function JazzSpecialistPage() {

@@ -111,7 +111,7 @@ function QuizSideDecor({
       rhythm: 'Ritmo',
       pulse: 'Pulso',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   return (
     <>
@@ -183,7 +183,7 @@ function QuizPlaylistPanel({
       currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
       openSpotify: 'Abrir no Spotify',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   return (
     <aside className="hidden self-start xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col xl:gap-2.5 2xl:w-[360px] 2xl:-ml-8">
@@ -358,8 +358,8 @@ export function LessonQuizOverlay({
       resultWrong: 'Questões erradas',
       currentBest: 'Melhor resultado',
       yourProgress: 'Seu progresso nesta sessão',
-      startError: 'Não foi possível abrir o quiz agora.',
-      answerError: 'Não foi possível registrar sua resposta.',
+      startError: 'No fue posible abrir el cuestionario ahora.',
+      answerError: 'No fue posible registrar tu respuesta.',
       noOption: 'Selecione uma alternativa antes de confirmar.',
       resumeTitle: 'Modo jazz arcade',
       bestResultEmpty: 'Sua melhor medalha vai aparecer aqui depois da primeira rodada completa.',
@@ -367,7 +367,7 @@ export function LessonQuizOverlay({
       quizMeta: 'Jazz arcade • 5 opções • 12 rodadas',
       qaLabel: 'QA local: resposta correta é',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   useEffect(() => {
     setSummary(initialSummary);

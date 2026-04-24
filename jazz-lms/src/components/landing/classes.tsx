@@ -332,26 +332,26 @@ export function Classes() {
       ],
     },
     pt: {
-      title: "O curso",
+      title: "El curso",
       subtitle:
-        "Clique em qualquer aula para ver a descrição completa e a prévia",
-      previewLabel: "Prévia da aula",
-      closeLabel: "Fechar",
-      backLabel: "Voltar para as aulas",
-      classWord: "Aula",
-      lockTitle: "Aula bloqueada",
+        "Haz clic en cualquier clase para ver la descripción completa y una vista previa",
+      previewLabel: "Vista previa de clase",
+      closeLabel: "Cerrar",
+      backLabel: "Volver a las clases",
+      classWord: "Clase",
+      lockTitle: "Clase bloqueada",
       lockDescription:
-        "Crie uma conta ou faça login para desbloquear a aula completa.",
-      createAccountLabel: "Criar conta",
-      loginLabel: "Login",
-      learnListTitle: "Nesta aula você vai aprender",
+        "Crea una cuenta o inicia sesión para acceder a la lección completa.",
+      createAccountLabel: "Crear cuenta",
+      loginLabel: "Iniciar sesión",
+      learnListTitle: "En esta clase aprenderás",
       lessonIncludes: [
-        "Contexto histórico e cultural do tema principal.",
-        "Conceitos centrais explicados com exemplos musicais.",
-        "Como aplicar essa escuta no restante do curso.",
+        "Contexto histórico y cultural del tema principal.",
+        "Conceptos clave explicados con ejemplos musicales.",
+        "Cómo aplicar esta escucha al resto del curso.",
       ],
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const localizedClasses = classes.map((classItem, index) => {
     if (language === "es") return classItem;

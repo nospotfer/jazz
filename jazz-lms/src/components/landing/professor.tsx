@@ -35,10 +35,10 @@ export function Professor() {
       title: "Conheça seu professor",
       p1: "Poucas pessoas podem dizer que viveram o jazz por dentro durante mais de 60 anos. Enric Vázquez Ramonich é cofundador do lendário Jamboree Jazz Club e do Jubilee Jazz Club, e já dividiu palco e conversas com lendas como Bill Evans, Chet Baker e Art Blakey.",
       p2: "Ele apresentou programas de rádio e televisão, escreveu em veículos especializados e participou de obras de referência como o Guia Universal do Jazz Moderno. Também é autor dos primeiros capítulos da História do Jazz para a Generalitat da Catalunha.",
-      p3: 'Agora, toda essa experiência e paixão se concentram em "Cultura do Jazz", um curso desenhado para que, mesmo sem nunca ter tocado um instrumento, você possa entender, sentir e curtir o jazz como se sempre fizesse parte dele.',
+      p3: 'Ahora, toda esa experiencia y pasión se concentran en "Cultura del Jazz", un curso diseñado para que, incluso si nunca has tocado un instrumento, puedas entender, sentir y disfrutar el jazz como si siempre hubieras formado parte de él.',
       badge: "Mais de 60 anos de experiência em jazz",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">

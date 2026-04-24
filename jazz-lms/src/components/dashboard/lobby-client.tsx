@@ -87,14 +87,14 @@ export function LobbyClient({
       continueLearning: 'Continuar aprendendo',
       seeAll: 'Ver tudo',
       exploreCourses: 'Explorar cursos',
-      noCoursesTitle: 'Ainda não há cursos disponíveis',
+      noCoursesTitle: 'Aún no hay cursos disponibles',
       noCoursesDesc: 'Novos cursos estarão disponíveis em breve. Fique atento!',
       enrolledBadge: 'Inscrito',
       chapters: 'capítulos',
       lessons: 'aulas',
       progress: 'Progresso',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const firstName = userName.split(' ')[0];
   const totalInProgress = purchasedCourses.filter(
@@ -222,7 +222,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
     en: { enrolledBadge: 'Enrolled', chapters: 'chapters', lessons: 'lessons', progress: 'Progress' },
     fr: { enrolledBadge: 'Inscrit', chapters: 'chapitres', lessons: 'leçons', progress: 'Progression' },
     pt: { enrolledBadge: 'Inscrito', chapters: 'capítulos', lessons: 'aulas', progress: 'Progresso' },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const href = course.purchased
     ? `/courses/${course.id}/lessons/${course.id}`

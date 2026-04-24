@@ -86,7 +86,7 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
     },
   };
 
-  return copy[language];
+  return copy[language === 'pt' ? 'es' : language];
 }
 
 export default async function CourseCompletionRecognitionPage() {

@@ -270,7 +270,7 @@ describe("CoursePlayer language switch behavior", () => {
     mocks.currentLanguage = "pt";
     view.rerender(<CoursePlayer {...baseProps} />);
 
-    expect(await screen.findByText(/playback assinado/i)).toBeTruthy();
+    expect(await screen.findByText(/playback firmado/i)).toBeTruthy();
     expect(muxPlaybackCalls()).toHaveLength(1);
   });
 

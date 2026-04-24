@@ -76,12 +76,12 @@ export function LessonNotesEditor({
     },
     pt: {
       pdfTitle: 'PDF da aula',
-      loadPdfError: 'Não foi possível carregar este PDF agora.',
+      loadPdfError: 'No fue posible cargar este PDF ahora.',
       loadingPdf: 'Carregando PDF...',
-      noPdf: 'Não há PDFs disponíveis para esta aula.',
+      noPdf: 'No hay PDF disponibles para esta lección.',
       downloadPdf: 'Baixar PDF selecionado',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const notesStorageKey = useMemo(
     () => `lesson-notes:${courseId}:${lessonId}`,

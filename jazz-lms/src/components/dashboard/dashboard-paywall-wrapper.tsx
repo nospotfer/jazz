@@ -54,12 +54,12 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
     },
     pt: {
       title: 'Área bloqueada',
-      description: 'Para acessar esta área, você precisa comprar o curso completo.',
+      description: 'Para acceder a esta área, necesitas comprar el curso completo.',
       processing: 'Processando...',
       payFullCourse: 'Pagar curso completo',
       chooseMethod: 'Aplicar voucher e continuar',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;

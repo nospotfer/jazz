@@ -72,9 +72,9 @@ export default function ForgotPasswordPage() {
     pt: {
       invalidEmail: "Digite um e-mail válido",
       requestFailed:
-        "Não foi possível enviar o link agora. Tente novamente em alguns minutos.",
+        "No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.",
       requestRateLimited:
-        "Você solicitou links muito rápido. Aguarde um pouco e tente novamente.",
+        "Has solicitado enlaces demasiado rápido. Espera un momento y vuelve a intentarlo.",
       title: "Redefina sua senha",
       subtitle:
         "Digite o e-mail associado à sua conta e enviaremos um link para redefinir sua senha.",
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
       inboxDesc:
         "Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha. Confira também a pasta de spam.",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

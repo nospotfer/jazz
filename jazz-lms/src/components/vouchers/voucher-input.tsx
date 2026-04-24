@@ -78,10 +78,10 @@ export function VoucherInput({
       validating: "Validando...",
       invalid: "Código inválido ou expirado.",
       missingCode: "Digite um código antes de aplicar.",
-      missingCourse: "Curso não encontrado para validar este voucher.",
+      missingCourse: "Curso no encontrado para validar este voucher.",
       remove: "Remover",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const handleApply = async () => {
     const normalizedCode = code.trim().toUpperCase();

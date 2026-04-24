@@ -206,15 +206,15 @@ export default function ProfilePage() {
       openSupremePage: "Voir la reconnaissance speciale",
     },
     pt: {
-      avatarUpdateError: "Não foi possível atualizar o avatar",
-      profileUpdateError: "Não foi possível atualizar o perfil",
+      avatarUpdateError: "No fue posible actualizar el avatar",
+      profileUpdateError: "No fue posible actualizar el perfil",
       billingSupportError:
-        "Não foi possível abrir o suporte financeiro. Tente novamente mais tarde.",
+        "No fue posible abrir el soporte financiero. Inténtalo de nuevo más tarde.",
       title: "Perfil",
       subtitle: "Gerencie seu perfil, dados pessoais e preferências de avatar",
       profileIcon: "Ícone de perfil",
       randomModeDesc: "Modo aleatório: muda a cada login",
-      fixedModeDesc: "Modo fixo: permanece até você alterar",
+      fixedModeDesc: "Modo fijo: permanece hasta que lo cambies",
       saving: "Salvando...",
       saveChanges: "Salvar alterações",
       profileUpdated: "Perfil atualizado com sucesso!",
@@ -223,7 +223,7 @@ export default function ProfilePage() {
       fullNamePlaceholder: "Seu nome completo",
       headline: "Título",
       bio: "Biografia",
-      bioPlaceholder: "Conte-nos sobre você...",
+      bioPlaceholder: "Cuéntanos sobre ti...",
       email: "E-mail",
       contactData: "Contato e dados pessoais",
       phone: "Telefone",
@@ -255,7 +255,7 @@ export default function ProfilePage() {
       supremeTitle: "Especialista em jazz",
       openSupremePage: "Ver reconhecimento especial",
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isSupportLoading, setIsSupportLoading] = useState(false);

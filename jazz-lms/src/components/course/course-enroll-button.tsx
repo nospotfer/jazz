@@ -76,7 +76,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       buyCourse: 'Comprar curso',
       chooseMethod: 'Aplicar voucher e continuar',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   const checkoutCourse = async () => {
     try {

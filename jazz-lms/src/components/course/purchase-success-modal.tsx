@@ -35,10 +35,10 @@ export function PurchaseSuccessModal({ isVisible, onClose, language }: PurchaseS
     pt: {
       close: 'Fechar',
       title: 'Obrigado por fazer parte desta jornada musical',
-      subtitle: 'Agora você tem acesso a todo o conteúdo do site',
+      subtitle: 'Ahora tienes acceso a todo el contenido del sitio',
       cta: 'Começar a aprender',
     },
-  }[language];
+  }[language === 'pt' ? 'es' : language];
 
   useEffect(() => {
     if (isVisible) {
