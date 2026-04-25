@@ -33,10 +33,8 @@ function buildVoucherCode(prefix: string) {
   return `${paddedPrefix}${randomToken(10 - paddedPrefix.length)}`;
 }
 
-function randomDigits(size = 3) {
-  const max = 10 ** size;
-  const value = crypto.randomInt(0, max);
-  return String(value).padStart(size, '0');
+function normalizeArtistSequence(sequence: number) {
+  return ((Math.max(1, Math.floor(sequence)) - 1) % 99) + 1;
 }
 
 function extractArtistSequence(code: string, shortKey: string, discountPercent: number) {
@@ -45,7 +43,7 @@ function extractArtistSequence(code: string, shortKey: string, discountPercent: 
   // 2-digit discount → 3+2+2+3 = 10 chars.
   // 3-digit discount → 3+3+2+2 = 10 chars.
   const randomLen = discountPercent >= 100 ? 2 : 3;
-  const pattern = new RegExp(`^${shortKey}${discountPercent}(\\d{2})\\d{${randomLen}}$`);
+  const pattern = new RegExp(`^${shortKey}${discountPercent}(\\d{2})[A-Z0-9]{${randomLen}}$`);
   const match = normalizedCode.match(pattern);
 
   if (!match) {
@@ -60,9 +58,9 @@ function extractArtistSequence(code: string, shortKey: string, discountPercent: 
 // 2-digit discount (10..90) → 3+2+2+3 = 10 chars.
 // 3-digit discount (100)    → 3+3+2+2 = 10 chars.
 function buildArtistVoucherCode(shortKey: string, discountPercent: number, sequence: number) {
-  const sequencePart = String(sequence).padStart(2, '0').slice(-2);
+  const sequencePart = String(normalizeArtistSequence(sequence)).padStart(2, '0');
   const randomLen = discountPercent >= 100 ? 2 : 3;
-  return `${shortKey}${discountPercent}${sequencePart}${randomDigits(randomLen)}`;
+  return `${shortKey}${discountPercent}${sequencePart}${randomToken(randomLen)}`;
 }
 
 export async function POST(req: Request) {
@@ -75,7 +73,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const type = String(body.type || '').toUpperCase() as VoucherType;
     const courseId = body.courseId ? String(body.courseId) : null;
-    const count = Math.min(500, Math.max(1, Number(body.count || 1)));
+    const requestedCount = Number(body.count ?? 1);
+    if (!Number.isFinite(requestedCount) || requestedCount <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid count', message: 'La cantidad debe ser un número mayor que cero.' },
+        { status: 400 }
+      );
+    }
+    const count = Math.max(1, Math.floor(requestedCount));
     const maxUses = body.maxUses === null || body.maxUses === undefined ? 1 : Number(body.maxUses);
     const maxUsesPerUser = Math.max(1, Number(body.maxUsesPerUser || 1));
     const expiresInDays = body.expiresInDays === null || body.expiresInDays === undefined
@@ -163,6 +168,7 @@ export async function POST(req: Request) {
       });
 
       let maxSequence = 0;
+      const existingCodeSet = new Set(existingCodes.map((item) => item.code.trim().toUpperCase()));
       for (const item of existingCodes) {
         const sequence = extractArtistSequence(item.code, selectedArtist.shortKey, discountPercent);
         if (sequence !== null && sequence > maxSequence) {
@@ -173,20 +179,9 @@ export async function POST(req: Request) {
       const generatedCodes = new Set<string>();
       for (let offset = 1; offset <= count; offset += 1) {
         const sequence = maxSequence + offset;
-        if (sequence > 99) {
-          return NextResponse.json(
-            {
-              success: false,
-              error: 'Sequence limit reached',
-              message:
-                'Límite de 99 cupones por artista y descuento alcanzado. Elimina o archiva cupones antiguos antes de generar más.',
-            },
-            { status: 409 }
-          );
-        }
         let nextCode = buildArtistVoucherCode(selectedArtist.shortKey, discountPercent, sequence);
 
-        while (generatedCodes.has(nextCode)) {
+        while (generatedCodes.has(nextCode) || existingCodeSet.has(nextCode)) {
           nextCode = buildArtistVoucherCode(selectedArtist.shortKey, discountPercent, sequence);
         }
 

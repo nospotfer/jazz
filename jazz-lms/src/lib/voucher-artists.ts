@@ -51,9 +51,10 @@ export function getVoucherArtistFromCode(code: string) {
   for (const artist of VOUCHER_ARTIST_TIERS) {
     // Compact format (exactly 10 chars): {shortKey:3}{discount:2-3}{sequence:2}{random:2-3}
     // 2-digit discount → 3+2+2+3 = 10 chars. 3-digit discount → 3+3+2+2 = 10 chars.
+    // Random suffix supports A-Z0-9 to increase unique combinations.
     const randomLen = artist.discountPercent >= 100 ? 2 : 3;
     const pattern = new RegExp(
-      `^${artist.shortKey}${artist.discountPercent}(\\d{2})(\\d{${randomLen}})$`
+      `^${artist.shortKey}${artist.discountPercent}(\\d{2})([A-Z0-9]{${randomLen}})$`
     );
     const match = normalizedCode.match(pattern);
 
