@@ -79,6 +79,7 @@ export function VouchersAdminClient({ courses }: Props) {
   const [filterDiscountPercent, setFilterDiscountPercent] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isResyncing, setIsResyncing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [vouchers, setVouchers] = useState<VoucherItem[]>([]);
@@ -288,6 +289,34 @@ export function VouchersAdminClient({ courses }: Props) {
       toast.error(message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleResyncProvider = async () => {
+    if (!confirm('Re-sincronizar todos los vouchers activos con Dodo? Creará los descuentos faltantes en el proveedor.')) {
+      return;
+    }
+    setIsResyncing(true);
+    try {
+      const response = await fetch('/api/admin/vouchers/resync-provider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ onlyActive: true, onlyUnsynced: false }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'Re-sync falló.');
+      }
+      toast.success(`Re-sync: ${data.synced}/${data.total} ok, ${data.failed} fallos.`);
+      if (Array.isArray(data.failures) && data.failures.length > 0) {
+        console.warn('[VOUCHER_RESYNC_FAILURES]', data.failures);
+      }
+      await loadVouchers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Re-sync falló.';
+      toast.error(message);
+    } finally {
+      setIsResyncing(false);
     }
   };
 
@@ -851,6 +880,9 @@ export function VouchersAdminClient({ courses }: Props) {
               <span className="text-xs font-medium text-emerald-600">Copiado con éxito</span>
             ) : null}
           </div>
+          <Button variant="secondary" onClick={() => void handleResyncProvider()} disabled={isResyncing}>
+            {isResyncing ? 'Re-sincronizando...' : 'Re-sincronizar todos con Dodo'}
+          </Button>
         </div>
 
         <div className="rounded-md border border-border p-3">

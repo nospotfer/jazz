@@ -85,6 +85,12 @@ vi.mock("@/lib/payments/provider", () => ({
 
 vi.mock("@/lib/payments/providers/dodo", () => ({
   isDodoWebhookConfigured: mocks.isDodoWebhookConfigured,
+  isDodoConfigured: () => false,
+  createDodoDiscount: vi.fn(async () => ({ ok: false, reason: "not_configured" })),
+}));
+
+vi.mock("@/lib/voucher-provider-sync", () => ({
+  ensureVoucherDiscountSynced: vi.fn(async () => ({ ok: false, reason: "skipped_no_provider", metadata: null })),
 }));
 
 vi.mock("@/lib/vouchers", () => ({

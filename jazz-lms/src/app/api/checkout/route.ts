@@ -12,6 +12,7 @@ import { isDodoWebhookConfigured } from "@/lib/payments/providers/dodo";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
 import { isLocalTestRequest } from "@/lib/test-mode";
 import { validateVoucherForCourse } from "@/lib/vouchers";
+import { ensureVoucherDiscountSynced } from "@/lib/voucher-provider-sync";
 import { createClient } from "@/utils/supabase/server";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
@@ -454,6 +455,53 @@ export async function POST(req: Request) {
       }
 
       if (voucherRejectedByProvider) {
+        // Tenta backfill do discount no Dodo (vouchers legados criados antes da sync real).
+        if (voucherValidation?.valid) {
+          console.warn("[CHECKOUT_VOUCHER_BACKFILL_ATTEMPT]", {
+            courseId,
+            userId: user.id,
+            voucherCode: voucherValidation.voucher.code,
+          });
+          const remainingUses =
+            voucherValidation.voucher.maxUses !== null
+              ? Math.max(1, voucherValidation.voucher.maxUses - voucherValidation.voucher.currentUses)
+              : null;
+          const syncResult = await ensureVoucherDiscountSynced({
+            id: voucherValidation.voucher.id,
+            code: voucherValidation.voucher.code,
+            type: voucherValidation.voucher.type,
+            discountPercent: voucherValidation.voucher.discountPercent ?? null,
+            discountAmount: voucherValidation.voucher.discountAmount ?? null,
+            maxUses: remainingUses,
+            expiresAt: voucherValidation.voucher.expiresAt ?? null,
+            metadata: null,
+          });
+          await db.voucherCode.update({
+            where: { id: voucherValidation.voucher.id },
+            data: {
+              metadata: (syncResult.metadata ?? null) as never,
+            },
+          });
+          if (syncResult.ok) {
+            try {
+              checkoutUrl = await createCheckout(
+                voucherValidation.voucher.providerDiscountCode,
+              );
+              return NextResponse.json({ url: checkoutUrl });
+            } catch (retryError) {
+              console.error("[CHECKOUT_VOUCHER_BACKFILL_RETRY_FAILED]", {
+                voucherCode: voucherValidation.voucher.code,
+                retryError,
+              });
+            }
+          } else {
+            console.error("[CHECKOUT_VOUCHER_BACKFILL_FAILED]", {
+              voucherCode: voucherValidation.voucher.code,
+              reason: syncResult.reason,
+            });
+          }
+        }
+
         try {
           console.warn("[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK]", {
             courseId,
