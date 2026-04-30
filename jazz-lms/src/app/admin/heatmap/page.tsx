@@ -25,6 +25,72 @@ const PRIVACY_RULES = [
   'iFrames no son capturados (captureIFrames: false).',
 ];
 
+type WidgetKey = 'trend' | 'funnel' | 'heatmaps' | 'topPages' | 'topUsers' | 'topBrowsers';
+
+const WIDGETS: Array<{
+  key: WidgetKey;
+  title: string;
+  description: string;
+  icon: string;
+  path: string;
+}> = [
+  {
+    key: 'trend',
+    title: 'Tendencia de sesiones',
+    description: 'Evolución del número de sesiones a lo largo del tiempo.',
+    icon: '📈',
+    path: '/metrics',
+  },
+  {
+    key: 'funnel',
+    title: 'Embudo de conversión',
+    description: 'Pasos de conversión, total de conversiones y abandono.',
+    icon: '🔻',
+    path: '/funnels',
+  },
+  {
+    key: 'heatmaps',
+    title: 'Mapas de calor',
+    description: 'Clicks y áreas más interactuadas por los usuarios.',
+    icon: '🔥',
+    path: '/heatmaps',
+  },
+  {
+    key: 'topPages',
+    title: 'Páginas más vistas',
+    description: 'Top de URLs por sesiones y visitas.',
+    icon: '🏆',
+    path: '/metrics',
+  },
+  {
+    key: 'topUsers',
+    title: 'Usuarios destacados',
+    description: 'Usuarios con más sesiones o tiempo de uso.',
+    icon: '👥',
+    path: '/metrics',
+  },
+  {
+    key: 'topBrowsers',
+    title: 'Navegadores principales',
+    description: 'Distribución de sesiones por navegador.',
+    icon: '🌐',
+    path: '/metrics',
+  },
+];
+
+function buildWidgetUrl(dashboardUrl: string, path: string): string {
+  if (!dashboardUrl) return '';
+  try {
+    const base = new URL(dashboardUrl);
+    // Mantém o pathname existente como prefixo (ex.: /<projectId>) e anexa o path do widget.
+    const existing = base.pathname.replace(/\/$/, '');
+    base.pathname = `${existing}${path}`;
+    return base.toString();
+  } catch {
+    return dashboardUrl;
+  }
+}
+
 function StatusBadge({ status }: { status: 'active' | 'disabled' | 'unconfigured' }) {
   const config = {
     active: {
@@ -92,6 +158,64 @@ export default async function AdminHeatmapPage() {
         </div>
         <StatusBadge status={status} />
       </header>
+
+      <section aria-label="Widgets del dashboard de OpenReplay">
+        <div className="mb-3 flex items-end justify-between">
+          <h2 className="text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+            Widgets del panel
+          </h2>
+          {dashboardUrl ? (
+            <Link
+              href={dashboardUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-jazz-gold hover:underline"
+            >
+              Ver dashboard completo ↗
+            </Link>
+          ) : null}
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {WIDGETS.map((widget) => {
+            const href = buildWidgetUrl(dashboardUrl, widget.path);
+            return (
+              <article
+                key={widget.key}
+                className="flex flex-col justify-between rounded-xl border border-border bg-white p-5 dark:bg-card"
+              >
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span aria-hidden className="text-xl">
+                      {widget.icon}
+                    </span>
+                    <h3 className="text-[18px] font-semibold text-jazz-dark dark:text-white">
+                      {widget.title}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{widget.description}</p>
+                </div>
+                <div className="mt-4">
+                  {href ? (
+                    <Link
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center rounded-md border border-border px-3 py-1.5 text-sm font-medium text-jazz-dark hover:bg-muted dark:text-white"
+                    >
+                      Abrir en OpenReplay ↗
+                    </Link>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      Configura <code>NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL</code> para habilitar el
+                      enlace.
+                    </span>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
         <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
