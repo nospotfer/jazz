@@ -497,7 +497,7 @@ export function CourseViewClient({
       registrationUnlockMessage:
         "Obrigado por se cadastrar. Esperamos que voce aproveite a primeira aula gratis do curso de jazz que preparamos para voce.",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
   const router = useRouter();
   const searchParams = useSearchParams();
   const [hasPurchased, setHasPurchased] = useState(initialHasPurchased);

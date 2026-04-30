@@ -67,12 +67,5 @@ export function useLanguage() {
     throw new Error('useLanguage must be used within LanguageProvider');
   }
 
-  if (context.language === 'pt') {
-    return {
-      ...context,
-      language: 'es' as const,
-    };
-  }
-
   return context;
 }

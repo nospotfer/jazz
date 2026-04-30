@@ -351,7 +351,7 @@ export function Classes() {
         "Cómo aplicar esta escucha al resto del curso.",
       ],
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const localizedClasses = classes.map((classItem, index) => {
     if (language === "es") return classItem;

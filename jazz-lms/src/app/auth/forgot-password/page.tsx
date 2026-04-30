@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
       inboxDesc:
         "Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha. Confira também a pasta de spam.",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

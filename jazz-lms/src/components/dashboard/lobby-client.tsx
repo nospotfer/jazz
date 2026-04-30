@@ -94,7 +94,7 @@ export function LobbyClient({
       lessons: 'aulas',
       progress: 'Progresso',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const firstName = userName.split(' ')[0];
   const totalInProgress = purchasedCourses.filter(
@@ -222,7 +222,7 @@ function CourseCardComponent({ course }: { course: CourseCard }) {
     en: { enrolledBadge: 'Enrolled', chapters: 'chapters', lessons: 'lessons', progress: 'Progress' },
     fr: { enrolledBadge: 'Inscrit', chapters: 'chapitres', lessons: 'leçons', progress: 'Progression' },
     pt: { enrolledBadge: 'Inscrito', chapters: 'capítulos', lessons: 'aulas', progress: 'Progresso' },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const href = course.purchased
     ? `/courses/${course.id}/lessons/${course.id}`

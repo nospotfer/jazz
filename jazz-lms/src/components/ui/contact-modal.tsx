@@ -136,7 +136,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       sending: 'Enviando...',
       send: 'Enviar mensagem',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [formData, setFormData] = useState({
     messageType: '' as MessageType,

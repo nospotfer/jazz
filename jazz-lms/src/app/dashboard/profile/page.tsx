@@ -255,7 +255,7 @@ export default function ProfilePage() {
       supremeTitle: "Especialista em jazz",
       openSupremePage: "Ver reconhecimento especial",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isSupportLoading, setIsSupportLoading] = useState(false);

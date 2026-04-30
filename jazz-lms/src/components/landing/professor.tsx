@@ -38,7 +38,7 @@ export function Professor() {
       p3: 'Ahora, toda esa experiencia y pasión se concentran en "Cultura del Jazz", un curso diseñado para que, incluso si nunca has tocado un instrumento, puedas entender, sentir y disfrutar el jazz como si siempre hubieras formado parte de él.',
       badge: "Mais de 60 anos de experiência em jazz",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">

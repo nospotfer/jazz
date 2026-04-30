@@ -6,12 +6,16 @@ export type LessonAccessPolicy = {
 
 export function resolveLessonAccessPolicy(params: {
   isAdminOwner: boolean;
+  isAdminRole?: boolean;
   hasFullPurchase: boolean;
   hasLessonPurchase: boolean;
   isFreePreviewLesson: boolean;
 }): LessonAccessPolicy {
   const hasPaidAccess = Boolean(
-    params.isAdminOwner || params.hasFullPurchase || params.hasLessonPurchase,
+    params.isAdminOwner ||
+      params.isAdminRole ||
+      params.hasFullPurchase ||
+      params.hasLessonPurchase,
   );
 
   const canAccessLesson = hasPaidAccess || params.isFreePreviewLesson;

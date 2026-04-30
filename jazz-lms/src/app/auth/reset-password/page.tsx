@@ -119,7 +119,7 @@ export default function ResetPasswordPage() {
       updating: "Atualizando...",
       updatePassword: "Atualizar senha",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [loadingToken, setLoadingToken] = useState(true);
   const [tokenValid, setTokenValid] = useState(false);

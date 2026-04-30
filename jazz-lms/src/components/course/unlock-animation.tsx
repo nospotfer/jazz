@@ -61,7 +61,7 @@ export function UnlockAnimation({
     en: { unlocked: 'Unlocked!' },
     fr: { unlocked: 'Déverrouillé !' },
     pt: { unlocked: 'Desbloqueado!' },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const startAnimation = useCallback(() => {
     setPhase('key-insert');

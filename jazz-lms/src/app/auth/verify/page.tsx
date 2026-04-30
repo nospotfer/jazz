@@ -98,7 +98,7 @@ export default function VerifyCodePage() {
       resendButton: "Reenviar código",
       backToLogin: "Voltar ao login",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");

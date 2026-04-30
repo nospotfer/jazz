@@ -204,7 +204,7 @@ export default function AuthPage() {
       noAccount: "¿No tienes una cuenta?",
       registerLink: "Cadastre-se",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   useEffect(() => {
     if (typeof window === "undefined") return;

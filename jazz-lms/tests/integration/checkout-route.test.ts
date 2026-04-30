@@ -213,7 +213,7 @@ describe("POST /api/checkout", () => {
     expect(res.status).toBe(400);
   });
 
-  test("allows admin checkout flow even when already purchased", async () => {
+  test("blocks admin checkout when already purchased (no bypass)", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "admin@example.com" } },
     });
@@ -231,7 +231,7 @@ describe("POST /api/checkout", () => {
     const req = createCheckoutRequest({ courseId: "c1" });
 
     const res = await POST(req);
-    expect(res.status).toBe(503);
+    expect(res.status).toBe(400);
   });
 
   test("creates purchase immediately for free courses", async () => {

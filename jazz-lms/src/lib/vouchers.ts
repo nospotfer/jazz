@@ -75,6 +75,13 @@ export async function validateVoucherForCourse({
   }
 
   const normalizedCode = code.toUpperCase().trim();
+  if (normalizedCode.length < 4 || normalizedCode.length > 12) {
+    return {
+      valid: false,
+      error: 'Invalid code',
+      message: 'O código de voucher é inválido.',
+    };
+  }
   const prisma = db;
   const voucher = await prisma.voucherCode.findFirst({
     where: {

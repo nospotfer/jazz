@@ -111,7 +111,7 @@ function QuizSideDecor({
       rhythm: 'Ritmo',
       pulse: 'Pulso',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   return (
     <>
@@ -183,7 +183,7 @@ function QuizPlaylistPanel({
       currentTrack: 'After You\'ve Gone — Benny Goodman Trio',
       openSpotify: 'Abrir no Spotify',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   return (
     <aside className="hidden self-start xl:mt-[5.5rem] xl:flex xl:w-[340px] xl:shrink-0 xl:-ml-4 xl:flex-col xl:gap-2.5 2xl:w-[360px] 2xl:-ml-8">
@@ -367,7 +367,7 @@ export function LessonQuizOverlay({
       quizMeta: 'Jazz arcade • 5 opções • 12 rodadas',
       qaLabel: 'QA local: resposta correta é',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   useEffect(() => {
     setSummary(initialSummary);

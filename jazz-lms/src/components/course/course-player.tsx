@@ -397,7 +397,7 @@ export const CoursePlayer = ({
       unlockNotes: "Anotações pessoais por aula",
       buyNowUnlock: "Comprar e desbloquear",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [isReady, setIsReady] = useState(false);
   const [lastSavedPercent, setLastSavedPercent] = useState(

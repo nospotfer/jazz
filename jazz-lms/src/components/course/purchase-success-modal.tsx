@@ -38,7 +38,7 @@ export function PurchaseSuccessModal({ isVisible, onClose, language }: PurchaseS
       subtitle: 'Ahora tienes acceso a todo el contenido del sitio',
       cta: 'Começar a aprender',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   useEffect(() => {
     if (isVisible) {

@@ -59,7 +59,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
       payFullCourse: 'Pagar curso completo',
       chooseMethod: 'Aplicar voucher e continuar',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;

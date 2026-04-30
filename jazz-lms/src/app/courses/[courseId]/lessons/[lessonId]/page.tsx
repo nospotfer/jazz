@@ -13,6 +13,7 @@ import {
   getLessonQuizSummary,
 } from "@/lib/lesson-quiz-server";
 import { resolveLessonAccessPolicy } from "@/lib/lesson-access";
+import { isAdminRole } from "@/lib/admin/permissions";
 import { getServerUser } from "@/lib/server-user";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -109,10 +110,16 @@ const LessonPage = async ({
   const isAdminOwner =
     user.email?.toLowerCase() ===
     (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
+  const dbUserRole = await db.user
+    .findUnique({ where: { email: user.email ?? "" }, select: { role: true } })
+    .then((u) => u?.role ?? null)
+    .catch(() => null);
+  const isAdmin = isAdminRole(dbUserRole);
   const firstPublishedLesson = orderedLessons.at(0);
   const isFreePreviewLesson = firstPublishedLesson?.id === lesson.id;
   const accessPolicy = resolveLessonAccessPolicy({
     isAdminOwner,
+    isAdminRole: isAdmin,
     hasFullPurchase: Boolean(hasFullPurchase),
     hasLessonPurchase: Boolean(hasLessonPurchase),
     isFreePreviewLesson,

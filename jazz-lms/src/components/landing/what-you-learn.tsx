@@ -104,7 +104,7 @@ export function WhatYouLearn() {
       ],
       cta: 'Regístrate',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   return (
     <>

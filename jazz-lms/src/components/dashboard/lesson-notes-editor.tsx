@@ -81,7 +81,7 @@ export function LessonNotesEditor({
       noPdf: 'No hay PDF disponibles para esta lección.',
       downloadPdf: 'Baixar PDF selecionado',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const notesStorageKey = useMemo(
     () => `lesson-notes:${courseId}:${lessonId}`,

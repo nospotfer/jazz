@@ -21,7 +21,7 @@ export function UserNavClient({ user }: UserNavClientProps) {
     en: { signIn: 'Sign in', signUp: 'Sign up' },
     fr: { signIn: 'Se connecter', signUp: 'S’inscrire' },
     pt: { signIn: 'Entrar', signUp: 'Cadastrar' },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   if (!user) {
     return (

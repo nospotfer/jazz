@@ -97,7 +97,7 @@ export function PromoVideo() {
       mute: "Silenciar",
       unmute: "Activar sonido",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(

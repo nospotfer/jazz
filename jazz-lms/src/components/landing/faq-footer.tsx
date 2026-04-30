@@ -163,7 +163,7 @@ export function FAQFooter() {
       topLabel: "Top",
       topAria: "Volver arriba",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const localizedFaqs =
     language === "es"

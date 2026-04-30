@@ -84,7 +84,7 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
       auxiliaryLabel: 'Notas auxiliares',
       auxiliaryTitle: 'Nota auxiliar',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   const [signedUrl, setSignedUrl] = useState<string>('');

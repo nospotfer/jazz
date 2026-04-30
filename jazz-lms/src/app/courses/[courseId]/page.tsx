@@ -5,6 +5,7 @@ import {
   resolveLessonTitle,
 } from "@/lib/course-translations";
 import { db } from "@/lib/db";
+import { isAdminRole } from "@/lib/admin/permissions";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
 import { getServerUser } from "@/lib/server-user";
@@ -63,7 +64,7 @@ export default async function CourseDetailPage({
       fullAccess: "Acesso completo às 15 aulas",
       securePayment: "Pagamento seguro processado pelo Dodo Payments",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const user = await getServerUser();
 
@@ -98,6 +99,11 @@ export default async function CourseDetailPage({
   }
 
   const hasPurchased = course.purchases.length > 0;
+  const dbUserRole = await db.user
+    .findUnique({ where: { email: user.email ?? "" }, select: { role: true } })
+    .then((u) => u?.role ?? null)
+    .catch(() => null);
+  const isAdmin = isAdminRole(dbUserRole);
   const displayPrice =
     course.price && course.price > 0 ? DEFAULT_FULL_COURSE_PRICE_EUR : 0;
   const totalLessons = course.chapters.reduce(
@@ -123,8 +129,8 @@ export default async function CourseDetailPage({
     course.description,
   );
 
-  // If already purchased, redirect to first lesson
-  if (hasPurchased) {
+  // If already purchased or admin, redirect to first lesson
+  if (hasPurchased || isAdmin) {
     const firstLesson = course.chapters[0]?.lessons[0];
     if (firstLesson) {
       return redirect(`/courses/${course.id}/lessons/${firstLesson.id}`);

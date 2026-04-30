@@ -28,7 +28,7 @@ export function JazzCats() {
       body: 'O termo "jazz cat" é uma expressão informal da gíria do jazz para se referir a um músico de jazz ou, de forma mais ampla, a uma pessoa entusiasmada e conhecedora do gênero. A palavra "cat" era uma gíria da época para se referir a um homem, geralmente com um toque de estilo ou malandragem.',
       cta: "Cadastrar",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   return (
     <>

@@ -49,7 +49,7 @@ export default function PaymentPage() {
       noPurchasesTitle: 'Aún no hay compras',
       noPurchasesDesc: 'Seus registros de pagamento aparecerão aqui',
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
   const dateLocale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US';
 
   const [purchases, setPurchases] = useState<PurchaseRecord[]>([]);

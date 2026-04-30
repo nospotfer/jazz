@@ -189,7 +189,7 @@ export function MessagesClient() {
       selectConversation:
         "Selecione uma conversa da caixa de entrada para abrir o chat.",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
   const dateLocale =
     language === "pt"
       ? "pt-BR"

@@ -81,7 +81,7 @@ export function VoucherInput({
       missingCourse: "Curso no encontrado para validar este voucher.",
       remove: "Remover",
     },
-  }[language === 'pt' ? 'es' : language];
+  }[language];
 
   const handleApply = async () => {
     const normalizedCode = code.trim().toUpperCase();
@@ -150,14 +150,14 @@ export function VoucherInput({
           name="voucherCode"
           autoComplete="off"
           inputMode="text"
-          maxLength={10}
-          pattern="[A-Z0-9]{5,10}"
+          maxLength={12}
+          pattern="[A-Z0-9]{5,12}"
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           value={code}
           placeholder={copy.placeholder}
           disabled={isLoading || disabled}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const next = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+            const next = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
             setCode(next);
             setStatus("idle");
           }}
