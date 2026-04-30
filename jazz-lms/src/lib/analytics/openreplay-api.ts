@@ -1,55 +1,60 @@
 /**
- * OpenReplay REST API client (server-side only).
- *
- * Lê dados reais do projeto OpenReplay para renderizar widgets dentro do
- * próprio admin (sem precisar abrir o painel externo).
+ * OpenReplay REST API client (server-side only) — v2.
  *
  * Configuração (env vars server-side, NÃO usar NEXT_PUBLIC_):
  *   OPENREPLAY_API_KEY      — Organization API Key (Preferences → Account)
  *   OPENREPLAY_PROJECT_ID   — id numérico do projeto (ex.: 16692)
  *   OPENREPLAY_API_URL      — opcional, default https://api.openreplay.com
  *
- * Falha sempre fail-safe: retorna `null` ou estrutura vazia em qualquer erro.
+ * A API pública v2 não expõe agregados de sessões cross-user; apenas:
+ *   - lista de projetos
+ *   - busca de usuários do projeto (com total)
+ *   - sessões de um usuário específico
+ * Por isso os widgets agregam o que é factível com esses endpoints.
  */
 
 import 'server-only';
 
-type Session = {
-  sessionID?: string;
-  userID?: string | null;
-  userBrowser?: string | null;
-  userOs?: string | null;
-  userDevice?: string | null;
-  userCountry?: string | null;
-  startTs?: number;
-  duration?: number;
-  pagesCount?: number;
-  eventsCount?: number;
-  errorsCount?: number;
+type ProjectInfo = {
+  projectId: number;
+  projectKey: string;
+  name: string;
+  platform?: string;
+  sampleRate?: number;
+  saveRequestPayloads?: boolean;
+};
+
+type UserRow = {
+  $user_id?: string;
+  $email?: string;
+  $name?: string;
+  $country?: string;
+  $last_seen?: number;
+  $first_event_at?: number;
 };
 
 export type WidgetData = {
   ok: boolean;
   reason?: 'unconfigured' | 'fetch_failed';
+  project: ProjectInfo | null;
+  totalUsers: number;
   trend: Array<{ label: string; count: number }>;
-  topPages: Array<{ label: string; count: number }>;
-  topUsers: Array<{ label: string; count: number }>;
-  topBrowsers: Array<{ label: string; count: number }>;
-  totalSessions: number;
+  topUsers: Array<{ label: string; count: number; sub?: string }>;
+  topCountries: Array<{ label: string; count: number }>;
   windowDays: number;
 };
 
-const EMPTY_DATA = (
-  reason: 'unconfigured' | 'fetch_failed',
+const EMPTY = (
+  reason: WidgetData['reason'] | undefined,
   windowDays: number,
 ): WidgetData => ({
-  ok: false,
+  ok: !reason,
   reason,
+  project: null,
+  totalUsers: 0,
   trend: [],
-  topPages: [],
   topUsers: [],
-  topBrowsers: [],
-  totalSessions: 0,
+  topCountries: [],
   windowDays,
 });
 
@@ -58,123 +63,136 @@ function getConfig() {
   const projectId = (process.env.OPENREPLAY_PROJECT_ID ?? '').trim();
   const apiUrl = (process.env.OPENREPLAY_API_URL ?? 'https://api.openreplay.com').trim();
   if (!apiKey || !projectId) return null;
-  return { apiKey, projectId, apiUrl };
+  return { apiKey, projectId: Number(projectId), apiUrl };
 }
 
 export function isOpenReplayApiConfigured(): boolean {
   return getConfig() !== null;
 }
 
-async function fetchSessions(windowDays: number): Promise<Session[] | null> {
+async function v2<T>(
+  path: string,
+  init?: RequestInit & { body?: string },
+): Promise<T | null> {
   const cfg = getConfig();
   if (!cfg) return null;
-
-  const endTs = Date.now();
-  const startTs = endTs - windowDays * 24 * 60 * 60 * 1000;
-
-  // OpenReplay search endpoint. Página única com limite alto: suficiente
-  // para sites pequenos. Em volumes maiores, paginar.
-  const url = `${cfg.apiUrl}/api/v1/${cfg.projectId}/sessions/search`;
-
   try {
-    const res = await fetch(url, {
-      method: 'POST',
+    const res = await fetch(`${cfg.apiUrl}/v2${path}`, {
+      ...init,
       headers: {
+        Authorization: `Bearer ${cfg.apiKey}`,
         'Content-Type': 'application/json',
-        Authorization: cfg.apiKey,
+        ...(init?.headers ?? {}),
       },
-      body: JSON.stringify({
-        startTimestamp: startTs,
-        endTimestamp: endTs,
-        limit: 200,
-        page: 1,
-        sort: 'startTs',
-        order: 'desc',
-      }),
-      // Cache curto a nível de fetch do Next; layer de cache acima também aplica
-      next: { revalidate: 300 },
+      next: { revalidate: 900 },
     });
-
     if (!res.ok) return null;
-    const data = (await res.json()) as { sessions?: Session[]; data?: Session[] } | Session[];
-    if (Array.isArray(data)) return data;
-    return data.sessions ?? data.data ?? [];
+    const json = (await res.json()) as { data?: T };
+    return (json.data ?? null) as T | null;
   } catch {
     return null;
   }
 }
 
-function aggregate(sessions: Session[], windowDays: number): WidgetData {
-  // Trend (sessões por dia)
-  const trendMap = new Map<string, number>();
-  const today = new Date();
+async function getProject(): Promise<ProjectInfo | null> {
+  const cfg = getConfig();
+  if (!cfg) return null;
+  const list = await v2<ProjectInfo[]>('/public/projects', { method: 'GET' });
+  if (!list) return null;
+  return list.find((p) => p.projectId === cfg.projectId) ?? list[0] ?? null;
+}
+
+type UsersSearchResponse = { total: number; users: UserRow[] };
+
+async function searchUsers(
+  projectKey: string,
+  body: Record<string, unknown>,
+): Promise<UsersSearchResponse | null> {
+  return v2<UsersSearchResponse>(`/public/${projectKey}/users`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
+export async function getOpenReplayWidgetData(windowDays = 7): Promise<WidgetData> {
+  if (!isOpenReplayApiConfigured()) return EMPTY('unconfigured', windowDays);
+
+  const project = await getProject();
+  if (!project) return EMPTY('fetch_failed', windowDays);
+
+  const endTs = Date.now();
+  const startTs = endTs - windowDays * 86_400_000;
+
+  // Busca principal: até 200 usuários ativos na janela.
+  // sortBy/columns têm validação restrita na API; deixamos default.
+  const main = await searchUsers(project.projectKey, {
+    startTimestamp: startTs,
+    endTimestamp: endTs,
+    limit: 200,
+    page: 1,
+    sortOrder: 'desc',
+  });
+
+  if (!main) {
+    // Conexão até a API ok (project foi obtido), mas users falhou.
+    return { ...EMPTY(undefined, windowDays), project, ok: true };
+  }
+
+  const users = main.users ?? [];
+  const totalUsers = main.total ?? users.length;
+
+  // Top usuários (até 5)
+  const topUsers = users.slice(0, 5).map((u) => {
+    const id = u.$user_id ?? u.$email ?? '(anónimo)';
+    const sub = u.$last_seen
+      ? new Date(u.$last_seen).toLocaleString('es-ES', {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        })
+      : undefined;
+    return { label: id, count: 1, sub };
+  });
+
+  // Top países
+  const countryMap = new Map<string, number>();
+  for (const u of users) {
+    const c = (u.$country ?? '').trim() || '—';
+    countryMap.set(c, (countryMap.get(c) ?? 0) + 1);
+  }
+  const topCountries = Array.from(countryMap.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  // Tendência: usuários ativos por dia (uma chamada por dia, só lê o total).
+  // Em janelas grandes seria caro; com 7 dias e revalidate=900 fica ok.
+  const trend: WidgetData['trend'] = [];
   for (let i = windowDays - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(5, 10); // MM-DD
-    trendMap.set(key, 0);
-  }
-  for (const s of sessions) {
-    if (!s.startTs) continue;
-    const d = new Date(s.startTs);
-    const key = d.toISOString().slice(5, 10);
-    if (trendMap.has(key)) trendMap.set(key, (trendMap.get(key) ?? 0) + 1);
-  }
-  const trend = Array.from(trendMap.entries()).map(([label, count]) => ({ label, count }));
+    const dayEnd = new Date();
+    dayEnd.setHours(23, 59, 59, 999);
+    dayEnd.setDate(dayEnd.getDate() - i);
+    const dayStart = new Date(dayEnd);
+    dayStart.setHours(0, 0, 0, 0);
 
-  // Top users (usa userID quando presente; senão "Anónimo")
-  const userCounts = new Map<string, number>();
-  for (const s of sessions) {
-    const key = s.userID && s.userID.trim() ? s.userID : 'Anónimo';
-    userCounts.set(key, (userCounts.get(key) ?? 0) + 1);
+    const day = await searchUsers(project.projectKey, {
+      startTimestamp: dayStart.getTime(),
+      endTimestamp: dayEnd.getTime(),
+      limit: 1,
+      page: 1,
+    });
+    trend.push({
+      label: `${dayStart.getMonth() + 1}/${dayStart.getDate()}`,
+      count: day?.total ?? 0,
+    });
   }
-  const topUsers = Array.from(userCounts.entries())
-    .map(([label, count]) => ({ label, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
-  // Top browsers
-  const browserCounts = new Map<string, number>();
-  for (const s of sessions) {
-    const key = (s.userBrowser ?? 'Desconocido').trim() || 'Desconocido';
-    browserCounts.set(key, (browserCounts.get(key) ?? 0) + 1);
-  }
-  const topBrowsers = Array.from(browserCounts.entries())
-    .map(([label, count]) => ({ label, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
-  // Top pages: a API de sessions não traz URLs por sessão sem expansão.
-  // Como aproximação inicial, usamos pagesCount agregado por SO/dispositivo.
-  // Quando o usuário ativar a API de pageviews ou cards, trocamos por dados reais.
-  const deviceCounts = new Map<string, number>();
-  for (const s of sessions) {
-    const key = (s.userDevice ?? 'desktop').toString();
-    deviceCounts.set(key, (deviceCounts.get(key) ?? 0) + (s.pagesCount ?? 1));
-  }
-  const topPages = Array.from(deviceCounts.entries())
-    .map(([label, count]) => ({ label: `Páginas en ${label}`, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
 
   return {
     ok: true,
+    project,
+    totalUsers,
     trend,
-    topPages,
     topUsers,
-    topBrowsers,
-    totalSessions: sessions.length,
+    topCountries,
     windowDays,
   };
-}
-
-/**
- * Busca dados reais agregados para os widgets.
- * Janela default: 7 dias.
- */
-export async function getOpenReplayWidgetData(windowDays = 7): Promise<WidgetData> {
-  if (!isOpenReplayApiConfigured()) return EMPTY_DATA('unconfigured', windowDays);
-  const sessions = await fetchSessions(windowDays);
-  if (sessions === null) return EMPTY_DATA('fetch_failed', windowDays);
-  return aggregate(sessions, windowDays);
 }
