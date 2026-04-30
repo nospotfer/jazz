@@ -38,9 +38,9 @@ export async function GET(req: Request) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // Janela: últimas 6 horas. Cron roda a cada 5min, então cobre todos os
-  // pagamentos recentes mesmo se algumas execuções falharem.
-  const sinceISO = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+  // Janela: últimas 48 horas. Cron roda diariamente; janela > 24h cobre
+  // qualquer atraso ou execução perdida.
+  const sinceISO = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
   // Pega usuários que tiveram atividade recente (últimos 7 dias) ou que
   // ainda não compraram nada (potenciais conversões pendentes).
