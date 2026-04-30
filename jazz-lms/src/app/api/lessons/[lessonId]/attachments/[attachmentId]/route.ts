@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isAdminRole } from "@/lib/admin/permissions";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/lib/language";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { createClient } from "@/utils/supabase/server";
@@ -151,6 +152,14 @@ export async function GET(
     const isAdminOwner = (user.email ?? "").toLowerCase() === adminOwnerEmail;
     const courseId = attachment.lesson.chapter.courseId;
 
+    const dbUser = user.email
+      ? await db.user.findUnique({
+          where: { email: user.email },
+          select: { role: true },
+        })
+      : null;
+    const isAdmin = isAdminRole(dbUser?.role ?? null);
+
     const [hasFullCoursePurchase, hasLessonPurchase, courseWithLessons] =
       await Promise.all([
         db.purchase.findUnique({
@@ -193,6 +202,7 @@ export async function GET(
     const isFreePreview = firstLessonInCourse?.id === attachment.lessonId;
     const canAccess = Boolean(
       isAdminOwner ||
+      isAdmin ||
       hasFullCoursePurchase ||
       hasLessonPurchase ||
       isFreePreview,

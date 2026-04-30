@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isAdminRole } from "@/lib/admin/permissions";
 import { createMuxPlaybackTokens } from "@/lib/mux";
 import { extractMuxPlaybackId, isValidMuxPlaybackId } from "@/lib/mux-playback";
 import { createClient } from "@/utils/supabase/server";
@@ -38,8 +39,10 @@ export async function GET(
     }
 
     const courseId = lesson.chapter.courseId;
+    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
+    const isAdminOwner = (user.email ?? "").toLowerCase() === adminOwnerEmail;
 
-    const [hasCoursePurchase, hasLessonPurchase, firstLessonInCourse] =
+    const [hasCoursePurchase, hasLessonPurchase, firstLessonInCourse, dbUser] =
       await Promise.all([
         db.purchase.findUnique({
           where: {
@@ -70,11 +73,22 @@ export async function GET(
             id: true,
           },
         }),
+        user.email
+          ? db.user.findUnique({
+              where: { email: user.email },
+              select: { role: true },
+            })
+          : Promise.resolve(null),
       ]);
 
+    const isAdmin = isAdminRole(dbUser?.role ?? null);
     const isFreePreview = firstLessonInCourse?.id === lesson.id;
     const canAccess = Boolean(
-      isFreePreview || hasCoursePurchase || hasLessonPurchase,
+      isAdminOwner ||
+        isAdmin ||
+        isFreePreview ||
+        hasCoursePurchase ||
+        hasLessonPurchase,
     );
 
     if (!canAccess) {
