@@ -1,88 +1,19 @@
 import Link from 'next/link';
 import { requirePermission } from '@/lib/admin';
+import {
+  getOpenReplayWidgetData,
+  isOpenReplayApiConfigured,
+  type WidgetData,
+} from '@/lib/analytics/openreplay-api';
 
 export const dynamic = 'force-dynamic';
 
-const TRACKED_ROUTES = [
-  '/ (landing pública)',
-  '/auth (login y registro — campos sensibles enmascarados)',
-  '/courses, /courses/[id] (catálogo y detalle)',
-  '/dashboard (área del estudiante)',
-  '/dashboard/courses/[id] (lección/player)',
-  '/dashboard/pdf-view, /dashboard/notes (material)',
-];
-
-const EXCLUDED_ROUTES = [
-  '/admin/* (todo el panel administrativo)',
-  '/api/* (endpoints internos)',
-  'Campos de contraseña y datos de pago',
-];
-
-const PRIVACY_RULES = [
-  'Inputs de contraseña son enmascarados por el tracker.',
-  'Emails ofuscados (obscureTextEmails: true).',
-  'Respeta la cabecera Do Not Track del navegador.',
-  'iFrames no son capturados (captureIFrames: false).',
-];
-
-type WidgetKey = 'trend' | 'funnel' | 'heatmaps' | 'topPages' | 'topUsers' | 'topBrowsers';
-
-const WIDGETS: Array<{
-  key: WidgetKey;
-  title: string;
-  description: string;
-  icon: string;
-  path: string;
-}> = [
-  {
-    key: 'trend',
-    title: 'Tendencia de sesiones',
-    description: 'Evolución del número de sesiones a lo largo del tiempo.',
-    icon: '📈',
-    path: '/metrics',
-  },
-  {
-    key: 'funnel',
-    title: 'Embudo de conversión',
-    description: 'Pasos de conversión, total de conversiones y abandono.',
-    icon: '🔻',
-    path: '/funnels',
-  },
-  {
-    key: 'heatmaps',
-    title: 'Mapas de calor',
-    description: 'Clicks y áreas más interactuadas por los usuarios.',
-    icon: '🔥',
-    path: '/heatmaps',
-  },
-  {
-    key: 'topPages',
-    title: 'Páginas más vistas',
-    description: 'Top de URLs por sesiones y visitas.',
-    icon: '🏆',
-    path: '/metrics',
-  },
-  {
-    key: 'topUsers',
-    title: 'Usuarios destacados',
-    description: 'Usuarios con más sesiones o tiempo de uso.',
-    icon: '👥',
-    path: '/metrics',
-  },
-  {
-    key: 'topBrowsers',
-    title: 'Navegadores principales',
-    description: 'Distribución de sesiones por navegador.',
-    icon: '🌐',
-    path: '/metrics',
-  },
-];
+const WINDOW_DAYS = 7;
 
 function buildWidgetUrl(dashboardUrl: string, path: string): string {
   if (!dashboardUrl) return '';
   try {
     const base = new URL(dashboardUrl);
-    // Mantém o pathname existente como prefixo (ex.: /<projectId>) e anexa o path do widget.
     const existing = base.pathname.replace(/\/$/, '');
     base.pathname = `${existing}${path}`;
     return base.toString();
@@ -91,194 +22,144 @@ function buildWidgetUrl(dashboardUrl: string, path: string): string {
   }
 }
 
-function StatusBadge({ status }: { status: 'active' | 'disabled' | 'unconfigured' }) {
-  const config = {
-    active: {
-      label: 'Activo',
-      className: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    },
-    disabled: {
-      label: 'Desactivado',
-      className: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-    },
-    unconfigured: {
-      label: 'No configurado',
-      className: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
-    },
-  }[status];
+function maxCount(items: Array<{ count: number }>): number {
+  return items.reduce((acc, item) => Math.max(acc, item.count), 0);
+}
+
+function BarRow({
+  label,
+  count,
+  max,
+}: {
+  label: string;
+  count: number;
+  max: number;
+}) {
+  const pct = max > 0 ? Math.max(2, Math.round((count / max) * 100)) : 0;
   return (
-    <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${config.className}`}
-    >
-      {config.label}
-    </span>
+    <div className="flex items-center gap-3">
+      <span
+        className="min-w-0 flex-1 truncate text-sm text-jazz-dark dark:text-white"
+        title={label}
+      >
+        {label}
+      </span>
+      <div className="relative h-2 w-32 overflow-hidden rounded-full bg-muted">
+        <div
+          className="absolute inset-y-0 left-0 bg-jazz-gold"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className="w-10 text-right text-sm font-medium text-jazz-dark dark:text-white">
+        {count}
+      </span>
+    </div>
   );
 }
 
-function EnvCheck({ name, present }: { name: string; present: boolean }) {
+function TrendChart({ data }: { data: WidgetData['trend'] }) {
+  if (data.length === 0) {
+    return <p className="text-sm text-muted-foreground">Sin datos suficientes.</p>;
+  }
+  const max = maxCount(data);
   return (
-    <li className="flex items-center justify-between rounded-md border border-border bg-background/50 px-3 py-2 text-sm">
-      <code className="font-mono text-jazz-dark dark:text-white">{name}</code>
-      <span aria-label={present ? 'configurado' : 'no configurado'}>
-        {present ? (
-          <span className="text-emerald-400">✅ configurada</span>
-        ) : (
-          <span className="text-rose-400">❌ no configurada</span>
-        )}
-      </span>
-    </li>
+    <div className="flex h-32 items-end gap-1">
+      {data.map((point) => {
+        const h = max > 0 ? Math.max(4, Math.round((point.count / max) * 100)) : 4;
+        return (
+          <div
+            key={point.label}
+            className="flex flex-1 flex-col items-center gap-1"
+            title={`${point.label}: ${point.count}`}
+          >
+            <div
+              className="w-full rounded-sm bg-jazz-gold transition-all"
+              style={{ height: `${h}%` }}
+            />
+            <span className="text-[10px] text-muted-foreground">{point.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ListWidget({
+  items,
+  emptyLabel,
+}: {
+  items: Array<{ label: string; count: number }>;
+  emptyLabel: string;
+}) {
+  if (items.length === 0) {
+    return <p className="text-sm text-muted-foreground">{emptyLabel}</p>;
+  }
+  const max = maxCount(items);
+  return (
+    <div className="space-y-2">
+      {items.map((item) => (
+        <BarRow key={item.label} label={item.label} count={item.count} max={max} />
+      ))}
+    </div>
+  );
+}
+
+function WidgetCard({
+  title,
+  icon,
+  children,
+  deepLink,
+  deepLinkLabel = 'Ver detalle ↗',
+}: {
+  title: string;
+  icon: string;
+  children: React.ReactNode;
+  deepLink?: string;
+  deepLinkLabel?: string;
+}) {
+  return (
+    <article className="flex flex-col gap-3 rounded-xl border border-border bg-white p-5 dark:bg-card">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span aria-hidden className="text-xl">
+            {icon}
+          </span>
+          <h3 className="text-[18px] font-semibold text-jazz-dark dark:text-white">{title}</h3>
+        </div>
+        {deepLink ? (
+          <Link
+            href={deepLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium text-jazz-gold hover:underline"
+          >
+            {deepLinkLabel}
+          </Link>
+        ) : null}
+      </div>
+      <div className="flex-1">{children}</div>
+    </article>
   );
 }
 
 export default async function AdminHeatmapPage() {
   await requirePermission('analytics.read');
 
-  const enabledFlag = process.env.NEXT_PUBLIC_OPENREPLAY_ENABLED === 'true';
-  const projectKey = (process.env.NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY ?? '').trim();
-  const ingestUrl = (process.env.NEXT_PUBLIC_OPENREPLAY_INGEST_URL ?? '').trim();
   const dashboardUrl = (process.env.NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL ?? '').trim();
-
-  const hasKey = projectKey.length > 0;
-  const status: 'active' | 'disabled' | 'unconfigured' = !hasKey
-    ? 'unconfigured'
-    : enabledFlag
-      ? 'active'
-      : 'disabled';
+  const apiConfigured = isOpenReplayApiConfigured();
+  const data = await getOpenReplayWidgetData(WINDOW_DAYS);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-[28px] font-bold leading-[40px] text-jazz-dark dark:text-white">
-            Heatmap — OpenReplay
+            Heatmap & Analytics
           </h1>
-          <p className="mt-1 text-[18px] text-muted-foreground">
-            Session replay y análisis de comportamiento para las rutas públicas y de estudiantes.
+          <p className="mt-1 text-[16px] text-muted-foreground">
+            Datos en tiempo real del comportamiento de los visitantes (últimos {WINDOW_DAYS} días).
           </p>
         </div>
-        <StatusBadge status={status} />
-      </header>
-
-      <section aria-label="Widgets del dashboard de OpenReplay">
-        <div className="mb-3 flex items-end justify-between">
-          <h2 className="text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-            Widgets del panel
-          </h2>
-          {dashboardUrl ? (
-            <Link
-              href={dashboardUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-jazz-gold hover:underline"
-            >
-              Ver dashboard completo ↗
-            </Link>
-          ) : null}
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {WIDGETS.map((widget) => {
-            const href = buildWidgetUrl(dashboardUrl, widget.path);
-            return (
-              <article
-                key={widget.key}
-                className="flex flex-col justify-between rounded-xl border border-border bg-white p-5 dark:bg-card"
-              >
-                <div>
-                  <div className="mb-2 flex items-center gap-2">
-                    <span aria-hidden className="text-xl">
-                      {widget.icon}
-                    </span>
-                    <h3 className="text-[18px] font-semibold text-jazz-dark dark:text-white">
-                      {widget.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{widget.description}</p>
-                </div>
-                <div className="mt-4">
-                  {href ? (
-                    <Link
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center rounded-md border border-border px-3 py-1.5 text-sm font-medium text-jazz-dark hover:bg-muted dark:text-white"
-                    >
-                      Abrir en OpenReplay ↗
-                    </Link>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      Configura <code>NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL</code> para habilitar el
-                      enlace.
-                    </span>
-                  )}
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Estado
-        </h2>
-        {status === 'active' && (
-          <p className="text-muted-foreground">
-            OpenReplay está activo y registrando sesiones públicas. Las rutas{' '}
-            <code>/admin/*</code> y <code>/api/*</code> están excluidas.
-          </p>
-        )}
-        {status === 'disabled' && (
-          <p className="text-muted-foreground">
-            La integración está configurada pero deshabilitada por la variable{' '}
-            <code>NEXT_PUBLIC_OPENREPLAY_ENABLED</code>. Configúrala como <code>true</code> en
-            Vercel para empezar a registrar sesiones.
-          </p>
-        )}
-        {status === 'unconfigured' && (
-          <p className="text-muted-foreground">
-            OpenReplay no está configurado. Define{' '}
-            <code>NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY</code> en Vercel para habilitarlo.
-          </p>
-        )}
-      </section>
-
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Rutas rastreadas
-        </h2>
-        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
-          {TRACKED_ROUTES.map((route) => (
-            <li key={route}>{route}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Rutas excluidas
-        </h2>
-        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
-          {EXCLUDED_ROUTES.map((route) => (
-            <li key={route}>{route}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Privacidad y enmascaramiento
-        </h2>
-        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
-          {PRIVACY_RULES.map((rule) => (
-            <li key={rule}>{rule}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Dashboard de OpenReplay
-        </h2>
         {dashboardUrl ? (
           <Link
             href={dashboardUrl}
@@ -286,34 +167,108 @@ export default async function AdminHeatmapPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center rounded-md bg-jazz-gold px-4 py-2 text-sm font-medium text-jazz-dark hover:bg-jazz-gold/90"
           >
-            Abrir dashboard ↗
+            Abrir panel completo ↗
           </Link>
-        ) : (
-          <p className="text-muted-foreground">
-            URL del dashboard no configurada. Define{' '}
-            <code>NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL</code> en Vercel para mostrar el enlace
-            directo aquí.
+        ) : null}
+      </header>
+
+      {!apiConfigured ? (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-200">
+          <p className="font-semibold">Datos en vivo no disponibles todavía.</p>
+          <p className="mt-1 text-amber-100/90">
+            Para mostrar las métricas reales aquí dentro, configura en Vercel:
           </p>
-        )}
+          <ul className="mt-2 list-disc space-y-1 pl-5 font-mono text-xs">
+            <li>
+              <code>OPENREPLAY_API_KEY</code> — Organization API Key (Account → Preferences →
+              Account → API Key en OpenReplay).
+            </li>
+            <li>
+              <code>OPENREPLAY_PROJECT_ID</code> — id numérico del proyecto (ej. <code>16692</code>).
+            </li>
+          </ul>
+          <p className="mt-2 text-amber-100/90">
+            Tras añadir las variables, redepliega el proyecto.
+          </p>
+        </div>
+      ) : null}
+
+      {apiConfigured && data.reason === 'fetch_failed' ? (
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-5 text-sm text-rose-200">
+          <p className="font-semibold">No se pudieron cargar los datos de OpenReplay.</p>
+          <p className="mt-1">
+            Verifica que <code>OPENREPLAY_API_KEY</code> tenga permisos sobre el proyecto{' '}
+            <code>{process.env.OPENREPLAY_PROJECT_ID}</code>.
+          </p>
+        </div>
+      ) : null}
+
+      <section aria-label="Resumen">
+        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <p className="text-sm text-muted-foreground">
+            Sesiones registradas en los últimos {WINDOW_DAYS} días
+          </p>
+          <p className="mt-1 text-[36px] font-bold leading-none text-jazz-dark dark:text-white">
+            {data.totalSessions}
+          </p>
+        </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
-          Configuración (variables de entorno)
-        </h2>
-        <ul className="space-y-2">
-          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_ENABLED" present={enabledFlag} />
-          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY" present={hasKey} />
-          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_INGEST_URL" present={ingestUrl.length > 0} />
-          <EnvCheck
-            name="NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL"
-            present={dashboardUrl.length > 0}
-          />
-        </ul>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Tras editar las variables en Vercel, redepliega el proyecto para que el cliente las
-          use.
-        </p>
+      <section aria-label="Widgets" className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <WidgetCard
+          title="Tendencia de sesiones"
+          icon="📈"
+          deepLink={buildWidgetUrl(dashboardUrl, '/metrics')}
+        >
+          <TrendChart data={data.trend} />
+        </WidgetCard>
+
+        <WidgetCard
+          title="Embudo de conversión"
+          icon="🔻"
+          deepLink={buildWidgetUrl(dashboardUrl, '/funnels')}
+          deepLinkLabel="Configurar ↗"
+        >
+          <p className="text-sm text-muted-foreground">
+            Define los pasos del embudo en OpenReplay y los datos aparecerán aquí.
+          </p>
+        </WidgetCard>
+
+        <WidgetCard
+          title="Mapas de calor"
+          icon="🔥"
+          deepLink={buildWidgetUrl(dashboardUrl, '/heatmaps')}
+          deepLinkLabel="Ver heatmaps ↗"
+        >
+          <p className="text-sm text-muted-foreground">
+            Los mapas de calor se generan por página individual. Selecciónala en OpenReplay para
+            visualizar la interacción.
+          </p>
+        </WidgetCard>
+
+        <WidgetCard
+          title="Páginas más activas"
+          icon="🏆"
+          deepLink={buildWidgetUrl(dashboardUrl, '/metrics')}
+        >
+          <ListWidget items={data.topPages} emptyLabel="Sin datos suficientes." />
+        </WidgetCard>
+
+        <WidgetCard
+          title="Usuarios destacados"
+          icon="👥"
+          deepLink={buildWidgetUrl(dashboardUrl, '/metrics')}
+        >
+          <ListWidget items={data.topUsers} emptyLabel="Sin datos suficientes." />
+        </WidgetCard>
+
+        <WidgetCard
+          title="Navegadores principales"
+          icon="🌐"
+          deepLink={buildWidgetUrl(dashboardUrl, '/metrics')}
+        >
+          <ListWidget items={data.topBrowsers} emptyLabel="Sin datos suficientes." />
+        </WidgetCard>
       </section>
     </div>
   );
