@@ -245,11 +245,12 @@ export function VouchersAdminClient({ courses }: Props) {
 
     try {
       const selectedArtist = getVoucherArtistByKey(form.artistKey);
+      const isCustom = form.artistKey === 'CUSTOM' || !selectedArtist;
       const payload = {
         type: form.type,
         courseId: form.courseId || null,
         count: Number(form.count || 1),
-        artistKey: form.type === 'DISCOUNT_PERCENT' ? form.artistKey : null,
+        artistKey: form.type === 'DISCOUNT_PERCENT' && !isCustom ? form.artistKey : null,
         discountPercent: form.type === 'DISCOUNT_PERCENT' ? Number(form.discountPercent || 0) : null,
         discountAmount: form.type === 'DISCOUNT_FIXED' ? Number(form.discountAmount || 0) : null,
         minOrderValue: Number(form.minOrderValue || 0),
@@ -705,20 +706,29 @@ export function VouchersAdminClient({ courses }: Props) {
 
           {form.type === 'DISCOUNT_PERCENT' ? (
             <div>
-              <label className="text-xs text-muted-foreground">Artista</label>
+              <label className="text-xs text-muted-foreground">Artista (opcional)</label>
               <select
                 className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                 value={form.artistKey}
                 onChange={(event) => {
-                  const artist = getVoucherArtistByKey(event.target.value);
+                  const value = event.target.value;
+                  if (value === 'CUSTOM') {
+                    setForm((prev) => ({
+                      ...prev,
+                      artistKey: 'CUSTOM',
+                    }));
+                    return;
+                  }
+                  const artist = getVoucherArtistByKey(value);
                   setForm((prev) => ({
                     ...prev,
-                    artistKey: event.target.value,
+                    artistKey: value,
                     discountPercent: artist ? String(artist.discountPercent) : prev.discountPercent,
                     batchName: artist ? artist.name : prev.batchName,
                   }));
                 }}
               >
+                <option value="CUSTOM">Personalizado (%, livre)</option>
                 {VOUCHER_ARTIST_TIERS.map((artist) => (
                   <option key={artist.key} value={artist.key}>
                     {artist.name} · {artist.discountPercent}%
@@ -736,8 +746,12 @@ export function VouchersAdminClient({ courses }: Props) {
                 type="number"
                 min={1}
                 max={100}
+                step={1}
                 value={form.discountPercent}
-                readOnly
+                readOnly={form.artistKey !== 'CUSTOM' && Boolean(getVoucherArtistByKey(form.artistKey))}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setForm((prev) => ({ ...prev, discountPercent: event.target.value }))
+                }
               />
             </div>
           ) : null}

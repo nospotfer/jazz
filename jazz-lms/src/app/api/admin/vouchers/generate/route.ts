@@ -115,18 +115,8 @@ export async function POST(req: Request) {
     }
 
     if (type === 'DISCOUNT_PERCENT') {
-      if (!selectedArtist) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Invalid artist',
-            message: 'Selecione um artista válido para vouchers percentuais.',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (selectedArtist.discountPercent !== discountPercent) {
+      // Custom % is allowed: artistKey opcional. Se vier, valida o mapeamento.
+      if (selectedArtist && selectedArtist.discountPercent !== discountPercent) {
         return NextResponse.json(
           {
             success: false,

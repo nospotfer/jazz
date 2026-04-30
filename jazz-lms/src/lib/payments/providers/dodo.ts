@@ -84,6 +84,93 @@ export function getDodoConfig() {
   };
 }
 
+export async function createDodoDiscount(input: {
+  code: string;
+  type: 'percentage' | 'flat';
+  /** Para percentage: basis points (20% = 2000). Para flat: USD cents. */
+  amount: number;
+  usageLimit?: number | null;
+  expiresAt?: Date | null;
+  name?: string | null;
+  restrictedToProductIds?: string[];
+}): Promise<{
+  ok: boolean;
+  discountId?: string;
+  code?: string;
+  reason?: string;
+}> {
+  const apiKey = readOptionalEnv('DODO_PAYMENTS_API_KEY');
+  if (!apiKey) {
+    return { ok: false, reason: 'Missing DODO_PAYMENTS_API_KEY' };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), DODO_DEFAULT_TIMEOUT_MS);
+
+  try {
+    const body: Record<string, unknown> = {
+      code: input.code.toUpperCase(),
+      type: input.type,
+      amount: Math.max(1, Math.round(input.amount)),
+    };
+    if (input.usageLimit && input.usageLimit > 0) {
+      body.usage_limit = input.usageLimit;
+    }
+    if (input.expiresAt) {
+      body.expires_at = input.expiresAt.toISOString();
+    }
+    if (input.name) {
+      body.name = input.name;
+    }
+    if (input.restrictedToProductIds && input.restrictedToProductIds.length > 0) {
+      body.restricted_to = input.restrictedToProductIds;
+    }
+
+    const response = await fetch(`${getDodoBaseUrl()}/discounts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    const json = await toJson(response);
+
+    if (!response.ok) {
+      const reason = `Dodo discount create failed (${response.status}): ${JSON.stringify(json ?? {})}`;
+      // 409 / already exists is fine: discount já registrado.
+      const message = JSON.stringify(json ?? {}).toLowerCase();
+      if (
+        response.status === 409 ||
+        message.includes('already exists') ||
+        message.includes('duplicate') ||
+        message.includes('code is already')
+      ) {
+        return { ok: true, code: input.code.toUpperCase(), reason: 'already_exists' };
+      }
+      return { ok: false, reason };
+    }
+
+    const discountId =
+      (json?.discount_id as string | undefined) ??
+      (json?.id as string | undefined) ??
+      undefined;
+    const code =
+      (json?.code as string | undefined) ?? input.code.toUpperCase();
+
+    return { ok: true, discountId, code };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: error instanceof Error ? error.message : 'Unknown error',
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function createDodoCheckout(
   input: DodoCheckoutInput,
 ): Promise<string> {
