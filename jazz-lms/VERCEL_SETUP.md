@@ -173,42 +173,41 @@ working normally.
 
 ---
 
-## Heatmap — Microsoft Clarity
+## Heatmap & Session Replay — OpenReplay
 
-Public-area heatmap and session recording for 50+ UX research. The script is
-**never** injected under `/admin/*` (admin activity is intentionally excluded
-to avoid recording operator data).
+Free/open-source session replay and heatmap-like behavior analysis. The
+tracker runs **only in the browser**, **only on public/student routes**, and
+**never** under `/admin/*` or `/api/*`. If any of the required envs are
+missing, the tracker is silently disabled.
 
-> Production project ID `wgmaqx3k1n` is baked into the client loader as a
-> default — Clarity starts collecting as soon as the site deploys, no Vercel
-> config is strictly required for the tag itself.
+### `NEXT_PUBLIC_OPENREPLAY_ENABLED` (required to activate)
 
-### `NEXT_PUBLIC_CLARITY_PROJECT_ID` (optional override)
+- **Format:** `true` to enable, anything else (including empty) disables.
+- **Recommended:** `false` in development/preview, `true` only in production
+  once the project key is set.
 
-- **Format:** 10-character alphanumeric ID (ex.: `wgmaqx3k1n`).
-- **Purpose:** Only set this to point a non-production environment at a
-  different Clarity project (staging / QA). Leave unset in production.
-- **Where:** https://clarity.microsoft.com/ → project → Settings →
-  Setup → copy the project ID from the install snippet.
-- **Scope:** Applies to landing, auth, courses, and student dashboard only.
+### `NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY` (required to activate)
 
-### `CLARITY_DATA_EXPORT_TOKEN` (secret — recommended)
+- **Format:** alphanumeric project key issued by OpenReplay
+  (e.g. `aUW0mM7uSurSFlu9yfIp`).
+- **Where:** OpenReplay dashboard → Project Settings → Tracker Code.
 
-- **Format:** Bearer JWT issued by Clarity (long string, `eyJ...`).
-- **Purpose:** Server-side token to call
-  `https://www.clarity.ms/export-data/api/v1/project-live-insights`
-  (and other Data Export endpoints) from our backend for reporting.
-- **Where:** https://clarity.microsoft.com/ → project →
-  Settings → Data Export → **Generate new API token**.
-- **How to add in Vercel:**
-  1. Project → Settings → Environment Variables.
-  2. Name: `CLARITY_DATA_EXPORT_TOKEN`.
-  3. Value: paste the full JWT (no quotes).
-  4. Environments: check **Production**, **Preview**, **Development**.
-  5. Sensitivity: mark as **Secret** (Vercel UI option — hides value after save).
-  6. Save → redeploy so the variable is picked up.
-- **Security:** Never commit this token. If it leaks, rotate it in Clarity
-  (Settings → Data Export → Revoke) and update Vercel.
+### `NEXT_PUBLIC_OPENREPLAY_INGEST_URL` (optional)
+
+- **Format:** full URL of the OpenReplay ingest endpoint
+  (e.g. `https://your-openreplay.example.com`).
+- **When:** only required for self-hosted OpenReplay. Leave empty for the
+  Cloud default.
+- **CSP:** when set, the origin is automatically allowed in `connect-src`,
+  `script-src` and `img-src`.
+
+### `NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL` (optional)
+
+- **Format:** full URL to the OpenReplay project dashboard.
+- **Effect:** `/admin/heatmap` shows a one-click link when this is set.
+
+See [docs/openreplay-implementation.md](docs/openreplay-implementation.md) for
+implementation details.
 
 ---
 
@@ -216,7 +215,7 @@ to avoid recording operator data).
 
 Complements the server-side GA4 Data API already used by `/admin/stats` (via
 `GA4_PROPERTY_ID` / `GA4_SERVICE_ACCOUNT_EMAIL` / `GA4_PRIVATE_KEY`). This
-client-side loader collects real browser traffic. Like Clarity, it is
+client-side loader collects real browser traffic. It is
 **never** injected on `/admin/*` and is **fail-safe**: without the env below
 nothing is loaded.
 

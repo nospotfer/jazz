@@ -1,323 +1,195 @@
+import Link from 'next/link';
 import { requirePermission } from '@/lib/admin';
-import {
-  getClarityLiveInsights,
-  parseClarityDimensions,
-  type ClarityExportDimension,
-  type ClarityExportMetric,
-  type ClarityExportRow,
-} from '@/lib/admin/clarity-live-insights';
-import { ClarityMirrorControls } from '@/components/admin/analytics/clarity-mirror-controls';
-import { EmptyState } from '@/components/admin/analytics/empty-state';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 300;
 
-const CLARITY_PROJECT_ID = 'wgmaqx3k1n';
-const MAX_TABLE_ROWS = 30;
+const TRACKED_ROUTES = [
+  '/ (landing pública)',
+  '/auth (login y registro — campos sensibles enmascarados)',
+  '/courses, /courses/[id] (catálogo y detalle)',
+  '/dashboard (área del estudiante)',
+  '/dashboard/courses/[id] (lección/player)',
+  '/dashboard/pdf-view, /dashboard/notes (material)',
+];
 
-function normalizeWindowDays(value: string | undefined): 1 | 2 | 3 {
-  if (value === '1') return 1;
-  if (value === '2') return 2;
-  return 3;
-}
+const EXCLUDED_ROUTES = [
+  '/admin/* (todo el panel administrativo)',
+  '/api/* (endpoints internos)',
+  'Campos de contraseña y datos de pago',
+];
 
-function parseNumeric(value: unknown): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string' && value.trim().length > 0) {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return null;
-}
+const PRIVACY_RULES = [
+  'Inputs de contraseña son enmascarados por el tracker.',
+  'Emails ofuscados (obscureTextEmails: true).',
+  'Respeta la cabecera Do Not Track del navegador.',
+  'iFrames no son capturados (captureIFrames: false).',
+];
 
-function formatNumber(value: number, key?: string): string {
-  const lowerKey = (key || '').toLowerCase();
-  if (lowerKey.includes('percentage') || lowerKey.includes('rate')) {
-    return `${value.toLocaleString('es-ES', { maximumFractionDigits: 2 })}%`;
-  }
-
-  return value.toLocaleString('es-ES', {
-    maximumFractionDigits: value % 1 === 0 ? 0 : 2,
-  });
-}
-
-function normalizeMetricName(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-function findMetric(metrics: ClarityExportMetric[], name: string): ClarityExportMetric | null {
-  const target = normalizeMetricName(name);
-  return metrics.find((metric) => normalizeMetricName(metric.metricName) === target) ?? null;
-}
-
-function getTotalFromMetric(metric: ClarityExportMetric | null, preferredKeys: string[]): number {
-  if (!metric || metric.information.length === 0) return 0;
-  const row = metric.information[0];
-
-  for (const key of preferredKeys) {
-    const value = parseNumeric(row[key]);
-    if (value !== null) return value;
-  }
-
-  for (const [key, rawValue] of Object.entries(row)) {
-    if (key.toLowerCase().includes('count') || key.toLowerCase().includes('session')) {
-      const value = parseNumeric(rawValue);
-      if (value !== null) return value;
-    }
-  }
-
-  return 0;
-}
-
-function buildColumns(rows: ClarityExportRow[], dimensions: ClarityExportDimension[]): {
-  dimensions: string[];
-  numeric: string[];
-} {
-  const dimensionColumns = dimensions.filter((dimension) =>
-    rows.some((row) => row[dimension] !== undefined && String(row[dimension]).trim() !== ''),
+function StatusBadge({ status }: { status: 'active' | 'disabled' | 'unconfigured' }) {
+  const config = {
+    active: {
+      label: 'Activo',
+      className: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    },
+    disabled: {
+      label: 'Desactivado',
+      className: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+    },
+    unconfigured: {
+      label: 'No configurado',
+      className: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+    },
+  }[status];
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${config.className}`}
+    >
+      {config.label}
+    </span>
   );
-
-  const dimensionSet = new Set<string>(dimensionColumns);
-  const numericSet = new Set<string>();
-
-  rows.forEach((row) => {
-    Object.entries(row).forEach(([key, value]) => {
-      if (dimensionSet.has(key)) return;
-      if (parseNumeric(value) !== null) {
-        numericSet.add(key);
-      }
-    });
-  });
-
-  return {
-    dimensions: dimensionColumns,
-    numeric: Array.from(numericSet).slice(0, 8),
-  };
 }
 
-export default async function AdminHeatmapPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{
-    numOfDays?: string;
-    d1?: string;
-    d2?: string;
-    d3?: string;
-  }>;
-}) {
+function EnvCheck({ name, present }: { name: string; present: boolean }) {
+  return (
+    <li className="flex items-center justify-between rounded-md border border-border bg-background/50 px-3 py-2 text-sm">
+      <code className="font-mono text-jazz-dark dark:text-white">{name}</code>
+      <span aria-label={present ? 'configurado' : 'no configurado'}>
+        {present ? (
+          <span className="text-emerald-400">✅ configurada</span>
+        ) : (
+          <span className="text-rose-400">❌ no configurada</span>
+        )}
+      </span>
+    </li>
+  );
+}
+
+export default async function AdminHeatmapPage() {
   await requirePermission('analytics.read');
 
-  const params = (await searchParams) ?? {};
-  const windowDays = normalizeWindowDays(params.numOfDays);
-  const dimensions = parseClarityDimensions([params.d1, params.d2, params.d3]);
-  const effectiveDimensions = dimensions.length > 0 ? dimensions : (['URL'] as ClarityExportDimension[]);
+  const enabledFlag = process.env.NEXT_PUBLIC_OPENREPLAY_ENABLED === 'true';
+  const projectKey = (process.env.NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY ?? '').trim();
+  const ingestUrl = (process.env.NEXT_PUBLIC_OPENREPLAY_INGEST_URL ?? '').trim();
+  const dashboardUrl = (process.env.NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL ?? '').trim();
 
-  const insights = await getClarityLiveInsights({
-    windowDays,
-    dimensions: effectiveDimensions,
-  });
-
-  const isUnavailable = 'unavailable' in insights;
-  const metrics = isUnavailable ? [] : insights.data.metrics;
-
-  const trafficMetric = findMetric(metrics, 'Traffic');
-  const engagementMetric = findMetric(metrics, 'Engagement Time');
-  const pagesPerSessionMetric = findMetric(metrics, 'Pages Per Session');
-
-  const sessions = getTotalFromMetric(trafficMetric, ['totalSessionCount']);
-  const bots = getTotalFromMetric(trafficMetric, ['totalBotSessionCount']);
-  const distinctUsers = getTotalFromMetric(trafficMetric, ['distinctUserCount', 'distantUserCount']);
-  const engagedSessions = getTotalFromMetric(engagementMetric, ['engagedSessions']);
-  const pagesPerSession = getTotalFromMetric(pagesPerSessionMetric, ['pagesPerSession', 'pagesPerSessionPercentage']);
+  const hasKey = projectKey.length > 0;
+  const status: 'active' | 'disabled' | 'unconfigured' = !hasKey
+    ? 'unconfigured'
+    : enabledFlag
+      ? 'active'
+      : 'disabled';
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-[28px] font-bold leading-[40px] text-jazz-dark dark:text-white">
-          Heatmap Mirror — Microsoft Clarity
-        </h1>
-        <p className="mt-1 text-[18px] text-muted-foreground">
-          Vista interna dentro del Jazz LMS con los datos reales exportados por Clarity
-          para no salir del panel.
-        </p>
+      <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-[28px] font-bold leading-[40px] text-jazz-dark dark:text-white">
+            Heatmap — OpenReplay
+          </h1>
+          <p className="mt-1 text-[18px] text-muted-foreground">
+            Session replay y análisis de comportamiento para las rutas públicas y de estudiantes.
+          </p>
+        </div>
+        <StatusBadge status={status} />
       </header>
 
-      <ClarityMirrorControls
-        currentWindowDays={windowDays}
-        currentDimensions={effectiveDimensions}
-      />
-
-      <section
-        aria-label="Resumen en vivo"
-        className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4"
-      >
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <p className="text-[15px] text-muted-foreground">Sesiones</p>
-          <p className="mt-2 text-[28px] font-bold text-jazz-dark dark:text-white">
-            {isUnavailable ? '—' : formatNumber(sessions)}
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Estado
+        </h2>
+        {status === 'active' && (
+          <p className="text-muted-foreground">
+            OpenReplay está activo y registrando sesiones públicas. Las rutas{' '}
+            <code>/admin/*</code> y <code>/api/*</code> están excluidas.
           </p>
-        </div>
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <p className="text-[15px] text-muted-foreground">Usuarios únicos</p>
-          <p className="mt-2 text-[28px] font-bold text-jazz-dark dark:text-white">
-            {isUnavailable ? '—' : formatNumber(distinctUsers)}
+        )}
+        {status === 'disabled' && (
+          <p className="text-muted-foreground">
+            La integración está configurada pero deshabilitada por la variable{' '}
+            <code>NEXT_PUBLIC_OPENREPLAY_ENABLED</code>. Configúrala como <code>true</code> en
+            Vercel para empezar a registrar sesiones.
           </p>
-        </div>
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <p className="text-[15px] text-muted-foreground">Sesiones de bot</p>
-          <p className="mt-2 text-[28px] font-bold text-jazz-dark dark:text-white">
-            {isUnavailable ? '—' : formatNumber(bots)}
+        )}
+        {status === 'unconfigured' && (
+          <p className="text-muted-foreground">
+            OpenReplay no está configurado. Define{' '}
+            <code>NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY</code> en Vercel para habilitarlo.
           </p>
-        </div>
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <p className="text-[15px] text-muted-foreground">Sesiones con engagement</p>
-          <p className="mt-2 text-[28px] font-bold text-jazz-dark dark:text-white">
-            {isUnavailable ? '—' : formatNumber(engagedSessions)}
-          </p>
-        </div>
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <p className="text-[15px] text-muted-foreground">Páginas por sesión</p>
-          <p className="mt-2 text-[28px] font-bold text-jazz-dark dark:text-white">
-            {isUnavailable ? '—' : formatNumber(pagesPerSession, 'pagesPerSession')}
-          </p>
-        </div>
+        )}
       </section>
 
-      {isUnavailable ? (
-        <section
-          aria-label="Estado de la integración"
-          className="rounded-xl border border-yellow-300 bg-yellow-50 p-5 text-[15px] text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-200"
-        >
-          <p className="font-semibold">Integración con Clarity no disponible</p>
-          <p className="mt-1">
-            {insights.reason === 'missing_env'
-              ? 'Falta la variable CLARITY_DATA_EXPORT_TOKEN en Vercel.'
-              : insights.reason === 'rate_limited'
-                ? 'Se alcanzó el límite diario de la API de Clarity (10 llamadas/día). Los datos vuelven mañana.'
-                : 'No se pudieron obtener los datos en vivo desde Clarity para esta vista interna.'}
-          </p>
-        </section>
-      ) : (
-        <section className="space-y-6" aria-label="Métricas detalladas de Clarity">
-          {metrics.length === 0 ? (
-            <EmptyState
-              title="Sin métricas exportables"
-              description="Clarity no devolvió datos para esta combinación de ventana y dimensiones."
-            />
-          ) : (
-            metrics.map((metric) => {
-              const rows = metric.information.slice(0, MAX_TABLE_ROWS);
-              const columns = buildColumns(rows, effectiveDimensions);
-
-              return (
-                <article
-                  key={metric.metricName}
-                  className="rounded-xl border border-border bg-white dark:bg-card"
-                >
-                  <header className="border-b border-border px-5 py-4">
-                    <h2 className="text-[20px] font-semibold text-jazz-dark dark:text-white">
-                      {metric.metricName}
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Top {rows.length} filas exportadas por Clarity.
-                    </p>
-                  </header>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead className="bg-muted/30 text-xs uppercase tracking-wide text-muted-foreground">
-                        <tr>
-                          {columns.dimensions.map((dimension) => (
-                            <th key={dimension} className="px-4 py-3 font-semibold">
-                              {dimension}
-                            </th>
-                          ))}
-                          {columns.numeric.map((column) => (
-                            <th key={column} className="px-4 py-3 font-semibold">
-                              {column}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.length === 0 ? (
-                          <tr>
-                            <td
-                              colSpan={Math.max(1, columns.dimensions.length + columns.numeric.length)}
-                              className="px-4 py-5 text-sm text-muted-foreground"
-                            >
-                              Sin filas para esta métrica.
-                            </td>
-                          </tr>
-                        ) : (
-                          rows.map((row, index) => (
-                            <tr key={`${metric.metricName}-${index}`} className="border-t border-border/70 text-sm">
-                              {columns.dimensions.map((dimension) => (
-                                <td key={dimension} className="px-4 py-3 align-top text-foreground">
-                                  {String(row[dimension] ?? '—')}
-                                </td>
-                              ))}
-                              {columns.numeric.map((column) => {
-                                const value = parseNumeric(row[column]);
-                                return (
-                                  <td key={column} className="px-4 py-3 align-top font-medium text-jazz-dark dark:text-white">
-                                    {value === null ? '—' : formatNumber(value, column)}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </article>
-              );
-            })
-          )}
-        </section>
-      )}
-
-      <section
-        aria-label="Cómo interpretar los datos"
-        className="rounded-xl border border-border bg-white p-5 text-[15px] text-muted-foreground dark:bg-card"
-      >
-        <h2 className="mb-2 text-[18px] font-semibold text-jazz-dark dark:text-white">
-          Notas de este mirror interno
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Rutas rastreadas
         </h2>
-        <ul className="list-inside list-disc space-y-1">
-          <li>
-            Proyecto conectado: <span className="font-mono">{CLARITY_PROJECT_ID}</span>.
-          </li>
-          <li>
-            Datos 100% reales desde Clarity Data Export API con un máximo de 3 días
-            y hasta 10 solicitudes por día.
-          </li>
-          <li>
-            Esta página muestra métricas y desgloses exportables por dimensiones.
-            Los datos están cacheados por 5 minutos para evitar límites de cuota.
-          </li>
+        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
+          {TRACKED_ROUTES.map((route) => (
+            <li key={route}>{route}</li>
+          ))}
         </ul>
+      </section>
 
-        {!isUnavailable ? (
-          <details className="mt-4 rounded-md border border-border bg-background/50 p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-jazz-dark dark:text-white">
-              Ver payload JSON crudo (idéntico a la exportación)
-            </summary>
-            <pre className="mt-3 max-h-[360px] overflow-auto rounded-md bg-black/90 p-3 text-xs text-green-300">
-              {JSON.stringify(
-                {
-                  windowDays,
-                  dimensions: effectiveDimensions,
-                  fetchedAt: insights.data.fetchedAt,
-                  metrics: insights.data.metrics,
-                },
-                null,
-                2,
-              )}
-            </pre>
-          </details>
-        ) : null}
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Rutas excluidas
+        </h2>
+        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
+          {EXCLUDED_ROUTES.map((route) => (
+            <li key={route}>{route}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Privacidad y enmascaramiento
+        </h2>
+        <ul className="list-disc space-y-1 pl-6 text-muted-foreground">
+          {PRIVACY_RULES.map((rule) => (
+            <li key={rule}>{rule}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Dashboard de OpenReplay
+        </h2>
+        {dashboardUrl ? (
+          <Link
+            href={dashboardUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-md bg-jazz-gold px-4 py-2 text-sm font-medium text-jazz-dark hover:bg-jazz-gold/90"
+          >
+            Abrir dashboard ↗
+          </Link>
+        ) : (
+          <p className="text-muted-foreground">
+            URL del dashboard no configurada. Define{' '}
+            <code>NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL</code> en Vercel para mostrar el enlace
+            directo aquí.
+          </p>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <h2 className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white">
+          Configuración (variables de entorno)
+        </h2>
+        <ul className="space-y-2">
+          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_ENABLED" present={enabledFlag} />
+          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY" present={hasKey} />
+          <EnvCheck name="NEXT_PUBLIC_OPENREPLAY_INGEST_URL" present={ingestUrl.length > 0} />
+          <EnvCheck
+            name="NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL"
+            present={dashboardUrl.length > 0}
+          />
+        </ul>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Tras editar las variables en Vercel, redepliega el proyecto para que el cliente las
+          use.
+        </p>
       </section>
     </div>
   );

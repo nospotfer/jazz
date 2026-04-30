@@ -1,7 +1,7 @@
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { GlobalLoadingProvider } from "@/components/providers/global-loading-provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ClarityScript } from "@/components/third-parties/clarity-script";
+import { OpenReplayProvider } from "@/components/analytics/openreplay-provider";
 import { GoogleAnalyticsScript } from "@/components/third-parties/google-analytics-script";
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
@@ -47,7 +47,7 @@ export default function RootLayout({
             <GlobalLoadingProvider>{children}</GlobalLoadingProvider>
           </LanguageProvider>
         </ThemeProvider>
-        <ClarityScript />
+        <OpenReplayProvider />
         <GoogleAnalyticsScript />
       </body>
     </html>

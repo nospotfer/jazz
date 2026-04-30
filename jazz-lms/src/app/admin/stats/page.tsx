@@ -9,7 +9,7 @@ import {
   resolveRange,
   type RangeKey,
 } from '@/lib/admin/metrics-db';
-import { getClarityTrafficOverview } from '@/lib/admin/metrics-clarity';
+import { getTrafficOverview } from '@/lib/admin/metrics-ga';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { PeriodFilter } from '@/components/admin/analytics/period-filter';
 import { RefreshMetricsButton } from '@/components/admin/analytics/refresh-metrics-button';
@@ -53,7 +53,7 @@ export default async function AdminStatsPage({
     getRevenueTimeseries(range),
     getEnrollmentsTimeseries(range),
     getCompletionByCourse(range),
-    getClarityTrafficOverview(range),
+    getTrafficOverview(range),
   ]);
 
   const hasAnyRevenue = revenue.some((r) => r.value > 0);
@@ -140,15 +140,15 @@ export default async function AdminStatsPage({
             unavailable={{
               reason:
                 traffic.reason === 'missing_env'
-                  ? 'Microsoft Clarity no configurado (falta CLARITY_DATA_EXPORT_TOKEN).'
-                  : traffic.reason === 'rate_limited'
-                    ? 'Clarity: límite diario alcanzado. Intenta más tarde.'
-                    : 'No se pudo obtener datos de Clarity.',
+                  ? 'GA4 no configurado (faltan GA4_PROPERTY_ID, GA4_SERVICE_ACCOUNT_EMAIL o GA4_PRIVATE_KEY).'
+                  : traffic.reason === 'timeout'
+                    ? 'GA4: tiempo de espera agotado. Intenta más tarde.'
+                    : 'No se pudo obtener datos de GA4.',
             }}
           />
         ) : (
           <KpiCard
-            label="Sesiones (últimos 3 días)"
+            label="Sesiones en el sitio"
             value={traffic.data.sessions}
             format="number"
             delta={null}

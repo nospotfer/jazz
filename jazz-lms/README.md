@@ -177,18 +177,20 @@ Documentação completa: `docs/painel-metricas-admin.md`.
 - A área pública (landing, auth, dashboard do aluno) suporta ES/EN/FR/PT via `LanguageProvider` (`src/lib/language.ts`) e oferece o `<LanguageSelector />` no topo.
 - Cookie `jazz_lang` e `localStorage.jazz-language-v1` persistem a escolha do usuário. Quando ausentes, `detectLanguageFromAcceptLanguage` recai em `es`.
 
-## Heatmap — Microsoft Clarity
+## Heatmap & Session Replay — OpenReplay
 
-Coleta de heatmap e gravação de sessões via Microsoft Clarity apenas na área
-pública do site (landing, auth, cursos, dashboard do aluno). O admin
-(`/admin/*`) é deliberadamente excluído.
+Coleta de session replay e análise de comportamento via [OpenReplay](https://openreplay.com/)
+apenas na área pública do site (landing, auth, cursos, dashboard do aluno). O admin
+(`/admin/*`) e as rotas `/api/*` são deliberadamente excluídos.
 
-- Project ID padrão embutido: `wgmaqx3k1n` (produção Jazz LMS).
-- Override opcional via `NEXT_PUBLIC_CLARITY_PROJECT_ID` (staging/QA).
-- Data Export API (server-side): `CLARITY_DATA_EXPORT_TOKEN` — JWT secreto,
-  configurado apenas como env no Vercel. Endpoint:
-  `https://www.clarity.ms/export-data/api/v1/project-live-insights`.
-- Código: `src/components/third-parties/clarity-script.tsx`.
+- Pacote: `@openreplay/tracker`.
+- Habilitação por env: `NEXT_PUBLIC_OPENREPLAY_ENABLED=true` + `NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY`.
+- Self-hosted opcional: `NEXT_PUBLIC_OPENREPLAY_INGEST_URL` (a CSP em `next.config.mjs` permite
+  automaticamente o origin desta URL — sem wildcards).
+- Status visual em `/admin/heatmap` (estado, rotas tracked/excluídas, link do dashboard).
+- Falha silenciosa: erro no tracker nunca quebra a UI.
+- Código: `src/lib/analytics/openreplay.ts`, `src/components/analytics/openreplay-provider.tsx`.
+- Documentação: [docs/openreplay-implementation.md](docs/openreplay-implementation.md).
 
 ## Google Analytics 4 — gtag no browser (opcional)
 

@@ -27,8 +27,8 @@ describe('GET /api/admin/metrics/overview', () => {
       resolveRange: vi.fn(),
       getOverview: vi.fn(),
     }));
-    vi.doMock('@/lib/admin/metrics-clarity', () => ({
-      getClarityTrafficOverview: vi.fn(),
+    vi.doMock('@/lib/admin/metrics-ga', () => ({
+      getTrafficOverview: vi.fn(),
     }));
 
     const { GET } = await import('@/app/api/admin/metrics/overview/route');
@@ -57,16 +57,14 @@ describe('GET /api/admin/metrics/overview', () => {
         }),
       };
     });
-    vi.doMock('@/lib/admin/metrics-clarity', () => ({
-      getClarityTrafficOverview: vi.fn().mockResolvedValue({
+    vi.doMock('@/lib/admin/metrics-ga', () => ({
+      getTrafficOverview: vi.fn().mockResolvedValue({
         ok: true,
         data: {
           sessions: 420,
-          bots: 10,
-          distinctUsers: 250,
-          pagesPerSession: 2.1,
-          engagedSessions: 300,
-          windowDays: 3,
+          users: 250,
+          topPages: [],
+          sources: [],
         },
       }),
     }));
@@ -78,10 +76,10 @@ describe('GET /api/admin/metrics/overview', () => {
     expect(body.ok).toBe(true);
     expect(body.range.key).toBe('30d');
     expect(body.data.revenue.value).toBe(1200);
-    expect(body.data.traffic).toEqual({ value: 420, users: 250, windowDays: 3 });
+    expect(body.data.traffic).toEqual({ value: 420, users: 250 });
   });
 
-  test('reports traffic unavailable when Clarity envs are missing', async () => {
+  test('reports traffic unavailable when GA4 envs are missing', async () => {
     vi.doMock('@/lib/admin-api', () => ({
       ensureAdminApiPermission: vi.fn().mockResolvedValue({ ok: true, userId: 'user-1' }),
     }));
@@ -102,8 +100,8 @@ describe('GET /api/admin/metrics/overview', () => {
         }),
       };
     });
-    vi.doMock('@/lib/admin/metrics-clarity', () => ({
-      getClarityTrafficOverview: vi.fn().mockResolvedValue({
+    vi.doMock('@/lib/admin/metrics-ga', () => ({
+      getTrafficOverview: vi.fn().mockResolvedValue({
         unavailable: true,
         reason: 'missing_env',
       }),

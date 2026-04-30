@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { getOverview, isRangeKey, resolveRange, type RangeKey } from '@/lib/admin/metrics-db';
-import { getClarityTrafficOverview } from '@/lib/admin/metrics-clarity';
+import { getTrafficOverview } from '@/lib/admin/metrics-ga';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   const [metrics, traffic] = await Promise.all([
     getOverview(range),
-    getClarityTrafficOverview(range),
+    getTrafficOverview(range),
   ]);
 
   return NextResponse.json(
@@ -38,8 +38,7 @@ export async function GET(request: Request) {
             ? { unavailable: true as const, reason: traffic.reason }
             : {
                 value: traffic.data.sessions,
-                users: traffic.data.distinctUsers,
-                windowDays: traffic.data.windowDays,
+                users: traffic.data.users,
               },
       },
     },

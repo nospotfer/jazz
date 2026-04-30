@@ -21,6 +21,18 @@ const nextConfig = {
   async headers() {
     const isProduction = process.env.NODE_ENV === "production";
 
+    // OpenReplay: derive ingest origin only when env is configured.
+    // Avoids broad wildcards in CSP.
+    let openReplayOrigin = null;
+    const openReplayIngest = process.env.NEXT_PUBLIC_OPENREPLAY_INGEST_URL;
+    if (openReplayIngest && openReplayIngest.trim().length > 0) {
+      try {
+        openReplayOrigin = new URL(openReplayIngest).origin;
+      } catch {
+        openReplayOrigin = null;
+      }
+    }
+
     const cspConnectSrc = [
       "'self'",
       "https://*.supabase.co",
@@ -43,13 +55,21 @@ const nextConfig = {
 
     cspConnectSrc.push("https://inferred.litix.io");
 
+    const cspImgSrc = ["'self'", "data:", "blob:", "https:"];
+
+    if (openReplayOrigin) {
+      cspConnectSrc.push(openReplayOrigin);
+      cspScriptSrc.push(openReplayOrigin);
+      cspImgSrc.push(openReplayOrigin);
+    }
+
     const contentSecurityPolicy = [
       "default-src 'self'",
       "base-uri 'self'",
       "object-src 'none'",
       "frame-ancestors 'none'",
       "form-action 'self'",
-      "img-src 'self' data: blob: https:",
+      `img-src ${cspImgSrc.join(" ")}`,
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       `script-src ${cspScriptSrc.join(" ")}`,
