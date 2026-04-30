@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { DashboardPreferencesProvider } from '@/components/providers/dashboard-preferences-provider';
 import { DashboardPaywallWrapper } from '@/components/dashboard/dashboard-paywall-wrapper';
 import { DashboardLocalTestReset } from '@/components/dashboard/dashboard-local-test-reset';
+import { DashboardPurchaseAutoReconcile } from '@/components/dashboard/dashboard-purchase-auto-reconcile';
 import { getServerUser } from '@/lib/server-user';
 import { getFirstPublishedCourseId, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
 
@@ -44,6 +45,7 @@ export default async function DashboardLayout({
     <DashboardPreferencesProvider>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <DashboardLocalTestReset />
+        <DashboardPurchaseAutoReconcile />
         <Sidebar />
         <div className="lg:pl-64 h-full flex flex-col">
           <DashboardHeader user={dashboardHeaderUser} role={role} isAdmin={isAdmin} />
