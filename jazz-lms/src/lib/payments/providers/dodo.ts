@@ -266,6 +266,76 @@ export async function retrieveDodoPayment(
   }
 }
 
+/**
+ * Lista pagamentos recentes para um determinado email.
+ * Usado como fallback de reconciliação quando o webhook falha
+ * ou quando a URL de retorno não traz `payment_id`.
+ */
+export async function listDodoPaymentsForCustomer(input: {
+  email: string;
+  sinceISO?: string;
+  pageSize?: number;
+}): Promise<DodoApiPaymentRecord[]> {
+  const trimmedEmail = input.email.trim();
+  if (!trimmedEmail) {
+    return [];
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), DODO_DEFAULT_TIMEOUT_MS);
+
+  try {
+    const params = new URLSearchParams();
+    params.set("customer_email", trimmedEmail);
+    params.set("page_size", String(input.pageSize ?? 25));
+    if (input.sinceISO) {
+      params.set("created_at_gte", input.sinceISO);
+    }
+
+    const response = await fetch(
+      `${getDodoBaseUrl()}/payments?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${readRequiredEnv("DODO_PAYMENTS_API_KEY")}`,
+        },
+        signal: controller.signal,
+      },
+    );
+
+    if (!response.ok) {
+      // Loga e devolve vazio: fallback é best-effort.
+      const text = await response.text().catch(() => "");
+      console.error("[DODO_LIST_PAYMENTS_FAILED]", {
+        status: response.status,
+        body: text.slice(0, 500),
+      });
+      return [];
+    }
+
+    const json = (await response.json().catch(() => null)) as
+      | Record<string, unknown>
+      | null;
+    if (!json) {
+      return [];
+    }
+
+    const items = Array.isArray((json as { items?: unknown[] }).items)
+      ? ((json as { items: unknown[] }).items as DodoApiPaymentRecord[])
+      : Array.isArray((json as { data?: unknown[] }).data)
+        ? ((json as { data: unknown[] }).data as DodoApiPaymentRecord[])
+        : [];
+
+    return items;
+  } catch (error) {
+    console.error("[DODO_LIST_PAYMENTS_ERROR]", error);
+    return [];
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export function verifyDodoWebhookSignature(input: {
   payload: string;
   signature: string | null;

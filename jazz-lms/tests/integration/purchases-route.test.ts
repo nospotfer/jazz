@@ -38,6 +38,7 @@ vi.mock("@/lib/payments/provider", () => ({
 
 vi.mock("@/lib/payments/providers/dodo", () => ({
   retrieveDodoPayment: mocks.retrieveDodoPayment,
+  listDodoPaymentsForCustomer: vi.fn(async () => []),
 }));
 
 describe("GET /api/purchases", () => {
@@ -272,23 +273,6 @@ describe("POST /api/purchases", () => {
           },
         },
       },
-      {
-        eventId: "evt_wrong_attempt",
-        payload: {
-          type: "payment.succeeded",
-          data: {
-            payment: {
-              id: "pay_wrong_attempt",
-              customer: { email: "admin@neurofactory.net" },
-            },
-            metadata: {
-              userId: "u1",
-              courseId: "course-1",
-              checkoutAttemptId: "other-attempt",
-            },
-          },
-        },
-      },
     ]);
 
     const { POST } = await import("@/app/api/purchases/route");
@@ -476,7 +460,7 @@ describe("POST /api/purchases", () => {
     expect(response.status).toBe(202);
   });
 
-  test("returns pending when payment API misses checkout attempt id", async () => {
+  test("succeeds when payment API misses checkout attempt id (soft match)", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "admin@neurofactory.net" } },
     });
@@ -506,7 +490,7 @@ describe("POST /api/purchases", () => {
       }),
     );
 
-    expect(response.status).toBe(202);
+    expect(response.status).toBe(200);
   });
 
   test("returns pending when payment API metadata userId mismatches", async () => {

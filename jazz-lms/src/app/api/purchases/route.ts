@@ -1,13 +1,15 @@
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { getPaymentProvider } from "@/lib/payments/provider";
-import { retrieveDodoPayment } from "@/lib/payments/providers/dodo";
+import {
+  listDodoPaymentsForCustomer,
+  retrieveDodoPayment,
+} from "@/lib/payments/providers/dodo";
 import {
   asObject as asDodoObject,
   extractDodoPricing,
   normalizeDodoEventKind,
   readCustomString as readDodoCustomString,
-  resolveDodoCheckoutAttemptId,
   resolveDodoCustomerEmail,
   resolveDodoEventType,
   resolveDodoMetadata,
@@ -121,13 +123,8 @@ async function reconcileDodoFromWebhookEvents(input: {
       }
     }
 
-    if (input.checkoutAttemptId) {
-      const eventAttemptId = resolveDodoCheckoutAttemptId(payload);
-      if (!eventAttemptId || eventAttemptId !== input.checkoutAttemptId) {
-        return false;
-      }
-    }
-
+    // checkoutAttemptId é preferência, não filtro estrito:
+    // alguns fluxos da Dodo não propagam o atributo no payload do evento.
     return true;
   });
 
@@ -231,12 +228,7 @@ async function reconcileDodoFromPaymentApi(input: {
     }
   }
 
-  if (input.checkoutAttemptId) {
-    const paymentAttemptId = resolveDodoCheckoutAttemptId(paymentPayload);
-    if (!paymentAttemptId || paymentAttemptId !== input.checkoutAttemptId) {
-      return null;
-    }
-  }
+  // checkoutAttemptId é preferência, não filtro estrito.
 
   const providerReferenceId =
     resolveDodoProviderReferenceId(paymentPayload) ??
@@ -273,6 +265,107 @@ async function reconcileDodoFromPaymentApi(input: {
     providerReferenceId,
     source: "reconciled_dodo_api",
   };
+}
+
+/**
+ * Fallback final: lista pagamentos recentes por email.
+ * Pega o usuário desbloqueado mesmo se webhook não chegou
+ * e a URL de retorno não traz `payment_id`.
+ */
+async function reconcileDodoFromCustomerEmail(input: {
+  userId: string;
+  userEmail: string | null;
+  courseId: string;
+}) {
+  if (!input.userEmail) {
+    return null;
+  }
+
+  const sinceISO = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const payments = await listDodoPaymentsForCustomer({
+    email: input.userEmail,
+    sinceISO,
+    pageSize: 50,
+  });
+
+  if (payments.length === 0) {
+    return null;
+  }
+
+  for (const payment of payments) {
+    const paymentPayload = {
+      type: `payment.${String(payment.status ?? "unknown").toLowerCase()}`,
+      id: payment.id,
+      data: {
+        payment,
+        customer: asDodoObject(payment.customer),
+        customer_email: payment.customer_email,
+        amount: payment.amount,
+        subtotal_amount: payment.subtotal_amount,
+        total_amount: payment.total_amount,
+        metadata: asDodoObject(payment.metadata),
+      },
+      metadata: asDodoObject(payment.metadata),
+    } as DodoLooseObject;
+
+    const eventType = resolveDodoEventType(paymentPayload);
+    if (normalizeDodoEventKind(eventType) !== "paid") {
+      continue;
+    }
+
+    const metadata = resolveDodoMetadata(paymentPayload);
+    const metadataCourseId = readDodoCustomString(
+      metadata,
+      "courseId",
+      "course_id",
+    );
+    if (!metadataCourseId || metadataCourseId !== input.courseId) {
+      continue;
+    }
+
+    const metadataUserId = readDodoCustomString(metadata, "userId", "user_id");
+    if (metadataUserId && metadataUserId !== input.userId) {
+      continue;
+    }
+
+    const providerReferenceId =
+      resolveDodoProviderReferenceId(paymentPayload) ??
+      (payment.id ? `dodo-pay:${payment.id}` : null);
+    if (!providerReferenceId) {
+      continue;
+    }
+
+    const { subtotalAmount, totalAmount, discountAmount } =
+      extractDodoPricing(paymentPayload);
+
+    await upsertCoursePurchaseFromProvider({
+      userId: input.userId,
+      courseId: input.courseId,
+      providerReferenceId,
+      originalPrice: subtotalAmount,
+      discountAmount,
+      finalPrice: totalAmount,
+      localVoucherCode: readDodoCustomString(
+        metadata,
+        "voucherCode",
+        "voucher_code",
+      ),
+      providerDiscountCode: readDodoCustomString(
+        metadata,
+        "providerDiscountCode",
+        "provider_discount_code",
+        "discountCode",
+        "discount_code",
+      ),
+    });
+
+    return {
+      providerReferenceId,
+      source: "reconciled_dodo_email_listing",
+    };
+  }
+
+  return null;
 }
 
 export async function GET() {
@@ -426,6 +519,33 @@ export async function POST(req: Request) {
           purchased: true,
           source: dodoApiReconcile.source,
           providerReferenceId: dodoApiReconcile.providerReferenceId,
+        });
+      }
+
+      // Último recurso: listar pagamentos recentes por email do cliente.
+      let dodoEmailReconcile: {
+        providerReferenceId: string;
+        source: string;
+      } | null = null;
+      try {
+        dodoEmailReconcile = await reconcileDodoFromCustomerEmail({
+          userId: user.id,
+          userEmail: user.email?.trim().toLowerCase() ?? null,
+          courseId,
+        });
+      } catch (error) {
+        console.error("[PURCHASES_RECONCILE_DODO_EMAIL_LISTING_FAILED]", {
+          userId: user.id,
+          courseId,
+          message: toErrorMessage(error),
+        });
+      }
+
+      if (dodoEmailReconcile) {
+        return NextResponse.json({
+          purchased: true,
+          source: dodoEmailReconcile.source,
+          providerReferenceId: dodoEmailReconcile.providerReferenceId,
         });
       }
 
