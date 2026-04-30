@@ -10,6 +10,7 @@ export type DodoCheckoutInput = {
 
 export type DodoApiPaymentRecord = {
   id?: string;
+  payment_id?: string;
   status?: string;
   amount?: string | number;
   subtotal_amount?: string | number;
@@ -327,7 +328,13 @@ export async function listDodoPaymentsForCustomer(input: {
         ? ((json as { data: unknown[] }).data as DodoApiPaymentRecord[])
         : [];
 
-    return items;
+    // A API de listagem da Dodo retorna `payment_id`, mas a API de retrieve
+    // e os webhooks usam `id`. Normaliza para que o resto do código possa
+    // usar `payment.id` indistintamente.
+    return items.map((item) => ({
+      ...item,
+      id: item.id ?? item.payment_id,
+    }));
   } catch (error) {
     console.error("[DODO_LIST_PAYMENTS_ERROR]", error);
     return [];
