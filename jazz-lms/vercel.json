@@ -1,5 +1,11 @@
 {
   "framework": "nextjs",
   "buildCommand": "npm run pdf:worker:sync && prisma generate && next build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "crons": [
+    {
+      "path": "/api/cron/payments-sweep",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
