@@ -7,6 +7,7 @@ import { DashboardPreferencesProvider } from '@/components/providers/dashboard-p
 import { DashboardPaywallWrapper } from '@/components/dashboard/dashboard-paywall-wrapper';
 import { DashboardLocalTestReset } from '@/components/dashboard/dashboard-local-test-reset';
 import { DashboardPurchaseAutoReconcile } from '@/components/dashboard/dashboard-purchase-auto-reconcile';
+import { CheckoutSessionGuard } from '@/components/dashboard/checkout-session-guard';
 import { getServerUser } from '@/lib/server-user';
 import { getFirstPublishedCourseId, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
 
@@ -45,6 +46,7 @@ export default async function DashboardLayout({
     <DashboardPreferencesProvider>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <DashboardLocalTestReset />
+        <CheckoutSessionGuard currentUserId={user.id} />
         <DashboardPurchaseAutoReconcile />
         <Sidebar />
         <div className="lg:pl-64 h-full flex flex-col">

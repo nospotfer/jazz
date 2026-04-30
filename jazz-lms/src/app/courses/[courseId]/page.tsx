@@ -1,4 +1,5 @@
 import { CourseEnrollButton } from "@/components/course/course-enroll-button";
+import { CheckoutSessionGuard } from "@/components/dashboard/checkout-session-guard";
 import {
   getCourseTranslationBundle,
   resolveCourseText,
@@ -139,6 +140,7 @@ export default async function CourseDetailPage({
 
   return (
     <div className="min-h-screen bg-background">
+      <CheckoutSessionGuard currentUserId={user.id} />
       {/* Hero */}
       <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-12 sm:py-16">

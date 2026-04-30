@@ -352,8 +352,9 @@ export async function POST(req: Request) {
     const encodedCourseId = encodeURIComponent(courseId);
     const checkoutAttemptId = randomUUID();
     const encodedCheckoutAttemptId = encodeURIComponent(checkoutAttemptId);
-    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
-    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}`;
+    const encodedExpectedUserId = encodeURIComponent(user.id);
+    const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}&expectedUserId=${encodedExpectedUserId}`;
+    const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}&expectedUserId=${encodedExpectedUserId}`;
 
     const checkoutMetadata = {
       purchaseType: "course",
