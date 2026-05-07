@@ -202,23 +202,31 @@ describe("CoursePlayer Mux retry behavior", () => {
       expect(mocks.muxPlayerProps.current).not.toBeNull();
     });
 
-    // Fire 5 errors: only 2 should trigger retries (max=2).
-    for (let i = 0; i < 5; i += 1) {
+    // Fire errors sequentially so each retry cycle can finish before the next onError.
+    for (let i = 0; i < 3; i += 1) {
       await act(async () => {
         const onError = mocks.muxPlayerProps.current?.onError as
           | (() => void)
           | undefined;
         onError?.();
       });
-      // Allow microtasks to settle between errors.
-      await act(async () => {
-        await Promise.resolve();
+
+      await waitFor(() => {
+        expect(muxPlaybackCalls()).toHaveLength(i + 2);
       });
     }
 
+    // Further errors should not trigger extra retries after max attempts.
+    await act(async () => {
+      const onError = mocks.muxPlayerProps.current?.onError as
+        | (() => void)
+        | undefined;
+      onError?.();
+    });
+
     await waitFor(() => {
-      // 1 initial + 2 retries = 3.
-      expect(muxPlaybackCalls()).toHaveLength(3);
+      // 1 initial + 3 retries = 4.
+      expect(muxPlaybackCalls()).toHaveLength(4);
     });
   });
 });

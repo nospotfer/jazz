@@ -879,7 +879,8 @@ export const CoursePlayer = ({
     setMuxRetryState("idle");
   }, [lesson.id]);
 
-  const MAX_MUX_RETRIES = 2;
+  const MAX_MUX_RETRIES = 3;
+  const RETRY_BASE_DELAY_MS = 250;
 
   const retryPlayback = useCallback(async () => {
     if (muxRetryInFlightRef.current) return;
@@ -892,6 +893,11 @@ export const CoursePlayer = ({
 
       setMuxRetryState("retrying");
       setMuxRuntimeError("");
+
+      const retryDelayMs = RETRY_BASE_DELAY_MS * Math.max(1, muxRetryCountRef.current);
+      await new Promise<void>((resolve) => {
+        window.setTimeout(() => resolve(), retryDelayMs);
+      });
 
       const response = await axios.get(
         `/api/lessons/${lesson.id}/mux-playback`,
@@ -929,6 +935,7 @@ export const CoursePlayer = ({
   }, [
     copy.muxRetryExhausted,
     lesson.id,
+    RETRY_BASE_DELAY_MS,
     setPlaybackId,
     setPlaybackToken,
     setThumbnailToken,
