@@ -1,9 +1,9 @@
 import { createMuxPlaybackTokens } from '@/lib/mux';
 
 const LESSON_PLAYBACK_IDS = [
-  'rZItzE4EBu4mLxAcVsNrTuH00kg4pFcpgrYYY7SkgVVM',
+  'qVp00sifjJCQKujhDSPLiJNRiZF8H4OdFoC7u3of00gyU',
   'R5uBKi01LJHvyG02S8VcrgrTj7D65hPj00vWuonU602WIPM',
-  'Xv01wg01NiO7XJ01mNcNOUigP2bbzKg9yPMfioUb01yh501g',
+  'iMs2GxXGyK5CjymZX395Yf7hzeY8OYe7FzD7Yi3Zcow',
   'n5d01VwkLk1SFrpg5hIX75KuLy4a01huEdb4jxsRMbmOc',
   'jTqTQEHQYVur1n9yV8Qi7umKQQAwQSwZsEFjqO01bwcs',
   'wv8E5ZCIoskvQRecgAmbsNa1bdlC028esSMWBLaLDOIc',
