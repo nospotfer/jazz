@@ -192,7 +192,11 @@ export const CoursePlayer = ({
       lessonReset: "El progreso de la lección se reinició.",
       loadingSignedVideo: "Cargando video firmado de la lección...",
       muxTokenError:
-        "Mux rechazó el token de reproducción. Verifica MUX_SIGNING_KEY_ID y MUX_SIGNING_PRIVATE_KEY.",
+        "No pudimos reproducir este video ahora. Inténtalo de nuevo.",
+      muxRetrying: "Reintentando reproducción...",
+      muxRetryExhausted:
+        "No pudimos reproducir el video tras varios intentos. Recarga manualmente o vuelve más tarde.",
+      muxReloadButton: "Recargar video",
       lessonLockedTitle: "Esta lección está bloqueada",
       lessonLockedDesc:
         "Compra el curso completo para ver todas las clases con reproducción Mux en alta calidad.",
@@ -255,7 +259,11 @@ export const CoursePlayer = ({
       lessonReset: "Lesson progress reset.",
       loadingSignedVideo: "Loading signed lesson video...",
       muxTokenError:
-        "Mux rejected the playback token. Check MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY.",
+        "We couldn’t play this video right now. Please try again.",
+      muxRetrying: "Retrying playback...",
+      muxRetryExhausted:
+        "We couldn’t play the video after several attempts. Reload manually or try again later.",
+      muxReloadButton: "Reload video",
       lessonLockedTitle: "This lesson is locked",
       lessonLockedDesc:
         "Purchase the full course to watch all classes with high-quality Mux playback.",
@@ -317,7 +325,11 @@ export const CoursePlayer = ({
       lessonReset: "Progression de la leçon réinitialisée.",
       loadingSignedVideo: "Chargement de la vidéo sécurisée de la leçon...",
       muxTokenError:
-        "Mux a rejeté le token de lecture. Vérifiez MUX_SIGNING_KEY_ID et MUX_SIGNING_PRIVATE_KEY.",
+        "Impossible de lire cette vidéo pour le moment. Veuillez réessayer.",
+      muxRetrying: "Nouvelle tentative de lecture...",
+      muxRetryExhausted:
+        "Impossible de lire la vidéo après plusieurs tentatives. Rechargez manuellement ou réessayez plus tard.",
+      muxReloadButton: "Recharger la vidéo",
       lessonLockedTitle: "Cette leçon est verrouillée",
       lessonLockedDesc:
         "Achetez le cours complet pour regarder toutes les leçons avec une lecture Mux HD.",
@@ -380,7 +392,11 @@ export const CoursePlayer = ({
       lessonReset: "Progresso da aula redefinido.",
       loadingSignedVideo: "Carregando vídeo assinado da aula...",
       muxTokenError:
-        "O Mux rejeitou o token de reprodução. Verifique MUX_SIGNING_KEY_ID e MUX_SIGNING_PRIVATE_KEY.",
+        "Não foi possível reproduzir este vídeo agora. Tente novamente.",
+      muxRetrying: "Tentando novamente...",
+      muxRetryExhausted:
+        "Não conseguimos reproduzir o vídeo após várias tentativas. Recarregue manualmente ou tente mais tarde.",
+      muxReloadButton: "Recarregar vídeo",
       lessonLockedTitle: "Esta aula está bloqueada",
       lessonLockedDesc:
         "Compre o curso completo para assistir a todas as aulas com reprodução Mux em alta qualidade.",
@@ -456,6 +472,12 @@ export const CoursePlayer = ({
   const muxContainerRef = useRef<HTMLDivElement | null>(null);
   const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
   const hasAppliedMuxDefaultSubtitleRef = useRef(false);
+  const muxRetryCountRef = useRef(0);
+  const muxRetryInFlightRef = useRef(false);
+  const muxLastPositionRef = useRef(0);
+  const [muxRetryState, setMuxRetryState] = useState<
+    "idle" | "retrying" | "exhausted"
+  >("idle");
   const router = useRouter();
   const confetti = useConfettiStore();
 
@@ -848,6 +870,88 @@ export const CoursePlayer = ({
       cancelled = true;
     };
   }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
+
+  // Reset retry state whenever the active lesson changes.
+  useEffect(() => {
+    muxRetryCountRef.current = 0;
+    muxRetryInFlightRef.current = false;
+    muxLastPositionRef.current = 0;
+    setMuxRetryState("idle");
+  }, [lesson.id]);
+
+  const MAX_MUX_RETRIES = 2;
+
+  const retryPlayback = useCallback(async () => {
+    if (muxRetryInFlightRef.current) return;
+    muxRetryInFlightRef.current = true;
+
+    try {
+      const player = muxPlayerRef.current;
+      const lastPos = Math.max(0, Number(player?.currentTime ?? 0));
+      muxLastPositionRef.current = lastPos;
+
+      setMuxRetryState("retrying");
+      setMuxRuntimeError("");
+
+      const response = await axios.get(
+        `/api/lessons/${lesson.id}/mux-playback`,
+        { params: { _retry: Date.now() } },
+      );
+      setPlaybackId(response.data.playbackId || "");
+      setPlaybackToken(response.data.playbackToken || "");
+      setThumbnailToken(response.data.thumbnailToken || "");
+      setStoryboardToken(response.data.storyboardToken || "");
+
+      // Defer reload to next tick so Mux player picks up new tokens.
+      window.setTimeout(() => {
+        const current = muxPlayerRef.current;
+        if (!current) return;
+        try {
+          if (lastPos > 0) {
+            current.currentTime = lastPos;
+          }
+          const maybeMedia = (
+            current as MuxPlayerElement & {
+              media?: { load?: () => void } | null;
+            }
+          ).media;
+          maybeMedia?.load?.();
+        } catch {
+          // Best-effort; if reload fails we'll surface error on next onError.
+        }
+      }, 50);
+    } catch {
+      setMuxRetryState("exhausted");
+      setMuxRuntimeError(copy.muxRetryExhausted);
+    } finally {
+      muxRetryInFlightRef.current = false;
+    }
+  }, [
+    copy.muxRetryExhausted,
+    lesson.id,
+    setPlaybackId,
+    setPlaybackToken,
+    setThumbnailToken,
+    setStoryboardToken,
+  ]);
+
+  const handleMuxError = useCallback(() => {
+    if (muxRetryInFlightRef.current) return;
+    if (muxRetryCountRef.current >= MAX_MUX_RETRIES) {
+      setMuxRetryState("exhausted");
+      setMuxRuntimeError(copy.muxRetryExhausted);
+      return;
+    }
+    muxRetryCountRef.current += 1;
+    void retryPlayback();
+  }, [copy.muxRetryExhausted, retryPlayback]);
+
+  const handleManualReload = useCallback(() => {
+    muxRetryCountRef.current = 0;
+    setMuxRetryState("idle");
+    setMuxRuntimeError("");
+    void retryPlayback();
+  }, [retryPlayback]);
 
   const getAttachmentSignedUrl = useCallback(
     async (attachmentId: string, download = false) => {
@@ -1293,6 +1397,7 @@ export const CoursePlayer = ({
                 </div>
                 <div
                   ref={muxContainerRef}
+                  data-mux-retry-state={muxRetryState}
                   className="relative flex-1 min-h-0 bg-black border border-primary/50 dark:border-primary/70 rounded-b-xl overflow-hidden"
                 >
                   {canRenderMuxPlayer ? (
@@ -1307,12 +1412,15 @@ export const CoursePlayer = ({
                       onCanPlay={() => {
                         enforceNoRemotePlayback();
                         setIsReady(true);
+                        muxRetryCountRef.current = 0;
+                        if (muxRetryState !== "idle") {
+                          setMuxRetryState("idle");
+                        }
+                        setMuxRuntimeError("");
                       }}
                       onTimeUpdate={onTimeUpdate}
                       onLoadStart={enforceNoRemotePlayback}
-                      onError={() => {
-                        setMuxRuntimeError(copy.muxTokenError);
-                      }}
+                      onError={handleMuxError}
                       playsInline
                       castReceiver=""
                       disableTracking
@@ -1359,6 +1467,36 @@ export const CoursePlayer = ({
                       )}
                     </div>
                   )}
+                  {canRenderMuxPlayer && muxRetryState !== "idle" ? (
+                    <div
+                      data-testid="mux-retry-overlay"
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/70 p-6 text-center"
+                    >
+                      <div className="pointer-events-auto max-w-md space-y-3">
+                        {muxRetryState === "retrying" ? (
+                          <>
+                            <Loader2 className="mx-auto h-6 w-6 animate-spin text-primary" />
+                            <p className="text-sm text-white">
+                              {copy.muxRetrying}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm text-white">
+                              {muxRuntimeError || copy.muxRetryExhausted}
+                            </p>
+                            <Button
+                              type="button"
+                              onClick={handleManualReload}
+                              variant="secondary"
+                            >
+                              {copy.muxReloadButton}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
