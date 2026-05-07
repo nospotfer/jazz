@@ -877,6 +877,17 @@ export const CoursePlayer = ({
     muxRetryInFlightRef.current = false;
     muxLastPositionRef.current = 0;
     setMuxRetryState("idle");
+    // Clear stale playback tokens immediately when lesson changes so the
+    // player never renders the previous lesson's video while the new
+    // playback id/token are being fetched. Prevents Class N showing
+    // the video of Class N-1 during navigation.
+    setPlaybackId("");
+    setPlaybackToken("");
+    setThumbnailToken("");
+    setStoryboardToken("");
+    setPlaybackError("");
+    setMuxRuntimeError("");
+    hasAppliedMuxDefaultSubtitleRef.current = false;
   }, [lesson.id]);
 
   const MAX_MUX_RETRIES = 3;
