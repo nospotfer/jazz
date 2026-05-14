@@ -30,6 +30,7 @@ import {
     Lock,
     PanelRightClose,
     PanelRightOpen,
+    Play,
     ShoppingCart,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -100,6 +101,7 @@ const SPOTIFY_WEB_PLAYER_URL =
   "https://open.spotify.com/playlist/2SL42Fq3AgVvnJb7RixOvp";
 const PLAYBACK_ERROR_FALLBACK = "__mux_playback_unavailable__";
 const COMPLETE_BUTTON_UNLOCK_PERCENT = 80;
+const DASHBOARD_VIDEO_COVER_IMAGE = "/icon.jpg";
 
 interface CoursePlayerProps {
   course: Course & {
@@ -435,6 +437,7 @@ export const CoursePlayer = ({
   const [storyboardToken, setStoryboardToken] = useState("");
   const [playbackError, setPlaybackError] = useState("");
   const [muxRuntimeError, setMuxRuntimeError] = useState("");
+  const [isPlayerPaused, setIsPlayerPaused] = useState(true);
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -610,18 +613,6 @@ export const CoursePlayer = ({
       storyboard: storyboardToken || undefined,
     };
   }, [playbackToken, thumbnailToken, storyboardToken]);
-  const playbackPosterUrl = useMemo(() => {
-    if (!effectivePlaybackId) {
-      return "";
-    }
-
-    const baseUrl = `https://image.mux.com/${effectivePlaybackId}/thumbnail.webp?time=1`;
-    if (!thumbnailToken) {
-      return baseUrl;
-    }
-
-    return `${baseUrl}&token=${encodeURIComponent(thumbnailToken)}`;
-  }, [effectivePlaybackId, thumbnailToken]);
 
   const muxTooltipMap = useMemo(() => {
     if (language === "pt") {
@@ -887,6 +878,7 @@ export const CoursePlayer = ({
     setStoryboardToken("");
     setPlaybackError("");
     setMuxRuntimeError("");
+    setIsPlayerPaused(true);
     hasAppliedMuxDefaultSubtitleRef.current = false;
   }, [lesson.id]);
 
@@ -954,6 +946,7 @@ export const CoursePlayer = ({
   ]);
 
   const handleMuxError = useCallback(() => {
+    setIsPlayerPaused(true);
     if (muxRetryInFlightRef.current) return;
     if (muxRetryCountRef.current >= MAX_MUX_RETRIES) {
       setMuxRetryState("exhausted");
@@ -968,6 +961,7 @@ export const CoursePlayer = ({
     muxRetryCountRef.current = 0;
     setMuxRetryState("idle");
     setMuxRuntimeError("");
+    setIsPlayerPaused(true);
     void retryPlayback();
   }, [retryPlayback]);
 
@@ -1424,7 +1418,7 @@ export const CoursePlayer = ({
                       className="lesson-mux-player lesson-mux-player--fit-contain absolute inset-0 h-full w-full"
                       playbackId={effectivePlaybackId}
                       tokens={muxTokens}
-                      poster={playbackPosterUrl || undefined}
+                      poster={DASHBOARD_VIDEO_COVER_IMAGE}
                       defaultHiddenCaptions
                       accentColor="#d4af37"
                       onCanPlay={() => {
@@ -1435,6 +1429,15 @@ export const CoursePlayer = ({
                           setMuxRetryState("idle");
                         }
                         setMuxRuntimeError("");
+                      }}
+                      onPlay={() => {
+                        setIsPlayerPaused(false);
+                      }}
+                      onPause={() => {
+                        setIsPlayerPaused(true);
+                      }}
+                      onEnded={() => {
+                        setIsPlayerPaused(true);
                       }}
                       onTimeUpdate={onTimeUpdate}
                       onLoadStart={enforceNoRemotePlayback}
@@ -1485,6 +1488,36 @@ export const CoursePlayer = ({
                       )}
                     </div>
                   )}
+                  {canRenderMuxPlayer && isPlayerPaused && muxRetryState === "idle" ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = muxPlayerRef.current as
+                          | (MuxPlayerElement & {
+                              play?: () => Promise<void>;
+                            })
+                          | null;
+                        if (!current) {
+                          return;
+                        }
+                        void current.play?.().catch(() => {
+                          // Browser playback policies can still block manual attempts.
+                        });
+                      }}
+                      className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-black/80"
+                      aria-label="Play video"
+                    >
+                      <img
+                        src={DASHBOARD_VIDEO_COVER_IMAGE}
+                        alt="Cultura del Jazz"
+                        className="h-24 w-24 rounded-xl border border-primary/60 bg-black/20 object-cover shadow-lg sm:h-28 sm:w-28"
+                      />
+                      <span className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-black/60 px-4 py-2 text-sm font-semibold text-white">
+                        <Play className="h-4 w-4 fill-current" />
+                        Play video
+                      </span>
+                    </button>
+                  ) : null}
                   {canRenderMuxPlayer && muxRetryState !== "idle" ? (
                     <div
                       data-testid="mux-retry-overlay"
