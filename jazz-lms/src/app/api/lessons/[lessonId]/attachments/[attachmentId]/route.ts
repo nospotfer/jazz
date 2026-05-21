@@ -250,9 +250,9 @@ export async function GET(
         );
       }
 
-      const buffer = Buffer.from(await fileData.arrayBuffer());
+      const bytes = new Uint8Array(await fileData.arrayBuffer());
 
-      return new NextResponse(buffer, {
+      return new NextResponse(bytes, {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",
