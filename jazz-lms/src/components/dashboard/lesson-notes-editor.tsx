@@ -157,20 +157,14 @@ export function LessonNotesEditor({
     setPdfLoadError('');
 
     try {
-      const response = await getAttachmentSignedUrl(attachment, false);
+      await getAttachmentSignedUrl(attachment, false);
       if (requestId !== pdfRequestIdRef.current) return;
-
-      if (response.signedUrl) {
-        setPdfSignedUrl(response.signedUrl);
-        return;
-      }
-
       setPdfSignedUrl(buildInlineProxyUrl(attachment));
     } catch (error: unknown) {
       if (requestId !== pdfRequestIdRef.current) return;
 
-      if (attachment.url) {
-        setPdfSignedUrl(attachment.url);
+      if (attachment.url || attachment.id) {
+        setPdfSignedUrl(buildInlineProxyUrl(attachment));
         setPdfLoadError('');
         return;
       }

@@ -61,7 +61,7 @@ describe('LessonNotesEditor PDF preview', () => {
     );
   });
 
-  test('uses signed URL when attachment endpoint succeeds', async () => {
+  test('uses inline proxy URL when attachment endpoint succeeds', async () => {
     mocks.axiosGet.mockResolvedValue({
       data: {
         signedUrl: 'https://signed.example.com/apunte-1.pdf',
@@ -84,12 +84,12 @@ describe('LessonNotesEditor PDF preview', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('pdf-viewer').getAttribute('data-url')).toBe(
-        'https://signed.example.com/apunte-1.pdf',
+        '/api/lessons/lesson-1/attachments/att-1?download=0&language=pt&proxy=1',
       );
     });
   });
 
-  test('falls back to legacy attachment URL when signed URL request fails', async () => {
+  test('falls back to inline proxy URL when signed URL request fails', async () => {
     mocks.axiosGet.mockRejectedValueOnce({
       response: { data: { error: 'storage unavailable' } },
     });
@@ -110,7 +110,7 @@ describe('LessonNotesEditor PDF preview', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('pdf-viewer').getAttribute('data-url')).toBe(
-        'https://legacy.example.com/apunte-1.pdf',
+        '/api/lessons/lesson-1/attachments/att-1?download=0&language=pt&proxy=1',
       );
     });
   });
