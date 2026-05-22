@@ -8,8 +8,6 @@ interface PdfWorkspaceViewerProps {
   compact?: boolean;
 }
 
-const IFRAME_SANDBOX = "allow-same-origin allow-scripts allow-downloads allow-forms allow-modals";
-
 const OPEN_LABEL: Record<string, string> = {
   es: "Abrir en una nueva pestaña",
   en: "Open in a new tab",
@@ -73,7 +71,6 @@ export function PdfWorkspaceViewer({
           title="PDF Viewer"
           className="h-full w-full border-0"
           loading="lazy"
-          sandbox={IFRAME_SANDBOX}
           onLoad={() => {
             setLoadedUrl(safeUrl);
             setFailedUrl("");
