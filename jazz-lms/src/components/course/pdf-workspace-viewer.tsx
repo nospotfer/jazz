@@ -1,319 +1,104 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/language-provider";
-import {
-  SpecialZoomLevel,
-  Viewer,
-  Worker,
-  type RenderPageProps,
-} from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import {
-  highlightPlugin,
-  Trigger,
-  type HighlightArea,
-  type RenderHighlightsProps,
-  type RenderHighlightTargetProps,
-} from "@react-pdf-viewer/highlight";
-import { zoomPlugin } from "@react-pdf-viewer/zoom";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface PdfWorkspaceViewerProps {
   fileUrl: string;
   compact?: boolean;
 }
 
-interface SavedHighlight {
-  id: string;
-  color: string;
-  quote: string;
-  highlightAreas: HighlightArea[];
-}
+const IFRAME_SANDBOX = "allow-same-origin allow-scripts allow-downloads allow-forms allow-modals";
 
-const HIGHLIGHT_COLORS = [
-  "#fde047",
-  "#f97316",
-  "#22c55e",
-  "#38bdf8",
-  "#a78bfa",
-  "#f43f5e",
-  "#14b8a6",
-];
+const OPEN_LABEL: Record<string, string> = {
+  es: "Abrir en una nueva pestaña",
+  en: "Open in a new tab",
+  fr: "Ouvrir dans un nouvel onglet",
+  pt: "Abrir em nova aba",
+};
 
-const PDF_WORKER_URL = "/pdf.worker.min.js";
+const LOAD_ERROR_LABEL: Record<string, string> = {
+  es: "No pudimos mostrar este PDF embebido. Ábrelo en una nueva pestaña.",
+  en: "We could not render this PDF inline. Open it in a new tab.",
+  fr: "Impossible d'afficher ce PDF intégré. Ouvrez-le dans un nouvel onglet.",
+  pt: "Nao foi possivel exibir este PDF incorporado. Abra em uma nova aba.",
+};
+
+const LOADING_LABEL: Record<string, string> = {
+  es: "Cargando PDF...",
+  en: "Loading PDF...",
+  fr: "Chargement du PDF...",
+  pt: "Carregando PDF...",
+};
 
 export function PdfWorkspaceViewer({
   fileUrl,
   compact = false,
 }: PdfWorkspaceViewerProps) {
   const { language } = useLanguage();
-  const [highlights, setHighlights] = useState<SavedHighlight[]>([]);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const highlightCounterRef = useRef(0);
+  const [loadedUrl, setLoadedUrl] = useState("");
+  const [failedUrl, setFailedUrl] = useState("");
 
-  const storageKey = useMemo(
-    () => `pdf-highlights:${encodeURIComponent(fileUrl)}`,
-    [fileUrl],
-  );
+  const safeUrl = useMemo(() => {
+    if (!fileUrl || typeof fileUrl !== "string") return "";
+    return fileUrl.trim();
+  }, [fileUrl]);
 
-  useEffect(() => {
-    const deferSetHighlights = (next: SavedHighlight[]) => {
-      const frame = window.requestAnimationFrame(() => {
-        setHighlights(next);
-      });
-      return () => window.cancelAnimationFrame(frame);
-    };
-
-    try {
-      const saved = window.localStorage.getItem(storageKey);
-      if (!saved) {
-        return deferSetHighlights([]);
-      }
-
-      const parsed = JSON.parse(saved) as SavedHighlight[];
-      return deferSetHighlights(parsed);
-    } catch {
-      return deferSetHighlights([]);
-    }
-  }, [storageKey]);
-
-  const persistHighlights = useCallback(
-    (next: SavedHighlight[]) => {
-      setHighlights(next);
-      window.localStorage.setItem(storageKey, JSON.stringify(next));
-    },
-    [storageKey],
-  );
-
-  const zoomPluginInstance = zoomPlugin();
-
-  const defaultLayoutPluginInstance = useMemo(
-    () =>
-      defaultLayoutPlugin({
-        sidebarTabs: (tabs) => (compact ? [] : tabs),
-      }),
-    [compact],
-  );
-
-  const addHighlight = useCallback(
-    (props: RenderHighlightTargetProps, color: string) => {
-      highlightCounterRef.current += 1;
-      const newHighlight: SavedHighlight = {
-        id: `highlight-${highlightCounterRef.current}`,
-        color,
-        quote: props.selectedText,
-        highlightAreas: props.highlightAreas,
-      };
-
-      persistHighlights([...highlights, newHighlight]);
-      props.cancel();
-    },
-    [highlights, persistHighlights],
-  );
-
-  const renderHighlightTarget = (props: RenderHighlightTargetProps) => (
-    <div
-      style={{
-        left: `${props.selectionRegion.left}%`,
-        top: `${props.selectionRegion.top + props.selectionRegion.height}%`,
-      }}
-      className="absolute z-20 mt-1 rounded-md border border-primary/40 bg-background/95 p-1.5 shadow-lg"
-      data-testid="highlight-target"
-    >
-      <div className="flex items-center gap-1">
-        {HIGHLIGHT_COLORS.map((color) => (
-          <button
-            key={color}
-            type="button"
-            aria-label={`Highlight ${color}`}
-            className="h-4 w-4 rounded-full border border-black/25"
-            style={{ backgroundColor: color }}
-            onClick={() => addHighlight(props, color)}
-          />
-        ))}
+  if (!safeUrl) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-sm text-muted-foreground px-4 text-center">
+        {LOAD_ERROR_LABEL[language] ?? LOAD_ERROR_LABEL.es}
       </div>
-    </div>
-  );
+    );
+  }
 
-  const renderHighlights = (props: RenderHighlightsProps) => (
-    <>
-      {highlights.map((highlight) => (
-        <div key={highlight.id}>
-          {highlight.highlightAreas
-            .filter((area) => area.pageIndex === props.pageIndex)
-            .map((area, index) => (
-              <div
-                key={`${highlight.id}-${index}`}
-                style={{
-                  ...props.getCssProperties(area, props.rotation),
-                  background: highlight.color,
-                  opacity: 0.35,
-                }}
-              />
-            ))}
-        </div>
-      ))}
-    </>
-  );
-
-  const highlightPluginInstance = highlightPlugin({
-    trigger: Trigger.TextSelection,
-    renderHighlightTarget,
-    renderHighlights,
-  });
-
-  const tooltipMap = useMemo(() => {
-    if (language === "pt") {
-      return {
-        Attachment: "Anexos",
-        Thumbnails: "Miniaturas",
-        Bookmark: "Favoritos",
-        "Open file": "Abrir arquivo",
-        Print: "Imprimir",
-        Download: "Baixar",
-        "Enter full screen": "Tela cheia",
-        "Exit full screen": "Sair da tela cheia",
-        "Go to first page": "Primeira página",
-        "Go to previous page": "Página anterior",
-        "Go to next page": "Próxima página",
-        "Go to last page": "Última página",
-        "Previous page": "Página anterior",
-        "Next page": "Próxima página",
-        "Zoom in": "Aproximar",
-        "Zoom out": "Afastar",
-        Search: "Buscar",
-      } as Record<string, string>;
-    }
-
-    if (language === "es") {
-      return {
-        Attachment: "Adjuntos",
-        Thumbnails: "Miniaturas",
-        Bookmark: "Marcadores",
-        "Open file": "Abrir archivo",
-        Print: "Imprimir",
-        Download: "Descargar",
-        "Enter full screen": "Pantalla completa",
-        "Exit full screen": "Salir de pantalla completa",
-        "Go to first page": "Primera página",
-        "Go to previous page": "Página anterior",
-        "Go to next page": "Página siguiente",
-        "Go to last page": "Última página",
-        "Previous page": "Página anterior",
-        "Next page": "Página siguiente",
-        "Zoom in": "Acercar",
-        "Zoom out": "Alejar",
-        Search: "Buscar",
-      } as Record<string, string>;
-    }
-
-    if (language === "fr") {
-      return {
-        Attachment: "Pièces jointes",
-        Thumbnails: "Miniatures",
-        Bookmark: "Signets",
-        "Open file": "Ouvrir le fichier",
-        Print: "Imprimer",
-        Download: "Télécharger",
-        "Enter full screen": "Plein écran",
-        "Exit full screen": "Quitter le plein écran",
-        "Go to first page": "Première page",
-        "Go to previous page": "Page précédente",
-        "Go to next page": "Page suivante",
-        "Go to last page": "Dernière page",
-        "Previous page": "Page précédente",
-        "Next page": "Page suivante",
-        "Zoom in": "Agrandir",
-        "Zoom out": "Réduire",
-        Search: "Rechercher",
-      } as Record<string, string>;
-    }
-
-    return {} as Record<string, string>;
-  }, [language]);
-
-  const downloadLabels = useMemo(
-    () => ["Download", "Descargar", "Télécharger", "Baixar"],
-    [],
-  );
-
-  useEffect(() => {
-    if (language === "en") {
-      return;
-    }
-
-    const root = containerRef.current;
-    if (!root) {
-      return;
-    }
-
-    const translateAttrs = () => {
-      const elements = root.querySelectorAll<HTMLElement>(
-        "[title], [aria-label]",
-      );
-      elements.forEach((el) => {
-        const title = el.getAttribute("title");
-        if (title && tooltipMap[title]) {
-          el.setAttribute("title", tooltipMap[title]);
-        }
-
-        const ariaLabel = el.getAttribute("aria-label");
-        if (ariaLabel && tooltipMap[ariaLabel]) {
-          el.setAttribute("aria-label", tooltipMap[ariaLabel]);
-        }
-
-        const resolvedTitle = el.getAttribute("title") || "";
-        const resolvedAria = el.getAttribute("aria-label") || "";
-        const isDownload =
-          downloadLabels.includes(resolvedTitle) ||
-          downloadLabels.includes(resolvedAria);
-        if (isDownload) {
-          el.classList.add("pdf-download-emphasis");
-        }
-      });
-    };
-
-    translateAttrs();
-    const observer = new MutationObserver(() => {
-      translateAttrs();
-    });
-
-    observer.observe(root, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["title", "aria-label"],
-    });
-
-    return () => observer.disconnect();
-  }, [language, tooltipMap, fileUrl, downloadLabels]);
-
-  const viewerScale = compact ? SpecialZoomLevel.PageFit : 1.3;
+  const isLoading = loadedUrl !== safeUrl && failedUrl !== safeUrl;
+  const hasError = failedUrl === safeUrl;
 
   return (
     <div
-      ref={containerRef}
-      className={`pdf-workspace-viewer h-full w-full ${compact ? "overflow-auto" : "overflow-y-auto overflow-x-hidden"}`}
+      className={`relative h-full w-full ${compact ? "overflow-hidden" : "overflow-auto"}`}
+      data-testid="pdf-workspace-viewer"
     >
-      <Worker workerUrl={PDF_WORKER_URL}>
-        <Viewer
-          key={`${language}:${fileUrl}`}
-          fileUrl={fileUrl}
-          defaultScale={viewerScale}
-          plugins={[
-            defaultLayoutPluginInstance,
-            zoomPluginInstance,
-            highlightPluginInstance,
-          ]}
-          renderPage={(props: RenderPageProps) => (
-            <>
-              {props.canvasLayer.children}
-              {props.textLayer.children}
-              {props.annotationLayer.children}
-            </>
-          )}
+      {isLoading && !hasError ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/85 text-sm text-muted-foreground">
+          {LOADING_LABEL[language] ?? LOADING_LABEL.es}
+        </div>
+      ) : null}
+
+      {!hasError ? (
+        <iframe
+          key={safeUrl}
+          src={safeUrl}
+          title="PDF Viewer"
+          className="h-full w-full border-0"
+          loading="lazy"
+          sandbox={IFRAME_SANDBOX}
+          onLoad={() => {
+            setLoadedUrl(safeUrl);
+            setFailedUrl("");
+          }}
+          onError={() => {
+            setFailedUrl(safeUrl);
+          }}
         />
-      </Worker>
+      ) : null}
+
+      {hasError ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background px-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            {LOAD_ERROR_LABEL[language] ?? LOAD_ERROR_LABEL.es}
+          </p>
+          <a
+            href={safeUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+          >
+            {OPEN_LABEL[language] ?? OPEN_LABEL.es}
+          </a>
+        </div>
+      ) : null}
     </div>
   );
 }

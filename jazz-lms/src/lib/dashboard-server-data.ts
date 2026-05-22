@@ -2,6 +2,7 @@ import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 
 import { db } from '@/lib/db';
+import type { SupportedLanguage } from '@/lib/language';
 
 const getFirstPublishedCourseIdCached = unstable_cache(
   async () => {
@@ -65,7 +66,7 @@ export const getPublishedCourseOutline = cache(async () => {
 });
 
 const getPublishedCoursesForPdfViewCached = unstable_cache(
-  async () => {
+  async (language: SupportedLanguage) => {
     return db.course.findMany({
       where: { isPublished: true },
       select: {
@@ -83,6 +84,9 @@ const getPublishedCoursesForPdfViewCached = unstable_cache(
                 title: true,
                 position: true,
                 attachments: {
+                  where: {
+                    language,
+                  },
                   select: {
                     id: true,
                     name: true,
@@ -101,9 +105,9 @@ const getPublishedCoursesForPdfViewCached = unstable_cache(
   { revalidate: 180 },
 );
 
-export const getPublishedCoursesForPdfView = cache(async () => {
+export const getPublishedCoursesForPdfView = cache(async (language: SupportedLanguage) => {
   try {
-    return await getPublishedCoursesForPdfViewCached();
+    return await getPublishedCoursesForPdfViewCached(language);
   } catch (error) {
     console.error('[dashboard-server-data] Unable to load published courses for pdf view.', error);
     return [];

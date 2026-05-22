@@ -40,7 +40,7 @@ export default async function PdfViewPage() {
       where: { userId: user.id },
       select: { courseId: true },
     }),
-    getPublishedCoursesForPdfView(),
+    getPublishedCoursesForPdfView(language),
   ]);
 
   const purchasedCourseIds = new Set(fullPurchases.map((purchase) => purchase.courseId));

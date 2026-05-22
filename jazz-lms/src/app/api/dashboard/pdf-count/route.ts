@@ -1,13 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { getCourseNoteIdentity, isCourseNoteAttachment } from '@/lib/course-notes';
+import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request?: NextRequest) {
   try {
+      const language = normalizeLanguage(request?.cookies?.get(LANGUAGE_COOKIE_KEY)?.value);
+
     const supabase = createClient();
     const {
       data: { user },
@@ -56,6 +59,7 @@ export async function GET() {
                 orderBy: { position: 'asc' },
                 include: {
                   attachments: {
+                      where: { language },
                       select: { id: true, url: true, name: true },
                   },
                 },

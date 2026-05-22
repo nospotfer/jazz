@@ -45,6 +45,7 @@ const nextConfig = {
       "https://*.mux.com",
       "https://live.dodopayments.com",
       "https://test.dodopayments.com",
+      "https://api.openreplay.com",
     ];
 
     if (!isProduction) {
@@ -63,7 +64,9 @@ const nextConfig = {
     const cspImgSrc = ["'self'", "data:", "blob:", "https:"];
 
     if (openReplayOrigin) {
-      cspConnectSrc.push(openReplayOrigin);
+      if (!cspConnectSrc.includes(openReplayOrigin)) {
+        cspConnectSrc.push(openReplayOrigin);
+      }
       cspScriptSrc.push(openReplayOrigin);
       cspImgSrc.push(openReplayOrigin);
     }
