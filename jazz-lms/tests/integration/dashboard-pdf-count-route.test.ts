@@ -8,11 +8,6 @@ const mocks = vi.hoisted(() => ({
   findLessonPurchases: vi.fn(),
   findCourses: vi.fn(),
   isAdminRole: vi.fn(),
-  cookies: vi.fn(),
-}));
-
-vi.mock('next/headers', () => ({
-  cookies: mocks.cookies,
 }));
 
 vi.mock('@/utils/supabase/server', () => ({
@@ -40,17 +35,23 @@ vi.mock('@/lib/db', () => ({
 }));
 
 describe('GET /api/dashboard/pdf-count', () => {
+  const createRequest = (language = 'es') =>
+    ({
+      cookies: {
+        get: vi.fn(() => ({ value: language })),
+      },
+    }) as unknown as import('next/server').NextRequest;
+
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.isAdminRole.mockReturnValue(false);
-    mocks.cookies.mockResolvedValue({ get: vi.fn(() => ({ value: 'es' })) });
   });
 
   test('returns 401 with zero when unauthenticated', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(401);
@@ -63,7 +64,7 @@ describe('GET /api/dashboard/pdf-count', () => {
     mocks.findPurchaseFirst.mockResolvedValue(null);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -75,7 +76,7 @@ describe('GET /api/dashboard/pdf-count', () => {
     mocks.findPurchaseFirst.mockResolvedValue(null);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -112,7 +113,7 @@ describe('GET /api/dashboard/pdf-count', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -152,7 +153,7 @@ describe('GET /api/dashboard/pdf-count', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -163,7 +164,7 @@ describe('GET /api/dashboard/pdf-count', () => {
     mocks.getUser.mockRejectedValue(new Error('supabase down'));
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(createRequest());
     const body = await response.json();
 
     expect(response.status).toBe(500);

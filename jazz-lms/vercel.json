@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run pdf:worker:sync && prisma generate && next build",
+  "buildCommand": "npm run build:webpack",
   "outputDirectory": ".next",
   "crons": [
     {
