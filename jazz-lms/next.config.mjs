@@ -21,8 +21,10 @@ const nextConfig = {
   async headers() {
     const isProduction = process.env.NODE_ENV === "production";
 
-    // OpenReplay: derive ingest origin only when env is configured.
-    // Avoids broad wildcards in CSP.
+    // OpenReplay: derive ingest origin from env when configured; otherwise fall
+    // back to the OpenReplay Cloud default so CSP doesn't silently block the
+    // tracker (a CSP-blocked start leaves the tracker's monkey-patched React
+    // useEffect dispatcher in a broken state and crashes the UI).
     let openReplayOrigin = null;
     const openReplayIngest = process.env.NEXT_PUBLIC_OPENREPLAY_INGEST_URL;
     if (openReplayIngest && openReplayIngest.trim().length > 0) {
@@ -31,6 +33,9 @@ const nextConfig = {
       } catch {
         openReplayOrigin = null;
       }
+    }
+    if (!openReplayOrigin && process.env.NEXT_PUBLIC_OPENREPLAY_ENABLED === "true") {
+      openReplayOrigin = "https://api.openreplay.com";
     }
 
     const cspConnectSrc = [
