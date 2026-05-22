@@ -7,6 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+// Bump this when the PDF bucket is bulk-replaced under the same filenames.
+// The value is mixed into the signed URL as `?v=...` so the Supabase Storage
+// CDN treats the object as a fresh cache entry. Can be overridden at runtime
+// with PDF_CACHE_VERSION.
+const DEFAULT_PDF_CACHE_VERSION = "2026-05-21-bucket-refresh";
+
 const extractStoragePath = (value: string, bucketName: string) => {
   const rawValue = value.trim();
 
@@ -244,9 +250,9 @@ export async function GET(
         );
       }
 
-      const buffer = Buffer.from(await fileData.arrayBuffer());
+      const bytes = new Uint8Array(await fileData.arrayBuffer());
 
-      return new NextResponse(buffer, {
+      return new NextResponse(bytes, {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",
@@ -270,6 +276,33 @@ export async function GET(
       );
     }
 
+    // Append a cache-busting version so the Supabase Storage CDN serves the
+    // latest object even when the bucket file was replaced under the same
+    // name (the canonical storage path is otherwise cached at the edge).
+    // Combines the DB row's updatedAt with an optional deploy-time override
+    // (PDF_CACHE_VERSION) so bulk bucket replacements can be invalidated even
+    // when the Attachment rows themselves were not touched.
+    const updatedAtMs =
+      attachment.updatedAt instanceof Date
+        ? attachment.updatedAt.getTime()
+        : 0;
+    const deployVersion = (
+      process.env.PDF_CACHE_VERSION ?? DEFAULT_PDF_CACHE_VERSION
+    ).trim();
+    const cacheBustVersion = deployVersion
+      ? `${updatedAtMs}-${deployVersion}`
+      : String(updatedAtMs || Date.now());
+    const signedUrlWithVersion = (() => {
+      try {
+        const parsed = new URL(data.signedUrl);
+        parsed.searchParams.set("v", cacheBustVersion);
+        return parsed.toString();
+      } catch {
+        const separator = data.signedUrl.includes("?") ? "&" : "?";
+        return `${data.signedUrl}${separator}v=${cacheBustVersion}`;
+      }
+    })();
+
     const variants = await db.attachment.findMany({
       where: {
         lessonId: attachment.lessonId,
@@ -283,7 +316,7 @@ export async function GET(
 
     return NextResponse.json(
       {
-        signedUrl: data.signedUrl,
+        signedUrl: signedUrlWithVersion,
         name: attachment.name,
         storagePath,
         language: attachment.language,
