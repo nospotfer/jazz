@@ -7,9 +7,9 @@ import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request?: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-      const language = normalizeLanguage(request?.cookies?.get(LANGUAGE_COOKIE_KEY)?.value);
+  const language = normalizeLanguage(request.cookies.get(LANGUAGE_COOKIE_KEY)?.value);
 
     const supabase = createClient();
     const {
