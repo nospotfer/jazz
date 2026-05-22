@@ -986,6 +986,19 @@ export const CoursePlayer = ({
     [language, lesson.id],
   );
 
+  const buildInlineProxyUrl = useCallback(
+    (attachmentId: string) => {
+      const params = new URLSearchParams({
+        download: "0",
+        language,
+        proxy: "1",
+      });
+
+      return `/api/lessons/${lesson.id}/attachments/${attachmentId}?${params.toString()}`;
+    },
+    [language, lesson.id],
+  );
+
   const openPdfPreview = useCallback(
     async (attachmentId: string) => {
       if (!canAccessAttachments) return;
@@ -994,14 +1007,14 @@ export const CoursePlayer = ({
       setPdfError("");
 
       try {
-        const data = await getAttachmentSignedUrl(attachmentId, false);
+        await getAttachmentSignedUrl(attachmentId, false);
 
         setSelectedAttachmentId(attachmentId);
         setPreviewUrl((currentUrl) => {
           if (currentUrl.startsWith("blob:")) {
             URL.revokeObjectURL(currentUrl);
           }
-          return data.signedUrl;
+          return buildInlineProxyUrl(attachmentId);
         });
       } catch (error: unknown) {
         const message = axios.isAxiosError(error)
@@ -1010,13 +1023,13 @@ export const CoursePlayer = ({
         const fallbackAttachment = visibleAttachments.find(
           (item) => item.id === attachmentId,
         );
-        if (fallbackAttachment?.url) {
+        if (fallbackAttachment) {
           setSelectedAttachmentId(attachmentId);
           setPreviewUrl((currentUrl) => {
             if (currentUrl.startsWith("blob:")) {
               URL.revokeObjectURL(currentUrl);
             }
-            return fallbackAttachment.url;
+            return buildInlineProxyUrl(attachmentId);
           });
           setPdfError("");
           toast.info(copy.loadedLegacyPdf);
@@ -1032,6 +1045,7 @@ export const CoursePlayer = ({
       canAccessAttachments,
       copy.loadedLegacyPdf,
       copy.unableLoadPdf,
+      buildInlineProxyUrl,
       getAttachmentSignedUrl,
       visibleAttachments,
     ],

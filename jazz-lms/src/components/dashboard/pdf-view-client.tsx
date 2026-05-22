@@ -165,16 +165,10 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
     setSignedUrl('');
 
     try {
-      const response = await getAttachmentSignedUrl(item, false);
+      await getAttachmentSignedUrl(item, false);
       if (requestId !== pdfRequestIdRef.current) {
         return;
       }
-
-      if (response.signedUrl) {
-        setSignedUrl(response.signedUrl);
-        return;
-      }
-
       setSignedUrl(buildInlineProxyUrl(item));
     } catch (error: unknown) {
       if (requestId !== pdfRequestIdRef.current) {

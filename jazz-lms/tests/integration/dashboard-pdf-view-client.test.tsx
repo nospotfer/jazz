@@ -53,7 +53,7 @@ describe('PdfViewClient', () => {
     mocks.language = 'es';
   });
 
-  test('uses signed URL from attachment endpoint for preview', async () => {
+  test('uses inline proxy URL from attachment endpoint for preview', async () => {
     mocks.axiosGet.mockResolvedValueOnce({
       data: {
         signedUrl: 'https://signed.example.com/clase-1.pdf',
@@ -76,7 +76,7 @@ describe('PdfViewClient', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('pdf-viewer').getAttribute('data-url')).toBe(
-        'https://signed.example.com/clase-1.pdf'
+        '/api/lessons/lesson-1/attachments/att-1?download=0&language=es&proxy=1'
       );
     });
   });
