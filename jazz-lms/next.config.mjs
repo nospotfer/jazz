@@ -45,9 +45,6 @@ const nextConfig = {
       "https://*.mux.com",
       "https://live.dodopayments.com",
       "https://test.dodopayments.com",
-      // OpenReplay Cloud default ingest endpoint.
-      // Keeping it always allowed prevents CSP regressions when env toggles
-      // and deployments become temporarily out of sync.
       "https://api.openreplay.com",
     ];
 
