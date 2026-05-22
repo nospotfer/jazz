@@ -1,25 +1,16 @@
-const CLASS_NOTE_FILES = [
-  'Clase 1_ La Esencia del Jazz - Apuntes.pdf',
-  'Clase 2_ El Lenguaje del Jazz_ Heterogeneidad Sonora - Apuntes.pdf',
-  'Clase 3_ Gospel y Blues_ Las Raices Profundas - Apuntes.pdf',
-  'Clase 4_ Las Formas del Jazz_ Blues y Baladas - Apuntes.pdf',
-  'Clase 5_ Un Antecedente Decisivo_ El Ragtime - Apuntes.pdf',
-  'Clase 6_ El Ritmo_ El Corazon del Jazz - Apuntes.pdf',
-  'Clase 7_ Jamming and Blowing_ El Placer de Improvisar - Apuntes.pdf',
-  'Clase 8_ La Composicion Colaborativa_ Ellington, Basie y Monk - Apuntes.pdf',
-  'Clase 9_ Instrumentos y Conjuntos (La Orquesta)  - Apuntes.pdf',
-  'Clase 10_ Los Pequenos Grupos y el Mundo de los Solistas - Apuntes.pdf',
-  'Clase 11_ La Seccion Ritmica_ El Motor del Grupo  - Apuntes.pdf',
-  'Clase 12_ La Improvisacion en el Jazz - Apuntes.pdf',
-  'Clase 13_ Jazz y Entertainment_ Arte o Espectaculo_ - Apuntes.pdf',
-  'Clase 14_ Cantar Jazz (Parte 1)_ De Bessie Smith a Billie Holiday - Apuntes.pdf',
-  'Clase 15_ Cantar Jazz (Parte 2)_ De Ella Fitzgerald a Sarah Vaughan - Apuntes.pdf',
-];
-
-const AUXILIARY_NOTE_FILES = [
-  'Apuntes Auxiliares 1 - Anos relevantes del Periodo Clasico de la Historia del Jazz.pdf',
-  'Apuntes Auxiliares 2 - Anos relevantes del Periodo Moderno de la Historia del Jazz.pdf',
-];
+// Multilingual class-note matcher.
+// Files in the bucket follow these patterns per language:
+//   ES: "Clase <N>_ ... - Apuntes"
+//   EN: "Lesson <N>_ ... - Notes"
+//   PT: "Aula <N>_ ... - Apontamentos"
+//   FR: "Lecon <N>_ ... - Notes"   (also "Leçon" accented)
+// Auxiliary notes (2 per language):
+//   ES: "Apuntes Auxiliares <N> - ..."
+//   EN: "Auxiliary Notes <N> - ..."
+//   PT: "Apontamentos Auxiliares <N> - ..."
+//   FR: "Notes auxiliaires <N> - ..."
+const CLASS_NOTE_PREFIX_REGEX = /^(clase|lesson|aula|le[cç]on)\s+(\d{1,2})[_\s-]/i;
+const AUXILIARY_NOTE_PREFIX_REGEX = /^(apuntes auxiliares|auxiliary notes|apontamentos auxiliares|notes auxiliaires)\s+(\d{1,2})\b/i;
 
 function decodePdfValue(value: string) {
   try {
@@ -49,18 +40,21 @@ export function normalizeCourseNoteKey(value: string) {
   }
 }
 
-const COURSE_NOTE_KEYS = new Set(
-  [...CLASS_NOTE_FILES, ...AUXILIARY_NOTE_FILES].map((fileName) => normalizeCourseNoteKey(fileName))
-);
+function classifyCourseNoteKey(key: string): 'class' | 'auxiliary' | null {
+  if (!key) return null;
+  if (AUXILIARY_NOTE_PREFIX_REGEX.test(key)) return 'auxiliary';
+  if (CLASS_NOTE_PREFIX_REGEX.test(key)) return 'class';
+  return null;
+}
 
 export function getCourseNoteIdentity(url: string, name: string) {
   const normalizedUrl = normalizeCourseNoteKey(url);
-  if (COURSE_NOTE_KEYS.has(normalizedUrl)) {
+  if (classifyCourseNoteKey(normalizedUrl)) {
     return normalizedUrl;
   }
 
   const normalizedName = normalizeCourseNoteKey(name);
-  if (COURSE_NOTE_KEYS.has(normalizedName)) {
+  if (classifyCourseNoteKey(normalizedName)) {
     return normalizedName;
   }
 
@@ -73,16 +67,28 @@ export function isCourseNoteAttachment(name: string, url: string) {
 
 export function isAuxiliaryCourseNote(name: string, url: string) {
   const identity = getCourseNoteIdentity(url, name);
-  return identity.startsWith('apuntes auxiliares');
+  return classifyCourseNoteKey(identity) === 'auxiliary';
 }
 
 export function getCourseNoteClassNumber(value: string) {
-  const decodedValue = decodePdfValue((value || '').trim());
-  const match = decodedValue.match(/clase\s*(\d{1,2})/i);
-  if (!match) return null;
+  const normalized = normalizeCourseNoteKey(value);
+  if (!normalized) return null;
 
-  const valueAsNumber = Number(match[1]);
-  return Number.isInteger(valueAsNumber) ? valueAsNumber : null;
+  const auxMatch = normalized.match(AUXILIARY_NOTE_PREFIX_REGEX);
+  if (auxMatch) {
+    const n = Number(auxMatch[2]);
+    return Number.isInteger(n) ? n : null;
+  }
+
+  const classMatch = normalized.match(CLASS_NOTE_PREFIX_REGEX);
+  if (classMatch) {
+    const n = Number(classMatch[2]);
+    return Number.isInteger(n) ? n : null;
+  }
+
+  return null;
 }
 
-export const EXPECTED_COURSE_NOTE_COUNT = COURSE_NOTE_KEYS.size;
+// 15 class notes + 2 auxiliary notes per language slot. We expose 17 as the
+// canonical expected count for a single language; UI uses it as a sanity hint.
+export const EXPECTED_COURSE_NOTE_COUNT = 17;
