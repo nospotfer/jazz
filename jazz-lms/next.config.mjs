@@ -71,11 +71,11 @@ const nextConfig = {
       cspImgSrc.push(openReplayOrigin);
     }
 
-    const contentSecurityPolicy = [
+    const buildContentSecurityPolicy = (frameAncestors) => [
       "default-src 'self'",
       "base-uri 'self'",
       "object-src 'none'",
-      "frame-ancestors 'none'",
+      `frame-ancestors ${frameAncestors}`,
       "form-action 'self'",
       `img-src ${cspImgSrc.join(" ")}`,
       "font-src 'self' data:",
@@ -89,6 +89,11 @@ const nextConfig = {
     ]
       .filter(Boolean)
       .join("; ");
+
+    const contentSecurityPolicy = buildContentSecurityPolicy("'none'");
+    const embeddablePdfContentSecurityPolicy = buildContentSecurityPolicy(
+      "'self' https://culturadeljazz.com https://www.culturadeljazz.com",
+    );
 
     return [
       {
@@ -126,6 +131,19 @@ const nextConfig = {
           {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
+          },
+        ],
+      },
+      {
+        source: "/api/lessons/:lessonId/attachments/:attachmentId",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: embeddablePdfContentSecurityPolicy,
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
         ],
       },
