@@ -35,6 +35,10 @@ type Lang = "es" | "en" | "fr" | "pt";
 type Kind = "CLASS" | "AUXILIARY";
 type Key = `${Lang}|${Kind}|${number}`;
 
+function toAttachmentDisplayName(bucketFile: string) {
+  return bucketFile.replace(/(?:\.docx)?\.pdf$/i, "");
+}
+
 // Determine language + class number from a bucket filename.
 function classifyBucketName(
   name: string,
@@ -165,7 +169,7 @@ async function main() {
       });
       continue;
     }
-    const newName = bucketFile.replace(/\.pdf$/i, "");
+    const newName = toAttachmentDisplayName(bucketFile);
     if (att.name !== newName || att.url !== bucketFile) {
       updates.push({
         id: att.id,
