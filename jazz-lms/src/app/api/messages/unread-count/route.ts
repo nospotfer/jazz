@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -69,11 +70,11 @@ export async function GET() {
     return NextResponse.json({ count: Number(rows[0]?.count || 0) });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:unread-count:db-unavailable]', error);
+      console.error('[messages:unread-count:db-unavailable]', safeErrorDiagnostic(error));
       return NextResponse.json({ count: 0 }, { status: 503 });
     }
 
-    console.error('[messages:unread-count]', error);
+    console.error('[messages:unread-count]', safeErrorDiagnostic(error));
     return NextResponse.json({ count: 0 }, { status: 500 });
   }
 }

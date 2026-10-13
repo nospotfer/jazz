@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { extractNormalizedEmail } from "@/lib/email-validation";
 import { ensureMessagingTables } from "@/lib/messages-db";
@@ -49,7 +50,7 @@ async function notifyStudentByEmail(to: string, subject: string, body: string) {
   } catch (error) {
     console.error(
       "[messages:email-webhook:notifyStudent] Email delivery failed",
-      error,
+      safeErrorDiagnostic(error),
     );
   }
 }
@@ -248,7 +249,7 @@ export async function POST(req: Request) {
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }
     if (error instanceof SyntaxError) return new NextResponse("Invalid JSON", { status: 400 });
-    console.error("[messages:email-webhook]", error instanceof Error ? error.name : "UnknownError");
+    console.error("[messages:email-webhook]", safeErrorDiagnostic(error));
     return new NextResponse("Error interno del servidor", { status: 500 });
   }
 }

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
       failures,
     });
   } catch (error) {
-    console.error('[VOUCHER_RESYNC_PROVIDER_ERROR]', error);
+    console.error('[VOUCHER_RESYNC_PROVIDER_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Error al re-sincronizar vouchers.' },
       { status: 500 }

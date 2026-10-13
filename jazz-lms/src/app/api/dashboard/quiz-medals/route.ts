@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProgress } from '@/lib/jazz-medal-progress';
@@ -22,7 +23,7 @@ export async function GET() {
     const progress = await getUserJazzMedalProgress(user.id, user.email);
     return NextResponse.json(progress);
   } catch (error) {
-    console.error('[dashboard:quiz-medals]', error);
+    console.error('[dashboard:quiz-medals]', safeErrorDiagnostic(error));
 
     return NextResponse.json({
       platinumMedalCount: 0,

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/admin/permissions";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/lib/language";
@@ -334,7 +335,7 @@ export async function GET(
       },
     );
   } catch (error) {
-    console.error("[ATTACHMENT_SIGNED_URL_ROUTE_ERROR]", error);
+    console.error("[ATTACHMENT_SIGNED_URL_ROUTE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "Failed to load attachment" },
       { status: 500 },

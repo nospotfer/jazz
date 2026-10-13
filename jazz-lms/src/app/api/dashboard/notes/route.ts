@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ note }, { headers: privateHeaders });
   } catch (error) {
     if (error instanceof LessonNotesAccessError) return NextResponse.json({ error: error.message }, { status: error.statusCode });
-    console.error('[dashboard:notes:get]', error);
+    console.error('[dashboard:notes:get]', safeErrorDiagnostic(error));
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -66,7 +67,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ ok: true, note: saved }, { headers: privateHeaders });
   } catch (error) {
     if (error instanceof LessonNotesAccessError) return NextResponse.json({ error: error.message }, { status: error.statusCode });
-    console.error('[dashboard:notes:put]', error);
+    console.error('[dashboard:notes:put]', safeErrorDiagnostic(error));
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

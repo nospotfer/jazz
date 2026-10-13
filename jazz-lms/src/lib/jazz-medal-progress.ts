@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 
 import { CANONICAL_JAZZ_CLASSES, getCanonicalJazzClass } from '@/lib/course-lessons';
@@ -216,7 +217,7 @@ export const getUserJazzMedalProgress = cache(async (userId: string, verifiedUse
       getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
     );
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load medal progress.', error);
+    console.error('[jazz-medal-progress] Unable to load medal progress.', safeErrorDiagnostic(error));
     return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
   }
 });
@@ -299,7 +300,7 @@ export const getUserCourseCompletionRecognition = cache(async (
       medal,
     };
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load course completion recognition.', error);
+    console.error('[jazz-medal-progress] Unable to load course completion recognition.', safeErrorDiagnostic(error));
     return emptyRecognitionSnapshot;
   }
 });
@@ -388,7 +389,7 @@ export const getUserJazzMedalProfile = cache(async (
       }),
     };
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load medal profile.', error);
+    console.error('[jazz-medal-progress] Unable to load medal profile.', safeErrorDiagnostic(error));
     const progress = buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
 
     return {

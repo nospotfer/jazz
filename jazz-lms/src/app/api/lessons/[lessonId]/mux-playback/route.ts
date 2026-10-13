@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/admin/permissions";
 import { createMuxPlaybackTokens } from "@/lib/mux";
@@ -119,17 +120,12 @@ export async function GET(
     try {
       tokens = createMuxPlaybackTokens(playbackId);
     } catch (tokenError) {
-      const tokenErrorMessage =
-        tokenError instanceof Error
-          ? tokenError.message
-          : "Unable to create Mux playback token.";
-
-      console.error("[MUX_PLAYBACK_TOKEN_ERROR]", tokenErrorMessage);
+      console.error("[MUX_PLAYBACK_TOKEN_ERROR]", safeErrorDiagnostic(tokenError));
 
       return NextResponse.json(
         {
           error:
-            "Mux playback signing is not configured correctly. Provide valid MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY (PEM or base64 PEM) and restart the server.",
+            "Video playback is temporarily unavailable. Please try again later.",
         },
         { status: 500 },
       );
@@ -150,7 +146,7 @@ export async function GET(
       },
     );
   } catch (error) {
-    console.error("[MUX_PLAYBACK_ROUTE_ERROR]", error);
+    console.error("[MUX_PLAYBACK_ROUTE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "Failed to generate playback token" },
       { status: 500 },

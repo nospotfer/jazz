@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProfile } from '@/lib/jazz-medal-progress';
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
     const profile = await getUserJazzMedalProfile(user.id, language, user.email);
     return NextResponse.json(profile);
   } catch (error) {
-    console.error('[dashboard:quiz-medals:profile]', error);
+    console.error('[dashboard:quiz-medals:profile]', safeErrorDiagnostic(error));
     return NextResponse.json({ error: 'Unable to load medal profile' }, { status: 500 });
   }
 }

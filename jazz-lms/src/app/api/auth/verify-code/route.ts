@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
@@ -14,21 +15,21 @@ export async function POST(request: Request) {
   try {
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, 'your-project.supabase.co')) {
       return NextResponse.json(
-        { error: 'La URL de Supabase no está configurada en el entorno del servidor.' },
+        { error: 'La verificación por correo no está disponible temporalmente. Inténtalo más tarde.' },
         { status: 500 }
       );
     }
 
     if (hasPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'your-anon-key')) {
       return NextResponse.json(
-        { error: 'La clave pública de Supabase no está configurada en el entorno del servidor.' },
+        { error: 'La verificación por correo no está disponible temporalmente. Inténtalo más tarde.' },
         { status: 500 }
       );
     }
 
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY.includes('your-service-role-key')) {
       return NextResponse.json(
-        { error: 'SUPABASE_SERVICE_ROLE_KEY es obligatoria para la verificación por correo.' },
+        { error: 'La verificación por correo no está disponible temporalmente. Inténtalo más tarde.' },
         { status: 500 }
       );
     }
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            'La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.',
+            'La verificación por correo no está disponible temporalmente. Inténtalo más tarde.',
         },
         { status: 500 }
       );
@@ -134,7 +135,7 @@ export async function POST(request: Request) {
       verified: true,
     });
   } catch (error) {
-    console.error('Error verifying code:', error);
+    console.error('Error verifying code:', safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: 'No se pudo verificar el código.' },
       { status: 500 }

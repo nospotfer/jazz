@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
@@ -291,7 +292,7 @@ export async function POST(req: Request) {
       vouchers: result.vouchers,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHERS_GENERATE_ERROR]', error);
+    console.error('[ADMIN_VOUCHERS_GENERATE_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao gerar vouchers.' },
       { status: 500 }

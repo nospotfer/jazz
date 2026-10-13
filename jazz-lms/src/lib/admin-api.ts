@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -33,7 +34,7 @@ export async function ensureAdminApiPermission(permission: Permission) {
 
     role = dbUser?.role || role;
   } catch (error) {
-    console.error('[admin-api] Database role lookup failed.', error);
+    console.error('[admin-api] Database role lookup failed.', safeErrorDiagnostic(error));
   }
 
   const effectiveRole = isOwner && role === 'USER' ? 'SUPER_ADMIN' : role;

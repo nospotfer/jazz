@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -133,7 +134,7 @@ export async function POST(req: Request) {
       message: `Se eliminaron ${deletedIds.length} cupon(es) legado(s).`,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHERS_PURGE_LEGACY_ERROR]', error);
+    console.error('[ADMIN_VOUCHERS_PURGE_LEGACY_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

@@ -623,3 +623,45 @@ transactions and a concrete production code/config/hardening/reopening review
 remain open. No paid plan or production deployment is authorized. The goal
 controller still reports blocked; the owner must use `/goal resume` to enable
 overnight continuation. This checkpoint does not complete the maintenance goal.
+
+## Resumed ownership review and application diagnostics follow-up
+
+- The owner reactivated the goal. Earlier checkpoint work was progress: source
+  repairs, tested preview, published runbooks/PR and durable private evidence.
+  Production remains paused; the zero-new-paid-services constraint continues.
+- Read-only account follow-up found no authenticated Dodo dashboard session or
+  explicit Dodo login entry. Its login offers email OTP/Google; inspection stopped
+  before delivery or submission. Merchant/team/refund/webhook-alert recipient
+  scope is still unverified; the existing controlled customer address is retained.
+- Existing native Google sessions require reauthentication (`invalid_grant` /
+  `invalid_rapt`). Ordinary owned Chrome was rejected before password submission.
+  No project/customer API request, new scopes, account policy or mail action.
+  GA4 property/stream/service-account mapping remains absent from the inspected
+  configuration; OpenReplay account credentials/settings remain inaccessible.
+- Fresh npm/primary advisory evidence confirms zero production findings and the
+  same five development lint-chain findings; braces3.0.3 remains the latest and
+  has no published patch. No forced downgrade or dependency suppression.
+  [Current advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm).
+- Further source inspection reproduced raw exception/provider-prose disclosure
+  beyond the earlier payment repair. The existing finite diagnostic contract is
+  now used across application-owned Auth/voucher/media/messaging/dashboard/admin
+  logs and browser error boundaries. Provider error text no longer enters
+  registration/resend responses; auth/video failures use customer-facing copy
+  instead of server environment/key instructions. Successful identity/payment/
+  access behavior and existing failure statuses/rate-limit handling are preserved.
+- All53 new isolated regressions fail for private-data disclosure on the baseline
+  and pass after repair. Initial fixture diagnostics (React cache, short Mux ID,
+  omitted PDF bucket) are retained and corrected before the meaningful53-case
+  baseline. Clean verification passes1,130 normal/40 skips,91 files with passes/
+  five all-skipped, types, webpack and lint. A first typecheck caught the new
+  test's unnecessary GET argument; corrected signature and focused53 cases pass.
+  No private env copied, external fetch permitted, provider mutation or data scrub.
+- Native-host compatibility inspection also reproduced expired limiter retention
+  and a spoofable forwarding-header assumption. A client timeout cannot bound
+  the current payment sweep inside `next start`; server deadline/non-overlap and
+  ingress verification remain concrete work. No service/DNS/timer setup occurred.
+
+Next: finish exact-project analytics selection and native-process limiter/sweep
+repairs, then verify the updated source and prepare the smallest free-host
+package. Dodo recipients, account reauthentication and continuous host/domain
+access remain specific external inputs; continue independent work meanwhile.

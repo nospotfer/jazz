@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from "next/server";
 
 import {
@@ -68,7 +69,7 @@ export async function POST(
       );
     }
 
-    console.log("[LESSON_QUIZ_ANSWER_ERROR]", error);
+    console.log("[LESSON_QUIZ_ANSWER_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         error: "Internal Server Error",

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { ensureMessagingTables } from "@/lib/messages-db";
 import { createClient } from "@/utils/supabase/server";
@@ -83,7 +84,7 @@ async function notifyByEmail(to: string, subject: string, body: string) {
   } catch (error) {
     console.error(
       "[messages:thread:notifyByEmail] Email delivery failed",
-      error,
+      safeErrorDiagnostic(error),
     );
   }
 }
@@ -152,11 +153,11 @@ export async function GET(
     });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error("[messages:thread:get:db-unavailable]", error);
+      console.error("[messages:thread:get:db-unavailable]", safeErrorDiagnostic(error));
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }
 
-    console.error("[messages:thread:get]", error);
+    console.error("[messages:thread:get]", safeErrorDiagnostic(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -285,11 +286,11 @@ export async function POST(
     return NextResponse.json({ ok: true, createdAt: now });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error("[messages:thread:post:db-unavailable]", error);
+      console.error("[messages:thread:post:db-unavailable]", safeErrorDiagnostic(error));
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }
 
-    console.error("[messages:thread:post]", error);
+    console.error("[messages:thread:post]", safeErrorDiagnostic(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

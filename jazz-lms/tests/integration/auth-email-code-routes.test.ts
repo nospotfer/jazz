@@ -347,7 +347,7 @@ describe("POST /api/auth/register", () => {
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual(
-      expect.objectContaining({ error: "create failed" }),
+      expect.objectContaining({ error: "No se pudo crear la cuenta. Inténtalo de nuevo más tarde." }),
     );
   });
 });

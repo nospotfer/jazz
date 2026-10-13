@@ -75,7 +75,7 @@ export default function AuthPage() {
       signInFailed: "No se pudo iniciar sesión",
       signInFailedRetry: "No se pudo iniciar sesión. Inténtalo de nuevo.",
       googleNotConfigured:
-        "La autenticación con Google no está configurada en este entorno.",
+        "El inicio de sesión con Google no está disponible temporalmente. Inténtalo más tarde.",
       googleAuthFailed: "No se pudo iniciar con Google",
       tabLogin: "Iniciar sesión",
       tabRegister: "Registrarse",
@@ -83,7 +83,7 @@ export default function AuthPage() {
       googleRegister: "Registrarse con Google",
       googleLogin: "Iniciar sesión con Google",
       authMissingConfig:
-        "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.",
+        "El acceso no está disponible temporalmente. Inténtalo más tarde.",
       or: "O",
       fullName: "Nombre completo",
       fullNamePlaceholder: "Tu nombre completo",
@@ -119,7 +119,7 @@ export default function AuthPage() {
       signInFailed: "Unable to sign in",
       signInFailedRetry: "Unable to sign in. Please try again.",
       googleNotConfigured:
-        "Google authentication is not configured in this environment.",
+        "Google sign-in is temporarily unavailable. Please try again later.",
       googleAuthFailed: "Unable to sign in with Google",
       tabLogin: "Sign in",
       tabRegister: "Register",
@@ -127,7 +127,7 @@ export default function AuthPage() {
       googleRegister: "Sign up with Google",
       googleLogin: "Sign in with Google",
       authMissingConfig:
-        "Authentication is not configured. Set valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your local environment.",
+        "Sign-in is temporarily unavailable. Please try again later.",
       or: "OR",
       fullName: "Full name",
       fullNamePlaceholder: "Your full name",
@@ -163,7 +163,7 @@ export default function AuthPage() {
       signInFailed: "Impossible de se connecter",
       signInFailedRetry: "Impossible de se connecter. Réessayez.",
       googleNotConfigured:
-        "L’authentification Google n’est pas configurée dans cet environnement.",
+        "La connexion avec Google est temporairement indisponible. Réessayez plus tard.",
       googleAuthFailed: "Impossible de se connecter avec Google",
       tabLogin: "Connexion",
       tabRegister: "Inscription",
@@ -171,7 +171,7 @@ export default function AuthPage() {
       googleRegister: "S’inscrire avec Google",
       googleLogin: "Se connecter avec Google",
       authMissingConfig:
-        "L’authentification n’est pas configurée. Définissez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY valides dans votre environnement local.",
+        "La connexion est temporairement indisponible. Réessayez plus tard.",
       or: "OU",
       fullName: "Nom complet",
       fullNamePlaceholder: "Votre nom complet",
@@ -207,7 +207,7 @@ export default function AuthPage() {
       signInFailed: "No fue posible iniciar sesión",
       signInFailedRetry: "No fue posible iniciar sesión. Tente novamente.",
       googleNotConfigured:
-        "La autenticación con Google no está configurada en este entorno.",
+        "O acesso com Google está temporariamente indisponível. Tente novamente mais tarde.",
       googleAuthFailed: "No fue posible iniciar sesión com Google",
       tabLogin: "Entrar",
       tabRegister: "Cadastrar",
@@ -215,7 +215,7 @@ export default function AuthPage() {
       googleRegister: "Cadastrar com Google",
       googleLogin: "Entrar com Google",
       authMissingConfig:
-        "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY válidos en tu entorno local.",
+        "O acesso está temporariamente indisponível. Tente novamente mais tarde.",
       or: "OU",
       fullName: "Nome completo",
       fullNamePlaceholder: "Seu nome completo",

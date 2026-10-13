@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -186,7 +187,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error('[VOUCHER_REDEEM_ERROR]', error);
+    console.error('[VOUCHER_REDEEM_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao resgatar voucher.' },
       { status: 500 }

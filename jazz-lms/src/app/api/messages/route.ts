@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -84,7 +85,7 @@ async function notifyProfessor(params: {
       text: `From: ${params.fromEmail}\nStudent Name: ${params.studentName}\nStudent ID: ${params.studentId}\nThread ID: ${params.threadId}\n\n${params.body}\n\nIMPORTANT: Keep [Thread:${params.threadId}] in the subject when replying so the message is attached to the correct conversation.`,
     });
   } catch (error) {
-    console.error('[messages:notifyProfessor] Email delivery failed', error);
+    console.error('[messages:notifyProfessor] Email delivery failed', safeErrorDiagnostic(error));
   }
 }
 
@@ -216,11 +217,11 @@ export async function GET() {
     });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:get:db-unavailable]', error);
+      console.error('[messages:get:db-unavailable]', safeErrorDiagnostic(error));
       return new NextResponse('Messaging temporarily unavailable', { status: 503 });
     }
 
-    console.error('[messages:get]', error);
+    console.error('[messages:get]', safeErrorDiagnostic(error));
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
@@ -373,11 +374,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: threadId, createdAt: now, createdNewThread: !matchedThread });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:create:db-unavailable]', error);
+      console.error('[messages:create:db-unavailable]', safeErrorDiagnostic(error));
       return new NextResponse('Messaging temporarily unavailable', { status: 503 });
     }
 
-    console.error('[messages:create]', error);
+    console.error('[messages:create]', safeErrorDiagnostic(error));
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 
@@ -22,7 +23,7 @@ export const getFirstPublishedCourseId = cache(async () => {
   try {
     return await getFirstPublishedCourseIdCached();
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load first published course.', error);
+    console.error('[dashboard-server-data] Unable to load first published course.', safeErrorDiagnostic(error));
     return null;
   }
 });
@@ -60,7 +61,7 @@ export const getPublishedCourseOutline = cache(async () => {
   try {
     return await getPublishedCourseOutlineCached();
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published course outline.', error);
+    console.error('[dashboard-server-data] Unable to load published course outline.', safeErrorDiagnostic(error));
     return null;
   }
 });
@@ -109,7 +110,7 @@ export const getPublishedCoursesForPdfView = cache(async (language: SupportedLan
   try {
     return await getPublishedCoursesForPdfViewCached(language);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published courses for pdf view.', error);
+    console.error('[dashboard-server-data] Unable to load published courses for pdf view.', safeErrorDiagnostic(error));
     return [];
   }
 });
@@ -146,7 +147,7 @@ export const getPublishedCourseForLessonPage = cache(async (courseId: string) =>
   try {
     return await getPublishedCourseForLessonPageCached(courseId);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published lesson course tree.', error);
+    console.error('[dashboard-server-data] Unable to load published lesson course tree.', safeErrorDiagnostic(error));
     return null;
   }
 });
@@ -160,7 +161,7 @@ export const hasAnyCoursePurchase = cache(async (userId: string) => {
 
     return Boolean(purchase);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load course purchase state.', error);
+    console.error('[dashboard-server-data] Unable to load course purchase state.', safeErrorDiagnostic(error));
     return false;
   }
 });

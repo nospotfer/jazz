@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { ensureAdminApiPermission } from "@/lib/admin-api";
 import { db } from "@/lib/db";
 import {
@@ -112,7 +113,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error("[ADMIN_VOUCHER_TOGGLE_ERROR]", error);
+    console.error("[ADMIN_VOUCHER_TOGGLE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

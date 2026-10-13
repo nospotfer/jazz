@@ -1,5 +1,6 @@
 "use client";
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { useLanguage } from "@/components/providers/language-provider";
 import { createClient } from "@/utils/supabase/client";
 import { LogOut, X } from "lucide-react";
@@ -352,7 +353,7 @@ export default function ResetPasswordPage() {
         logRecoveryDebug("token-valid");
         setTokenValid(true);
       } catch (err) {
-        console.error("[auth/reset-password] unexpected-bootstrap-error", err);
+        console.error("[auth/reset-password] unexpected-bootstrap-error", safeErrorDiagnostic(err));
         setTokenError(copy.tokenValidationFailed);
         setTokenValid(false);
       } finally {

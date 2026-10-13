@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ count: accessiblePdfKeys.size });
   } catch (error) {
-    console.error('[pdf-count]', error);
+    console.error('[pdf-count]', safeErrorDiagnostic(error));
     return NextResponse.json({ count: 0 }, { status: 500 });
   }
 }

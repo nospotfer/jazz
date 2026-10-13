@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La URL de Supabase no está configurada en el entorno del servidor.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La clave pública de Supabase no está configurada en el entorno del servidor.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "SUPABASE_SERVICE_ROLE_KEY es obligatoria para el flujo de registro.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -66,7 +67,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -149,11 +150,10 @@ export async function POST(request: Request) {
         // Resume by email verification without replacing its initial password.
         pendingRegistration = true;
       } else if (createError || !createdUser.user) {
+        console.error("[AUTH_REGISTER_CREATE_FAILED]", safeErrorDiagnostic(createError));
         return NextResponse.json(
           {
-            error:
-              createError?.message ||
-              "No se pudo crear el usuario de autenticación.",
+            error: "No se pudo crear la cuenta. Inténtalo de nuevo más tarde.",
           },
           { status: 400 },
         );
@@ -188,10 +188,10 @@ export async function POST(request: Request) {
     });
 
     if (otpError) {
+      console.error("[AUTH_REGISTER_OTP_FAILED]", safeErrorDiagnostic(otpError));
       return NextResponse.json(
         {
-          error:
-            otpError.message || "No se pudo enviar el código de verificación.",
+          error: "No se pudo enviar el código de verificación. Inténtalo de nuevo más tarde.",
         },
         { status: 400 },
       );
@@ -205,7 +205,7 @@ export async function POST(request: Request) {
         : "Cuenta creada. Introduce el código de verificación enviado a tu correo.",
     });
   } catch (error) {
-    console.error("Error registering user:", error);
+    console.error("Error registering user:", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "No se pudo crear la cuenta" },
       { status: 500 },

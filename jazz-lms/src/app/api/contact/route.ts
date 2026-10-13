@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
@@ -167,7 +168,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('[contact] Unexpected delivery failure', error instanceof Error ? error.name : 'Unknown');
+    console.error('[contact] Unexpected delivery failure', safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

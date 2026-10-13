@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
@@ -256,7 +257,7 @@ export async function GET() {
     const courses = Array.from(coursesMap.values());
     return NextResponse.json({ courses });
   } catch (error) {
-    console.error('[courses-progress]', error);
+    console.error('[courses-progress]', safeErrorDiagnostic(error));
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

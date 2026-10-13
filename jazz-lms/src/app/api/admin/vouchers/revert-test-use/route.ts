@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -151,7 +152,7 @@ export async function POST(req: Request) {
       reverted,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHER_REVERT_TEST_USE_ERROR]', error);
+    console.error('[ADMIN_VOUCHER_REVERT_TEST_USE_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
       ...summary,
     });
   } catch (error) {
-    console.error('[DEV_RESET_TEST_PURCHASES_ERROR]', error);
+    console.error('[DEV_RESET_TEST_PURCHASES_ERROR]', safeErrorDiagnostic(error));
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

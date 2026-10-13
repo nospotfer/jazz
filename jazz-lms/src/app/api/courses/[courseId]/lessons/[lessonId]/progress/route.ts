@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
 import { assertLessonQuizAccess, isLessonQuizError } from "@/lib/lesson-quiz-server";
@@ -77,7 +78,7 @@ export async function PUT(
     if (isLessonQuizError(error)) {
       return NextResponse.json({ error: error.message }, { status: error.statusCode });
     }
-    console.log("[LESSON_PROGRESS_ERROR]", error);
+    console.log("[LESSON_PROGRESS_ERROR]", safeErrorDiagnostic(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

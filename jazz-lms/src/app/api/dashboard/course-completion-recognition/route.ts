@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 
 import { getUserCourseCompletionRecognition } from '@/lib/jazz-medal-progress';
@@ -26,7 +27,7 @@ export async function GET() {
     const recognition = await getUserCourseCompletionRecognition(user.id, user.email);
     return NextResponse.json(recognition);
   } catch (error) {
-    console.error('[dashboard:course-completion-recognition]', error);
+    console.error('[dashboard:course-completion-recognition]', safeErrorDiagnostic(error));
     return NextResponse.json(defaultResponse, { status: 500 });
   }
 }
