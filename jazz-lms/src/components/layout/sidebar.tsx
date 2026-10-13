@@ -30,7 +30,7 @@ const DashboardNotesNavPanel = dynamic(
   },
 );
 
-export function Sidebar() {
+export function Sidebar({ currentUserId }: { currentUserId: string }) {
   const { t } = useDashboardPreferences();
   const [isOpen, setIsOpen] = useState(false);
   const [pdfCount, setPdfCount] = useState<number | null>(null);
@@ -344,6 +344,7 @@ export function Sidebar() {
         }`}
       >
         <SidebarContent
+          currentUserId={currentUserId}
           pathname={pathname}
           pdfCount={pdfCount}
           unreadMessages={unreadMessages}
@@ -355,6 +356,7 @@ export function Sidebar() {
       {/* Sidebar - Desktop (always visible) */}
       <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
+          currentUserId={currentUserId}
           pathname={pathname}
           pdfCount={pdfCount}
           unreadMessages={unreadMessages}
@@ -366,12 +368,14 @@ export function Sidebar() {
 }
 
 function SidebarContent({
+  currentUserId,
   pathname,
   pdfCount,
   unreadMessages,
   onClose,
   onLogout,
 }: {
+  currentUserId: string;
   pathname: string;
   pdfCount: number | null;
   unreadMessages: number | null;
@@ -491,7 +495,7 @@ function SidebarContent({
               />
             </button>
 
-            {isNotesSectionOpen ? <DashboardNotesNavPanel /> : null}
+            {isNotesSectionOpen ? <DashboardNotesNavPanel currentUserId={currentUserId} /> : null}
           </div>
         </div>
       </nav>

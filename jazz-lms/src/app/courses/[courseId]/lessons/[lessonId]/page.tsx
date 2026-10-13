@@ -164,6 +164,7 @@ const LessonPage = async ({
   return (
     <div>
       <CoursePlayer
+        currentUserId={user.id}
         course={localizedCourse}
         lesson={lesson}
         lessonId={lessonId}

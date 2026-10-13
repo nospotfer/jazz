@@ -24,6 +24,13 @@ vi.mock('@/components/providers/language-provider', () => ({
   }),
 }));
 
+vi.mock('@/utils/supabase/client', () => ({ createClient: () => ({ auth: {
+  onAuthStateChange: (callback: (event: string, session: { user: { id: string } }) => void) => {
+    queueMicrotask(() => callback('INITIAL_SESSION', { user: { id: 'user-1' } }));
+    return { data: { subscription: { unsubscribe: () => undefined } } };
+  },
+} }) }));
+
 vi.mock('@/components/course/pdf-workspace-viewer', () => ({
   PdfWorkspaceViewer: ({ fileUrl }: { fileUrl: string }) => (
     <div data-testid="pdf-viewer" data-url={fileUrl}>
@@ -33,6 +40,7 @@ vi.mock('@/components/course/pdf-workspace-viewer', () => ({
 }));
 
 const baseProps = {
+  currentUserId: 'user-1',
   courseId: 'course-1',
   lessonId: 'lesson-1',
   classLabel: 'Clase 1',

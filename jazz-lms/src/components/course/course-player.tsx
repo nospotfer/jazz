@@ -104,6 +104,7 @@ const COMPLETE_BUTTON_UNLOCK_PERCENT = 80;
 const DASHBOARD_VIDEO_COVER_IMAGE = "/icon.jpg";
 
 interface CoursePlayerProps {
+  currentUserId: string;
   course: Course & {
     chapters: (Chapter & {
       lessons: (Lesson & {
@@ -147,6 +148,7 @@ function disableSubtitleTracks(textTracks: TextTrackList) {
 }
 
 export const CoursePlayer = ({
+  currentUserId,
   course,
   lesson,
   lessonId,
@@ -1300,7 +1302,7 @@ export const CoursePlayer = ({
   return (
     <DashboardPreferencesProvider>
       <div className="h-[100dvh] overflow-hidden bg-background">
-        <Sidebar />
+        <Sidebar currentUserId={currentUserId} />
 
         <div className="lg:pl-56 h-full overflow-hidden p-2 pb-[168px] sm:p-3 sm:pb-[168px] lg:p-4 lg:pb-[168px]">
           <div

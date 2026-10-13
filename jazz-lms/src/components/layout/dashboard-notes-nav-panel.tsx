@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Library } from 'lucide-react';
 
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
+import { useNoteOwner } from '@/hooks/use-note-owner';
+import { readLessonNoteDraft, writeLessonNoteDraft } from '@/lib/lesson-note-drafts';
 
 interface CourseProgressVideo {
   lessonId: string;
@@ -20,20 +22,29 @@ interface CourseProgressItem {
   videos: CourseProgressVideo[];
 }
 
-export function DashboardNotesNavPanel() {
+export function DashboardNotesNavPanel({ currentUserId }: { currentUserId: string }) {
+  const isCurrentOwner = useNoteOwner(currentUserId);
+  if (!isCurrentOwner) return null;
+  return <ScopedNotesNavPanel key={currentUserId} currentUserId={currentUserId} />;
+}
+
+function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
   const { t, language } = useDashboardPreferences();
   const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
-  const [noteContent, setNoteContent] = useState('');
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const loadCourses = () => {
       setLoading(true);
-      fetch('/api/dashboard/courses-progress')
-        .then((response) => response.json())
+      fetch('/api/dashboard/courses-progress', { signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) throw new Error('Unable to load courses');
+          return response.json();
+        })
         .then((data) => {
           if (!isMounted) return;
 
@@ -58,6 +69,7 @@ export function DashboardNotesNavPanel() {
     if (idleCallback !== undefined) {
       return () => {
         isMounted = false;
+        controller.abort();
         window.cancelIdleCallback?.(idleCallback);
       };
     }
@@ -65,12 +77,13 @@ export function DashboardNotesNavPanel() {
     const timeoutId = window.setTimeout(loadCourses, 300);
     return () => {
       isMounted = false;
+      controller.abort();
       window.clearTimeout(timeoutId);
     };
   }, []);
 
   const primaryCourseId = videos[0]?.courseId;
-  const notesVideos = videos
+  const notesVideos = useMemo(() => videos
     .filter((video) => video.courseId === primaryCourseId)
     .map((video, index) => ({
       lessonId: video.lessonId,
@@ -78,13 +91,12 @@ export function DashboardNotesNavPanel() {
       classLabel: `${t('classLabel', 'Class')} ${index + 1}`,
       subtitle: getLocalizedJazzSubtitle(index + 1, language) || video.title,
       classNumber: index + 1,
-    }));
+    })), [videos, primaryCourseId, t, language]);
 
   useEffect(() => {
     if (!notesVideos.length) {
       const frame = window.requestAnimationFrame(() => {
         setSelectedNote(null);
-        setNoteContent('');
       });
 
       return () => window.cancelAnimationFrame(frame);
@@ -104,25 +116,6 @@ export function DashboardNotesNavPanel() {
     return () => window.cancelAnimationFrame(frame);
   }, [notesVideos]);
 
-  useEffect(() => {
-    if (!selectedNote) return;
-
-    const frame = window.requestAnimationFrame(() => {
-      const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
-      const saved = window.localStorage.getItem(storageKey) || '';
-      setNoteContent(saved);
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [selectedNote]);
-
-  const onChangeSidebarNotes = (value: string) => {
-    setNoteContent(value);
-    if (!selectedNote) return;
-
-    const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
-    window.localStorage.setItem(storageKey, value);
-  };
 
   return (
     <div className="mt-1 flex h-full min-h-0 flex-col">
@@ -189,16 +182,40 @@ export function DashboardNotesNavPanel() {
               <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
                 {t('lessonNotes', 'Lesson notes')}
               </p>
-              <textarea
-                value={noteContent}
-                onChange={(event) => onChangeSidebarNotes(event.target.value)}
-                placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
-                className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              {selectedNote ? (
+                <SidebarNoteDraft
+                  key={JSON.stringify([currentUserId, selectedNote.courseId, selectedNote.lessonId])}
+                  currentUserId={currentUserId}
+                  courseId={selectedNote.courseId}
+                  lessonId={selectedNote.lessonId}
+                  placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
+                />
+              ) : null}
             </div>
           </>
         )}
       </div>
     </div>
+  );
+}
+
+function SidebarNoteDraft({ currentUserId, courseId, lessonId, placeholder }: {
+  currentUserId: string;
+  courseId: string;
+  lessonId: string;
+  placeholder: string;
+}) {
+  const [content, setContent] = useState(() => readLessonNoteDraft(currentUserId, courseId, lessonId).content);
+  return (
+    <textarea
+      value={content}
+      onChange={(event) => {
+        setContent(event.target.value);
+        writeLessonNoteDraft(currentUserId, courseId, lessonId, event.target.value);
+      }}
+      aria-label={placeholder}
+      placeholder={placeholder}
+      className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+    />
   );
 }

@@ -118,6 +118,7 @@ const course = {
 } as any;
 
 const baseProps = {
+  currentUserId: 'user-1',
   course,
   lesson,
   lessonId: "lesson-1",

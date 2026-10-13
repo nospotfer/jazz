@@ -161,6 +161,7 @@ export default async function LessonNotesPage({
 
   return (
     <LessonNotesEditor
+      currentUserId={user.id}
       courseId={courseId}
       lessonId={lessonId}
       classLabel={getLocalizedJazzClassLabel(lessonIndex + 1, language)}

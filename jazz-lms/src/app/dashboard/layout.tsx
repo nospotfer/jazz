@@ -48,7 +48,7 @@ export default async function DashboardLayout({
         <DashboardLocalTestReset />
         <CheckoutSessionGuard currentUserId={user.id} />
         <DashboardPurchaseAutoReconcile />
-        <Sidebar />
+        <Sidebar currentUserId={user.id} />
         <div className="lg:pl-64 h-full flex flex-col">
           <DashboardHeader user={dashboardHeaderUser} role={role} isAdmin={isAdmin} />
           <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">

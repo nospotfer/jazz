@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { PdfWorkspaceViewer } from '@/components/course/pdf-workspace-viewer';
 import { languageToHtmlLang } from '@/lib/language';
+import { useNoteOwner } from '@/hooks/use-note-owner';
+import { DEFAULT_NOTE_STYLE, MIN_NOTE_FONT_SIZE, MAX_NOTE_FONT_SIZE, normalizeNoteStyle, readLessonNoteDraft, writeLessonNoteDraft, acknowledgeLessonNoteDraft, type LessonNoteStyle } from '@/lib/lesson-note-drafts';
 
 interface StudentNote {
   userId: string;
@@ -20,6 +22,7 @@ interface StudentNote {
 }
 
 interface LessonNotesEditorProps {
+  currentUserId: string;
   courseId: string;
   lessonId: string;
   classLabel: string;
@@ -34,16 +37,27 @@ interface LessonNotesEditorProps {
   studentNotes?: StudentNote[];
 }
 
-interface NotesStyleState {
-  isBold: boolean;
-  isItalic: boolean;
-  fontSize: number;
+const MIN_FONT_SIZE = MIN_NOTE_FONT_SIZE;
+const MAX_FONT_SIZE = MAX_NOTE_FONT_SIZE;
+const SESSION_CHANGED_COPY = {
+  es: 'La sesión ha cambiado. Vuelve a abrir tus notas.',
+  en: 'Your session changed. Open your notes again.',
+  fr: 'Votre session a changé. Ouvrez à nouveau vos notes.',
+  pt: 'Sua sessão mudou. Abra suas notas novamente.',
+};
+
+export function LessonNotesEditor(props: LessonNotesEditorProps) {
+  const isCurrentOwner = useNoteOwner(props.currentUserId);
+  const { language } = useLanguage();
+  if (isCurrentOwner === null) return null;
+  if (!isCurrentOwner) {
+    return <p role="status" className="text-muted-foreground">{SESSION_CHANGED_COPY[language]}</p>;
+  }
+  return <ScopedLessonNotesEditor key={JSON.stringify([props.currentUserId, props.courseId, props.lessonId])} {...props} />;
 }
 
-const MIN_FONT_SIZE = 11;
-const MAX_FONT_SIZE = 14;
-
-export function LessonNotesEditor({
+function ScopedLessonNotesEditor({
+  currentUserId,
   courseId,
   lessonId,
   classLabel,
@@ -64,6 +78,8 @@ export function LessonNotesEditor({
       loadingPdf: 'Cargando PDF...',
       noPdf: 'No hay PDFs disponibles para esta clase.',
       downloadPdf: 'Descargar PDF seleccionado',
+      localDraftOnly: 'Tus cambios no se han guardado en tu cuenta. Mantén esta página abierta y copia tus notas antes de reconectar.',
+      saveDraft: 'Guardar borrador', savingDraft: 'Guardando...',
     },
     en: {
       title: 'My notes', placeholder: 'Write your notes here', bold: 'Bold', italic: 'Italic',
@@ -75,6 +91,8 @@ export function LessonNotesEditor({
       loadingPdf: 'Loading PDF...',
       noPdf: 'No PDFs are available for this lesson.',
       downloadPdf: 'Download selected PDF',
+      localDraftOnly: 'Your changes have not been saved to your account. Keep this page open and copy your notes before reconnecting.',
+      saveDraft: 'Save draft', savingDraft: 'Saving...',
     },
     fr: {
       title: 'Mes notes', placeholder: 'Écrivez vos notes ici', bold: 'Gras', italic: 'Italique',
@@ -86,6 +104,8 @@ export function LessonNotesEditor({
       loadingPdf: 'Chargement du PDF...',
       noPdf: 'Aucun PDF disponible pour cette leçon.',
       downloadPdf: 'Télécharger le PDF sélectionné',
+      localDraftOnly: 'Vos modifications n’ont pas été enregistrées dans votre compte. Gardez cette page ouverte et copiez vos notes avant de vous reconnecter.',
+      saveDraft: 'Enregistrer le brouillon', savingDraft: 'Enregistrement...',
     },
     pt: {
       title: 'Minhas notas', placeholder: 'Escreva suas notas aqui', bold: 'Negrito', italic: 'Itálico',
@@ -97,26 +117,22 @@ export function LessonNotesEditor({
       loadingPdf: 'Carregando PDF...',
       noPdf: 'Não há PDFs disponíveis para esta aula.',
       downloadPdf: 'Baixar PDF selecionado',
+      localDraftOnly: 'Suas alterações não foram salvas na sua conta. Mantenha esta página aberta e copie suas notas antes de reconectar.',
+      saveDraft: 'Salvar rascunho', savingDraft: 'Salvando...',
     },
   }[language];
 
-  const notesStorageKey = useMemo(
-    () => `lesson-notes:${courseId}:${lessonId}`,
-    [courseId, lessonId]
-  );
-
-  const styleStorageKey = useMemo(
-    () => `lesson-notes-style:${courseId}:${lessonId}`,
-    [courseId, lessonId]
-  );
-
   const [content, setContent] = useState('');
-  const [styleState, setStyleState] = useState<NotesStyleState>({
-    isBold: false,
-    isItalic: false,
-    fontSize: 13,
-  });
+  const [styleState, setStyleState] = useState<LessonNoteStyle>(DEFAULT_NOTE_STYLE);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [canSaveToServer, setCanSaveToServer] = useState(false);
+  const [editRevision, setEditRevision] = useState(0);
+  const [ownerRejected, setOwnerRejected] = useState(false);
+  const [hasUnsyncedChanges, setHasUnsyncedChanges] = useState(false);
+  const [manualSaveRequest, setManualSaveRequest] = useState(0);
+  const [savingRevision, setSavingRevision] = useState<{ edit: number; manual: number } | null>(null);
+  const lastManualSaveRef = useRef(0);
+  const isSaving = savingRevision?.edit === editRevision && savingRevision?.manual === manualSaveRequest;
   const [selectedPdfId, setSelectedPdfId] = useState<string | null>(
     pdfAttachments[0]?.id ?? null,
   );
@@ -124,7 +140,6 @@ export function LessonNotesEditor({
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const [pdfLoadError, setPdfLoadError] = useState('');
 
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pdfRequestIdRef = useRef(0);
 
   const selectedPdf = useMemo(
@@ -231,79 +246,53 @@ export function LessonNotesEditor({
   }, [loadSignedPdfUrl, selectedPdf]);
 
   useEffect(() => {
+    const controller = new AbortController();
     let cancelled = false;
-
     const hydrateNotes = async () => {
-      const savedNotes = window.localStorage.getItem(notesStorageKey) || '';
-      const rawStyle = window.localStorage.getItem(styleStorageKey);
-
-      let fallbackStyle: NotesStyleState = {
-        isBold: false,
-        isItalic: false,
-        fontSize: 13,
-      };
-
-      if (rawStyle) {
-        try {
-          const parsed = JSON.parse(rawStyle) as Partial<NotesStyleState>;
-          fallbackStyle = {
-            isBold: Boolean(parsed.isBold),
-            isItalic: Boolean(parsed.isItalic),
-            fontSize:
-              typeof parsed.fontSize === 'number'
-                ? Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, parsed.fontSize))
-                : 13,
-          };
-        } catch {
-          fallbackStyle = {
-            isBold: false,
-            isItalic: false,
-            fontSize: 13,
-          };
-        }
-      }
-
       try {
-        const response = await fetch(
-          `/api/dashboard/notes?courseId=${encodeURIComponent(courseId)}&lessonId=${encodeURIComponent(lessonId)}`
-        );
-        const data = await response.json();
-
+        const query = new URLSearchParams({ courseId, lessonId, expectedUserId: currentUserId });
+        const response = await fetch(`/api/dashboard/notes?${query}`, { signal: controller.signal });
         if (cancelled) return;
-
-        if (response.ok && data.note) {
-          setContent(String(data.note.content || ''));
-          setStyleState({
-            isBold: Boolean(data.note.isBold),
-            isItalic: Boolean(data.note.isItalic),
-            fontSize:
-              typeof data.note.fontSize === 'number'
-                ? Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, data.note.fontSize))
-                : 13,
-          });
+        if (response.status === 401 || response.status === 409) {
+          setOwnerRejected(true);
+          return;
+        }
+        const data = await response.json();
+        if (cancelled) return;
+        if (response.ok && (data.note === null || (
+          data.note?.userId === currentUserId && data.note.courseId === courseId && data.note.lessonId === lessonId
+        ))) {
+          // A sidebar edit may have arrived while the server request was pending.
+          const draft = readLessonNoteDraft(currentUserId, courseId, lessonId);
+          const note = data.note;
+          if (note && !draft.isDirty) writeLessonNoteDraft(currentUserId, courseId, lessonId, String(note.content ?? ''), normalizeNoteStyle(note), { isDirty: false });
+          setContent(draft.isDirty ? draft.content : note ? String(note.content ?? '') : draft.content);
+          setStyleState(draft.isDirty ? draft.style : note ? normalizeNoteStyle(note) : draft.style);
+          setHasUnsyncedChanges(draft.isDirty);
+          setCanSaveToServer(true);
           setIsHydrated(true);
           return;
         }
-      } catch {
-      }
-
+      } catch { /* An unavailable API must not import another account's draft. */ }
       if (!cancelled) {
-        setContent(savedNotes);
-        setStyleState(fallbackStyle);
+        const draft = readLessonNoteDraft(currentUserId, courseId, lessonId);
+        setContent(draft.content);
+        setStyleState(draft.style);
+        setHasUnsyncedChanges(draft.isDirty);
         setIsHydrated(true);
       }
     };
-
     void hydrateNotes();
-
     return () => {
       cancelled = true;
+      controller.abort();
     };
-  }, [courseId, lessonId, notesStorageKey, styleStorageKey]);
+  }, [currentUserId, courseId, lessonId]);
 
-  const persistStyle = (next: NotesStyleState) => {
+  const persistStyle = (next: LessonNoteStyle) => {
     setStyleState(next);
-    window.localStorage.setItem(styleStorageKey, JSON.stringify(next));
+    setEditRevision((revision) => revision + 1);
+    setHasUnsyncedChanges(true);
   };
 
   const handleFontChange = (delta: number) => {
@@ -315,38 +304,49 @@ export function LessonNotesEditor({
   };
 
   useEffect(() => {
-    if (!isHydrated) return;
-
-    window.localStorage.setItem(notesStorageKey, content);
-    window.localStorage.setItem(styleStorageKey, JSON.stringify(styleState));
-
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    saveTimeoutRef.current = setTimeout(() => {
+    // Loading a server note or an owned draft is never a user edit.
+    if (!isHydrated || !hasUnsyncedChanges || ownerRejected) return;
+    const isManualSave = manualSaveRequest > lastManualSaveRef.current;
+    if (editRevision === 0 && !isManualSave) return;
+    const draftRevision = writeLessonNoteDraft(currentUserId, courseId, lessonId, content, styleState);
+    if (!canSaveToServer && !isManualSave) return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      if (isManualSave) lastManualSaveRef.current = manualSaveRequest;
+      setSavingRevision({ edit: editRevision, manual: manualSaveRequest });
       void fetch('/api/dashboard/notes', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        signal: controller.signal,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          courseId,
-          lessonId,
-          content,
-          isBold: styleState.isBold,
-          isItalic: styleState.isItalic,
-          fontSize: styleState.fontSize,
+          expectedUserId: currentUserId,
+          courseId, lessonId, content,
+          isBold: styleState.isBold, isItalic: styleState.isItalic, fontSize: styleState.fontSize,
         }),
+      }).then((response) => {
+        if (controller.signal.aborted) return;
+        setSavingRevision(null);
+        if (response.status === 401 || response.status === 409) setOwnerRejected(true);
+        else if (!response.ok) setCanSaveToServer(false);
+        else {
+          acknowledgeLessonNoteDraft(currentUserId, courseId, lessonId, draftRevision);
+          setHasUnsyncedChanges(false);
+          setCanSaveToServer(true);
+        }
+      }).catch(() => {
+        if (!controller.signal.aborted) {
+          setSavingRevision(null);
+          setCanSaveToServer(false);
+        }
       });
-    }, 450);
-
+    }, isManualSave ? 0 : 450);
     return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, [content, courseId, isHydrated, lessonId, notesStorageKey, styleState, styleStorageKey]);
+  }, [currentUserId, content, courseId, isHydrated, canSaveToServer, editRevision, lessonId, styleState, ownerRejected, hasUnsyncedChanges, manualSaveRequest]);
+
+  if (ownerRejected) return <p role="status" className="text-muted-foreground">{SESSION_CHANGED_COPY[language]}</p>;
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-5">
@@ -362,6 +362,7 @@ export function LessonNotesEditor({
           <Button
             type="button"
             variant={styleState.isBold ? 'default' : 'outline'}
+            disabled={!isHydrated}
             onClick={() => persistStyle({ ...styleState, isBold: !styleState.isBold })}
             className="h-9 px-3"
             title={copy.bold}
@@ -373,6 +374,7 @@ export function LessonNotesEditor({
           <Button
             type="button"
             variant={styleState.isItalic ? 'default' : 'outline'}
+            disabled={!isHydrated}
             onClick={() => persistStyle({ ...styleState, isItalic: !styleState.isItalic })}
             className="h-9 px-3"
             title={copy.italic}
@@ -385,7 +387,7 @@ export function LessonNotesEditor({
             type="button"
             variant="outline"
             onClick={() => handleFontChange(-1)}
-            disabled={styleState.fontSize <= MIN_FONT_SIZE}
+            disabled={!isHydrated || styleState.fontSize <= MIN_FONT_SIZE}
             className="h-9 px-3"
             title={copy.decreaseFont}
             aria-label={copy.decreaseFont}
@@ -401,7 +403,7 @@ export function LessonNotesEditor({
             type="button"
             variant="outline"
             onClick={() => handleFontChange(1)}
-            disabled={styleState.fontSize >= MAX_FONT_SIZE}
+            disabled={!isHydrated || styleState.fontSize >= MAX_FONT_SIZE}
             className="h-9 px-3"
             title={copy.increaseFont}
             aria-label={copy.increaseFont}
@@ -412,8 +414,12 @@ export function LessonNotesEditor({
 
         <textarea
           value={content}
+          disabled={!isHydrated}
+          aria-label={copy.title}
           onChange={(event) => {
             setContent(event.target.value);
+            setEditRevision((revision) => revision + 1);
+            setHasUnsyncedChanges(true);
           }}
           placeholder={copy.placeholder}
           className="w-full min-h-[420px] resize-y rounded-lg border-2 border-border bg-background p-4 sm:p-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50"
@@ -424,6 +430,12 @@ export function LessonNotesEditor({
             lineHeight: 1.6,
           }}
         />
+        {isHydrated && (!canSaveToServer || hasUnsyncedChanges) ? <p role="status" className="text-sm text-muted-foreground">{copy.localDraftOnly}</p> : null}
+        {isHydrated && hasUnsyncedChanges ? (
+          <Button type="button" disabled={isSaving} onClick={() => setManualSaveRequest((request) => request + 1)}>
+            {isSaving ? copy.savingDraft : copy.saveDraft}
+          </Button>
+        ) : null}
       </div>
 
       <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-4">

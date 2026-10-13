@@ -64,7 +64,10 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;
     if (pathname === '/dashboard') return false;
-    return pathname.startsWith('/dashboard');
+    // The notes page and API enforce access to the individual lesson, including
+    // the free first lesson and historical single-lesson purchases.
+    if (/^\/dashboard\/notes\/[^/]+\/[^/]+\/?$/.test(pathname)) return false;
+    return pathname.startsWith('/dashboard/');
   }, [pathname]);
 
   const showPaywall = !hasPaidCourse && isLockedRoute;

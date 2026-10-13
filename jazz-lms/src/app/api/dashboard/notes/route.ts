@@ -6,11 +6,24 @@ import { getLessonNotesAccess, LessonNotesAccessError } from '@/lib/lesson-notes
 export const dynamic = 'force-dynamic';
 const privateHeaders = { 'Cache-Control': 'no-store, private, max-age=0' };
 
+function checkExpectedUser(expectedUserId: unknown, userId: string) {
+  if (expectedUserId === undefined) return null;
+  if (typeof expectedUserId !== 'string' || !expectedUserId.trim()) {
+    return NextResponse.json({ error: 'Invalid expectedUserId' }, { status: 400, headers: privateHeaders });
+  }
+  if (expectedUserId !== userId) {
+    return NextResponse.json({ error: 'Session changed' }, { status: 409, headers: privateHeaders });
+  }
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const identityError = checkExpectedUser(request.nextUrl.searchParams.get('expectedUserId') ?? undefined, user.id);
+    if (identityError) return identityError;
     const courseId = request.nextUrl.searchParams.get('courseId');
     const lessonId = request.nextUrl.searchParams.get('lessonId');
     const targetUserId = request.nextUrl.searchParams.get('userId') || user.id;
@@ -32,6 +45,8 @@ export async function PUT(request: NextRequest) {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const body = await request.json().catch(() => null);
+    const identityError = checkExpectedUser(body?.expectedUserId, user.id);
+    if (identityError) return identityError;
     if (!body || typeof body.courseId !== 'string' || typeof body.lessonId !== 'string' ||
       typeof body.content !== 'string' || (body.isBold !== undefined && typeof body.isBold !== 'boolean') ||
       (body.isItalic !== undefined && typeof body.isItalic !== 'boolean')) {
