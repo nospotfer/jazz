@@ -83,3 +83,63 @@ Primary API references: [alias](https://vercel.com/docs/rest-api/aliases/get-an-
 [members](https://vercel.com/docs/rest-api/teams/list-team-members).
 Sanitized local evidence: `/tmp/jazz-maintenance/vercel-live-target-summary.json`
 and `/tmp/jazz-maintenance/vercel-account-access-summary.json`.
+
+## Concrete commercial-hosting decision
+
+The owner has now set a **zero incremental hosting budget** and rejected a paid
+upgrade for this low-revenue project. Do not upgrade, add a card/seat, enable
+paid usage or repeat the same Pro approval request. The earlier cost research
+below is retained as evidence, not the selected plan. The existing Hobby
+commercial-use mismatch remains documented; low sales do not establish a
+provider policy exception.
+
+The free HTTPS preview uses a temporary Cloudflare Quick Tunnel to a separate
+production-built synthetic frontend on the existing machine. This
+needs no Cloudflare account or domain/DNS change and is documented for testing,
+not production hosting. It has no SLA, changes URL after restart, supports
+200 concurrent requests and does not support SSE. The completed 44-check HTTPS
+run and independent preserved-data comparison are [recorded separately](preview.md#free-https-frontend-checkpoint).
+Payment/mail/tracking remain disabled and access is protected;
+no real-email PIN gate or unsigned webhook bypass is implied.
+[Quick Tunnel documentation](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/).
+
+An exact-commit HTTPS preview can satisfy the customer-journey review without
+being a Vercel deployment. A stable zero-cost production hosting alternative
+and any domain/runtime move still require a concrete compatibility/rollback
+review and explicit production approval. No existing deployment is moved here.
+
+For this exact Neurofactory team, current Pro pricing starts at **USD 20/month**:
+the platform fee includes one deploying seat and USD 20 usage credit. The
+observed sole Owner therefore gives a USD 20 base, plus actual usage and applicable
+taxes. Both accessible projects share team billing; there is no per-project
+USD 20 base. Extra members/add-ons remain outside this proposal.
+[Pro platform fee](https://vercel.com/docs/plans/pro-plan#platform-fee).
+
+This paid option was rejected by the owner. Its checkout, renewal, tax and
+proration were not executed or verified. The selected free preview leaves the
+existing live Hobby commercial-use issue for the stable hosting review. No plan,
+card, project transfer, production deployment or spending setting was changed.
+
+Current [Flat Rate CDN](https://vercel.com/docs/pricing/flat-rate-cdn) includes the
+initial 1M-request/1TB tier in Pro; over-capacity traffic can increase the next
+cycle's tier fee, and tiers do not automatically downgrade. Do not use cached
+older allocations or promise a fixed USD 20 total. Subscription renewal,
+cancellation/downgrade timing and generally non-refundable fees are covered by
+[self-service terms](https://vercel.com/legal/terms).
+
+[Spend Management](https://vercel.com/docs/spend-management) covers beyond-credit
+metered usage, with reporting delay; it is not a total-invoice cap for seats,
+add-ons or every integration. Automatic pausing can stop both live production
+projects with HTTP 503 while previews/build usage may continue. Configuring that
+shared outage behavior needs explicit approval; an alert-only proposal does not
+set an automatic outage or a hard bill cap. Downgrade can require domain/store
+transfers and member changes, so plan rollback also needs review.
+
+The authenticated last-30-day CLI read with documented flags returns no JSON
+and reports billing cost data unavailable for the range, potentially because
+there is no active subscription/data yet. This is an inspection limit, not zero
+usage or zero outstanding charges. The separate current-cycle read likewise
+reports unavailable billing data/no active subscription and returns no JSON.
+The private decision brief is
+`/tmp/jazz-maintenance/vercel-hosting-decision.md`; actual checkout/invoices and
+usage remain owner/provider verification gates.

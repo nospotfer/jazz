@@ -1,5 +1,80 @@
 # Operational script review
 
+## Scoped read-only PDF audit
+
+The following inspects one explicitly named project's course:
+
+```bash
+npm run audit:pdfs -- --config /private/pdf-audit.json \
+  --project-ref PROJECT_REF --course-id COURSE_ID
+```
+
+`tsx` is
+pinned as a development dependency, so this command uses the installed runner
+rather than fetching an unversioned one. The private configuration and explicit
+datasource are required; there is no ambient database/provider credential
+fallback. Prisma itself may read a local `.env` during import/construction,
+but the supplied datasource takes precedence. The audit does not create signed
+URLs, modify attachments or query customer/accounting tables.
+
+The JSON configuration must be an owner-only regular file (mode 600, private
+directory); symlinks and special files are rejected before client creation.
+Required fields are `projectRef`, `courseId`, `supabaseUrl`, `databaseUrl`,
+`serviceRoleKey` and `bucket`. Credentials belong only in that private file,
+never CLI arguments. Its project/course must exactly match the two CLI scope
+arguments. The URL must be the exact project's HTTPS Supabase origin; the DB
+must be that project's direct or Supabase-pooler connection. The client requires
+strict certificate verification; provide the authoritative server CA using
+the connection URL's explicit `sslcert` path where the system trust store lacks
+it. Do not downgrade verification after a TLS error.
+
+Optional `limits` fields and their defaults:
+
+| Limit | Default |
+| --- | --- |
+| maxFiles | 256 |
+| maxBytesPerFile | 16 MiB |
+| maxTotalBytes | 128 MiB |
+| timeoutMs | 10,000 |
+| maxDurationMs | 90,000 |
+| concurrency | 2 |
+
+The metadata query verifies a READ ONLY transaction, selects only this course
+and joined attachment IDs/references, and stops before downloads if the complete
+bounded inventory is too large or contains wrong identities. Same-project
+Storage references are normalized to authenticated GETs; foreign origins,
+buckets, traversal and malformed references are rejected. Streaming requests
+have byte/time/concurrency limits and reject redirects, wrong response identity,
+HTTP failures, non-PDF content types and invalid PDF headers. No body, name,
+object path, URL, token, provider prose or database exception is printed.
+
+Output contains only scope IDs, counts, controlled statuses, checked byte totals
+and SHA-256 hashes. Existing opaque `sb_secret_` keys use the `apikey` header;
+legacy service-role JWTs retain their bearer header as well. No key creation or
+rotation occurs. Any failure or exhausted budget yields `incomplete` and a
+nonzero exit. `complete` verifies PDF headers and full streams, not full PDF
+parsing or semantic lesson mapping. Optional `expectedSha256` maps attachment
+IDs to independently obtained hashes; without that evidence, a new hash alone
+does not prove the object is the intended original file. Byte caps cover accepted
+checked/hashed stream bytes; one oversized transport chunk may arrive before
+cancellation.
+
+Verified against the separate synthetic cloud preview: all 60 attachments,
+15 lessons × four languages, HTTP 200, 200,304 checked bytes and 60 unique hashes.
+Independent fixture IDs match the complete scoped inventory. Strict CA-bound
+Prisma TLS and actual READ ONLY mode were verified. Forty-six meaningful
+preflight/reference/stream/budget/timeout/redaction regressions pass. No customer
+execution or attachment remapping occurred. This replaces the unsafe use of the
+historical ambient all-attachment diagnostic, not the guarded legacy mutators.
+The actual cached opaque preview key also completes the 60-file audit, with
+identical hashes to the legacy-key read; this is real transport/authentication
+proof for both formats. See [Supabase API-key contract](https://supabase.com/docs/guides/getting-started/api-keys).
+
+The CA was obtained through the URL template published in Supabase's
+[Studio configuration](https://github.com/supabase/supabase/blob/master/apps/studio/hooks/custom-content/custom-content.json),
+then independently used to verify the exact preview pooler's certificate and
+hostname. See [Supabase SSL guidance](https://supabase.com/docs/guides/platform/ssl-enforcement).
+
 Source review completed during the October 2026 maintenance audit. No deployment,
 seed, wipe, reset, price change, media mapping or production migration command
 was executed. Commands below identify existing entrypoints; they are not

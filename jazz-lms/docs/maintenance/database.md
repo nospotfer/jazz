@@ -1,10 +1,30 @@
 # Database and Supabase Data API security
 
-Authenticated [manager inspection](supabase.md) now identifies the deployed feav
-project as INACTIVE, eu-west-1/PG17 in Free Neurofactory Org. No production SQL or
-schema/data inspection has occurred. The same-project resume and preservation
-proposal awaits explicit production approval; actual backup/restore remains
-unverified. The local exposure described below is not production evidence.
+Authenticated [manager inspection and approved recovery](supabase.md) identifies
+the deployed feav project in Free Neurofactory Org, eu-west-1/PG17. It is now
+INACTIVE after the approved rollback: brief recovery allowed private DB/Storage
+exports and read-only inspection, which confirmed unsafe production grants.
+No production hardening SQL or code release has been authorized or applied.
+
+## Confirmed recovered production exposure
+
+All 26 public tables have effective browser privileges. The payment-event
+ledger and both messaging tables have RLS disabled; anonymous users have read
+and write privileges. A zero-row anonymous HEAD on PaymentWebhookEvent returns
+200, confirming the Data API exposes it without reading customer records.
+Authenticated users have UPDATE privilege on User.role, and the existing
+self-ID update policy does not restrict that column. These are actual
+production metadata/API findings, not an inference from the local fixture.
+No exploit write, forged role, entitlement or payment event was submitted.
+
+The owner-approved same-project rollback restored backend unavailability after
+the exports succeeded. Archives and current Storage bytes are preserved
+privately; archived-data restore is verified with explicit extension ACL/platform
+limits. The reviewed corrective SQL/release package remains separate. Four public functions exist, three SECURITY DEFINER
+and browser-executable; their legacy access helpers require a scoped RPC review
+alongside table/column grants and future default privileges. No public views or
+foreign tables were observed. Storage contains one private bucket, not a public
+course-file bucket. No compromise or historical data completeness is inferred.
 
 The LMS uses Supabase for authentication and private object storage. Application
 `.from()` calls found in this review target storage buckets; no application
@@ -13,7 +33,7 @@ entitlements, vouchers, progress, notes and quizzes use Prisma/server routes;
 messages use server-side SQL. Browser access to their underlying tables is not
 required by the current application.
 
-## Confirmed isolated exposure; production remains unverified
+## Earlier isolated exposure and regression proof
 
 The dedicated Supabase maintenance stack (`127.0.0.1:56121`, database
 `127.0.0.1:56122/postgres`) was created from the current Prisma schema using
@@ -68,7 +88,8 @@ Existing SQL is not a safe alternative to this fix:
 
 These are concrete source policy defects conditional on browser grants. The
 local fresh stack did not have these policy/helper migrations installed. Their
-production deployment is unverified; do not reapply them as a security fix.
+recovered production self-update/role metadata confirms that risk; do not
+reapply these scripts as a security fix.
 
 The repository has separate Prisma and Supabase SQL histories plus standalone
 messaging setup/hardening files. Prisma migration folders contain additions
@@ -169,6 +190,34 @@ API behavior does not prove the production connection role or production policy
 deployment.
 
 ## Production approval package
+
+An exact private archived-baseline package is now prepared and tested outside
+Git. Revision2 passes **25/25 offline checks**, including default-off/manual
+rollback gates and wrong project/name/org rejection before locks. It closes
+browser access to all 26 public tables / 225 columns and three SECURITY DEFINER
+RPCs, enables missing RLS without FORCE, and preserves trusted postgres/service
+CRUD. A total of 422 actual zero-row operations exercise effective permissions.
+All 65 archived table contents / 2,239 records and two sequence states remain
+unchanged through apply, manual inverse and reapply. Auth/app users are14↔14,
+with zero missing/email/confirmation/duplicate mismatches. Verifiers are removed.
+
+Candidate SHA256:
+`cb8933f257d283175aa8cffb32b72fe62cb4a6b747972e5cbcb7c4c10b793dfd`.
+Manual inverse SHA256:
+`709db9d29473c9094f42bf6ec34331af23f145f256bb3ff0a177c2223726c740`.
+Private review: `/tmp/jazz-maintenance/production-hardening-review/review.md`.
+No production connection or repair was made by this validation; approval remains
+false. The unsafe-grant inverse is manual-only with services closed; keep closed
+or approved re-pause is the preferred operational rollback.
+
+The candidate removes existing postgres/public browser default additions only.
+Built-in PUBLIC EXECUTE on future functions and unchanged supabase_admin creator
+defaults remain: future migrations must explicitly revoke access in their
+creation transaction. Schema/typmod/index-definition drift, external consumers,
+old June server-code vulnerabilities and extension/platform recovery limits need
+review before any new production resume. SQL-only reopening is not a safe code
+release. This tested private package does not authorize deployment or another
+resume and is not a blanket migration replay.
 
 1. Capture sanitized read-only table ownership/RLS/effective browser grants,
    relevant function/view privileges and actual migration history; inspect only

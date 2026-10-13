@@ -21,6 +21,11 @@ those operations and their rollback for review. Use isolated test data and
 provider test environments; a preview connected to production data is not an
 isolated test environment.
 
+The owner selected a zero-cost hosting budget. Do not request or perform a paid
+Vercel upgrade. Use the existing machine and free resources for a protected
+HTTPS preview; a temporary tunnel is testing infrastructure, not a production
+hosting replacement. Keep any production hosting/domain move for concrete review.
+
 ## Credentials
 
 The local credential CSV and environment files contain secrets. Never print,

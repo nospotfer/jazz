@@ -1,7 +1,10 @@
 # Production review and rollback checklist
 
 Updated 2026-10-13. Preparation only: **no production release is authorized**.
-Local repairs have not changed the website, accounts, DNS or live database.
+Source repairs have not been released. The owner separately approved one
+production Supabase resume, private preservation and unsafe-state re-pause;
+those operations completed. Production is INACTIVE again. No production
+SQL/configuration repair or another resume is authorized by that approval.
 
 ## Recorded production baseline
 
@@ -31,24 +34,48 @@ Local repairs have not changed the website, accounts, DNS or live database.
 - [x] Public responsive/privacy/SEO browser checks and real guarded PostgreSQL
   accounting/security checks pass.
 - [x] Finish private mobile quiz/header review and prove native PDF rendering; final source review complete.
-- [x] Reviewed code checkpoint c6a0556 passes lint/types/tests/build/secret scan
-  and actual GitHub Quality, CodeQL and secret-scan checks. Later source changes
-  must pass fresh checks; subsequent documentation records this exact evidence.
+- [x] Reviewed source checkpoint d46b214 passes actual GitHub Quality, CodeQL,
+  secret scan and Vercel build. Job logs confirm 990 normal tests and separate
+  37 persisted PostgreSQL checks, types/build/lint; intentional skips remain.
+  [Immutable checks](review-status.md#published-pdf-audit-source-verification).
 - [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
+- [x] Record the owner's zero-cost hosting constraint; no paid Vercel upgrade.
 - [ ] Verify isolated target build settings, usage/logs and previous deployment
-  compatibility/rollback; prepare owner decision for commercial site on Hobby.
+  compatibility/rollback; prepare stable free production hosting review while
+  documenting the existing Hobby commercial-use mismatch.
 - [x] Locate deployed Supabase project through manager inventory; feav exists,
   INACTIVE, eu-west-1/PG17, matching production server reference.
-- [ ] Approve bounded same-project resume and verify actual customer data,
-  separate Storage preservation and a usable backup/restore. [Proposal](supabase.md).
-- [ ] Confirm remote preview uses isolated data/providers, deploy exact review
-  commit and repeat relevant customer journeys. Local copied preview is not Vercel proof.
-- [ ] Inspect production schema/roles/table/function/view grants/storage/migration
-  state and a tested backup/restore path.
+- [x] Execute explicitly approved same-project recovery/preservation/rollback:
+  private DB and 68 Storage files exported, offline archived-data restore verified,
+  unsafe browser permissions confirmed, same project re-paused. Extension ACL and
+  platform/off-site recovery limits remain explicit. [Outcome](supabase.md).
+- [x] Create and harden a separate Free Supabase preview with synthetic accounts,
+  course and private PDFs; actual native password login and direct-REST denial
+  verified. No production clone or paid resource. [Isolation](preview.md).
+- [x] Actual cloud-backend native four-role/media/PDF/mobile browser checks pass
+  29/29 under strict-CA database runtime. Payment reconciliation was intercepted;
+  this proves neither Dodo nor an HTTPS Vercel frontend.
+- [x] Existing publishable/secret keys pass 20 overlapping native Auth/SDK/access
+  checks on the synthetic backend; no production key change or rotation.
+- [x] Exact source `85f4e12`, isolated data/providers and production-built HTTPS
+  frontend pass 44 unique role/media/native-PDF/mobile/profile/certificate checks.
+  Independent final read-only snapshot preserves notes/learning/purchases;
+  temporary free tunnel is not Vercel runtime or stable hosting proof. [Scope](preview.md#free-https-frontend-checkpoint).
+- [x] Inspect production schema/roles/table/function/view grants and private
+  Storage; verify offline archive counts/hashes and durable local backup.
+- [x] Offline-validate exact baseline-bound production hardening revision 2:
+  25 checks / 422 zero-row operations, unchanged archive content and 14 Auth/app
+  identities; private SQL/inverse hashes and durable review copy recorded.
+- [ ] Approve exact 26-table/RPC/default-privilege hardening and runtime
+  compatibility before another resume. Existing June code has additional
+  undeployed security defects; SQL-only recovery is not a complete release.
 - [x] Verify live Dodo product/business, €29.90 EUR tax-exclusive base price,
   active webhook route/filters and exact signing-secret match through GETs.
-- [ ] Obtain matching Dodo test credentials; verify dashboard/account/currency/tax
+- [x] Verify supplied Dodo TEST key and matching business; create exactly one
+  dedicated synthetic product. Verified test-only price alignment to EUR80 and
+  two coupon API acceptances preserve live resources and app fixture rows.
+- [ ] Review customer/team/webhook-alert recipients, dashboard/currency/tax
   decisions and actual isolated checkout, delivery, reconciliation/coupon/reversal.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
@@ -64,11 +91,12 @@ Values remain in provider stores. Publish names, targets and status only.
 
 | Configuration | Review before release |
 | --- | --- |
-| DB/Supabase URL, anon/service keys and storage bucket | Current three targets share feavujcllgbzlvdvkkxx. Preserve customer project and reconcile EU/US connection strings; separate preview. Verify trusted CRUD and public key scope. |
+| DB/Supabase URL, anon/service keys and storage bucket | Existing Vercel targets share feavujcllgbzlvdvkkxx. New separate preview tvmhuacxctdgmejziaxg has verified trusted CRUD and denied browser grants; use only its keys/bucket in the reviewed preview. Preserve customer project and reconcile EU/US connection strings. |
+| Database TLS / CA resource | Synthetic runtime and actual production read-only session export verify the published CA/hostname. Package and trace a reviewed public CA resource for Vercel, verify deployed runtime path and strict connection. The local temporary CA path is not portable; live application TLS remains unverified. |
 | APP_URL/NEXT_PUBLIC_APP_URL and Auth allowlist | Current stored apex Auth lacks /auth/reset-password/callback and allows global *.vercel.app. Prepare canonical www with exact callback/reset paths; separate preview Auth, remove broad production preview/local allowances in reviewed release. |
 | Runtime/root/build | Live Node 20.x with root/framework/build overrides unset; prepare Node 24.x and source-root/build settings for the exact deployment method. Verify isolated build before production change. |
 | CRON_SECRET | Currently absent in live project/deployment env names; prepare nonempty random per-environment secret with hardened release. 03:15 UTC bearer sweep; missing/wrong denied. |
-| Dodo keys/product/environment | Preview currently shares live mode/resources; development test mode key returns 401. Supply separate verified test credentials/product/webhook in staging; preserve approved live resources. Synthetic checkout stays loopback-only. |
+| Dodo keys/product/environment | Existing deployed preview shares live resources; deployed development wrong-mode key still returns 401. Separate private TEST key/business/product are verified; review notifications and bind a dedicated verified test webhook before enabling the isolated runtime. Synthetic checkout stays loopback-only. |
 | Mux signer | Match registered key/signed assets; trim CSV trailing comma. Never apply stale mapping script to live lessons. |
 | Resend/from/professor/reply/signing | Verified sending identity; inbound needs approved receiving DNS and enabled signed webhook. Native RESEND_WEBHOOK_SECRET differs from optional relay secret. [Runbook](resend.md). |
 | GA/OpenReplay | Replay enabled across current targets; prepare initial disabled configuration. Review retention/provider settings and prove choice/withdrawal/private exclusions before enablement. Disable GA automatic history/forms/outbound/video/download capture. |
@@ -77,7 +105,9 @@ Values remain in provider stores. Publish names, targets and status only.
 ## Database change package
 
 No blanket migration replay is proposed. A complete initial PostgreSQL migration
-is unverified; db push was used only on disposable local databases.
+is unverified; db push was used only on disposable local databases. The new
+empty cloud preview was bootstrapped from the current datamodel plus explicit
+messaging/RLS SQL in a guarded transaction, without legacy history replay.
 
 1. Inspect sanitized ownership/grant/RLS/function/view/migration metadata,
    runtime-role capability, backups and restore evidence.
@@ -91,6 +121,15 @@ is unverified; db push was used only on disposable local databases.
    retain pre-change metadata for reviewed forward repair.
 
 ## Release after explicit approval
+
+Changing DNS alone does not retire trusted old servers. The June deployment's
+direct vercel.app URL and cron may still reach production with their immutable
+credentials after Supabase resumes. Prepare and approve a verified old-project/
+deployment quarantine before another resume, covering generated URLs and cron.
+The separate Gabriel-scoped historical/previews remain unreconciled and could
+also carry customer credentials; their isolation must be verified or access
+retired through the correct account. No project pause/delete, credential rotation,
+DNS move or deployment-protection change has been performed for this plan.
 
 1. Confirm approved commit, deployment target, exact configuration/SQL changes,
    prerequisites and verified previous deployment/rollback target.

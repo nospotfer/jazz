@@ -56,7 +56,9 @@ npx vitest run --no-file-parallelism \
   tests/security/lms-database-postgres.test.ts
 ```
 
-Verified: five suites, 37 passed, one Supabase REST-only case skipped. Unique
+Verified at source85f4e12: five suites, 39 passed, one Supabase REST-only case skipped. The
+two added quiz queue cases hold the only connection read-only for three seconds,
+then verify bounded acquisition and single persisted launch/answer. Unique
 fixture rows are cleaned up or transactions rolled back. The role suite applies
 scoped security SQL and refuses remote targets. Do not treat skipped database
 checks in the normal suite as equivalent evidence.
@@ -158,5 +160,14 @@ Certificate tests require the persisted buyer's prior 15-lesson completion;
 they do not fabricate eligibility or mutate the legacy actor's purchases.
 
 Local browser evidence and verified Mux requests are recorded in the
-[verification matrix](verification-matrix.md). A remote Vercel preview with
-isolated provider settings and exact review commit is still required.
+[verification matrix](verification-matrix.md). The separate exact-source,
+production-built HTTPS frontend passes 44 unique checks through a protected free
+temporary tunnel. [Runtime and scope](preview.md#free-https-frontend-checkpoint).
+This does not prove Dodo, Google/SMTP, Vercel runtime or stable production hosting.
+The owner selected a zero-cost budget; no paid upgrade is authorized.
+
+The newer [separate cloud preview](preview.md) uses an independent Free Supabase
+project and a different loopback frontend at 3012. Its credentials/actor file
+are separate from the local stack. Existing local test and mutator guards must
+not be bypassed to target that remote database; purpose-bound private checks
+verify its exact project instead. Neither frontend is an HTTPS Vercel preview.

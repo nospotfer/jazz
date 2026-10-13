@@ -1,17 +1,83 @@
-# Supabase manager audit and recovery proposal
+# Supabase manager audit, recovery and rollback
 
-Observed 2026-10-13 after native CLI login on the remote machine. All provider
-requests so far are GETs. No project resume, SQL, customer-row query, migration,
-configuration change, key rotation, mail or plan change was performed. Credentials
-and raw provider responses remain private outside Git.
+Observed 2026-10-13 after native CLI login on the remote machine. The owner
+explicitly approved same-project resume, immediate private DB/Storage backup and
+bounded re-pause rollback. Both operations have been executed once: production
+reached ACTIVE_HEALTHY, exports succeeded, and unsafe recovered permissions
+required re-pause. Its current state is **INACTIVE after the approved rollback**.
+No production schema/grant/configuration repair, code release, key rotation,
+plan change, real payment/refund or customer message was performed. The separate
+Free synthetic preview remains independent; see [preview isolation](preview.md).
+Credentials, customer archives and raw responses remain private outside Git.
+
+## Approved recovery outcome
+
+- Resume POST returned 200; exact project/org/region remained unchanged,
+  platform 17.6.1.063 and actual PostgreSQL 17.6. API DNS recovered.
+- The existing production credential works through a separately reviewed,
+  documented session-pooler port 5432 connection. Actual libpq certificate and
+  hostname verification succeeded against the published CA, with read-only SQL.
+  The original transaction-mode 6543 packet was preserved and never used for dump.
+- Full custom database archive, password-free role definitions, schema/TOC,
+  metadata and integrity manifests were exported. Separate Storage preservation
+  copied **68 objects / 6,423,774 bytes in one private bucket**; initial/final
+  inventories match. No upload/delete/signing request was used.
+- Read-only catalog inspection confirms browser grants on all 26 public tables.
+  PaymentWebhookEvent, message and messagethread have RLS disabled. The payment
+  ledger grants anonymous SELECT/INSERT/UPDATE/DELETE; an anonymous zero-row
+  HEAD returns 200. Authenticated users can update User.role through the existing
+  self-update policy without a role restriction. No exploit write was attempted.
+- The approved same-project re-pause POST returned 200; subsequent manager GET
+  confirms INACTIVE. No unsafe grants were restored or customer records changed
+  by the maintenance operation. [Security findings](database.md).
+- All 79 copied backup artifacts are independently hash-verified in an
+  owner-only directory outside temporary storage:
+  `/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24`.
+  Raw API-key responses and credential packets are excluded. This is a local
+  preservation copy, not an encrypted off-site backup.
+
+The initial manager evidence below is retained as historical preflight. It no
+longer means that production SQL/data preservation has never been attempted.
+Offline archived-data restore is now verified with the limits below. An exact
+reviewed hardening/release package remains separate from that recovery proof.
+Production stays paused while it is prepared; the earlier approval did not
+authorize hardening SQL or another resume.
+
+## Offline archived-data recovery verification
+
+A new network-disabled, unpublished, resource-bounded PostgreSQL 17 verifier
+restored the archive with exit-on-error and a single transaction. It matched
+all **65 archive COPY table counts / 2,239 records**, both sequence states,
+table owners/RLS/kinds, role flags and 67 role/settings/membership statements.
+Public/LMS table/column/schema/type/default ACL SQL matches. Six LMS user-reference
+aggregates and completed-owned quiz-summary references contain no missing links.
+All **68 Storage object IDs and file hashes / 6,423,774 bytes** match the archive;
+no public bucket or Vault secret rows were present. Customer records were not
+exposed through an app, Auth service, Storage API or published port.
+
+This verifies exported archive data, not a live-source count comparison or
+historical completeness. Source/restored extension ACL SQL differs for 49
+function and two pg_stat_statements view revocations from postgres; those source
+clauses executed successfully, but exact extension creator/initial-privilege
+equivalence is unproven. One existing NOT VALID realtime CHECK flag is preserved,
+and its partitioned-parent predicate was not independently evaluated. Runtime
+configuration, OAuth/SMTP/signing/encryption keys, Storage history and an atomic
+DB/Storage snapshot were not reproduced. A narrowly documented initdb bootstrap
+pre-satisfied one role CREATE while retaining original ALTER/GRANT semantics.
+
+All five temporary verifier containers are removed; existing local and cloud
+fixture databases are untouched. Five private verification reports and their
+integrity manifest were hash-copied into the durable local backup's
+offline-verification directory. This remains a local backup, with no encrypted
+off-site copy or complete platform-recovery claim.
 
 ## Verified project and account
 
 | Item | Evidence |
 | --- | --- |
-| Accessible project | Jazz-LMS-Project, `feavujcllgbzlvdvkkxx`; exactly one project returned by CLI inventory |
+| Customer project | Jazz-LMS-Project, `feavujcllgbzlvdvkkxx`; initial CLI inventory returned exactly this one project, before preview creation |
 | Organization | Neurofactory Org, `iotxifqyrryoidgagdxi`, Free plan, one Owner member; profile GET confirms the authenticated caller matches that Owner |
-| Status / creation | INACTIVE; created 2026-02-17 13:01:22 UTC |
+| Status / creation | Initially INACTIVE; briefly restored, then INACTIVE after approved unsafe-state rollback; created 2026-02-17 13:01:22 UTC |
 | Database | eu-west-1; PostgreSQL 17, platform version 17.6.1.063, ga channel |
 | Database host | db.feavujcllgbzlvdvkkxx.supabase.co; matches Vercel production configuration |
 | Restore-version GET | 200; available supabase-postgres-17.6.1.063, ga, engine 17 |
@@ -20,8 +86,8 @@ and raw provider responses remain private outside Git.
 | Account controls | Sole Owner member reports mfa_enabled false; organization-enforced MFA entitlement disabled; credential recovery unverified |
 | Legacy project | wmujuzheurvrfyebobcj absent from this account's inventory; existence/other-account ownership unknown |
 
-This confirms the deployed project exists and is inactive. It does not prove
-when/why it stopped, customer-data completeness, or successful recovery. The
+The initial inventory confirmed the deployed project existed and was inactive.
+It did not prove when/why it stopped or customer-data completeness. The
 project API does not report paused_at. The restore-version list is engine
 metadata, not a verified snapshot. Empty managed-backup results do not establish
 that a pause snapshot is absent or that data has been lost.
@@ -42,7 +108,7 @@ after low activity; no artificial keepalive or upgrade was introduced.
 | SMTP | smtp.resend.com:587; user/password/sender fields present. | Sending identity/deliverability untested; no email sent. |
 | Redirects | Production /auth/callback and /auth/reset-password present; global *.vercel.app callbacks and local-development wildcards present. | Required /auth/reset-password/callback missing on production host; current www production paths absent. Replace broad production allowances in the reviewed release configuration; preview uses separate Auth. |
 | Auth limits | Password minimum 6; OTP length 8 and expiry 3600s; configured email rate 30. CAPTCHA and breached-password checks disabled. | Product/security policy review; these flags alone do not prove abuse or justify unattended provider changes. |
-| Storage | Config GET 200; file limit 50MiB and feature flags readable. | Buckets, object preservation, permissions and RLS unknown. |
+| Storage | Config GET 200; file limit 50MiB. Approved export later verifies one private bucket and all 68 current objects. | Current-byte preservation is verified; full service settings/version history and actual client-policy behavior remain separate. |
 | DB network | Stored restrictions applied but allow all IPv4/IPv6. | These rules cover DB/pooler, not Auth/Storage/Data API; application-level access and RLS still require inspection. |
 | Unavailable settings | PostgREST config GET 404; SSL enforcement metadata GET 500. | Neither error establishes disabled Data API or absent TLS enforcement. |
 
@@ -52,9 +118,9 @@ source uses `/auth/reset-password/callback` for PKCE; stored apex rules do not
 cover it. This is a configuration prerequisite for releasing that source, not
 proof of a tested live recovery failure. Provider changes are still unapplied.
 
-## Concrete production resume proposal — awaiting approval
+## Concrete production resume proposal — approved and executed
 
-The bounded proposed mutation is:
+The owner approved this bounded mutation and its backup/re-pause scope:
 
 ```text
 POST https://api.supabase.com/v1/projects/feavujcllgbzlvdvkkxx/restore
@@ -63,7 +129,7 @@ No request body; authorization loaded from the existing private CLI session.
 
 This is the documented same-project restore action, not restoration of an older
 selected database backup, a replacement project, a migration or a plan upgrade.
-It would restart the production backend referenced by the existing live site.
+It restarted the production backend referenced by the existing live site.
 Existing app code, stored permissions and scheduled/integration work may become
 active again; those have not yet been audited against the actual database. The
 maintenance fixes in PR #46 would remain undeployed. Supabase may apply a minor
@@ -128,3 +194,27 @@ References: [project GET](https://supabase.com/docs/reference/api/v1-get-project
 Sanitized local evidence: `/tmp/jazz-maintenance/supabase-manager-access-summary.json`,
 `supabase-project-recovery-summary.json`, `supabase-org-restore-summary.json` and
 `supabase-auth-config-summary.json` in the same private directory.
+
+The stored production OTP length is eight digits. The maintained source accepts
+six to ten digits, so the configured length fits its validation. This does not
+prove actual production OTP delivery or redemption while the backend is inactive.
+
+Private preservation tooling is now prepared at
+`/tmp/jazz-maintenance/production-preservation-preflight.md`; 20 offline/mocked
+approval/identity/transport/argument/Storage-consistency checks pass. The false
+approval template rejects execution before credentials, network or subprocess.
+The initial false template remains preserved; a separate actual-approval
+manifest authorized the successful exports described above. Two staging-limit
+regressions bring the private tooling checks to 22. A failed offline schema
+extraction required an explicit pg_restore output target; the corrected fresh
+export completed, and the earlier incomplete run remains separately marked.
+Phase flags record actual covered scope and do not each require a new question.
+
+The inactive pooler-config GET initially returned an empty list. After recovery,
+fresh metadata binds the exact project to its eu-west-1 pooler and advertises
+transaction mode. A new explicit session-5432 candidate follows the official
+connection-mode contract; actual password/TLS/read-only export then succeeded.
+No silent change to the original transaction packet was made. Full logical DB
+and separate current Storage exports exist, with explicit extension, Vault/key,
+version/config and off-site preservation limits. No customer clone was loaded
+into the preview or existing local journey databases.

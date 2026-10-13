@@ -36,6 +36,7 @@ npm run seed:sample  # Sample data (npx tsx prisma/seed-sample.ts)
 npm run admin:create # Create admin user (needs ADMIN_EMAIL env var)
 npm run admin:studio # Open Prisma Studio
 npm run check:integrations # Validate Mux + Supabase storage + env
+npm run audit:pdfs -- --config /private/pdf-audit.json --project-ref PROJECT_REF --course-id COURSE_ID # Bounded read-only PDF audit; see maintenance runbook
 npm run test:payments:backend # Targeted backend payment validation
 npm run test:payments:frontend:real # Real Dodo checkout frontend E2E
 npm run test:payments:all # Backend + frontend real + build

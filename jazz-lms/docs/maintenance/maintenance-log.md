@@ -339,3 +339,214 @@ test-provider/OAuth/mail journeys remain essential. The goal is incomplete.
 
 Next: publish source plus manager/recovery evidence, inspect exact remote checks,
 and execute only the owner-approved recovery operation when approval arrives.
+
+## Separate cloud preview and bounded PDF audit — 2026-10-13
+
+- Complete Free-capacity preflight observed one related organization/Owner,
+  one inactive customer project and no next inventory page. Created only the
+  independent eu-west-1 Free preview tvmhuacxctdgmejziaxg; healthy, one active
+  preview and one customer-resume slot reserved. No paid branch/add-on/upgrade.
+  Production feav remains inactive and untouched; its resume question remains
+  unanswered. Initial one-project inventory is historical, not the new total.
+- Verified the new public schema empty, then applied the current datamodel,
+  explicit messaging definitions and scoped RLS/grants in a guarded transaction.
+  All 25 table owners postgres, RLS enabled/no FORCE, no browser/PUBLIC effective
+  grants, trusted CRUD retained. Actual Prisma CRUD/messaging probes roll back
+  with no remaining rows. Anonymous REST HTTP 401 and authenticated REST HTTP 403 / SQL 42501
+  denials verified. No legacy migration replay or customer clone.
+- Added four confirmed synthetic Auth/app accounts with fixed avatars, a
+  15-lesson course, 60 generated private PDFs, 180 questions/900 options and
+  bounded buyer/historical entitlements. Payment ledger empty. Signup, Google,
+  custom SMTP and messaging/payment keys disabled; only exact loopback 3012
+  callback/reset paths allowed. No invites/OTP/recovery emails requested.
+- Separate Git-visible app copy at `835d22c` runs on 127.0.0.1:3012 using only the new
+  backend; analytics/replay/Resend/Dodo/synthetic checkout disabled. No existing
+  local guard was bypassed. Strict database certificate verification is now
+  explicit, with Supabase's published CA; actual pooler CA/hostname verification returns code 0.
+  Preview SSL-enforcement metadata reports `database: false`; no config change.
+  Browser journey verification is being completed separately from HTTPS Vercel.
+- Compared maintained source with reported live June commits; restored only
+  the June PDF cache default and optional `.docx.pdf` normalization in `835d22c`.
+  Scoped lint and 83 relevant tests pass. The historical ambient all-PDF checker
+  was not ported because its scope/budgets/raw diagnostics were unsafe.
+- New source `3dc76f3` adds a private-config, exact-project/course, read-only PDF
+  auditor. Foreign URLs/buckets/traversal rejected, streaming byte/time/file/
+  concurrency caps enforced, statuses controlled and no names/URLs/provider
+  prose/content printed. 45 targeted regressions pass, including FIFO rejection.
+  Strict CA-bound actual cloud audit covers all 60 synthetic PDFs/200,304 accepted
+  checked bytes/60 hashes; IDs match the independent 15 × 4 fixture manifest.
+  Headers/full streams/hashes do not prove full parsing or semantic mapping.
+- Pinned the already-used tsx 4.23.15 runner; removed the stale global esbuild 0.25
+  override so its supported locked 0.28.2 dependency is used. Fresh Node 24/npm 11
+  source-only npm ci, 989 normal tests/38 skips, TypeScript, webpack build and
+  lint 0 errors/25 existing warnings pass. Real CLI with the installed runner repeats
+  the complete synthetic audit. Production npm audit reports zero vulnerabilities; full audit retains the
+  same five high development lint-chain findings. No additional persisted payment
+  tests were invented or counted twice.
+- Confirmed Prisma may auto-read local `.env`, but this tool's explicit datasource/
+  private credentials override ambient values. A bounded actual synthetic
+  constructor/disconnect with DEBUG=prisma:* produced debug output but no
+  synthetic password/URL leak; no query or remote request was attempted. No
+  broader logging guarantee or invented defect was inferred.
+- Actual d02b1b1 remote Quality/Secret Scan/CodeQL/Vercel pass at 944 normal/37 PostgreSQL tests.
+  New source follow-up publication/checks pending. Vercel usage read failed to
+  yield a parseable report; no zero-cost inference. Dodo test key still absent;
+  current docs confirm CLI uses a key and test mode can send real email, while
+  business/bank/verification settings are shared. No sandbox messages or shared
+  business changes were made.
+- One authorized production pooler-metadata GET returned HTTP 200/empty. This is an
+  inspection limit while inactive, not data-loss proof. Prepared preservation
+  must use a verified session/direct connection after approved resume, not the
+  recovered transaction-mode port-6543 URL. No production TLS/DB probe or customer rows.
+
+Final cloud-backend browser run passes 29/29, with no uncaught client errors or
+app 5xx. Actual native sessions for all four roles, access negatives, Mux decoder/
+time advancement, native same-origin PDF/four language files, administrator API
+and 320/390 navigation/profile controls pass under independently checked strict
+CA runtime. Five auto-reconciliation POSTs were blocked before the app server;
+this is an explicit Dodo exclusion, not a provider success. Initial harness
+timing/hydration/CDN/frame mistakes were corrected privately before the final
+run. No screenshots/traces/videos/saved sessions or provider writes.
+
+Next: publish the checkpoint and inspect
+actual remote checks. Production resume/preservation approval, Dodo test key,
+HTTPS preview/account/commercial-hosting decision, OAuth/mail and actual customer
+schema/storage/backup recovery remain essential. The goal is incomplete; the
+controller still reports its previous `blocked` status until user/system resume.
+
+## Approved recovery, archived-data verification and source repairs — 2026-10-13
+
+- The owner explicitly approved existing production resume, immediate private
+  DB/Storage preservation and bounded same-project unsafe-state re-pause rollback.
+  A single restore POST 200 reached ACTIVE_HEALTHY. The separately reviewed
+  session-pooler port 5432 connection authenticated with published-CA/hostname verification;
+  the original transaction port 6543 packet remained unchanged. No blind mutation retry.
+- Full DB archive/password-free roles/schema/TOC and 68 private Storage objects
+  (6,423,774 bytes) exported with matching inventories/hashes. An initial auxiliary
+  schema extraction failed because pg_restore needed an explicit output target;
+  the corrected fresh export completed and the incomplete run is retained.
+- Actual read-only inspection confirms browser grants on 26 public tables,
+  RLS disabled on PaymentWebhookEvent/message/messagethread and authenticated
+  self-role updates. Anonymous zero-row ledger HEAD 200 verifies exposure without
+  reading rows or attempting an exploit. One approved re-pausePOST 200 returned
+  the project to INACTIVE. No production SQL/config/code repair performed.
+- Network-disabled, unpublished, resource-bounded offline recovery verifies all
+  65 archive COPY tables/2,239 records, both sequences, role/table metadata and
+  public/LMS ACLs, six LMS user-reference aggregates, quiz best-attempt ownership
+  and all 68 Storage IDs/hashes. ExistingNOT VALID realtimeCHECK remains unvalidated;
+  exact extension ACL creator/initial-privilege equivalence differs for49 function /
+  two view revocation clauses. No full platform/atomic snapshot/historic-completeness
+  claim. All five verifier containers removed; journey fixtures untouched.
+- 79 export artifacts are hash-copied into a private local backup outside /tmp,
+  excluding API-key responses/credential packets. Five offline verification
+  reports plus their manifest were preserved there too. This is not encrypted
+  off-site retention. Private directories700/files600; no customer archive in Git.
+- Supplied Dodo TEST key now returns200 and matches existing business/brand;
+  exactly one EUR29.90 tax-exclusive, no-license test product created. TEST
+  webhook inventory200/zero. Native CLIv3.6.2 privately checksum-verified, version
+  only. Workflow/preflight/listener template prepared with execution/mail flags
+  false; four wrong-target negatives deny before key/provider access. Customer
+  controlled address selected privately; merchant/webhook-alert recipients still
+  need review. No transaction/customer/coupon/refund/webhook/listener/mail yet.
+- Actual cloud learning continuation26/26 yields15 completed lessons,16 attempts/
+  192 answers and15 PLATINUM summaries, SUPREME and actual A4 vector certificate.
+  A second class2 attempt scores11/12→92GOLD while retaining bestPLATINUM. Pending
+  resume/answer409/final replay pass. Initial realP2028 diagnostic is preserved.
+- Native account switch reproduced another student's cached note and normal
+  autosave re-authoring. Source 8716dd3 uses owned atomic drafts, initial-session
+  gating, expected identity409 beforeDB, stale request/timer cancellation and
+  dirty-draft/manual recovery. Server notes remain intact. Actual pointer testing
+  found the full-course overlay incorrectly blocked permitted free/historical
+  notes; exact protected-route exemption retains server access enforcement.
+- Final actual pointer/privacy/recovery19/19 passes: free/historical click/focus,
+  paid403/lockedredirect, stale409/crossstudent403, explicitly intercepted500→
+  dirty draft over older realGET/nohydrationPUT→ordinarymanualPUT200→cache-cleared
+  serverreload. Earlier11 logic checks remain incomplete and are not added to
+  totals. Original29/20 reports unchanged; no extra logout or reset. Independent
+  final snapshot confirms buyer2/free1/legacy1/admin0 notes, unchanged learning/
+  purchases and zero business activity. Nine automatic reconciliationPOSTs blocked.
+- Source 85f4e12 adds10-second transaction acquisition waits retaining5-second
+  execution bounds. Two real single-connection3-second blocking regressions
+  prove launch/answer persistence; no new cloud quiz mutations after patch.
+  Clean Node24 source:1,039normal/40skips, types, webpack build, lint0/25warnings;
+  five persisted suites39/oneRESTskip. An extraneous preserved private.cjs helper
+  first broke clean-copy ESLint plugin matching; moving it outside source restored
+  the unchanged lint configuration. Actual GitHub Quality/Secret Scan/CodeQL pass,
+  downloaded logs independently confirm counts. [Immutable source checks](review-status.md#approved-preservation-and-source-follow-up).
+- Owner rejected paid hosting: zero-cost budget, no Pro upgrade. Official
+  Cloudflare Quick Tunnels can provide temporary HTTPS without account/domain;
+  a protected separate production-built source-exact preview is being prepared,
+  not yet launched. Existing Hobby commercial-use mismatch and stable production
+  hosting/rollback remain documented; no policy exception or domain change assumed.
+
+Next: validate the exact private production hardening package offline, complete
+free HTTPS preview/cookie/journey proof, and review bounded test notification/
+signature/transaction scope. Production stays paused; no SQL/config/deploy or
+another resume is authorized by the executed preservation approval. OAuth,
+SMTP/receiving, account recovery/off-site retention and release gates remain open.
+The controller's old blocked state needs the user's /goal resume for unattended
+continuation; independent work is actively progressing.
+
+## Offline hardening and zero-cost HTTPS preparation follow-up
+
+- Exact private production hardening revision2 passes 25/25 offline checks,
+  including target attestations before locks, default-off/manual inverse gates,
+  422 actual zero-row operations and effective denials on 26 tables / 225 columns /
+  three definer RPCs. Trusted CRUD retained; all 65 archived table content hashes/
+  2,239 records and two sequences unchanged. Auth/app 14↔14 with no missing/email/
+  confirmation/duplicate mismatches. Verifier containers removed; tested package
+  hash-copied into durable private backup. No production approval or connection.
+- Archive-only in-memory Course parsing finds one stored price 29.99 / no NULL;
+  under the app's EUR interpretation this differs from live Dodo 29.90 by 0.09.
+  No actual tax/FX/settlement or price correction claim.
+- Existing synthetic Course.price 80 remains unchanged. A single price-only
+  TEST product PATCH 200 plus exact GET 200 aligns only the dedicated product to EUR 8000,
+  preserving all nonprice fields/app rows and the original 2990 creation receipt.
+  Current source helper actually creates/retrieves two TEST coupons (10% and EUR 5),
+  seven requests with scoped collision checks/product/metadata/limit/expiry/shape
+  assertions. No local voucher/customer/checkout/payment/refund/webhook/mail.
+- Latest publisher-verified cloudflared 2026.10.0 and private external Basic gate
+  have 59 local checks (47 gate / 7 env / 5 browser credential cases), not app/provider proof.
+  Root starts closed gate 3015 and bounded free Quick Tunnel, learns random HTTPS origin,
+  rebuilds exact source 85f4e12 with that compiled public origin/modern synthetic
+  keys and strict CA, then starts production frontend 3014. Actual env/source/build/
+  loopback and all private credential-byte exclusions from clientstatic pass
+  before opening Basic access. Current 3012 remains untouched; no DNS/account/paid
+  hosting change. Webhook exception remains disabled. Actual HTTPS browser proof
+  is being recorded separately from immutable29/20/26/19 loopback reports.
+- Native HTTPS media revealed one legitimate sibling Mux chunk CDN not in initial
+  narrow allowlist. Root approved that exact observed host only; no wildcard or
+  source change. Preserve the initial allowlist diagnostic and unproved playback
+  separately from the completed browser verdict. No forced successful result.
+
+## Completed free HTTPS preview checkpoint
+
+- Production-built source `85f4e12` passes **44/44 distinct HTTPS checks** through
+  the protected free Quick Tunnel, using only the separate synthetic backend.
+  Native sessions/access restrictions for all four actors, actual signed Mux
+  decoding/time advancement, native PDFs at 320/390, completed profile and an
+  ordinary vector-certificate download pass. All 255 application/schema/config
+  source hashes and final runtime isolation guards match.
+- Preserve attempt accounting: initial 39/41, continuation 14/14 with nine
+  overlaps, hence 55 attempts / 53 passed attempts / two retained harness
+  diagnostics. The corrected exact Mux host and native certificate click resolved
+  the media allowlist and React-internal probe diagnostics. They are not erased,
+  added to unique counts or claimed as application fixes.
+- All browsers closed before the independent strict-CA read-only snapshot at
+  16:27 UTC. Notes remain buyer/free/historical/admin 2/1/1/0; buyer learning
+  remains 15 completed lessons, 16 attempts, 192 answers and 15 PLATINUM summaries.
+  Full timeline, exact purchases/historical ownership and zero business records
+  match the previous final baseline; synthetic price remains 80. No learning
+  writes occurred. Five normal native session synchronizations were permitted;
+  17 automatic payment reconciliations were intercepted before the backend.
+- No client errors or actual app 5xx; browser Basic credentials were restricted
+  to the exact preview origin. Source/payment/mail/provider configuration and
+  production were unchanged by this browser run. Earlier 29/20/26/19 evidence
+  remains immutable. The free preview deadline is 2026-10-13 17:59:42 UTC;
+  access details are private, and this is temporary testing infrastructure.
+
+Next: finish the sustainable free hosting/quarantine review, compare archived
+media/PDF mappings against preserved provider inventories, and prepare signed
+Dodo delivery while merchant/webhook-alert recipients are clarified. Actual
+checkout/refund, Google/SMTP, stable production hosting and approved code/config/
+hardening/reopening remain outstanding. No paid upgrade or new resume occurred.

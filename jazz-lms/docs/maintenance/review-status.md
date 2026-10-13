@@ -1,8 +1,11 @@
 # Maintenance review checkpoints
 
 Updated 2026-10-13. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
-on `maintenance/initial-audit`. Production is unchanged and maintenance remains
-incomplete. A provider build success is not proof of an isolated, working preview.
+on `maintenance/initial-audit`. Source is unreleased and maintenance remains
+incomplete. The separately approved production Supabase recovery/export/unsafe-state
+rollback completed; production is paused again. A provider build success is not
+proof of an isolated, working preview. Historical checkpoints below retain the
+evidence available at their dates; the latest sections supersede old access gates.
 
 ## First published checkpoint
 
@@ -127,4 +130,133 @@ rechecks, and localizes sidebar accessibility labels. Fresh local suite:
 build pass, lint 0 errors/25 warnings. Updated affected source in the isolated
 app passes native PDF desktop/mobile and actual voucher redemption/cleanup:
 **3/3 browser cases**. Component tests use actual language providers with mocked
-API responses; they do not prove Dodo. Fresh remote follow-up checks pending.
+API responses; they do not prove Dodo.
+
+Published revision `d02b1b13cb9dbb3b1e46a024a75f6b18103096e0` includes that
+source and manager/recovery documentation. Actual remote checks all pass:
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38387928895) | 944 normal tests/38 skips, 37 persisted PostgreSQL tests/one REST skip, lint 0 errors/25 warnings, TypeScript and webpack build pass. Push run 38387923077 also passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38387929034) | Success; push run 38387923038 also passes. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38387923923) and [aggregate](https://github.com/nospotfer/jazz/runs/115264435276) | Success. |
+| [Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/FkFBKD4tyyEMxVJCPwC4i3LQMES3) | Success; exact Preview deployment 7036803945, https://jazz-2skowqoe3-gabriels-projects-bd92791f.vercel.app. Its account/configuration remains unreconciled with authenticated Neurofactory access. No SSO bypass or remote customer journey. |
+
+Source `835d22c` subsequently retains the deployed June PDF cache default and
+optional `.docx.pdf` filename normalization. Scoped lint and 83 relevant tests
+pass. No PDF mutator or provider write was executed by that change.
+
+An independent Free cloud Supabase preview is now healthy, with hardened tables
+and synthetic accounts/course/private PDFs. Its local frontend runs on loopback
+3012 with sending/payments/tracking disabled. [Preview identity and evidence](preview.md).
+This does not establish customer-project recovery or a verified HTTPS Vercel
+preview. Production remains untouched, and resume approval is still pending.
+
+## Scoped PDF audit and reproducible runner
+
+Source `3dc76f3eb69fb5f6dedbe35c95f33c83e1f8e61c` adds the explicit-project/course,
+read-only, bounded PDF audit and 45 focused regressions. A newly copied Git-visible
+application without private env files passes Node24/npm11 `npm ci`, **989 normal
+tests/38 intentional skips** in 85 passed/5 skipped files, TypeScript, webpack
+build and lint 0 errors/25 existing warnings. Production dependency audit remains
+zero; full audit remains the same five high development lint-chain findings.
+
+The pinned tsx 4.23.15 runner uses its supported locked esbuild 0.28.2 dependency;
+the stale global 0.25 override was removed. The new installed CLI, not an on-demand
+runner, independently succeeds against all 60 synthetic cloud attachments with
+strict CA-bound TLS and read-only metadata. Accepted checked bytes 200,304, unique
+hashes 60 and complete independent fixture-ID coverage. [Audit boundaries](operational-scripts.md#scoped-read-only-pdf-audit).
+No production query, signed URL creation or attachment write. The later
+published source checkpoint below includes this audit and its compatibility fix.
+
+Follow-up source `d46b21430e2d5f6425eb80717aa25c7d1251745a` fixes opaque secret-key
+headers according to the current Supabase contract. The focused suite now passes
+46 cases, and the fresh full suite passes **990 normal tests/38 intentional skips**
+in the same 85 passed/5 skipped files; types/scoped lint pass. Actual cached
+opaque-key authentication reads all 60 synthetic PDFs/200,304 accepted bytes,
+with every fingerprint identical to the prior legacy-key read. No key creation,
+rotation or production request. These overlapping reads are not extra coverage
+counts. The frontend's separate 29-case cloud proof, 20 overlapping modern-key
+compatibility checks and HTTPS/Dodo limits remain
+in [preview evidence](preview.md).
+
+## Published PDF-audit source verification
+
+Exact revision `d46b21430e2d5f6425eb80717aa25c7d1251745a` is pushed. Actual
+remote checks all pass:
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38400304553) | Downloaded job logs confirm 990 normal tests/38 intentional skips, 37 persisted PostgreSQL tests/one REST skip, lint 0 errors/25 warnings, TypeScript and webpack build. Push run 38400298133 also passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38400304478) | Gitleaks success; push run 38400298011 also passes. |
+| [CodeQL analysis](https://github.com/nospotfer/jazz/actions/runs/38400297891) and [aggregate](https://github.com/nospotfer/jazz/runs/115306092279) | Success. |
+| [Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/DMwcH6ZDDEzT4kCB4xm4SWKM25QM) | Success; exact Preview deployment 7038968173, https://jazz-5k246l58y-gabriels-projects-bd92791f.vercel.app. HEAD /, /auth and /robots.txt return 302 to Vercel SSO. Account/configuration remain unreconciled; no protection bypass or remote customer journey. |
+
+The separate synthetic cloud backend works through its loopback frontend;
+that evidence does not verify this protected HTTPS deployment or customer-data
+recovery. At that checkpoint production had not yet been resumed. Later documentation-only commits do not
+alter the immutable source/check checkpoint above.
+
+## Approved preservation and source follow-up
+
+The owner approved exactly the existing production Supabase resume, immediate
+private preservation and bounded same-project re-pause rollback. The project
+became healthy; full DB and 68 private Storage objects were exported, catalog
+inspection confirmed critical unsafe browser permissions, and the approved
+rollback returned it to INACTIVE. No production SQL/configuration/code repair
+or another resume is authorized. Offline restore matches 65 archive COPY table
+counts / 2,239 records, two sequences and every Storage object/hash, with explicit
+extension ACL/platform/atomic-snapshot/off-site limits. A durable private local
+copy and verification reports exist. [Recovery outcome](supabase.md).
+
+The supplied Dodo TEST key works for the matching business. One dedicated
+product was created at EUR29.90, then a verified price-only test-resource change
+aligned it to the unchanged synthetic course price, EUR80. Two provider coupons
+(10% and EUR5) were created and retrieved through seven bounded requests.
+Transactions/listener/mail remain disabled. Controlled customer email is recorded
+privately; merchant and webhook-alert recipients remain pending. [Sandbox preparation](dodo.md).
+
+Source `8716dd3` fixes the actually reproduced cross-account note cache/autosave
+leak, binds writes to expected verified identity, preserves owned dirty drafts
+and adds explicit save recovery. It also removes the dashboard overlay only for
+the exact lesson-authorized notes page. Source `85f4e12e5b5c8ae8cf1059b70d15bf0ada2b41ac`
+adds bounded quiz transaction acquisition waits after real cloud P2028 and local
+single-connection reproduction. Both are pushed; neither is deployed to production.
+
+A Git-visible source copy with no private env files passes **1,039 normal tests /
+40 intentional skips**, 88 passed / five all-skipped files, TypeScript, webpack
+build and lint **0 errors / 25 existing warnings**. Five actual guarded PostgreSQL
+suites pass **39 tests / one REST-only skip**. An extraneous private debug .cjs
+helper initially caused an ESLint configuration failure in the copy; preserving
+it outside the source tree restored the actual clean-source lint pass. No source
+rule was suppressed to hide that preparation mistake.
+
+Actual remote source checks pass:
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38420660371) | Downloaded logs confirm 1,039 normal tests/40 skips, 39 persisted tests/one REST skip, lint 0 errors/25 warnings, types and webpack build. Push run 38420650782 also passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38420660437) | Gitleaks success; push run 38420650864 also passes. |
+| [CodeQL analysis](https://github.com/nospotfer/jazz/actions/runs/38420651969) and [aggregate](https://github.com/nospotfer/jazz/runs/115377041415) | Both analysis jobs and aggregate pass. |
+| [Existing GitHub Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/G1Fm9sp8iR9yhJW5BoakYCG1QABK) | Success; Preview7042420678, https://jazz-bzv4fjqr7-gabriels-projects-bd92791f.vercel.app. Account/provider isolation remains unreconciled; no customer journey or paid hosting decision inferred. |
+
+The exact 235-file source copy on the separate cloud backend passes the distinct
+26-check learning continuation and 19-check actual-pointer notes/privacy/recovery
+run. Existing 29-case and overlapping 20-case reports remain immutable. The
+intercepted PUT500 is explicitly mocked; the subsequent manual PUT200 and server
+reload are actual app persistence. Final independent counts and exact purchase
+fields are unchanged. [Detailed boundaries](preview.md#learning-and-note-recovery-follow-up).
+
+The owner has set a zero-cost hosting budget. A separate production-built
+frontend now passes **44/44 unique HTTPS checks** through a protected free
+temporary tunnel: native secure sessions, role/access denials, actual video,
+native mobile PDFs, profile and vector certificate download. Independent
+post-browser read-only verification confirms unchanged learning, notes, exact
+purchases and zero payment/voucher/discount/messaging activity. Two earlier
+harness diagnostics and overlapping continuation attempts remain explicit.
+[HTTPS evidence and deadline](preview.md#free-https-frontend-checkpoint).
+
+No paid upgrade, production release or domain move occurred. Stable free hosting,
+old credential-bearing deployment quarantine, production hardening/configuration,
+signed Dodo delivery/transactions, Google/SMTP/receiving, account recovery and
+release/rollback gates remain open.
