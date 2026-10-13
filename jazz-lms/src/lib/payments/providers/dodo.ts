@@ -181,7 +181,7 @@ export async function createDodoDiscount(input: DodoDiscountInput): Promise<Dodo
     const json = await toJson(response);
 
     if (!response.ok) {
-      const reason = `Dodo discount create failed (${response.status}): ${JSON.stringify(json ?? {})}`;
+      const reason = `Dodo discount create failed (${response.status})`;
       // An existing code can belong to another service or have different limits.
       // Verify ownership, then reconcile configuration instead of claiming sync.
       const message = JSON.stringify(json ?? {}).toLowerCase();
@@ -222,7 +222,8 @@ export async function createDodoDiscount(input: DodoDiscountInput): Promise<Dodo
   } catch (error) {
     return {
       ok: false,
-      reason: error instanceof Error ? error.message : 'Unknown error',
+      reason: error instanceof Error && error.name === 'AbortError'
+        ? 'Dodo discount request timed out' : 'Dodo discount request failed',
     };
   } finally {
     clearTimeout(timeout);
@@ -255,7 +256,8 @@ export async function disableDodoDiscount(input: {
       ? { ok: true, discountId: discount.discount_id, code: input.code.toUpperCase() }
       : { ok: false, reason: `Dodo discount disable failed (${update.status})` };
   } catch (error) {
-    return { ok: false, reason: error instanceof Error ? error.message : "Unknown error" };
+    return { ok: false, reason: error instanceof Error && error.name === 'AbortError'
+      ? 'Dodo discount removal timed out' : 'Dodo discount removal failed' };
   } finally {
     clearTimeout(timeout);
   }
@@ -287,9 +289,24 @@ export async function createDodoCheckout(
     const json = await toJson(response);
 
     if (!response.ok) {
-      throw new Error(
-        `Dodo checkout create failed (${response.status}): ${JSON.stringify(json ?? {})}`,
+      // Preserve the existing retry/limit decisions without carrying provider
+      // bodies, customer data or tokenized URLs into errors and diagnostics.
+      const message = JSON.stringify(json ?? {}).toLowerCase();
+      const normalized = message.replace(/[_-]+/g, " ");
+      const limit = normalized.includes("discount") && (
+        normalized.includes("maximum redemptions") || normalized.includes("max redemptions") ||
+        normalized.includes("reached its maximum") || normalized.includes("maximum uses") ||
+        normalized.includes("max uses") || normalized.includes("usage limit") ||
+        (normalized.includes("redemption") && (normalized.includes("limit") || normalized.includes("reached")))
       );
+      const invalid = message.includes("discount") && (
+        message.includes("does not exist") || message.includes("invalid") ||
+        message.includes("not found") || message.includes("not valid")
+      );
+      const hint = limit ? ": discount usage limit" : invalid ? ": invalid discount" : "";
+      throw Object.assign(new Error(`Dodo checkout create failed (${response.status})${hint}`), {
+        status: response.status,
+      });
     }
 
     const checkoutUrl =
@@ -337,9 +354,9 @@ export async function retrieveDodoPayment(
     const json = await toJson(response);
 
     if (!response.ok) {
-      throw new Error(
-        `Dodo payment retrieve failed (${response.status}): ${JSON.stringify(json ?? {})}`,
-      );
+      throw Object.assign(new Error(`Dodo payment retrieve failed (${response.status})`), {
+        status: response.status,
+      });
     }
 
     if (!json) {

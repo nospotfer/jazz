@@ -1,6 +1,7 @@
 import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { getPaymentProvider } from "@/lib/payments/provider";
 import {
   listDodoPaymentsForCustomer,
@@ -373,7 +374,7 @@ export async function GET() {
 
     return NextResponse.json(formatted);
   } catch (error) {
-    console.log("[PURCHASES_GET_ERROR]", error);
+    console.log("[PURCHASES_GET_ERROR]", safeErrorDiagnostic(error));
     return new NextResponse("Error interno del servidor", { status: 500 });
   }
 }
@@ -464,7 +465,7 @@ export async function POST(req: Request) {
             userId: user.id,
             courseId,
             paymentId: dodoPaymentId,
-            message: toErrorMessage(error),
+            diagnostic: safeErrorDiagnostic(error),
           });
 
           return NextResponse.json(
@@ -503,7 +504,7 @@ export async function POST(req: Request) {
         console.error("[PURCHASES_RECONCILE_DODO_EMAIL_LISTING_FAILED]", {
           userId: user.id,
           courseId,
-          message: toErrorMessage(error),
+          diagnostic: safeErrorDiagnostic(error),
         });
       }
 
@@ -533,7 +534,7 @@ export async function POST(req: Request) {
       { status: 503 },
     );
   } catch (error) {
-    console.log("[PURCHASES_POST_ERROR]", error);
+    console.log("[PURCHASES_POST_ERROR]", safeErrorDiagnostic(error));
     return new NextResponse("Error interno del servidor", { status: 500 });
   }
 }

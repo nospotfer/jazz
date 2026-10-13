@@ -1,6 +1,7 @@
 import { isSupportedPaymentMethod } from "@/lib/checkout-helpers";
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { normalizeLanguage } from "@/lib/language";
 import {
   createProviderCheckout,
@@ -200,8 +201,7 @@ export async function POST(req: Request) {
       });
     } catch (dbUserLookupError) {
       console.warn("[CHECKOUT_DB_USER_LOOKUP_FAILED]", {
-        email: user.email,
-        error: dbUserLookupError,
+        diagnostic: safeErrorDiagnostic(dbUserLookupError),
       });
     }
 
@@ -228,10 +228,8 @@ export async function POST(req: Request) {
     if (existingPurchase) {
       console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
         userId: user.id,
-        userEmail: user.email,
         courseId,
         purchaseId: existingPurchase.id,
-        providerReferenceId: existingPurchase.providerReferenceId ?? null,
         role: dbUser?.role ?? null,
       });
       return new NextResponse(copy.alreadyPurchased, { status: 400 });
@@ -445,7 +443,6 @@ export async function POST(req: Request) {
 
           console.warn("[CHECKOUT_VOUCHER_MAX_USES_SYNCED]", {
             voucherId: voucherValidation.voucher.id,
-            voucherCode: voucherValidation.voucher.code,
             localMaxUses: voucherValidation.voucher.maxUses,
             localCurrentUsesBefore: voucherValidation.voucher.currentUses,
             localCurrentUsesAfter: nextCurrentUses,
@@ -461,7 +458,7 @@ export async function POST(req: Request) {
           console.warn("[CHECKOUT_VOUCHER_BACKFILL_ATTEMPT]", {
             courseId,
             userId: user.id,
-            voucherCode: voucherValidation.voucher.code,
+            voucherId: voucherValidation.voucher.id,
           });
           const syncResult = await ensureVoucherDiscountSynced({
             id: voucherValidation.voucher.id,
@@ -489,14 +486,14 @@ export async function POST(req: Request) {
               return NextResponse.json({ url: checkoutUrl });
             } catch (retryError) {
               console.error("[CHECKOUT_VOUCHER_BACKFILL_RETRY_FAILED]", {
-                voucherCode: voucherValidation.voucher.code,
-                retryError,
+                voucherId: voucherValidation.voucher.id,
+                diagnostic: safeErrorDiagnostic(retryError),
               });
             }
           } else {
             console.error("[CHECKOUT_VOUCHER_BACKFILL_FAILED]", {
-              voucherCode: voucherValidation.voucher.code,
-              reason: syncResult.reason,
+              voucherId: voucherValidation.voucher.id,
+              diagnostic: "discount_sync_failed",
             });
           }
         }
@@ -518,10 +515,8 @@ export async function POST(req: Request) {
         courseId,
         userId: user.id,
         provider: paymentProvider,
-        voucherCode: voucherValidation?.valid
-          ? voucherValidation.voucher.code
-          : null,
-        error,
+        voucherId: voucherValidation?.valid ? voucherValidation.voucher.id : null,
+        diagnostic: safeErrorDiagnostic(error),
       });
 
       throw error;
@@ -532,7 +527,7 @@ export async function POST(req: Request) {
     if (error instanceof Error && error.name === "VoucherRedemptionRejectedError") {
       return new NextResponse(error.message, { status: 409 });
     }
-    console.log("[CHECKOUT_ERROR]", error);
+    console.log("[CHECKOUT_ERROR]", safeErrorDiagnostic(error));
     if (isInvalidJsonBodyError(error)) {
       return new NextResponse(copy.invalidRequest, { status: 400 });
     }

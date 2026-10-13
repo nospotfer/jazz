@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { Prisma } from "@prisma/client";
 import {
   asObject,
@@ -372,7 +373,6 @@ export async function upsertCoursePurchaseFromProvider(
       console.info("[COURSE_PURCHASE_SYNC_VOUCHER_CONFLICT_PRESERVED]", {
         userId: input.userId,
         courseId: input.courseId,
-        providerReferenceId: input.providerReferenceId,
         purchaseId: existingPurchase?.id ?? null,
         existingVoucherId,
         incomingVoucherId: desiredVoucherId,
@@ -453,9 +453,7 @@ export async function upsertCoursePurchaseFromProvider(
           operation,
           userId: input.userId,
           courseId: input.courseId,
-          providerReferenceId: input.providerReferenceId,
-          message: toErrorMessage(error),
-          code: toErrorCode(error),
+          diagnostic: safeErrorDiagnostic(error),
         });
       }
     };

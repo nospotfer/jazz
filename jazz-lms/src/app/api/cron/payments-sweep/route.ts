@@ -1,6 +1,7 @@
 import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic, safeErrorReason } from "@/lib/error-diagnostics";
 import { listDodoPaymentsForCustomer } from "@/lib/payments/providers/dodo";
 import {
   asObject,
@@ -142,18 +143,16 @@ export async function GET(req: Request) {
 
         console.warn("[CRON_PAYMENTS_SWEEP_UNLOCKED]", {
           userId: user.id,
-          email,
           courseId,
           providerReferenceId,
         });
       }
     } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
+      const reason = safeErrorReason(error);
       failures.push({ userId: user.id, reason });
       console.error("[CRON_PAYMENTS_SWEEP_USER_ERROR]", {
         userId: user.id,
-        email,
-        error: reason,
+        diagnostic: safeErrorDiagnostic(error),
       });
     }
   }

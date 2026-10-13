@@ -1,4 +1,5 @@
 import { resolveServerAppOrigin } from "@/lib/app-origin";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -43,9 +44,7 @@ export async function GET(request: Request) {
     const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error || !data.session) {
-      console.error("[auth/reset-password/callback] exchange failed", {
-        errorCode: error?.code,
-      });
+      console.error("[auth/reset-password/callback] exchange failed", safeErrorDiagnostic(error));
       return redirectToReset(origin, { reset_error: "exchange_failed" });
     }
 
@@ -56,7 +55,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error(
       "[auth/reset-password/callback] unexpected exchange error",
-      error instanceof Error ? error.message : String(error),
+      safeErrorDiagnostic(error),
     );
     return redirectToReset(origin, { reset_error: "exchange_exception" });
   }

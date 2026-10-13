@@ -3,6 +3,7 @@ import {
   upsertCoursePurchaseFromProvider,
 } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic, safeErrorReason } from "@/lib/error-diagnostics";
 import {
   isDodoWebhookTimestampFresh,
   verifyDodoWebhookSignature,
@@ -268,14 +269,14 @@ export async function POST(req: Request) {
     console.error("[DODO_WEBHOOK_PROCESSING_ERROR]", {
       eventType,
       eventId,
-      error,
+      diagnostic: safeErrorDiagnostic(error),
     });
 
     try {
       await markWebhookEventStatus(
         eventKey,
         "FAILED",
-        error instanceof Error ? error.message : String(error ?? ""),
+        safeErrorReason(error),
       );
     } catch {
       // noop: keep original error handling response

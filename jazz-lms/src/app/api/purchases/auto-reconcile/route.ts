@@ -1,6 +1,7 @@
 import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { listDodoPaymentsForCustomer } from "@/lib/payments/providers/dodo";
 import {
   asObject,
@@ -124,8 +125,7 @@ export async function POST() {
         console.error("[AUTO_RECONCILE_UPSERT_FAILED]", {
           userId: user.id,
           courseId,
-          providerReferenceId,
-          error,
+          diagnostic: safeErrorDiagnostic(error),
         });
       }
     }
@@ -136,7 +136,7 @@ export async function POST() {
       unlockedCourseIds,
     });
   } catch (error) {
-    console.error("[AUTO_RECONCILE_ERROR]", error);
+    console.error("[AUTO_RECONCILE_ERROR]", safeErrorDiagnostic(error));
     return new NextResponse("Error interno", { status: 500 });
   }
 }
