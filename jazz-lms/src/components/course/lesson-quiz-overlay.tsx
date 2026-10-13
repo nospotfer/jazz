@@ -16,7 +16,6 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { useConfettiStore } from '@/hooks/use-confetti-store';
 import {
   LESSON_QUIZ_AUTO_ADVANCE_MS,
-  LESSON_QUIZ_QUESTION_COUNT,
   type LessonQuizAnswerResponse,
   type LessonQuizAttemptPayload,
   type LessonQuizLaunchResponse,
@@ -28,15 +27,6 @@ import {
   LessonQuizMedalBadge,
   getLessonQuizResultMessage,
 } from '@/components/course/lesson-quiz-medal';
-
-function isLocalQuizQaMode() {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  const hostname = window.location.hostname;
-  return hostname === 'localhost' || hostname === '127.0.0.1';
-}
 
 interface LessonQuizOverlayProps {
   courseId: string;
@@ -267,8 +257,9 @@ export function LessonQuizOverlay({
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [confettiPieces, setConfettiPieces] = useState<ConfettiPiece[]>([]);
-  const [showQaAnswer, setShowQaAnswer] = useState(false);
   const advanceTimerRef = useRef<number | null>(null);
+  const quizBodyRef = useRef<HTMLDivElement | null>(null);
+  const launchGenerationRef = useRef(0);
 
   const copy = {
     es: {
@@ -374,10 +365,6 @@ export function LessonQuizOverlay({
   }, [initialSummary]);
 
   useEffect(() => {
-    setShowQaAnswer(isLocalQuizQaMode());
-  }, []);
-
-  useEffect(() => {
     return () => {
       if (advanceTimerRef.current) {
         clearTimeout(advanceTimerRef.current);
@@ -386,7 +373,10 @@ export function LessonQuizOverlay({
   }, []);
 
   const currentQuestion = attempt?.questions[currentQuestionIndex] ?? null;
-  const currentCorrectOption = currentQuestion?.options.find((option) => option.id === currentQuestion.answerId) ?? null;
+
+  useEffect(() => {
+    if (quizBodyRef.current) quizBodyRef.current.scrollTop = 0;
+  }, [currentQuestion?.questionId, result]);
 
   const sessionProgressPercent = useMemo(() => {
     if (!attempt) {
@@ -397,12 +387,14 @@ export function LessonQuizOverlay({
   }, [attempt]);
 
   const openQuiz = useCallback(async (restart = false) => {
+    const generation = ++launchGenerationRef.current;
     if (advanceTimerRef.current) {
       clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
     }
 
     setIsLoading(true);
+    setIsSubmitting(false);
     setError('');
     setFeedback(null);
     setResult(null);
@@ -413,25 +405,28 @@ export function LessonQuizOverlay({
         `/api/courses/${courseId}/lessons/${lessonId}/quiz`,
         { restart, language }
       );
+      if (generation !== launchGenerationRef.current) return;
 
       setAttempt(response.data.attempt);
       setSummary(response.data.summary);
       onSummaryChange?.(response.data.summary);
-      setCurrentQuestionIndex(0);
+      setCurrentQuestionIndex(Math.max(0, response.data.attempt.questions.findIndex((question) => !question.isAnswered)));
       setSelectedOptionId(null);
     } catch (error: unknown) {
+      if (generation !== launchGenerationRef.current) return;
       const message = axios.isAxiosError(error)
         ? error.response?.data?.error || copy.startError
         : copy.startError;
       setError(message);
       toast.error(message);
     } finally {
-      setIsLoading(false);
+      if (generation === launchGenerationRef.current) setIsLoading(false);
     }
   }, [copy.startError, courseId, language, lessonId, onSummaryChange]);
 
   useEffect(() => {
     if (!isOpen) {
+      launchGenerationRef.current += 1;
       setAttempt(null);
       setResult(null);
       setError('');
@@ -442,6 +437,7 @@ export function LessonQuizOverlay({
     }
 
     void openQuiz(false);
+    return () => { launchGenerationRef.current += 1; };
   }, [isOpen, openQuiz]);
 
   useEffect(() => {
@@ -453,126 +449,57 @@ export function LessonQuizOverlay({
   }, [currentQuestion]);
 
   const handleAnswerSubmit = async () => {
-    if (!attempt || !currentQuestion) {
-      return;
-    }
-
+    if (!attempt || !currentQuestion || currentQuestion.isAnswered || isSubmitting) return;
     if (!selectedOptionId) {
       toast.error(copy.noOption);
       return;
     }
-
-    const selectedAnswers = attempt.questions
-      .map((question) => ({
-        questionId: question.questionId,
-        selectedOptionId:
-          question.questionId === currentQuestion.questionId
-            ? selectedOptionId
-            : question.selectedOptionId,
-      }))
-      .filter((question): question is { questionId: string; selectedOptionId: string } => Boolean(question.selectedOptionId));
-
-    const answeredCount = selectedAnswers.length;
-    const isCorrect = currentQuestion.answerId === selectedOptionId;
-    const isFinalAnswer = answeredCount >= attempt.questionCount;
-
-    setAttempt((currentAttempt) => {
-      if (!currentAttempt) {
-        return currentAttempt;
-      }
-
-      const nextQuestions = currentAttempt.questions.map((question) =>
-        question.questionId === currentQuestion.questionId
-          ? {
-              ...question,
-              isAnswered: true,
-              selectedOptionId,
-            }
-          : question
-      );
-
-      return {
-        ...currentAttempt,
-        answeredCount,
-        questions: nextQuestions,
-      };
-    });
-
-    setFeedback({
-      questionId: currentQuestion.questionId,
-      verdict: isCorrect ? 'correct' : 'incorrect',
-    });
-
-    if (isCorrect) {
-      confetti.onOpen();
-      setConfettiPieces(buildConfettiBurst());
-      window.setTimeout(() => setConfettiPieces([]), 2100);
-    }
-
-    if (!isFinalAnswer) {
-      advanceTimerRef.current = window.setTimeout(() => {
-        setFeedback(null);
-        setCurrentQuestionIndex((currentIndex) => Math.min(currentIndex + 1, LESSON_QUIZ_QUESTION_COUNT - 1));
-      }, LESSON_QUIZ_AUTO_ADVANCE_MS);
-
-      return;
-    }
-
+    const generation = launchGenerationRef.current;
     setIsSubmitting(true);
-
     try {
       const response = await axios.post<LessonQuizAnswerResponse>(
         `/api/courses/${courseId}/lessons/${lessonId}/quiz/${attempt.attemptId}/answer`,
-        {
-          questionId: currentQuestion.questionId,
-          optionId: selectedOptionId,
-          answers: selectedAnswers,
-        }
+        { questionId: currentQuestion.questionId, optionId: selectedOptionId },
       );
-
-      if (response.data.summary) {
-        setSummary(response.data.summary);
-        onSummaryChange?.(response.data.summary);
+      if (generation !== launchGenerationRef.current) return;
+      const accepted = response.data;
+      setAttempt((currentAttempt) => currentAttempt ? {
+        ...currentAttempt,
+        answeredCount: accepted.answeredCount,
+        questions: currentAttempt.questions.map((question) => question.questionId === accepted.questionId
+          ? { ...question, isAnswered: true, selectedOptionId, isCorrect: accepted.isCorrect, correctOptionId: accepted.correctOptionId }
+          : question),
+      } : currentAttempt);
+      setFeedback({ questionId: accepted.questionId, verdict: accepted.isCorrect ? 'correct' : 'incorrect' });
+      if (accepted.isCorrect) {
+        confetti.onOpen();
+        setConfettiPieces(buildConfettiBurst());
+        window.setTimeout(() => setConfettiPieces([]), 2100);
       }
-
+      if (accepted.summary) {
+        setSummary(accepted.summary);
+        onSummaryChange?.(accepted.summary);
+      }
       advanceTimerRef.current = window.setTimeout(() => {
+        if (generation !== launchGenerationRef.current) return;
         setFeedback(null);
-
-        if (response.data.result) {
-          setResult(response.data.result);
+        if (accepted.isComplete && accepted.result) {
+          setResult(accepted.result);
+        } else {
+          const nextQuestion = attempt.questions.findIndex((question) =>
+            question.questionId !== accepted.questionId && !question.isAnswered);
+          setCurrentQuestionIndex(Math.max(0, nextQuestion));
         }
       }, LESSON_QUIZ_AUTO_ADVANCE_MS);
     } catch (error: unknown) {
-      setAttempt((currentAttempt) => {
-        if (!currentAttempt) {
-          return currentAttempt;
-        }
-
-        const restoredQuestions = currentAttempt.questions.map((question) =>
-          question.questionId === currentQuestion.questionId
-            ? {
-                ...question,
-                isAnswered: false,
-                selectedOptionId: null,
-              }
-            : question
-        );
-
-        return {
-          ...currentAttempt,
-          answeredCount: Math.max(0, currentAttempt.answeredCount - 1),
-          questions: restoredQuestions,
-        };
-      });
-      setFeedback(null);
-      setSelectedOptionId(null);
-
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.error || copy.answerError
-        : copy.answerError;
+      if (generation !== launchGenerationRef.current) return;
+      const message = axios.isAxiosError(error) ? error.response?.data?.error || copy.answerError : copy.answerError;
       toast.error(message);
+      if (axios.isAxiosError(error) && error.response?.data?.code === 'QUIZ_ANSWER_LOCKED') {
+        await openQuiz(false);
+      }
     } finally {
-      setIsSubmitting(false);
+      if (generation === launchGenerationRef.current) setIsSubmitting(false);
     }
   };
 
@@ -588,7 +515,7 @@ export function LessonQuizOverlay({
       : 'border-primary/35 bg-black/20';
 
   return (
-    <div className="fixed inset-0 z-[120] overflow-hidden bg-black/78 backdrop-blur-md">
+    <div className="fixed inset-0 z-[120] overflow-hidden bg-black/78 backdrop-blur-md" data-testid="lesson-quiz-overlay">
       <div className="quiz-scanlines absolute inset-0 opacity-40" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.18),_transparent_30%),radial-gradient(circle_at_bottom,_rgba(56,189,248,0.12),_transparent_28%)]" />
 
@@ -612,7 +539,7 @@ export function LessonQuizOverlay({
       ))}
 
       <div className="relative flex h-[100dvh] flex-col p-3 sm:p-4 lg:px-16 lg:py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex shrink-0 items-center justify-between">
           <div className="hidden sm:block">
             <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary/75">{copy.resumeTitle}</p>
             <p className="mt-1 text-sm text-muted-foreground">{copy.yourProgress}</p>
@@ -628,7 +555,7 @@ export function LessonQuizOverlay({
           </button>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[1460px] flex-1 items-start justify-start py-1.5">
+        <div ref={quizBodyRef} data-testid="lesson-quiz-scroll" className="relative mx-auto flex min-h-0 w-full max-w-[1460px] flex-1 items-start justify-start overflow-y-auto overscroll-contain py-1.5">
           {isLoading || !attempt ? (
             <div className="animate-fade-scale-in rounded-[28px] border border-white/10 bg-card/80 px-8 py-10 text-center shadow-2xl backdrop-blur-sm">
               <Loader2 className="mx-auto h-7 w-7 animate-spin text-primary" />
@@ -684,21 +611,10 @@ export function LessonQuizOverlay({
                       </h2>
                       <p className="mt-2 text-sm text-white/65">{copy.instruction}</p>
 
-                      {showQaAnswer && currentCorrectOption ? (
-                        <div className="mt-4 inline-flex max-w-full items-center gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 px-4 py-3 text-left shadow-[0_0_24px_rgba(34,211,238,0.12)]">
-                          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-cyan-200/30 bg-cyan-300/20 text-xs font-bold text-cyan-100">
-                            {currentCorrectOption.label}
-                          </span>
-                          <span className="min-w-0 text-sm font-medium text-cyan-50">
-                            {copy.qaLabel} {currentCorrectOption.text}
-                          </span>
-                        </div>
-                      ) : null}
-
                       <div className="mt-5 grid gap-2.5">
                         {currentQuestion.options.map((option) => {
                           const isSelected = selectedOptionId === option.id;
-                          const isCorrectOption = option.id === currentQuestion.answerId;
+                          const isCorrectOption = option.id === currentQuestion.correctOptionId;
                           const isLocked = currentQuestion.isAnswered;
                           const isFeedbackTarget = feedback?.questionId === currentQuestion.questionId;
                           const optionTone = isLocked && isFeedbackTarget
@@ -754,8 +670,8 @@ export function LessonQuizOverlay({
           )}
 
           {result ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-sm p-4">
-              <div className="animate-fade-scale-in w-full max-w-2xl rounded-[32px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,10,10,0.96),rgba(24,24,27,0.98),rgba(17,24,39,0.96))] p-6 shadow-2xl sm:p-8">
+            <div data-testid="lesson-quiz-result" className="absolute inset-0 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/35 backdrop-blur-sm p-4">
+              <div className="my-auto animate-fade-scale-in w-full max-w-2xl shrink-0 rounded-[32px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,10,10,0.96),rgba(24,24,27,0.98),rgba(17,24,39,0.96))] p-6 shadow-2xl sm:p-8">
                 <div className="mx-auto max-w-lg text-center">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary/75">{copy.currentBest}</p>
                   <h2 className="mt-4 text-3xl font-serif font-bold text-white sm:text-4xl">{copy.resultTitle}</h2>

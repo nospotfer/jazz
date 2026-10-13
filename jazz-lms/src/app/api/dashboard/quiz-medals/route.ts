@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProgress } from '@/lib/jazz-medal-progress';
-import { createClient } from '@/utils/supabase/server';
+import { getServerUser } from '@/lib/server-user';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getServerUser();
 
     if (!user) {
       return NextResponse.json({
@@ -22,7 +19,7 @@ export async function GET() {
       }, { status: 401 });
     }
 
-    const progress = await getUserJazzMedalProgress(user.id);
+    const progress = await getUserJazzMedalProgress(user.id, user.email);
     return NextResponse.json(progress);
   } catch (error) {
     console.error('[dashboard:quiz-medals]', error);

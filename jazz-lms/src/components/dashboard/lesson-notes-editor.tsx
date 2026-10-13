@@ -6,6 +6,7 @@ import { Bold, Italic, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/providers/language-provider';
 import { PdfWorkspaceViewer } from '@/components/course/pdf-workspace-viewer';
+import { languageToHtmlLang } from '@/lib/language';
 
 interface StudentNote {
   userId: string;
@@ -54,6 +55,10 @@ export function LessonNotesEditor({
   const { language } = useLanguage();
   const copy = {
     es: {
+      title: 'Mis notas', placeholder: 'Escribe tus notas aquí', bold: 'Negrita', italic: 'Cursiva',
+      decreaseFont: 'Reducir tamaño de letra', increaseFont: 'Aumentar tamaño de letra',
+      studentNotesTitle: 'Notas de estudiantes', studentNotesDescription: 'Notas guardadas por estudiantes para esta clase.',
+      noStudentNotes: 'Aún no hay notas de estudiantes guardadas.',
       pdfTitle: 'PDF de la clase',
       loadPdfError: 'No se puede cargar este PDF ahora mismo.',
       loadingPdf: 'Cargando PDF...',
@@ -61,6 +66,10 @@ export function LessonNotesEditor({
       downloadPdf: 'Descargar PDF seleccionado',
     },
     en: {
+      title: 'My notes', placeholder: 'Write your notes here', bold: 'Bold', italic: 'Italic',
+      decreaseFont: 'Decrease font size', increaseFont: 'Increase font size',
+      studentNotesTitle: 'Student notes', studentNotesDescription: 'Notes saved by students for this lesson.',
+      noStudentNotes: 'No student notes have been saved yet.',
       pdfTitle: 'Class PDF',
       loadPdfError: 'Unable to load this PDF right now.',
       loadingPdf: 'Loading PDF...',
@@ -68,6 +77,10 @@ export function LessonNotesEditor({
       downloadPdf: 'Download selected PDF',
     },
     fr: {
+      title: 'Mes notes', placeholder: 'Écrivez vos notes ici', bold: 'Gras', italic: 'Italique',
+      decreaseFont: 'Réduire la taille du texte', increaseFont: 'Augmenter la taille du texte',
+      studentNotesTitle: 'Notes des étudiants', studentNotesDescription: 'Notes enregistrées par les étudiants pour cette leçon.',
+      noStudentNotes: 'Aucune note d’étudiant n’a encore été enregistrée.',
       pdfTitle: 'PDF du cours',
       loadPdfError: 'Impossible de charger ce PDF pour le moment.',
       loadingPdf: 'Chargement du PDF...',
@@ -75,10 +88,14 @@ export function LessonNotesEditor({
       downloadPdf: 'Télécharger le PDF sélectionné',
     },
     pt: {
+      title: 'Minhas notas', placeholder: 'Escreva suas notas aqui', bold: 'Negrito', italic: 'Itálico',
+      decreaseFont: 'Diminuir tamanho da fonte', increaseFont: 'Aumentar tamanho da fonte',
+      studentNotesTitle: 'Notas dos estudantes', studentNotesDescription: 'Notas salvas pelos estudantes para esta aula.',
+      noStudentNotes: 'Ainda não há notas salvas pelos estudantes.',
       pdfTitle: 'PDF da aula',
-      loadPdfError: 'No fue posible cargar este PDF ahora.',
+      loadPdfError: 'Não foi possível carregar este PDF agora.',
       loadingPdf: 'Carregando PDF...',
-      noPdf: 'No hay PDF disponibles para esta lección.',
+      noPdf: 'Não há PDFs disponíveis para esta aula.',
       downloadPdf: 'Baixar PDF selecionado',
     },
   }[language];
@@ -334,7 +351,7 @@ export function LessonNotesEditor({
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-5">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Mis notas</h1>
+        <h1 className="text-2xl font-serif font-bold text-foreground">{copy.title}</h1>
         <p className="text-muted-foreground mt-1">
           {classLabel}: {lessonTitle}
         </p>
@@ -347,8 +364,8 @@ export function LessonNotesEditor({
             variant={styleState.isBold ? 'default' : 'outline'}
             onClick={() => persistStyle({ ...styleState, isBold: !styleState.isBold })}
             className="h-9 px-3"
-            title="Bold"
-            aria-label="Bold"
+            title={copy.bold}
+            aria-label={copy.bold}
           >
             <Bold className="h-4 w-4" />
           </Button>
@@ -358,8 +375,8 @@ export function LessonNotesEditor({
             variant={styleState.isItalic ? 'default' : 'outline'}
             onClick={() => persistStyle({ ...styleState, isItalic: !styleState.isItalic })}
             className="h-9 px-3"
-            title="Italic"
-            aria-label="Italic"
+            title={copy.italic}
+            aria-label={copy.italic}
           >
             <Italic className="h-4 w-4" />
           </Button>
@@ -370,8 +387,8 @@ export function LessonNotesEditor({
             onClick={() => handleFontChange(-1)}
             disabled={styleState.fontSize <= MIN_FONT_SIZE}
             className="h-9 px-3"
-            title="Decrease font"
-            aria-label="Decrease font"
+            title={copy.decreaseFont}
+            aria-label={copy.decreaseFont}
           >
             <Minus className="h-4 w-4" />
           </Button>
@@ -386,8 +403,8 @@ export function LessonNotesEditor({
             onClick={() => handleFontChange(1)}
             disabled={styleState.fontSize >= MAX_FONT_SIZE}
             className="h-9 px-3"
-            title="Increase font"
-            aria-label="Increase font"
+            title={copy.increaseFont}
+            aria-label={copy.increaseFont}
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -398,7 +415,7 @@ export function LessonNotesEditor({
           onChange={(event) => {
             setContent(event.target.value);
           }}
-          placeholder="DIGITE AQUI"
+          placeholder={copy.placeholder}
           className="w-full min-h-[420px] resize-y rounded-lg border-2 border-border bg-background p-4 sm:p-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50"
           style={{
             fontWeight: styleState.isBold ? 700 : 400,
@@ -468,14 +485,14 @@ export function LessonNotesEditor({
       {isPrivilegedViewer && (
         <div className="bg-card border border-border rounded-xl p-4 sm:p-5 space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Notas de estudiantes</h2>
+            <h2 className="text-lg font-semibold text-foreground">{copy.studentNotesTitle}</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Notas guardadas por estudiantes para esta clase.
+              {copy.studentNotesDescription}
             </p>
           </div>
 
           {studentNotes.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aún no hay notas de estudiantes guardadas.</p>
+            <p className="text-sm text-muted-foreground">{copy.noStudentNotes}</p>
           ) : (
             <div className="space-y-3">
               {studentNotes.map((note) => (
@@ -488,7 +505,7 @@ export function LessonNotesEditor({
                       {note.userName?.trim() || note.userEmail || note.userId}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(note.updatedAt).toLocaleString()}
+                      {new Date(note.updatedAt).toLocaleString(languageToHtmlLang(language))}
                     </p>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{note.userEmail}</p>

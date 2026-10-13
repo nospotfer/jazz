@@ -134,6 +134,18 @@ function isPdfAttachment(attachment: Attachment) {
   return name.endsWith(".pdf") || url.includes(".pdf");
 }
 
+function disableSubtitleTracks(textTracks: TextTrackList) {
+  let hasSubtitleTrack = false;
+  for (const track of Array.from(textTracks)) {
+    if (track.kind === "subtitles" || track.kind === "captions") {
+      // TextTrack.mode is an imperative browser API, not React render state.
+      track.mode = "disabled";
+      hasSubtitleTrack = true;
+    }
+  }
+  return hasSubtitleTrack;
+}
+
 export const CoursePlayer = ({
   course,
   lesson,
@@ -528,23 +540,7 @@ export const CoursePlayer = ({
       return;
     }
 
-    let hasSubtitleTrack = false;
-
-    for (let index = 0; index < textTracks.length; index += 1) {
-      const track = textTracks[index];
-      if (!track) {
-        continue;
-      }
-
-      const isSubtitleTrack =
-        track.kind === "subtitles" || track.kind === "captions";
-      if (!isSubtitleTrack) {
-        continue;
-      }
-
-      hasSubtitleTrack = true;
-      track.mode = "disabled";
-    }
+    const hasSubtitleTrack = disableSubtitleTracks(textTracks);
 
     if (!hasSubtitleTrack) {
       return;
@@ -1314,7 +1310,7 @@ export const CoursePlayer = ({
               <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
                 <div className="p-3 sm:p-4 border-b-2 border-primary/45 bg-gradient-to-r from-primary/10 to-transparent">
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
+                    <h2 className="pl-11 lg:pl-0 text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
                       {classLabel}
                     </h2>
                     <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -1459,6 +1455,7 @@ export const CoursePlayer = ({
                       playsInline
                       castReceiver=""
                       disableTracking
+                      disableCookies
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">

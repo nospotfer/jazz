@@ -98,14 +98,12 @@ export function PdfViewClient({ items }: PdfViewClientProps) {
   );
 
   const localizedItems = useMemo(() => {
-    let auxiliaryIndex = 0;
-
-    return items.map((item) => {
+    return items.map((item, index) => {
       const isAuxiliary = Boolean(item.isAuxiliary);
       const classNumber = item.classNumber ?? null;
 
       if (isAuxiliary) {
-        auxiliaryIndex += 1;
+        const auxiliaryIndex = items.slice(0, index + 1).filter((entry) => entry.isAuxiliary).length;
         return {
           ...item,
           displayClassLabel: copy.auxiliaryLabel,

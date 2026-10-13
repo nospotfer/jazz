@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
+import { assertLessonQuizAccess, isLessonQuizError } from "@/lib/lesson-quiz-server";
 import { NextResponse } from "next/server";
 
 export async function PUT(
@@ -7,15 +8,23 @@ export async function PUT(
   { params }: { params: Promise<{ courseId: string; lessonId: string }> },
 ) {
   try {
-    const { lessonId } = await params;
+    const { courseId, lessonId } = await params;
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const { isCompleted, progressPercent, minutesRemaining } = await req.json();
-
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    await assertLessonQuizAccess({ userId: user.id, userEmail: user.email, courseId, lessonId, allowFreePreview: true });
+    const { isCompleted, progressPercent, minutesRemaining } = await req.json();
+    if (
+      (isCompleted !== undefined && typeof isCompleted !== "boolean") ||
+      (progressPercent !== undefined && !Number.isFinite(progressPercent)) ||
+      (minutesRemaining !== undefined && !Number.isFinite(minutesRemaining))
+    ) {
+      return new NextResponse("Invalid progress", { status: 400 });
     }
 
     const safeProgressPercent = Number.isFinite(progressPercent)
@@ -65,6 +74,9 @@ export async function PUT(
 
     return NextResponse.json(userProgress);
   } catch (error) {
+    if (isLessonQuizError(error)) {
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
+    }
     console.log("[LESSON_PROGRESS_ERROR]", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
