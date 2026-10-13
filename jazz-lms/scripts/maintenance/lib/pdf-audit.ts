@@ -240,7 +240,14 @@ export async function runPdfAudit(config: PdfAuditConfig, dependencies: PdfAudit
       try {
         const response = await abortable(dependencies.fetch(urls[position], {
           method: 'GET', redirect: 'error', signal, cache: 'no-store',
-          headers: { Authorization: `Bearer ${config.serviceRoleKey}`, apikey: config.serviceRoleKey, 'Accept-Encoding': 'identity' },
+          // Opaque secret keys are not JWT bearer tokens. Both formats use
+          // apikey; only legacy service-role JWTs also use Authorization.
+          // https://supabase.com/docs/guides/getting-started/api-keys
+          headers: {
+            apikey: config.serviceRoleKey,
+            ...(!config.serviceRoleKey.startsWith('sb_secret_') ? { Authorization: `Bearer ${config.serviceRoleKey}` } : {}),
+            'Accept-Encoding': 'identity',
+          },
         }), signal);
         record.httpStatus = response.status;
         if (response.url !== urls[position] || response.redirected) { record.status = 'RESPONSE_IDENTITY_FAILURE'; return record; }

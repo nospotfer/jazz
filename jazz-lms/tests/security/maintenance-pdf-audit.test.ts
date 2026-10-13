@@ -162,10 +162,27 @@ describe('scoped metadata and object reference identity', () => {
     const report = await runPdfAudit(config(), { readInventory, fetch: fetchPdf });
     expect(report.outcome).toBe('complete');
     expect(fetchPdf.mock.calls[0][0]).toBe(`https://${ref}.supabase.co/storage/v1/object/fixture-bucket/folder/Private%20notes.pdf`);
-    expect(fetchPdf.mock.calls[0][1]).toMatchObject({ method: 'GET', redirect: 'error', headers: { Authorization: `Bearer ${key}` } });
+    expect(fetchPdf.mock.calls[0][1]).toMatchObject({ method: 'GET', redirect: 'error', headers: { Authorization: `Bearer ${key}`, apikey: key } });
     expect(report.records[0].sha256).toBe(createHash('sha256').update(pdfBytes).digest('hex'));
     expect(JSON.stringify(report)).not.toContain('Private'); expect(JSON.stringify(report)).not.toContain(privateMarker);
     expect(JSON.stringify(report)).not.toContain('https://'); expect(JSON.stringify(report)).not.toContain(key);
+  });
+
+  test('an opaque backend secret key uses apikey without a JWT Authorization header throughout a successful audit', async () => {
+    const opaqueKey = `sb_secret_${privateMarker}`;
+    const cfg = validatePdfAuditConfig({ ...rawConfig, serviceRoleKey: opaqueKey }, target);
+    fetchPdf.mockImplementation(async (url, options) => {
+      const headers = new Headers(options?.headers);
+      expect(headers.get('apikey')).toBe(opaqueKey);
+      expect(headers.has('authorization')).toBe(false);
+      expect(options?.method).toBe('GET');
+      return response(String(url));
+    });
+    const report = await runPdfAudit(cfg, { readInventory, fetch: fetchPdf });
+    expect(readInventory).toHaveBeenCalledOnce(); expect(fetchPdf).toHaveBeenCalledOnce();
+    expect(report.outcome).toBe('complete'); expect(report.successfulFiles).toBe(1);
+    expect(report.records[0].sha256).toBe(createHash('sha256').update(pdfBytes).digest('hex'));
+    expect(JSON.stringify(report)).not.toContain(opaqueKey);
   });
 
   test('a foreign course row or duplicate attachment identity aborts the entire inventory before downloads', async () => {
