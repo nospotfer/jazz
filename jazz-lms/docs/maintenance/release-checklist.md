@@ -38,11 +38,19 @@ SQL/configuration repair or another resume is authorized by that approval.
   secret scan and Vercel build. Job logs confirm 990 normal tests and separate
   37 persisted PostgreSQL checks, types/build/lint; intentional skips remain.
   [Immutable checks](review-status.md#published-pdf-audit-source-verification).
-- [x] Latest diagnostics repair source `27d7b4c` passes actual remote Quality,
+- [x] Diagnostics repair checkpoint `27d7b4c` passes actual remote Quality,
   Secret Scan, CodeQL and protected Vercel build. Downloaded logs confirm 1,077
   normal tests/40 skips and 39 real PostgreSQL checks/one REST skip, types/build/
   lint0errors/25warnings. Included 38 new confidentiality regressions.
   [Latest source evidence](review-status.md#diagnostics-confidentiality-source-follow-up).
+- [x] Broader source `530e9bb` passes actual remote Quality/Secret Scan/CodeQL
+  and protected build. Downloaded logs confirm1,175 normal/40 skips and39 actual
+  PostgreSQL/one skip, types/build/lint0errors/25warnings;53 additional application
+  confidentiality and45 exact-project analytics cases are included.
+  [Latest source](review-status.md#application-diagnostics-and-exact-project-analytics).
+- [ ] Repair and verify bounded/pruned native limiter storage, trusted ingress,
+  cooperative payment sweep/continuation/non-overlap and writable cache before
+  the final self-hosted package proof. No service/timer/DNS activation yet.
 - [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
 - [x] Record the owner's zero-cost hosting constraint; no paid Vercel upgrade.
@@ -64,13 +72,15 @@ SQL/configuration repair or another resume is authorized by that approval.
   this proves neither Dodo nor an HTTPS Vercel frontend.
 - [x] Existing publishable/secret keys pass 20 overlapping native Auth/SDK/access
   checks on the synthetic backend; no production key change or rotation.
-- [x] Latest exact source `27d7b4c`, isolated data/providers and production-built
+- [x] Verified checkpoint `27d7b4c`, isolated data/providers and production-built
   HTTPS frontend pass 45 distinct role/media/native-PDF/mobile/profile/certificate
   checks. Independent final read-only snapshot preserves notes/learning/purchases.
   Separate actual PDF page/text diagnostic passes at1440/320/390; restricted
   preview excludes Spotify/Cast. Earlier44/29/20/26/19 reports remain immutable.
   Owned temporary servers closed; this is not Vercel runtime or stable hosting
   proof. [Scope](preview.md#current-diagnostics-source-https-follow-up).
+- [ ] Verify the final updated package/source in its reviewed runtime; earlier
+  source27 browser evidence must not be relabeled as current-head proof.
 - [x] Inspect production schema/roles/table/function/view grants and private
   Storage; verify offline archive counts/hashes and durable local backup.
 - [x] Compare archived media/PDF mappings offline: 15 distinct signed lesson

@@ -303,3 +303,42 @@ native buyer session only; all 88 prior artifacts unchanged. The three owned
 temporary process groups were closed at 17:50 UTC, retaining local3010/3012 and
 fixture data. [Exact scope](preview.md#current-diagnostics-source-https-follow-up).
 No production release, payment, mail or DNS change occurred.
+
+## Application diagnostics and exact-project analytics
+
+Source `491a02cb984b5b8e9364afa824e8aca2a51c0298` extends the finite diagnostic
+contract to application-owned Auth/voucher/media/messaging/dashboard/admin logs
+and client error boundaries. Registration/resend responses omit provider prose;
+customer Auth/video failures omit server setup instructions. All53 new closed-
+mock disclosure regressions reproduce before the repair and pass after it.
+Successful operations and existing failure/rate-limit statuses are preserved.
+
+Latest source `530e9bb50f0eae6dea9679f23a15f0045a4a80e1` prevents OpenReplay from
+falling back to another project in the same organization. IDs must be valid,
+inventory/key must exactly match, and main/daily failures are unavailable data,
+not healthy zero activity.45 new closed-fetch ownership/request/failure/healthy-
+data cases pass. This is source proof, not actual account access/cross-tenant
+exposure. The admin page retains its `analytics.read` permission guard.
+
+Clean verification and downloaded exact-source Quality logs confirm **1,175
+normal passes/40 skips**,92 files with passes/five all-skipped, **39 actual
+PostgreSQL passes/one REST-only skip**, TypeScript, webpack and lint0errors/
+25existingwarnings. Exported531 committed files pass redacted Gitleaks with
+zero findings; no private env copied. Source491's first pre-push lacked the
+documented synthetic DATABASE_URL; the explicit loopback retry passed, with
+the failed environment diagnostic preserved.
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38454048826) | Downloaded counts1,175/40 and39/1, lint0/25, types/build pass. Push38454039034 passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38454048944) | Success; push38454039024 passes. |
+| [CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38454041280) and [aggregate](https://github.com/nospotfer/jazz/runs/115492310165) | Success. |
+| [Existing protected Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/EX22ccMmPSikyguSmNpKEgRzgrtS) | Success; account/provider isolation remains unreconciled. |
+
+Earlier source27's45 HTTPS checks and visual PDF/unchanged-data comparison
+remain immutable; they are not current-head browser proof. Native isolated
+review confirms forwarded-IP assumptions, expired limiter retention, continuing
+work after client abort and a writable-cache requirement. Limiter/sweep/ingress/
+cache repairs and a final package verification remain outstanding. All owned
+native/account browsers/processes closed; no production/provider configuration,
+mail, transaction, DNS or paid-plan change. The goal is active and incomplete.

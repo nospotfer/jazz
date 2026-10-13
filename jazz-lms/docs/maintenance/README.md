@@ -64,3 +64,12 @@ migrations, deployment, destructive operations, real charges/refunds, plan
 changes and messages to third parties require explicit approval. Credentials
 remain local and redacted; rotation is left to the user. Test customer data and
 payment environments must be isolated from production.
+
+The latest application source `530e9bb` extends safe diagnostics across Auth,
+vouchers, media, messaging and dashboard/admin paths, and prevents OpenReplay
+from querying another application in the same organization. Clean and downloaded
+CI evidence confirms 1,175 normal passes/40 skips, 39 persisted passes/one skip,
+types/build and lint0errors/25warnings. The 45-check HTTPS report belongs to
+earlier source27; a final package/browser verification remains separate.
+Native-process limiter, sweep cancellation/continuation and cache/ingress work
+are now concrete outstanding checks. [Latest checkpoint](review-status.md#application-diagnostics-and-exact-project-analytics).

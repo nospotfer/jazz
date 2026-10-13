@@ -96,6 +96,17 @@ details from logs and failure metadata while preserving actual helper/route
 decisions. Those 38 are part of the 1,077 total. Downloaded GitHub Quality logs
 independently confirm counts. [Source checkpoint](review-status.md#diagnostics-confidentiality-source-follow-up).
 
+The broader diagnostic source `491a02c` adds 53 closed-mock regressions for
+Auth/provider responses, vouchers, messages, media and server fallbacks. A
+corrected baseline reproduces disclosure in all53; the repair passes all53 and
+the normal1,130/40 suite. Source `530e9bb` additionally requires exact OpenReplay
+project selection and honest failed-query reporting, adding45 closed-fetch
+cases. The combined clean source and downloaded GitHub logs confirm **1,175
+normal passes/40 skips** (92 files with passes/five all-skipped), **39 persisted
+passes/one REST skip**, types/build and lint0errors/25warnings. These added cases
+are included, not additional totals. No provider/customer analytics query was
+made. Existing source27 HTTPS45/TLS9 evidence remains a distinct checkpoint.
+
 ## Actual local Auth/storage/email stack
 
 Use a separate Supabase CLI work directory outside this repository so the
