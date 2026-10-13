@@ -194,3 +194,15 @@ DNS move or deployment-protection change has been performed for this plan.
   reversal events to force reconciliation.
 - If core checks fail, retain failed revision/sanitized evidence, stop further
   production mutation, and use only approved rollback/forward repair.
+
+## Native package prerequisite
+
+The `ab14628` producer builds/verifies a sealed artifact; its synthetic preview
+origin was never exposed and it is not a running host. Before production review,
+finish the private launcher, runtime umask/cache/cold restart, disabled bounded
+daily runner, exact tunnel profile/socket boundary and fresh protected HTTPS
+journeys. Package durable CA/configuration, bind public build values and verify
+provider identity separately from key shape. Preserve the current artifact and
+failure receipts; rebuild whenever public values or source change. Existing
+account/DNS/continuous-host, old Vercel quarantine and explicit production
+approval gates remain. [Verified source/package limits](native-runtime.md).

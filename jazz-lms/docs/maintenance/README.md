@@ -24,7 +24,7 @@ site attractive and easy to use while preserving its jazz identity.
 | [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
 | [Zero-cost hosting](hosting.md) | Conditional stable hosting, old deployment quarantine and rollback | Monster + free named tunnel preferred if availability/account/DNS control exists; no setup or cutover performed |
 | [Dodo audit](dodo.md) | Live product, tax setting, webhook and test-mode access | Test product and two coupon APIs verified; transactions and notification review pending |
-| [Native safeguards](native-runtime.md) | Bounded counters, sweep continuation/cancellation and runtime limits | Source repairs under isolated verification; package/activation remains pending |
+| [Native safeguards](native-runtime.md) | Counters, sweeps, trusted ingress and reproducible release builds | Guard tests and fresh sealed artifact verified; launcher/runner/activation pending |
 | [Operational scripts](operational-scripts.md) | Deployment/mutator hazards and safe prerequisites | Legacy mutators quarantined to explicit disposable local targets |
 | [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Follow-up Quality, Secret Scan, CodeQL and Vercel build passed |
 
@@ -66,11 +66,12 @@ changes and messages to third parties require explicit approval. Credentials
 remain local and redacted; rotation is left to the user. Test customer data and
 payment environments must be isolated from production.
 
-The latest application source `530e9bb` extends safe diagnostics across Auth,
-vouchers, media, messaging and dashboard/admin paths, and prevents OpenReplay
-from querying another application in the same organization. Clean and downloaded
-CI evidence confirms 1,175 normal passes/40 skips, 39 persisted passes/one skip,
-types/build and lint0errors/25warnings. The 45-check HTTPS report belongs to
-earlier source27; a final package/browser verification remains separate.
-Native-process limiter, sweep cancellation/continuation and cache/ingress work
-are now concrete outstanding checks. [Latest checkpoint](review-status.md#application-diagnostics-and-exact-project-analytics).
+Application source `3cbb17c` includes the bounded limiter/sweep, validated
+ingress, explicit environment and immutable release producer. Clean verification
+passes 1,763 normal tests/40 skips, types and lint 0 errors/25 existing warnings.
+A fresh locked configured build at package source `ab14628` matches 541 archived Git application files,
+verifies 45,759 sealed files and excludes server secrets from 157 client files.
+Its origin is synthetic/unrouted and it was never started. Native launcher,
+disabled runner and current-source HTTPS/browser proof remain separate work.
+The earlier source27 45-check HTTPS report remains historical.
+[Latest checkpoint](review-status.md#native-ingress-and-release-producer).

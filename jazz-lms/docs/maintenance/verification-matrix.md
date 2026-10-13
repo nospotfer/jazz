@@ -38,3 +38,14 @@ Node24 copy with no private env. The 76 new cases are included in1,251. Exact-so
 1,251/40 normal and 39/1 persisted PostgreSQL counts. Earlier reports remain
 immutable. No latest-head HTTPS/browser or
 production verification is inferred. [Native behavior and limits](native-runtime.md).
+
+Native source `ab14628` passes 1,763 normal tests/40 skips, types and lint0/25.
+Its 512 new cases are included: indexing35, configuration189, policy170,
+actual HTTP20, actual release I/O48 and preparation50. A fresh configured locked
+package matches 541 Git application blobs and verifies45,759 sealed files;
+157 client files contain the public key/origin without supplied server secrets.
+Reinspection passes, but its origin is synthetic/unrouted and it was never
+started. Fixture-only successor `3cbb17c` has189 scoped passes and preserves the
+same malformed-key test value without a scanner suppression. Native launcher,
+runtime cache/restart, disabled daily runner and current-source HTTPS/customer
+journeys remain unverified. [Package and exact scope](native-runtime.md).

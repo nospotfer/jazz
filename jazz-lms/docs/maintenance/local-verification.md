@@ -218,3 +218,21 @@ project and a different loopback frontend at 3012. Its credentials/actor file
 are separate from the local stack. Existing local test and mutator guards must
 not be bypassed to target that remote database; purpose-bound private checks
 verify its exact project instead. Neither frontend is an HTTPS Vercel preview.
+
+## Native release verification
+
+Source `ab14628` passes 1,763 normal cases/40 skips (101 files with passes/five
+all-skipped), types and lint 0 errors/25 existing warnings without private env.
+The 512 new indexing/configuration/ingress/inspection/preparation cases include
+20 actual HTTP and 48 actual release-I/O checks. A separately fresh locked
+configured webpack package matches 541 committed application files and verifies
+45,759 immutable files; 157 client files omit supplied server secrets and contain
+the expected public key/origin. Its synthetic origin is unrouted and no process
+was started. [Commands and limits](native-runtime.md).
+
+Private evidence: `/tmp/jazz-maintenance/native-release-package-verification/`.
+The earlier type/scan/quiz-fixture and first esbuild sealing failures are retained;
+final corrections pass. Fixture-only `3cbb17c` preserves the malformed key value
+while satisfying the existing plain-text scanner, with 189 scoped tests passing.
+Source27's HTTPS45 report remains historical. This package is not a credential,
+tunnel, runtime cache, restart or production health check.

@@ -48,6 +48,7 @@ persisted local journeys and actual provider inspection.
 
 | OPS-08 | High native availability | Payment sweeps ignored cancellation/overlap and could restart from the same users while silently truncating provider history. Cooperative deadline, single-flight, fair user/payment continuation and bounded retry recovery now preserve ownership/accounting gates. | 30 Dodo-read and 20 sweep cases pass; independent full-queue recovery proof. Process-local/restart, uncancellable Prisma and unavailable-user saturation limits remain explicit. [Native safeguards](native-runtime.md). |
 | OPS-09 | Medium native stability | Expired request counters and raw identifier keys could accumulate without bound. Three fixed buckets now use hashed keys, expiry pruning and live-capacity denial without eviction. |26 storage regressions pass. Trusted ingress and restart/distributed limits remain separate. [Native safeguards](native-runtime.md). |
+| OPS-10 | High native integrity | Unnormalized ingress permits IP/header spoofing; writable cache symlinks and mutable/npm-link/ambient-config release inputs can escape the intended artifact. Explicit policy/HTTP transport/configuration/complete manifest and fresh locked producer address these source defects. |512 new cases included in1,763 normal passes; actual configured541-file Git archive/45,759-file sealed package and client-secret check pass. Launcher/private boundary/runtime/restart/timer/current HTTPS and production activation remain separate. [Native package](native-runtime.md). |
 
 ## Open verification and release gates
 

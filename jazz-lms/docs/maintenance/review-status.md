@@ -366,3 +366,34 @@ counts while retaining that diagnostic. Source27's 45 HTTPS checks remain
 separate historical evidence. The
 final native ingress/cache/start/runner package and latest-source frontend proof
 are still outstanding. Goal remains active and incomplete.
+
+## Native ingress and release producer
+
+Application/package source `ab146288efdb05cbfa3cc7454710966d3d08bccd` adds the
+trusted ingress/configuration/immutable producer. Fixture-only successor
+`3cbb17ce86adeb3ee974e4c3f911f7a2f0ccabfd` preserves a malformed test key's
+value while satisfying the existing plain-text scanner; no suppression was added.
+The initial stopped push and type/scan/quiz-fixture/esbuild sealing diagnostics
+remain private rather than being counted as application/customer failures.
+
+Clean local checks and downloaded exact-source Quality logs confirm **1,763
+normal passes/40 skips**, **39 actual PostgreSQL passes/one REST-only skip**,
+types/build and lint **0 errors/25 existing warnings**. The 512 new guard cases
+are included. The stronger real package proof belongs specifically to source
+`ab14628`: fresh npm ci/configured webpack, 541 archived Git blobs matched,
+45,759 sealed files verified, 157 client files free of supplied server secrets,
+cache write/reinspection pass and one esbuild link materialized. Its origin is
+synthetic/unrouted and nothing was started. [Native behavior](native-runtime.md).
+
+| Source3cbb remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38472541482) | Success; downloaded logs verify1,763/40 normal,39/1 persisted and lint0/25. Push38472537144 also passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38472541525) | Success; push38472536950 passes. |
+| [CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38472539108) and [aggregate](https://github.com/nospotfer/jazz/runs/115555242907) | Success. |
+
+The existing protected Vercel build subsequently passes; its account/provider
+isolation remains unreconciled regardless of build outcome.
+No latest-head browser, credential, DNS/tunnel or production health claim follows.
+Private launcher/runtime cache/restart, disabled runner and a fresh exact-source
+protected HTTPS window remain outstanding. Goal is active and incomplete; budget
+remains zero new paid services and production stays paused.

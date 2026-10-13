@@ -736,3 +736,41 @@ logs verify 1,251/40 normal and 39/1 real PostgreSQL, types/build and lint 0/25.
 The initial count parser missed ANSI formatting; the corrected report is
 verified and the initial diagnostic retained. Committed-source Gitleaks covers
 534 files with zero findings. Protected Vercel scope remains unreconciled.
+
+## Native ingress and release producer
+
+- Source `5aafd14` adds explicit native deployment indexing, bounded HTTP ingress,
+  provider-routing/credential-kind validation and a complete release inspector.
+  Header spoofing/ambiguous paths/public cron are denied; raw webhook bodies and
+  streamed private responses are preserved. Twenty real loopback cases pass.
+- Independent local review reproduced cache-symlink escapes through actual Next
+  image-cache read/write, identical-byte npm-link retargeting with changed module
+  behavior, and ambient npm configuration loading. Recursive cache validation,
+  exact link-target receipts and empty explicit npm user/global config fix them.
+- The producer exports exact clean Git source and uses a fresh locked install and
+  configured webpack build with only public values and a closed loopback DB.
+  Source additions/removals/edits and source symlink/hardlink replacement are
+  rejected after both phases. No server credentials reach the builder.
+- The first actual package built but could not seal esbuild's legitimate linked
+  executables. Source `ab14628` materializes generated hardlinks without modifying
+  outside files; original source is validated before any link is split.
+  Seven real filesystem regressions cover that repair and traversal order.
+- Clean verification now passes 1,763 normal tests/40 skips, 101 files with passes
+  and five all-skipped, types and lint 0 errors/25 existing warnings. The 512 new
+  safeguard cases are included. Initial type/scan and intermittent quiz-fixture
+  diagnostics are retained; awaited enabled-button interaction preserves the
+  quiz's exact server-answer/grading assertions without an application change.
+- Actual `ab14628` package: 541 archived Git files match committed blobs, fresh
+  npm ci/configured webpack pass, 45,759 sealed files verify, one esbuild link is
+  materialized, and 157 client files omit supplied server secrets while matching
+  public key/origin. Reinspection passes. The origin is synthetic/unrouted and
+  nothing was started. This is not current HTTPS/provider/production proof.
+- The first push was stopped by the existing plain-text scanner's benign malformed
+  PEM fixture marker. Fixture-only `3cbb17c` constructs the identical value without
+  contiguous marker text; 189 focused cases and both scanners pass, with no
+  suppression. Required pre-push checks pass on the retry; source is published.
+
+Next: private launcher/runtime umask/cache/cold restart, disabled bounded daily
+runner and refreshed exact-source protected HTTPS/customer journeys. Existing
+account/recipient/DNS/continuous-host and production-review gates remain. No paid
+upgrade, service/DNS/production activation, transaction or mail occurred.

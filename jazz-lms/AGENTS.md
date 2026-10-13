@@ -50,6 +50,14 @@ disposable loopback target. They cannot run in production. Voucher reset require
 explicit user/course scope and defaults to a plan; writes need `--apply`.
 See `docs/maintenance/operational-scripts.md` before using operational commands.
 
+Native release helpers under `scripts/native/` use an explicit owner-only JSON
+configuration and Node 24. `prepare-release.mjs --inspect` is read-only;
+`--build` creates a new private artifact from an exact clean Git checkout without
+server credentials in the builder. Neither command starts services. The unbound
+ingress factory requires a separately reviewed private tunnel boundary; plain
+`npm start` does not establish that boundary. See `docs/maintenance/native-runtime.md`
+before native startup or hosting changes.
+
 ## File Patterns
 
 | Pattern | Location |
