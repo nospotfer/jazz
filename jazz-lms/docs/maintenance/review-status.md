@@ -330,15 +330,39 @@ the failed environment diagnostic preserved.
 
 | Remote check | Verified result |
 | --- | --- |
-| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38454048826) | Downloaded counts1,175/40 and39/1, lint0/25, types/build pass. Push38454039034 passes. |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38454048826) | Downloaded counts1,175/40 and 39/1, lint0/25, types/build pass. Push38454039034 passes. |
 | [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38454048944) | Success; push38454039024 passes. |
 | [CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38454041280) and [aggregate](https://github.com/nospotfer/jazz/runs/115492310165) | Success. |
 | [Existing protected Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/EX22ccMmPSikyguSmNpKEgRzgrtS) | Success; account/provider isolation remains unreconciled. |
 
-Earlier source27's45 HTTPS checks and visual PDF/unchanged-data comparison
+Earlier source27's 45 HTTPS checks and visual PDF/unchanged-data comparison
 remain immutable; they are not current-head browser proof. Native isolated
 review confirms forwarded-IP assumptions, expired limiter retention, continuing
 work after client abort and a writable-cache requirement. Limiter/sweep/ingress/
 cache repairs and a final package verification remain outstanding. All owned
 native/account browsers/processes closed; no production/provider configuration,
 mail, transaction, DNS or paid-plan change. The goal is active and incomplete.
+
+## Native storage and sweep source checkpoint
+
+Source `98db3b1` includes limiter `822e6cd` and the cooperative sweep/read/continuation
+repair. A clean 535-file copy passes 1,251/40 normal, types, webpack and
+lint 0 errors/25 warnings. The 76 new regressions comprise 26 storage, 30 Dodo read and 20
+sweep cases. Independent mocks also verify 500 queued retries free capacity and
+normal cursor work resumes; they are not added to the normal suite total.
+
+Previous Dodo source passes 5/fails 25 in the new 30-case suite; original capacity
+retention/raw-key/denied-growth defects were independently reproduced. The
+first-draft live-queue deadlock was repaired before the final tests.
+[Operational behavior](native-runtime.md) states uncancellable Prisma, process
+restart/distributed limits, unavailable-user saturation and historical recovery
+gaps. No ledger migration, provider/DB request or production write occurred.
+
+Exact-source Quality, Secret Scan and CodeQL pass. Downloaded
+[Quality logs](https://github.com/nospotfer/jazz/actions/runs/38461175029) verify
+1,251/40 normal and 39/1 persisted PostgreSQL counts, types/build and lint 0/25.
+The first count parser omitted ANSI controls; the corrected parser verifies both
+counts while retaining that diagnostic. Source27's 45 HTTPS checks remain
+separate historical evidence. The
+final native ingress/cache/start/runner package and latest-source frontend proof
+are still outstanding. Goal remains active and incomplete.

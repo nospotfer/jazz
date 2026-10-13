@@ -686,9 +686,9 @@ access remain specific external inputs; continue independent work meanwhile.
   file was loaded. Source491a02c is pushed; its remote Quality runs are being
   verified separately from the newest local analytics repair.
 
-Source530e9bb is now pushed; Quality/Secret Scan/CodeQL and the existing protected
-build pass. Downloaded Quality logs confirm1,175/40 normal and39/1 actual
-PostgreSQL tests, types/build/lint0errors/25warnings. The Gitleaks source export
+Source `530e9bb` is now pushed; Quality/Secret Scan/CodeQL and the existing protected
+build pass. Downloaded Quality logs confirm1,175/40 normal and 39/1 actual
+PostgreSQL tests, types/build/lint 0 errors/25 warnings. The Gitleaks source export
 covers531 committed files with zero findings. Existing protected Vercel scope
 remains unreconciled, and no current-head browser/production proof is inferred.
 
@@ -700,3 +700,39 @@ a stable user cursor with bounded retry cutoffs and overlapping pass windows.
 No financial ledger marker/migration, provider call or running process was used
 in these five helper observations. Fourteen proposed cases remain preparation;
 they are not added to passing test totals. Goal remains active and incomplete.
+
+## Bounded counters and interrupted payment sweeps
+
+- Commit `822e6cd` bounds the three known limiter buckets to 4,096 hashed identifiers
+  each, lazily prunes expiry and retains live counters on capacity denial. Denied
+  counters saturate. All 26 regression cases pass; an isolated previous-source VM
+  reproduced unbounded/raw-key retention and growing denied counts.
+- Source `98db3b1` composes caller cancellation with Dodo's 12-second read timeout,
+  rethrows body-read aborts and rejects full final tenth pages as incomplete.
+  The 30 read regressions pass; previous source passes 5/fails 25 in the same suite.
+  Provider HTTP/ownership/filter/dedupe behavior and ordinary callers remain.
+- The sweep holds process single-flight through awaited work, checks a 50-second
+  cooperative deadline and reports partial/aborted/busy work distinctly. Stable
+  user/payment rotation, frozen/overlapping pass windows and earliest retry
+  cutoffs prevent slow prefixes and rolling windows from losing the tail. Fresh
+  detail/owner/course/reversal/applied-discount gates remain in place.
+- Independent review found a capacity deadlock in the first draft. A bounded
+  pending-only recovery cursor now frees slots without moving the ordinary tail.
+  Twenty final sweep cases pass; separate closed mocks verify 500 terminal retries
+  free capacity and the next normal call reaches that tail. Unavailable/deleted
+  saturated queues still require explicit manual recovery; no windows are evicted.
+- One clean 535-file copy passes 1,251 normal tests/40 skips (95 passed/five skipped
+  files), lint 0 errors/25 warnings, types and webpack. All tested file hashes match
+  root source; no private env/provider/DB/financial work was used. The 76 new cases
+  are included, not added again. Source/fixture reports remain private.
+
+Next: preserve the review checkpoint, then prepare the
+smallest native ingress/cache/configuration/disabled-runner package and transport
+proof. Current-head HTTPS/browser evidence is still outstanding; source27's 45
+checks stay historical. No timer/service/DNS/account/production activation.
+
+Source `98db3b1` is pushed. Quality/Secret Scan/CodeQL pass; downloaded Quality
+logs verify 1,251/40 normal and 39/1 real PostgreSQL, types/build and lint 0/25.
+The initial count parser missed ANSI formatting; the corrected report is
+verified and the initial diagnostic retained. Committed-source Gitleaks covers
+534 files with zero findings. Protected Vercel scope remains unreconciled.

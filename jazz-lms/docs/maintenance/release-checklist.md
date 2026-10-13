@@ -41,16 +41,19 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Diagnostics repair checkpoint `27d7b4c` passes actual remote Quality,
   Secret Scan, CodeQL and protected Vercel build. Downloaded logs confirm 1,077
   normal tests/40 skips and 39 real PostgreSQL checks/one REST skip, types/build/
-  lint0errors/25warnings. Included 38 new confidentiality regressions.
+  lint 0 errors/25 warnings. Included 38 new confidentiality regressions.
   [Latest source evidence](review-status.md#diagnostics-confidentiality-source-follow-up).
 - [x] Broader source `530e9bb` passes actual remote Quality/Secret Scan/CodeQL
-  and protected build. Downloaded logs confirm1,175 normal/40 skips and39 actual
-  PostgreSQL/one skip, types/build/lint0errors/25warnings;53 additional application
+  and protected build. Downloaded logs confirm1,175 normal/40 skips and 39 actual
+  PostgreSQL/one skip, types/build/lint 0 errors/25 warnings;53 additional application
   confidentiality and45 exact-project analytics cases are included.
   [Latest source](review-status.md#application-diagnostics-and-exact-project-analytics).
-- [ ] Repair and verify bounded/pruned native limiter storage, trusted ingress,
-  cooperative payment sweep/continuation/non-overlap and writable cache before
-  the final self-hosted package proof. No service/timer/DNS activation yet.
+- [x] Source `98db3b1` limiter/sweep/read safeguards pass 76 new regressions and
+  combined 1,251/40 clean checks, types/build/lint. Exact-source Quality, Secret
+  Scan and CodeQL pass; downloaded CI verifies 39 persisted tests/one skip.
+- [ ] Verify trusted native ingress, writable cache and exact self-hosted
+  start/runner package, including unavailable-queue/manual historical recovery.
+  No service/timer/DNS activation yet. [Source limits](native-runtime.md).
 - [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
 - [x] Record the owner's zero-cost hosting constraint; no paid Vercel upgrade.

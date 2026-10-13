@@ -30,7 +30,9 @@ Use dedicated Jazz services and private immutable releases/configuration; pin
 Node 24 without changing the machine's shared default. Bind Next/proxy/metrics
 only to loopback, keep the tunnel token in a private file and run one bounded
 internal daily payment timer. No shared Docker/SSH/proxy configuration changes
-are proposed. Startup, resource limits and recovery still need verification.
+are proposed. Startup, resource limits and recovery still need verification. Source safeguards
+for counters and sweep cancellation/continuation are documented in
+[native runtime](native-runtime.md); the final transport/package is outstanding.
 
 The trusted edge must replace caller-supplied forwarding headers with a validated
 client IP; current rate limiting reads the first X-Forwarded-For entry. Preserve
