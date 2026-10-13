@@ -55,7 +55,7 @@ export async function inspectNativePreview(launchFile) {
   requireCondition(Date.now() < expiresAt, 'NATIVE_LAUNCH_EXPIRY');
   return { plan, config: inspected.config, expiresAt, workerPath,
     summary: { ...inspected.summary, privateUnixTransport: true, previewGateRequired: true,
-      expiresAt: access.expiresAt, inspectedOnly: true } };
+      previewWorkerTransportAllowed: true, expiresAt: access.expiresAt, inspectedOnly: true } };
 }
 
 /** Linux process-group observation uses only UID/group/session/state metadata.
@@ -245,7 +245,7 @@ export async function startNativePreview(launchFile) {
     await robotsProbe(socketPaths.app, hostname);
     requireCondition(!closing && child.exitCode === null && child.signalCode === null && Date.now() < expiresAt, 'NATIVE_START_STOPPED');
     ingress = createIngressServer({ upstreamSocket: socketPaths.app,
-      policy: { canonicalHost: hostname }, previewAccess: plan.previewAccess });
+      policy: { canonicalHost: hostname }, previewAccess: plan.previewAccess, allowPreviewWorkerTransport: true });
     await recordResource(async () => {
       await new Promise((resolveListen, reject) => {
         ingress.once('error', reject); ingress.listen(socketPaths.edge, () => { ingress.off('error', reject); resolveListen(); });

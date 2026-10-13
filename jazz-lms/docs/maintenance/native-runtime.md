@@ -2,7 +2,7 @@
 
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
-verification. Application source `ab14628` passes 1,763 normal tests/40 intentional
+verification. Earlier application source `ab14628` passes 1,763 normal tests/40 intentional
 skips, types, webpack and lint 0 errors/25 existing warnings in a credential-free
 copy. The 512 new safeguard cases are included in that total.
 
@@ -98,6 +98,71 @@ Private evidence is under
 `/tmp/jazz-maintenance/native-release-package-verification/`; the first sealing
 failure and earlier type/scan/quiz-fixture diagnostics remain preserved.
 
+## Bounded private preview startup
+
+`launch-preview.mjs` inspects the complete release before creating a new run
+directory. Its private JSON contains `version: 1`, absolute `configFile`,
+`appRoot`, `manifestFile`, `runDirectory`, and `previewAccess` with a generated
+username/password and a canonical ISO `expiresAt` no more than one hour ahead.
+Keep the JSON owner-only, outside the release, and its existing run parent
+owned with mode 700. Both socket paths must fit Linux's length limit. An existing
+run path is rejected; it is never adopted or deleted as a stale directory.
+
+```bash
+/absolute/node24/bin/node scripts/native/launch-preview.mjs --inspect /private/launch.json
+/absolute/node24/bin/node scripts/native/launch-preview.mjs --run-preview /private/launch.json
+```
+
+Only Linux/Node 24 **preview** configuration can start. Production configuration
+is denied before a child or listener is created. The release-local worker uses
+Next's custom-server API with the public hostname/logical port 443, then binds
+only `app.sock`; the parent binds only `edge.sock`. Both sockets are mode 600
+inside the new mode 700 directory; the worker runs with umask 077. No application
+TCP port, tunnel, service or DNS record is created by the launcher.
+
+An owned IPC nonce/PID and a bounded real `robots.txt` probe precede ingress
+readiness. The Basic credential stays in the parent, never the worker's argv or
+environment. Every ingress request requires it, including assets and redirects;
+authorized responses override shared cache headers with private/no-store.
+The fixed lease is checked again after request buffering and bounds forwarding.
+Next raw output is discarded; only finite diagnostic counters reach receipts.
+
+Signal, lease expiry and unexpected worker exit close the owned ingress/process
+group. Cleanup waits for in-flight resource creation and preserves replacement
+paths or unknown entries. It removes only recorded owned sockets/temp files and
+the empty new run directory. Next closing alone is not process-group proof.
+Same-owner/root access remains a trusted boundary, not hostile-user isolation.
+
+## Temporary Cloudflare transport
+
+The installed Cloudflare CLI's `--url unix:/...` is **not** a Unix ingress rule;
+an actual request demonstrated HTTP hostname normalization and 502. Use an
+explicit private YAML ingress rule instead:
+
+```yaml
+ingress:
+  - service: unix:/private/new-run/edge.sock
+```
+
+Validate it with `cloudflared tunnel --config /private/tunnel.yaml ingress validate`.
+Quick mode needs an explicit `--url` selector; with this installed version,
+`--url http://127.0.0.1:1` selects Quick mode while the configured ingress supplies
+the actual Unix origin. That closed-port selector is never an application TCP
+bridge. [Cloudflare's versioned ingress implementation](https://github.com/cloudflare/cloudflared/blob/2026.7.3/ingress/ingress.go)
+and [Unix rule documentation](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/configuration-file/)
+support this ordering and service type; reverify after CLI changes.
+
+Actual Quick traffic carries `cf-worker`. The launcher explicitly permits that
+transport only behind its authenticated, leased operator preview. General
+ingress continues to deny Worker browsing; pseudo-IP/v6, host and HTTPS checks
+remain enforced. This exception is not a production tunnel policy. Accountless
+Quick infrastructure also rewrote an unauthorized origin `robots.txt` 401 into
+a managed 200 response retaining the Basic challenge. Record that provider
+behavior separately; do not claim every external path preserves origin status.
+Verify protected pages/assets through HTTPS and inspect the resulting preview's
+indexing behavior. A temporary tunnel is testing infrastructure, not stable
+hosting or an account/DNS approval.
+
 ## Request counters
 
 The three known buckets each retain at most 4,096 SHA256 identifier keys.
@@ -159,10 +224,42 @@ scope. Independent instances do not share this lock; disable old cron before
 activating one native runner. No distributed exactly-once or complete historical
 coverage is claimed.
 
+## Disabled reconciliation preparation
+
+`reconcile-runner.mjs --plan /private/runner.json` only inspects and reports a
+disabled plan. The CLI has no execution flag and installs/enables no timer.
+The plan pins a production configuration/source revision and the dev/inode of
+an existing private app socket and lock file. It cannot target public TCP/HTTP
+or discover ambient credentials. Configuration/source and local inode checks
+are not provider ownership, application-version or activation approval.
+
+The exported execution path exists for owned fixtures/future reviewed startup;
+both explicit execution and a private enabled plan are required. It acquires
+the existing lock through root-controlled `/usr/bin/flock` on an inherited
+descriptor, retains the lock until settlement and rechecks target identities
+before every call. Limits are 20 calls, 15 minutes, 75 seconds per request and
+64 KiB per response, with one second between settled continuations. It leaves
+enough time for a complete request before starting another.
+
+Only a valid settled 503 with explicit cursor continuation and user progress
+permits another call. Busy, abort, capacity, zero progress, pending tail,
+malformed/oversized response, authentication and unknown transport outcomes
+stop the run. The receipt distinguishes complete/incomplete/uncertain; no raw
+response or bearer is logged. It never restarts Next or retries an uncertain
+write. Releasing the HTTP client does not prove an in-flight Prisma call stopped;
+the app retains its own single-flight lock until settlement. Future scheduling,
+old Vercel cron quarantine and manual historical recovery require separate
+review before production activation.
+
 ## Remaining package verification
 
-The final launcher/private socket, runtime umask 077, cold start/restart, actual
-Next cache behavior and a disabled bounded daily runner remain outstanding.
+The current preview launcher and disabled runner are described above; final
+combined checks and fresh protected HTTPS/browser evidence must bind the
+corrected Quick transport source. Earlier `0dfa999` actually passes private
+Next startup, 19 runtime checks, image cache writes, clean restart and worker-exit
+cleanup without unlocking compiled files. A separate UID is denied both sockets.
+Its initial external transport diagnostics are retained rather than counted as
+browser/customer checks.
 An eventual production package needs a durable reviewed CA/config path; temporary
 preview paths are insufficient. Fresh protected HTTPS/customer-journey checks
 must bind the resulting current-source runtime and window. Account/DNS/continuous

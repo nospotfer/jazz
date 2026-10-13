@@ -3,7 +3,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { isAbsolute, resolve } from 'node:path';
 import { evaluateIngressRequest, stripHopHeaders, WEBHOOK_PATHS } from './ingress-policy.mjs';
 
-/** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
+/** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},allowPreviewWorkerTransport?:boolean,requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
 
 function bounded(value, fallback, maximum) {
   const selected = value ?? fallback;
@@ -83,6 +83,10 @@ export function createIngressServer(options) {
     }
     previewHash = createHash('sha256').update(`${username}:${password}`).digest();
   }
+  if ((options.allowPreviewWorkerTransport !== undefined && typeof options.allowPreviewWorkerTransport !== 'boolean') ||
+    (options.allowPreviewWorkerTransport === true && !previewHash)) {
+    throw new Error('Invalid native preview transport configuration');
+  }
   const bodyLimit = bounded(options.requestBodyLimitBytes, 8 * 1024 * 1024, 8 * 1024 * 1024);
   const webhookLimit = bounded(options.webhookBodyLimitBytes, 256 * 1024, 256 * 1024);
   const bodyTimeout = bounded(options.requestBodyTimeoutMs, 10_000, 10_000);
@@ -113,7 +117,13 @@ export function createIngressServer(options) {
       }
       const target = req.url ?? '/';
       if (Buffer.byteLength(target) > 8192) { fail(res, 414); return; }
-      const decision = evaluateIngressRequest({ method: req.method ?? '', target, headers: req.headers }, options.policy);
+      const policyHeaders = { ...req.headers };
+      // Quick Tunnels themselves use Worker transport. Only an explicitly
+      // enabled, authenticated and leased operator preview may admit it.
+      // Production/general ingress keeps its Worker denial. Pseudo-IP/v6 and
+      // host/scheme validation still run; the policy strips edge metadata.
+      if (previewHash && options.allowPreviewWorkerTransport === true) delete policyHeaders['cf-worker'];
+      const decision = evaluateIngressRequest({ method: req.method ?? '', target, headers: policyHeaders }, options.policy);
       if (decision.action === 'deny') { fail(res, decision.status); return; }
       if (decision.action === 'redirect') {
         res.writeHead(decision.status, { Location: decision.location, 'Cache-Control': 'no-store', Connection: 'close' });

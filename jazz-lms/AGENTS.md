@@ -53,10 +53,14 @@ See `docs/maintenance/operational-scripts.md` before using operational commands.
 Native release helpers under `scripts/native/` use an explicit owner-only JSON
 configuration and Node 24. `prepare-release.mjs --inspect` is read-only;
 `--build` creates a new private artifact from an exact clean Git checkout without
-server credentials in the builder. Neither command starts services. The unbound
-ingress factory requires a separately reviewed private tunnel boundary; plain
-`npm start` does not establish that boundary. See `docs/maintenance/native-runtime.md`
-before native startup or hosting changes.
+server credentials in the builder. Neither command starts services.
+`launch-preview.mjs` starts only a bounded Linux preview after release inspection,
+using owner-only Unix sockets and a fixed-expiry Basic gate. Production startup
+is denied. Its explicit Quick Tunnel Worker exception is preview-only; general
+ingress continues to deny Worker browsing. `reconcile-runner.mjs` has a
+preparation-only CLI and no activation flag. A separately verified tunnel boundary
+is still required; plain `npm start` does not establish it. See
+`docs/maintenance/native-runtime.md` before startup or hosting changes.
 
 ## File Patterns
 
