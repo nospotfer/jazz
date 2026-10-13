@@ -337,7 +337,7 @@ export function FAQFooter() {
         </div>
 
         {/* Footer */}
-        <footer className="w-full bg-gray-900 dark:bg-black border-t border-gray-700 py-8">
+        <footer className="w-full bg-gray-900 dark:bg-black border-t border-gray-700 py-8 [--color-jazz-title-accent:#d79b1a]">
           <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               {/* Logo + Contact */}

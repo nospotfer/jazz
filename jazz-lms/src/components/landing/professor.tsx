@@ -63,7 +63,7 @@ export function Professor() {
           </div>
 
           {/* Right side - Text */}
-          <div className="bg-gray-900 p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+          <div className="bg-gray-900 p-6 sm:p-8 lg:p-10 flex flex-col justify-center [--color-jazz-title-accent:#d79b1a]">
             <div className="border-b-2 title-accent-border pb-6 mb-8">
               <h2 className="title-accent font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold">
                 {copy.title}
