@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
+import { AccessibleDialog } from "@/components/ui/accessible-dialog";
 import type { PressContent } from "@/content/landing/press-content";
 import type { SupportedLanguage } from "@/lib/language";
 import { FileText, Newspaper, X } from "lucide-react";
@@ -182,30 +183,13 @@ export function Press() {
     };
   }, [contentById, selectedCardId]);
 
-  useEffect(() => {
-    if (!selected) return;
-
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedCardId(null);
-    };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onEscape);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onEscape);
-    };
-  }, [selected]);
-
   const localizedUi = uiText[language];
 
   return (
     <>
-      <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-          <h2 className="text-gray-900 dark:text-white text-4xl sm:text-5xl font-bold text-center mb-12">
+      <div className="w-full bg-white dark:bg-background">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12 lg:py-16">
+          <h2 className="font-serif text-gray-900 dark:text-white text-3xl sm:text-4xl font-semibold text-center mb-8">
             {localizedUi.sectionTitle}
           </h2>
 
@@ -264,21 +248,15 @@ export function Press() {
       </div>
 
       {selected && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedCardId(null)}
+        <AccessibleDialog
+          label={selected.title}
+          onClose={() => setSelectedCardId(null)}
         >
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card"
-            onClick={(event) => event.stopPropagation()}
-          >
             <div className="sticky top-0 z-10 flex items-center justify-end p-4 bg-card/95 border-b border-border">
               <button
                 type="button"
                 onClick={() => setSelectedCardId(null)}
-                className="rounded-full p-2 text-foreground hover:bg-muted transition"
+                className="flex min-h-11 min-w-11 items-center justify-center rounded-full p-2 text-foreground hover:bg-muted transition"
                 aria-label={localizedUi.closeLabel}
               >
                 <X className="h-5 w-5" />
@@ -365,14 +343,13 @@ export function Press() {
                 <Button
                   type="button"
                   onClick={() => setSelectedCardId(null)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black"
+                  className="min-h-11 bg-yellow-500 hover:bg-yellow-600 text-black"
                 >
                   {localizedUi.closeLabel}
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
+        </AccessibleDialog>
       )}
     </>
   );

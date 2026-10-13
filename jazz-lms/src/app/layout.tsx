@@ -3,6 +3,8 @@ import { GlobalLoadingProvider } from "@/components/providers/global-loading-pro
 import { ThemeProvider } from "@/components/theme-provider";
 import { OpenReplayProvider } from "@/components/analytics/openreplay-provider";
 import { GoogleAnalyticsScript } from "@/components/third-parties/google-analytics-script";
+import { PrivacyControls } from "@/components/analytics/privacy-controls";
+import { PUBLIC_SITE_DESCRIPTION, PUBLIC_SITE_ORIGIN, PUBLIC_SITE_TITLE } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
@@ -18,8 +20,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "La Cultura del Jazz",
-  description: "Curso online con Enric Vázquez Ramonich",
+  metadataBase: new URL(PUBLIC_SITE_ORIGIN),
+  title: { default: PUBLIC_SITE_TITLE, template: `%s · ${PUBLIC_SITE_TITLE}` },
+  description: PUBLIC_SITE_DESCRIPTION,
+  robots: { index: false, follow: false },
   icons: {
     icon: "/images/logo-mark.png",
     shortcut: "/images/logo-mark.png",
@@ -45,10 +49,11 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <GlobalLoadingProvider>{children}</GlobalLoadingProvider>
+            <PrivacyControls />
+            <OpenReplayProvider />
+            <GoogleAnalyticsScript />
           </LanguageProvider>
         </ThemeProvider>
-        <OpenReplayProvider />
-        <GoogleAnalyticsScript />
       </body>
     </html>
   );

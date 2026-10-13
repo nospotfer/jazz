@@ -1,41 +1,34 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import {
   isOpenReplayEnabled,
   startTracker,
   stopTracker,
 } from '@/lib/analytics/openreplay';
-
-const EXCLUDED_PREFIXES = ['/admin', '/api'];
-
-function isExcludedPath(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return EXCLUDED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-}
+import { isAnalyticsPathAllowed } from '@/lib/analytics/consent';
+import { useAnalyticsConsent } from './use-analytics-consent';
+import { guardAnalyticsNavigation } from '@/lib/analytics/navigation';
 
 /**
- * OpenReplay provider — renders nothing.
- * - Inicializa o tracker apenas no cliente, quando habilitado por env.
- * - NÃO carrega em rotas /admin/* ou /api/*.
- * - Falha silenciosa: nenhum erro do OpenReplay deve impactar a UI.
+ * Optional replay is limited to the public homepage after explicit consent.
+ * Account, student and admin pages never start the tracker.
  */
 export function OpenReplayProvider() {
   const pathname = usePathname();
+  const { replay } = useAnalyticsConsent();
 
-  useEffect(() => {
-    if (!isOpenReplayEnabled()) return;
-
-    if (isExcludedPath(pathname)) {
-      // Caso o usuário tenha entrado primeiro em rota pública e navegado para /admin,
-      // paramos o tracker (best effort).
+  useLayoutEffect(() => {
+    if (!isOpenReplayEnabled() || !replay || !isAnalyticsPathAllowed(pathname)) {
       void stopTracker();
       return;
     }
 
+    const removeGuard = guardAnalyticsNavigation(allowed => { if (!allowed) void stopTracker(); });
     void startTracker();
-  }, [pathname]);
+    return () => { removeGuard(); void stopTracker(); };
+  }, [pathname, replay]);
 
   return null;
 }

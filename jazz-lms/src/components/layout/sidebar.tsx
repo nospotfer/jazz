@@ -319,9 +319,11 @@ export function Sidebar() {
     <>
       {/* Hamburger Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
+        className="fixed top-3 left-3 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
         aria-label="Open menu"
+        aria-expanded={isOpen}
       >
         <Menu className="h-6 w-6 text-foreground" />
       </button>
@@ -422,8 +424,9 @@ function SidebarContent({
         </Link>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-accent transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent transition-colors"
             aria-label="Close menu"
           >
             <X className="h-5 w-5 text-muted-foreground" />

@@ -3,6 +3,7 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './button';
+import { AccessibleDialog } from './accessible-dialog';
 import { useLanguage } from '@/components/providers/language-provider';
 
 interface ContactModalProps {
@@ -147,6 +148,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
+  const [sentEmail, setSentEmail] = useState('');
 
   const messageTypes = [
     { value: 'question', label: copy.messageTypes.question },
@@ -192,6 +194,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setFormData({ messageType: '', message: '', email: '' });
     setErrors({});
     setSuccess(false);
+    setSentEmail('');
     onClose();
   };
 
@@ -232,6 +235,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }
 
       setSuccess(true);
+      setSentEmail(formData.email);
       setFormData({ messageType: '', message: '', email: '' });
 
       // Close modal after 2 seconds
@@ -250,43 +254,43 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 sm:p-6 min-h-screen">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm sm:max-w-md my-auto">
+    <AccessibleDialog label={copy.title} onClose={handleClose} className="max-w-md rounded-xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b">
           <button
+            type="button"
             onClick={handleClose}
-            className="p-1 hover:bg-gray-100 rounded-md transition"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-md p-1 hover:bg-accent transition"
             aria-label={copy.close}
           >
-            <X className="h-5 w-5 text-gray-600" />
+            <X className="h-5 w-5 text-muted-foreground" />
           </button>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-1 text-center">{copy.title}</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-foreground flex-1 text-center">{copy.title}</h2>
           <div className="w-8" />
         </div>
 
         {/* Body */}
         <div className="p-4 sm:p-6">
           {success ? (
-            <div className="text-center space-y-3">
+            <div role="status" className="text-center space-y-3">
               <div className="text-green-600 font-semibold">
                 {copy.sentSuccess}
               </div>
-              <p className="text-sm text-gray-600">
-                {copy.sentTo} {formData.email}
+              <p className="text-sm text-muted-foreground">
+                {copy.sentTo} {sentEmail}
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {errors.submit && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
                   {errors.submit}
                 </div>
               )}
 
               {/* Message Type */}
               <div>
-                <label htmlFor="messageType" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="messageType" className="block text-sm font-medium mb-2 text-foreground">
                   {copy.messageType}: <span className="text-red-500">{copy.required}</span>
                 </label>
                 <select
@@ -294,7 +298,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   name="messageType"
                   value={formData.messageType}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-900 ${
+                  className={`w-full min-h-11 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-yellow-500 text-foreground ${
                     errors.messageType ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
@@ -312,7 +316,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="message" className="block text-sm font-medium mb-2 text-foreground">
                   {copy.message}: <span className="text-red-500">{copy.required}</span>
                 </label>
                 <textarea
@@ -323,12 +327,12 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   maxLength={1000}
                   placeholder={copy.messagePlaceholder}
                   rows={5}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-900 placeholder-gray-400 resize-none ${
+                  className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-yellow-500 text-foreground placeholder:text-muted-foreground resize-none ${
                     errors.message ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
                 <div className="flex items-center justify-between mt-1">
-                  <p className="text-gray-600 text-xs">{formData.message.length}/1000 {copy.characters}</p>
+                  <p className="text-muted-foreground text-xs">{formData.message.length}/1000 {copy.characters}</p>
                   {errors.message && (
                     <p className="text-red-600 text-xs">{errors.message}</p>
                   )}
@@ -337,7 +341,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">
                   {copy.email}: <span className="text-red-500">{copy.required}</span>
                 </label>
                 <input
@@ -347,7 +351,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder={copy.emailPlaceholder}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-gray-900 placeholder-gray-400 ${
+                  className={`w-full min-h-11 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-yellow-500 text-foreground placeholder:text-muted-foreground ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -357,26 +361,26 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               {/* Admin Email Notice */}
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
-                <p className="text-xs text-gray-600">
-                  {copy.adminNotice} <span className="font-semibold text-gray-900">{SUPPORT_EMAIL}</span>
+              <div className="bg-muted border border-border rounded-md p-3">
+                <p className="text-xs text-muted-foreground">
+                  {copy.adminNotice} <span className="font-semibold text-foreground break-all">{SUPPORT_EMAIL}</span>
                 </p>
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-wrap gap-3 pt-4">
                 <Button
                   type="button"
                   onClick={handleClose}
                   variant="outline"
-                  className="flex-1"
+                  className="min-h-11 h-auto flex-1 whitespace-normal py-2"
                   disabled={loading}
                 >
                   {copy.cancel}
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black"
+                  className="min-h-11 h-auto flex-1 whitespace-normal bg-yellow-500 hover:bg-yellow-600 py-2 text-black"
                   disabled={loading}
                 >
                   {loading ? copy.sending : copy.send}
@@ -385,7 +389,6 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             </form>
           )}
         </div>
-      </div>
-    </div>
+    </AccessibleDialog>
   );
 }

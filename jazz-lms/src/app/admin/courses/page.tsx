@@ -24,20 +24,14 @@ export default async function AdminCoursesPage() {
       <div className="flex items-center justify-between">
         <div>
             <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Gestión de cursos</h1>
-            <p className="text-sm text-muted-foreground mt-1">Gestiona cursos, capítulos y lecciones</p>
+            <p className="text-sm text-muted-foreground mt-1">Consulta el contenido, las publicaciones y las inscripciones de los cursos.</p>
         </div>
-        <Link href="/admin/courses/new" className="btn-primary">
-            ➕ Nuevo curso
-        </Link>
       </div>
 
       <div className="card">
         {courses.length === 0 ? (
           <div className="p-12 text-center">
               <p className="text-muted-foreground text-lg">Aún no se ha creado ningún curso</p>
-            <Link href="/admin/courses/new" className="inline-block mt-4 text-jazz-accent hover:opacity-90 transition">
-                Crear primer curso →
-            </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -80,14 +74,8 @@ export default async function AdminCoursesPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           <Link href={`/courses/${course.id}`} className="btn-secondary text-sm px-3 py-1.5">
-                            👁️
+                            Ver curso
                           </Link>
-                          <Link href={`/admin/courses/${course.id}`} className="btn-secondary text-sm px-3 py-1.5">
-                            ✏️
-                          </Link>
-                          <button type="button" className="btn-danger text-sm px-3 py-1.5">
-                            🗑️
-                          </button>
                         </div>
                       </td>
                     </tr>

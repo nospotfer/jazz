@@ -309,12 +309,9 @@ export function DashboardHeader({
   return (
     <>
       <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="relative flex items-center justify-between h-16 px-3 sm:px-6 lg:px-8">
-          {/* Spacer for hamburger on mobile */}
-          <div className="w-10 lg:hidden" />
-
+        <div className="relative flex min-w-0 flex-col gap-2 px-3 py-2 sm:px-6 lg:min-h-16 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:px-8">
           {/* Search bar */}
-          <div className="hidden sm:flex flex-1 max-w-md">
+          <div className="ml-14 hidden min-w-0 flex-1 sm:flex lg:ml-0 lg:max-w-md">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -323,26 +320,27 @@ export function DashboardHeader({
                 name="courseSearch"
                 autoComplete="off"
                 placeholder={t("courses", "Cursos") + "..."}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
+                className="min-h-11 w-full min-w-0 pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
           </div>
 
           {pathname === "/dashboard" && (
-            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
+            <div className="hidden max-w-40 shrink-0 truncate text-sm font-semibold text-foreground tracking-wide 2xl:block">
               {t("welcomeShort", "Bienvenido,")} {displayName.split(" ")[0]}.
             </div>
           )}
 
           {/* Right side */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex w-full min-w-0 flex-wrap items-center justify-end gap-2 lg:w-auto lg:shrink-0 lg:flex-nowrap">
+            <div className="flex w-full items-center justify-end gap-2 pl-14 sm:w-auto sm:pl-0">
             <ThemeToggle />
             {medalProgress?.hasSupremeMedal ? (
               <Link
                 href="/dashboard/jazz-specialist"
                 aria-label={t("supremeMedalPage", "Jazz specialist medal")}
                 title={t("supremeMedalPage", "Jazz specialist medal")}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
               >
                 <JazzMedalIcon medal="GOLD" size="sm" />
               </Link>
@@ -358,7 +356,7 @@ export function DashboardHeader({
                   "courseRecognitionPage",
                   "Course completion recognition",
                 )}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
               >
                 <ScrollText className="h-5 w-5" />
               </Link>
@@ -367,20 +365,26 @@ export function DashboardHeader({
               href="/dashboard/settings"
               aria-label={t("settings", "Settings")}
               title={t("settings", "Settings")}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-accent transition-colors"
             >
               <Settings className="h-5 w-5 text-muted-foreground" />
             </Link>
+            </div>
+            <div className="flex w-full min-w-0 items-center justify-end gap-2 sm:w-auto">
             <LanguageSelector />
 
             {/* ── Notifications bell ── */}
-            <div className="relative" ref={notifRef}>
+            <div className="static shrink-0 lg:relative" ref={notifRef}>
               <button
+                type="button"
+                aria-label={t("notifications", "Notificaciones")}
+                aria-expanded={showNotifDropdown}
+                aria-controls="dashboard-notifications"
                 onClick={() => {
                   setShowNotifDropdown((v) => !v);
                   setShowUserMenu(false);
                 }}
-                className="relative p-2 rounded-lg hover:bg-accent transition-colors"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg hover:bg-accent transition-colors"
               >
                 <Bell className="h-5 w-5 text-muted-foreground" />
                 {unreadCount > 0 && (
@@ -390,7 +394,7 @@ export function DashboardHeader({
 
               {/* Dropdown */}
               {showNotifDropdown && (
-                <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div id="dashboard-notifications" className="absolute left-3 right-3 top-full mt-2 max-h-[calc(100dvh-9rem)] max-w-96 overflow-y-auto bg-card border border-border rounded-xl shadow-2xl z-50 sm:left-auto sm:right-6 sm:w-96 lg:right-0">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
                       {t("notifications", "Notificaciones")}
@@ -448,11 +452,15 @@ export function DashboardHeader({
             {/* ── User avatar + menu ── */}
             <div className="relative" ref={userMenuRef}>
               <button
+                type="button"
+                aria-label={t("profile", "Perfil")}
+                aria-expanded={showUserMenu}
+                aria-controls="dashboard-user-menu"
                 onClick={() => {
                   setShowUserMenu((v) => !v);
                   setShowNotifDropdown(false);
                 }}
-                className="flex items-center gap-2 pl-2 border-l border-border cursor-pointer hover:opacity-80 transition-opacity"
+                className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-lg border-l border-border px-2 cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <div className="flex shrink-0 flex-col items-center justify-center gap-1">
                   {avatarUrl ? (
@@ -471,11 +479,11 @@ export function DashboardHeader({
                     </div>
                   )}
                 </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium text-foreground leading-none">
+                <div className="hidden min-w-0 max-w-40 text-left xl:block">
+                  <p className="truncate text-sm font-medium text-foreground leading-none">
                     {displayName}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="truncate text-xs text-muted-foreground mt-0.5">
                     {user.email}
                   </p>
                 </div>
@@ -483,7 +491,7 @@ export function DashboardHeader({
 
               {/* Dropdown */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-[min(14rem,calc(100vw-1rem))] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div id="dashboard-user-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-9rem)] w-[min(14rem,calc(100vw-1rem))] overflow-y-auto bg-card border border-border rounded-xl shadow-2xl z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">
@@ -555,6 +563,7 @@ export function DashboardHeader({
                   </div>
                 </div>
               )}
+            </div>
             </div>
           </div>
         </div>
