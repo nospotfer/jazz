@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
+import { getVoucherFailureMessage, getVoucherFailureReason, type VoucherFailureReason } from "@/lib/voucher-feedback";
 import Link from "next/link";
 import axios from "axios";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
@@ -23,7 +24,8 @@ function RedeemPageContent() {
   const courseId = searchParams.get("courseId") || "";
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
+  const [failureReason, setFailureReason] = useState<VoucherFailureReason>('Failed');
+  const message = status === 'success' ? copy.success : getVoucherFailureMessage(failureReason, language);
 
   useEffect(() => {
     const initialCode = searchParams.get("code") || "";
@@ -49,21 +51,25 @@ function RedeemPageContent() {
 
       if (response.data?.success) {
         setStatus("success");
-        setMessage(copy.success);
         toast.success(copy.granted);
 
         setTimeout(() => {
           router.push("/dashboard");
         }, 1500);
+      } else {
+        const reason = getVoucherFailureReason(response.data, response.status);
+        setStatus('error');
+        setFailureReason(reason);
+        toast.error(getVoucherFailureMessage(reason, language));
       }
     } catch (error) {
-      const apiMessage =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? String(error.response.data.message)
-          : copy.failed;
+      const reason = getVoucherFailureReason(
+        axios.isAxiosError(error) ? error.response?.data : undefined,
+        axios.isAxiosError(error) ? error.response?.status : undefined,
+      );
       setStatus("error");
-      setMessage(apiMessage);
-      toast.error(apiMessage);
+      setFailureReason(reason);
+      toast.error(getVoucherFailureMessage(reason, language));
     } finally {
       setIsLoading(false);
     }
@@ -135,13 +141,20 @@ function RedeemPageContent() {
 }
 
 export default function RedeemPage() {
+  const { language } = useLanguage();
+  const loadingCopy = {
+    es: { title: 'Canjea tu acceso', loading: 'Cargando…' },
+    en: { title: 'Redeem your access', loading: 'Loading…' },
+    fr: { title: 'Activez votre accès', loading: 'Chargement…' },
+    pt: { title: 'Resgatar acesso', loading: 'Carregando…' },
+  }[language];
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center p-4 bg-muted/20">
           <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 space-y-3 shadow-sm">
-            <h1 className="text-2xl font-bold">Canjea tu acceso</h1>
-            <p className="text-sm text-muted-foreground">Cargando…</p>
+            <h1 className="text-2xl font-bold">{loadingCopy.title}</h1>
+            <p className="text-sm text-muted-foreground">{loadingCopy.loading}</p>
           </div>
         </div>
       }

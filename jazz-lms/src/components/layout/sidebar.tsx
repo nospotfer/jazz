@@ -31,6 +31,7 @@ const DashboardNotesNavPanel = dynamic(
 );
 
 export function Sidebar() {
+  const { t } = useDashboardPreferences();
   const [isOpen, setIsOpen] = useState(false);
   const [pdfCount, setPdfCount] = useState<number | null>(null);
   const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
@@ -322,7 +323,7 @@ export function Sidebar() {
         type="button"
         onClick={() => setIsOpen(true)}
         className="fixed top-3 left-3 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
-        aria-label="Open menu"
+        aria-label={t("openMenu", "Open menu")}
         aria-expanded={isOpen}
       >
         <Menu className="h-6 w-6 text-foreground" />
@@ -427,7 +428,7 @@ function SidebarContent({
             type="button"
             onClick={onClose}
             className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent transition-colors"
-            aria-label="Close menu"
+            aria-label={t("closeMenu", "Close menu")}
           >
             <X className="h-5 w-5 text-muted-foreground" />
           </button>
@@ -467,8 +468,8 @@ function SidebarContent({
                 unreadMessages > 0 && (
                   <span
                     className="h-2.5 w-2.5 rounded-full bg-yellow-400"
-                    aria-label="Unread messages"
-                    title="New message in inbox"
+                    aria-label={t("unreadMessages", "Unread messages")}
+                    title={t("inboxNewMessageTitle", "New inbox message")}
                   />
                 )}
             </Link>

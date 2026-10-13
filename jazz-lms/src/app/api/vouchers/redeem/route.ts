@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { validateVoucherForCourse } from '@/lib/vouchers';
+import { validateVoucherForCourse, type VoucherValidationError } from '@/lib/vouchers';
 import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
 class VoucherRedeemError extends Error {
   status: number;
+  reason: VoucherValidationError;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, reason: VoucherValidationError) {
     super(message);
     this.status = status;
+    this.reason = reason;
   }
 }
 
@@ -85,18 +87,18 @@ export async function POST(req: Request) {
       });
 
       if (!latestVoucher || !latestVoucher.isActive) {
-        throw new VoucherRedeemError('Voucher inválido ou inativo.', 400);
+        throw new VoucherRedeemError('Voucher inválido ou inativo.', 400, latestVoucher ? 'Inactive' : 'Invalid code');
       }
 
       if (latestVoucher.expiresAt && new Date() > latestVoucher.expiresAt) {
-        throw new VoucherRedeemError('Este voucher expirou.', 400);
+        throw new VoucherRedeemError('Este voucher expirou.', 400, 'Expired');
       }
 
       if (
         latestVoucher.maxUses !== null &&
         latestVoucher.currentUses >= latestVoucher.maxUses
       ) {
-        throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409);
+        throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409, 'Max uses reached');
       }
 
       const userRedemptions = await tx.voucherRedemption.count({
@@ -107,7 +109,7 @@ export async function POST(req: Request) {
       });
 
       if (userRedemptions >= latestVoucher.maxUsesPerUser) {
-        throw new VoucherRedeemError('Ya alcanzaste el límite de uso de este cupón.', 409);
+        throw new VoucherRedeemError('Ya alcanzaste el límite de uso de este cupón.', 409, 'Max uses per user reached');
       }
 
       const purchase = await tx.purchase.create({
@@ -153,7 +155,7 @@ export async function POST(req: Request) {
         });
 
         if (updated.count === 0) {
-          throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409);
+          throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409, 'Max uses reached');
         }
       } else {
         await tx.voucherCode.update({
@@ -177,6 +179,7 @@ export async function POST(req: Request) {
         {
           success: false,
           error: 'Redeem failed',
+          reason: error.reason,
           message: error.message,
         },
         { status: error.status }

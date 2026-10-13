@@ -40,6 +40,9 @@ const defaultState: DashboardPreferencesState = {
 const translations: Record<DashboardLanguage, Record<string, string>> = {
   en: {
     lobby: 'Lobby',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    unreadMessages: 'Unread messages',
     myCourses: 'My Courses',
     messages: 'Messages',
     courseNotes: 'Course Notes',
@@ -105,6 +108,9 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
   },
   pt: {
     lobby: 'Lobby',
+    openMenu: 'Abrir menu',
+    closeMenu: 'Fechar menu',
+    unreadMessages: 'Mensagens não lidas',
     myCourses: 'Meus Cursos',
     messages: 'Mensagens',
     courseNotes: 'Notas do Curso',
@@ -170,6 +176,9 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
   },
   es: {
     lobby: 'Lobby',
+    openMenu: 'Abrir menú',
+    closeMenu: 'Cerrar menú',
+    unreadMessages: 'Mensajes sin leer',
     myCourses: 'Mis Cursos',
     messages: 'Mensajes',
     courseNotes: 'Notas del Curso',
@@ -235,6 +244,9 @@ const translations: Record<DashboardLanguage, Record<string, string>> = {
   },
   fr: {
     lobby: 'Accueil',
+    openMenu: 'Ouvrir le menu',
+    closeMenu: 'Fermer le menu',
+    unreadMessages: 'Messages non lus',
     myCourses: 'Mes Cours',
     messages: 'Messages',
     courseNotes: 'Notes du Cours',

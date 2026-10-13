@@ -76,7 +76,7 @@ for (const width of [1440, 390]) {
 
     if (width === 390) {
       const title = page.locator('h2').first();
-      const menu = page.getByRole('button', { name: 'Open menu', exact: true });
+      const menu = page.getByRole('button', { name: 'Abrir menú', exact: true });
       await expect(menu).toBeVisible();
       const menuBox = await menu.boundingBox();
       const titleTextLeft = await title.evaluate((element) => {
