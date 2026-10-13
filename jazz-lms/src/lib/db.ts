@@ -15,7 +15,7 @@ function getValidatedDatabaseUrl() {
 
   if (!value.startsWith('postgresql://') && !value.startsWith('postgres://')) {
     throw new Error(
-      `Invalid DATABASE_URL protocol: "${value}". Prisma datasource is PostgreSQL, so DATABASE_URL must start with "postgresql://" or "postgres://".`
+      'Invalid DATABASE_URL protocol. Prisma datasource is PostgreSQL, so DATABASE_URL must start with "postgresql://" or "postgres://". The configured value is omitted because it may contain credentials.'
     );
   }
 

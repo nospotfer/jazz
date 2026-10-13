@@ -1,1 +1,5 @@
 .vercel
+
+# Local credential handover; never commit account passwords or API keys.
+Documento - Senhas - Neurofactory - Página1.csv
+.idea/

@@ -2,26 +2,29 @@
 
 ## Project Overview
 
-Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 14 (App Router), Supabase Auth, Prisma (SQLite), Dodo Payments payments, and Tailwind CSS. Single-course sales model with chapter/lesson hierarchy.
+Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platform with Supabase Auth, Prisma/PostgreSQL, Mux, Dodo Payments, Resend, and Tailwind CSS. It sells the complete course; new individual lesson checkout intentionally returns HTTP 410. Historical lesson purchases still exist in the schema/access policy. The first lesson is free after registration. ES is the default language, with EN/FR/PT available in the public/student experience.
 
 ## Architecture
 
 - **Auth**: Supabase handles authentication. Two client factories exist: `src/utils/supabase/server.ts` (Server Components/API routes) and `src/utils/supabase/client.ts` (Client Components). Both return safe stubs when env vars are missing so local dev doesn't crash.
-- **Database**: Prisma with SQLite. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models: `User`, `Course → Chapter → Lesson → Attachment`, `Purchase`, `UserProgress`.
+- **Database**: Prisma with PostgreSQL. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models include `User`, `Course → Chapter → Lesson → Attachment`, course/lesson purchases, vouchers, progress, quiz attempts and a payment webhook event ledger. SQLite instructions and old Stripe environment variables are legacy.
 - **Admin system**: Role-based via `User.role` field (string: `"USER" | "SUPER_ADMIN" | "COURSE_ADMIN" | "CONTENT_CREATOR" | "MODERATOR"`). Guard helpers in `src/lib/admin.ts` (`requireAdmin()`/`requirePermission()`). Admin pages under `src/app/admin/` are layout-protected.
 - **User sync**: On auth callback (`src/app/auth/callback/route.ts`), `syncUserWithDatabase()` from `src/lib/sync-user.ts` creates a Prisma `User` record matching the Supabase user.
-- **Payments**: Dodo Payments checkout in `src/app/api/checkout/route.ts`. Webhook at `src/app/api/webhooks/dodo-jazzlms/route.ts` creates and reverts `Purchase` records for paid/refunded orders.
+- **Payments**: Dodo checkout in `src/app/api/checkout/route.ts` and `src/app/api/lesson-checkout/route.ts`. Standard signed webhooks at `src/app/api/webhooks/dodo-jazzlms/route.ts`; reconciliation in the purchases route and cron. Provider helpers are under `src/lib/payments/providers/`. Do not assume a mocked payload matches the documented provider contract.
+- **Media**: Mux signed playback via `src/lib/mux.ts` and lesson access checks. PDF viewing uses a same-origin attachment proxy and native iframe viewer.
+- **Messaging**: Resend outbound email and inbound webhook, with messaging tables managed outside the main Prisma models. Review runtime table-creation helpers before using a production database.
 
 ## Key Conventions
 
 - **Server Components by default**. Only add `'use client'` when needed (interactivity, browser APIs). See `src/app/auth/page.tsx` for client example.
 - **Import alias**: `@/*` maps to `./src/*`. Always use `@/` imports.
 - **Auth pattern in pages**: Call `createClient()` → `supabase.auth.getUser()` → redirect to `/auth` if null. See `src/app/dashboard/page.tsx`.
-- **Release flow policy**: All fixes/config changes are developed and deployed as preview from `jazz-lms-dev-vercel`; `main` is reserved for reviewed merges and production deploys only.
+- **Release flow policy**: Use the user-authorized maintenance branch for this goal and previews. Legacy deploy scripts may still assume `jazz-lms-dev-vercel`; verify their actual behavior before running. `main` and production changes require the review/approval described in the root instructions.
 - **Supabase stubs**: Both Supabase client factories return minimal stubs when `NEXT_PUBLIC_SUPABASE_URL` is unset, allowing the app to render without Supabase configured.
 - **Component organization**: `src/components/landing/` (homepage sections), `src/components/course/` (player/sidebar), `src/components/layout/` (header, nav), `src/components/ui/` (shadcn primitives).
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.
-- **Theme**: Dark theme, black/gray backgrounds, yellow-500 accent color throughout.
+- **Theme**: Dark and light themes with jazz gold accents. Verify contrast and mobile layouts in both; do not use dark-only text colors on shared surfaces.
+- **Server identity**: Verify cookie-backed identity through `supabase.auth.getUser()` before authorization. `getSession().user` is not trusted server-side identity.
 
 ## Commands
 
@@ -55,7 +58,8 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 
 - **Role field is string-based**: `User.role` is a `String` with `@default("USER")`, not a Prisma enum. Use constants from `src/lib/admin/permissions.ts`.
 - **Prisma Client must be regenerated** after any `schema.prisma` change: run `npx prisma generate`.
-- **Middleware runs on all routes** (except static/image/favicon). Session refresh happens via `src/utils/supabase/middleware.ts`.
+- **Next.js proxy**: `src/proxy.ts` handles language cookies and root/dashboard/admin session processing. API routes must enforce their own authentication and authorization.
 - **Test framework is configured**: Vitest for unit/integration/contract/security/system and Playwright for E2E.
 - **Real Dodo frontend E2E requires env preconditions** (`PAYMENTS_E2E_REAL_ENABLED=1`, `PAYMENTS_E2E_STORAGE_STATE`, `PAYMENTS_E2E_COURSE_ID`).
-- **Admin pages are layout-protected** — the `src/app/admin/layout.tsx` calls `requireAdmin()` which redirects non-admins. Individual admin pages don't need their own auth checks.
+- **Admin pages are layout-protected**, but privileged data reads, API routes and actions must also enforce the permission relevant to their operation. Do not rely on a layout to authorize an API/action.
+- **Maintenance evidence**: See `docs/maintenance/` for inventory, verified issues, checks and remaining work. Use synthetic environment values for mocked tests; never run seeds, test purchase resets, migrations or payment scripts against production during unattended work.
