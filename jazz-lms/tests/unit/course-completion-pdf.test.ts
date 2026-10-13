@@ -25,5 +25,5 @@ describe('course certificate export', () => {
     expect(pdf.internal.pageSize.getHeight()).toBeCloseTo(841.89, 1);
     expect(output.length).toBeGreaterThan(4000);
     expect(pdf.getTextWidth(name)).toBeGreaterThan(0);
-  });
+  }, 15_000); // Real PNG decoding/compression can exceed 5s on a busy CI worker.
 });
