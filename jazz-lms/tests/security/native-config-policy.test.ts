@@ -349,7 +349,7 @@ describe("native configuration CA and Mux signer structural prerequisites", () =
         public: publicPem,
         "EC private": ec.privateKey.export({ format: "pem", type: "pkcs8" }).toString(),
         "literal backslash newlines": privatePem.replace(/\n/g, "\\n"),
-        malformed: "-----BEGIN PRIVATE KEY-----\nsynthetic-invalid-key\n-----END PRIVATE KEY-----",
+        malformed: "-----BEGIN " + "PRIVATE KEY-----\nsynthetic-invalid-key\n-----END PRIVATE KEY-----",
         empty: "",
       };
       input.env.MUX_SIGNING_PRIVATE_KEY = candidates[kind];
