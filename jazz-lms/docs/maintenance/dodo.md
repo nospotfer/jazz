@@ -62,6 +62,19 @@ PATCH/delete, local voucher, customer, checkout, payment, refund or webhook call
 This proves provider acceptance of helper-generated coupon resources, not tax,
 settlement or local redemption accounting. Resources and receipts are preserved.
 
+A separate private direct-webhook exception is prepared with **110 in-process
+checks** (63 raw-body/signature/receipt/duplicate cases plus 47 existing Basic
+gate cases). Root reran it against source27's native verifier after checking
+frozen hashes. It authenticates original bytes before scope parsing and only
+forwards recorded owned TEST payment/refund receipts; completed identical
+duplicates are acknowledged without a second forward, while mismatched or
+uncertain deliveries stay denied. This is preparation, not provider delivery.
+No exception is integrated, endpoint created or signer activated. The planned
+four checkout sessions/two successes/two refunds use one fresh controlled-email
+actor and two additional native-generated coupons, maximum four provider coupons
+including the two completed acceptance resources. Existing learning/purchases
+stay preserved. Merchant/webhook-alert recipients remain the execution gap.
+
 ## Verified live configuration
 
 | Area | Evidence |

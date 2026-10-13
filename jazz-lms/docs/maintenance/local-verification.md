@@ -63,6 +63,39 @@ fixture rows are cleaned up or transactions rolled back. The role suite applies
 scoped security SQL and refuses remote targets. Do not treat skipped database
 checks in the normal suite as equivalent evidence.
 
+## Separate native Prisma TLS verification
+
+A new disposable PostgreSQL 17.11 loopback fixture independently passes **9/9**
+native-engine checks with the actual Prisma 5.17.0 engine
+`393aa359c9ad4a4bb28630fb5613f9c281cde053`. Positive read-only queries confirm
+`pg_stat_ssl.ssl=true`. With `sslmode=require`, `sslaccept=strict` and a supplied
+synthetic CA, unrelated CA, trusted-chain/wrong-hostname, missing CA file and
+non-TLS server cases all reject before a query; strict positives succeed between
+negative groups. Both server certificates validate under the same synthetic CA,
+so the wrong-host case isolates hostname validation.
+
+The first fixture preparation incorrectly set command-line `ssl=off`, which
+overrode its subsequent reload; it ran zero engine checks and is retained as a
+configuration diagnostic. The corrected fixture changed only its own disposable
+container, bound port 55436 to loopback, and removed that container in `finally`.
+Existing local/cloud/production services and application source were unchanged.
+The private runner, driver and result are in
+`/tmp/jazz-maintenance/prisma-native-tls-verification-v2/` (owner-only files).
+These nine checks are separate from normal and persisted CI totals. They prove
+the pinned engine's strict chain/hostname behavior, not deployed CA packaging,
+exclusive CA trust or actual production TLS configuration.
+
+## Diagnostics verification follow-up
+
+The later diagnostics source `27d7b4c` passes **1,077 normal tests / 40 skips**
+(90 files with passes / five all-skipped), the same five guarded PostgreSQL suites
+**39 passed / one REST-only skip**, TypeScript, webpack build and lint
+**0 errors / 25 existing warnings** in a clean copy with no private env files.
+Its 38 added regressions test omission of private response/error/email/voucher
+details from logs and failure metadata while preserving actual helper/route
+decisions. Those 38 are part of the 1,077 total. Downloaded GitHub Quality logs
+independently confirm counts. [Source checkpoint](review-status.md#diagnostics-confidentiality-source-follow-up).
+
 ## Actual local Auth/storage/email stack
 
 Use a separate Supabase CLI work directory outside this repository so the
@@ -161,8 +194,11 @@ they do not fabricate eligibility or mutate the legacy actor's purchases.
 
 Local browser evidence and verified Mux requests are recorded in the
 [verification matrix](verification-matrix.md). The separate exact-source,
-production-built HTTPS frontend passes 44 unique checks through a protected free
-temporary tunnel. [Runtime and scope](preview.md#free-https-frontend-checkpoint).
+production-built HTTPS frontend at source `27d7b4c` passes 45 distinct checks
+through a protected free temporary tunnel; the earlier 44-check report is
+preserved. Final read-only comparison preserves fixture learning and purchases.
+The owned temporary servers were closed after verification.
+[Runtime and scope](preview.md#current-diagnostics-source-https-follow-up).
 This does not prove Dodo, Google/SMTP, Vercel runtime or stable production hosting.
 The owner selected a zero-cost budget; no paid upgrade is authorized.
 

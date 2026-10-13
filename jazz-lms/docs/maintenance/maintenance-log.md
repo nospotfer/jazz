@@ -550,3 +550,76 @@ media/PDF mappings against preserved provider inventories, and prepare signed
 Dodo delivery while merchant/webhook-alert recipients are clarified. Actual
 checkout/refund, Google/SMTP, stable production hosting and approved code/config/
 hardening/reopening remain outstanding. No paid upgrade or new resume occurred.
+
+## Archived mapping, native TLS and stable free hosting follow-up
+
+- Offline production mapping comparison finds 15 distinct lesson playback IDs,
+  all matching one cached ready signed Mux asset and intended class labels 1–15;
+  promo is separate. All 68 attachments map uniquely to exported objects with
+  matching SHA-256/size and valid PDF structure, totaling 6,423,774 bytes. All
+  60 class PDFs cover 15 lessons × four matching filename language/number labels.
+  Six auxiliary filenames are unclear; local text review of their 15 pages
+  confirms declared EN2/FR2/PT2 content languages. No translation/video semantic
+  claim or mutation; original files/input hashes remain unchanged.
+- Actual Prisma 5.17 native engine passes nine isolated TLS checks in a new
+  PostgreSQL 17.11 loopback fixture. Real TLSv1.3 positives and unrelated CA,
+  trusted-chain/wrong-hostname, missing CA and non-TLS-server negatives pass,
+  with positives repeated between groups. Its owned container is removed;
+  zero cloud/provider/production connections. Initial command-line SSL override
+  preparation ran zero engine checks and is preserved as a harness diagnostic.
+  Production artifact/durable CA/runtime portability is still a release gate.
+- [Stable free hosting proposal](hosting.md) conditionally prefers native Node
+  on Monster plus a named Cloudflare Tunnel, retaining managed integrations.
+  Account/DNS control and continuous operational availability are not verified.
+  Full zone preservation/delegation, trusted-header normalization, durable TLS,
+  exact callbacks, isolated services/timer and rollback are prepared, unexecuted.
+  Netlify Free is a candidate fallback with adapter/native-engine/quota gates.
+- Root's current primary-policy review corrected the private quarantine proposal:
+  All Deployments Vercel Authentication is available on all plans without a paid
+  add-on. Revised plan combines it with explicit cron disable and paused active
+  production, requiring actual coverage/bypass/historical-scope proof. Original
+  proposal/hashes remain preserved. No provider quarantine, DNS, service/account
+  setup, paid upgrade or another production resume occurred.
+
+## Diagnostic privacy repair and final free HTTPS checkpoint
+
+- Closed mocks reproduced raw error/provider response/email/voucher details in
+  failure logs and metadata. Source `27d7b4c` replaces these with finite safe
+  categories, allowlisted database codes and validated HTTP statuses, preserving
+  retry/discount/limit and localized customer-response behavior. No historic
+  data scrub or production change. The 38 new regressions are included in the
+  clean suite's 1,077 passes/40 skips; separate guarded PostgreSQL39/1, types,
+  webpack and lint0/25 pass. Actual GitHub checks and downloaded logs agree.
+- Exact full523-file committed source27 was production-built at the private
+  HTTPS origin; core256 hashes, modern keys, strict CA, loopback bindings and
+  client-secret checks pass. An initial incomplete copy omitted support scripts,
+  failed typecheck and was retained as a preparation diagnostic; the corrected
+  full archive builds. Earlier source85 app/build/evidence remains immutable.
+- Separate browser run passes45/45 distinct checks with four native role
+  sessions and actual secure-cookie/access/video/native-PDF/mobile/profile/vector
+  certificate proof. Four normal session syncs only;14 automatic payment
+  reconciles intercepted. Final independent strict-CA read-only snapshot at
+  17:36 UTC matches both earlier baselines for learning timeline, notes, exact
+  purchases and zero payment/voucher/discount/messaging records.
+- A separate synthetic PDF diagnostic visually confirms actual page/text at
+  1440/320/390. Enforced policy events identify Spotify frames and optional Mux
+  Google Cast in course HTML, not PDF violations. Initial substring labels had
+  matched allowed blob/inline policy text; records remain preserved. One extra
+  normal buyer session sync and one intercepted reconciliation, no learning/
+  financial/mail/config writes or CSP changes; all88 prior artifacts unchanged.
+- Prepared direct raw-signed Dodo exception remains disabled. Frozen templates
+  pass110 in-process checks against the native verifier; no endpoint, signer,
+  customer, checkout, transaction, refund or mail activation. Merchant/team/
+  webhook-alert recipient scope remains unanswered.
+- Closed only owned app/gate/tunnel groups and loopback3014/3015/3016 at17:50 UTC,
+  before expiry. Existing3010/3012 and fixture data preserved. The first cleanup
+  inventory stopped before any signal on an inaccessible unrelated `/proc` cwd;
+  corrected group-scoped inspection verified ownership before termination.
+
+Next: record the host-availability/account/DNS selection and Dodo notification
+scope when supplied, then activate only the reviewed isolated workflow within
+those bounds. Stable-host compatibility/quarantine, Google/SMTP, actual Dodo
+transactions and a concrete production code/config/hardening/reopening review
+remain open. No paid plan or production deployment is authorized. The goal
+controller still reports blocked; the owner must use `/goal resume` to enable
+overnight continuation. This checkpoint does not complete the maintenance goal.

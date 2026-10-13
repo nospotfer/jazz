@@ -218,6 +218,54 @@ and any production move remain a separate review.
 
 ## Private evidence and operation
 
+### Current diagnostics source HTTPS follow-up
+
+Source `27d7b4c` adds the bounded diagnostic privacy repair after source85's
+44-check report. Its new production-built frontend uses the same protected
+origin/deadline, exact 523-file committed archive and 256 application/schema/
+config hashes. The earlier app/build/proofs and all 75 original evidence files
+are preserved. A first incomplete private copy omitted support scripts and
+failed typecheck; the corrected full archive builds successfully. The gate
+stayed closed until strict-CA/modern-key runtime, compiled-origin, loopback and
+client-secret checks passed. This was preview preparation, not a source defect.
+
+The separate source27 browser report passes **45/45 distinct HTTPS checks**:
+four native role logins/session synchronizations, secure cookies and server
+identity-bound reads, permission restrictions, real signed video, four-language
+private PDFs/native viewer/mobile layouts, SUPREME profile and ordinary A4 vector
+certificate download. All browsers close before the final independent snapshot.
+Four normal native session synchronizations were allowed; 14 automatic payment
+reconciliations were intercepted. No learning/forbidden writes, app 5xx,
+uncaught client errors, key mismatches or external Basic credentials.
+
+Do not add these 45 to the earlier 44/29/20/26/19 reports: their scopes overlap.
+The current report is private under `https-preview-source27-evidence/`; the
+original reports remain byte-for-byte unchanged. Payments/webhooks/mail/OAuth
+remain disabled, and stable hosting/production reopening requires its separate
+review. The independent strict-CA, repeatable-read, read-only comparison at
+17:36 UTC matches both earlier final baselines: full learning timeline,
+buyer/free/historical/admin notes 2/1/1/0, 15 completed lessons, 16 attempts,
+192 answers, 15 PLATINUM summaries and exact purchases. All payment/voucher/
+discount/messaging records remain zero; the fixture price remains 80.
+
+A separate synthetic-only PDF diagnostic confirms actual page/text rendering
+at desktop 1440px and mobile 320/390px. Enforced policy events identify two
+Spotify frames and Mux's optional Google Cast sender script blocked in course
+HTML by the restricted preview gate; there are no PDF-context violations.
+Earlier substring-based labels incorrectly matched allowed `blob:`/inline
+directives inside the quoted policy. Those diagnostic records are retained.
+No CSP bypass/change was made; Spotify/Cast behavior remains outside this
+restricted preview's verified scope. One additional normal buyer login/session
+sync was allowed, with one automatic reconciliation intercepted and no learning,
+payment, mail or provider-configuration writes. All 88 prior artifacts remain
+byte-for-byte unchanged; do not add this diagnostic to the 45-check report.
+
+The owned app/gate/tunnel process groups and loopback ports 3014/3015/3016 were
+closed at **17:50 UTC**, before the two-hour deadline. Existing local frontends
+3010/3012 and all fixture data were preserved. The private closure receipt is
+`quick-tunnel-preparation/source27-preview-closure-private.json`. Restarting
+requires a fresh reviewed origin/window/runtime proof; the old URL is closed.
+
 Use `/tmp/jazz-maintenance/supabase-preview-creation-summary.json` and
 `supabase-preview-database-summary.json` for sanitized provisioning checks.
 Fixture summary is `supabase-preview-fixtures-summary.json`; final browser
@@ -238,8 +286,15 @@ The scoped [PDF audit](operational-scripts.md#scoped-read-only-pdf-audit) passes
 against all 60 synthetic attachments: 200,304 accepted checked bytes, PDF headers
 and 60 unique hashes, complete independent fixture-ID coverage across 15 lessons
 and four languages. Actual read-only SQL and strict CA-bound Prisma TLS succeed.
-This does not verify customer PDF mappings or byte identity against original
-course files. The first audit attempt correctly stopped on a missing trusted CA;
+This synthetic audit does not verify customer PDF mappings. A later archive-only
+comparison independently verifies all 68 original attachment/object references,
+hashes, sizes and PDF structures; all 60 class filename numbers/language labels
+match. Fifteen lesson playback IDs and separate promo match the preserved Mux
+inventory. That is snapshot structure/label consistency, not human semantic
+review or a current production connection. Local text extraction separately
+confirms the six auxiliary files without clear language filenames match their
+declared EN2/FR2/PT2 languages across 15 pages; this is not translation-accuracy
+proof. Original files and mapping hashes remain unchanged. The first audit attempt correctly stopped on a missing trusted CA;
 verification was retained and the published CA was supplied explicitly.
 The same auditor also passes with the existing opaque secret key: every
 attachment fingerprint matches the legacy-key read. Opaque keys use `apikey`
@@ -256,7 +311,10 @@ hostname verification returns code 0. Preview SSL-enforcement metadata returns
 verification is distinct from provider rejection of all non-TLS connections.
 The temporary CA file is a local runtime input. An HTTPS deployment must package
 and trace a reviewed CA resource, then verify its runtime path and connection;
-copying this machine's temporary file path into Vercel is not sufficient.
+copying this machine's temporary file path into Vercel is not sufficient. The
+actual pinned Prisma engine separately passes nine disposable TLS positive and
+negative checks, including trusted-chain/wrong-hostname rejection; this does not
+verify an eventual hosting artifact or production runtime. [Engine evidence](local-verification.md#separate-native-prisma-tls-verification).
 
 Do not run legacy seeds, `db push`, broad media remapping, production migrations,
 checkout simulations or local reset commands against this remote preview.

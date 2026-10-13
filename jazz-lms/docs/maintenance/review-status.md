@@ -260,3 +260,46 @@ No paid upgrade, production release or domain move occurred. Stable free hosting
 old credential-bearing deployment quarantine, production hardening/configuration,
 signed Dodo delivery/transactions, Google/SMTP/receiving, account recovery and
 release/rollback gates remain open.
+
+## Diagnostics confidentiality source follow-up
+
+Source `27d7b4c07fb8b440be979909b5b140bb4dc50c48` is pushed. A bounded closed-mock
+review reproduced raw payment-provider/error/email/voucher-code diagnostic
+exposure. The repair emits only finite categories, known database codes and
+validated numeric HTTP statuses; provider bodies/arbitrary exceptions cannot
+enter new voucher or webhook failure diagnostics. Auth callbacks/session and
+reconciliation logs use the same contract. Existing discount backfill, retry,
+usage-limit decisions and localized customer responses remain unchanged.
+
+Clean no-env verification passes **1,077 normal tests / 40 intentional skips**
+(90 files with passes / five all-skipped), **39 real PostgreSQL tests / one
+REST-only skip**, TypeScript, webpack build and lint **0 errors / 25 warnings**.
+The 38 new confidentiality regressions are included in the normal total.
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38437695616) | Downloaded logs independently confirm 1,077/40 normal, 39/1 persisted, lint0/25, types and webpack build. Push38437687326 passes. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38437695531) | Success; push38437687360 passes. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38437691191) and [aggregate](https://github.com/nospotfer/jazz/runs/115436162401) | Success. |
+| [Existing GitHub Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/co1MCaNGi1e24f87uTbr6526Xs9k) | Success in the same unreconciled protected scope; no isolated-journey/production claim. |
+
+The free frontend is freshly rebuilt at the same HTTPS origin with all 523
+committed files, including 256 application/schema/config hashes, modern keys and
+strict TLS. Source85's app/build/evidence are preserved. A first incomplete
+private copy omitted support scripts and failed typecheck; the corrected full
+archive configured build passes. The gate stayed closed until actual runtime
+and client-secret checks passed. Source27 browser follow-up is separate from
+the immutable 44-check source85 report. It passes45/45 distinct checks with four
+fresh native role sessions, identity/permission/media/native-PDF/mobile/profile/
+certificate proof and no learning/payment/mail writes. All75 earlier evidence
+files remain unchanged. The final independent strict-CA read-only snapshot at
+17:36 UTC matches both prior baselines, including learning timeline, notes,
+exact purchases and zero payment/voucher/discount/messaging records.
+
+A separate PDF diagnostic verifies visible synthetic page/text at 1440/320/390.
+Enforced policy events identify excluded Spotify frames and optional Google Cast
+in course HTML, with no PDF rendering failure or policy change. One additional
+native buyer session only; all 88 prior artifacts unchanged. The three owned
+temporary process groups were closed at 17:50 UTC, retaining local3010/3012 and
+fixture data. [Exact scope](preview.md#current-diagnostics-source-https-follow-up).
+No production release, payment, mail or DNS change occurred.

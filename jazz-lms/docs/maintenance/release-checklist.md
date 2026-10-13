@@ -38,12 +38,18 @@ SQL/configuration repair or another resume is authorized by that approval.
   secret scan and Vercel build. Job logs confirm 990 normal tests and separate
   37 persisted PostgreSQL checks, types/build/lint; intentional skips remain.
   [Immutable checks](review-status.md#published-pdf-audit-source-verification).
+- [x] Latest diagnostics repair source `27d7b4c` passes actual remote Quality,
+  Secret Scan, CodeQL and protected Vercel build. Downloaded logs confirm 1,077
+  normal tests/40 skips and 39 real PostgreSQL checks/one REST skip, types/build/
+  lint0errors/25warnings. Included 38 new confidentiality regressions.
+  [Latest source evidence](review-status.md#diagnostics-confidentiality-source-follow-up).
 - [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
 - [x] Record the owner's zero-cost hosting constraint; no paid Vercel upgrade.
 - [ ] Verify isolated target build settings, usage/logs and previous deployment
-  compatibility/rollback; prepare stable free production hosting review while
-  documenting the existing Hobby commercial-use mismatch.
+  compatibility/rollback; verify stable hosting account/DNS control and continuous
+  host availability. [Free hosting and quarantine plan](hosting.md) is prepared;
+  existing Hobby commercial-use mismatch remains.
 - [x] Locate deployed Supabase project through manager inventory; feav exists,
   INACTIVE, eu-west-1/PG17, matching production server reference.
 - [x] Execute explicitly approved same-project recovery/preservation/rollback:
@@ -58,12 +64,24 @@ SQL/configuration repair or another resume is authorized by that approval.
   this proves neither Dodo nor an HTTPS Vercel frontend.
 - [x] Existing publishable/secret keys pass 20 overlapping native Auth/SDK/access
   checks on the synthetic backend; no production key change or rotation.
-- [x] Exact source `85f4e12`, isolated data/providers and production-built HTTPS
-  frontend pass 44 unique role/media/native-PDF/mobile/profile/certificate checks.
-  Independent final read-only snapshot preserves notes/learning/purchases;
-  temporary free tunnel is not Vercel runtime or stable hosting proof. [Scope](preview.md#free-https-frontend-checkpoint).
+- [x] Latest exact source `27d7b4c`, isolated data/providers and production-built
+  HTTPS frontend pass 45 distinct role/media/native-PDF/mobile/profile/certificate
+  checks. Independent final read-only snapshot preserves notes/learning/purchases.
+  Separate actual PDF page/text diagnostic passes at1440/320/390; restricted
+  preview excludes Spotify/Cast. Earlier44/29/20/26/19 reports remain immutable.
+  Owned temporary servers closed; this is not Vercel runtime or stable hosting
+  proof. [Scope](preview.md#current-diagnostics-source-https-follow-up).
 - [x] Inspect production schema/roles/table/function/view grants and private
   Storage; verify offline archive counts/hashes and durable local backup.
+- [x] Compare archived media/PDF mappings offline: 15 distinct signed lesson
+  assets plus separate promo, 68 unique exported object references and valid PDFs;
+  60 class files cover all four languages. Structural/label proof is not content
+  correctness. Local extraction of six unclear auxiliary filenames confirms
+  declared EN2/FR2/PT2 content languages across 15 pages; translation accuracy
+  remains outside that check. All original hashes unchanged.
+- [x] Actual pinned native Prisma engine verifies strict TLS and rejects wrong
+  CA, trusted-chain/wrong-hostname, missing CA and non-TLS endpoints in a separate
+  disposable loopback fixture; nine checks pass, container removed. [Scope](local-verification.md#separate-native-prisma-tls-verification).
 - [x] Offline-validate exact baseline-bound production hardening revision 2:
   25 checks / 422 zero-row operations, unchanged archive content and 14 Auth/app
   identities; private SQL/inverse hashes and durable review copy recorded.
@@ -92,7 +110,7 @@ Values remain in provider stores. Publish names, targets and status only.
 | Configuration | Review before release |
 | --- | --- |
 | DB/Supabase URL, anon/service keys and storage bucket | Existing Vercel targets share feavujcllgbzlvdvkkxx. New separate preview tvmhuacxctdgmejziaxg has verified trusted CRUD and denied browser grants; use only its keys/bucket in the reviewed preview. Preserve customer project and reconcile EU/US connection strings. |
-| Database TLS / CA resource | Synthetic runtime and actual production read-only session export verify the published CA/hostname. Package and trace a reviewed public CA resource for Vercel, verify deployed runtime path and strict connection. The local temporary CA path is not portable; live application TLS remains unverified. |
+| Database TLS / CA resource | Synthetic runtime and production read-only session export verify the published CA/hostname; actual pinned native engine passes nine isolated chain/hostname/no-TLS checks. Prepare a durable reviewed CA path and strict URLs for the selected free host; Vercel would additionally need build tracing. The temporary path is not a release resource; actual production app TLS remains unverified. |
 | APP_URL/NEXT_PUBLIC_APP_URL and Auth allowlist | Current stored apex Auth lacks /auth/reset-password/callback and allows global *.vercel.app. Prepare canonical www with exact callback/reset paths; separate preview Auth, remove broad production preview/local allowances in reviewed release. |
 | Runtime/root/build | Live Node 20.x with root/framework/build overrides unset; prepare Node 24.x and source-root/build settings for the exact deployment method. Verify isolated build before production change. |
 | CRON_SECRET | Currently absent in live project/deployment env names; prepare nonempty random per-environment secret with hardened release. 03:15 UTC bearer sweep; missing/wrong denied. |
@@ -126,6 +144,9 @@ Changing DNS alone does not retire trusted old servers. The June deployment's
 direct vercel.app URL and cron may still reach production with their immutable
 credentials after Supabase resumes. Prepare and approve a verified old-project/
 deployment quarantine before another resume, covering generated URLs and cron.
+The prepared free scope is All Deployments Vercel Authentication, explicit cron
+disable and paused active production. Verify actual targets/bypasses before
+claiming coverage; [hosting review](hosting.md) records current primary policy.
 The separate Gabriel-scoped historical/previews remain unreconciled and could
 also carry customer credentials; their isolation must be verified or access
 retired through the correct account. No project pause/delete, credential rotation,
@@ -144,9 +165,11 @@ DNS move or deployment-protection change has been performed for this plan.
 
 ## Rollback / forward repair
 
-- Promote the verified previous Vercel deployment only after checking current
-  environment/runtime/provider compatibility. Code rollback does not restore
-  failed Supabase DNS, lost data or disabled inbound email.
+- Use a verified previous secure release on the selected host or a closed
+  maintenance page. The unsafe June Vercel deployment is not a repaired rollback;
+  any earlier candidate requires environment/runtime/provider compatibility and
+  security review. Code rollback does not restore failed Supabase DNS, lost data
+  or disabled inbound email.
 - Restore reviewed previous config from provider stores, never reports. Changed
   public build-time values require a rebuild.
 - Handle SQL separately: application rollback does not reverse grants/schema.

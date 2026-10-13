@@ -106,7 +106,12 @@ no real-email PIN gate or unsigned webhook bypass is implied.
 An exact-commit HTTPS preview can satisfy the customer-journey review without
 being a Vercel deployment. A stable zero-cost production hosting alternative
 and any domain/runtime move still require a concrete compatibility/rollback
-review and explicit production approval. No existing deployment is moved here.
+review and explicit production approval. The [prepared free hosting review](hosting.md)
+conditionally prefers native Node on Monster plus a named tunnel; account/DNS
+control and continuous host availability are unverified. No existing deployment
+is moved here. Its old-server quarantine uses free All Deployments Vercel
+Authentication plus explicit cron disable and paused production, with actual
+coverage/bypass/historical-scope verification before reopening the backend.
 
 For this exact Neurofactory team, current Pro pricing starts at **USD 20/month**:
 the platform fee includes one deploying seat and USD 20 usage credit. The

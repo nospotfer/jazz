@@ -19,9 +19,10 @@ site attractive and easy to use while preserving its jazz identity.
 | [Public provider evidence](public-provider-evidence.md) | Deployed/legacy Supabase DNS failure and inspection limits | Documented |
 | [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Production exposure confirmed; hardening prepared separately, not applied |
 | [Supabase manager and recovery](supabase.md) | Existing customer-project status, preservation and bounded rollback | Approved recovery and private exports completed; offline data restore verified; INACTIVE after unsafe-state rollback |
-| [Separate preview](preview.md) | Guarded Free cloud backend, synthetic fixtures and customer-journey evidence | Healthy/hardened; distinct 29 browser, 20 overlapping key, 26 learning and 19 notes reports; separate free HTTPS frontend passes 44 unique checks |
+| [Separate preview](preview.md) | Guarded Free cloud backend, synthetic fixtures and customer-journey evidence | Healthy/hardened; immutable 29/20/26/19/44 reports; current source27 free HTTPS frontend passes45 distinct checks |
 | [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
 | [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
+| [Zero-cost hosting](hosting.md) | Conditional stable hosting, old deployment quarantine and rollback | Monster + free named tunnel preferred if availability/account/DNS control exists; no setup or cutover performed |
 | [Dodo audit](dodo.md) | Live product, tax setting, webhook and test-mode access | Test product and two coupon APIs verified; transactions and notification review pending |
 | [Operational scripts](operational-scripts.md) | Deployment/mutator hazards and safe prerequisites | Legacy mutators quarantined to explicit disposable local targets |
 | [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Follow-up Quality, Secret Scan, CodeQL and Vercel build passed |
@@ -46,9 +47,12 @@ existing Vercel configuration is unsuitable for isolated customer/payment testin
 An independent Free Supabase preview now has hardened tables, synthetic accounts
 and private generated PDFs. Its local frontend uses only the new backend;
 all 29 initial cloud-backend browser checks pass. A separate exact-source,
-production-built HTTPS frontend passes 44 unique checks through a protected free
-temporary tunnel. It is neither Vercel runtime proof nor stable production
-hosting. The owner selected a zero incremental hosting budget. The offline customer archive was never loaded
+production-built HTTPS frontend at source `27d7b4c` passes 45 distinct checks
+through a protected free temporary tunnel; its independent final snapshot
+preserves learning and purchases. The earlier 44-check report remains immutable.
+The temporary servers were closed after verification, before their deadline.
+This is neither Vercel runtime proof nor stable production hosting. The owner
+selected a zero incremental hosting budget. The offline customer archive was never loaded
 into the customer-journey preview or existing fixture databases. Dodo test access
 is now valid, but transactions await notification/recipient review.
 
