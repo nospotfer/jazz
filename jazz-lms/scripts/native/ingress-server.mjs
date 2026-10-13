@@ -1,7 +1,9 @@
 import http from 'node:http';
+import { createHash, timingSafeEqual } from 'node:crypto';
+import { isAbsolute, resolve } from 'node:path';
 import { evaluateIngressRequest, stripHopHeaders, WEBHOOK_PATHS } from './ingress-policy.mjs';
 
-/** @typedef {{upstreamPort:number,policy:import('./ingress-policy.mjs').IngressPolicy,requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
+/** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
 
 function bounded(value, fallback, maximum) {
   const selected = value ?? fallback;
@@ -58,7 +60,29 @@ function readBody(req, limit, timeoutMs) {
  * @returns {import('node:http').Server}
  */
 export function createIngressServer(options) {
-  const port = bounded(options.upstreamPort, undefined, 65535);
+  let transport;
+  if (options.upstreamSocket !== undefined) {
+    const path = options.upstreamSocket;
+    if (options.upstreamPort !== undefined || typeof path !== 'string' || !isAbsolute(path) ||
+      resolve(path) !== path || /[\x00-\x1f\x7f]/.test(path) || Buffer.byteLength(path) > 100) {
+      throw new Error('Invalid native ingress socket configuration');
+    }
+    transport = { socketPath: path };
+  } else transport = { hostname: '127.0.0.1', port: bounded(options.upstreamPort, undefined, 65535) };
+  let previewHash, previewDeadline;
+  if (options.previewAccess !== undefined) {
+    if (!options.previewAccess || typeof options.previewAccess !== 'object' || Array.isArray(options.previewAccess)) {
+      throw new Error('Invalid native preview access configuration');
+    }
+    const { username, password, expiresAt } = options.previewAccess;
+    previewDeadline = Date.parse(expiresAt);
+    if (typeof username !== 'string' || typeof password !== 'string' || typeof expiresAt !== 'string' ||
+      !/^[A-Za-z0-9._-]{1,48}$/.test(username) || !/^[A-Za-z0-9_-]{32,128}$/.test(password) ||
+      !Number.isFinite(previewDeadline) || previewDeadline <= Date.now() || previewDeadline > Date.now() + 3_600_000) {
+      throw new Error('Invalid native preview access configuration');
+    }
+    previewHash = createHash('sha256').update(`${username}:${password}`).digest();
+  }
   const bodyLimit = bounded(options.requestBodyLimitBytes, 8 * 1024 * 1024, 8 * 1024 * 1024);
   const webhookLimit = bounded(options.webhookBodyLimitBytes, 256 * 1024, 256 * 1024);
   const bodyTimeout = bounded(options.requestBodyTimeoutMs, 10_000, 10_000);
@@ -73,6 +97,20 @@ export function createIngressServer(options) {
     // IncomingMessage emits error after aborted; keep a listener through close.
     req.on('error', () => {});
     const handle = async () => {
+      if (previewHash) {
+        if (Date.now() >= previewDeadline) { fail(res, 410); return; }
+        const authorization = req.headers.authorization;
+        const encoded = typeof authorization === 'string' && authorization.match(/^Basic ([A-Za-z0-9+/]+={0,2})$/)?.[1];
+        const bytes = encoded ? Buffer.from(encoded, 'base64') : null;
+        if (!bytes || bytes.toString('base64') !== encoded ||
+          !timingSafeEqual(createHash('sha256').update(bytes).digest(), previewHash)) {
+          res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Jazz preview", charset="UTF-8"',
+            'Cache-Control': 'no-store', Connection: 'close' });
+          res.end(); return;
+        }
+        // This credential belongs to the preview gate, not Next/Supabase.
+        delete req.headers.authorization;
+      }
       const target = req.url ?? '/';
       if (Buffer.byteLength(target) > 8192) { fail(res, 414); return; }
       const decision = evaluateIngressRequest({ method: req.method ?? '', target, headers: req.headers }, options.policy);
@@ -85,10 +123,11 @@ export function createIngressServer(options) {
       try { body = await readBody(req, WEBHOOK_PATHS.has(target.split('?')[0]) ? webhookLimit : bodyLimit, bodyTimeout); }
       catch (error) { fail(res, error?.status === 413 ? 413 : error?.status === 408 ? 408 : 400); return; }
       if (req.aborted || res.destroyed) return;
+      if (previewHash && Date.now() >= previewDeadline) { fail(res, 410); return; }
       let upstreamResponse;
       let settled = false;
       const upstream = http.request({
-        hostname: '127.0.0.1', port, path: target, method: req.method,
+        ...transport, path: target, method: req.method,
         headers: { ...decision.headers, 'content-length': String(body.length) },
         agent: false,
       });
@@ -97,7 +136,9 @@ export function createIngressServer(options) {
         if (settled) return;
         cleanup(); upstream.destroy(); upstreamResponse?.destroy(); fail(res, status);
       };
-      const timer = setTimeout(() => abort(504), upstreamTimeout);
+      const remainingLease = previewHash ? Math.max(1, previewDeadline - Date.now()) : upstreamTimeout;
+      const timer = setTimeout(() => abort(previewHash && Date.now() >= previewDeadline ? 410 : 504),
+        Math.min(upstreamTimeout, remainingLease));
       res.once('close', () => {
         if (!res.writableFinished) abort(502);
         else cleanup();
@@ -111,7 +152,17 @@ export function createIngressServer(options) {
         response.once('error', () => abort(502));
         response.once('aborted', () => abort(502));
         res.once('finish', cleanup);
-        res.writeHead(response.statusCode, stripHopHeaders(response.headers));
+        const responseHeaders = stripHopHeaders(response.headers);
+        if (previewHash) {
+          // Even public assets/redirects remain behind the leased Basic gate.
+          // A cache must not reuse an authorized preview response without it.
+          responseHeaders['cache-control'] = 'private, no-store, max-age=0';
+          responseHeaders['cdn-cache-control'] = 'no-store';
+          responseHeaders['cloudflare-cdn-cache-control'] = 'no-store';
+          delete responseHeaders['surrogate-control'];
+          delete responseHeaders['surrogate-key'];
+        }
+        res.writeHead(response.statusCode, responseHeaders);
         res.flushHeaders();
         response.pipe(res);
       });

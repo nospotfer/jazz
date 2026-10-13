@@ -9,7 +9,7 @@ function requireCondition(condition, code) { if (!condition) throw new NativeCon
 const trustedOwner = stat => stat.uid === process.geteuid() || stat.uid === 0;
 
 /** Owner/root-controlled regular inputs; reject symlinks and writable peers. */
-async function readControlledFile(path, { privateFile = false, maximum = 256 * 1024 } = {}) {
+export async function readControlledFile(path, { privateFile = false, maximum = 256 * 1024 } = {}) {
   requireCondition(typeof path === 'string' && isAbsolute(path) && resolve(path) === path &&
     !/[\x00-\x1f\x7f]/.test(path), 'NATIVE_INPUT_PATH');
   requireCondition(await realpath(path) === path, 'NATIVE_INPUT_SYMLINK');
