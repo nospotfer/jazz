@@ -245,3 +245,42 @@ provider/account/data evidence. Next: obtain current Supabase inventory/customer
 database, scoped Vercel access with an isolated preview and Dodo test access;
 then finish production metadata/backup/OAuth and approved-mail verification.
 The goal is not complete and production remains unchanged.
+
+## Authenticated Vercel and recovered live Dodo — 2026-10-13
+
+- Owner completed native Vercel CLI login on monster. Read-only team/project/
+  domain/alias/env/deployment inspection identifies actual live jazz-lms under
+  Neurofactory, deployment dpl_6Xo6rUDVdh9jTWg4KoH1ok6iyU3D, June 11 redeploy,
+  reported source 50c2f87f, Node 20 and no Git link. Both custom-domain pointers
+  and homepage/auth script-path fingerprints agree. The May GitHub Production
+  record is historical rather than the current live target. Separate Gabriel
+  GitHub preview configuration remains unreconciled.
+- Documented environment GETs recovered readable integration configuration,
+  respecting sensitive values not returned as plaintext. All three targets use
+  the same feav Supabase project; EU/US historical pooler strings differ. Cron
+  remains enabled at 03:15 UTC with CRON_SECRET absent from project and live
+  deployment env names. No live sweep invoked. Replay enablement true in all
+  targets; consent/private-route repairs remain undeployed.
+- Neurofactory account metadata confirms one owner and active Hobby plan. The
+  course site's commercial use conflicts with current Hobby policy; recorded
+  an owner plan/hosting decision without upgrade, transfer or billing writes.
+- Recovered Dodo live credentials support eight documented GETs. Product and
+  business match configuration, €29.90 EUR base excluding tax; active webhook
+  targets current handler and its signing secret exactly matches configuration.
+  No customer/payment/payout rows, charges/refunds, coupons, keys or webhook
+  writes. License-key entitlement and absent support contact need business review.
+- Production and preview share live Dodo resources; development selects test
+  mode with the live-only key and test GETs return 401. Existing preview is not
+  isolated. Dashboard owner/MFA/KYC/payout/Adaptive Currency and actual signed
+  test delivery/checkout/reversal remain unverified.
+- One native Supabase manager session check is unauthenticated. Supabase login
+  on monster is pending; CAPTCHA-bound headless password login did not establish
+  a session. No pause/deletion/restore conclusion or production DB write.
+- Added authoritative Vercel/Dodo audits and reconciled inventory, backlog,
+  verification, README and release baseline/gates. Earlier checkpoint statements
+  about missing credentials/target reflect the evidence available at that time.
+
+Next: finish native Supabase manager login, locate/preserve customer project and
+inspect metadata/recovery/backups. Prepare separate preview dependencies and
+test credentials, then repeat relevant remote customer journeys. Production is
+unchanged; completion and production approval remain pending.

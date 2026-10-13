@@ -1,7 +1,9 @@
 # Initial maintenance and stabilization
 
-Started 2026-10-13 on `maintenance/initial-audit` from production commit
-`c897f36`. The user also explicitly requested UX/UI improvements that make the
+Started 2026-10-13 on `maintenance/initial-audit` from repository `main` commit
+`c897f36`. Authenticated Vercel inspection subsequently identified the actual
+live deployment as a June 11 redeploy with reported source `50c2f87f`; see the
+[Vercel audit](vercel.md). The user explicitly requested UX/UI improvements that make the
 site attractive and easy to use while preserving its jazz identity.
 
 ## Deliverables
@@ -17,6 +19,8 @@ site attractive and easy to use while preserving its jazz identity.
 | [Public provider evidence](public-provider-evidence.md) | Deployed/legacy Supabase DNS failure and inspection limits | Documented |
 | [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Locally tested; production unverified |
 | [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
+| [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
+| [Dodo audit](dodo.md) | Live product, tax setting, webhook and test-mode access | Read-only live access works; test credentials still needed |
 | [Operational scripts](operational-scripts.md) | Deployment/mutator hazards and safe prerequisites | Legacy mutators quarantined to explicit disposable local targets |
 | [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Follow-up Quality, Secret Scan, CodeQL and Vercel build passed |
 
@@ -28,7 +32,10 @@ Unverified integrations and deferred requirements must remain explicit.
 The largest current availability gate is the Supabase public endpoint: both the
 deployed frontend project and the older local project fail independent DNS
 checks. Preserve and locate the actual customer database before preparing any
-production configuration change or replacement project.
+production configuration change or replacement project. Vercel configuration
+confirms the deployed server and all three target environments use the same
+Supabase project. Production and preview also share live Dodo credentials; the
+existing preview is unsuitable for isolated customer/payment testing.
 
 ## Authorized work
 

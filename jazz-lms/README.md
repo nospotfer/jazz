@@ -87,8 +87,10 @@ maintenance matrix.
 
 Dodo test mode is required for local/staging transactions. Checkout, provider
 signature verification, refund/dispute barriers and coupon accounting have
-regression coverage. Actual account products/settings and real test checkout
-remain unverified until current Dodo access is available.
+regression coverage. Read-only live product/webhook access is verified; current
+Vercel preview shares live payment credentials and development has a wrong-mode
+key. Real test checkout requires separate test credentials and isolated data.
+See the [Dodo audit](docs/maintenance/dodo.md).
 
 Dodo webhooks use `webhook-id`, `webhook-timestamp` and `webhook-signature` with a
 Standard Webhooks signing secret; the old `order_created`/`X-Signature` guide was
@@ -125,8 +127,10 @@ default-off `ENABLE_LOCAL_LEGACY_MUTATIONS` opt-in and dedicated disposable
 loopback targets; production is always blocked. See the
 [operational script runbook](docs/maintenance/operational-scripts.md).
 
-Legacy deploy scripts still encode old branch/account assumptions. Verify their
-actual target and environment before use. Preserve the previous production
+The live custom domains use Neurofactory's `jazz-lms`, independently of the
+GitHub PR preview project. Review [Vercel account evidence](docs/maintenance/vercel.md)
+before linking or deploying; its current preview shares production dependencies.
+Preserve the previous production
 commit/deployment and migration-specific rollback before release; an app rollback
 does not undo a database migration. See the [release checklist](docs/maintenance/release-checklist.md).
 

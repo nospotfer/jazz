@@ -9,7 +9,7 @@ persisted local journeys and actual provider inspection.
 | ID | Priority | Finding and resulting behavior | Evidence / remaining check |
 | --- | --- | --- | --- |
 | SEC-01 | High | Server identity trusted cookie session data; now validates `auth.getUser()` and fails closed. | Forged/unverified identity regressions; persisted customer-role negatives. |
-| SEC-02 | High | Cron accepted spoofable Vercel header; now requires configured bearer `CRON_SECRET`. | Missing/wrong/spoof tests; production secret unverified. |
+| SEC-02 | High | Cron accepted spoofable Vercel header; now requires configured bearer `CRON_SECRET`. | Missing/wrong/spoof tests pass. Vercel project and live deployment env names lack the secret; approved release configuration required. Live sweep not invoked. |
 | SEC-03 | High | Pending registration password/profile overwritten before ownership proof. | Existing-identity/proof regressions and real emailed-OTP onboarding. |
 | SEC-04 | High | Unhydrated credential forms sent passwords through GET; now explicit POST. | No-JavaScript browser regression with no password query. |
 | SEC-05 | High | Empty owner/user email could authorize media; publication/access hierarchy inconsistent. | Role/owner/publication regressions and real free/buyer/legacy/admin matrix. |
@@ -44,15 +44,16 @@ persisted local journeys and actual provider inspection.
 | ID | Priority | Gate | Exact next action |
 | --- | --- | --- | --- |
 | LIVE-01 | Critical availability | Deployed Supabase host and older .env host both NXDOMAIN. | Obtain dashboard/project inventory, locate and preserve customer database before replacement/configuration changes. [Public evidence](public-provider-evidence.md). |
-| LIVE-02 | High | Vercel team/project/env and isolated remote preview unavailable. | Project/team access or scoped token; verify separation/runtime/cron, deploy exact review commit. |
+| LIVE-02 | High | Authenticated live target/env verified; preview shares production Supabase and live Dodo. Current site is a June redeploy on Node 20, separate from GitHub PR preview scope. | Prepare isolated Auth/DB/storage and Dodo test credentials in a separate remote target; verify Node 24/build/exact commit and customer journeys. [Vercel audit](vercel.md). |
 | LIVE-03 | High | Production DB roles/RLS/schema/functions/storage/restore unknown. | Read-only metadata/backup inspection; prepare reviewed baseline and scoped SQL. No production db push/legacy replay. |
-| LIVE-04 | High | Actual Dodo pricing/currency/tax/refund/invoices/test checkout unknown. | Current test-mode account access; isolated checkout, real webhook/return/coupon/reversal evidence. No live charges. |
+| LIVE-04 | High | Live Dodo product €29.90 EUR tax-exclusive and webhook/signing match verified; development uses wrong-mode key (test GETs 401). Delivery, Adaptive Currency, owner/KYC/payout and real test journeys remain unknown. | Recover matching test credentials/resources, inspect dashboard settings and run isolated checkout/webhook/return/coupon/reversal checks. [Dodo audit](dodo.md). No live charges. |
 | LIVE-05 | High | Resend receiving/webhook disabled and MX absent. | Review DNS/receiving/signing/controlled-mail activation. [Runbook](resend.md). No unsolicited professor/student mail. |
 | LIVE-06 | High | Purchase Float values lack full currency/tax/refund financial journal. | Compare authorized provider evidence with persistence before proposing reviewed schema/data migration; preserve event ledger and entitlements. |
 | LIVE-07 | High | Google OAuth/Auth URLs/SMTP unknown. | Active Supabase/Google configuration read access, then isolated OAuth test. |
 | OPS-03 | Medium | Registrar renewal/billing/recovery/shared ownership incomplete. | Account evidence and read-only renewal/billing review; preserve shared Stripe/Mux resources. |
+| OPS-04 | High operational | Live Vercel team uses Hobby while the site advertises/processes paid course sales; current Vercel policy restricts Hobby to non-commercial personal use. | Prepare owner-reviewed plan/hosting decision and usage/cost evidence; no unattended plan change. [Policy and account evidence](vercel.md). |
 | PRIV-01 | Medium | GA automatic measurement may bypass manual restrictions; OpenReplay account unknown. | Keep tracking disabled until provider settings verified; disable automatic history/forms/outbound/video/download capture before GA enablement. |
-| BIZ-01 | Medium | Existing 30-day guarantee, live price/currency and legal copy need evidence. | Verify actual terms/product before changing promises; no invented social proof or discounts added. |
+| BIZ-01 | Medium | Existing 30-day guarantee/legal copy, live €29.90 tax-exclusive versus local €29.99 defaults, license entitlement and missing Dodo support contact need review. | Compare actual database/advertised price and business policy before changing promises/product/brand. [Product evidence](dodo.md). |
 | HIST-01 | Medium | Removed tracked test-account credentials remain in history. | Owner rotates later as requested; no unattended history rewrite/rotation. |
 | QUAL-01 | Medium | Draft PR #46 passes actual Quality, Secret Scan and CodeQL; both initial findings are fixed. Exact Vercel preview built but requires SSO. | Verify provider isolation/customer journeys on the actual remote preview. [Checkpoints](review-status.md). |
 

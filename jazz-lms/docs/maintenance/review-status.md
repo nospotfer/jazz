@@ -1,8 +1,8 @@
 # Maintenance review checkpoints
 
 Updated 2026-10-13. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
-on `maintenance/initial-audit`. Production is unchanged and the goal remains
-active. A provider build success is not proof of an isolated, working preview.
+on `maintenance/initial-audit`. Production is unchanged and maintenance remains
+incomplete. A provider build success is not proof of an isolated, working preview.
 
 ## First published checkpoint
 
@@ -62,6 +62,40 @@ above plus checkpoint documentation. Actual remote checks all passed:
 Next: preserve the account/provider gaps in the
 [verification matrix](verification-matrix.md) and [release gates](release-checklist.md).
 Both known Supabase endpoints fail DNS; customer data preservation, current
-Vercel/Supabase/Dodo access, Google OAuth and approved email evidence remain
+Supabase manager/test-Dodo access, Google OAuth and approved email evidence remain
 essential requirements. Do not merge or release this draft as proof of those
-integrations.
+integrations. The newer authenticated provider checkpoint below supersedes the
+earlier Vercel-access and live-target assumptions.
+
+## Documentation HEAD verification
+
+Revision `de5e634821cae5ffc21f56d1a1fdea3b92569d52` also passed actual
+[Quality PR](https://github.com/nospotfer/jazz/actions/runs/38333404521),
+[Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38333404534),
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/38333400204) and
+[Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/3eELf1x88UEgGdsGsiTf9CKCy2bo).
+Preview deployment 7027980406 has exact URL
+https://jazz-awf49dt6l-gabriels-projects-bd92791f.vercel.app; homepage/auth/robots
+HEAD requests redirect to SSO. Isolation and customer journeys remain unverified.
+
+## Authenticated provider checkpoint
+
+Vercel CLI login on the remote machine now works. Neurofactory OWNER access
+identifies the actual live custom-domain target as jazz-lms deployment
+`dpl_6Xo6rUDVdh9jTWg4KoH1ok6iyU3D`, June 11 redeploy, reported source `50c2f87f`,
+Node 20, no Git link. Both aliases and public script-path fingerprints agree.
+This supersedes the historical May GitHub Production record as the live baseline.
+One confirmed owner and active Hobby plan are verified; commercial hosting needs
+an owner plan/hosting decision. [Vercel audit](vercel.md).
+
+Readable configuration recovers valid Dodo live access. Eight GETs verify the
+€29.90 EUR tax-exclusive product/business, enabled webhook and matching signing
+key. Production and preview share live resources; development's live-only key
+returns 401 in test mode. Separate test access and dashboard/delivery evidence
+remain required. [Dodo audit](dodo.md).
+
+Vercel production/preview/development all reference the feav Supabase project;
+current manager CLI check is unauthenticated. Public DNS failure does not prove
+pause/deletion/data loss. Finish native Supabase login on the remote machine,
+then inspect customer-project preservation/recovery and Auth/schema/storage/
+backup metadata. No provider write, production deployment or migration occurred.

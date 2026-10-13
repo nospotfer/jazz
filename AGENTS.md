@@ -34,4 +34,6 @@ local changes and shared Neurofactory services.
 Keep the maintenance log, inventory, prioritized backlog, verification matrix
 and release checklist current. Record actual checks and failures, distinguish
 local fixes from deployed fixes, and do not treat mocks as proof of live service
-health. Keep the goal active until the full completion criteria are verified.
+health. Do not mark the goal complete until its full completion criteria are
+verified. Follow the goal's blocked-state rules when essential access prevents
+progress; newly available access is a reason to resume useful work.

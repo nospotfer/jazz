@@ -5,13 +5,21 @@ Local repairs have not changed the website, accounts, DNS or live database.
 
 ## Recorded production baseline
 
-- GitHub production deployment **4786399978**, successful 2026-05-22 17:26 UTC,
-  source **c897f36da5a677097a91c6f509cc4a804a328051**.
-- Recorded deployment: `https://jazz-f6fczhw27-gabriels-projects-bd92791f.vercel.app`.
-- Public alias: `https://www.culturadeljazz.com`; apex redirects there.
-- This is the latest successful production record inspected in GitHub, not proof
-  of current Vercel alias assignment or rollback usability. Confirm in Vercel.
-  Its public Auth hostname currently fails DNS; code rollback cannot repair that.
+- Authenticated Vercel alias/domain APIs identify Neurofactory's **jazz-lms**,
+  project **prj_lEwrHldvtbnCByMPA9gvGzqVqpts**, team
+  **team_u4fDHjN9J7mqJuDlulZmzrPc**, exact live deployment
+  **dpl_6Xo6rUDVdh9jTWg4KoH1ok6iyU3D**.
+- Deployment: https://jazz-4k7e4unoj-neurofactorys-orgs-projects.vercel.app,
+  created **2026-06-11 05:21:22 UTC**, READY **05:23:39 UTC**, Node **20.x**,
+  source **redeploy**; reported source **50c2f87fa0b4d458b90f88943720817bc690db58**.
+- Both custom domains point to that deployment; apex redirects to www. Public
+  homepage/auth script-path fingerprints match its direct URL. No Git project
+  link/gitSource exists, so the source SHA is metadata rather than clean-checkout proof.
+- GitHub Production record **4786399978** for **c897f36** on May 22 belongs to
+  the earlier Gabriel deployment history; it is not the current live alias.
+- Exact live target is verified; prior deployment compatibility and rollback
+  usability remain untested. Supabase public DNS is unavailable; code rollback
+  cannot repair that. [Vercel audit](vercel.md).
 
 ## Review gates
 
@@ -26,15 +34,20 @@ Local repairs have not changed the website, accounts, DNS or live database.
 - [x] Reviewed code checkpoint c6a0556 passes lint/types/tests/build/secret scan
   and actual GitHub Quality, CodeQL and secret-scan checks. Later source changes
   must pass fresh checks; subsequent documentation records this exact evidence.
-- [ ] Verify Vercel team/project, alias/env/runtime/build/cron/logs/rollback.
+- [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
+  daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
+- [ ] Verify isolated target build settings, usage/logs and previous deployment
+  compatibility/rollback; prepare owner decision for commercial site on Hobby.
 - [ ] Locate and preserve customer Supabase database; reconcile public/server
   settings. Both known project DNS endpoints fail. [Evidence](public-provider-evidence.md).
 - [ ] Confirm remote preview uses isolated data/providers, deploy exact review
   commit and repeat relevant customer journeys. Local copied preview is not Vercel proof.
 - [ ] Inspect production schema/roles/table/function/view grants/storage/migration
   state and a tested backup/restore path.
-- [ ] Verify Dodo test account/products/currency/tax and actual checkout, signed
-  webhook, reconciliation, coupon and reversal flows.
+- [x] Verify live Dodo product/business, €29.90 EUR tax-exclusive base price,
+  active webhook route/filters and exact signing-secret match through GETs.
+- [ ] Obtain matching Dodo test credentials; verify dashboard/account/currency/tax
+  decisions and actual isolated checkout, delivery, reconciliation/coupon/reversal.
 - [ ] Verify current Google OAuth/SMTP configuration and isolated login.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
 - [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
@@ -46,14 +59,14 @@ Values remain in provider stores. Publish names, targets and status only.
 
 | Configuration | Review before release |
 | --- | --- |
-| DB/Supabase URL, anon/service keys and storage bucket | Same preserved project; server role retains CRUD after hardening. Public key must not be a service-role key. |
+| DB/Supabase URL, anon/service keys and storage bucket | Current three targets share feavujcllgbzlvdvkkxx. Preserve customer project and reconcile EU/US connection strings; separate preview. Verify trusted CRUD and public key scope. |
 | APP_URL/NEXT_PUBLIC_APP_URL and Auth allowlist | Exact canonical origin plus /auth/callback, /auth/reset-password/callback and /auth/reset-password; separate preview project, no production wildcard preview allowlist. |
-| Runtime/root/build | Node 24.x, root jazz-lms, npm ci, npm run build:webpack; verify provider overrides. |
-| CRON_SECRET | Nonempty random per-environment server secret; 03:15 UTC bearer sweep; missing/wrong credentials denied. |
-| Dodo keys/product/environment | Test mode staging; live mode only in approved production. Verify actual signing/account product; local synthetic checkout disabled outside loopback preview. |
+| Runtime/root/build | Live Node 20.x with root/framework/build overrides unset; prepare Node 24.x and source-root/build settings for the exact deployment method. Verify isolated build before production change. |
+| CRON_SECRET | Currently absent in live project/deployment env names; prepare nonempty random per-environment secret with hardened release. 03:15 UTC bearer sweep; missing/wrong denied. |
+| Dodo keys/product/environment | Preview currently shares live mode/resources; development test mode key returns 401. Supply separate verified test credentials/product/webhook in staging; preserve approved live resources. Synthetic checkout stays loopback-only. |
 | Mux signer | Match registered key/signed assets; trim CSV trailing comma. Never apply stale mapping script to live lessons. |
 | Resend/from/professor/reply/signing | Verified sending identity; inbound needs approved receiving DNS and enabled signed webhook. Native RESEND_WEBHOOK_SECRET differs from optional relay secret. [Runbook](resend.md). |
-| GA/OpenReplay | Initially disabled. Review provider settings, then prove choice/withdrawal/private exclusions. Disable GA automatic history/forms/outbound/video/download capture. |
+| GA/OpenReplay | Replay enabled across current targets; prepare initial disabled configuration. Review retention/provider settings and prove choice/withdrawal/private exclusions before enablement. Disable GA automatic history/forms/outbound/video/download capture. |
 | Owner/admin identity | Validated Auth identity and intended role; no invented Auth ID via legacy admin:create. |
 
 ## Database change package

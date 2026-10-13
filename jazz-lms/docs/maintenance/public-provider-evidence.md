@@ -6,8 +6,11 @@ The deployed public frontend embeds Supabase host
 `feavujcllgbzlvdvkkxx.supabase.co`. Its public anon-role key was extracted and
 used only in process memory; it was never printed or saved. This host differs
 from the local `.env` host, `wmujuzheurvrfyebobcj.supabase.co`. Neither value
-establishes which database currently holds the customer data or what the
-production server environment contains.
+establishes which database currently holds customer data. At this public-only
+checkpoint the server environment was unknown; subsequent authenticated
+[Vercel inspection](vercel.md) confirms production server and preview/development
+configuration reference the deployed feav project. Project existence, status,
+recovery and customer-data preservation still require manager access.
 
 The public homepage and `/auth` returned HTTP 200. Twenty same-origin Next.js
 script chunks were fetched without executing JavaScript, starting analytics,
@@ -41,9 +44,10 @@ status summaries only, with no key, bundle body, JWT payload or customer data.
 
 ## Newer GitHub preview deployments
 
-GitHub's latest `Production` deployment record is `4786399978`, created
+The latest `Production` record inspected in GitHub is `4786399978`, created
 2026-05-22 at 17:26:19 UTC, for commit `c897f36da5a677097a91c6f509cc4a804a328051`
-(source committed at 17:24:38 UTC). Three newer successful `Preview` records
+(source committed at 17:24:38 UTC). This is historical GitHub evidence, not the
+live custom-domain baseline. Three newer successful `Preview` records
 were inspected:
 
 | Deployment | Source commit/date (UTC) | Public environment URL | Current public access |
@@ -60,6 +64,9 @@ customer data, payments or media. GitHub deployment metadata alone does not
 establish the production alias's current target after any manual rollback.
 
 Sanitized status/access evidence is at
-`/tmp/jazz-maintenance/preview-deployment-evidence.json`. Authorized Vercel account
-access remains necessary to inspect those environments and reconcile their
-configuration with the public production frontend.
+`/tmp/jazz-maintenance/preview-deployment-evidence.json`. The now-authenticated
+Neurofactory Vercel scope serves the actual site from a June 11 jazz-lms redeploy
+with reported source 50c2f87f. Both live alias pointers and public asset-path
+fingerprints agree. Gabriel's protected GitHub-preview account scope is still
+unreconciled. The live project's preview shares customer Supabase and live Dodo,
+so it must not be treated as isolated. [Current authoritative evidence](vercel.md).
