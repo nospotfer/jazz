@@ -261,6 +261,8 @@ export async function POST(req: Request) {
         discountPercent: type === 'DISCOUNT_PERCENT' ? discountPercent : null,
         discountAmount: type === 'DISCOUNT_FIXED' ? discountAmount : null,
         maxUses: Number.isFinite(maxUses) && maxUses > 0 ? maxUses : null,
+        maxUsesPerUser: Number.isFinite(maxUsesPerUser) && maxUsesPerUser > 0 ? maxUsesPerUser : 1,
+        minOrderValue,
         expiresAt,
         metadata: normalizedMetadataJson,
       });

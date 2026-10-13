@@ -12,6 +12,7 @@ const professorEmail = (
 ).toLowerCase();
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof Error && error.name === 'MessagingSchemaUnavailableError') return true;
   if (
     error instanceof Prisma.PrismaClientInitializationError
     || error instanceof Prisma.PrismaClientRustPanicError
@@ -49,12 +50,12 @@ export async function GET() {
     const isProfessor = user.email.toLowerCase() === professorEmail;
 
     const rows = isProfessor
-      ? await db.$queryRawUnsafe<Array<{ count: number }>>(`
+      ? await db.$queryRawUnsafe<Array<{ count: number | bigint }>>(`
           SELECT COUNT(*) as count
           FROM Message
           WHERE unreadByProfessor = 1
         `)
-      : await db.$queryRawUnsafe<Array<{ count: number }>>(`
+      : await db.$queryRawUnsafe<Array<{ count: number | bigint }>>(`
           SELECT COUNT(*) as count
           FROM Message m
           JOIN MessageThread t ON t.id = m.threadId

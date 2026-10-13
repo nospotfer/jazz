@@ -609,8 +609,7 @@ export function VouchersAdminClient({ courses }: Props) {
     return `Generados: ${stats.generated} · Disponibles: ${stats.available} · Usados: ${stats.used} · Expirados: ${stats.expired}`;
   }, [stats]);
 
-  const sortedVouchers = useMemo(() => {
-    return [...vouchers].sort((a, b) => {
+  const sortedVouchers = [...vouchers].sort((a, b) => {
       const aPercent =
         a.type === 'DISCOUNT_PERCENT' ? (a.discountPercent ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
       const bPercent =
@@ -621,8 +620,7 @@ export function VouchersAdminClient({ courses }: Props) {
       }
 
       return a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' });
-    });
-  }, [vouchers]);
+  });
 
   const allVisibleSelected =
     sortedVouchers.length > 0 && sortedVouchers.every((voucher) => selectedVoucherIds.includes(voucher.id));

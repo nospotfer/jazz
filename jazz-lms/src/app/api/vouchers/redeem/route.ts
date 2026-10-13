@@ -70,6 +70,8 @@ export async function POST(req: Request) {
     }
 
     await db.$transaction(async (tx: Prisma.TransactionClient) => {
+      // Share the lock with /api/checkout's free/100%-discount redemption path.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`voucher:${result.voucher.id}`}, 0))`;
       const latestVoucher = await tx.voucherCode.findUnique({
         where: { id: result.voucher.id },
         select: {

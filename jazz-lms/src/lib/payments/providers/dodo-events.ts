@@ -121,6 +121,7 @@ export function resolveDodoProviderReferenceId(
   const data = asObject(payload.data);
   const payment = asObject(data.payment);
   const paymentId =
+    asString(payment.payment_id) ??
     asString(payment.id) ??
     asString(data.payment_id) ??
     asString(data.id) ??
@@ -138,27 +139,83 @@ export function normalizeDodoEventKind(
 ): "paid" | "refunded" | "disputed" | "ignored" {
   const normalized = eventType.toLowerCase();
 
-  if (
-    normalized.includes("payment.succeeded") ||
-    normalized.includes("payment.paid") ||
-    normalized.includes("payment.completed") ||
-    normalized.includes("payment.captured") ||
-    normalized.includes("subscription.renewed") ||
-    normalized.includes("subscription.created") ||
-    normalized.includes("subscription.activated")
-  ) {
+  if (normalized === "payment.succeeded") {
     return "paid";
   }
 
-  if (normalized.includes("refund")) {
+  if (normalized === "refund.succeeded") {
     return "refunded";
   }
 
-  if (normalized.includes("dispute")) {
+  if (DODO_REVOKING_DISPUTE_EVENTS.includes(normalized)) {
     return "disputed";
   }
 
   return "ignored";
+}
+
+export const DODO_REVOKING_DISPUTE_EVENTS = [
+  "dispute.opened",
+  "dispute.expired",
+  "dispute.accepted",
+  "dispute.challenged",
+  "dispute.lost",
+];
+
+export const DODO_ENTITLEMENT_EVENTS = [
+  "refund.succeeded",
+  ...DODO_REVOKING_DISPUTE_EVENTS,
+  "dispute.won",
+  "dispute.cancelled",
+];
+
+/** A successful payment remains succeeded after a refund; inspect both states. */
+export function isDodoPaymentGrantable(payment: LooseObject): boolean {
+  if (asString(payment.status)?.toLowerCase() !== "succeeded") return false;
+  if (asString(payment.refund_status)) return false;
+  if (Array.isArray(payment.refunds) && payment.refunds.some((refund) =>
+    asString(asObject(refund).status)?.toLowerCase() === "succeeded"
+  )) return false;
+  if (Array.isArray(payment.disputes) && payment.disputes.some((dispute) => {
+    const status = asString(asObject(dispute).status)?.toLowerCase();
+    return !status || !["dispute_won", "dispute_cancelled"].includes(status);
+  })) return false;
+  const disputeStatus = asString(payment.dispute_status)?.toLowerCase();
+  return !disputeStatus || ["dispute_won", "dispute_cancelled"].includes(disputeStatus);
+}
+
+/** Require an owner in metadata or, for legacy payments, a matching email. */
+export function doesDodoPaymentBelongToUser(
+  payload: LooseObject,
+  userId: string,
+  userEmail: string | null,
+): boolean {
+  const metadataUserId = readCustomString(resolveDodoMetadata(payload), "userId", "user_id");
+  if (metadataUserId) return metadataUserId === userId;
+  return Boolean(userEmail && resolveDodoCustomerEmail(payload) === userEmail.trim().toLowerCase());
+}
+
+/** Checkout metadata is only a hint; Dodo's applied discount snapshot is proof. */
+export function resolveDodoVoucherAccounting(payload: LooseObject): {
+  localVoucherCode: string | null;
+  providerDiscountCode: string | null;
+  providerDiscountId: string | null;
+} {
+  const metadata = resolveDodoMetadata(payload);
+  const data = asObject(payload.data);
+  const payment = Object.keys(asObject(data.payment)).length ? asObject(data.payment) : data;
+  const metadataProviderCode = readCustomString(metadata, "providerDiscountCode", "provider_discount_code", "discountCode", "discount_code")?.toUpperCase();
+  const discounts = Array.isArray(payment.discounts) ? payment.discounts.map(asObject) : [];
+  const applied = discounts.find((discount) => asString(discount.code)?.toUpperCase() === metadataProviderCode) ?? discounts[0];
+  const providerDiscountCode = asString(applied?.code)?.toUpperCase() ?? null;
+  const providerDiscountId = asString(applied?.discount_id) ?? asString(payment.discount_id);
+  return {
+    localVoucherCode: providerDiscountCode && providerDiscountCode === metadataProviderCode
+      ? readCustomString(metadata, "voucherCode", "voucher_code")
+      : null,
+    providerDiscountCode,
+    providerDiscountId,
+  };
 }
 
 export function extractDodoPricing(payload: LooseObject): {

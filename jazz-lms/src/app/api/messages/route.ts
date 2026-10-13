@@ -16,7 +16,7 @@ type ThreadRow = {
   updatedAt: string;
   lastMessage: string | null;
   lastMessageAt: string | null;
-  unreadCount: number;
+  unreadCount: number | bigint;
 };
 
 type ExistingThreadRow = {
@@ -37,6 +37,7 @@ const professorEmail = (
 ).toLowerCase();
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof Error && error.name === 'MessagingSchemaUnavailableError') return true;
   if (
     error instanceof Prisma.PrismaClientInitializationError
     || error instanceof Prisma.PrismaClientRustPanicError
@@ -78,6 +79,7 @@ async function notifyProfessor(params: {
     await resend.emails.send({
       from,
       to: professorEmail,
+      replyTo: process.env.MESSAGES_REPLY_TO_EMAIL?.trim() || undefined,
       subject: `${params.subject} [Thread:${params.threadId}]`,
       text: `From: ${params.fromEmail}\nStudent Name: ${params.studentName}\nStudent ID: ${params.studentId}\nThread ID: ${params.threadId}\n\n${params.body}\n\nIMPORTANT: Keep [Thread:${params.threadId}] in the subject when replying so the message is attached to the correct conversation.`,
     });
@@ -143,64 +145,64 @@ export async function GET() {
       ? await db.$queryRawUnsafe<ThreadRow[]>(`
           SELECT
             t.id,
-            t.studentId,
-            t.studentEmail,
-            t.studentName,
+            t.studentId AS "studentId",
+            t.studentEmail AS "studentEmail",
+            t.studentName AS "studentName",
             t.subject,
-            t.createdAt,
-            t.updatedAt,
+            t.createdAt AS "createdAt",
+            t.updatedAt AS "updatedAt",
             (
               SELECT m.body
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessage,
+            ) AS "lastMessage",
             (
               SELECT m.createdAt
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessageAt,
+            ) AS "lastMessageAt",
             (
               SELECT COUNT(*)
               FROM Message m
               WHERE m.threadId = t.id
                 AND m.unreadByProfessor = 1
-            ) AS unreadCount
+            ) AS "unreadCount"
           FROM MessageThread t
           ORDER BY t.updatedAt DESC
         `)
       : await db.$queryRawUnsafe<ThreadRow[]>(`
           SELECT
             t.id,
-            t.studentId,
-            t.studentEmail,
-            t.studentName,
+            t.studentId AS "studentId",
+            t.studentEmail AS "studentEmail",
+            t.studentName AS "studentName",
             t.subject,
-            t.createdAt,
-            t.updatedAt,
+            t.createdAt AS "createdAt",
+            t.updatedAt AS "updatedAt",
             (
               SELECT m.body
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessage,
+            ) AS "lastMessage",
             (
               SELECT m.createdAt
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessageAt,
+            ) AS "lastMessageAt",
             (
               SELECT COUNT(*)
               FROM Message m
               WHERE m.threadId = t.id
                 AND m.unreadByStudent = 1
-            ) AS unreadCount
+            ) AS "unreadCount"
           FROM MessageThread t
            WHERE t.studentId = '${user.id.replace(/'/g, "''")}'
              OR LOWER(t.studentEmail) = LOWER('${user.email.replace(/'/g, "''")}')
@@ -210,7 +212,7 @@ export async function GET() {
     return NextResponse.json({
       isProfessor,
       professorEmail,
-      threads: rows,
+      threads: rows.map(row => ({ ...row, unreadCount: Number(row.unreadCount || 0) })),
     });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
@@ -307,7 +309,7 @@ export async function POST(req: Request) {
     `);
 
     const recentMessages = await db.$queryRawUnsafe<LastMessageRow[]>(`
-      SELECT id, senderId, body, createdAt
+      SELECT id, senderId AS "senderId", body, createdAt AS "createdAt"
       FROM Message
       WHERE threadId = '${threadId}'
       ORDER BY createdAt DESC

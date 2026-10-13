@@ -34,6 +34,8 @@ export type VoucherValidationResult =
         maxUsesPerUser: number;
         isActive: boolean;
         expiresAt: Date | null;
+        minOrderValue: number | null;
+        metadata: unknown;
       };
       type: VoucherTypeValue;
       originalPrice: number;
@@ -216,6 +218,8 @@ export async function validateVoucherForCourse({
       maxUsesPerUser: voucher.maxUsesPerUser,
       isActive: voucher.isActive,
       expiresAt: voucher.expiresAt,
+      minOrderValue: voucher.minOrderValue,
+      metadata: voucher.metadata,
     },
     type: voucher.type,
     originalPrice,

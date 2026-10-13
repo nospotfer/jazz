@@ -37,13 +37,15 @@ describe('GET /api/messages/unread-count', () => {
     const response = await GET();
 
     expect(response.status).toBe(401);
+    expect(mocks.ensureTables).not.toHaveBeenCalled();
+    expect(mocks.queryRawUnsafe).not.toHaveBeenCalled();
   });
 
   test('returns unread count for professor path', async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: 'p1', email: 'culturadeljazz@gmail.com' } },
     });
-    mocks.queryRawUnsafe.mockResolvedValue([{ count: 7 }]);
+    mocks.queryRawUnsafe.mockResolvedValue([{ count: BigInt(7) }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
     const response = await GET();

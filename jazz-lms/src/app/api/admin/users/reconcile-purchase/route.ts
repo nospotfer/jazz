@@ -1,3 +1,4 @@
+import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { upsertCoursePurchaseFromProvider } from '@/lib/course-purchase-sync';
 import { db } from '@/lib/db';
@@ -7,12 +8,15 @@ import {
 } from '@/lib/payments/providers/dodo';
 import {
   asObject,
+  doesDodoPaymentBelongToUser,
   extractDodoPricing,
+  isDodoPaymentGrantable,
   normalizeDodoEventKind,
   readCustomString,
   resolveDodoEventType,
   resolveDodoMetadata,
   resolveDodoProviderReferenceId,
+  resolveDodoVoucherAccounting,
   type LooseObject,
 } from '@/lib/payments/providers/dodo-events';
 import { NextResponse } from 'next/server';
@@ -31,11 +35,20 @@ export async function POST(req: Request) {
     return auth.response;
   }
 
-  let body: Body;
+  let input: unknown;
   try {
-    body = (await req.json()) as Body;
+    input = await req.json();
   } catch {
     return new NextResponse('Invalid JSON', { status: 400 });
+  }
+
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return NextResponse.json({ success: false, message: 'Invalid request' }, { status: 400 });
+  }
+  const body = input as Body;
+  if (typeof body.email !== 'string' || typeof body.courseId !== 'string' ||
+      (body.paymentId !== undefined && (typeof body.paymentId !== 'string' || !body.paymentId.trim()))) {
+    return NextResponse.json({ success: false, message: 'Invalid request' }, { status: 400 });
   }
 
   const email = body.email?.trim().toLowerCase();
@@ -72,6 +85,7 @@ export async function POST(req: Request) {
 
   for (const payment of candidates) {
     if (!payment) continue;
+    if (!isDodoPaymentGrantable(payment)) continue;
     const paymentPayload = {
       type: `payment.${String(payment.status ?? 'unknown').toLowerCase()}`,
       id: payment.id,
@@ -86,6 +100,8 @@ export async function POST(req: Request) {
       },
       metadata: asObject(payment.metadata),
     } as LooseObject;
+
+    if (!doesDodoPaymentBelongToUser(paymentPayload, user.id, email)) continue;
 
     if (normalizeDodoEventKind(resolveDodoEventType(paymentPayload)) !== 'paid') {
       continue;
@@ -104,24 +120,27 @@ export async function POST(req: Request) {
       continue;
     }
 
-    const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(paymentPayload);
+    // A manual payment ID already fetched detail; listings require that same
+    // authoritative snapshot before granting access or consuming a voucher.
+    const snapshot = body.paymentId ? paymentPayload : await retrieveDodoReconciliationSnapshot(payment);
+    if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, user.id, email) ||
+        readCustomString(resolveDodoMetadata(snapshot), 'courseId', 'course_id') !== courseId) continue;
+    const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
 
-    await upsertCoursePurchaseFromProvider({
-      userId: user.id,
-      courseId,
-      providerReferenceId,
-      originalPrice: subtotalAmount,
-      finalPrice: totalAmount,
-      discountAmount,
-      localVoucherCode: readCustomString(metadata, 'voucherCode', 'voucher_code'),
-      providerDiscountCode: readCustomString(
-        metadata,
-        'providerDiscountCode',
-        'provider_discount_code',
-        'discountCode',
-        'discount_code',
-      ),
-    });
+    try {
+      await upsertCoursePurchaseFromProvider({
+        userId: user.id,
+        courseId,
+        providerReferenceId,
+        originalPrice: subtotalAmount,
+        finalPrice: totalAmount,
+        discountAmount,
+        ...resolveDodoVoucherAccounting(snapshot),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'DodoPaymentRevokedError') continue;
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,

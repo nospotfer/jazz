@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { isLocalTestRequest } from '@/lib/test-mode';
+import { isIsolatedLocalTestRequest } from '@/lib/test-mode';
 
 export async function POST(req: Request) {
   try {
-    if (!isLocalTestRequest(req)) {
+    if (!isIsolatedLocalTestRequest(req)) {
       return new NextResponse('Not Found', { status: 404 });
     }
 
@@ -18,10 +18,35 @@ export async function POST(req: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
+    const body = await req.json().catch(() => null);
+    const courseId = typeof body?.courseId === 'string' ? body.courseId.trim() : '';
+    if (!courseId) return new NextResponse('Explicit course required', { status: 400 });
+    if (body.userId !== undefined && body.userId !== user.id) {
+      return new NextResponse('Unauthorized target user', { status: 403 });
+    }
+    const dryRun = body.dryRun !== false;
+    const purchaseScope = { userId: user.id, courseId };
+    const lessonScope = { userId: user.id, lesson: { chapter: { courseId } } };
+
+    if (dryRun) {
+      const [purchases, progress, lessonPurchases, redemptions, discounts] = await Promise.all([
+        db.purchase.count({ where: purchaseScope }),
+        db.userProgress.count({ where: lessonScope }),
+        db.lessonPurchase.count({ where: lessonScope }),
+        db.voucherRedemption.count({ where: { userId: user.id, purchase: { courseId } } }),
+        db.discountApplied.count({ where: { purchase: purchaseScope } }),
+      ]);
+      return NextResponse.json({
+        ok: true, dryRun: true, scope: purchaseScope,
+        counts: { purchases, progress, lessonPurchases, redemptions, discounts },
+      });
+    }
+
     const summary = await db.$transaction(async (tx) => {
       const redemptions = await tx.voucherRedemption.findMany({
         where: {
           userId: user.id,
+          purchase: { courseId },
         },
         select: {
           voucherId: true,
@@ -62,6 +87,7 @@ export async function POST(req: Request) {
         where: {
           purchase: {
             userId: user.id,
+            courseId,
           },
         },
       });
@@ -69,19 +95,20 @@ export async function POST(req: Request) {
       const deletedRedemptions = await tx.voucherRedemption.deleteMany({
         where: {
           userId: user.id,
+          purchase: { courseId },
         },
       });
 
       const deletedPurchases = await tx.purchase.deleteMany({
-        where: { userId: user.id },
+        where: purchaseScope,
       });
 
       const deletedProgress = await tx.userProgress.deleteMany({
-        where: { userId: user.id },
+        where: lessonScope,
       });
 
       const deletedLessonPurchases = await tx.lessonPurchase.deleteMany({
-        where: { userId: user.id },
+        where: lessonScope,
       });
 
       return {
@@ -95,6 +122,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       ok: true,
+      dryRun: false,
+      scope: purchaseScope,
       ...summary,
     });
   } catch (error) {

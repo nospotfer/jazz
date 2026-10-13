@@ -463,19 +463,17 @@ export async function POST(req: Request) {
             userId: user.id,
             voucherCode: voucherValidation.voucher.code,
           });
-          const remainingUses =
-            voucherValidation.voucher.maxUses !== null
-              ? Math.max(1, voucherValidation.voucher.maxUses - voucherValidation.voucher.currentUses)
-              : null;
           const syncResult = await ensureVoucherDiscountSynced({
             id: voucherValidation.voucher.id,
             code: voucherValidation.voucher.code,
             type: voucherValidation.voucher.type,
             discountPercent: voucherValidation.voucher.discountPercent ?? null,
             discountAmount: voucherValidation.voucher.discountAmount ?? null,
-            maxUses: remainingUses,
+            maxUses: voucherValidation.voucher.maxUses,
+            maxUsesPerUser: voucherValidation.voucher.maxUsesPerUser,
+            minOrderValue: voucherValidation.voucher.minOrderValue,
             expiresAt: voucherValidation.voucher.expiresAt ?? null,
-            metadata: null,
+            metadata: voucherValidation.voucher.metadata,
           });
           await db.voucherCode.update({
             where: { id: voucherValidation.voucher.id },
@@ -503,27 +501,9 @@ export async function POST(req: Request) {
           }
         }
 
-        try {
-          console.warn("[CHECKOUT_VOUCHER_PROVIDER_REJECTED_FALLBACK]", {
-            courseId,
-            userId: user.id,
-            voucherCode: voucherValidation?.valid
-              ? voucherValidation.voucher.code
-              : null,
-          });
-          checkoutUrl = await createCheckout();
-          return NextResponse.json({ url: checkoutUrl });
-        } catch (fallbackError) {
-          console.error("[CHECKOUT_FALLBACK_FULL_PRICE_ERROR]", {
-            courseId,
-            userId: user.id,
-            voucherCode: voucherValidation?.valid
-              ? voucherValidation.voucher.code
-              : null,
-            fallbackError,
-          });
-          return new NextResponse(copy.voucherNotConfigured, { status: 400 });
-        }
+        // A requested discount must survive provider validation. Let the buyer
+        // resolve/remove the voucher explicitly before offering full price.
+        return new NextResponse(copy.voucherNotConfigured, { status: 400 });
       }
 
       if (providerConfigFailure) {
@@ -549,6 +529,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
+    if (error instanceof Error && error.name === "VoucherRedemptionRejectedError") {
+      return new NextResponse(error.message, { status: 409 });
+    }
     console.log("[CHECKOUT_ERROR]", error);
     if (isInvalidJsonBodyError(error)) {
       return new NextResponse(copy.invalidRequest, { status: 400 });

@@ -170,6 +170,10 @@ export async function DELETE(
       metadata: voucher.metadata,
     });
 
+    if (!providerSync.ok) {
+      return NextResponse.json({ success: false, error: "Provider sync failed", providerSync }, { status: 503 });
+    }
+
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.voucherCode.delete({
         where: { id: voucher.id },

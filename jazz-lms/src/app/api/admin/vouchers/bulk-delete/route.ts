@@ -109,12 +109,14 @@ export async function POST(req: Request) {
       .filter((entry) => !entry.result.ok)
       .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
 
+    const syncedDeletable = deletable.filter((_, index) => providerSyncResults[index].ok);
+
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      if (deletable.length) {
+      if (syncedDeletable.length) {
         await tx.voucherCode.deleteMany({
           where: {
             id: {
-              in: deletable.map((voucher) => voucher.id),
+              in: syncedDeletable.map((voucher) => voucher.id),
             },
           },
         });
@@ -146,20 +148,20 @@ export async function POST(req: Request) {
       }
 
       return {
-        deletedCount: deletable.length,
+        deletedCount: syncedDeletable.length,
         blockedCount: blocked.length,
         blockedCodes: blocked.map((voucher) => voucher.code),
         message:
           blocked.length > 0
-            ? `Se eliminaron ${deletable.length} voucher(s). ${blocked.length} no se pudieron eliminar por uso.`
+            ? `Se eliminaron ${syncedDeletable.length} voucher(s). ${blocked.length} no se pudieron eliminar por uso.`
             : force
-              ? `Se eliminaron ${deletable.length} voucher(s) en modo forzado.`
-              : `Se eliminaron ${deletable.length} voucher(s).`,
+              ? `Se eliminaron ${syncedDeletable.length} voucher(s) en modo forzado.`
+              : `Se eliminaron ${syncedDeletable.length} voucher(s).`,
       };
     });
 
     return NextResponse.json({
-      success: true,
+      success: providerSyncWarnings.length === 0,
       ...result,
       providerSyncWarnings,
     });

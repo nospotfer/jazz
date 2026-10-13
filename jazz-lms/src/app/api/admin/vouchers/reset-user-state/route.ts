@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { Prisma } from '@prisma/client';
+import { isIsolatedLocalTestRequest } from '@/lib/test-mode';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,26 +15,27 @@ type ResetPayload = {
 
 export async function POST(req: Request) {
   try {
+    if (!isIsolatedLocalTestRequest(req)) return new NextResponse('Not Found', { status: 404 });
     const auth = await ensureAdminApiPermission('vouchers.update');
     if (!auth.ok) {
       return auth.response;
     }
 
-    const body = (await req.json().catch(() => ({}))) as ResetPayload;
-    const targetUserId = typeof body.userId === 'string' && body.userId.trim().length > 0
+    const body = (await req.json().catch(() => null)) as ResetPayload | null;
+    const targetUserId = typeof body?.userId === 'string' && body.userId.trim().length > 0
       ? body.userId.trim()
-      : auth.userId;
-    const courseId = typeof body.courseId === 'string' && body.courseId.trim().length > 0
+      : null;
+    const courseId = typeof body?.courseId === 'string' && body.courseId.trim().length > 0
       ? body.courseId.trim()
       : null;
-    const dryRun = body.dryRun === true;
+    const dryRun = body?.dryRun !== false;
 
-    if (!targetUserId) {
+    if (!targetUserId || !courseId) {
       return NextResponse.json(
         {
           success: false,
           error: 'Bad request',
-          message: 'Usuário inválido para reset.',
+          message: 'Informe usuário e curso explícitos para o reset local.',
         },
         { status: 400 }
       );

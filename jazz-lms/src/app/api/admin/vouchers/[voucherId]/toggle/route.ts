@@ -44,6 +44,7 @@ export async function PATCH(
         discountAmount: true,
         minOrderValue: true,
         maxUses: true,
+        maxUsesPerUser: true,
         isActive: true,
         expiresAt: true,
         metadata: true,
@@ -69,6 +70,8 @@ export async function PATCH(
           discountPercent: currentVoucher.discountPercent,
           discountAmount: currentVoucher.discountAmount,
           maxUses: currentVoucher.maxUses,
+          maxUsesPerUser: currentVoucher.maxUsesPerUser,
+          minOrderValue: currentVoucher.minOrderValue,
           expiresAt: currentVoucher.expiresAt,
           metadata: currentVoucher.metadata,
         })
@@ -82,6 +85,10 @@ export async function PATCH(
           expiresAt: currentVoucher.expiresAt,
           metadata: currentVoucher.metadata,
         });
+
+    if (!syncResult.ok) {
+      return NextResponse.json({ success: false, error: "Provider sync failed", providerSync: syncResult }, { status: 503 });
+    }
 
     const voucher = await prisma.voucherCode.update({
       where: { id: voucherId },

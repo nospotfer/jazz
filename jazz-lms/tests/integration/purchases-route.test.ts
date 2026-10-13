@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   upsertCoursePurchaseFromProvider: vi.fn(),
   getPaymentProvider: vi.fn(),
   retrieveDodoPayment: vi.fn(),
+  listDodoPaymentsForCustomer: vi.fn(),
 }));
 
 vi.mock("@/utils/supabase/server", () => ({
@@ -38,7 +39,7 @@ vi.mock("@/lib/payments/provider", () => ({
 
 vi.mock("@/lib/payments/providers/dodo", () => ({
   retrieveDodoPayment: mocks.retrieveDodoPayment,
-  listDodoPaymentsForCustomer: vi.fn(async () => []),
+  listDodoPaymentsForCustomer: mocks.listDodoPaymentsForCustomer,
 }));
 
 describe("GET /api/purchases", () => {
@@ -101,6 +102,7 @@ describe("POST /api/purchases", () => {
     mocks.paymentWebhookEventFindMany.mockResolvedValue([]);
     mocks.upsertCoursePurchaseFromProvider.mockResolvedValue(undefined);
     mocks.retrieveDodoPayment.mockResolvedValue(null);
+    mocks.listDodoPaymentsForCustomer.mockResolvedValue([]);
   });
 
   test("returns 400 when action is invalid", async () => {
@@ -117,6 +119,55 @@ describe("POST /api/purchases", () => {
     );
 
     expect(response.status).toBe(400);
+  });
+
+  test("rejects cross-account legacy payment from email listing", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.listDodoPaymentsForCustomer.mockResolvedValue([{
+      payment_id: "pay_other", status: "succeeded", total_amount: 2999,
+      customer: { email: "other@example.test" }, metadata: { courseId: "course-1" },
+    }]);
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1" }),
+    }));
+    expect(response.status).toBe(202);
+    expect(mocks.upsertCoursePurchaseFromProvider).not.toHaveBeenCalled();
+  });
+
+  test("reconciles provider-shaped payment detail using payment_id", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      payment_id: "pay_contract", status: "succeeded", total_amount: 2999,
+      customer: { email: "buyer@example.test" }, metadata: { userId: "buyer", courseId: "course-1" },
+    });
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1", paymentId: "pay_contract" }),
+    }));
+    expect(response.status).toBe(200);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({ providerReferenceId: "dodo-pay:pay_contract" }));
+  });
+
+  test("cannot restore refunded payment through stored paid event or provider fallback", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.paymentWebhookEventFindMany.mockResolvedValue([{
+      payload: { type: "payment.succeeded", data: { payment_id: "pay_refunded", metadata: { userId: "buyer", courseId: "course-1" } } },
+    }]);
+    const revoked = new Error("revoked");
+    revoked.name = "DodoPaymentRevokedError";
+    mocks.upsertCoursePurchaseFromProvider.mockRejectedValue(revoked);
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      payment_id: "pay_refunded", status: "succeeded", refund_status: "full",
+      metadata: { userId: "buyer", courseId: "course-1" },
+    });
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1", paymentId: "pay_refunded" }),
+    }));
+    expect(response.status).toBe(202);
+    expect((await response.json()).purchased).toBe(false);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
   });
 
   test("returns 401 when unauthenticated", async () => {
@@ -243,8 +294,9 @@ describe("POST /api/purchases", () => {
       originalPrice: 29.9,
       discountAmount: 0,
       finalPrice: 29.9,
-      localVoucherCode: "JAZZ10",
-      providerDiscountCode: "DODO10",
+      localVoucherCode: null,
+      providerDiscountCode: null,
+      providerDiscountId: null,
     });
   });
 

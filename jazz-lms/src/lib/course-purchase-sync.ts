@@ -1,5 +1,12 @@
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import {
+  asObject,
+  asString,
+  DODO_ENTITLEMENT_EVENTS,
+  normalizeDodoEventKind,
+  resolveDodoProviderReferenceId,
+} from "@/lib/payments/providers/dodo-events";
 
 type UpsertCoursePurchaseInput = {
   userId: string;
@@ -11,10 +18,72 @@ type UpsertCoursePurchaseInput = {
   voucherCode?: string | null;
   localVoucherCode?: string | null;
   providerDiscountCode?: string | null;
+  providerDiscountId?: string | null;
   preserveExistingVoucher?: boolean;
 };
 
 type LooseObject = Record<string, unknown>;
+
+export class DodoPaymentRevokedError extends Error {
+  constructor() {
+    super("This payment was refunded or disputed and cannot grant access");
+    this.name = "DodoPaymentRevokedError";
+  }
+}
+
+export class VoucherRedemptionRejectedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "VoucherRedemptionRejectedError";
+  }
+}
+
+async function lockPaymentReference(tx: Prisma.TransactionClient, reference: string) {
+  // Serialize grants and reversals for one payment, including concurrent webhook
+  // and dashboard reconciliation requests. This lock lasts for the transaction.
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${reference}, 0))`;
+}
+
+async function isDodoPaymentRevoked(tx: Prisma.TransactionClient, reference: string) {
+  const paymentId = reference.slice("dodo-pay:".length);
+  const events = await tx.paymentWebhookEvent.findMany({
+    where: {
+      provider: "dodo",
+      eventType: { in: DODO_ENTITLEMENT_EVENTS },
+      // Include validated events still processing/failed: the financial fact
+      // remains relevant when a prior local reversal failed or is in progress.
+      OR: [
+        { payload: { path: ["data", "payment_id"], equals: paymentId } },
+        { payload: { path: ["data", "payment", "payment_id"], equals: paymentId } },
+        { payload: { path: ["data", "payment", "id"], equals: paymentId } },
+        { payload: { path: ["data", "id"], equals: paymentId } },
+        { payload: { path: ["id"], equals: paymentId } },
+      ],
+    },
+    select: { eventType: true, payload: true, createdAt: true },
+  });
+  const matching = events.filter((event) =>
+    resolveDodoProviderReferenceId(asObject(event.payload)) === reference
+  );
+  if (matching.some((event) => normalizeDodoEventKind(event.eventType) === "refunded")) return true;
+
+  // Provider timestamps, not arrival order, distinguish a resolved dispute
+  // from an older opened/lost event delivered late.
+  const disputes = matching.filter((event) => event.eventType.startsWith("dispute."));
+  const time = (event: typeof disputes[number]) => {
+    const timestamp = asString(asObject(event.payload).timestamp);
+    const parsed = timestamp ? Date.parse(timestamp) : NaN;
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  if (disputes.some((event) => time(event) === null &&
+      normalizeDodoEventKind(event.eventType) === "disputed")) return true;
+  const ordered = disputes.filter((event) => time(event) !== null);
+  ordered.sort((a, b) => time(b)! - time(a)!);
+  if (!ordered.length) return false;
+  const latest = ordered.filter((event) => time(event) === time(ordered[0]));
+  // Ties are ambiguous; a revoking state wins until a later resolution arrives.
+  return latest.some((event) => normalizeDodoEventKind(event.eventType) === "disputed");
+}
 
 function toErrorCode(error: unknown): string | null {
   if (!error || typeof error !== "object") {
@@ -120,6 +189,16 @@ async function resolveVoucherByInput(
   prisma: typeof db,
   input: UpsertCoursePurchaseInput,
 ): Promise<string | null> {
+  if (input.providerDiscountId) {
+    const mapped = await prisma.voucherCode.findFirst({
+      where: {
+        OR: [{ courseId: input.courseId }, { courseId: null }],
+        metadata: { path: ["providerDiscountId"], equals: input.providerDiscountId },
+      },
+      select: { id: true },
+    });
+    if (mapped) return mapped.id;
+  }
   const localCode = normalizeCode(input.localVoucherCode ?? input.voucherCode);
   if (localCode) {
     const localVoucher = await findVoucherByCode(prisma, localCode);
@@ -169,7 +248,15 @@ async function resolveVoucherByInput(
   return metadataMappedVoucher?.id ?? null;
 }
 
-async function incrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string) {
+async function incrementVoucherUsage(tx: Prisma.TransactionClient, voucherId: string, maximum?: number | null) {
+  if (maximum != null) {
+    const updated = await tx.voucherCode.updateMany({
+      where: { id: voucherId, currentUses: { lt: maximum } },
+      data: { currentUses: { increment: 1 } },
+    });
+    if (updated.count === 0) throw new VoucherRedemptionRejectedError("Este voucher atingiu o limite total de usos");
+    return;
+  }
   await tx.voucherCode.update({
     where: { id: voucherId },
     data: {
@@ -200,13 +287,32 @@ export async function upsertCoursePurchaseFromProvider(
   input: UpsertCoursePurchaseInput,
 ) {
   const prisma = db;
-  const desiredVoucherId = await resolveVoucherByInput(prisma, input);
   const originalPrice = toMoney(input.originalPrice);
   const discountAmount = toMoney(input.discountAmount);
   const finalPrice = toMoney(input.finalPrice);
+  // Provider discount identity is authoritative even if a gross/tax-inclusive
+  // total exceeds the metadata base price. Metadata alone cannot prove a paid
+  // discount. Application-owned free redemptions continue to record vouchers.
+  const hasProviderDiscount = Boolean(input.providerDiscountId || input.providerDiscountCode);
+  const canResolveVoucher = hasProviderDiscount ||
+    (!input.providerReferenceId.startsWith("dodo-pay:") && (discountAmount > 0 || finalPrice === 0));
+  const desiredVoucherId = canResolveVoucher
+    ? await resolveVoucherByInput(prisma, input)
+    : null;
   const preserveExistingVoucher = input.preserveExistingVoucher !== false;
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const isFreeVoucher = input.providerReferenceId.startsWith("dodo-voucher:");
+    if (isFreeVoucher) {
+      if (!desiredVoucherId) throw new VoucherRedemptionRejectedError("Código de voucher inválido");
+      await lockPaymentReference(tx, `voucher:${desiredVoucherId}`);
+    }
+    if (input.providerReferenceId.startsWith("dodo-pay:")) {
+      await lockPaymentReference(tx, input.providerReferenceId);
+      if (await isDodoPaymentRevoked(tx, input.providerReferenceId)) {
+        throw new DodoPaymentRevokedError();
+      }
+    }
     const existingPurchase = await tx.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -234,6 +340,25 @@ export async function upsertCoursePurchaseFromProvider(
 
     const existingVoucherId =
       existingRedemption?.voucherId ?? existingPurchase?.voucherId ?? null;
+    let maximumFreeVoucherUses: number | null | undefined;
+    if (isFreeVoucher && desiredVoucherId && existingRedemption?.voucherId !== desiredVoucherId) {
+      const voucher = await tx.voucherCode.findUnique({
+        where: { id: desiredVoucherId },
+        select: { isActive: true, expiresAt: true, maxUses: true, currentUses: true, maxUsesPerUser: true, courseId: true },
+      });
+      if (!voucher?.isActive || (voucher.courseId && voucher.courseId !== input.courseId) ||
+          (voucher.expiresAt && voucher.expiresAt < new Date())) {
+        throw new VoucherRedemptionRejectedError("Voucher inválido, inativo ou expirado");
+      }
+      if (voucher.maxUses !== null && voucher.currentUses >= voucher.maxUses) {
+        throw new VoucherRedemptionRejectedError("Este voucher atingiu o limite total de usos");
+      }
+      const uses = await tx.voucherRedemption.count({ where: { voucherId: desiredVoucherId, userId: input.userId } });
+      if (uses >= voucher.maxUsesPerUser) {
+        throw new VoucherRedemptionRejectedError("Ya alcanzaste el límite de uso de este cupón");
+      }
+      maximumFreeVoucherUses = voucher.maxUses;
+    }
     const hasVoucherConflict =
       Boolean(existingVoucherId) &&
       (desiredVoucherId === null || desiredVoucherId !== existingVoucherId);
@@ -289,10 +414,10 @@ export async function upsertCoursePurchaseFromProvider(
           },
         });
 
-        await incrementVoucherUsage(tx, effectiveVoucherId);
+        await incrementVoucherUsage(tx, effectiveVoucherId, maximumFreeVoucherUses);
       } else if (existingRedemption.voucherId !== effectiveVoucherId) {
         await decrementVoucherUsage(tx, existingRedemption.voucherId);
-        await incrementVoucherUsage(tx, effectiveVoucherId);
+        await incrementVoucherUsage(tx, effectiveVoucherId, maximumFreeVoucherUses);
 
         await tx.voucherRedemption.update({
           where: {
@@ -376,6 +501,10 @@ export async function revertCoursePurchaseByProviderReferenceId(
   const prisma = db;
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    if (providerReferenceId.startsWith("dodo-pay:")) {
+      await lockPaymentReference(tx, providerReferenceId);
+      if (!(await isDodoPaymentRevoked(tx, providerReferenceId))) return;
+    }
     const purchase = await tx.purchase.findFirst({
       where: {
         providerReferenceId,

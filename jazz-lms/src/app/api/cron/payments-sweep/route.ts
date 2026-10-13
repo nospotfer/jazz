@@ -1,14 +1,16 @@
+import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { listDodoPaymentsForCustomer } from "@/lib/payments/providers/dodo";
 import {
   asObject,
   extractDodoPricing,
-  normalizeDodoEventKind,
+  doesDodoPaymentBelongToUser,
+  isDodoPaymentGrantable,
   readCustomString,
-  resolveDodoEventType,
   resolveDodoMetadata,
   resolveDodoProviderReferenceId,
+  resolveDodoVoucherAccounting,
   type LooseObject,
 } from "@/lib/payments/providers/dodo-events";
 import { NextResponse } from "next/server";
@@ -23,18 +25,18 @@ export const maxDuration = 60;
  * Garante desbloqueio mesmo se o webhook nunca chegar e o usuário nunca
  * retornar ao dashboard.
  *
- * Autenticação: header `Authorization: Bearer ${CRON_SECRET}` ou execução
- * via Vercel Cron (que injeta o header `x-vercel-cron`).
+ * Autenticação: header `Authorization: Bearer ${CRON_SECRET}`, enviado
+ * automaticamente pelo Vercel Cron quando CRON_SECRET está configurado.
  */
 export async function GET(req: Request) {
-  // Aceita Vercel Cron (header injetado) ou Bearer secret manual.
-  const isVercelCron = req.headers.get("x-vercel-cron") !== null;
+  // Headers como x-vercel-cron podem ser forjados por qualquer cliente.
+  // Sem um segredo configurado, nenhuma execução deve ser autorizada.
   const bearer = req.headers.get("authorization");
   const expected = process.env.CRON_SECRET?.trim();
   const hasValidBearer =
     Boolean(expected) && bearer === `Bearer ${expected}`;
 
-  if (!isVercelCron && !hasValidBearer) {
+  if (!hasValidBearer) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -89,18 +91,16 @@ export async function GET(req: Request) {
           metadata: asObject(payment.metadata),
         } as LooseObject;
 
-        if (
-          normalizeDodoEventKind(resolveDodoEventType(paymentPayload)) !== "paid"
-        ) {
+        if (!isDodoPaymentGrantable(asObject(payment))) {
+          continue;
+        }
+        if (!doesDodoPaymentBelongToUser(paymentPayload, user.id, email)) {
           continue;
         }
 
         const metadata = resolveDodoMetadata(paymentPayload);
         const courseId = readCustomString(metadata, "courseId", "course_id");
         if (!courseId) continue;
-
-        const metadataUserId = readCustomString(metadata, "userId", "user_id");
-        if (metadataUserId && metadataUserId !== user.id) continue;
 
         const existing = await db.purchase.findUnique({
           where: { userId_courseId: { userId: user.id, courseId } },
@@ -113,29 +113,31 @@ export async function GET(req: Request) {
           (payment.id ? `dodo-pay:${payment.id}` : null);
         if (!providerReferenceId) continue;
 
-        const { subtotalAmount, totalAmount, discountAmount } =
-          extractDodoPricing(paymentPayload);
+        const snapshot = await retrieveDodoReconciliationSnapshot(payment);
+        if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, user.id, email) ||
+            readCustomString(resolveDodoMetadata(snapshot), "courseId", "course_id") !== courseId) continue;
+        const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
 
-        await upsertCoursePurchaseFromProvider({
-          userId: user.id,
-          courseId,
-          providerReferenceId,
-          originalPrice: subtotalAmount,
-          finalPrice: totalAmount,
-          discountAmount,
-          localVoucherCode: readCustomString(
-            metadata,
-            "voucherCode",
-            "voucher_code",
-          ),
-          providerDiscountCode: readCustomString(
-            metadata,
-            "providerDiscountCode",
-            "provider_discount_code",
-            "discountCode",
-            "discount_code",
-          ),
-        });
+        try {
+          await upsertCoursePurchaseFromProvider({
+            userId: user.id,
+            courseId,
+            providerReferenceId,
+            originalPrice: subtotalAmount,
+            finalPrice: totalAmount,
+            discountAmount,
+            // Only actual provider discount snapshots can consume a voucher;
+            // checkout metadata alone is not evidence of an applied discount.
+            ...resolveDodoVoucherAccounting(snapshot),
+          });
+        } catch (error) {
+          // The webhook ledger can know about a reversal before the provider's
+          // list response catches up. Skip it and keep scanning other payments.
+          if (error instanceof Error && error.name === "DodoPaymentRevokedError") {
+            continue;
+          }
+          throw error;
+        }
         totalUnlocked += 1;
 
         console.warn("[CRON_PAYMENTS_SWEEP_UNLOCKED]", {

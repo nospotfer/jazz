@@ -1,3 +1,4 @@
+import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { getPaymentProvider } from "@/lib/payments/provider";
@@ -7,13 +8,15 @@ import {
 } from "@/lib/payments/providers/dodo";
 import {
   asObject as asDodoObject,
+  doesDodoPaymentBelongToUser,
   extractDodoPricing,
+  isDodoPaymentGrantable,
   normalizeDodoEventKind,
   readCustomString as readDodoCustomString,
-  resolveDodoCustomerEmail,
   resolveDodoEventType,
   resolveDodoMetadata,
   resolveDodoProviderReferenceId,
+  resolveDodoVoucherAccounting,
   type LooseObject as DodoLooseObject,
 } from "@/lib/payments/providers/dodo-events";
 import { createClient } from "@/utils/supabase/server";
@@ -111,17 +114,7 @@ async function reconcileDodoFromWebhookEvents(input: {
       return false;
     }
 
-    const metadataUserId = readDodoCustomString(metadata, "userId", "user_id");
-    if (metadataUserId && metadataUserId !== input.userId) {
-      return false;
-    }
-
-    if (!metadataUserId && input.userEmail) {
-      const payloadEmail = resolveDodoCustomerEmail(payload);
-      if (!payloadEmail || payloadEmail !== input.userEmail) {
-        return false;
-      }
-    }
+    if (!doesDodoPaymentBelongToUser(payload, input.userId, input.userEmail)) return false;
 
     // checkoutAttemptId é preferência, não filtro estrito:
     // alguns fluxos da Dodo não propagam o atributo no payload do evento.
@@ -133,7 +126,6 @@ async function reconcileDodoFromWebhookEvents(input: {
   }
 
   const payload = asDodoObject(matchingEvent.payload) as DodoLooseObject;
-  const metadata = resolveDodoMetadata(payload);
   const providerReferenceId = resolveDodoProviderReferenceId(payload);
 
   if (!providerReferenceId) {
@@ -143,26 +135,20 @@ async function reconcileDodoFromWebhookEvents(input: {
   const { subtotalAmount, totalAmount, discountAmount } =
     extractDodoPricing(payload);
 
-  await upsertCoursePurchaseFromProvider({
-    userId: input.userId,
-    courseId: input.courseId,
-    providerReferenceId,
-    originalPrice: subtotalAmount,
-    discountAmount,
-    finalPrice: totalAmount,
-    localVoucherCode: readDodoCustomString(
-      metadata,
-      "voucherCode",
-      "voucher_code",
-    ),
-    providerDiscountCode: readDodoCustomString(
-      metadata,
-      "providerDiscountCode",
-      "provider_discount_code",
-      "discountCode",
-      "discount_code",
-    ),
-  });
+  try {
+    await upsertCoursePurchaseFromProvider({
+      userId: input.userId,
+      courseId: input.courseId,
+      providerReferenceId,
+      originalPrice: subtotalAmount,
+      discountAmount,
+      finalPrice: totalAmount,
+      ...resolveDodoVoucherAccounting(payload),
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === "DodoPaymentRevokedError") return null;
+    throw error;
+  }
 
   return {
     providerReferenceId,
@@ -185,6 +171,8 @@ async function reconcileDodoFromPaymentApi(input: {
   if (!payment) {
     return null;
   }
+
+  if (!isDodoPaymentGrantable(payment as DodoLooseObject)) return null;
 
   const paymentPayload = {
     type: `payment.${String(payment.status ?? "unknown").toLowerCase()}`,
@@ -216,17 +204,7 @@ async function reconcileDodoFromPaymentApi(input: {
     return null;
   }
 
-  const metadataUserId = readDodoCustomString(metadata, "userId", "user_id");
-  if (metadataUserId && metadataUserId !== input.userId) {
-    return null;
-  }
-
-  if (!metadataUserId && input.userEmail) {
-    const paymentEmail = resolveDodoCustomerEmail(paymentPayload);
-    if (!paymentEmail || paymentEmail !== input.userEmail) {
-      return null;
-    }
-  }
+  if (!doesDodoPaymentBelongToUser(paymentPayload, input.userId, input.userEmail)) return null;
 
   // checkoutAttemptId é preferência, não filtro estrito.
 
@@ -240,26 +218,20 @@ async function reconcileDodoFromPaymentApi(input: {
   const { subtotalAmount, totalAmount, discountAmount } =
     extractDodoPricing(paymentPayload);
 
-  await upsertCoursePurchaseFromProvider({
-    userId: input.userId,
-    courseId: input.courseId,
-    providerReferenceId,
-    originalPrice: subtotalAmount,
-    discountAmount,
-    finalPrice: totalAmount,
-    localVoucherCode: readDodoCustomString(
-      metadata,
-      "voucherCode",
-      "voucher_code",
-    ),
-    providerDiscountCode: readDodoCustomString(
-      metadata,
-      "providerDiscountCode",
-      "provider_discount_code",
-      "discountCode",
-      "discount_code",
-    ),
-  });
+  try {
+    await upsertCoursePurchaseFromProvider({
+      userId: input.userId,
+      courseId: input.courseId,
+      providerReferenceId,
+      originalPrice: subtotalAmount,
+      discountAmount,
+      finalPrice: totalAmount,
+      ...resolveDodoVoucherAccounting(paymentPayload),
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === "DodoPaymentRevokedError") return null;
+    throw error;
+  }
 
   return {
     providerReferenceId,
@@ -293,6 +265,7 @@ async function reconcileDodoFromCustomerEmail(input: {
   }
 
   for (const payment of payments) {
+    if (!isDodoPaymentGrantable(payment as DodoLooseObject)) continue;
     const paymentPayload = {
       type: `payment.${String(payment.status ?? "unknown").toLowerCase()}`,
       id: payment.id,
@@ -323,10 +296,7 @@ async function reconcileDodoFromCustomerEmail(input: {
       continue;
     }
 
-    const metadataUserId = readDodoCustomString(metadata, "userId", "user_id");
-    if (metadataUserId && metadataUserId !== input.userId) {
-      continue;
-    }
+    if (!doesDodoPaymentBelongToUser(paymentPayload, input.userId, input.userEmail)) continue;
 
     const providerReferenceId =
       resolveDodoProviderReferenceId(paymentPayload) ??
@@ -335,29 +305,25 @@ async function reconcileDodoFromCustomerEmail(input: {
       continue;
     }
 
-    const { subtotalAmount, totalAmount, discountAmount } =
-      extractDodoPricing(paymentPayload);
+    const snapshot = await retrieveDodoReconciliationSnapshot(payment);
+    if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, input.userId, input.userEmail) ||
+        readDodoCustomString(resolveDodoMetadata(snapshot), "courseId", "course_id") !== input.courseId) continue;
+    const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
 
-    await upsertCoursePurchaseFromProvider({
-      userId: input.userId,
-      courseId: input.courseId,
-      providerReferenceId,
-      originalPrice: subtotalAmount,
-      discountAmount,
-      finalPrice: totalAmount,
-      localVoucherCode: readDodoCustomString(
-        metadata,
-        "voucherCode",
-        "voucher_code",
-      ),
-      providerDiscountCode: readDodoCustomString(
-        metadata,
-        "providerDiscountCode",
-        "provider_discount_code",
-        "discountCode",
-        "discount_code",
-      ),
-    });
+    try {
+      await upsertCoursePurchaseFromProvider({
+        userId: input.userId,
+        courseId: input.courseId,
+        providerReferenceId,
+        originalPrice: subtotalAmount,
+        discountAmount,
+        finalPrice: totalAmount,
+        ...resolveDodoVoucherAccounting(snapshot),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "DodoPaymentRevokedError") continue;
+      throw error;
+    }
 
     return {
       providerReferenceId,
