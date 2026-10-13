@@ -36,7 +36,9 @@ Local repairs have not changed the website, accounts, DNS or live database.
   webhook, reconciliation, coupon and reversal flows.
 - [ ] Verify current Google OAuth/SMTP configuration and isolated login.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
-- [ ] Draft PR records exact commit/preview/checks, residual findings and gaps.
+- [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
+  protected preview, initial CI/CodeQL findings and remaining gaps. Refresh with
+  the follow-up's actual remote checks before review progresses.
 
 ## Configuration review package
 

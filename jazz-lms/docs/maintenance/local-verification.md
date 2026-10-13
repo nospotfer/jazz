@@ -11,15 +11,21 @@ From jazz-lms with Node 24 selected:
 
 ```bash
 npm ci
+export DATABASE_URL=postgresql://jazz_test:jazz_test@127.0.0.1:5432/jazz_test
+export NEXT_PUBLIC_SUPABASE_URL='' NEXT_PUBLIC_SUPABASE_ANON_KEY=''
+export APP_URL=http://127.0.0.1:3000 NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000
+export NEXT_PUBLIC_OPENREPLAY_ENABLED=false NEXT_TELEMETRY_DISABLED=1
 npm run lint
 npm run typecheck
 npm test
 npm run build:webpack
 ```
 
-Set DATABASE_URL to a synthetic PostgreSQL URL for the build. Leave public
-Supabase configuration empty and optional analytics/replay disabled for this
-limited public preview. This does not exercise accounts or persistence.
+The synthetic DATABASE_URL is required for module validation in both tests and
+builds; it does not point to a running provider. Leave public Supabase
+configuration empty and optional analytics/replay disabled for this limited
+public preview. This does not exercise accounts or persistence. Do not copy
+private environment files into a clean verification checkout.
 
 ## Persisted regression database
 

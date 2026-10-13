@@ -189,3 +189,37 @@ Next: publish maintenance commits/draft PR and inspect actual Quality/CodeQL/
 secret-scan results. Finish a verified isolated remote preview when project access
 is available. Keep the goal active and preserve the production/account/backup/
 Dodo/OAuth/mail gates; no production release or provider mutation has occurred.
+
+## Published review and parser/operations follow-up — 2026-10-13
+
+- Opened draft [PR #46](https://github.com/nospotfer/jazz/pull/46), with eight
+  focused maintenance commits. On 8e67b0d, actual GitHub Quality and Secret Scan
+  checks passed, including 775 normal and 37 persisted tests. Vercel built
+  deployment 7027429907 successfully; the exact preview redirects to SSO and
+  has not been verified as isolated or exercised for customer journeys.
+- CodeQL's aggregate check failed on two new high regex-conversion findings
+  (14/15). Replaced that converter with bounded parser-based plain text in
+  0619b69, retaining actual React encoding/text-only notification sinks. Added
+  malformed/nested/entity/resource-limit and actual inbox regressions. Remote
+  rescan remains pending; no exploit or closure is inferred from mocks.
+- Commit 37df1a0 quarantines all 15 legacy mutators to dedicated disposable
+  loopback targets with a separate default-off flag; production is always
+  blocked. Voucher CLI reset defaults to a scoped plan and writes only with
+  --apply. Provider selection is captured before ambient Prisma env loading.
+  Legacy local-only defaults/mappings/pagination and production recovery remain
+  documented limits. No actual mutator was run.
+- Deployment wrappers validate explicit project/team/exact clean commit,
+  including untracked source and changes during preflights. Removed stale
+  branch/alias guessing and automatic provider probes. Token stays in the
+  environment; production scope validation is not owner approval. Nineteen
+  temporary-repository/mock-executable cases pass; no deployment was invoked.
+- Fresh source-only npm ci, lint/types/webpack and Turbopack builds pass. Normal suite now
+  **925 passed, 38 skipped**, 82 passed/5 skipped files. Guarded PostgreSQL
+  rerun: **37 passed, one REST skip**. Production audit and redacted source
+  scanner report zero; five documented development lint-chain highs remain.
+  Empty-environment metrics imports/build collection require a synthetic
+  DATABASE_URL; the corrected explicit reproduction is documented.
+
+Next: publish the follow-up, inspect its exact remote CI/CodeQL/preview and
+preserve essential provider-access gates. Detailed immutable checkpoint links
+are in [review-status.md](review-status.md). Goal remains active.
