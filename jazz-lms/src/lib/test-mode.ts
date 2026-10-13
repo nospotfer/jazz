@@ -60,13 +60,16 @@ function isIsolatedLocalRequest(req: Request, flagName: string): boolean {
     for (const header of ['host', 'x-forwarded-host']) {
       const value = req.headers.get(header);
       if (!value) continue;
-      const host = new URL(`http://${value}`);
-      if (!isLoopback(host) || host.host !== requestUrl.host || host.pathname !== '/' || host.search || host.hash) return false;
+      const host = new URL(`${requestUrl.protocol}//${value}`);
+      // Next development requests can use localhost internally even when the
+      // browser uses 127.0.0.1. Both must remain loopback at the same port.
+      if (!isLoopback(host) || host.port !== requestUrl.port || host.pathname !== '/' || host.search || host.hash) return false;
     }
     const origin = req.headers.get('origin');
     if (origin) {
       const url = new URL(origin);
-      if (!isLoopback(url) || url.origin !== requestUrl.origin || url.pathname !== '/' || url.search || url.hash) return false;
+      if (!isLoopback(url) || url.protocol !== requestUrl.protocol || url.port !== requestUrl.port ||
+          url.pathname !== '/' || url.search || url.hash) return false;
     }
     return true;
   } catch {

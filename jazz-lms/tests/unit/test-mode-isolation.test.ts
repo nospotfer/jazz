@@ -35,6 +35,12 @@ describe.each([
     }))).toBe(false);
   });
 
+  test('accepts the same-port loopback browser alias used by Next development', () => {
+    expect(check(request('http://localhost:3010/api/test', {
+      host: '127.0.0.1:3010', 'x-forwarded-host': '127.0.0.1:3010', origin: 'http://127.0.0.1:3010',
+    }))).toBe(true);
+  });
+
   test('production Vercel environment cannot be overridden by development NODE_ENV', () => {
     vi.stubEnv('NODE_ENV', 'development');
     vi.stubEnv('VERCEL_ENV', 'production');
@@ -71,6 +77,8 @@ describe.each([
     { origin: 'http://localhost:3000 invalid' },
     { origin: 'http://localhost:3000/path' },
     { origin: 'http://localhost:4000' },
+    { origin: 'https://localhost:3000' },
+    { host: '127.0.0.1:4000' },
     { host: 'attacker.example.test' },
     { host: 'localhost:3000 invalid' },
     { 'x-forwarded-host': 'attacker.example.test' },
