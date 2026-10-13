@@ -145,7 +145,7 @@ async function main() {
       });
       continue;
     }
-    const newName = bucketFile.replace(/\.pdf$/i, "");
+    const newName = bucketFile.replace(/(?:\.docx)?\.pdf$/i, "");
     if (att.name !== newName || att.url !== bucketFile) {
       updates.push({
         id: att.id,

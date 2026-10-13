@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 // The value is mixed into the signed URL as `?v=...` so the Supabase Storage
 // CDN treats the object as a fresh cache entry. Can be overridden at runtime
 // with PDF_CACHE_VERSION.
-const DEFAULT_PDF_CACHE_VERSION = "2026-05-21-bucket-refresh";
+const DEFAULT_PDF_CACHE_VERSION = "2026-06-04-bucket-refresh";
 
 const extractStoragePath = (value: string, bucketName: string) => {
   const rawValue = value.trim();
