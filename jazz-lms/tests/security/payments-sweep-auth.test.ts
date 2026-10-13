@@ -27,6 +27,7 @@ import { GET } from '@/app/api/cron/payments-sweep/route';
 describe('payment sweep authentication', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    Reflect.deleteProperty(globalThis, "__jazzPaymentSweepStateV1");
     mocks.userFindMany.mockResolvedValue([{ id: 'student-1', email: 'student@example.test' }]);
     mocks.listDodoPaymentsForCustomer.mockResolvedValue([]);
     mocks.retrieveDodoPayment.mockImplementation(async (id: string) =>
@@ -70,12 +71,14 @@ describe('payment sweep authentication', () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
-      success: true, usersScanned: 1, paymentsScanned: 0, unlocked: 0, failures: 0,
+      success: true, complete: true, passComplete: true, hasMore: false, reason: null,
+      usersScanned: 1, paymentsScanned: 0, unlocked: 0, failures: 0, pendingUsers: 0,
+      coverage: "recent_eligible_users", state: "process_local",
     });
     expect(mocks.userFindMany).toHaveBeenCalledOnce();
     expect(mocks.listDodoPaymentsForCustomer).toHaveBeenCalledOnce();
     expect(mocks.listDodoPaymentsForCustomer).toHaveBeenCalledWith({
-      email: 'student@example.test', sinceISO: expect.any(String), pageSize: 50,
+      email: 'student@example.test', sinceISO: expect.any(String), pageSize: 50, signal: expect.any(AbortSignal),
     });
   });
 

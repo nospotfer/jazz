@@ -60,11 +60,35 @@ function getDodoBaseUrl() {
   return "https://test.dodopayments.com";
 }
 
-function toJson(response: Response) {
-  return response.json().catch(() => null) as Promise<Record<
-    string,
-    unknown
-  > | null>;
+async function toJson(response: Response, signal?: AbortSignal) {
+  try {
+    const json = await response.json() as Record<string, unknown>;
+    signal?.throwIfAborted();
+    return json;
+  } catch (error) {
+    signal?.throwIfAborted();
+    if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) throw error;
+    return null;
+  }
+}
+
+export type DodoReadOptions = { signal?: AbortSignal };
+
+function readDeadline(callerSignal?: AbortSignal) {
+  callerSignal?.throwIfAborted();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), DODO_DEFAULT_TIMEOUT_MS);
+  return {
+    signal: callerSignal ? AbortSignal.any([callerSignal, controller.signal]) : controller.signal,
+    dispose: () => clearTimeout(timeout),
+  };
+}
+
+export class DodoPaginationIncompleteError extends Error {
+  constructor() {
+    super('Dodo payment history exceeded the bounded pagination limit');
+    this.name = 'DodoPaginationIncompleteError';
+  }
 }
 
 export function isDodoConfigured() {
@@ -325,14 +349,15 @@ export async function createDodoCheckout(
 
 export async function retrieveDodoPayment(
   paymentId: string,
+  options?: DodoReadOptions,
 ): Promise<DodoApiPaymentRecord | null> {
+  options?.signal?.throwIfAborted();
   const normalizedPaymentId = paymentId.trim();
   if (!normalizedPaymentId) {
     return null;
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DODO_DEFAULT_TIMEOUT_MS);
+  const deadline = readDeadline(options?.signal);
 
   try {
     const response = await fetch(
@@ -343,15 +368,16 @@ export async function retrieveDodoPayment(
           Accept: "application/json",
           Authorization: `Bearer ${readRequiredEnv("DODO_PAYMENTS_API_KEY")}`,
         },
-        signal: controller.signal,
+        signal: deadline.signal,
       },
     );
 
+    deadline.signal.throwIfAborted();
     if (response.status === 404) {
       return null;
     }
 
-    const json = await toJson(response);
+    const json = await toJson(response, deadline.signal);
 
     if (!response.ok) {
       throw Object.assign(new Error(`Dodo payment retrieve failed (${response.status})`), {
@@ -368,7 +394,7 @@ export async function retrieveDodoPayment(
       : json) as DodoApiPaymentRecord;
     return { ...payment, id: payment.payment_id ?? payment.id };
   } finally {
-    clearTimeout(timeout);
+    deadline.dispose();
   }
 }
 
@@ -381,27 +407,30 @@ export async function listDodoPaymentsForCustomer(input: {
   email: string;
   sinceISO?: string;
   pageSize?: number;
+  signal?: AbortSignal;
 }): Promise<DodoApiPaymentRecord[]> {
+  input.signal?.throwIfAborted();
   const trimmedEmail = input.email.trim().toLowerCase();
   if (!trimmedEmail) {
     return [];
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DODO_DEFAULT_TIMEOUT_MS);
+  const deadline = readDeadline(input.signal);
 
   try {
     const requestPage = async (resource: string, params: URLSearchParams) => {
+      deadline.signal.throwIfAborted();
       const response = await fetch(`${getDodoBaseUrl()}/${resource}?${params}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${readRequiredEnv("DODO_PAYMENTS_API_KEY")}`,
         },
-        signal: controller.signal,
+        signal: deadline.signal,
       });
+      deadline.signal.throwIfAborted();
       if (!response.ok) throw new Error(`Dodo ${resource} list failed (${response.status})`);
-      const json = await toJson(response);
+      const json = await toJson(response, deadline.signal);
       if (!Array.isArray(json?.items)) throw new Error(`Dodo ${resource} list returned an invalid response`);
       return json.items as Record<string, unknown>[];
     };
@@ -420,6 +449,7 @@ export async function listDodoPaymentsForCustomer(input: {
         }
       }
       if (customers.length < 100) break;
+      if (page === 9) throw new DodoPaginationIncompleteError();
     }
 
     const pageSize = Math.max(1, Math.min(100, Math.trunc(input.pageSize ?? 25)));
@@ -441,15 +471,17 @@ export async function listDodoPaymentsForCustomer(input: {
           payments.set(id, { ...payment, id });
         }
         if (items.length < pageSize) break;
+        if (page === 9) throw new DodoPaginationIncompleteError();
       }
     }
+    deadline.signal.throwIfAborted();
     return [...payments.values()];
   } catch (error) {
     // An outage is different from an empty customer history. Let callers report
     // failed reconciliation instead of silently returning a successful sweep.
     throw error;
   } finally {
-    clearTimeout(timeout);
+    deadline.dispose();
   }
 }
 

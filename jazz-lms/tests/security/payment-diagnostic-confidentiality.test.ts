@@ -256,8 +256,8 @@ describe("reconciliation and webhook diagnostic confidentiality", () => {
     const dodo = await import("@/lib/payments/providers/dodo");
     vi.spyOn(dodo, "listDodoPaymentsForCustomer").mockRejectedValue(privateFailure());
     const response = await (await import("@/app/api/cron/payments-sweep/route")).GET(new Request("https://app.example.invalid/api/cron/payments-sweep", { headers: { authorization: "Bearer synthetic-local-cron-secret" } }));
-    expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ failures: 1, unlocked: 0 });
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({ success: false, complete: false, failures: 1, unlocked: 0 });
     expectPrivateDetailsOmitted();
   });
 

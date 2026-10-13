@@ -1,4 +1,4 @@
-import { retrieveDodoPayment, type DodoApiPaymentRecord } from '@/lib/payments/providers/dodo';
+import { retrieveDodoPayment, type DodoReadOptions, type DodoApiPaymentRecord } from '@/lib/payments/providers/dodo';
 import { asString, isDodoPaymentGrantable, type LooseObject } from '@/lib/payments/providers/dodo-events';
 
 export function dodoPaymentPayload(payment: DodoApiPaymentRecord): LooseObject {
@@ -13,11 +13,14 @@ export function dodoPaymentPayload(payment: DodoApiPaymentRecord): LooseObject {
  */
 export async function retrieveDodoReconciliationSnapshot(
   summary: DodoApiPaymentRecord,
+  options?: DodoReadOptions,
 ): Promise<LooseObject | null> {
+  options?.signal?.throwIfAborted();
   if (!isDodoPaymentGrantable(summary)) return null;
   const id = asString(summary.payment_id) ?? asString(summary.id);
   if (!id) return null;
-  const detail = await retrieveDodoPayment(id);
+  const detail = options ? await retrieveDodoPayment(id, options) : await retrieveDodoPayment(id);
+  options?.signal?.throwIfAborted();
   if (!detail || (asString(detail.payment_id) ?? asString(detail.id)) !== id ||
       !isDodoPaymentGrantable(detail)) return null;
   return dodoPaymentPayload(detail);
