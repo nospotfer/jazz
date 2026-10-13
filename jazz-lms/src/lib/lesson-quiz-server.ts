@@ -323,7 +323,7 @@ export async function createOrResumeLessonQuizAttempt(params: {
       },
       include: attemptInclude,
     });
-  });
+  }, { maxWait: 10_000, timeout: 5_000 });
 
   // External translations happen after the DB lock and transaction are released.
   const localizedQuestions = await localizeQuestions(
@@ -415,7 +415,7 @@ export async function submitLessonQuizAnswer(params: {
       correctOptionId: currentAnswer.question.options.find((option) => option.isCorrect)?.id ?? '',
       answeredCount, isComplete, result, summary: serializeSummary(summary),
     };
-  });
+  }, { maxWait: 10_000, timeout: 5_000 });
 }
 
 export async function assertLessonQuizAccess(params: {

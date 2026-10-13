@@ -24,7 +24,10 @@ describe.skipIf(!testDatabaseUrl)('quiz/progress authority against isolated Post
     if (url.hostname !== '127.0.0.1' || url.port !== '55432' || url.pathname !== '/jazz_maintenance') {
       throw new Error('Refusing database writes outside isolated loopback jazz_maintenance:55432');
     }
-    vi.stubEnv('DATABASE_URL', testDatabaseUrl!);
+    // Match the bounded cloud runtime pool so acquisition regressions exercise
+    // a real queued transaction rather than additional spare connections.
+    url.searchParams.set('connection_limit', '1');
+    vi.stubEnv('DATABASE_URL', url.toString());
     vi.stubEnv('ADMIN_OWNER_EMAIL', 'maintenance-owner@example.test');
     database = (await import('@/lib/db')).db;
     quiz = await import('@/lib/lesson-quiz-server');
@@ -78,6 +81,49 @@ describe.skipIf(!testDatabaseUrl)('quiz/progress authority against isolated Post
   const submit = (attemptId: string, questionId: string, optionId: string, student = userId) =>
     quiz.submitLessonQuizAnswer({ userId: student, lessonId, attemptId, questionId, optionId });
   const correctOption = (questionId: string) => `${questionId}-o0`;
+
+  const whileOnlyConnectionIsBusy = async <T>(operation: () => Promise<T>) => {
+    let acquired!: () => void;
+    let failed!: (error: unknown) => void;
+    const ready = new Promise<void>((resolve, reject) => {
+      acquired = resolve;
+      failed = reject;
+    });
+    const blocker = database.$transaction(async (tx) => {
+      await tx.$executeRawUnsafe('SET TRANSACTION READ ONLY');
+      const state = await tx.$queryRaw<Array<{ read_only: string }>>`SELECT current_setting('transaction_read_only') AS read_only`;
+      expect(state[0].read_only).toBe('on');
+      acquired();
+      // Prisma cannot deserialize pg_sleep's void result; select a scalar while
+      // keeping the single connection occupied for longer than default maxWait.
+      await tx.$queryRaw`SELECT 1::int AS waited FROM pg_sleep(3)`;
+    }, { maxWait: 10_000, timeout: 5_000 });
+    void blocker.catch(failed);
+    await ready;
+    try {
+      return await operation();
+    } finally {
+      await blocker;
+    }
+  };
+
+  test('launch waits for the single busy connection and persists one issued attempt', async () => {
+    const payload = await whileOnlyConnectionIsBusy(() => launch());
+    expect(payload.attempt.questions).toHaveLength(12);
+    expect(await database.lessonQuizAttempt.count({ where: { userId, lessonId } })).toBe(1);
+    expect(await database.lessonQuizAttemptAnswer.count({ where: { attemptId: payload.attempt.attemptId } })).toBe(12);
+  });
+
+  test('answer waits for the single busy connection and records the owned choice once', async () => {
+    const { attempt } = await launch();
+    const question = attempt.questions[0];
+    const response = await whileOnlyConnectionIsBusy(() => submit(attempt.attemptId, question.questionId, correctOption(question.questionId)));
+    expect(response).toMatchObject({ answeredCount: 1, isComplete: false, isCorrect: true });
+    expect(await database.lessonQuizAttemptAnswer.count({ where: { attemptId: attempt.attemptId, answeredAt: { not: null } } })).toBe(1);
+    const replay = await submit(attempt.attemptId, question.questionId, correctOption(question.questionId));
+    expect(replay.answeredCount).toBe(1);
+    expect(await database.lessonQuizAttemptAnswer.count({ where: { attemptId: attempt.attemptId, answeredAt: { not: null } } })).toBe(1);
+  });
 
   test('persists question membership and hides all correct answers before submission', async () => {
     const payload = await launch();
