@@ -33,7 +33,7 @@ function readCookie(request: Request, cookieName: string): string | null {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const origin = resolveServerAppOrigin(requestUrl.origin);
+  const origin = resolveServerAppOrigin(requestUrl.origin, request.headers.get('host'));
   const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
   const configuredOrigin = normalizeBaseOrigin(
     process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL,

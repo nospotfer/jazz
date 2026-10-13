@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/language-provider";
+import { isValidEmailAddress } from "@/lib/email-validation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,6 +22,8 @@ export default function VerifyCodePage() {
       title: "Verifica tu correo",
       subtitle:
         "Te enviamos un código de verificación a tu correo. Introdúcelo abajo para activar tu cuenta.",
+      resumingRegistration:
+        "Tu registro ya estaba pendiente. Verifica tu correo y usa la contraseña de tu registro inicial. Si no la recuerdas, restablécela desde el inicio de sesión.",
       email: "Correo",
       emailPlaceholder: "tu@correo.com",
       code: "Código de verificación",
@@ -42,6 +45,8 @@ export default function VerifyCodePage() {
       title: "Verify your email",
       subtitle:
         "We sent a verification code to your email. Enter it below to activate your account.",
+      resumingRegistration:
+        "Your registration was already pending. Verify your email and sign in with your original password. If you forgot it, reset it from the sign-in page.",
       email: "Email",
       emailPlaceholder: "you@email.com",
       code: "Verification code",
@@ -66,6 +71,8 @@ export default function VerifyCodePage() {
       title: "Vérifiez votre e-mail",
       subtitle:
         "Nous avons envoyé un code de vérification à votre e-mail. Saisissez-le ci-dessous pour activer votre compte.",
+      resumingRegistration:
+        "Votre inscription était déjà en attente. Vérifiez votre e-mail et connectez-vous avec votre mot de passe initial. Si vous l’avez oublié, réinitialisez-le depuis la page de connexion.",
       email: "E-mail",
       emailPlaceholder: "vous@email.com",
       code: "Code de vérification",
@@ -80,14 +87,16 @@ export default function VerifyCodePage() {
       invalidEmailCode: "Digite um e-mail e um código de verificação válidos",
       invalidCode: "Código de verificação inválido",
       verified: "E-mail verificado com sucesso! Redirecionando para o login...",
-      verifyFailed: "No fue posible verificar el código",
+      verifyFailed: "Não foi possível verificar o código",
       invalidEmailResend: "Digite um e-mail válido para reenviar o código",
-      resendFailed: "No fue posible reenviar el código",
+      resendFailed: "Não foi possível reenviar o código",
       resendSuccess:
         "Um novo código de verificação foi enviado para seu e-mail.",
       title: "Verifique seu e-mail",
       subtitle:
         "Enviamos um código de verificação para seu e-mail. Digite-o abaixo para ativar sua conta.",
+      resumingRegistration:
+        "Seu cadastro já estava pendente. Verifique seu e-mail e entre com a senha do cadastro inicial. Se você a esqueceu, redefina-a na página de login.",
       email: "E-mail",
       emailPlaceholder: "voce@email.com",
       code: "Código de verificação",
@@ -101,6 +110,7 @@ export default function VerifyCodePage() {
   }[language];
 
   const [email, setEmail] = useState("");
+  const [resumingRegistration, setResumingRegistration] = useState(false);
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
@@ -113,6 +123,7 @@ export default function VerifyCodePage() {
     }
 
     const params = new URLSearchParams(window.location.search);
+    setResumingRegistration(params.get("pending") === "1");
     const emailParam = params.get("email");
     if (emailParam) {
       setEmail(emailParam);
@@ -120,13 +131,13 @@ export default function VerifyCodePage() {
   }, []);
 
   const inputClasses =
-    "w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
+    "w-full px-3 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground text-base focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
 
   const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail || code.trim().length < 6) {
+    if (!isValidEmailAddress(normalizedEmail) || !/^\d{6,10}$/.test(code.trim())) {
       setError(copy.invalidEmailCode);
       return;
     }
@@ -166,9 +177,8 @@ export default function VerifyCodePage() {
 
   const handleResendCode = async () => {
     const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(normalizedEmail)) {
+    if (!isValidEmailAddress(normalizedEmail)) {
       setError(copy.invalidEmailResend);
       return;
     }
@@ -205,13 +215,15 @@ export default function VerifyCodePage() {
           <h1 className="text-xl sm:text-2xl font-bold text-white text-center">
             {copy.title}
           </h1>
-          <p className="text-sm text-[#9CA3AF] text-center">{copy.subtitle}</p>
+          <p className="text-sm text-muted-foreground text-center">
+            {resumingRegistration ? copy.resumingRegistration : copy.subtitle}
+          </p>
 
-          <form onSubmit={handleVerify} className="space-y-4">
+          <form method="post" onSubmit={handleVerify} className="space-y-4">
             <div>
               <label
                 htmlFor="verifyEmail"
-                className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                className="block text-sm font-medium text-foreground mb-1.5"
               >
                 {copy.email}
               </label>
@@ -231,7 +243,7 @@ export default function VerifyCodePage() {
             <div>
               <label
                 htmlFor="verifyCode"
-                className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                className="block text-sm font-medium text-foreground mb-1.5"
               >
                 {copy.code}
               </label>
@@ -252,12 +264,12 @@ export default function VerifyCodePage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
             {message && !error && (
-              <p className="text-sm text-green-400 bg-green-900/20 border border-green-700/40 rounded-lg px-3 py-2">
+              <p className="text-sm text-green-700 dark:text-green-400 bg-green-900/20 border border-green-700/40 rounded-lg px-3 py-2">
                 {message}
               </p>
             )}
@@ -276,14 +288,14 @@ export default function VerifyCodePage() {
               type="button"
               onClick={handleResendCode}
               disabled={resending}
-              className="text-sm text-[#FBBF24] hover:text-[#F59E0B] disabled:opacity-70 transition-colors"
+              className="text-sm text-primary hover:text-primary/80 disabled:opacity-70 transition-colors"
             >
               {resending ? copy.resending : copy.resendButton}
             </button>
             <button
               type="button"
               onClick={() => router.push("/auth?tab=login")}
-              className="text-sm text-[#9CA3AF] hover:text-white transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {copy.backToLogin}
             </button>

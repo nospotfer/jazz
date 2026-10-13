@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { db } from '@/lib/db';
+import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
+import { isValidEmailAddress } from '@/lib/email-validation';
 
 const OWNER_EMAIL = (process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net').toLowerCase();
-import { hasValidSupabaseServerConfig } from '@/lib/supabase-config';
 
 function hasPlaceholder(value: string | undefined, placeholder: string) {
   return !value || value.includes(placeholder);
@@ -48,16 +49,16 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!normalizedEmail || !code) {
+    if (!isValidEmailAddress(normalizedEmail) || typeof code !== 'string') {
       return NextResponse.json(
         { error: 'El correo y el código son obligatorios.' },
         { status: 400 }
       );
     }
 
-    // Validate code format (must be numeric, at least 6 digits)
-    const cleanCode = code.replace(/\D/g, '');
-    if (cleanCode.length < 6) {
+    // Do not transform malformed codes into a different token.
+    const cleanCode = code.trim();
+    if (!/^\d{6,10}$/.test(cleanCode)) {
       return NextResponse.json(
         { error: 'El formato del código de verificación es inválido.' },
         { status: 400 }
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    const { error } = await supabase.auth.verifyOtp({
+    const { data: verification, error } = await supabase.auth.verifyOtp({
       email: normalizedEmail,
       token: cleanCode,
       type: 'email',
@@ -91,42 +92,42 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: userData } = await supabase.auth.admin.listUsers();
-    const supaUser = userData?.users?.find((u) => u.email?.toLowerCase() === normalizedEmail);
+    // Synchronize the exact identity whose OTP Supabase verified, rather than
+    // trusting the input email or an unrelated first page of the user directory.
+    const supaUser = verification?.user;
+    if (!supaUser?.id || supaUser.email?.toLowerCase() !== normalizedEmail) {
+      return NextResponse.json(
+        { error: 'No se pudo comprobar la identidad verificada.' },
+        { status: 401 },
+      );
+    }
     const fullName =
       typeof supaUser?.user_metadata?.full_name === 'string' ? supaUser.user_metadata.full_name : null;
     const role = normalizedEmail === OWNER_EMAIL ? 'SUPER_ADMIN' : 'USER';
 
-    if (supaUser) {
-      const updateData: { emailVerified: boolean; name?: string; role?: string } = {
-        emailVerified: true,
-      };
+    const updateData: { emailVerified: boolean; name?: string; role?: string } = {
+      emailVerified: true,
+    };
 
-      if (fullName) {
-        updateData.name = fullName;
-      }
-
-      if (role === 'SUPER_ADMIN') {
-        updateData.role = 'SUPER_ADMIN';
-      }
-
-      await db.user.upsert({
-        where: { email: normalizedEmail },
-        create: {
-          id: supaUser.id,
-          email: normalizedEmail,
-          name: fullName,
-          emailVerified: true,
-          role,
-        },
-        update: updateData,
-      });
-    } else {
-      await db.user.updateMany({
-        where: { email: normalizedEmail },
-        data: { emailVerified: true },
-      });
+    if (fullName) {
+      updateData.name = fullName;
     }
+
+    if (role === 'SUPER_ADMIN') {
+      updateData.role = 'SUPER_ADMIN';
+    }
+
+    await db.user.upsert({
+      where: { email: normalizedEmail },
+      create: {
+        id: supaUser.id,
+        email: normalizedEmail,
+        name: fullName,
+        emailVerified: true,
+        role,
+      },
+      update: updateData,
+    });
 
     return NextResponse.json({
       success: true,

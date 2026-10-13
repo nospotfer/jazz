@@ -21,7 +21,7 @@ describe("GET /api/mux/promo-playback route", () => {
     process.env.MUX_SIGNING_PRIVATE_KEY = originalEnv.privateKey;
     vi.resetModules();
     vi.clearAllMocks();
-    vi.unmock("@/lib/mux");
+    vi.doUnmock("@/lib/mux");
   });
 
   test("returns unsigned fallback payload when mux env is missing", async () => {

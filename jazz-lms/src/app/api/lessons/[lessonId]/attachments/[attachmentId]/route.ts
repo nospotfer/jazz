@@ -83,7 +83,7 @@ export async function GET(
     const { lessonId, attachmentId } = await params;
     const bucket = process.env.SUPABASE_STORAGE_BUCKET;
     const ttlSeconds = Number(process.env.SIGNED_URL_TTL_SECONDS ?? 900);
-    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
+    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").trim().toLowerCase();
 
     if (!bucket) {
       return NextResponse.json(
@@ -95,9 +95,10 @@ export async function GET(
     const supabase = createClient();
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -116,6 +117,8 @@ export async function GET(
             chapter: {
               select: {
                 courseId: true,
+                isPublished: true,
+                course: { select: { isPublished: true } },
               },
             },
           },
@@ -145,6 +148,8 @@ export async function GET(
                 chapter: {
                   select: {
                     courseId: true,
+                    isPublished: true,
+                    course: { select: { isPublished: true } },
                   },
                 },
               },
@@ -155,16 +160,15 @@ export async function GET(
 
     const attachment = translatedAttachment ?? baseAttachment;
 
-    const isAdminOwner = (user.email ?? "").toLowerCase() === adminOwnerEmail;
+    const userEmail = (user.email ?? "").trim().toLowerCase();
+    const isAdminOwner = Boolean(adminOwnerEmail && userEmail && userEmail === adminOwnerEmail);
     const courseId = attachment.lesson.chapter.courseId;
 
-    const dbUser = user.email
-      ? await db.user.findUnique({
-          where: { email: user.email },
-          select: { role: true },
-        })
-      : null;
+    const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { role: true } });
     const isAdmin = isAdminRole(dbUser?.role ?? null);
+    if (!isAdminOwner && !isAdmin && (!attachment.lesson.isPublished || !attachment.lesson.chapter.isPublished || !attachment.lesson.chapter.course.isPublished)) {
+      return NextResponse.json({ error: "Attachment not found" }, { status: 404 });
+    }
 
     const [hasFullCoursePurchase, hasLessonPurchase, courseWithLessons] =
       await Promise.all([
@@ -185,7 +189,7 @@ export async function GET(
           },
         }),
         db.course.findUnique({
-          where: { id: courseId },
+          where: { id: courseId, isPublished: true },
           include: {
             chapters: {
               where: { isPublished: true },

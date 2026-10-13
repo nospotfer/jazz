@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -85,6 +86,7 @@ vi.mock('@/lib/course-translations', () => ({
 
 vi.mock('@/lib/test-mode', () => ({
   isLocalTestRequest: mocks.isLocalTestRequest,
+  isIsolatedLocalTestRequest: mocks.isLocalTestRequest,
 }));
 
 describe('Security: Authentication enforcement', () => {
@@ -107,7 +109,7 @@ describe('Security: Authentication enforcement', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     expect(response.status).toBe(401);
   });
 

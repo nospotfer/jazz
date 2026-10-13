@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -171,7 +172,7 @@ describe('Functional: Privileged user PDF access', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -224,7 +225,7 @@ describe('Functional: Privileged user PDF access', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);

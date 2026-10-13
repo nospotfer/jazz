@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -117,7 +118,7 @@ describe('API Contract: /api/dashboard/pdf-count response shape', () => {
     mocks.purchaseFindFirst.mockResolvedValue(null);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(body).toHaveProperty('count');

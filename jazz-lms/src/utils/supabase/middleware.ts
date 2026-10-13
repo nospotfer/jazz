@@ -14,6 +14,9 @@ export async function updateSession(request: NextRequest) {
   }
 
   const supabase = createServerClient(url!, key!, {
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production' || request.nextUrl.protocol === 'https:',
+    },
     cookies: {
       getAll() {
         return request.cookies.getAll()

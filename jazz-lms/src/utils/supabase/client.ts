@@ -1,11 +1,9 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { hasValidSupabasePublicConfig, normalizeSupabaseUrl } from '@/lib/supabase-config'
 
-type SupabaseFlowType = 'pkce' | 'implicit'
-
 type BrowserSupabaseClient = ReturnType<typeof createBrowserClient>
 
-export function createClient(options?: { flowType?: SupabaseFlowType }): BrowserSupabaseClient {
+export function createClient(): BrowserSupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const normalizedUrl = normalizeSupabaseUrl(url)
@@ -58,8 +56,12 @@ export function createClient(options?: { flowType?: SupabaseFlowType }): Browser
   }
 
   return createBrowserClient(normalizedUrl!, key!, {
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production' ||
+        (typeof window !== 'undefined' && window.location.protocol === 'https:'),
+    },
     auth: {
-      flowType: options?.flowType,
+      flowType: 'pkce',
     },
   })
 }

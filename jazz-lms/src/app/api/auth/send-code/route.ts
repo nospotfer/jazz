@@ -98,23 +98,22 @@ export async function POST(request: Request) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Also check Supabase Auth for fully registered users (with password)
-    const { data: userData } = await supabase.auth.admin.listUsers();
-    const existingSupaUser = userData?.users?.find(
-      (u) => u.email?.toLowerCase() === normalizedEmail,
-    );
-    if (!existingSupaUser) {
-      return NextResponse.json(
-        { error: "No se encontró la cuenta. Primero crea tu cuenta." },
-        { status: 404 },
-      );
-    }
-
-    if (existingSupaUser.email_confirmed_at) {
-      return NextResponse.json(
-        { error: "Este correo ya está registrado. Inicia sesión en su lugar." },
-        { status: 409 },
-      );
+    // A known DB id gives an exact auth lookup regardless of directory size.
+    // Unknown/auth-only accounts go through OTP without any directory scan.
+    if (existingUser) {
+      const { data, error } = await supabase.auth.admin.getUserById(existingUser.id);
+      if (error || !data.user || data.user.email?.toLowerCase() !== normalizedEmail) {
+        return NextResponse.json(
+          { error: "No se pudo comprobar la cuenta. Inténtalo de nuevo más tarde." },
+          { status: 503 },
+        );
+      }
+      if (data.user.email_confirmed_at) {
+        return NextResponse.json(
+          { error: "Este correo ya está registrado. Inicia sesión en su lugar." },
+          { status: 409 },
+        );
+      }
     }
 
     const { error } = await supabase.auth.signInWithOtp({
@@ -125,6 +124,12 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      if (error.code === "user_not_found") {
+        return NextResponse.json({
+          success: true,
+          message: "Si tu cuenta está pendiente de verificación, recibirás un código en tu correo.",
+        });
+      }
       console.error("Supabase OTP error:", error);
       const isRateLimit = error.message?.toLowerCase().includes("rate limit");
       if (isRateLimit) {
