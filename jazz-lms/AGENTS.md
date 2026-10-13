@@ -19,7 +19,7 @@ Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platfor
 - **Server Components by default**. Only add `'use client'` when needed (interactivity, browser APIs). See `src/app/auth/page.tsx` for client example.
 - **Import alias**: `@/*` maps to `./src/*`. Always use `@/` imports.
 - **Auth pattern in pages**: Call `createClient()` → `supabase.auth.getUser()` → redirect to `/auth` if null. See `src/app/dashboard/page.tsx`.
-- **Release flow policy**: Use the user-authorized maintenance branch for this goal and previews. Legacy deploy scripts may still assume `jazz-lms-dev-vercel`; verify their actual behavior before running. `main` and production changes require the review/approval described in the root instructions.
+- **Release flow policy**: Use the user-authorized maintenance branch for this goal and previews. Deployment scripts require a clean exact `VERCEL_DEPLOY_COMMIT`, explicit project/team/token configuration and a matching local Vercel project link. Validate remote provider isolation separately. `main` and production changes require the review/approval described in the root instructions; passing a scope guard is not approval.
 - **Supabase stubs**: Both Supabase client factories return minimal stubs when `NEXT_PUBLIC_SUPABASE_URL` is unset, allowing the app to render without Supabase configured.
 - **Component organization**: `src/components/landing/` (homepage sections), `src/components/course/` (player/sidebar), `src/components/layout/` (header, nav), `src/components/ui/` (shadcn primitives).
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.
@@ -42,6 +42,12 @@ npm run test:payments:all # Backend + frontend real + build
 npx prisma migrate dev --name <name>  # Apply migrations
 npx prisma generate  # Regenerate Prisma Client after schema changes
 ```
+
+The inventoried legacy seeds/admin/media mutators require a separate literal
+`ENABLE_LOCAL_LEGACY_MUTATIONS=1`, development/test runtime and the dedicated
+disposable loopback target. They cannot run in production. Voucher reset requires
+explicit user/course scope and defaults to a plan; writes need `--apply`.
+See `docs/maintenance/operational-scripts.md` before using operational commands.
 
 ## File Patterns
 

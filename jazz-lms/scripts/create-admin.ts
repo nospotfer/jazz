@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 
 const VALID_ADMIN_ROLES = ['SUPER_ADMIN', 'COURSE_ADMIN', 'CONTENT_CREATOR', 'MODERATOR'] as const;

@@ -5,11 +5,13 @@ seed, wipe, reset, price change, media mapping or production migration command
 was executed. Commands below identify existing entrypoints; they are not
 approval to run them against the supplied production credentials.
 
-Most scripts use ambient Prisma/provider configuration. Several diagnostic and
-mapping scripts explicitly read `.env.local`; the auth wipe reads `.env` before
-`.env.local`, without overriding an already-set value. A local-looking filename
-does not establish a local target. Confirm the resolved database, provider
-project/team and affected records privately before any operational execution.
+The 15 inventoried legacy mutators are now quarantined by a shared CLI guard
+before any Prisma/provider client is constructed. Execution requires the
+separate, literal `ENABLE_LOCAL_LEGACY_MUTATIONS=1` flag, `NODE_ENV=development`
+or `test`, and a known disposable loopback database. Production runtime or
+`VERCEL_ENV=production` is always denied; no production override exists.
+Read-only diagnostics retain their existing configuration behavior. Confirm
+their resolved provider/database identity privately before collecting evidence.
 Do not print configuration values or signed media URLs during that inspection.
 
 ## Diagnostic output fixed in this pass
@@ -42,25 +44,39 @@ playback IDs and the first usable attachment among up to 25. It does not prove
 every published lesson/PDF, account ownership, actual Dodo price/currency/tax,
 webhook delivery or recovery readiness.
 
-## Deployment entrypoints need release review
+## Deployment entrypoints now validate explicit scope
 
 | Existing command | Confirmed source behavior | Required review before use |
 | --- | --- | --- |
-| `npm run deploy:test` | `scripts/deploy-preview.sh:7` hardcodes an old canonical alias; line 14 requires `jazz-lms-dev-vercel`, so the current maintenance branch is rejected. It invokes `vercel --yes`, then searches CLI text for an alias. | Use the approved maintenance commit and verified Jazz project/team. Confirm preview environment isolation and deployment protection. Verify deployment/alias metadata directly rather than trusting text from a stale alias assumption. |
-| `npm run deploy:prod` | `scripts/deploy-production.sh:8` requires `main`; line 38 requires the legacy `INBOUND_EMAIL_WEBHOOK_SECRET`. It omits native `RESEND_WEBHOOK_SECRET` and `MESSAGES_REPLY_TO_EMAIL`, then invokes `vercel --prod --yes`. | Review the final commit, verified project/team, environment changes and production approval. Native receiving must use its matching webhook secret and approved Reply-To; the legacy relay should remain unset unless separately approved. |
+| `npm run deploy:test` | Allows a reviewed branch, validates its exact commit and linked project/team, runs lint/types/tests/webpack build, rechecks scope, then invokes `vercel --yes --non-interactive`. No hardcoded preview alias or CLI-text alias guessing remains. | Confirm isolated provider configuration and deployment protection before exercising accounts/payments. Verify actual deployment ID, source revision and URL through provider metadata. |
+| `npm run deploy:prod` | Requires `main`, the reviewed exact commit and linked project/team. Checks required configuration names, canonical app origins, live Dodo mode/origin, disabled synthetic checkout and paired optional native receiving configuration. Runs the same preflights and rechecks before `vercel --prod --yes --non-interactive`. | Explicit approval for this exact production operation remains required. Review remote environments, prerequisites, schema and rollback separately; the scope guard is not approval. |
 
-Both scripts inspect tracked changes with `--untracked-files=no`, so their clean
-check excludes untracked source files that can affect a build/upload. Neither
-validates the expected project/team before deploying; they rely on the current
-CLI account/project link. Existing branch gates do not establish that identity.
-Their lint/integration/build preflights do not inspect applied database
-migrations or backups.
+`scripts/check-deploy-target.mjs` requires `VERCEL_DEPLOY_COMMIT` to match the
+full HEAD SHA and rejects tracked or untracked source changes, both before
+preflights and immediately before upload. Explicit `VERCEL_PROJECT_ID` and
+`VERCEL_ORG_ID` must match the private local `.vercel/project.json` link. Supply
+`VERCEL_TOKEN` through the environment; the script never puts it in command
+arguments. Vercel documents these environment variables and the agent-friendly
+flag in its [CLI global options](https://vercel.com/docs/cli/global-options).
+The example environment leaves all four names empty.
 
-The preview `sanitize_cli_output` helper removes carriage returns and ANSI
-control sequences; it is not a credential redactor. No literal credential
-printing was found in these deployment scripts, but echoed CLI/build output
-must not be treated as guaranteed safe. Review app logging and keep secrets
-out of build commands/config dumps. No deployment behavior was changed here.
+Automatic integration probing was removed from deployment preflights; an
+unverified ambient database/provider must not be queried as a side effect of
+preparing a deploy. Native receiving requires both `RESEND_WEBHOOK_SECRET` and
+`MESSAGES_REPLY_TO_EMAIL`, or both unset. The old relay secret is optional.
+No receiving activation or email is performed by the guard.
+
+The guard validates local scope and configuration presence. It does not prove
+remote Vercel environment values, root directory, token permissions, alias
+assignment, provider health/isolation, database migrations or restorable backups.
+Ignored local files and ordinary CLI/build output still require appropriate
+secret handling. A clean Git status alone does not establish those facts.
+
+All 19 deployment regressions passed, including wrong project/team/commit,
+untracked source, production gates and a source file created during preflights.
+Wrapper checks use temporary Git repositories and mock npm/Vercel executables;
+no actual deployment or live provider is invoked. These checks do not establish
+that a real Vercel CLI/account deployment will succeed.
 
 ## Administrative and destructive entrypoints
 
@@ -71,38 +87,41 @@ out of build commands/config dumps. No deployment behavior was changed here.
 | `npx tsx scripts/seed-cleanup-vouchers.ts` | Its confirmation string gates deletion of every coupon except two legacy codes, associated redemption/discount history, and usage counter resets. It also reactivates unrestricted test/free codes. | Treat as a destructive legacy fixture tool; do not use for live voucher maintenance. Prepare an explicit scoped plan and recoverable export if a replacement operation is needed. |
 | `npm run admin:wipe-user-activity` | `scripts/wipe-user-activity.ts:28` deletes broad activity/payment/quiz tables, including the webhook ledger at line 46, and resets all voucher counters. Optional user deletion preserves only roles from its hardcoded set. Messaging tables are omitted despite the “ALL user activity” label. | Restrict to a verified disposable database. Any production retention/deletion request needs its own scoped plan, accounting/refund history decision and recovery verification; the static confirmation string provides no target/backup assurance. |
 | `npx tsx scripts/wipe-auth-users.ts` | Defaults to protecting one legacy email at line 65, rather than verified Jazz owners/admin roles. It deletes while advancing offset pages (lines 86–116), which can skip users as the result shrinks. Individual deletion failures only log and can leave the overall exit status successful. Emails/IDs and raw errors are logged. | Do not run on the live/shared project. A future approved deletion workflow needs explicit owner protection, a stable enumerated target list, dry-run output with PII minimized, reliable failure reporting and an account recovery plan. |
-| `npm run reset:user:vouchers -- --user-id=...` | `scripts/reset-user-voucher-state.ts:15` defaults `dryRun=false`; omitting course scope spans that user's courses. It deletes purchase/activity rows and adjusts voucher counts, with no environment/backup guard. | Review only with explicit `--dry-run`, explicit user/course and a verified isolated target. Reconcile provider/financial consequences before approving an actual reset. |
+| `npm run reset:user:vouchers -- --user-id=... --course-id=...` | Defaults to a read-only plan; both user and course are required. `--apply` explicitly enables writes, and `--codes` can sync only vouchers belonging to the selected purchases. The shared quarantine blocks other environments/targets. | Review the scoped plan first. This remains a disposable fixture reset, not a production accounting/refund workflow. |
 | `npm run course:price:fix` | `scripts/fix-course-price.ts:8` changes every positive-priced course to the hardcoded €29.99, without course/provider comparison or confirmation. | Review an explicit course and its actual Dodo product currency/price first. Do not use this broad historical default for maintenance. |
-| `npm run seed` / `npm run seed:sample` | The main seed creates another placeholder course each run. The sample seed upserts fixed IDs and published €29.99 sample content. Neither checks target environment. | Use disposable local fixtures only. Confirm intended catalogue identity and schema preparation; do not seed production to repair missing data. |
+| `npm run seed` / `npm run seed:sample` | After the shared local quarantine, the main seed creates another placeholder course each run. The sample seed upserts fixed IDs and published €29.99 sample content. | Use disposable local fixtures only. Confirm intended catalogue identity and schema preparation; do not seed production to repair missing data. |
 
-The scripts above were inspected only. Their static confirmation strings,
-idempotent upserts or transactions do not provide project identity, business
-approval or restoration evidence. Committed deletion requires a tested recovery
-procedure. In particular, deleting the payment webhook ledger discards durable
-refund/dispute evidence used by the entitlement safeguards.
+Their legacy business behavior remains suitable only for disposable fixtures;
+the quarantine does not validate admin account pairing, repair Auth wipe
+pagination, correct stale media maps or establish a restoration procedure.
+No actual mutator was executed during this change: accepted write branches were
+tested with mocked clients only. Deleting the payment webhook ledger still
+discards durable refund/dispute evidence, even in a disposable database.
 
 ## Media and PDF maintenance
 
 - `npm run mux:apply -- COURSE_ID` runs `scripts/apply-mux-playback-ids.ts` and
-  writes immediately. If the course ID is omitted, lines 40–48 choose the course
+  writes immediately after the local quarantine guard. If the course ID is
+  omitted, it chooses the course
   with the most lessons, then assign a positional hardcoded map. Account audit
   already proved its 15 slots contain only 14 unique playback IDs, with a
   duplicated final slot and stale class mappings. Compare the current lesson
   IDs/titles/order with actual selected-environment assets before preparing an
   approved map; do not run the existing mapping as a repair.
 - `npx tsx scripts/update-mux-playback-ids.ts` writes a separate fixed-ID map
-  immediately. Title-fragment checks help identify some mismatches, but do not
+  after the local quarantine guard. Title-fragment checks help identify some
+  mismatches, but do not
   prove environment ownership; updates are per row, so earlier changes can
-  persist when later rows fail. Line 128 prints the previous `videoUrl`, which
-  can contain a signed bearer query. A minimal logging fix would retain counts
-  and record IDs while omitting old URLs.
+  persist when later rows fail. Output now contains controlled statuses,
+  lesson IDs and counts; old video URLs/titles and arbitrary provider exceptions
+  are omitted.
 - `npx tsx scripts/remap-attachments-to-bucket.ts` defaults to a dry run, with
-  `--apply` enabling writes. Line 194 nevertheless prints complete old
-  attachment URLs before that gate. Signed URLs stored there would leak even
-  during the dry run. Omit old URLs or emit only a reviewed token-free identifier
-  before using the diagnostic; no such script was run in this audit.
+  `--apply` enabling writes, after the local quarantine guard. Output contains
+  attachment IDs and counts, including unmatched/duplicate file counts; old
+  names/URLs and arbitrary provider exceptions are omitted even during dry runs.
 - `npm run pdf:sync -- --course-id=COURSE_ID --storage-prefix=PREFIX` writes
-  attachment upserts immediately; it has no dry-run flag. An omitted course ID
+  attachment upserts after the local quarantine guard; it has no dry-run flag.
+  An omitted course ID
   only triggers a guard when the lesson count exceeds the expected class count.
   Review explicit course/bucket/prefix and the full proposed mapping privately.
 - `npx tsx scripts/check-attachments-bucket.ts` and
@@ -160,8 +179,68 @@ regressions. Checkout opt-in does not enable resets.
 Focused checks: 137 tests across helper isolation, admin/self reset behavior,
 consumer scope and checkout regressions. Positive mutation paths use mocks
 only; no reset, reversal or synthetic-purchase mutator was executed against an
-actual database/provider in this task. Existing CLI mutators above still need
-their own target/dry-run/recovery review; these API changes do not guard them.
+actual database/provider in this task. The separate CLI quarantine below does
+not inherit the HTTP reset or checkout opt-in.
+
+### Legacy CLI quarantine
+
+`scripts/lib/legacy-local-guard.ts` now guards these entrypoints before client
+construction:
+
+- `prisma/seed.ts`, `prisma/seed-sample.ts`.
+- `scripts/create-admin.ts`, `scripts/seed-admin-test-voucher.ts`,
+  `scripts/seed-cleanup-vouchers.ts`, `scripts/wipe-user-activity.ts`,
+  `scripts/wipe-auth-users.ts`, `scripts/reset-user-voucher-state.ts`,
+  `scripts/fix-course-price.ts`.
+- `scripts/apply-mux-playback-ids.ts`, `scripts/update-mux-playback-ids.ts`,
+  `scripts/remap-attachments-to-bucket.ts`,
+  `scripts/sync-supabase-pdf-attachments.ts`,
+  `scripts/sync-jazz-lesson-metadata.ts`, `scripts/import-lesson-quiz-bank.ts`.
+
+The new flag defaults to `0` in `.env.example`. It must be set to literal `1`,
+independently of the HTTP test-helper flags or the older `CONFIRM` strings.
+`NODE_ENV` must be `development` or `test`; production is denied regardless of
+flags. `DATABASE_URL` must use postgres/postgresql and `localhost` or
+`127.0.0.1`, selecting exactly `55432/jazz_maintenance` or `56122/postgres`.
+Only public schema and numeric pool/timeout query parameters are permitted;
+duplicate parameters, fragments, service/host overrides and other targets fail
+closed. The guard never emits datasource or service-key values.
+
+Auth wipe and both Supabase-backed attachment tools additionally require every
+configured `NEXT_PUBLIC_SUPABASE_URL`/`SUPABASE_URL` alias to select the dedicated
+HTTP loopback API on port `56121`, with no credentials, path or query overrides.
+The Auth wipe and attachment remapper no longer auto-load `.env`/`.env.local`.
+Supply disposable configuration explicitly before invocation. Prisma's own
+environment loading cannot authorize a missing flag or datasource because the
+guard executes before construction.
+Supabase-backed tools also retain the validated target snapshot and pass an
+explicit Prisma datasource/provider URL, so later ambient environment loading
+cannot switch a fallback local alias to a production project.
+
+Voucher reset requires explicit `--user-id` and `--course-id`, defaults to a
+dry-run plan and writes only with `--apply`. Supplying both `--apply` and
+`--dry-run` is rejected. Named voucher count sync is restricted to vouchers
+found on the selected user/course purchases. The other quarantined tools retain
+their legacy local-only behavior, including immediate writes where noted;
+do not assume every tool now has a dry-run mode.
+
+Focused regressions cover guard parsing, every entrypoint's default-off/remote/
+production rejection before construction, remote Supabase alias rejection,
+read-only reset defaults and explicit reset scope, and signed-media logging.
+All 110 quarantine/reset/logging cases passed. Running the existing 11 read-only
+integration-check confidentiality cases alongside them passed 121 tests across
+three files. Full TypeScript, targeted ESLint and whitespace checks passed.
+All client/write branches are mocked; no actual mutator or live provider runs.
+
+```bash
+npx vitest run tests/security/legacy-cli-guard.test.ts tests/security/legacy-cli-entrypoints.test.ts
+```
+
+This closes accidental ambient-production execution of the inventoried legacy
+tools. It does not provide a production maintenance CLI, correct the retained
+fixture mappings/administrative defaults, quarantine unrelated migration or
+deployment commands, or establish backup/restore capability. A future
+production operation needs its own reviewed tool and recovery plan.
 
 ### Review before operational writes
 

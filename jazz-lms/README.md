@@ -116,6 +116,15 @@ authorized when provider data is isolated. Production deployment/configuration,
 migrations, destructive operations, real payments/refunds, plan changes and
 third-party messages require the owner's explicit approval.
 
+Manual deployment scripts require a clean reviewed commit, explicit Vercel
+project/team/token configuration and a matching private local project link.
+They run lint, types, tests and a webpack build, then recheck the target before
+upload. This local guard does not verify remote environments or authorize a
+production release. Legacy seeds/admin/media mutators require the separate
+default-off `ENABLE_LOCAL_LEGACY_MUTATIONS` opt-in and dedicated disposable
+loopback targets; production is always blocked. See the
+[operational script runbook](docs/maintenance/operational-scripts.md).
+
 Legacy deploy scripts still encode old branch/account assumptions. Verify their
 actual target and environment before use. Preserve the previous production
 commit/deployment and migration-specific rollback before release; an app rollback
