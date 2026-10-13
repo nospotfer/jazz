@@ -134,6 +134,64 @@ describe("native Resend professor replies", () => {
     expect(mocks.execute.mock.calls[0][4]).toBe("Hello & welcome\nListen to jazz.");
   });
 
+  test("parses nested script/style markup and preserves a thread marker in HTML-only body text", async () => {
+    mocks.receiving.mockResolvedValue({ data: {
+      id: emailId, from: professor, subject: 'Professor reply', text: null,
+      html: `<script><script>hidden()</script></script><style><style>hidden</style></style><p>Thread ID: ${threadId}</p><p>&#x1F3B7; &eacute; answer</p>`,
+      authentication: { dkim: 'pass', dmarc: 'pass' },
+    }, error: null });
+    expect((await post(signedRequest())).status).toBe(200);
+    expect(mocks.execute.mock.calls[0][4]).toBe(`Thread ID: ${threadId}\n🎷 é answer`);
+    expect(mocks.send.mock.calls[0][0].text).toContain('🎷 é answer');
+    expect(mocks.send.mock.calls[0][0]).not.toHaveProperty('html');
+  });
+
+  test("prefers supplied plain text and keeps literal markup in a text-only notification", async () => {
+    const text = '<script>literal professor example</script>';
+    mocks.receiving.mockResolvedValue({ data: {
+      id: emailId, from: professor, subject: `Question [Thread:${threadId}]`, text,
+      html: 'x'.repeat(100_001), authentication: { dkim: 'pass', dmarc: 'pass' },
+    }, error: null });
+    expect((await post(signedRequest())).status).toBe(200);
+    expect(mocks.execute.mock.calls[0][4]).toBe(text);
+    expect(mocks.send.mock.calls[0][0].text).toContain(text);
+    expect(mocks.send.mock.calls[0][0]).not.toHaveProperty('html');
+  });
+
+  test.each([
+    { text: null, html: 'x'.repeat(100_001) },
+    { text: null, html: `${'<div>'.repeat(300)}Deep reply${'</div>'.repeat(300)}` },
+    { text: 'x'.repeat(100_001), html: null },
+  ])("rejects oversized/deep receiving content before database or notification work", async body => {
+    mocks.receiving.mockResolvedValue({ data: {
+      id: emailId, from: professor, subject: `Question [Thread:${threadId}]`, ...body,
+      authentication: { dkim: 'pass', dmarc: 'pass' },
+    }, error: null });
+    expect((await post(signedRequest())).status).toBe(413);
+    expectNoDatabaseWork();
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  test("ignores unauthenticated sender before even attempting oversized HTML conversion", async () => {
+    mocks.receiving.mockResolvedValue({ data: {
+      id: emailId, from: professor, subject: `Question [Thread:${threadId}]`, text: null,
+      html: 'x'.repeat(100_001), authentication: { dkim: 'fail', dmarc: 'pass' },
+    }, error: null });
+    expect((await post(signedRequest())).status).toBe(202);
+    expectNoDatabaseWork();
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  test("rejects script-only HTML whose conversion has no message body", async () => {
+    mocks.receiving.mockResolvedValue({ data: {
+      id: emailId, from: professor, subject: `Question [Thread:${threadId}]`, text: null,
+      html: '<script>hidden</script><style>hidden</style>', authentication: { dkim: 'pass', dmarc: 'pass' },
+    }, error: null });
+    expect((await post(signedRequest())).status).toBe(400);
+    expectNoDatabaseWork();
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
   test("acknowledges retries without updating thread or resending notifications", async () => {
     mocks.execute.mockResolvedValueOnce(0);
     const response = await post(signedRequest());

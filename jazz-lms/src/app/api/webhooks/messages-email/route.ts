@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { extractNormalizedEmail } from "@/lib/email-validation";
 import { ensureMessagingTables } from "@/lib/messages-db";
+import { incomingEmailHtmlToText, IncomingEmailConversionLimitError, MAX_INCOMING_EMAIL_BODY_LENGTH } from "@/lib/incoming-email-text";
 import { checkRateLimit, createRateLimitHeaders } from "@/lib/rate-limit";
 import { randomUUID, timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
@@ -62,22 +63,6 @@ function hasMatchingSecret(expected: string | undefined, provided: string | null
   return expectedBuffer.length === providedBuffer.length && timingSafeEqual(expectedBuffer, providedBuffer);
 }
 
-// Messages are displayed as plain text. This extracts a readable fallback for
-// HTML-only emails; it never renders incoming markup or fetches embedded URLs.
-function htmlToText(html: string) {
-  return html
-    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
-    .replace(/<br\s*\/?\s*>|<\/(p|div|li|tr|h[1-6])>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;|&apos;/gi, "'")
-    .replace(/&amp;/gi, "&")
-    .trim();
-}
-
 export async function POST(req: Request) {
   try {
     const signingSecret = process.env.RESEND_WEBHOOK_SECRET?.trim();
@@ -133,7 +118,7 @@ export async function POST(req: Request) {
         return new NextResponse("Ignored unauthenticated sender", { status: 202 });
       }
       subject = email.subject;
-      textBody = email.text?.trim() || htmlToText(email.html || "");
+      textBody = email.text?.trim() || incomingEmailHtmlToText(email.html || "");
       messageId = `resend-email:${emailId}`;
     } else {
       // Compatibility for an explicitly configured trusted relay. That relay
@@ -175,7 +160,7 @@ export async function POST(req: Request) {
     if (!textBody) {
       return new NextResponse("Message body is required", { status: 400 });
     }
-    if (textBody.length > 100_000) return new NextResponse("Message too large", { status: 413 });
+    if (textBody.length > MAX_INCOMING_EMAIL_BODY_LENGTH) return new NextResponse("Message too large", { status: 413 });
 
     const threadId = extractThreadId(`${subject}\n${textBody}`);
     if (!threadId) {
@@ -256,6 +241,9 @@ export async function POST(req: Request) {
       studentId: thread.studentId,
     });
   } catch (error) {
+    if (error instanceof IncomingEmailConversionLimitError) {
+      return new NextResponse("Message too large", { status: 413 });
+    }
     if (error instanceof Error && error.name === "MessagingSchemaUnavailableError") {
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }

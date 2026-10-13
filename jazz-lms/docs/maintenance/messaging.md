@@ -20,6 +20,33 @@ Native events contain metadata. After successful verification, the route calls
 embedded resources or render email HTML. See
 [Resend receiving content](https://resend.com/docs/dashboard/receiving/get-email-content).
 
+### HTML-only reply conversion
+
+Nonempty plain text takes precedence. HTML-only replies use the server-only
+`html-to-text` parser with explicit selectors: scripts, styles, document metadata,
+hidden elements and embedded content are skipped; anchor destinations and image
+URLs are not added to the message. Conversion decodes character entities and
+preserves useful paragraph and line breaks without fetching resources. The
+library documents its [conversion options, selectors and limits](https://github.com/html-to-text/node-html-to-text/tree/master/packages/html-to-text).
+
+HTML input and resulting message text are capped at 100,000 characters. Conversion
+also bounds traversal depth to 256 and children per node to 20,000. Exceeding
+these bounds returns HTTP 413 before storage or notification, rather than
+silently saving a truncated reply. The signed webhook request retains its
+separate existing 100,000-character limit. Unused HTML does not affect a valid
+plain-text reply.
+
+The result is plain text, not HTML suitable for interpolation. Decoded text may
+contain literal `<script>` or `<img>` strings; React text children in the inbox
+and notification panel encode these for display, and outgoing notifications use
+Resend's `text` field. Any future HTML sink requires its own reviewed encoding
+or sanitization. CodeQL alerts 14 and 15 identified incomplete one-pass
+script/style removal in the old regex converter. The replacement removes that
+source pattern; current text sinks did not establish an exploitable browser XSS
+path. Regression tests exercise malformed tags, entities, conversion limits,
+HTML-only webhook deliveries and the actual inbox's text rendering. The remote
+CodeQL rerun remains the verification of those alerts.
+
 Both signed metadata and the retrieved message must identify `PROFESSOR_EMAIL`.
 The retrieved provider-computed `authentication.dkim` and `authentication.dmarc`
 must each equal `pass`. Arbitrary email `Authentication-Results` headers are not
