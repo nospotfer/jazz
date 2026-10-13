@@ -94,8 +94,37 @@ key. Production and preview share live resources; development's live-only key
 returns 401 in test mode. Separate test access and dashboard/delivery evidence
 remain required. [Dodo audit](dodo.md).
 
-Vercel production/preview/development all reference the feav Supabase project;
-current manager CLI check is unauthenticated. Public DNS failure does not prove
-pause/deletion/data loss. Finish native Supabase login on the remote machine,
-then inspect customer-project preservation/recovery and Auth/schema/storage/
-backup metadata. No provider write, production deployment or migration occurred.
+At that checkpoint the manager CLI was unauthenticated. Native Supabase login
+now works and the subsequent evidence below identifies the existing customer
+project. Public DNS failure alone never established pause/deletion/data loss.
+
+## Provider-evidence documentation verification
+
+Revision `ad61d7c5de717e11a21cbdf1b505d857f8206bf0` passed
+[Quality PR](https://github.com/nospotfer/jazz/actions/runs/38381709357),
+[Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38381709464),
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/38381706185) and
+[Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/BWjWURduMqj2nkLdiU4C2auYYQEz).
+Push Quality/Secret Scan also pass. Exact Preview deployment 7035778099:
+https://jazz-q16rbw7pb-gabriels-projects-bd92791f.vercel.app. HEAD homepage/auth/
+robots all redirect to SSO; no bypass, remote customer journey or isolation proof.
+
+## Supabase manager and UX follow-up
+
+Authenticated inventory/project GET finds feav Jazz-LMS-Project INACTIVE,
+eu-west-1/PG17 in Free Neurofactory Org. Caller matches its sole Owner; member
+MFA false. Matching restore engine/version is advertised; backup list empty,
+PITR off, managed backup retention entitlement zero. This is not recovered-data
+proof. Stored Google/SMTP configured, production PKCE reset callback missing,
+global Vercel redirect allowance present. [Recovery proposal](supabase.md).
+The bounded same-project resume/preservation/re-pause proposal awaits explicit
+production approval; no production mutation or SQL has occurred.
+
+Source `47c383d996c1346a39bf5e6dd07a460b18a04afb` localizes voucher success/error
+feedback in both entry points, retains stable failure reasons through atomic
+rechecks, and localizes sidebar accessibility labels. Fresh local suite:
+**944 passed, 38 skipped**, 84 passed/5 skipped files; TypeScript and webpack
+build pass, lint 0 errors/25 warnings. Updated affected source in the isolated
+app passes native PDF desktop/mobile and actual voucher redemption/cleanup:
+**3/3 browser cases**. Component tests use actual language providers with mocked
+API responses; they do not prove Dodo. Fresh remote follow-up checks pending.

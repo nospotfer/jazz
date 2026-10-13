@@ -10,7 +10,11 @@ establishes which database currently holds customer data. At this public-only
 checkpoint the server environment was unknown; subsequent authenticated
 [Vercel inspection](vercel.md) confirms production server and preview/development
 configuration reference the deployed feav project. Project existence, status,
-recovery and customer-data preservation still require manager access.
+recovery and customer-data preservation required manager access at that point.
+Subsequent authenticated [manager inventory](supabase.md) confirms the feav
+project exists but is INACTIVE; legacy wmuj is absent from this account. Matching
+engine restore metadata and an empty managed-backup list do not prove recovered
+data. A same-project resume/preservation plan awaits production approval.
 
 The public homepage and `/auth` returned HTTP 200. Twenty same-origin Next.js
 script chunks were fetched without executing JavaScript, starting analytics,

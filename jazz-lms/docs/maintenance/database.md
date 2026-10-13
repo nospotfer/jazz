@@ -1,5 +1,11 @@
 # Database and Supabase Data API security
 
+Authenticated [manager inspection](supabase.md) now identifies the deployed feav
+project as INACTIVE, eu-west-1/PG17 in Free Neurofactory Org. No production SQL or
+schema/data inspection has occurred. The same-project resume and preservation
+proposal awaits explicit production approval; actual backup/restore remains
+unverified. The local exposure described below is not production evidence.
+
 The LMS uses Supabase for authentication and private object storage. Application
 `.from()` calls found in this review target storage buckets; no application
 table `.from()` or `.rpc()` queries were found. Course data, accounts,

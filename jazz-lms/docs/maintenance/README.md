@@ -18,6 +18,7 @@ site attractive and easy to use while preserving its jazz identity.
 | [Local verification](local-verification.md) | Guarded databases, native Auth/storage and browser reproduction | Documented |
 | [Public provider evidence](public-provider-evidence.md) | Deployed/legacy Supabase DNS failure and inspection limits | Documented |
 | [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Locally tested; production unverified |
+| [Supabase manager and recovery](supabase.md) | Existing customer-project status, stored Auth/config and bounded resume proposal | Authenticated; production project INACTIVE, resume approval pending |
 | [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
 | [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
 | [Dodo audit](dodo.md) | Live product, tax setting, webhook and test-mode access | Read-only live access works; test credentials still needed |
@@ -29,10 +30,12 @@ accessible critical/high defects are fixed and verified, relevant customer
 journeys pass in a verified preview, and the production review package is ready.
 Unverified integrations and deferred requirements must remain explicit.
 
-The largest current availability gate is the Supabase public endpoint: both the
-deployed frontend project and the older local project fail independent DNS
-checks. Preserve and locate the actual customer database before preparing any
-production configuration change or replacement project. Vercel configuration
+The largest current availability gate is the inactive Supabase customer project.
+Authenticated manager access identifies the deployed feav project in Neurofactory
+Org; no usable backup/restore has yet been verified. The older local project is
+absent from this account's inventory. A bounded same-project resume/preservation
+proposal awaits production approval. Preserve the source before any replacement.
+Vercel configuration
 confirms the deployed server and all three target environments use the same
 Supabase project. Production and preview also share live Dodo credentials; the
 existing preview is unsuitable for isolated customer/payment testing.

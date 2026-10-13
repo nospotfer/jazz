@@ -284,3 +284,58 @@ Next: finish native Supabase manager login, locate/preserve customer project and
 inspect metadata/recovery/backups. Prepare separate preview dependencies and
 test credentials, then repeat relevant remote customer journeys. Production is
 unchanged; completion and production approval remain pending.
+
+## Supabase manager access and bounded recovery review — 2026-10-13
+
+- Native CLI login now works. Exactly one accessible project: deployed feav
+  Jazz-LMS-Project, INACTIVE, eu-west-1/PG17, created February 17. Legacy wmuj
+  absent from this account; no deletion/other-account ownership inference.
+  Neurofactory Org is Free with one Owner; profile confirms caller is that
+  Owner, member MFA false. Recovery/ownership hygiene remains an owner decision.
+- Documented project/restore-version/backup/org/member/entitlement GETs confirm
+  matching PG17 restore version, empty managed backup list/physical timestamps,
+  WAL-G true/PITR false and zero managed backup retention entitlement. Empty
+  results do not prove a missing pause snapshot or customer-data loss. No SQL,
+  customer rows or project mutation requested.
+- Current official pausing docs specify a one-year in-place restore window,
+  superseding historical 90-day guidance. Prepared exact existing-project
+  POST /restore proposal with preflight, private DB/separate Storage export,
+  isolated recovery verification and explicitly bounded re-pause rollback.
+  It would reconnect the live site's existing backend and may apply a minor
+  platform update. Explicit production approval requested and still pending.
+- Five Auth/storage/network/SSL/PostgREST GETs: Google and Resend SMTP stored
+  configured, confirmation/rotation/reauth on. Production reset callback missing
+  for current PKCE source; global *.vercel.app allowances need release review.
+  Stored network rules allow all IPs. PostgREST404/SSL500 remain inspection limits;
+  no service protection/health inferred. No email or OAuth test performed.
+- Standalone synthetic preview is the intended separate Supabase option. Free
+  quota is two active projects across Owner/Admin organizations; reserve customer
+  resume capacity and verify all affected quotas before creation. Billing is
+  organization-wide; no paid branch, clone, upgrade or new project was created.
+- Actual ad61d7c remote Quality/Secret Scan/CodeQL/Vercel pass. Exact new protected
+  preview recorded in review-status; HEAD homepage/auth/robots still SSO302.
+
+Next: await the required resume decision while finishing independent source/UX
+work. Resume/preservation, actual schema/storage/RLS/backups and isolated remote
+test-provider/OAuth/mail journeys remain essential. The goal is incomplete.
+
+## Voucher and sidebar localization — source 47c383d
+
+- Both voucher entry points now map stable error/reason contracts into selected
+  ES/EN/FR/PT, including language changes after feedback. Unknown API/provider
+  prose stays out of customer feedback; localized free/price/success text retained.
+- Atomic redeem failures add a reason while retaining status/error/message and
+  purchase/discount/voucher accounting. Nineteen actual component/route cases
+  pass; 201 focused payment cases overlap the final normal suite, not extra totals.
+- Sidebar menu/unread accessibility labels use dashboard translations. Existing
+  Spanish PDF/browser selector updated to assert the correct accessible label.
+- Final normal suite: 944 passed/38 intentional skips, 84 passed/5 skipped files.
+  TypeScript/webpack build pass; lint zero errors/25 existing warnings. A browser
+  launch first used an absent system Chromium path; bounded rerun with installed
+  full Chromium and no fallback app server passes native PDF desktop/mobile and
+  actual new local voucher redemption with scoped cleanup, 3/3. Private recordings
+  disabled; production env not copied. Only affected source was synced for these
+  targeted browser checks; this is not a remote/exact-whole-preview claim.
+
+Next: publish source plus manager/recovery evidence, inspect exact remote checks,
+and execute only the owner-approved recovery operation when approval arrives.

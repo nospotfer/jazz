@@ -65,8 +65,10 @@ includes advertising or processing product sales. The site's paid course and
 active live Dodo product therefore require an owner decision about a suitable
 plan/hosting arrangement. No upgrade, transfer or payment-method change was made.
 
-Next, finish Supabase manager authentication on the remote machine, preserve the
-customer project, and prepare a distinct preview with isolated Auth/database/
+Supabase manager authentication now works: the existing customer project is
+INACTIVE, eu-west-1/PG17, with stored Google/SMTP configuration and specific Auth
+redirect gaps. Review the [same-project recovery proposal](supabase.md), preserve
+the customer project, and prepare a distinct preview with isolated Auth/database/
 storage and Dodo test mode. Do not deploy a customer test into the live project's
 current preview configuration. Verify the exact source, Node/build settings,
 remote customer journeys, webhook handling and rollback compatibility. Production

@@ -38,8 +38,10 @@ Local repairs have not changed the website, accounts, DNS or live database.
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
 - [ ] Verify isolated target build settings, usage/logs and previous deployment
   compatibility/rollback; prepare owner decision for commercial site on Hobby.
-- [ ] Locate and preserve customer Supabase database; reconcile public/server
-  settings. Both known project DNS endpoints fail. [Evidence](public-provider-evidence.md).
+- [x] Locate deployed Supabase project through manager inventory; feav exists,
+  INACTIVE, eu-west-1/PG17, matching production server reference.
+- [ ] Approve bounded same-project resume and verify actual customer data,
+  separate Storage preservation and a usable backup/restore. [Proposal](supabase.md).
 - [ ] Confirm remote preview uses isolated data/providers, deploy exact review
   commit and repeat relevant customer journeys. Local copied preview is not Vercel proof.
 - [ ] Inspect production schema/roles/table/function/view grants/storage/migration
@@ -48,7 +50,10 @@ Local repairs have not changed the website, accounts, DNS or live database.
   active webhook route/filters and exact signing-secret match through GETs.
 - [ ] Obtain matching Dodo test credentials; verify dashboard/account/currency/tax
   decisions and actual isolated checkout, delivery, reconciliation/coupon/reversal.
-- [ ] Verify current Google OAuth/SMTP configuration and isolated login.
+- [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
+  PKCE reset callback and global preview Auth allowances documented.
+- [ ] Review exact production Auth redirect changes and Google console settings;
+  verify actual isolated OAuth/SMTP/recovery after service restoration.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
 - [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
   protected preview, actual follow-up CI/CodeQL success and remaining gaps.
@@ -60,7 +65,7 @@ Values remain in provider stores. Publish names, targets and status only.
 | Configuration | Review before release |
 | --- | --- |
 | DB/Supabase URL, anon/service keys and storage bucket | Current three targets share feavujcllgbzlvdvkkxx. Preserve customer project and reconcile EU/US connection strings; separate preview. Verify trusted CRUD and public key scope. |
-| APP_URL/NEXT_PUBLIC_APP_URL and Auth allowlist | Exact canonical origin plus /auth/callback, /auth/reset-password/callback and /auth/reset-password; separate preview project, no production wildcard preview allowlist. |
+| APP_URL/NEXT_PUBLIC_APP_URL and Auth allowlist | Current stored apex Auth lacks /auth/reset-password/callback and allows global *.vercel.app. Prepare canonical www with exact callback/reset paths; separate preview Auth, remove broad production preview/local allowances in reviewed release. |
 | Runtime/root/build | Live Node 20.x with root/framework/build overrides unset; prepare Node 24.x and source-root/build settings for the exact deployment method. Verify isolated build before production change. |
 | CRON_SECRET | Currently absent in live project/deployment env names; prepare nonempty random per-environment secret with hardened release. 03:15 UTC bearer sweep; missing/wrong denied. |
 | Dodo keys/product/environment | Preview currently shares live mode/resources; development test mode key returns 401. Supply separate verified test credentials/product/webhook in staging; preserve approved live resources. Synthetic checkout stays loopback-only. |
