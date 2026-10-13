@@ -27,7 +27,7 @@ Revision `37df1a0089d64dfd5c11975caf0aedd7ffa5055e` includes:
   encoding regressions. Plain text remains preferred; signatures, authenticated
   sender checks, deduplication and text-only notifications remain enforced.
   The sinks did not establish executable HTML; the CodeQL findings were not
-  dismissed. Their remote rescan is still required.
+  dismissed. Their follow-up remote rescan marks both fixed.
 - `37df1a0`: all 15 inventoried legacy mutators reject ambient production and
   unexpected local targets before client construction. Voucher reset requires
   user/course scope and explicit application. Deployment wrappers require the
@@ -47,8 +47,19 @@ empty-environment run correctly rejected imports/build collection that require
 that setting. The reproducible sequence is in [local verification](local-verification.md).
 No real mutator or deployment was invoked by the wrapper/CLI regressions.
 
-Next: publish this follow-up and inspect fresh Quality, Secret Scan, CodeQL and
-Vercel results on its exact commit. Preserve the account/provider gaps in the
+## Follow-up published verification
+
+Revision `c6a0556264f803aceb99311d8efc588f52ff2208` contains the reviewed source
+above plus checkpoint documentation. Actual remote checks all passed:
+
+| Remote check | Verified result |
+| --- | --- |
+| [Quality PR run](https://github.com/nospotfer/jazz/actions/runs/38332857386) | Lint 0 errors/25 warnings, TypeScript, webpack build, 925 normal tests/38 intentional skips and 37 persisted PostgreSQL tests/one REST skip. Push Quality run 38332853063 also passed. |
+| [Secret Scan PR run](https://github.com/nospotfer/jazz/actions/runs/38332857318) | Success; push Secret Scan run 38332853065 also passed. Local redacted history scan covered 285 commits with zero findings. Known historical test passwords remain the owner's rotation task. |
+| [CodeQL analysis](https://github.com/nospotfer/jazz/actions/runs/38332854151) and [aggregate check](https://github.com/nospotfer/jazz/runs/115086427261) | Success. PR-scoped alerts 14/15 have state fixed, and the open-alert query for PR #46 returns zero. This is branch evidence, not proof that production/default-branch issues are resolved. |
+| [Vercel build](https://vercel.com/gabriels-projects-bd92791f/jazz/EiBBxrnsEzA4UP2NdFbWtgCwoLxD) | Success; GitHub Preview deployment 7027902333, exact source c6a0556, exact URL https://jazz-gaqqmqu84-gabriels-projects-bd92791f.vercel.app. All three HEAD checks (/ /auth /robots.txt) return 302 to Vercel SSO; no bypass or customer flow was attempted. |
+
+Next: preserve the account/provider gaps in the
 [verification matrix](verification-matrix.md) and [release gates](release-checklist.md).
 Both known Supabase endpoints fail DNS; customer data preservation, current
 Vercel/Supabase/Dodo access, Google OAuth and approved email evidence remain

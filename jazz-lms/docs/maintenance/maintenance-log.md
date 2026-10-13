@@ -223,3 +223,25 @@ Dodo/OAuth/mail gates; no production release or provider mutation has occurred.
 Next: publish the follow-up, inspect its exact remote CI/CodeQL/preview and
 preserve essential provider-access gates. Detailed immutable checkpoint links
 are in [review-status.md](review-status.md). Goal remains active.
+
+## Follow-up remote checks complete — 2026-10-13
+
+On c6a0556264f803aceb99311d8efc588f52ff2208, both push/PR Quality and
+Secret Scan passed. The downloaded PR Quality log confirms 925 normal tests,
+38 intentional skips, 37 actual PostgreSQL tests/one REST skip, lint 0 errors/
+25 warnings, TypeScript and webpack build. CodeQL analysis and aggregate check
+passed; PR-scoped alerts 14/15 are fixed and no open PR alerts remain.
+Local redacted history scan covered 285 commits with zero findings, preserving
+the explicitly deferred historical-password rotation caveat.
+
+Vercel Preview deployment 7027902333 succeeded on this exact source. Its
+immutable URL redirects all three tested HEAD paths to Vercel SSO; no protection
+bypass or remote customer flow was attempted. Provider/data isolation and
+management settings remain unknown. See [review-status.md](review-status.md)
+for the exact preview and immutable check links.
+
+No independent source-critical/high issue remains actionable without current
+provider/account/data evidence. Next: obtain current Supabase inventory/customer
+database, scoped Vercel access with an isolated preview and Dodo test access;
+then finish production metadata/backup/OAuth and approved-mail verification.
+The goal is not complete and production remains unchanged.

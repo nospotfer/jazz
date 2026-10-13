@@ -18,7 +18,7 @@ site attractive and easy to use while preserving its jazz identity.
 | [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Locally tested; production unverified |
 | [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
 | [Operational scripts](operational-scripts.md) | Deployment/mutator hazards and safe prerequisites | Legacy mutators quarantined to explicit disposable local targets |
-| [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Published baseline; parser/CLI follow-up checked locally |
+| [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Follow-up Quality, Secret Scan, CodeQL and Vercel build passed |
 
 The goal is not complete until installation/build/checks are reproducible,
 accessible critical/high defects are fixed and verified, relevant customer

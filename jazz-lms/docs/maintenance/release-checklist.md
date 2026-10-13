@@ -23,8 +23,9 @@ Local repairs have not changed the website, accounts, DNS or live database.
 - [x] Public responsive/privacy/SEO browser checks and real guarded PostgreSQL
   accounting/security checks pass.
 - [x] Finish private mobile quiz/header review and prove native PDF rendering; final source review complete.
-- [ ] Final committed revision passes lint/types/tests/build/secret scan and actual
-  GitHub Quality, CodeQL and secret-scan checks.
+- [x] Reviewed code checkpoint c6a0556 passes lint/types/tests/build/secret scan
+  and actual GitHub Quality, CodeQL and secret-scan checks. Later source changes
+  must pass fresh checks; subsequent documentation records this exact evidence.
 - [ ] Verify Vercel team/project, alias/env/runtime/build/cron/logs/rollback.
 - [ ] Locate and preserve customer Supabase database; reconcile public/server
   settings. Both known project DNS endpoints fail. [Evidence](public-provider-evidence.md).
@@ -37,8 +38,7 @@ Local repairs have not changed the website, accounts, DNS or live database.
 - [ ] Verify current Google OAuth/SMTP configuration and isolated login.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
 - [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
-  protected preview, initial CI/CodeQL findings and remaining gaps. Refresh with
-  the follow-up's actual remote checks before review progresses.
+  protected preview, actual follow-up CI/CodeQL success and remaining gaps.
 
 ## Configuration review package
 

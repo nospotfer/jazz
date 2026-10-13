@@ -24,7 +24,7 @@ persisted local journeys and actual provider inspection.
 | PAY-04 | High | Free vouchers exceeded concurrent limits; coupon edits could affect unrelated provider discounts. | Atomic limits, persistent races, provider ownership/lifecycle regressions and real voucher browser journey. |
 | PAY-05 | High | List summaries/stale metadata miscounted coupons, including tax-inclusive totals. | Full payment detail before grant; actual coupon identity and route/accounting regressions. |
 | MSG-01 | High | Runtime DDL/table/BigInt defects broke messaging; inbound trust and deduplication incomplete. | Explicit schema, persisted API/signature regressions. Live receiving remains disabled. |
-| MSG-02 | High scan finding | CodeQL flagged incomplete one-pass HTML tag removal. Replaced it with a bounded parser producing plain text, preserving safe inbox encoding and text-only notifications. | Malformed/entity/limit/native webhook and actual inbox regressions pass. Fresh CodeQL rescan required; no executable HTML sink was established. [Messaging](messaging.md). |
+| MSG-02 | High scan finding | CodeQL flagged incomplete one-pass HTML tag removal. Replaced it with a bounded parser producing plain text, preserving safe inbox encoding and text-only notifications. | Malformed/entity/limit/native webhook and actual inbox regressions pass. Remote CodeQL passed and PR alerts 14/15 are fixed; no executable HTML sink was established. [Messaging](messaging.md). |
 | DATA-01 | High | Notes used invalid tables/runtime DDL/missing Boolean fields. | Prisma persistence/actor guards, PostgreSQL tests and actual notes reload/staff review. |
 | DATA-02 | High | One purchased lesson could qualify as entire-course completion. | Full 15-lesson denominator/entitlement; eligible buyer and legacy denial browser proof. |
 | UX-01 | High | Public mobile signup/actions clipped; dialogs lacked keyboard/focus handling. | 320/390/1440 review; accessible dialogs and 15 public browser checks. |
@@ -36,7 +36,7 @@ persisted local journeys and actual provider inspection.
 | UX-07 | High | Global CSP blocked native protected PDF iframe despite valid downloads. Attachment-only same-origin exception ported from unmerged June fix. | Actual Chrome renderer success and visible PDF content at 1440/390; page framing remains denied. |
 | SEO-01 | Medium | Production robots/sitemap 404 and indexing boundaries unclear. | Production homepage metadata/discovery; private/preview noindex regressions and browser checks. |
 | DEP-01 | Critical/high | Unsupported runtime and vulnerable/unused dependencies. | Node 24/Next 16.4 upgrades, unused viewers/workers/html2canvas removed. Five high dev lint-chain findings remain, with no upstream braces patch; production-only audit reports zero. |
-| OPS-01 | Medium | CI absent, Dependabot directory wrong, guidance stale. | Build/lint/types/tests and real PostgreSQL workflow, redacted scanning, updated runbooks. Prior published Quality/Secret Scan passed; follow-up parser/CLI CI pending. [Checkpoints](review-status.md). |
+| OPS-01 | Medium | CI absent, Dependabot directory wrong, guidance stale. | Build/lint/types/tests and real PostgreSQL workflow, redacted scanning, updated runbooks. Follow-up Quality, Secret Scan and CodeQL passed. [Checkpoints](review-status.md). |
 | OPS-02 | High | Legacy mutators could change all prices/users/vouchers/media through ambient production configuration. All 15 inventoried entrypoints now require a separate default-off opt-in and known disposable loopback targets before client construction; production is always denied. | 110 mocked guard/entrypoint negatives, dry-run/scoped reset and signed-URL logging regressions. Legacy fixture semantics and production backup/restore/tooling remain separate work. [Inventory and exact quarantine](operational-scripts.md). |
 
 ## Open verification and release gates
@@ -54,7 +54,7 @@ persisted local journeys and actual provider inspection.
 | PRIV-01 | Medium | GA automatic measurement may bypass manual restrictions; OpenReplay account unknown. | Keep tracking disabled until provider settings verified; disable automatic history/forms/outbound/video/download capture before GA enablement. |
 | BIZ-01 | Medium | Existing 30-day guarantee, live price/currency and legal copy need evidence. | Verify actual terms/product before changing promises; no invented social proof or discounts added. |
 | HIST-01 | Medium | Removed tracked test-account credentials remain in history. | Owner rotates later as requested; no unattended history rewrite/rotation. |
-| QUAL-01 | Medium | Draft PR #46 and prior Quality/Secret Scan pass; two initial CodeQL findings now have a locally verified parser fix. Vercel preview built but requires SSO. | Inspect follow-up CI/CodeQL and verify provider isolation/customer journeys on the actual remote preview. [Checkpoints](review-status.md). |
+| QUAL-01 | Medium | Draft PR #46 passes actual Quality, Secret Scan and CodeQL; both initial findings are fixed. Exact Vercel preview built but requires SSO. | Verify provider isolation/customer journeys on the actual remote preview. [Checkpoints](review-status.md). |
 
 Existing lint warnings are documented, not hidden. Neither unavailable account
 access nor an empty REST result proves an integration is correctly configured.
