@@ -665,3 +665,23 @@ Next: finish exact-project analytics selection and native-process limiter/sweep
 repairs, then verify the updated source and prepare the smallest free-host
 package. Dodo recipients, account reauthentication and continuous host/domain
 access remain specific external inputs; continue independent work meanwhile.
+
+## Exact-project analytics repair
+
+- Source-only closed fetch reproduced the OpenReplay client choosing another
+  application in the same organization when the configured project was missing.
+  This is not evidence of live/cross-tenant access; account keys remain unreadable.
+- The client now accepts only positive safe decimal project IDs, requires an
+  exact inventory match and nonempty key, and URL-encodes that key as one path
+  segment. No fallback user search occurs on missing/malformed configuration or
+  inventory. Main/daily query failures report unavailable data rather than a
+  healthy zero. Authorized healthy metrics and genuine zero days are preserved.
+-45 new closed-fetch regressions pass. The clean combined source passes1,175
+  normal tests/40 intentional skips (92 files with passes/five all-skipped),
+  lint, types and webpack build. No provider/customer query, secret/config change
+  or account mutation. Previous source491a02c's1,130-case report stays distinct.
+- First source491a02c pre-push stopped on a missing synthetic DATABASE_URL in
+  the test environment, before upload. Retrying with the documented explicit
+  loopback placeholder passes the required integration gate; no cloud URL/env
+  file was loaded. Source491a02c is pushed; its remote Quality runs are being
+  verified separately from the newest local analytics repair.
