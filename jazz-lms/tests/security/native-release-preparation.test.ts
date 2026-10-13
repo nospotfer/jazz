@@ -1,8 +1,8 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, generateKeyPairSync } from "node:crypto";
 import {
-  chmodSync, existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync,
-  readdirSync, rmSync, symlinkSync, writeFileSync,
+  chmodSync, existsSync, linkSync, lstatSync, mkdirSync, mkdtempSync, readFileSync,
+  readdirSync, readlinkSync, rmSync, symlinkSync, writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -12,7 +12,7 @@ import {
   PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, validateNativeConfig,
 } from "../../scripts/native/config-policy.mjs";
 import {
-  inspectNativePreparation, nativeBuildEnvironment, verifyNativeSourceInventory,
+  inspectNativePreparation, materializeNativeDependencies, nativeBuildEnvironment, verifyNativeSourceInventory,
 } from "../../scripts/native/prepare-release.mjs";
 
 const producerPath = resolve("scripts/native/prepare-release.mjs");
@@ -456,5 +456,119 @@ describe("native release source provenance checks with actual isolated files", (
     else linkSync(targetPath, originalPath);
     expect(sha256(readFileSync(originalPath)) === value.hashes["src/lib/authority.ts"]).toBe(true);
     await expectDenied(verifyNativeSourceInventory(value.appRoot, value.hashes), "NATIVE_BUILD_SOURCE_CHANGED");
+  });
+});
+
+describe("native generated dependency hardlink materialization", () => {
+  test("materializes an esbuild-like executable pair into independent inodes with identical bytes and executable bits", async () => {
+    const value = sourceInventoryFixture();
+    const first = join(value.appRoot, "node_modules/@esbuild/linux-x64/bin/esbuild");
+    const second = join(value.appRoot, "node_modules/esbuild/bin/esbuild");
+    value.write("node_modules/@esbuild/linux-x64/bin/esbuild", "synthetic executable bytes; never executed\n");
+    mkdirSync(dirname(second), { recursive: true, mode: 0o700 });
+    chmodSync(first, 0o755);
+    linkSync(first, second);
+    expect(lstatSync(first).nlink).toBe(2);
+    expect(lstatSync(first).ino === lstatSync(second).ino).toBe(true);
+    const digest = sha256(readFileSync(first));
+    expect(await materializeNativeDependencies(value.appRoot)).toBe(1);
+    expect(lstatSync(first).nlink).toBe(1);
+    expect(lstatSync(second).nlink).toBe(1);
+    expect(lstatSync(first).ino === lstatSync(second).ino).toBe(false);
+    for (const path of [first, second]) {
+      expect(sha256(readFileSync(path)) === digest).toBe(true);
+      expect(Boolean(lstatSync(path).mode & 0o111)).toBe(true);
+      expect(readdirSync(dirname(path)).some(name => name.startsWith(".native-materialize-"))).toBe(false);
+    }
+    // A second pass has nothing left to disconnect.
+    expect(await materializeNativeDependencies(value.appRoot)).toBe(0);
+  });
+
+  test.each([0o640, 0o755])("disconnects a generated hardlink from a separate owned fixture, preserving its outside bytes and mode %i", async (mode) => {
+    const value = sourceInventoryFixture();
+    const outsideDirectory = mkdtempSync(join(tmpdir(), "jazz-native-outside-hardlink-"));
+    chmodSync(outsideDirectory, 0o700);
+    fixtureDirectories.push(outsideDirectory);
+    const outside = join(outsideDirectory, "preserved-outside-file");
+    writeFileSync(outside, "synthetic outside dependency bytes\n", { mode });
+    chmodSync(outside, mode);
+    const generated = join(value.appRoot, "node_modules/synthetic-package/native-binary");
+    mkdirSync(dirname(generated), { recursive: true, mode: 0o700 });
+    linkSync(outside, generated);
+    const originalStat = lstatSync(outside);
+    const digest = sha256(readFileSync(outside));
+    expect(await materializeNativeDependencies(value.appRoot)).toBe(1);
+    expect(sha256(readFileSync(outside)) === digest).toBe(true);
+    expect(lstatSync(outside).ino).toBe(originalStat.ino);
+    expect(lstatSync(outside).mode & 0o777).toBe(mode);
+    expect(lstatSync(outside).nlink).toBe(1);
+    expect(lstatSync(generated).ino === originalStat.ino).toBe(false);
+    expect(lstatSync(generated).nlink).toBe(1);
+    expect(sha256(readFileSync(generated)) === digest).toBe(true);
+    expect(Boolean(lstatSync(generated).mode & 0o111)).toBe(Boolean(mode & 0o111));
+    expect(readdirSync(dirname(generated)).some(name => name.startsWith(".native-materialize-"))).toBe(false);
+  });
+
+  test("leaves regular files and a generated symlink unchanged", async () => {
+    const value = sourceInventoryFixture();
+    value.write("node_modules/synthetic-package/index.js", "synthetic regular dependency\n");
+    const regular = join(value.appRoot, "node_modules/synthetic-package/index.js");
+    chmodSync(regular, 0o640);
+    const symlink = join(value.appRoot, "node_modules/synthetic-package/alias.js");
+    symlinkSync("index.js", symlink);
+    const before = lstatSync(regular);
+    const digest = sha256(readFileSync(regular));
+    const symlinkBefore = lstatSync(symlink);
+    const sourceBefore = lstatSync(join(value.appRoot, "src/lib/authority.ts"));
+    expect(await materializeNativeDependencies(value.appRoot)).toBe(0);
+    expect(lstatSync(regular).ino).toBe(before.ino);
+    expect(lstatSync(regular).mode & 0o777).toBe(0o640);
+    expect(sha256(readFileSync(regular)) === digest).toBe(true);
+    expect(readlinkSync(symlink)).toBe("index.js");
+    expect(lstatSync(symlink).ino).toBe(symlinkBefore.ino);
+    expect(lstatSync(symlink).isSymbolicLink()).toBe(true);
+    expect(lstatSync(join(value.appRoot, "src/lib/authority.ts")).ino).toBe(sourceBefore.ino);
+  });
+
+  test.each(["outside fixture", "generated sibling"])("denies original source hardlinked to %s rather than materializing it", async (kind) => {
+    const value = sourceInventoryFixture();
+    const original = join(value.appRoot, "src/lib/authority.ts");
+    let linked: string;
+    if (kind === "outside fixture") {
+      const outside = mkdtempSync(join(tmpdir(), "jazz-native-source-hardlink-"));
+      chmodSync(outside, 0o700);
+      fixtureDirectories.push(outside);
+      linked = join(outside, "source-hardlink");
+    } else {
+      linked = join(value.appRoot, ".next/server/hardlinked-source.ts");
+      mkdirSync(dirname(linked), { recursive: true, mode: 0o700 });
+    }
+    linkSync(original, linked);
+    expect(lstatSync(original).nlink).toBe(2);
+    await expectDenied(materializeNativeDependencies(value.appRoot), "NATIVE_BUILD_SOURCE_CHANGED");
+    expect(lstatSync(original).nlink).toBe(2);
+    expect(lstatSync(linked).nlink).toBe(2);
+    expect(sha256(readFileSync(original)) === value.hashes["src/lib/authority.ts"]).toBe(true);
+  });
+
+  test("does not traverse or materialize the separately guarded .next/cache tree", async () => {
+    const value = sourceInventoryFixture();
+    const outsideDirectory = mkdtempSync(join(tmpdir(), "jazz-native-cache-outside-"));
+    chmodSync(outsideDirectory, 0o700);
+    fixtureDirectories.push(outsideDirectory);
+    const outside = join(outsideDirectory, "cache-source");
+    writeFileSync(outside, "synthetic excluded cache bytes\n", { mode: 0o640 });
+    chmodSync(outside, 0o640);
+    const cacheFile = join(value.appRoot, ".next/cache/synthetic-cache");
+    mkdirSync(dirname(cacheFile), { recursive: true, mode: 0o700 });
+    linkSync(outside, cacheFile);
+    const before = lstatSync(outside);
+    const digest = sha256(readFileSync(outside));
+    expect(await materializeNativeDependencies(value.appRoot)).toBe(0);
+    expect(lstatSync(cacheFile).ino).toBe(before.ino);
+    expect(lstatSync(cacheFile).nlink).toBe(2);
+    expect(lstatSync(outside).mode & 0o777).toBe(0o640);
+    expect(sha256(readFileSync(cacheFile)) === digest).toBe(true);
+    expect(sha256(readFileSync(outside)) === digest).toBe(true);
   });
 });

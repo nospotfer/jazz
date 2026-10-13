@@ -1,6 +1,7 @@
 import { constants, createWriteStream } from 'node:fs';
-import { mkdir, lstat, realpath, readdir, chmod, open, readlink } from 'node:fs/promises';
+import { mkdir, lstat, realpath, readdir, chmod, open, readlink, copyFile, rename, unlink } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NativeConfigurationError } from './config-policy.mjs';
@@ -143,6 +144,50 @@ async function seal(directory, root = directory) {
   await chmod(directory, 0o500);
 }
 
+/** esbuild's lifecycle legitimately hardlinks generated executables. Materialize
+ * those bytes in a new inode before sealing so permissions/content cannot affect
+ * another dependency/cache copy. Original source must never acquire hardlinks.
+ */
+export async function materializeNativeDependencies(root, directory = root) {
+  if (directory === root) {
+    // Validate the entire source invariant before splitting any generated link:
+    // traversal order must not hide a source link by first reducing its nlink.
+    for (const local of await inventory(root)) {
+      if (generated(local)) continue;
+      const stat = await lstat(join(root, local));
+      requireCondition(stat.isFile() && !stat.isSymbolicLink() && stat.nlink === 1, 'NATIVE_BUILD_SOURCE_CHANGED');
+    }
+  }
+  let copied = 0;
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name), local = relative(root, path);
+    if (local === '.next/cache') continue;
+    const stat = await lstat(path);
+    if (stat.isDirectory()) copied += await materializeNativeDependencies(root, path);
+    else if (!stat.isSymbolicLink()) {
+      requireCondition(stat.isFile(), 'NATIVE_BUILD_FILE');
+      if (stat.nlink === 1) continue;
+      requireCondition(generated(local), 'NATIVE_BUILD_SOURCE_CHANGED');
+      const temporary = join(directory, `.native-materialize-${randomUUID()}`);
+      let created = false;
+      try {
+        await copyFile(path, temporary, constants.COPYFILE_EXCL);
+        created = true;
+        await chmod(temporary, stat.mode & 0o111 ? 0o700 : 0o600);
+        await rename(temporary, path);
+        created = false;
+        copied += 1;
+      } finally {
+        // Only the owned random temporary name is eligible for cleanup.
+        if (created) {
+          try { await unlink(temporary); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
+      }
+    }
+  }
+  return copied;
+}
+
 async function protectCache(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name), stat = await lstat(path);
@@ -204,10 +249,16 @@ export async function prepareNativeRelease(input) {
   await verifyNativeSourceInventory(appRoot, sourceHashes);
   await mkdir(join(appRoot, '.next/cache'), { mode: 0o700, recursive: true });
   await protectCache(join(appRoot, '.next/cache'));
-  const files = {}, links = {};
-  for (const path of await inventory(appRoot)) {
-    files[path] = await digestFile(join(appRoot, path));
-    if ((await lstat(join(appRoot, path))).isSymbolicLink()) links[path] = await readlink(join(appRoot, path));
+  const materializedDependencyFiles = await materializeNativeDependencies(appRoot);
+  const files = {}, links = {}, paths = await inventory(appRoot), names = new Set(paths);
+  for (const path of paths) {
+    const absolute = join(appRoot, path);
+    if ((await lstat(absolute)).isSymbolicLink()) {
+      const destination = await realpath(absolute);
+      requireCondition(within(appRoot, destination) && names.has(relative(appRoot, destination)), 'NATIVE_BUILD_SYMLINK');
+      links[path] = await readlink(absolute);
+    }
+    files[path] = await digestFile(absolute);
   }
   const manifestFile = join(output, 'manifest.json');
   await writePrivateJson(manifestFile, {
@@ -218,7 +269,7 @@ export async function prepareNativeRelease(input) {
   await seal(appRoot);
   const inspected = await inspectNativeRelease({ configFile: input.configFile, appRoot, manifestFile });
   const summary = { ...inspected.summary, freshLockedInstall: true, webpackBuild: true,
-    serverCredentialsProvidedToBuild: false, started: false };
+    serverCredentialsProvidedToBuild: false, materializedDependencyFiles, started: false };
   await writePrivateJson(join(output, 'summary.json'), summary);
   return { appRoot, manifestFile, summary };
 }
