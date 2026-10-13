@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LessonQuizAnswerResponse, LessonQuizAttemptPayload } from '@/lib/lesson-quiz';
@@ -37,16 +38,21 @@ describe('quiz UI uses server-authoritative accepted answers', () => {
   afterEach(cleanup);
 
   test('waits for the first server answer and uses its wrong-answer verdict without local grading', async () => {
+    const user = userEvent.setup();
     let accept!: (response: { data: LessonQuizAnswerResponse }) => void;
     mocks.post.mockReturnValueOnce(new Promise((resolve) => { accept = resolve; }));
     mount();
-    fireEvent.click(await screen.findByText('First option 1'));
-    fireEvent.click(screen.getByRole('button', { name: /confirm answer/i }));
+    await user.click(await screen.findByRole('button', { name: /First option 1/ }));
+    const confirm = screen.getByRole('button', { name: /confirm answer/i });
+    expect(confirm.hasAttribute('disabled')).toBe(false);
+    await user.click(confirm);
 
     expect(mocks.post).toHaveBeenLastCalledWith('/api/courses/course-1/lessons/lesson-1/quiz/issued-attempt/answer', { questionId: 'question-0', optionId: 'q0-a' });
     expect(mocks.confetti).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: /confirming/i }).hasAttribute('disabled')).toBe(true);
-    accept({ data: { attemptId: 'issued-attempt', questionId: 'question-0', isCorrect: false, correctOptionId: 'q0-b', answeredCount: 1, isComplete: false, result: null, summary: null } });
+    await act(async () => {
+      accept({ data: { attemptId: 'issued-attempt', questionId: 'question-0', isCorrect: false, correctOptionId: 'q0-b', answeredCount: 1, isComplete: false, result: null, summary: null } });
+    });
 
     await waitFor(() => expect(screen.getByText('First option 1').closest('button')?.className).toContain('border-rose-400'));
     expect(screen.getByText('Second option 1').closest('button')?.className).toContain('border-emerald-400');

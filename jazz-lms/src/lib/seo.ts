@@ -6,15 +6,18 @@ export const PUBLIC_SITE_DESCRIPTION = 'Descubre el jazz con Enric Vázquez Ramo
 
 type DeploymentEnvironment = {
   VERCEL_ENV?: string;
+  APP_DEPLOYMENT_ENVIRONMENT?: string;
   APP_URL?: string;
   NEXT_PUBLIC_APP_URL?: string;
 };
 
 /** Only the verified production domain is indexable; previews and local copies fail closed. */
 export function isPublicIndexingEnabled(environment: DeploymentEnvironment = {
+  APP_DEPLOYMENT_ENVIRONMENT: process.env.APP_DEPLOYMENT_ENVIRONMENT,
   VERCEL_ENV: process.env.VERCEL_ENV, APP_URL: process.env.APP_URL, NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 }) {
-  if (environment.VERCEL_ENV !== 'production') return false;
+  const deployment = environment.APP_DEPLOYMENT_ENVIRONMENT ?? environment.VERCEL_ENV;
+  if (deployment !== 'production') return false;
   for (const value of [environment.APP_URL, environment.NEXT_PUBLIC_APP_URL]) {
     if (!value?.trim()) continue;
     try {
