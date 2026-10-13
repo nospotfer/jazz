@@ -51,9 +51,13 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Source `98db3b1` limiter/sweep/read safeguards pass 76 new regressions and
   combined 1,251/40 clean checks, types/build/lint. Exact-source Quality, Secret
   Scan and CodeQL pass; downloaded CI verifies 39 persisted tests/one skip.
-- [ ] Verify trusted native ingress, writable cache and exact self-hosted
-  start/runner package, including unavailable-queue/manual historical recovery.
-  No service/timer/DNS activation yet. [Source limits](native-runtime.md).
+- [x] Verify exact e32 private Unix ingress/start, writable cache, actual restart,
+  unexpected worker exit, separate-UID denial and sealed reinspection. Disabled
+  runner prepared with 49 regressions; no service/timer/DNS activation.
+  [Source and runtime limits](native-runtime.md).
+- [ ] Review production resource/recovery/timer policy, durable CA/configuration,
+  named-tunnel identity and unavailable-queue/manual historical recovery before
+  any production activation.
 - [x] Verify live Vercel team/project, aliases, environment scope, Node 20 runtime,
   daily cron and missing CRON_SECRET; read-only owner/member/plan evidence.
 - [x] Record the owner's zero-cost hosting constraint; no paid Vercel upgrade.
@@ -82,8 +86,16 @@ SQL/configuration repair or another resume is authorized by that approval.
   preview excludes Spotify/Cast. Earlier44/29/20/26/19 reports remain immutable.
   Owned temporary servers closed; this is not Vercel runtime or stable hosting
   proof. [Scope](preview.md#current-diagnostics-source-https-follow-up).
-- [ ] Verify the final updated package/source in its reviewed runtime; earlier
-  source27 browser evidence must not be relabeled as current-head proof.
+- [x] Verify fresh sealed application source e32 in its private Unix/HTTPS runtime:
+  19 runtime/11 transport checks,12 public layouts/48 computed contrast checks,
+  four native roles, actual Mux/PDF/certificate proof. Browser reports remain
+  primary 96/98, guest 2/2, completion 7/7 and visual 7/7; observations and earlier
+  unclassified exceptions are retained. [Current scope](preview.md#protected-native-preview-and-contrast).
+- [x] Current e32 local and downloaded remote Quality logs confirm 1,915/40 normal,
+  39/1 real PostgreSQL, types/build and lint0/25; Secret Scan/CodeQL pass.
+- [ ] Classify earlier source 2058 buyer exceptions if they recur. Current runs
+  have no recurrence; the earlier cause remains unknown. Complete Dodo/Google/SMTP journeys and
+  the remaining production gates before declaring the maintenance goal complete.
 - [x] Inspect production schema/roles/table/function/view grants and private
   Storage; verify offline archive counts/hashes and durable local backup.
 - [x] Compare archived media/PDF mappings offline: 15 distinct signed lesson
@@ -197,12 +209,14 @@ DNS move or deployment-protection change has been performed for this plan.
 
 ## Native package prerequisite
 
-The `ab14628` producer builds/verifies a sealed artifact; its synthetic preview
-origin was never exposed and it is not a running host. Before production review,
-finish the private launcher, runtime umask/cache/cold restart, disabled bounded
-daily runner, exact tunnel profile/socket boundary and fresh protected HTTPS
-journeys. Package durable CA/configuration, bind public build values and verify
-provider identity separately from key shape. Preserve the current artifact and
-failure receipts; rebuild whenever public values or source change. Existing
-account/DNS/continuous-host, old Vercel quarantine and explicit production
-approval gates remain. [Verified source/package limits](native-runtime.md).
+The exact e32 producer/Unix launcher passes fresh installation/build/sealing,
+actual protected HTTPS journeys, runtime cache/restart/cleanup and separate-UID
+boundary checks. The bounded reconciliation runner is prepared and disabled;
+no timer/service was activated. Initial browser observations and older failures
+remain separate. The temporary app/tunnel are closed, not a continuous host.
+Package durable CA/configuration and a reviewed named-tunnel profile; verify
+provider identity separately from key shape. Preserve artifact/failure receipts
+and rebuild if public values or application source change. Account/DNS/continuous-
+host control, resource/recovery policy, old Vercel quarantine, unfinished provider
+journeys and explicit SQL/config/deploy/resume approval remain release gates.
+[Verified source/package limits](native-runtime.md).

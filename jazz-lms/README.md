@@ -112,6 +112,15 @@ relay secret is separate from Resend's signing secret.
 
 ## Operations and release
 
+The owner selected zero new hosting spend. Current application checkpoint
+`e32a370` has a freshly installed/sealed native build and verified private Unix/
+temporary HTTPS preview, with desktop/mobile layouts, contrast, four-role access,
+Mux playback, PDFs and certificates. The temporary servers are closed; stable
+hosting and production activation remain separate. Automated verification is
+1,915 normal passes/40 skips, 39 real PostgreSQL passes/one skip, types/build and
+lint 0 errors/25 warnings. See the
+[exact checkpoint and remaining gaps](docs/maintenance/review-status.md#protected-native-preview-and-contrast).
+
 Read [AGENTS.md](AGENTS.md) and the [maintenance handover](docs/maintenance/README.md).
 The maintenance branch is `maintenance/initial-audit`. Preview deployments are
 authorized when provider data is isolated. Production deployment/configuration,

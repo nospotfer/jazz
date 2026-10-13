@@ -5,6 +5,11 @@ not a customer-database clone or a production repair. Preview work changed no
 production resource, plan, domain, key or payment configuration. The separately
 approved customer recovery/rollback is documented in [Supabase](supabase.md).
 
+Latest frontend: exact application source `e32a370`, freshly built and sealed,
+verified through a protected Unix/temporary HTTPS runtime, now closed.
+[Current evidence](#protected-native-preview-and-contrast) supersedes earlier
+source 27 frontend status without changing its historical reports.
+
 ## Identity and capacity
 
 | Item | Verified value |
@@ -322,3 +327,59 @@ Future fixture writes must retain exact-project guards. Any fixture cleanup
 must scope the recorded synthetic IDs/paths; project deletion is destructive
 and requires review. Free inactivity pausing is possible; no artificial
 keepalive or billing change was introduced.
+
+## Protected native preview and contrast
+
+Current application source `e32a3707a7ff647ebc8528798dc81df9415fa983` uses only
+this independent synthetic backend, strict CA-bound database URLs and read-only
+media signing. Mail, Dodo credentials, cron, tracking and legacy mutators are
+disabled. A fresh locked install/configured webpack artifact matches all 548
+application Git blobs and 45,766 sealed files. Both actual Next and ingress bind
+owner-only Unix sockets, behind an expiring origin-bound Basic gate. The explicit
+private Quick Worker exception does not change general production ingress.
+
+Nineteen native runtime and 11 HTTPS transport checks pass. Cloudflare's specific
+cache-control header is consumed at the edge; preserved CDN no-store and cache
+status were checked, along with unauthorized access after an authorized asset.
+Its managed robots response rewrites an origin401 to external200 retaining the
+Basic challenge; authorized origin Disallow and page noindex remain verified.
+No application TCP bridge, account, DNS record, service or timer was created.
+
+Twelve public home/auth layouts at 1440/320/390 in both themes and 48 actual
+computed contrast checks pass. The light-surface gold token is now #8a5b0a;
+always-dark panels retain #d79b1a. Four fresh native roles verify free/buyer/
+legacy/admin access; actual Mux video decoding, private four-language PDF bytes,
+15/15 SUPREME profile and a valid vector A4 certificate are checked.
+
+Reports remain distinct: primary **96/98**, guest selector diagnostic **2/2**,
+native PDF completion **7/7**, full-frame visual continuation **7/7**. The initial
+selector ambiguity and incomplete390-light document observation are preserved.
+Completion/white pixels alone were not accepted as visible rendering. Fresh
+320/390 viewport-before-navigation captures in both themes visibly show the
+synthetic title/disclaimer; full-frame captures were manually inspected. Earlier
+partial crops omitted that top text. Captured native document requests have no
+Range or Origin; this does not characterize every possible later viewer request.
+
+Earlier source 2058 initial **53/55**, diagnostic **3/4**, eventual guest **3/3**,
+sad-document screenshots and two unclassified buyer exceptions remain immutable.
+The resized loaded-desktop PDF diagnostic remains narrower than fresh-mobile
+proof. Current e32 runs have zero page errors; the older exceptions remain
+unclassified. Do not sum repeated or overlapping report counts.
+
+Exactly eleven native password requests/normal session syncs occurred across the
+two sources, six at e32 and five at 2058. All other mutations were blocked;
+automatic reconciliation was intercepted before app dispatch. The independent
+strict-CA read-only AFTER check at **23:29:43 UTC** preserves full scoped learning
+row hashes, actor counts, original purchase/history, price 80 and zero ledger/
+voucher/discount/thread/message rows. No learning, checkout, refund, mail or
+provider configuration change occurred. Purpose-created browser credential state
+was deleted and every owned browser closed.
+
+App and temporary tunnel closed cleanly at **23:35 UTC**, before expiry. Subsequent
+exact-e32 restart, forced owned-worker exit, separate-UID EACCES and final sealed
+reinspection pass and close cleanly. Evidence remains private under
+`/tmp/jazz-maintenance/native-preview-contrast-verification/` and
+`/tmp/jazz-maintenance/native-preview-contrast-browser-evidence/`.
+The old preview URL is closed; a fresh window needs new origin/expiry/runtime
+verification. Google, registration/SMTP, Dodo signed transactions, stable hosting
+and production runtime are still unverified. [Checkpoint](review-status.md#protected-native-preview-and-contrast).

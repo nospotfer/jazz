@@ -6,6 +6,8 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
+Current application source: `e32a370`; see
+[protected native preview and contrast](#protected-native-preview-and-contrast).
 
 ## First published checkpoint
 
@@ -397,3 +399,81 @@ No latest-head browser, credential, DNS/tunnel or production health claim follow
 Private launcher/runtime cache/restart, disabled runner and a fresh exact-source
 protected HTTPS window remain outstanding. Goal is active and incomplete; budget
 remains zero new paid services and production stays paused.
+
+## Protected native preview and contrast
+
+Application source **`e32a3707a7ff647ebc8528798dc81df9415fa983`** is published
+on the maintenance branch. `0dfa999` added the bounded Unix preview launcher;
+`2058ad1` added the authenticated Quick transport exception and disabled runner.
+The latest three-line UI repair makes gold text readable on light surfaces while
+preserving bright gold in the always-dark professor/footer panels and dark theme.
+Actual computed ratios include light hero 5.33:1 and header hover 5.85:1.
+All 48 checked contrast states and 12 public layouts pass.
+
+Clean exact-source checks and downloaded Quality logs confirm **1,915 normal
+passes/40 intentional skips** (105 files with passes/five all-skipped), **39
+actual PostgreSQL passes/one REST-only skip**, types, webpack and lint **0 errors/
+25 existing warnings**. The 152 new cases are included: launcher38, Unix ingress45,
+Quick transport 20 and disabled runner 49. Earlier actual TCP20 remains part of the
+previous 512; repeated runs are not additional distinct coverage.
+Exact committed-source export covers 553 files with zero Gitleaks findings.
+
+| Exact e32 source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38483345959) | Success; downloaded ZIP verifies 1,915/40 normal and 39/1 persisted. Push38483338908 also succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38483345945) | Success; push38483338800 also succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38483340092) and [aggregate](https://github.com/nospotfer/jazz/runs/115591157460) | Success. |
+| Existing protected Vercel build | Success at 23:23:57 UTC; account/provider isolation remains unreconciled. No customer-journey or production claim. |
+
+Downloaded Quality ZIP SHA256:
+`69d0397afd156b2486ec6a19a3d4de714acc2b4c4d8955a883e4180c5d322e39`.
+The separate fresh locked npm-ci/configured-webpack artifact matches **548
+application Git blobs**, verifies **45,766 sealed files** and excludes supplied
+server secrets from **157 client files**. Only `.next/cache` is writable.
+The producer's prelaunch `started:false` receipt is preserved; actual startup has
+its own receipt. **19 actual Unix runtime checks** and **11 external HTTPS
+transport checks** pass through explicit Cloudflare Unix ingress. The preview's
+leased Basic gate protects pages and assets. Managed robots rewriting and edge
+consumption of the Cloudflare-specific cache header are recorded separately.
+
+Browser evidence deliberately retains separate scopes:
+
+| Report | Result and practical limit |
+| --- | --- |
+| Source2058 initial | 53/55; public immediate-state assertion and two buyer page errors retained. Earlier mobile sad-document captures remain failures. |
+| Source2058 diagnostics | First 3/4; eventual-state guest 3/3; resized loaded PDF visibly renders. These do not rewrite the initial report. |
+| Exact e32 primary | 96/98; selector ambiguity and one initially incomplete fresh mobile PDF response retained. Four native roles, Mux decoding, profile/medals, vector certificate and four-language PDF bytes pass. Zero page errors. |
+| Exact e32 guest continuation | 2/2; stage-specific selectors each match once. No application cause established for the initial selector ambiguity. |
+| Exact e32 PDF completion | 7/7; native viewer load100/success/one page and complete authenticated private document response. Completion alone is not visible-text proof. |
+| Exact e32 full-frame visual continuation | 7/7; fresh viewport-before-navigation at 320/390 in both themes visibly shows synthetic title/disclaimer. Earlier cropped images omitted the top text; full-frame captures were manually inspected. |
+
+There are exactly **11 native password logins/11 normal session syncs overall**,
+six at e32 and five at source 2058. All learning/payment/mail/provider writes were
+blocked; automatic reconciliation was intercepted before the app. The strict-CA
+read-only AFTER comparison at **23:29:43 UTC** preserves full scoped learning
+hashes, entitlements, fixture price 80 and zero financial/voucher/messaging rows.
+All owned browsers closed and the purpose-created credential state was deleted.
+The two source 2058 buyer exceptions remain **unclassified**; zero current errors
+does not establish their cause or prove a repair.
+
+The actual e32 app and tunnel closed cleanly at **23:35 UTC**, before expiry.
+The same artifact subsequently passes home200 restart, unexpected owned-worker
+exit/cleanup, separate UID65534 denial of both sockets and final complete
+reinspection at **23:37:06 UTC**, without unlocking compiled files. Each owned
+lifecycle probe also closed cleanly. Private evidence is under
+`/tmp/jazz-maintenance/native-preview-contrast-verification/` and
+`/tmp/jazz-maintenance/native-preview-contrast-browser-evidence/`.
+Selected receipts, CI logs, artifact manifest and safe synthetic visuals have
+hash-verified owner-only copies outside /tmp at
+`/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24/review-checkpoint-native-e32a370/`.
+This is local preservation, not encrypted or off-site retention. A separate
+selected-evidence scan flagged 752 filename/SHA256 manifest entries; every match
+was parsed and checked against inspected file hashes. No other finding or scanner
+suppression; the raw report is retained. This is separate from the zero-finding
+committed-source scan.
+
+The runner is prepared and disabled; no service/timer, account/DNS activation,
+production resume/SQL/deploy, transaction/refund or mail occurred. Stable-host
+control, durable CA/config, old Vercel quarantine, Google/SMTP and Dodo recipient/
+signed-transaction verification remain open. The goal remains active and
+incomplete under the zero-cost constraint. [Release gates](release-checklist.md).

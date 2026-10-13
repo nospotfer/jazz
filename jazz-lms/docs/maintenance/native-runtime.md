@@ -2,9 +2,14 @@
 
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
-verification. Earlier application source `ab14628` passes 1,763 normal tests/40 intentional
-skips, types, webpack and lint 0 errors/25 existing warnings in a credential-free
-copy. The 512 new safeguard cases are included in that total.
+verification. Current application source `e32a370` passes 1,915 normal tests/40
+intentional skips, 39 actual PostgreSQL tests/one REST-only skip, types, webpack
+and lint 0 errors/25 existing warnings. Its fresh sealed artifact actually ran
+through private Unix sockets and a protected temporary HTTPS tunnel. Restart,
+worker-exit cleanup, separate-UID denial and final reinspection pass.
+[Exact checkpoint and retained observations](review-status.md#protected-native-preview-and-contrast).
+The earlier 512 safeguard cases and newer 152 launcher/transport/runner cases
+are included in the normal total.
 
 ## Trusted ingress
 
@@ -88,7 +93,7 @@ an existing output is never overwritten or deleted. Fifty preparation
 regressions pass, including actual disposable Git and source-injection checks.
 The receipt never claims credential verification or production approval.
 
-The actual source `ab14628` producer passes a fresh locked configured webpack
+The historical source `ab14628` producer passes a fresh locked configured webpack
 build and inspection of 45,759 sealed files. All 541 archived application files
 match committed Git blobs; 157 client files contain the configured public
 key/origin and no supplied server secrets. One generated esbuild hardlink was
@@ -251,17 +256,38 @@ the app retains its own single-flight lock until settlement. Future scheduling,
 old Vercel cron quarantine and manual historical recovery require separate
 review before production activation.
 
-## Remaining package verification
+## Verified preview and remaining production package
 
-The current preview launcher and disabled runner are described above; final
-combined checks and fresh protected HTTPS/browser evidence must bind the
-corrected Quick transport source. Earlier `0dfa999` actually passes private
-Next startup, 19 runtime checks, image cache writes, clean restart and worker-exit
-cleanup without unlocking compiled files. A separate UID is denied both sockets.
-Its initial external transport diagnostics are retained rather than counted as
-browser/customer checks.
-An eventual production package needs a durable reviewed CA/config path; temporary
-preview paths are insufficient. Fresh protected HTTPS/customer-journey checks
-must bind the resulting current-source runtime and window. Account/DNS/continuous
-host control, old Vercel quarantine and production cutover approval remain
-separate. Earlier source27 browser evidence is historical.
+Source `e32a3707a7ff647ebc8528798dc81df9415fa983` passes fresh locked install,
+configured webpack and inspection: 548 application Git blobs, 45,766 sealed
+files and 157 client files with the expected public values and no supplied server
+secrets. Only `.next/cache` is writable. The prelaunch producer receipt retains
+`started: false`; separate readiness/runtime receipts establish actual startup.
+Nineteen actual Unix runtime checks and 11 external HTTPS transport checks pass.
+Cloudflare consumes its specific cache-control header; downstream CDN no-store,
+cache status and an unauthorized request after an authorized asset remain checked.
+Managed robots rewriting is recorded separately.
+
+The same artifact passes actual home-200 restart, unexpected owned-worker exit,
+cleanup, image-cache write and final complete reinspection. A network-isolated
+UID 65534 process receives EACCES for both sockets. No compiled directory was
+unlocked. The app and temporary tunnel closed cleanly at 23:35 UTC, before their
+fixed deadlines; subsequent private lifecycle probes also closed cleanly.
+Private evidence is under
+`/tmp/jazz-maintenance/native-preview-contrast-verification/`.
+
+Fresh exact-source browser reports remain separate: primary 96/98, guest selector
+diagnostic 2/2, native-PDF completion 7/7, full-frame PDF visual continuation 7/7.
+Twelve public layouts and 48 computed contrast checks pass; four native roles,
+actual Mux playback, profile/certificate and fresh mobile PDF text are verified.
+The initial two observations, earlier failed PDF captures and two unclassified
+source 2058 buyer errors are preserved. Current runs have zero page errors;
+that does not classify the earlier exceptions. No learning, payment, mail or
+provider-configuration writes occurred. [Browser scope](preview.md#protected-native-preview-and-contrast).
+
+The disabled reconciliation runner has 49 regressions and a preparation-only CLI;
+no timer/service or production execution was enabled. A production package still
+needs durable reviewed CA/config paths, named-tunnel/account/DNS/continuous-host
+control, resource/recovery policy, old Vercel quarantine and explicit SQL/config/
+deployment/resume approval. Temporary preview verification does not satisfy those
+gates or prove Google, SMTP, Dodo transactions or production runtime health.

@@ -1,10 +1,12 @@
 # Zero-cost production hosting review
 
 Prepared 2026-10-13. **Proposal only.** The owner selected zero new hosting spend.
-The protected [temporary HTTPS preview](preview.md#free-https-frontend-checkpoint)
-passes 45 distinct checks at source `27d7b4c`; the earlier 44-check report is
-preserved. Temporary test servers were closed after verification. No stable
-hosting service, account, DNS change or production release has been provisioned.
+The protected [native temporary HTTPS preview](preview.md#protected-native-preview-and-contrast)
+now verifies exact application source `e32a370`, with fresh sealed build,
+four-role/media/PDF/layout/contrast proof and retained initial observations.
+Earlier source 27's 45-check report remains historical. Temporary app/tunnel and
+private lifecycle probes closed cleanly. No stable hosting service, account,
+DNS change or production release has been provisioned.
 
 ## Preferred conditional option
 
@@ -27,13 +29,14 @@ is a Business/Enterprise feature. Registration need not transfer.
 [Partial setup limits](https://developers.cloudflare.com/dns/zone-setups/partial-setup/).
 
 Use dedicated Jazz services and private immutable releases/configuration; pin
-Node 24 without changing the machine's shared default. Bind Next/proxy/metrics
-only to loopback, keep the tunnel token in a private file and run one bounded
-internal daily payment timer. No shared Docker/SSH/proxy configuration changes
-are proposed. Startup, resource limits and recovery still need verification.
-Source safeguards for counters, sweep cancellation/continuation, trusted ingress
-and a fresh sealed release producer are documented in [native runtime](native-runtime.md).
-The launcher, disabled runner and actual tunnel/runtime remain outstanding.
+Node 24 without changing the machine's shared default. Bind Next/proxy only to
+owner-only Unix sockets and metrics to loopback; keep the future named-tunnel
+token in a private file. The bounded daily runner is prepared with an execution-
+disabled CLI; no timer is installed or enabled. Actual preview startup, cache,
+restart, worker-exit cleanup and separate-UID denial pass. Production resource
+limits, durable configuration, named-tunnel identity and recovery remain to
+verify. No shared Docker/SSH/proxy changes are proposed.
+[Native runtime and exact preview limits](native-runtime.md).
 
 The trusted edge must replace caller-supplied forwarding headers with a validated
 client IP; current rate limiting reads the first X-Forwarded-For entry. Preserve

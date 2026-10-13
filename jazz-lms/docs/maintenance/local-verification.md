@@ -204,7 +204,7 @@ Certificate tests require the persisted buyer's prior 15-lesson completion;
 they do not fabricate eligibility or mutate the legacy actor's purchases.
 
 Local browser evidence and verified Mux requests are recorded in the
-[verification matrix](verification-matrix.md). The separate exact-source,
+[verification matrix](verification-matrix.md). The earlier exact-source,
 production-built HTTPS frontend at source `27d7b4c` passes 45 distinct checks
 through a protected free temporary tunnel; the earlier 44-check report is
 preserved. Final read-only comparison preserves fixture learning and purchases.
@@ -219,7 +219,7 @@ are separate from the local stack. Existing local test and mutator guards must
 not be bypassed to target that remote database; purpose-bound private checks
 verify its exact project instead. Neither frontend is an HTTPS Vercel preview.
 
-## Native release verification
+## Historical native producer verification
 
 Source `ab14628` passes 1,763 normal cases/40 skips (101 files with passes/five
 all-skipped), types and lint 0 errors/25 existing warnings without private env.
@@ -236,3 +236,32 @@ final corrections pass. Fixture-only `3cbb17c` preserves the malformed key value
 while satisfying the existing plain-text scanner, with 189 scoped tests passing.
 Source27's HTTPS45 report remains historical. This package is not a credential,
 tunnel, runtime cache, restart or production health check.
+
+## Current native verification
+
+Exact application source `e32a370` passes 1,915 normal tests/40 skips (105 files
+with passes/five all-skipped), 39 actual PostgreSQL tests/one REST-only skip,
+types, webpack and lint0/25. Clean combined-check source bytes match a 553-file
+committed export; that check copy reused dependencies. A separate artifact uses
+fresh locked npm ci and configured webpack, matching 548 application Git blobs,
+45,766 sealed files and 157 client files with expected public values and no
+supplied server secrets. The prelaunch producer receipt and actual startup
+receipt remain separate. Source CI independently confirms the same test counts.
+
+The artifact actually passes 19 Unix runtime checks, 11 HTTPS transport checks,
+image-cache writes, home200 restart, forced owned-worker exit, cleanup, separate
+UID65534 EACCES for both sockets and final complete inspection. Only .next/cache
+is writable; compiled directories remain sealed. Main preview/tunnel and later
+private lifecycle probes closed cleanly. Nothing was installed as a service/timer.
+
+Browser primary 96/98, guest 2/2, completion 7/7 and full-frame visual 7/7 remain
+separate, with initial observations retained. Twelve public layouts, 48 computed
+contrast states, four native roles, Mux decoding, PDF text and certificates have
+actual proof. The strict-CA read-only final snapshot preserves learning and
+entitlements. No learning/payment/mail/provider changes occurred; only six e32
+native password/session syncs were allowed, eleven overall with source 2058.
+Earlier two buyer exceptions remain unclassified despite zero current errors.
+Private exact-source evidence is under
+`/tmp/jazz-maintenance/native-preview-contrast-verification/` and
+`/tmp/jazz-maintenance/native-preview-contrast-browser-evidence/`.
+[Detailed scope and gaps](review-status.md#protected-native-preview-and-contrast).

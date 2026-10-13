@@ -774,3 +774,48 @@ Next: private launcher/runtime umask/cache/cold restart, disabled bounded daily
 runner and refreshed exact-source protected HTTPS/customer journeys. Existing
 account/recipient/DNS/continuous-host and production-review gates remain. No paid
 upgrade, service/DNS/production activation, transaction or mail occurred.
+
+## Protected native preview, bounded runner and contrast
+
+- Application source 0dfa999 adds the Node24/Linux private preview launcher and
+  release-local Next worker; source 2058ad1 adds the leased/authenticated Quick
+  Worker exception and preparation-only reconciliation runner. General ingress
+  still denies Worker browsing. Fixed leases, Unix600/private700 paths, finite
+  diagnostics and owned-resource/process cleanup have 152 new regressions total.
+- The actual Cloudflare CLI --url unix form failed with 502; explicit YAML Unix
+  ingress supplies the origin, while a closed-loopback URL only selects Quick
+  mode. Actual cf-worker metadata needed the explicit private-preview exception.
+  Managed robots rewriting and consumed Cloudflare cache header remain explicit
+  provider behavior. Initial transport diagnostics are retained.
+- Exact application source e32a370 changes three UI lines: light-surface gold text
+  #8a5b0a and bright-gold overrides in always-dark professor/footer containers.
+  Twelve public layouts and48 computed contrast checks pass; light hero5.33:1
+  and header hover5.85:1. Dark gold and CTA color remain unchanged.
+- Clean source checks and downloaded exact-source CI verify 1,915 normal passes/
+  40 skips,39 actual PostgreSQL passes/one skip, types/build and lint0/25.
+  Required push hooks were not bypassed. Exact553-file committed scan has 0
+  findings. Fresh locked build separately matches548 application Git blobs,
+  verifies 45,766 sealed files and157 client files without supplied server secrets.
+- Actual e32 Unix runtime 19 and HTTPS transport 11 pass; no compiled files were
+  unlocked. Exact-source restart/home200, forced owned-worker exit, separate
+  UID65534 EACCES and final complete reinspection pass. Main app/tunnel closed
+  cleanly23:35UTC before expiry; later private lifecycle probes closed cleanly.
+- Browser reports remain primary 96/98, guest 2/2, completion 7/7, full-frame visual
+  7/7. Four native roles, Mux decoding, PDFs/profile/certificate pass. Fresh
+  320/390 mobile-before-navigation captures visibly show synthetic PDF text in
+  both themes. Initial selector/incomplete-response observations remain; earlier
+  sad-document captures and two unclassified source 2058 buyer errors are retained.
+  Zero current page errors does not establish their earlier cause.
+- Exactly11 native password/session syncs overall, six at e32/five at 2058.
+  Reconciliation was intercepted and all other mutations blocked. Strict-CA
+  read-only final comparison23:29:43UTC preserves scoped learning fingerprints,
+  entitlements, price 80 and zero business records. All browsers closed and
+  purpose-created credential state was deleted. No payment/refund/mail/provider
+  configuration or production mutation occurred.
+
+Next: preserve this checkpoint and complete independent provider/release work
+within the zero-cost budget. Dodo recipient/signed-transaction and Google/SMTP
+access, continuous-host/account/DNS control, durable configuration, old Vercel
+quarantine and production SQL/config/deploy/resume review remain open. The
+runner stays disabled and no timer/service is installed. Goal remains active
+and incomplete. [Exact evidence](review-status.md#protected-native-preview-and-contrast).
