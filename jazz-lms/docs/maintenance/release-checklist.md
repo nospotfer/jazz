@@ -314,3 +314,32 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   catalog/provider mutation or actual charge is approved by the source repair.
 
 [Exact source and limits](review-status.md#catalog-prices-and-course-action-lifetime).
+
+
+## Checkout publication and account-intent follow-up
+
+- [x] Sourcecd20569a rejects unpublished courses and stale/ambiguous owner hints
+  before grants/payment work. Verified cookie identity remains authoritative;
+  genuine published0/admin and legacy controls pass. Four clients carry captured
+  owner IDs and show precise409 refresh guidance in four languages.
+- [x] Independent review and meaningful frozen baselines;2,221/51 normal,50/1
+  actual isolated PostgreSQL, types/build/lint0/23 and exact remote checks pass.
+  CI includes the new guarded persistence suite. Exact581-file source scans0.
+- [x] Native12 three-surface/four-locale controlled409 relay cases pass; original
+  B checkout never continues, URL/body/hint remain unchanged and actual native409
+  is relayed untouched. Page errors/forbidden mutations0. Raw no-checkout preflight
+  and later logout assertion interruption remain separate; all browsers close.
+- [x] Separate sign-out-only browser passes actual global204/private retirement
+  for both accounts, then strict-CA all-five/12-model preservation, runtime/tunnel
+  closure and sealed reinspection pass. Six sign-in/session pairs this preview/21
+  cumulative;0 avatar metadata writes. Earlier partials remain unchanged. No
+  repeat of the matrix, natural cookie-lag claim or matching provider checkout.
+- [ ] Before production recovery, separately review an index-definition guard
+  integrated after deterministic locks, plus unresolved column/extension ACL
+  equivalence. The separate93-index/18-check proposal never authorizes SQL or
+  removes revision2's capture-to-lock race. Original SQL/inverse remain frozen.
+- [ ] Resolve catalog/provider price,29.99 metadata, tax/currency, actual Dodo
+  transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
+  recovery/quarantine gates. No new spend or production action is inferred.
+
+[Exact scope](review-status.md#checkout-publication-and-account-intent).

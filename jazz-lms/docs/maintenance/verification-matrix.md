@@ -122,3 +122,23 @@ owner/catalog password/session pairs remain explicit. Prior41424/24 stays separa
 actual player-modal reachability, artificial delayed replies and positive provider
 price/metadata/tax/currency parity remain unresolved.
 [Current source scope](review-status.md#catalog-prices-and-course-action-lifetime).
+
+
+Current checkout publication/intent sourcecd20569a passes2,221 normal/51 opt-in
+skips and50 real isolated PostgreSQL/one REST skip, types/configured webpack and
+lint0/23. Publication9, server intent8 and client13 new normal cases retain frozen
+before failures and meaningful controls. Four new actual PostgreSQL cases prove
+before/after draft and wrong-cookie grant persistence. The older plain-URL fixture
+failure is retained. Exact CI logs and581-file source scan agree; all15 independently
+reviewed hashes match the final source. Fresh576/45,796/158 native artifact and
+Unix19/HTTPS11 pass. Current native12 actual-response relay matrix passes on three reachable screens
+and four languages at390; the whole run retains an unawaited logout assertion
+interruption. A prior preflight has0 checkout. Both browser groups close, with
+page errors/forbidden mutations0 and cumulative19 sign-in/session pairs. Final
+normal sign-out, preservation and runtime closure remain separately pending;
+natural cookie lag and locked-player reachability are not established.
+
+Offline93 public index definitions/18 closed checks expose the prepared name-only
+guard's uniqueness limitation. Original SQL/inverse hashes remain unchanged; no
+live SQL/drift/column/extension equivalence or atomic-preflight claim follows.
+[Current checkout evidence and limits](review-status.md#checkout-publication-and-account-intent).

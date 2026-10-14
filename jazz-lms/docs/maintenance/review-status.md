@@ -6,8 +6,8 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application source: `44ec58b`; see
-[catalog prices and course-action lifetime](#catalog-prices-and-course-action-lifetime).
+Current application/test source: `cd20569a`; see
+[checkout publication and account intent](#checkout-publication-and-account-intent).
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
@@ -1264,3 +1264,88 @@ reconciliation or a substitute for provider verification. No catalog SQL, provid
 price, schema, tax/currency policy, real transaction/refund or third-party mail
 change is authorized or performed. Production remains unreleased; all broader
 provider/hosting/hardening gates remain and the goal is incomplete.
+
+
+## Checkout publication and account intent
+
+Application source **`cd20569a4460374518bfd20c3a21a9957abac5c5`** contains
+`3ce58a8` plus a lifecycle-test URL correction. Checkout now requires an explicitly
+published course before free grants, voucher work or provider checkout, including
+for admins. A verified cookie identity remains the sole purchase authority. An
+optional `expectedUserId` consistency hint is checked immediately after server
+`getUser`, before all database reads and financial work. Wrong, blank or duplicate
+hints return409 `Session changed`; omitted legacy hints and unauthenticated401
+retain their behavior. All four active clients send their captured owner ID and
+show localized manual-refresh guidance for that precise JSON409. Ordinary voucher
+conflicts and current-owner/frame/lesson guards remain intact; no retry is added.
+
+Frozen source44 baselines are separate: publication9 has4 failures/5 controls;
+server intent8 has4 failures/4 controls; client28 has8 failures/20 controls. A
+real disposable PostgreSQL baseline4 actually persists a draft grant and a
+wrong-cookie grant in its two failures, with two legitimate controls. The same
+frozen server/PG bodies pass after the repair. Initial client selector diagnostics
+are preserved; revised assertions target the actual modal. Thirty new normal
+cases and four opt-in PostgreSQL cases are included in full verification. The
+first full run has2,219 passes/two failures/51 skips: two older lifecycle afterEach
+checks allowed only a plain checkout URL. Their exact captured-owner URL update
+preserves the behavior assertions; the failed report remains retained.
+
+Final clean private Node24 checks pass **2,221 normal tests/51 skips**, **50 actual
+PostgreSQL tests/one REST skip** in six guarded suites, types and lint0 errors/23
+existing warnings. Independent review binds15 relevant source/test/unchanged
+safeguard hashes to the final commit; the sole author-manifest delta is a root
+type-import alias correction. Mandatory hooks pass. Exact
+[Quality PR38593319613](https://github.com/nospotfer/jazz/actions/runs/38593319613)
+and push38593308747, Secret Scan PR38593319973/push38593308748,
+[CodeQL38593310891](https://github.com/nospotfer/jazz/actions/runs/38593310891)/aggregate115953795818
+and actual Vercel status pass. Quality ZIP SHA256
+`c544613385e75f088092d20cd77e2031b0faa5e4a92575a684e56f2eeb0d78ea`
+confirms these counts/types/build/lint;26 expanded entries scan0. The exact581-file
+Git export scans0 without new suppressions. Vercel isolation remains unverified.
+
+A new configured locked artifact matches576 Git application blobs/45,796 sealed
+files/158 inspected client files, with public origin/key binding and no supplied
+server secrets in client assets. Actual Unix19/HTTPS11 checks pass. Payments,
+mail and cron credentials are absent. The actual native checkout matrix passes
+**12/12**: dashboard CourseView, details/enrolment and the paywall ×ES/EN/FR/PT
+at390. Real B actions produce unchanged B owner hints/body; A's independently
+verified live API cookie jar gets actual409 JSON, relayed without body/status/
+header rewriting. Original B POSTs are never continued. The actual modal shows
+manual-refresh copy, without redirect or retry. No provider payment/mail occurs.
+This controlled transport relay is not naturally occurring Chromium cookie lag.
+The locked-player modal remains covered by actual components, not native claims.
+
+The first browser stops before checkout on a wrong purchases409 JSON assumption;
+that older route returns plaintext. Its two sign-in/session pairs remain consumed.
+A distinct frozen correction on the same artifact/origin/gate and unchanged expiry
+passes the12 matrix cases and both identity preflights, then stops on an immediate
+logout-counter assertion without awaiting its response. Both raw reports and
+executed helper hashes remain separate; no established application logout defect
+or whole-run success is inferred. All their contexts/Chromium close; page errors
+and forbidden mutations are0. Four total password/session pairs in this preview
+bring cumulative owner/catalog/checkout windows to19. A separately bounded
+sign-out-only browser uses two additional password/session pairs and no checkout.
+Ordinary native clicks produce trusted pointer/mouse/click events, actual global
+logout204 for both accounts and signed-out private boundaries before assertions.
+This independent two-sign-out proof passes; neither earlier partial is relabeled.
+Six pairs in this preview and21 cumulative remain explicit; three recognized
+optional own-avatar PUTs are blocked, with0 metadata writes. Strict-CA before
+15:54:34→after16:24:08 all-five/12-model/global/business/learning/entitlement hashes
+remain unchanged. Every context/Chromium/app/tunnel closes, owned sockets are
+removed and final sealed inspection passes. No matching provider checkout,
+natural cookie-lag reproduction or native locked-player pass is claimed.
+
+A separate private offline package fingerprints **93 public index definitions**,
+including standalone uniqueness that the hardening revision2 table/name guard
+does not prove. Its18 closed checks pass, including a same-name UNIQUE→nonunique
+counterexample; no production drift is observed or SQL executed. Root verifies
+all12 frozen artifact hashes and four protected original hashes. This is a
+review-only preflight proposal: a future locked-transaction integration is needed
+to remove the separate-capture race. Revision2 SQL/inverse remain unchanged;
+column equivalence and the extension ACL recovery gap remain unproved.
+
+The published-course check is a read snapshot, not a transactional publication
+lock or a historical-entitlement revocation. Positive29.99 metadata and Dodo
+product/catalog/tax/currency parity remain separate release gates. No provider
+transaction/refund, third-party mail, pricing/config/schema or production change
+occurred. Zero new spend; the goal remains active and incomplete.

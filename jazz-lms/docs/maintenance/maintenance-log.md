@@ -1112,3 +1112,42 @@ The maintenance goal remains active and incomplete.
   changes or production release. Zero new spend; the goal remains active.
 
 [Current evidence](review-status.md#catalog-prices-and-course-action-lifetime).
+
+
+## 2026-10-14 — Published-course checkout and captured-account intent
+
+- Confirm four draft checkout paths and missing client/server account consistency
+  on frozen44 source. Preserve9 publication,8 server,28 client baselines and four
+  actual local PostgreSQL cases; the latter really persist draft/wrong-cookie
+  grants before and reject both after, preserving valid0/unauth controls.
+- Publish3ce58a8 pluscd20569a old lifecycle-URL assertion correction. Thirty new
+  normal and four opt-in persisted cases; mandatory hooks and independent15-file
+  hash review pass. Retain initial client selector/whole-QA fixture diagnostics.
+- Final private2,221/51 normal,50/1 actual PostgreSQL, types/lint0/23 pass; exact
+  source CI and downloaded Quality logs agree.581 Git files/26 logs scan0.
+  Fresh locked576/45,796/158 configured artifact, Unix19/HTTPS11 pass.
+- First native preflight stops on a helper's
+  JSON assumption for an existing purchases409 plaintext response, with no checkout
+  or relay traffic. Browsers close, two password/session pairs remain consumed,
+  and the exact failed report/helper are immutable. Distinct correction uses the
+  same source/artifact/origin/gate and unchanged expiry, with cumulative17 before
+  its separate bounded two-sign-in window. No response shape is fabricated.
+- Native12 actual-response checkout cases pass at390 across three screens/four
+  locales, with unchanged B intent, actual A-cookie409 and unchanged relay; no
+  original B POST is continued. Page errors/forbidden mutations0. The whole run
+  stops on immediate unawaited logout count, without established app defect or
+  whole-run success. Both browser groups close; cumulative19 sign-in/session pairs
+  remain explicit. A separate sign-out-only browser passes actual global204 for
+  both accounts, trusted ordinary click events and signed-out private boundaries.
+  Two more pairs bring this preview to6/cumulative21; no matrix repeat. Three
+  optional own-avatar intents blocked,0 metadata writes. Strict-CA15:54:34→16:24:08
+  all-five/12-model/global/business/learning/entitlement hashes match; all browsers/
+  owned app/tunnel close, sockets retire and sealed inspection passes.
+- Prepare a private93-index definition comparator and18 meaningful closed checks;
+  root verifies frozen files/protected hashes. Same-name uniqueness drift is an
+  actual counterexample to the prepared name-only guard, not observed production
+  drift. SQL/inverse unchanged; locked integration and column/extension gaps remain.
+- Zero new spend, production change, provider transaction/refund, third-party mail
+  or learning write. Goal remains active/incomplete; broader gates retained.
+
+[Current evidence](review-status.md#checkout-publication-and-account-intent).
