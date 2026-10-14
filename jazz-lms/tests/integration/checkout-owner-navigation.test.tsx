@@ -47,7 +47,7 @@ async function start(kind: "enroll" | "paywall" | "course-view") {
   if (kind !== "enroll") fireEvent.click(screen.getByRole("button", { name: "Confirm synthetic checkout" }));
   await act(async () => { await Promise.resolve(); });
   expect(mocks.post).toHaveBeenCalledOnce();
-  expect(mocks.post.mock.calls[0][0]).toBe("/api/checkout");
+  expect(mocks.post.mock.calls[0][0]).toBe("/api/checkout?expectedUserId=owner-a");
   expect(mocks.post.mock.calls[0][1].courseId).toBe("synthetic-course");
   return view;
 }

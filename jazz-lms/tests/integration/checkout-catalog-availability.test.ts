@@ -31,7 +31,7 @@ function observed(response: Response) {
 beforeEach(() => {
   vi.resetAllMocks(); vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.synthetic.example');
   mocks.getUser.mockResolvedValue({ data: { user: { id: 'synthetic-owner', email: 'synthetic@example.test' } } });
-  mocks.course.mockResolvedValue({ id: 'synthetic-course', title: 'Synthetic course', price: 80 });
+  mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price: 80 });
   mocks.purchase.mockResolvedValue(null); mocks.user.mockResolvedValue({ role: 'USER' });
   mocks.transaction.mockImplementation(async (callback) => callback({ purchase: { upsert: mocks.upsert } }));
   mocks.upsert.mockResolvedValue({ id: 'synthetic-purchase' }); mocks.grant.mockResolvedValue(undefined);
@@ -43,13 +43,13 @@ beforeEach(() => {
 afterEach(() => { expect(mocks.fetch).not.toHaveBeenCalled(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 test.each([null, undefined, Number.NaN, Number.POSITIVE_INFINITY, -1, '0', '80', ''])('unknown or malformed catalog price %j rejects before any grant/provider/voucher work', async (price) => {
-  mocks.course.mockResolvedValue({ id: 'synthetic-course', title: 'Synthetic course', price });
+  mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price });
   const response = await invoke('en', true);
   expect(observed(response)).toEqual({ status: 503, upserts: 0, grants: 0, providerCalls: 0,
     voucherCalls: 0, synchronizations: 0, transactions: 0 });
 });
 test('unavailable price failure follows the chosen four-language response without any financial side effect', async () => {
-  mocks.course.mockResolvedValue({ id: 'synthetic-course', title: 'Synthetic course', price: null });
+  mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price: null });
   const messages = new Set<string>();
   for (const language of ['es', 'en', 'fr', 'pt']) {
     const response = await invoke(language); expect(response.status).toBe(503);
@@ -59,7 +59,7 @@ test('unavailable price failure follows the chosen four-language response withou
   expect(mocks.transaction).not.toHaveBeenCalled(); expect(mocks.provider).not.toHaveBeenCalled();
 });
 test('control genuine numeric zero keeps the existing scoped free-course entitlement', async () => {
-  mocks.course.mockResolvedValue({ id: 'synthetic-course', title: 'Synthetic course', price: 0 });
+  mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price: 0 });
   const response = await invoke(); expect(response.status).toBe(200);
   expect(mocks.upsert).toHaveBeenCalledExactlyOnceWith({
     where: { userId_courseId: { userId: 'synthetic-owner', courseId: 'synthetic-course' } },
@@ -69,7 +69,7 @@ test('control genuine numeric zero keeps the existing scoped free-course entitle
   expect(mocks.provider).not.toHaveBeenCalled(); expect(mocks.grant).not.toHaveBeenCalled();
 });
 test.each([29.99, 80])('control positive catalog price %j keeps existing provider metadata29.99 policy unchanged', async (price) => {
-  mocks.course.mockResolvedValue({ id: 'synthetic-course', title: 'Synthetic course', price });
+  mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price });
   const response = await invoke(); expect(response.status).toBe(200);
   expect(mocks.provider).toHaveBeenCalledOnce();
   expect(mocks.provider.mock.calls[0][0].customData.originalPrice).toBe('29.99');

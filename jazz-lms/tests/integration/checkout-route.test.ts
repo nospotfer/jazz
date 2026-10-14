@@ -176,6 +176,7 @@ describe("POST /api/checkout", () => {
     });
     mocks.userFindUnique.mockRejectedValue(new Error("relation User missing"));
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -209,6 +210,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -229,6 +231,7 @@ describe("POST /api/checkout", () => {
     });
     mocks.userFindUnique.mockResolvedValue({ role: "SUPER_ADMIN" });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -249,6 +252,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -273,6 +277,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -294,6 +299,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -331,6 +337,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -358,6 +365,7 @@ describe("POST /api/checkout", () => {
         data: { user: { id: "u1", email: "student@example.com" } },
       });
       mocks.courseFindUnique.mockResolvedValue({
+        isPublished: true,
         id: "c1",
         title: "Curso",
         description: "",
@@ -412,6 +420,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -450,7 +459,7 @@ describe("POST /api/checkout", () => {
       const actual = await vi.importActual<typeof import("@/lib/test-mode")>("@/lib/test-mode");
       mocks.isLocalTestRequest.mockImplementation(actual.isLocalTestRequest);
       mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.test" } } });
-      mocks.courseFindUnique.mockResolvedValue({ id: "c1", title: "Jazz", price: 29.99 });
+      mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
       mocks.purchaseFindUnique.mockResolvedValue(null);
       mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
       const url = condition === "remote URL with localhost headers"
@@ -471,6 +480,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -497,6 +507,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -536,6 +547,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -581,6 +593,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -625,6 +638,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -648,7 +662,7 @@ describe("POST /api/checkout", () => {
 
   test("returns 409 if concurrently consumed free voucher fails atomic redemption", async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.com" } } });
-    mocks.courseFindUnique.mockResolvedValue({ id: "c1", title: "Jazz", price: 29.99 });
+    mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
     mocks.validateVoucherForCourse.mockResolvedValue({ valid: true, isFree: true, originalPrice: 29.99, discount: 29.99, finalPrice: 0,
       voucher: { id: "v1", code: "FREE100", providerDiscountCode: "FREE100" } });
@@ -664,7 +678,7 @@ describe("POST /api/checkout", () => {
   test("backfill preserves provider mapping, local total limit and per-user rule", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.com" } } });
-    mocks.courseFindUnique.mockResolvedValue({ id: "c1", title: "Jazz", price: 29.99 });
+    mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
     mocks.purchaseFindUnique.mockResolvedValue(null);
     mocks.validateVoucherForCourse.mockResolvedValue({ valid: true, isFree: false, originalPrice: 29.99, discount: 5, finalPrice: 24.99,
       voucher: { id: "v1", code: "JAZZ5", providerDiscountCode: "DODO5", type: "DISCOUNT_FIXED", discountAmount: 5,
@@ -687,6 +701,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -730,6 +745,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -776,6 +792,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -802,6 +819,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -826,6 +844,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -848,6 +867,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",

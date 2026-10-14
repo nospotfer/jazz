@@ -10,6 +10,8 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 import { useOwnerAction } from '@/hooks/use-owner-action';
+import { withExpectedUserId } from '@/hooks/use-auth-owner';
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from '@/lib/checkout-helpers';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -115,7 +117,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, coursePrice, 
     try {
       setIsPurchasing(true);
       setPaymentError('');
-      const response = await axios.post('/api/checkout', {
+      const response = await axios.post(withExpectedUserId('/api/checkout', token.ownerId), {
         courseId,
         source: 'dashboard',
         language,
@@ -130,7 +132,9 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, coursePrice, 
       setIsPurchasing(false);
     } catch (error) {
       if (!isCurrent(token)) return;
-      if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        setPaymentError(getCheckoutSessionChangedMessage(language));
+      } else if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
         setPaymentError(error.response.data);
       }
       setIsPurchasing(false);

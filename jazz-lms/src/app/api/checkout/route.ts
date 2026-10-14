@@ -2,6 +2,7 @@ import { isSupportedPaymentMethod } from "@/lib/checkout-helpers";
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
+import { expectedUserConsistencyResponse } from "@/lib/expected-user-consistency";
 import { normalizeLanguage } from "@/lib/language";
 import {
   createProviderCheckout,
@@ -193,6 +194,9 @@ export async function POST(req: Request) {
       return new NextResponse(copy.unauthorized, { status: 401 });
     }
 
+    const ownerMismatch = expectedUserConsistencyResponse(req, user.id);
+    if (ownerMismatch) return ownerMismatch;
+
     if (!user.email) {
       return new NextResponse(copy.emailRequired, { status: 400 });
     }
@@ -225,7 +229,7 @@ export async function POST(req: Request) {
       }),
     ]);
 
-    if (!course) {
+    if (!course || course.isPublished !== true) {
       return new NextResponse(copy.courseNotFound, { status: 404 });
     }
 

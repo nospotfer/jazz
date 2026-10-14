@@ -26,6 +26,8 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useOwnerAction } from "@/hooks/use-owner-action";
+import { withExpectedUserId } from "@/hooks/use-auth-owner";
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from "@/lib/checkout-helpers";
 import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import { SaxLoadingOverlay } from "@/components/ui/sax-loading-overlay";
 
@@ -783,7 +785,7 @@ export function CourseViewClient({
     setIsPurchasing(true);
     setPaymentError("");
     try {
-      const response = await axios.post("/api/checkout", {
+      const response = await axios.post(withExpectedUserId("/api/checkout", token.ownerId), {
         courseId,
         source: "dashboard",
         language,
@@ -800,7 +802,9 @@ export function CourseViewClient({
       setIsPurchasing(false);
     } catch (error) {
       if (!isCurrent(token)) return;
-      if (
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        setPaymentError(getCheckoutSessionChangedMessage(language));
+      } else if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
       ) {

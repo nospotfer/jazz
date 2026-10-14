@@ -121,7 +121,7 @@ beforeEach(() => {
   mocks.syncUser.mockResolvedValue(undefined);
   mocks.userFindUnique.mockResolvedValue({ role: "USER" });
   mocks.userFindMany.mockResolvedValue([actor]);
-  mocks.courseFindUnique.mockResolvedValue({ id: COURSE_ID, title: "Synthetic course", price: 80 });
+  mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: COURSE_ID, title: "Synthetic course", price: 80 });
   mocks.purchaseFindUnique.mockResolvedValue(null);
   mocks.voucherValidation.mockResolvedValue(null);
   mocks.voucherUpdate.mockResolvedValue({});

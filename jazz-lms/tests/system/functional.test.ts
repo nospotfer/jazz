@@ -118,6 +118,7 @@ describe('Functional: Free course purchase flow', () => {
       data: { user: { id: 'u1', email: 'student@example.com' } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: 'c1', title: 'Jazz', description: '', price: 0,
     });
     mocks.purchaseFindUnique.mockResolvedValue({ id: 'existing-purchase' });

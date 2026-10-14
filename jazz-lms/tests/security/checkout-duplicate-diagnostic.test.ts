@@ -22,7 +22,7 @@ const role = 'SUPER_ADMIN';
 beforeEach(() => {
   vi.resetAllMocks();
   mocks.getUser.mockResolvedValue({ data: { user: { id: actorId, email: 'synthetic@example.test' } } });
-  mocks.user.mockResolvedValue({ role }); mocks.course.mockResolvedValue({ id: courseId, title: 'Synthetic course', price: 80 });
+  mocks.user.mockResolvedValue({ role }); mocks.course.mockResolvedValue({ isPublished: true, id: courseId, title: 'Synthetic course', price: 80 });
   mocks.purchase.mockResolvedValue({ id: purchaseId });
   mocks.fetch.mockImplementation(() => { throw new Error('Network prohibited'); }); vi.stubGlobal('fetch', mocks.fetch);
 });

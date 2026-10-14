@@ -7,6 +7,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import type { AppliedVoucher } from "@/components/vouchers/voucher-input";
 import { useConfettiStore } from "@/hooks/use-confetti-store";
 import { useAuthOwner, withExpectedUserId, type AuthOwnerToken } from "@/hooks/use-auth-owner";
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from "@/lib/checkout-helpers";
 import { getCanonicalJazzClass } from "@/lib/course-lessons";
 import { languageToHtmlLang } from "@/lib/language";
 import {
@@ -1118,7 +1119,7 @@ export const CoursePlayer = ({
     setIsPurchasing(true);
     setPaymentError("");
     try {
-      const response = await axios.post("/api/checkout", {
+      const response = await axios.post(withExpectedUserId("/api/checkout", token.ownerId), {
         courseId: course.id,
         source: "dashboard",
         language,
@@ -1132,7 +1133,11 @@ export const CoursePlayer = ({
       }
     } catch (error) {
       if (!isWorkCurrent(token)) return;
-      if (
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        const message = getCheckoutSessionChangedMessage(language);
+        setPaymentError(message);
+        toast.error(message);
+      } else if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
       ) {
