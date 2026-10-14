@@ -6,9 +6,10 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application source: `133716b`; see
-[provider amount availability](#provider-amount-availability). Actual UI evidence
-is bound separately to `fb37f9e`/`bc17899` below.
+Current application source: `a207f36`; see
+[payment history recovery and account isolation](#payment-history-recovery-and-account-isolation).
+Earlier accounting, editor, language, learning and media scopes retain their
+separate source bindings below.
 
 ## First published checkpoint
 
@@ -835,3 +836,85 @@ quarantine remain release gates. The maintenance goal is active and incomplete.
 
 Downloaded Quality ZIP SHA256:
 `7ace5fd49962f62157b390fbd3314e0159578e10dc3157591e4024fe1178ba78`.
+
+## Payment history recovery and account isolation
+
+Source **`a207f36feb804486f7b3ba926bb44a2bacaa86a2`** fixes three confirmed
+history defects. Failed requests previously displayed “no purchases”; failures
+and malformed successful responses now show a generic localized error and a
+44px Retry control. A successful empty array retains the empty state, including
+corrected Portuguese wording. Loading exposes an accessible status.
+
+A mounted account switch could retain the previous account's financial rows or
+accept its late response. The page now waits for the initial Auth session,
+clears/aborts on identity change, and rejects stale results with an owner epoch
+even if cancellation is ignored. Same-owner token refresh preserves the loaded
+history. Each GET supplies `expectedUserId`; the server verifies cookie-backed
+identity before reading purchases and returns 409 on a mismatching or blank
+hint, closing the cookie-update race. The hint grants no access. Unauthenticated
+requests remain 401; callers without a hint retain their own-record response.
+POST, accounting, currency, schema and historical data policy are unchanged.
+
+Frozen page baselines retain seven failures/three controls and a later owner/
+response-shape baseline of 15 failures/four controls. Final component cases pass
+**19/19**. The GET regression baseline has three failures/33 controls; five added
+cases cover mismatch/blank, matching-empty and unauthenticated hints. Existing
+direct route fixtures now pass a Request required by Next's generated types,
+without changing expected behavior. Independent source review passes. Root and
+downloaded CI verify **1,995 normal passes/47 intentional skips**, 108 passed/
+five all-skipped files, **46 PostgreSQL passes/one REST-only skip**, types/build
+and lint **0 errors/25 existing warnings**. The clean 556-file committed export
+has zero secret findings. Required hooks pass without bypass.
+
+A fresh Node24.21.0 locked configured webpack build matches **551 application
+Git blobs**, seals **45,770 files**, and checks **158 client files** for correct
+public key/origin and absence of supplied server secrets. Actual Unix transport
+passes **19/19** and protected temporary HTTPS passes **11/11**. This independent
+window reuses the fifth synthetic USER and its existing root-created course
+grant; no provider payment is implied.
+
+Root bounded SQL changes only that grant's final/discount amounts from 80/0 to
+NULL/NULL, then 0/80, then exactly back to the original row including updatedAt.
+Actual owner-bound API/UI checks pass separately: recorded80 **10/10**, unknown
+**7/7**, real-zero fixture **7/7**, restored80 **7/7**. These **31/31** successful
+phase checks include ES320, EN390, FR1440 and PT320, 16 real locale clicks,
+44px language controls and no horizontal overflow. One controlled intercepted
+500 displays an error instead of empty history; a real Retry GET200 recovers.
+An actual server owner-mismatch GET returns 409. The initial **3/2/1** report
+retains a helper assertion before GET completion; a separate **1/0/1** optional-
+label CLI diagnostic stopped before any browser traffic. Neither is erased or
+counted as an application failure. Empty-account and mounted account-switch
+behavior have source regressions, not an actual browser journey claim.
+
+The whole window uses exactly one password login, one normal session sync and
+one normal own-avatar update; saved-state continuations add none. Nineteen
+automatic reconciliation intents are intercepted before the app. No browser
+learning/financial/mail write, actual Dodo transaction or playback occurs.
+Root strict-CA read-only snapshots at **03:38:15.510Z / 03:55:44.840Z** confirm
+all five actors' **12 model hashes**, global counts, original four accounts,
+learning/entitlements, price80 and zero business rows unchanged after restoration.
+The restore guard observes explicit restoration without executing its fallback.
+All browser contexts and Chromium processes close, the purpose session is deleted,
+and owned app/tunnel shutdown and full sealed reinspection pass. Earlier learning,
+editor, media/PDF and restart/UID proofs remain separate. No spend or production
+change; provider notification/transaction, Google/mail, continuous-host/account/
+DNS, old Vercel quarantine and production review gates remain open.
+
+| Exact a207 source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38507290995) | Success; downloaded logs confirm 1,995/47 normal and 46/1 persisted. Push38507286850 also succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38507291080) | Success; push38507286857 also succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38507289757) and [aggregate](https://github.com/nospotfer/jazz/runs/115667755523) | Success on exact source. |
+| Existing protected Vercel build | Actual combined Vercel status is success, “Deployment has completed.” Account/provider isolation remains unreconciled; no Vercel journey or production release claim. |
+
+Downloaded Quality ZIP SHA256:
+`90342e5a3dbdf2f31d0e3d0b4c170c275d94173f0b0df35d2e9a03d6dc6c4c51`.
+
+An initial48 selected regression/native/browser/CI files are retained with
+matching byte hashes, files600/directories700, under
+`/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24/review-checkpoint-payment-history-a207f36/`.
+Credential, launch/config/env, actor and session inputs are excluded. All753
+scanner matches are individually verified as exact path/SHA256 records in the
+fully inspected seal manifest; zero other findings or new suppressions. The
+Quality ZIP's26 expanded text entries separately scan with zero findings. This
+is local retention, without encryption or off-site recovery.

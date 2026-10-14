@@ -312,3 +312,22 @@ existing caller controls pass260/260,including18 actual PostgreSQL cases.
 Fresh locked installation/build use a clean556-file Git archive without private
 env files or builder server credentials. No schema, backfill or provider call.
 [Exact source/CI and distinct UI scopes](review-status.md#provider-amount-availability).
+
+## Payment history regression checkpoint
+
+Source `a207f36` passes 1,995 normal tests/47 intentional skips in108 passed/
+five all-skipped files,46 actual PostgreSQL checks/one REST-only skip, types,
+configured webpack and lint0errors/25existingwarnings. Frozen failure/owner/
+malformed-response baselines remain separate; final page cases pass19/19.
+GET identity-hint cases reproduce three baseline failures/33 controls and
+verify mismatch/blank denial before database reads. Direct API fixtures supply
+the Request required by Next's generated route types. Exact downloaded CI and
+556-file committed export secret scan pass.
+
+Actual native HTTPS history checks pass31/31 successful phases with reversible
+root SQL variants on one existing synthetic grant, not Dodo transactions. The
+initial readiness and zero-traffic CLI diagnostics remain separate. Strict-CA
+all-five12-model comparison, original-row restoration, owned app/tunnel/browser
+closure, session deletion and45,770-file seal reinspection pass. No extra
+learning mutation or whole-course replay was needed.
+[Exact source and limits](review-status.md#payment-history-recovery-and-account-isolation).

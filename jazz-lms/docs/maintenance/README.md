@@ -100,7 +100,7 @@ current catalog price. Hydrated editor text and actual locale controls remain
 separate browser checks.
 
 
-Current source `133716b` preserves missing/malformed provider amounts asNULL,
+Earlier source `133716b` preserves missing/malformed provider amounts asNULL,
 retains same-payment known facts and correct voucher links, and clears stale
 accounting on replacement payments. Exact CI/downloaded logs confirm1,973 normal
 passes/47 skips and46 actual PostgreSQL passes/one skip; types/build/lint0/25 and
@@ -108,3 +108,13 @@ passes/47 skips and46 actual PostgreSQL passes/one skip; types/build/lint0/25 an
 cases. Actual browser proof stays bound to FB editors/BC35/35 language controls;
 all temporary processes are closed and all-five12-model preservation passes.
 [Current source and remaining gates](review-status.md#provider-amount-availability).
+
+Current source `a207f36` makes payment-history failures recoverable and prevents
+stale financial rows across account changes. Exact CI confirms 1,995 normal
+passes/47 skips and 46 PostgreSQL passes/one skip. A fresh sealed native HTTPS
+window passes 31/31 history checks across four languages/mobile/desktop: €80,
+unavailable, €0 and restored €80, plus controlled error/real retry and actual
+owner-mismatch409. Bounded root SQL touched only one synthetic grant, restored
+exactly; all-five12-model fingerprints match, temporary services are closed and
+the session deleted. No actual provider payment, spend or production change.
+[Current source, evidence and open gates](review-status.md#payment-history-recovery-and-account-isolation).

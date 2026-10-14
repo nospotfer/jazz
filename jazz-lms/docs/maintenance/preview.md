@@ -5,9 +5,12 @@ not a customer-database clone or a production repair. Preview work changed no
 production resource, plan, domain, key or payment configuration. The separately
 approved customer recovery/rollback is documented in [Supabase](supabase.md).
 
-Latest frontend: exact application source `57f5de1` freshly built/sealed with
-Unix19/HTTPS11 checks. Its read-only drawer correction is verified and closed; retained diagnostics are in the
-[current checkpoint](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+Latest frontend: exact source `a207f36`, freshly built/sealed with Unix19/HTTPS11
+checks. Its separate payment-history window passes31/31 successful phase checks
+for one existing synthetic grant. Root amount variants are restored exactly;
+all-five12-model hashes match, app/tunnel/browsers close and session is deleted.
+Retained diagnostics and distinct source scopes are in the
+[current checkpoint](review-status.md#payment-history-recovery-and-account-isolation).
 The separate9bd native browser scope actually saves two notes, watches two clips
 and completes two quizzes24answers for one new synthetic actor; original-four
 full rows remain unchanged. No customer-database clone or Dodo purchase is

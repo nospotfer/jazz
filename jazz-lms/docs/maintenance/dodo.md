@@ -150,3 +150,12 @@ Primary API references: [product list](https://docs.dodopayments.com/api-referen
 [webhooks](https://docs.dodopayments.com/api-reference/webhooks/list-webhooks) and
 [signing key](https://docs.dodopayments.com/api-reference/webhooks/get-webhook-signing-key).
 Sanitized local evidence: `/tmp/jazz-maintenance/dodo-provider-access-summary.json`.
+
+The later a207 native history window verifies actual own-record GET/UI display
+of80, NULL and0 and restoration, plus controlled load recovery and server owner-
+mismatch409. Its31 successful phase checks use one root-created synthetic grant
+with bounded reversible SQL amount changes; they make **no provider transaction,
+refund, delivery, tax or currency claim**. The original row/timestamp and all-five
+12-model fingerprints match afterward. Accounting source260 targeted checks
+and actual Dodo notification/transaction gates remain distinct.
+[Exact scope](review-status.md#payment-history-recovery-and-account-isolation).

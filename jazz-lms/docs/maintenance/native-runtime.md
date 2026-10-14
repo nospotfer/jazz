@@ -2,13 +2,13 @@
 
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
-verification. Current application source `57f5de1` passes 1,935 normal tests/40
-intentional skips, 39 actual PostgreSQL tests/one REST-only skip, types, webpack
+verification. Current application source `a207f36` passes 1,995 normal tests/47
+intentional skips, 46 actual PostgreSQL tests/one REST-only skip, types, webpack
 and lint 0 errors/25 existing warnings. Its fresh sealed artifact actually ran
 through private Unix sockets and a protected temporary HTTPS tunnel. The earlier
 e32 artifact separately passed restart, worker-exit cleanup and separate-UID
-denial; those lifecycle checks are not relabeled as 9bd execution.
-[Exact checkpoints and retained observations](review-status.md#native-password-navigation-and-fresh-learning).
+denial; those lifecycle checks retain their original source binding.
+[Exact checkpoints and retained observations](review-status.md#payment-history-recovery-and-account-isolation).
 The earlier 512 safeguard cases and newer 152 launcher/transport/runner cases
 are included in the normal total.
 
@@ -320,3 +320,12 @@ BC language controls pass; apps/tunnel/browser state are closed and all-five
 12-model strict-CA preservation passes at02:42:36 UTC October14. These scopes do
 not repeat or relabel the earlier e32 restart/worker/UID tests.
 [Latest UI checkpoint](review-status.md#scoped-notes-editor-and-language-controls).
+
+The separate a207 payment-history window uses a fresh551-application-blob/
+45,770-sealed-file artifact and158 client-file secret checks. Actual Unix19/
+HTTPS11, app/tunnel closure and full sealed reinspection pass. Browser31/31
+successful phase checks add payment history only; root bounded amount variants
+on one existing synthetic grant restore exactly, and all-five12-model hashes
+match. One login/session/own-avatar budget, purpose-state deletion and zero
+remaining Chromium processes are verified. Reconciliation, mail and payment
+activation stay disabled. [Scoped receipts](review-status.md#payment-history-recovery-and-account-isolation).

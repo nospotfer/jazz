@@ -915,3 +915,40 @@ host/account/DNS, old Vercel quarantine and production review gates remain open.
 Zero new spend; no production mutation, transaction/refund/mail or service/timer.
 The maintenance goal remains active and incomplete.
 [Source checkpoint](review-status.md#provider-amount-availability).
+
+## 2026-10-14 — Recoverable payment history and account privacy
+
+- Confirmed failed history GET falsely rendered empty, malformed200 was
+  unhandled, and mounted account changes retained/accepted previous-owner rows.
+  Sourcea207 adds localized error/44px Retry/status, response validation, owner
+  epochs and synchronous clearing/abort. Server GET expectedUserId mismatch
+  returns409 before DB access; verified cookie identity remains authority.
+- Frozen page baselines7FAIL/3controls and15FAIL/4controls; final19/19PASS.
+  API baseline3FAIL/33controls retained. Next required-Request type diagnostic
+  retained; existing direct fixtures now pass Request without expected-behavior
+  change. Independent review passes. Normal1,995/47,types/lint0/25; actual exact
+  CI PostgreSQL46/1,Quality/Secret Scan/CodeQL/protected build all pass.
+- Clean556-file committed export scan0; fresh locked configured Node24 artifact
+  matches551 application Git blobs/45,770 sealed files/158 client files. Actual
+  Unix19/HTTPS11 and complete final seal inspection pass.
+- Bounded native window reuses the fifth synthetic USER/grant. Root changes only
+  final/discount amounts toNULL/NULL,0/80,then exactly restores80/0 and updatedAt.
+  Browser successful phases10+7+7+7=31/31 show80/unavailable/0/restored80 in
+  ES320/EN390/FR1440/PT320; controlled500/real44px Retry and actual409 pass.
+  Initial3/2/1 early assertion and1/0/1 zero-traffic CLI diagnostics stay frozen.
+  No actual browser switch/empty-account or provider transaction claim.
+- Entire budget1password/1session/1owned-avatar;19 reconciliation intents
+  intercepted. Root strict-CA03:38:15/03:55:44 all-five12-model/global comparison
+  passes after exact restoration. Explicit restore guard fallback unused.
+  Session deleted, all Chromium/app/tunnel processes close and sealed artifact
+  reinspection passes. Existing services preserved; zero spend/production change.
+- Earlier learning/editor/language/media sources remain distinct. Actual Dodo
+  recipients/transactions,Google/mail,continuous host/account/DNS,old Vercel
+  quarantine and concrete production review remain open. Goal active/incomplete.
+- Initial48 selected evidence files are copied outside/tmp with matching hashes
+  and owner-only permissions. All753 scan matches are exact sealed-manifest
+  path/hash records; zero other findings. Quality ZIP26 expanded text entries
+  separately scan0. Credentials/config/env/actor/session inputs excluded; local
+  retention is neither encrypted nor off-site.
+
+[Exact source checks and retained limits](review-status.md#payment-history-recovery-and-account-isolation).

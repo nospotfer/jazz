@@ -234,7 +234,7 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
 [Verified source/package limits](native-runtime.md).
 
 
-## Current source and UI checkpoint
+## Earlier accounting and language checkpoint
 
 - [x] Source133 exact Quality/Secret Scan/CodeQL/protected build succeed; downloaded
   logs confirm1,973/47 normal and46/1 persisted,types/build/lint0/25.
@@ -251,3 +251,24 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   satisfy these gates. No paid upgrade or production release occurred.
 
 [Exact source and limits](review-status.md#provider-amount-availability).
+
+## Current payment history checkpoint
+
+- [x] Exact a207 Quality/Secret Scan/CodeQL and actual protected Vercel build
+  status pass; downloaded logs confirm1,995/47 normal and46/1 persisted,
+  types/build/lint0/25. Clean556-file committed export secret scan0.
+- [x] Failed/malformed history has localized recovery; successful empty remains
+  empty. Account epochs reject stale rows and server cookie/expected-owner
+  mismatch returns409 before the DB read. Independent review and page19/19 pass.
+- [x] Fresh551-application-blob/45,770-file/158-client-file build, Unix19/HTTPS11
+  and actual native history31/31 successful phases pass. Four locales, mobile/
+  desktop, unknown/zero/80, controlled failure/real retry and server409 verified.
+- [x] Sole synthetic grant restored to exact original row/timestamp; strict-CA
+  all-five12-model/global comparisons match. One login/session/own-avatar,
+  browser/app/tunnel closure, session deletion and complete seal inspection pass.
+- [ ] Verify actual Dodo/notification, Google/mail, continuous-host/account/DNS
+  and old-deployment quarantine gates, then review exact production actions.
+  Root fixture amount variants do not prove a provider transaction. Account-
+  switch/empty-account browser journeys remain excluded from this scoped window.
+
+[Exact source, retained diagnostics and limits](review-status.md#payment-history-recovery-and-account-isolation).
