@@ -138,7 +138,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   };
 
   return (
-    <div className="relative min-h-full">
+    <div className="relative isolate min-h-full">
       <div className={showPaywall ? 'blur-sm pointer-events-none select-none' : ''}>
         {children}
       </div>
