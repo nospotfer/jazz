@@ -10,7 +10,7 @@ import {
   isActivePaymentProviderConfigured,
 } from "@/lib/payments/provider";
 import { isDodoWebhookConfigured } from "@/lib/payments/providers/dodo";
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { DEFAULT_FULL_COURSE_PRICE_EUR, getKnownCatalogPrice } from "@/lib/pricing";
 import { isLocalTestRequest } from "@/lib/test-mode";
 import { validateVoucherForCourse } from "@/lib/vouchers";
 import { ensureVoucherDiscountSynced } from "@/lib/voucher-provider-sync";
@@ -69,6 +69,7 @@ export async function POST(req: Request) {
     emailRequired: "El correo del usuario es obligatorio",
     invalidRequest: "Solicitud inválida",
     courseNotFound: "Curso no encontrado",
+    priceUnavailable: "El precio del curso no está disponible. Inténtalo de nuevo más tarde.",
     alreadyPurchased: "El curso ya fue comprado",
     paymentsUnavailable: "Pagos temporalmente no disponibles",
     paymentMethodUnavailable: "Método de pago no disponible para esta compra",
@@ -107,6 +108,7 @@ export async function POST(req: Request) {
         emailRequired: "El correo del usuario es obligatorio",
         invalidRequest: "Solicitud inválida",
         courseNotFound: "Curso no encontrado",
+        priceUnavailable: "El precio del curso no está disponible. Inténtalo de nuevo más tarde.",
         alreadyPurchased: "El curso ya fue comprado",
         paymentsUnavailable: "Pagos temporalmente no disponibles",
         paymentMethodUnavailable:
@@ -121,6 +123,7 @@ export async function POST(req: Request) {
         emailRequired: "User email is required",
         invalidRequest: "Invalid request",
         courseNotFound: "Course not found",
+        priceUnavailable: "The course price is unavailable. Please try again later.",
         alreadyPurchased: "Course already purchased",
         paymentsUnavailable: "Payments are temporarily unavailable",
         paymentMethodUnavailable:
@@ -136,6 +139,7 @@ export async function POST(req: Request) {
         emailRequired: "L’e-mail utilisateur est obligatoire",
         invalidRequest: "Requête invalide",
         courseNotFound: "Cours introuvable",
+        priceUnavailable: "Le prix du cours est indisponible. Réessayez plus tard.",
         alreadyPurchased: "Le cours a déjà été acheté",
         paymentsUnavailable: "Les paiements sont temporairement indisponibles",
         paymentMethodUnavailable:
@@ -152,6 +156,7 @@ export async function POST(req: Request) {
         emailRequired: "O e-mail do usuário é obrigatório",
         invalidRequest: "Solicitação inválida",
         courseNotFound: "Curso no encontrado",
+        priceUnavailable: "O preço do curso está indisponível. Tente novamente mais tarde.",
         alreadyPurchased: "O curso já foi comprado",
         paymentsUnavailable: "Pagamentos temporariamente indisponíveis",
         paymentMethodUnavailable:
@@ -193,9 +198,8 @@ export async function POST(req: Request) {
     }
     const userEmail = user.email;
 
-    let dbUser = null;
     try {
-      dbUser = await db.user.findUnique({
+      await db.user.findUnique({
         where: { email: user.email },
         select: { role: true },
       });
@@ -227,17 +231,16 @@ export async function POST(req: Request) {
 
     if (existingPurchase) {
       console.warn("[CHECKOUT_ALREADY_PURCHASED]", {
-        userId: user.id,
-        courseId,
-        purchaseId: existingPurchase.id,
-        role: dbUser?.role ?? null,
+        diagnostic: "already_purchased",
       });
       return new NextResponse(copy.alreadyPurchased, { status: 400 });
     }
 
-    const configuredPrice = Number(course.price ?? 0);
-    const isFreeCourse =
-      !Number.isFinite(configuredPrice) || configuredPrice <= 0;
+    const configuredPrice = getKnownCatalogPrice(course.price);
+    if (configuredPrice === null) {
+      return new NextResponse(copy.priceUnavailable, { status: 503 });
+    }
+    const isFreeCourse = configuredPrice === 0;
     const numericPrice = isFreeCourse ? 0 : DEFAULT_FULL_COURSE_PRICE_EUR;
 
     const normalizedVoucherCode =

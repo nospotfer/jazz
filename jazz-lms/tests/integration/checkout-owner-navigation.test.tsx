@@ -41,7 +41,7 @@ function owner(event: string, id: string | null) {
 }
 async function start(kind: "enroll" | "paywall" | "course-view") {
   const view = kind === "enroll" ? render(<CourseEnrollButton courseId="synthetic-course" price={0} />)
-    : kind === "course-view" ? render(<CourseViewClient userName="Synthetic Alpha" hasPurchased={false} courseId="synthetic-course" lessonRoutesByTitle={{}} lessonRoutesInOrder={[]} lessonIdsInOrder={[]} lessonTitlesInOrder={[]} />)
+    : kind === "course-view" ? render(<CourseViewClient userName="Synthetic Alpha" hasPurchased={false} coursePrice={29.99} courseId="synthetic-course" lessonRoutesByTitle={{}} lessonRoutesInOrder={[]} lessonIdsInOrder={[]} lessonTitlesInOrder={[]} />)
     : render(<DashboardPaywallWrapper courseId="synthetic-course" hasPaidCourse={false}><p>Synthetic child</p></DashboardPaywallWrapper>);
   fireEvent.click(screen.getAllByRole("button", { name: kind === "enroll" ? "Enroll for free" : kind === "course-view" ? /Buy full course/ : "Apply voucher and continue" })[0]);
   if (kind !== "enroll") fireEvent.click(screen.getByRole("button", { name: "Confirm synthetic checkout" }));

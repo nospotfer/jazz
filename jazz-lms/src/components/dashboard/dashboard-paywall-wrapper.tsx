@@ -9,7 +9,6 @@ import { Loader2, Lock, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
 import { useOwnerAction } from '@/hooks/use-owner-action';
 
 const PaymentMethodModal = dynamic(
@@ -20,10 +19,11 @@ const PaymentMethodModal = dynamic(
 interface DashboardPaywallWrapperProps {
   hasPaidCourse: boolean;
   courseId: string | null;
+  coursePrice?: number | null;
   children: ReactNode;
 }
 
-export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: DashboardPaywallWrapperProps) {
+export function DashboardPaywallWrapper({ hasPaidCourse, courseId, coursePrice, children }: DashboardPaywallWrapperProps) {
   const pathname = usePathname();
   const { language } = useLanguage();
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -192,7 +192,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         isLoading={isPurchasing}
         language={language}
         courseId={courseId ?? ''}
-        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
+        basePrice={coursePrice}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {

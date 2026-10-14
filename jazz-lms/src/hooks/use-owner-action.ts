@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
 import { useAuthOwner, type AuthOwnerToken } from "@/hooks/use-auth-owner";
 
 /** Captured work may only affect the still-mounted frame of its original owner. */
 export function useOwnerAction() {
   const { capture: captureOwner, isCurrent: isOwnerCurrent, ready } = useAuthOwner();
   const mounted = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     mounted.current = true;
     return () => { mounted.current = false; };
   }, []);

@@ -146,6 +146,7 @@ describe("CourseViewClient free first class behavior", () => {
       <CourseViewClient
         userName="Student"
         hasPurchased={hasPurchased}
+        coursePrice={29.99}
         courseId="course-1"
         lessonRoutesByTitle={{}}
         lessonRoutesInOrder={lessonRoutesInOrder}

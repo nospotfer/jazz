@@ -107,11 +107,13 @@ export default async function DashboardPage() {
 
   return (
     <CourseViewClient
+      key={course?.id ?? 'unavailable-course'}
       userName={
         user.user_metadata?.full_name || user.email || "Estudiante de Jazz"
       }
       hasPurchased={hasPurchased || isAdmin}
       courseId={course?.id ?? null}
+      coursePrice={course?.price ?? null}
       lessonRoutesByTitle={lessonRoutesByTitle}
       lessonRoutesInOrder={lessonRoutesInOrder}
       lessonIdsInOrder={lessonIdsInOrder}

@@ -40,6 +40,7 @@ vi.mock('@/lib/server-user', () => ({ getServerUser: async () => actorA }));
 vi.mock('@/lib/admin', () => ({ getCurrentUser: async () => ({ id: 'legacy-prisma-id', role: 'COURSE_ADMIN' }), requireAdmin: vi.fn(async () => undefined) }));
 vi.mock('@/lib/dashboard-server-data', () => ({
   getFirstPublishedCourseId: async () => 'fixture-course', hasAnyCoursePurchase: async () => true,
+  getFirstPublishedCourseSummary: async () => ({ id: 'fixture-course', price: 29.99 }),
 }));
 vi.mock('@/lib/payment-modal-loader', () => ({ warmPaymentMethodModal: vi.fn(), loadPaymentMethodModal: vi.fn() }));
 vi.mock('@/components/providers/dashboard-preferences-provider', async (importOriginal) => ({

@@ -20,7 +20,7 @@ import {
     loadPaymentMethodModal,
     warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
-import { DEFAULT_LESSON_DURATION_MINUTES } from "@/lib/pricing";
+import { DEFAULT_LESSON_DURATION_MINUTES, getKnownCatalogPrice } from "@/lib/pricing";
 import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
@@ -162,6 +162,7 @@ export const CoursePlayer = ({
   canAccessAttachments,
 }: CoursePlayerProps) => {
   const { language } = useLanguage();
+  const catalogPrice = getKnownCatalogPrice(course.price);
   const copy = {
     es: {
       lessonFallback: "Lección",
@@ -503,7 +504,7 @@ export const CoursePlayer = ({
   const mountedRef = useRef(false);
   const activeLessonRef = useRef(lesson.id);
   useLayoutEffect(() => { activeLessonRef.current = lesson.id; }, [lesson.id]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     mountedRef.current = true;
     return () => { mountedRef.current = false; };
   }, []);
@@ -1110,7 +1111,7 @@ export const CoursePlayer = ({
   };
 
   const handlePurchaseClick = async () => {
-    if (isPurchasing) return;
+    if (isPurchasing || catalogPrice === null) return;
     const token = captureWork();
     if (!token) return;
 
@@ -1783,6 +1784,7 @@ export const CoursePlayer = ({
         isLoading={isPurchasing}
         language={language}
         courseId={course.id}
+        basePrice={catalogPrice}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {
