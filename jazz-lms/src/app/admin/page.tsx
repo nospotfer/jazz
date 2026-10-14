@@ -60,23 +60,23 @@ export default async function AdminDashboard() {
   const publicationRate = totalCourses > 0 ? `${Math.round((publishedCourses / totalCourses) * 100)}%` : '0%';
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Panel administrativo</h1>
+        <h1 className="break-words text-2xl font-bold text-jazz-dark dark:text-white sm:text-3xl">Panel administrativo</h1>
         <p className="mt-1 text-sm text-muted-foreground">Vista general de cursos, usuarios y compras registradas</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 sm:gap-6">
         <AnalyticsCard title="Total de cursos" value={totalCourses} subtitle={`${publishedCourses} publicados`} icon="📚" />
         <AnalyticsCard title="Total de usuarios" value={totalUsers} subtitle="Usuarios registrados" icon="👥" />
         <AnalyticsCard title="Registros de compra" value={totalPurchases} subtitle="Incluye accesos gratuitos" icon="🛒" />
         <AnalyticsCard title="Tasa de publicación" value={publicationRate} subtitle="Cursos publicados" icon="📊" />
       </div>
 
-      {canReadFinancialRecords && <div className="card">
+      {canReadFinancialRecords && <div className="card min-w-0">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <h2 className="text-lg font-semibold text-jazz-dark dark:text-white">Compras recientes</h2>
-          <div className="text-sm text-muted-foreground">
+          <div className="min-w-0 max-w-full break-words text-sm text-muted-foreground">
             <p>Suma conocida (últimos 5 registros): {knownSummary}</p>
             <p>{unavailableCount} {unavailableCount === 1 ? 'importe no disponible' : 'importes no disponibles'}</p>
           </div>
@@ -90,14 +90,14 @@ export default async function AdminDashboard() {
             </div>
           ) : (
             purchaseRecords.map(({ purchase, recordedAmount }) => (
-              <div key={purchase.id} className="py-4 first:pt-0 last:pb-0">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-jazz-dark dark:text-white">{purchase.course.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">ID de usuario: {purchase.userId}</p>
+              <div key={purchase.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words font-semibold text-jazz-dark dark:text-white">{purchase.course.title}</h3>
+                    <p className="mt-1 break-all text-sm text-muted-foreground">ID de usuario: {purchase.userId}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-jazz-accent font-semibold">
+                  <div className="min-w-0 max-w-full sm:text-right">
+                    <p className="break-words text-jazz-accent font-semibold">
                       Importe registrado: {recordedAmount === null ? 'No disponible' : amountFormatter.format(recordedAmount)}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -111,16 +111,16 @@ export default async function AdminDashboard() {
         </div>
       </div>}
 
-      <div className="card">
+      <div className="card min-w-0">
         <h2 className="text-lg font-semibold text-jazz-dark dark:text-white mb-4">Acciones rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/admin/courses/new" className="btn-primary text-center">
+          <Link href="/admin/courses/new" className="btn-primary flex min-h-11 min-w-0 items-center justify-center text-center">
             ➕ Crear nuevo curso
           </Link>
-          <Link href="/admin/users" className="btn-secondary text-center">
+          <Link href="/admin/users" className="btn-secondary flex min-h-11 min-w-0 items-center justify-center text-center">
             👥 Gestionar usuarios
           </Link>
-          <Link href="/admin/stats" className="btn-secondary text-center">
+          <Link href="/admin/stats" className="btn-secondary flex min-h-11 min-w-0 items-center justify-center text-center">
             📊 Ver informes
           </Link>
         </div>
