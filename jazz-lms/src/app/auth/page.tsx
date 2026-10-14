@@ -13,7 +13,7 @@ import { createClient } from "@/utils/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 function PasswordToggleIcon({ visible }: { visible: boolean }) {
   return visible ? (
@@ -60,6 +60,9 @@ export default function AuthPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
+  const passwordSignInStarted = useRef(false);
+  const passwordSignInPending = useRef(false);
+  const authPageMounted = useRef(false);
 
   const copy = {
     es: {
@@ -298,10 +301,11 @@ export default function AuthPage() {
 
   useEffect(() => {
     let isMounted = true;
+    authPageMounted.current = true;
 
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
-      if (isMounted && data.session?.user) {
+      if (isMounted && !passwordSignInStarted.current && data.session?.user) {
         const dashboardTarget = justRegistered
           ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
           : "/dashboard";
@@ -314,7 +318,7 @@ export default function AuthPage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (event === "SIGNED_IN") {
+      if (isMounted && event === "SIGNED_IN" && !passwordSignInPending.current) {
         const dashboardTarget = justRegistered
           ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
           : "/dashboard";
@@ -325,6 +329,7 @@ export default function AuthPage() {
 
     return () => {
       isMounted = false;
+      authPageMounted.current = false;
       subscription.unsubscribe();
     };
   }, [router, supabase, justRegistered]);
@@ -420,6 +425,7 @@ export default function AuthPage() {
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (passwordSignInPending.current) return;
 
     const normalizedEmail = loginEmail.trim().toLowerCase();
     if (!normalizedEmail || !loginPassword) {
@@ -427,6 +433,10 @@ export default function AuthPage() {
       return;
     }
 
+    // The password handler owns navigation until cookie sync and profile work
+    // settle. SIGNED_IN is emitted before those awaited operations finish.
+    passwordSignInStarted.current = true;
+    passwordSignInPending.current = true;
     setLoginLoading(true);
     setLoginError("");
 
@@ -435,6 +445,7 @@ export default function AuthPage() {
         email: normalizedEmail,
         password: loginPassword,
       });
+      if (!authPageMounted.current) return;
 
       if (signInError) {
         void supabase.auth.signOut();
@@ -445,6 +456,7 @@ export default function AuthPage() {
       // Ensure server-rendered routes can read the authenticated session
       // right after password login by syncing tokens into http cookies.
       const { data: sessionData } = await supabase.auth.getSession();
+      if (!authPageMounted.current) return;
       const accessToken = sessionData.session?.access_token;
       const refreshToken = sessionData.session?.refresh_token;
 
@@ -456,6 +468,7 @@ export default function AuthPage() {
           },
           body: JSON.stringify({ accessToken, refreshToken }),
         });
+        if (!authPageMounted.current) return;
 
         if (!sessionSyncResponse.ok) {
           setLoginError(copy.signInFailedRetry);
@@ -464,6 +477,7 @@ export default function AuthPage() {
       }
 
       const { data: signedInUserData } = await supabase.auth.getUser();
+      if (!authPageMounted.current) return;
       const currentMetadata = signedInUserData.user?.user_metadata || {};
       if (currentMetadata.avatar_mode !== "fixed") {
         await supabase.auth.updateUser({
@@ -474,6 +488,7 @@ export default function AuthPage() {
           },
         });
       }
+      if (!authPageMounted.current) return;
 
       if (typeof window !== "undefined") {
         if (rememberMe) {
@@ -486,9 +501,10 @@ export default function AuthPage() {
       router.replace(dashboardTarget);
       router.refresh();
     } catch {
-      setLoginError(copy.signInFailedRetry);
+      if (authPageMounted.current) setLoginError(copy.signInFailedRetry);
     } finally {
-      setLoginLoading(false);
+      passwordSignInPending.current = false;
+      if (authPageMounted.current) setLoginLoading(false);
     }
   };
 
