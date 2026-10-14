@@ -14,7 +14,7 @@ export function LanguageSelector() {
 
   return (
     <div
-      className="inline-flex items-center rounded-md border border-[var(--color-jazz-title-accent)]/60 overflow-hidden"
+      className="inline-flex shrink-0 items-center rounded-md border border-[var(--color-jazz-title-accent)]/60 overflow-hidden"
       aria-label={label}
     >
       {SUPPORTED_LANGUAGES.map((currentLanguage) => {
