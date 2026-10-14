@@ -8,9 +8,16 @@ import RedeemPage from '@/app/redeem/page';
 import { LANGUAGE_COOKIE_KEY, LANGUAGE_STORAGE_KEY, type SupportedLanguage } from '@/lib/language';
 
 const mocks = vi.hoisted(() => ({ post: vi.fn(), push: vi.fn(), toastError: vi.fn(), toastSuccess: vi.fn() }));
+const redeemParams = new URLSearchParams('courseId=fixture-course');
 vi.mock('axios', () => ({ default: { post: mocks.post, isAxiosError: (error: unknown) => Boolean(error && typeof error === 'object' && 'isAxiosError' in error) } }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mocks.push }), useSearchParams: () => new URLSearchParams('courseId=fixture-course') }));
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mocks.push }), useSearchParams: () => redeemParams }));
 vi.mock('sonner', () => ({ toast: { error: mocks.toastError, success: mocks.toastSuccess } }));
+vi.mock('@/utils/supabase/client', () => ({ createClient: () => ({ auth: {
+  onAuthStateChange: (listener: (event: string, session: unknown) => void) => {
+    listener('INITIAL_SESSION', { user: { id: 'synthetic-localization-owner' } });
+    return { data: { subscription: { unsubscribe: vi.fn() } } };
+  },
+} }) }));
 
 function LanguageControl() {
   const { language, setLanguage } = useLanguage();
@@ -47,7 +54,7 @@ describe('voucher feedback uses the selected language and stable API values', ()
     expect(screen.getByRole('alert').textContent).toMatch(expected);
     expect(screen.getByRole('alert').textContent).not.toContain(rawMessage);
     expect(mocks.toastError).toHaveBeenCalledWith(screen.getByRole('alert').textContent);
-    expect(mocks.post).toHaveBeenCalledWith('/api/vouchers/redeem', { courseId: 'fixture-course', voucherCode: 'JAZZFREE' });
+    expect(mocks.post).toHaveBeenCalledWith('/api/vouchers/redeem?expectedUserId=synthetic-localization-owner', { courseId: 'fixture-course', voucherCode: 'JAZZFREE' });
     expect(mocks.push).not.toHaveBeenCalled();
   });
 
