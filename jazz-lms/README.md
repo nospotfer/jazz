@@ -112,14 +112,14 @@ relay secret is separate from Resend's signing secret.
 
 ## Operations and release
 
-The owner selected zero new hosting spend. Current application checkpoint
-`e32a370` has a freshly installed/sealed native build and verified private Unix/
-temporary HTTPS preview, with desktop/mobile layouts, contrast, four-role access,
-Mux playback, PDFs and certificates. The temporary servers are closed; stable
-hosting and production activation remain separate. Automated verification is
-1,915 normal passes/40 skips, 39 real PostgreSQL passes/one skip, types/build and
-lint 0 errors/25 warnings. See the
-[exact checkpoint and remaining gaps](docs/maintenance/review-status.md#protected-native-preview-and-contrast).
+The owner selected zero new hosting spend. Current source `57f5de1` passes
+1,935 normal tests/40 skips, 39 real PostgreSQL checks/one skip, types/build and
+lint 0 errors/25 warnings. Fresh private Unix/HTTPS builds are verified; the
+9bd browser checkpoint saves notes, watches two real clips and completes two
+quizzes with persisted Platinum/Gold results. Earlier desktop/mobile public
+layouts, contrast, four-role access, PDFs and certificate evidence remain
+separate. Stable hosting and production activation require review. See the
+[exact checkpoints and remaining gaps](docs/maintenance/review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
 
 Read [AGENTS.md](AGENTS.md) and the [maintenance handover](docs/maintenance/README.md).
 The maintenance branch is `maintenance/initial-audit`. Preview deployments are
@@ -155,3 +155,8 @@ course services. The updated source disables them on account/student/admin/payme
 pages and requires an explicit homepage preference. Provider privacy settings
 and live configuration verification remain release gates; do not infer compliance
 from a single browser setting.
+
+The mobile drawer picker/editor link is verified at320/390 after its scroll/space
+repair. Unknown historical payment amounts are now explicit instead of borrowing
+current catalog price. Hydrated editor text and actual locale controls remain
+separate browser checks.

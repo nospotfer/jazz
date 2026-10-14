@@ -2,12 +2,13 @@
 
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
-verification. Current application source `e32a370` passes 1,915 normal tests/40
+verification. Current application source `57f5de1` passes 1,935 normal tests/40
 intentional skips, 39 actual PostgreSQL tests/one REST-only skip, types, webpack
 and lint 0 errors/25 existing warnings. Its fresh sealed artifact actually ran
-through private Unix sockets and a protected temporary HTTPS tunnel. Restart,
-worker-exit cleanup, separate-UID denial and final reinspection pass.
-[Exact checkpoint and retained observations](review-status.md#protected-native-preview-and-contrast).
+through private Unix sockets and a protected temporary HTTPS tunnel. The earlier
+e32 artifact separately passed restart, worker-exit cleanup and separate-UID
+denial; those lifecycle checks are not relabeled as 9bd execution.
+[Exact checkpoints and retained observations](review-status.md#native-password-navigation-and-fresh-learning).
 The earlier 512 safeguard cases and newer 152 launcher/transport/runner cases
 are included in the normal total.
 
@@ -291,3 +292,23 @@ needs durable reviewed CA/config paths, named-tunnel/account/DNS/continuous-host
 control, resource/recovery policy, old Vercel quarantine and explicit SQL/config/
 deployment/resume approval. Temporary preview verification does not satisfy those
 gates or prove Google, SMTP, Dodo transactions or production runtime health.
+
+
+## Fresh learning and late-event source follow-up
+
+Exact `cadeac7` is freshly built/sealed and passes Unix19/HTTPS11 using the
+owner-only CA copy outside/tmp. Its artifact matches549 application Git blobs,
+45,768 sealed files and158 client files without supplied server secrets. This
+preview configuration remains separate from reviewed production configuration.
+Exact9bd browser learning uses one new synthetic USER and explicit fixture grant;
+two notes/two completed progress rows/two quizzes24answers and PLATINUM/GOLD are
+independently verified read-only. All original-four scoped rows remain unchanged.
+The9bd processes and browser state are closed; latestcade read-only mobile/auth/
+accessibility and full five-account preservation are tracked separately.
+[Exact source and run receipts](review-status.md#late-auth-events-and-localized-completion-labels).
+
+
+Latest57 sealed550/45,769/158-file artifact passes Unix19/HTTPS11 and complete
+post-closure reinspection. Both latest apps and tunnel closed by their fixed
+leases; all-five12-model read-only preservation passes. The earlier e32 restart/
+worker-exit/UID denial remain separate. [Current receipts](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).

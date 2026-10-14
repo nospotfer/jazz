@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-Updated 2026-10-13. Preparation only: **no production release is authorized**.
+Updated 2026-10-14. Preparation only: **no production release is authorized**.
 Source repairs have not been released. The owner separately approved one
 production Supabase resume, private preservation and unsafe-state re-pause;
 those operations completed. Production is INACTIVE again. No production
@@ -55,6 +55,18 @@ SQL/configuration repair or another resume is authorized by that approval.
   unexpected worker exit, separate-UID denial and sealed reinspection. Disabled
   runner prepared with 49 regressions; no service/timer/DNS activation.
   [Source and runtime limits](native-runtime.md).
+- [x] Exact9bd native fresh-actor notes/watch/completion/two quizzes pass with
+  independent strict-CA row verification and original-four preservation; all
+  owned browser state/runtime/tunnel closed. Interrupted helper reports retained.
+- [x] Latestcade late-auth-event and completion-label repairs pass16 AuthPage
+  and seven existing player cases, full CI1,931/40, persisted39/1, types/build/
+  lint0/25 and exact554-file secret scan0; fresh sealed Unix19/HTTPS11 pass.
+- [x] Latest57 mobile drawer geometry/hit/keyboard/route entry320/390, all-five
+ 12-model read-only preservation, closure and sealed reinspection pass. Exact
+ CI1,935/40, persisted39/1 and source555-file scan0 pass.
+- [ ] Scoped hydrated-editor text and actual four-language controls remain pending;
+ raw browser12/9/3 is preserved. Financial currency/tax/journal and provider
+ journeys remain separate. [Current verification](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
 - [ ] Review production resource/recovery/timer policy, durable CA/configuration,
   named-tunnel identity and unavailable-queue/manual historical recovery before
   any production activation.

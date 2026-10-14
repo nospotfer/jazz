@@ -5,10 +5,13 @@ not a customer-database clone or a production repair. Preview work changed no
 production resource, plan, domain, key or payment configuration. The separately
 approved customer recovery/rollback is documented in [Supabase](supabase.md).
 
-Latest frontend: exact application source `e32a370`, freshly built and sealed,
-verified through a protected Unix/temporary HTTPS runtime, now closed.
-[Current evidence](#protected-native-preview-and-contrast) supersedes earlier
-source 27 frontend status without changing its historical reports.
+Latest frontend: exact application source `57f5de1` freshly built/sealed with
+Unix19/HTTPS11 checks. Its read-only drawer correction is verified and closed; retained diagnostics are in the
+[current checkpoint](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+The separate9bd native browser scope actually saves two notes, watches two clips
+and completes two quizzes24answers for one new synthetic actor; original-four
+full rows remain unchanged. No customer-database clone or Dodo purchase is
+inferred. Earlier e32 public/media/PDF/certificate scopes stay historical.
 
 ## Identity and capacity
 
@@ -383,3 +386,25 @@ reinspection pass and close cleanly. Evidence remains private under
 The old preview URL is closed; a fresh window needs new origin/expiry/runtime
 verification. Google, registration/SMTP, Dodo signed transactions, stable hosting
 and production runtime are still unverified. [Checkpoint](review-status.md#protected-native-preview-and-contrast).
+
+
+## Fresh native learning and latest-source UI
+
+See [exact sources, separate browser reports and independent persistence](review-status.md#native-password-navigation-and-fresh-learning).
+The preview now has five synthetic accounts: the original four roles plus one
+ordinary USER with an explicit fixture grant. Exact9bd normal UI persists two
+notes, two completed lessons, two attempts/24answered answers and two summaries
+100%PLATINUM/92%GOLD, with same-attempt resume and certificate ineligible2/15.
+Original-four User/learning/entitlement hashes remain unchanged; business tables
+stay empty. Browser contexts/state and both9bd temporary processes are closed.
+The latercade read-only UI follow-up changes no fixture/learning/provider data;
+its source16 auth/seven completion-label cases are included in1,931 normal passes.
+Mobile notes entry and full new-window preservation/closure are tracked separately.
+
+
+The57 correction verifies320/390 picker96px/editor225×44 hit-testing, keyboard
+and route entry, with owned note hashes unchanged. Raw report12/9/3 remains
+partial for scoped editor hydration and actual locale controls. All-five full
+row hashes across12 models and zero business counts are unchanged. Browser
+state and apps/tunnel are closed; only normal scoped synthetic avatar setup wrote
+Auth metadata. No new fixture, learning, payment, mail or production write.

@@ -477,3 +477,246 @@ production resume/SQL/deploy, transaction/refund or mail occurred. Stable-host
 control, durable CA/config, old Vercel quarantine, Google/SMTP and Dodo recipient/
 signed-transaction verification remain open. The goal remains active and
 incomplete under the zero-cost constraint. [Release gates](release-checklist.md).
+
+
+## Native password navigation and fresh learning
+
+Application source **`9bd09a65edc0c5c6d80a7f928fec85683e6ce8b0`** follows the
+contrast checkpoint above. Commit `ce5577f` fixes password-login navigation:
+SIGNED_IN and the initial session check previously redirected before the active
+password handler finished cookie synchronization and profile setup. The handler
+could then redirect again after unmount. Fourteen behavioral component cases
+produce **10 failures/four passing controls on unchanged source**, then **14/14
+passes after repair**. Duplicate submits and late post-unmount work are guarded;
+ordinary existing-session/non-password events retain navigation.
+
+Commit `9bd09a6` adds a usable link from the lesson notes drawer to its dedicated
+saved-notes editor, with selected course/lesson, keyboard focus and a 44px minimum
+target. ES/EN/FR/PT copy explains local drafts and account-saved notes. Previously
+that editor existed without a reachable drawer link. Forty-nine existing
+notes/privacy/access regressions and TypeScript pass; persistence and ownership
+checks are unchanged.
+
+Clean exact-source CI and downloaded Quality logs confirm **1,929 normal passes/
+40 intentional skips** (106 files with passes/five all-skipped), **39 actual
+PostgreSQL passes/one REST-only skip**, types/webpack and **lint 0 errors/25
+existing warnings**. The fourteen new auth cases are included in this total.
+Required pre-push checks were not bypassed. An exact committed **554-file export
+has zero Gitleaks findings**.
+
+| Exact 9bd source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38490691109) | Success; downloaded logs verify 1,929/40 normal and 39/1 persisted. Push38490686737 also succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38490691135) | Success; push38490686851 succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38490688049) and [aggregate](https://github.com/nospotfer/jazz/runs/115615082154) | Success. |
+| Existing protected Vercel build | Success; account/provider isolation remains unreconciled. No customer-journey or production claim. |
+
+Downloaded Quality ZIP SHA256:
+`5f7533101b7c339e608acb37083993007f794c27a3460de1007f38750f7320aa`.
+A separate fresh locked/configured native build matches **549 application Git
+blobs**, verifies **45,768 sealed files** and **158 client files** with the
+expected public key/origin and without supplied server secrets. Its prelaunch
+receipt remains separate from actual readiness. **19 Unix runtime/11 HTTPS
+transport checks pass** on this exact source; only `.next/cache` is writable.
+
+The actual corrected native login deliberately holds its own normal Supabase
+avatar update. Session synchronization returns200 while the page remains `/auth`
+with submission disabled; the successful avatar update is followed by dashboard
+navigation. The notes-editor link then navigates stably. This verifies the fixed
+ordering against the actual deployed frontend, independently of component tests.
+
+A fifth confirmed synthetic USER and one explicit fixture course entitlement
+were created only in the separate Free preview. The original four actors and
+customer archive remain separate. That grant is **not Dodo checkout evidence**.
+Fresh learning starts with zero notes/progress/attempts/answers/summaries;
+continuation records explicitly retain an earlier successfully saved note.
+Native password/session requests are bounded to three for this learning window,
+with one normal own-avatar update. Subsequent browser continuations reuse the
+purpose-created private session without another login.
+
+Browser scopes remain separate; continuations never rewrite interrupted reports:
+
+| Learning report | Result and practical limit |
+| --- | --- |
+| Initial e3 |2/3; the note persisted, then Chromium CDP response-body lookup failed. Independent SQL confirms the save. One forbidden avatar intent was intercepted. |
+| e3 race diagnostic |Preflight1/1 only, followed by abrupt private guard failure on the SDK's two inert null fields. This is not live navigation-race reproduction. Its browsers were subsequently closed. |
+| Corrected 9bd auth/link |4/5; held profile/login and desktop editor navigation pass; private fetch helper called numeric Response.status as a function. Saved-state continuation2/3 retained the same helper failure; independent read diagnostic3/3 passes. |
+| Notes/playback class1 |4/5; actual manual save, cache-cleared reload and normal playback to80% pass. Completion selector timed out because the button's accessible name differed from visible Concluir. |
+| Completion/quiz class1 |Earlier read-only resume3/4 assumed a nonexistent progress field. Corrected resume6/7 verifies explicit completion, pending same-attempt resume and all12 answers; its final result-text selector matched twice. SQL independently confirms100% PLATINUM. |
+| Mobile notes entry |2/3; timeout before class2 writes. Reachability remains pending, with no inferred application cause. |
+| Class2/profile final |**9/9**; actual note/save/reload, normal52-second playback, explicit100% completion,12 UI answers→92% GOLD,15-slot profile with one PLATINUM/one GOLD/no SUPREME and certificate ineligible2/15. Class2 learning runs at320px. |
+
+Strict-CA, read-only final verification at **00:51:39 UTC on October14** confirms
+exactly **two notes, two completed progress rows, two completed attempts,24
+answered answers and two summaries** for the fresh actor. Note content hashes
+and styles match; each lesson has one attempt, scores100/92 and medalsPLATINUM/
+GOLD. No other lesson learning row was added. A separate **00:51:24 UTC** snapshot
+preserves original-four full User/learning/entitlement hashes, fixture price80
+and zero financial/voucher/messaging rows. Global users/purchases are now5/2
+because the fifth actor has its explicit synthetic fixture grant.
+
+There are three native password logins/three normal session syncs in this learning
+window, one actual own-avatar update, and no further auth during saved-state
+continuations. These are separate from the earlier11 logins above. Two earlier
+avatar intents were intercepted, not forwarded. Current runs have zero uncaught
+page errors. Automatic reconciliation and all out-of-scope mutations stay
+blocked. The existing earlier source2058 buyer exceptions remain unclassified.
+
+All browser contexts closed, no owned Chromium process remains, and the
+purpose-created600 session file was deleted with owner/mode verification. The
+9bd runtime and its temporary tunnel closed cleanly around **00:52 UTC**, before
+fixed expiry. Final complete **45,768-file sealed reinspection** passes without
+unlocking compiled files. The original e3 runtime had separately closed before
+the corrected source started. This is temporary free testing infrastructure;
+no service/timer/stable hosting was activated.
+
+An independent source review subsequently finds a separate late-SIGNED_IN gap:
+after cookie-sync failure or successful handler completion, clearing the pending
+flag allowed an event to navigate. Commit **`e342a89`** suppresses those events
+once password login has started. Two new frozen cases fail against9bd (14 pass/
+two fail); all **16/16** then pass. That later correction is **not** relabeled as
+9bd browser execution. Mobile notes-entry and latest-source frontend recheck
+remain explicit next actions. Production, mail, OAuth and Dodo transactions
+remain separate gates; the goal is active and incomplete.
+
+
+## Late auth events and localized completion labels
+
+Application source **`cadeac79dd4dc2f230d3a91629d9ac1626a2f292`** contains the
+late-event repair `e342a89` above and the completion label fix. The visible
+completion action previously had a dynamic accessible name, becoming “Ir a
+gamificacion” before completion. Its accessible name now uses the same localized
+label as the button: ES Concluir, EN Complete, FR Valider, PT Concluir. Existing
+seven behavioral tests now query by accessible role/name through all four
+languages and ready/saving/completed states, preserving tooltip, confirmation,
+PDF localization and the single playback request. **7/7** pass; all **16 auth
+navigation cases** pass. These counts overlap the full suite below.
+
+Exact-source Quality logs confirm **1,931 normal passes/40 intentional skips**,
+106 files with passes/five all-skipped, **39 persisted passes/one REST-only skip**,
+types/webpack and **lint 0 errors/25 existing warnings**. The exact554-file
+committed Gitleaks export has zero findings. The first local push check lacked
+the documented synthetic DATABASE_URL and retained its two fixture-import
+failures; the retry supplies the closed-loopback fixture, passes required hooks
+and pushes without bypass.
+
+| Exact cade source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38493001441) | Success; downloaded ZIP verifies1,931/40 normal and39/1 persisted. Push38492996035 succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38493001463) | Success; push38492996016 succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38492997685) and [aggregate](https://github.com/nospotfer/jazz/runs/115622483870) | Success. |
+| Existing protected Vercel build | Success; account/provider isolation remains unreconciled. No customer-journey or production claim. |
+
+Downloaded Quality ZIP SHA256:
+`e9e6a541e54ddb8a6b666ff2e8e8a3d4176baaf6fb93293534e067fcb4b594b9`.
+A second exact-source fresh locked/configured build matches549 application Git
+blobs,45,768 sealed files and158 inspected client files, with expected public
+values and no supplied server secrets. **19 actual Unix/11 HTTPS checks pass**.
+The configured CA and exact preview input now have verified owner-only copies
+outside /tmp; this runtime uses the durable CA. Values are excluded from reports.
+This establishes preview packaging, not reviewed production configuration or
+encrypted/off-site backup.
+
+The subsequent browser window allows only one ordinary native password/session
+setup for the existing synthetic actor. All learning/payment/mail/provider
+mutators otherwise remain blocked. A strict-CA read-only BEFORE snapshot at
+**01:01:42 UTC on October14** binds full row hashes across12 models and exact
+five-actor globals5 users/2 purchases/6 notes/20 progress/18 attempts/216 answers/
+17 summaries, plus unchanged zero business rows. No new actor or fixture grant
+is created. Latest-source mobile navigation, all-five preservation and closure
+receipts follow below after verification.
+
+
+The latest test guard intercepts one normal own-avatar update before Supabase;
+actual metadata writes are zero. The preparation incorrectly assumed an existing
+random avatar would avoid that PUT. Profile copy explicitly says random mode
+changes on every sign-in; only fixed mode skips it. Native password/session200
+and dashboard navigation pass with this intercepted optional update, so that
+scope is an intentional write-blocked profile path. The earlier9bd held-avatar200
+proof remains the separate nominal profile-write evidence. No further login is
+added to compensate for the incorrect preparation assumption.
+
+
+## Mobile drawer recovery and recorded payment amounts
+
+Application source **`57f5de1c03a83bdd215edd19ded104494024ba66`** is published.
+Commit `c64c0fa` removes the historical-payment fallback to current catalog price.
+A NULL recorded amount previously became today's course price, so changing that
+price changed the apparent past charge. The API now returns `amount: null`, and
+payment history shows a localized unavailable message in ES/EN/FR/PT. Recorded
+zero and positive amounts are preserved. Frozen route/page regressions reproduce
+three failures/one passing control on unchanged source, including the page's
+null.toFixed crash; all **33 targeted cases** then pass with identical hashes.
+No schema, historical price, currency inference or provider change is involved.
+The first exact-source CI retained one outdated numeric-only contract failure
+(1,934 passes/one failure/40 skips). Commit `f5fc45e` explicitly covers recorded
+and unknown amounts; passing results below do not overwrite that diagnostic.
+Currency, tax and financial-journal limitations remain separate release gaps.
+
+The nominal `cadeac7` browser diagnostic confirms a real drawer defect at both
+320×740 and390×740: matching browser owner and opened notes panel,15 hydrated
+class buttons, yet picker clientHeight0/scrollHeight956. Class1 has a56px rectangle
+but zero effective visible height; its center hits the draft textarea. The44px
+editor link lies beyond the card and its center hits the footer. Earlier two
+write-blocked diagnostics captured an absent subtree; those observations remain
+separate and are not relabeled as the clipping cause.
+
+Commit `57f5de1` makes the panel use available flex space, allows its card to
+scroll, reserves96px for the class picker and prevents title/footer shrinkage.
+No owner, draft, route or persistence logic changes. Fresh production-built
+browser measurements at **320 and390** confirm picker height96 and correct
+class-button hit-testing. The editor link is **225×44**, fully in the viewport
+after focus/scroll, passes center hit-testing and keyboard Tab, and Enter reaches
+the corresponding dedicated editor route. Owned server note hashes/styles are
+unchanged. The correction report remains **12 checks/9 passes/3 diagnostics**:
+two early text assertions waited on a generic first textarea (the sidebar draft)
+instead of scoped editor readiness; ES language selection also timed out. Exact
+hydrated-editor text and four-language browser controls remain pending. Seven
+localized completion-state component cases pass; those are a different scope.
+
+The whole latest window uses **three native password/three normal session syncs**,
+one actual strictly scoped own-avatar update and two earlier intercepted avatar
+intents. Corrected-source state reuse adds **zero auth and zero mutators**;
+no playback is needed. All browser contexts are closed, no owned Chromium
+process remains, and the single purpose-created600 session file was deleted
+with uid/regular-file/no-symlink/single-link/mode checks. The separate cleanup
+receipt supersedes the summary's earlier retained-state flag.
+
+A strict-CA read-only AFTER snapshot at **01:41:29 UTC on October14** matches
+full row hashes across all12 bound app/content/learning/entitlement models and
+global counts for all five synthetic actors. Price80 and zero financial/voucher/
+messaging rows are unchanged. This comparison covers database rows; the one
+normal synthetic Auth avatar update is separately recorded. The `cadeac7` app
+closed cleanly by fixed expiry at01:29, the corrected app at01:37 and the tunnel
+at01:38 (exit0). Complete sealed reinspections verify45,768/45,769 files for the
+respective artifacts without unlocking compiled files.
+
+Exact-source CI and downloaded logs confirm **1,935 normal passes/40 intentional
+skips**,107 files with passes/five all-skipped, **39 actual PostgreSQL passes/one
+REST-only skip**, types/webpack and **lint0 errors/25 existing warnings**. The four
+new payment cases are included. Required push hooks pass without bypass.
+An exact committed **555-file export has zero Gitleaks findings**.
+
+| Exact57 source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38495998186) | Success; downloaded ZIP verifies1,935/40 normal and39/1 persisted. Push38495993076 succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38495998182) | Success; push38495993046 succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38495994946) and [aggregate](https://github.com/nospotfer/jazz/runs/115631915804) | Success. |
+| Existing protected Vercel build | Success; account/provider isolation remains unreconciled. No Vercel journey or production claim. |
+
+Downloaded Quality ZIP SHA256:
+`fc7394a58ccfcd7613d4bec30e50f065266cddec05d2f18ef0125482e83c79fb`.
+The fresh locked/configured native artifact matches **550 app Git blobs**,
+**45,769 sealed files** and **158 inspected client files**, with expected public
+values and no supplied server secrets. **19 Unix/11 HTTPS checks pass**. CA and
+private preview input packaging outside/tmp is verified for the earliercade
+configuration; it is not reviewed production configuration or encrypted/off-site
+retention. All temporary preview processes are closed. No paid upgrade, service/
+timer, production SQL/config/resume/deploy, transaction, refund or mail occurred.
+
+Selected evidence is preserved locally under
+`/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24/review-checkpoint-native-learning-cadeac7/`;
+final preservation/scan receipts accompany the checkpoint. Earlier reports remain
+immutable. Next: scoped editor hydration and actual locale controls, then remaining
+Dodo recipient/signed-transaction, OAuth/SMTP, stable-host/account/DNS, old Vercel
+quarantine and production review gates. The goal remains active and incomplete.

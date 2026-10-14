@@ -819,3 +819,62 @@ access, continuous-host/account/DNS control, durable configuration, old Vercel
 quarantine and production SQL/config/deploy/resume review remain open. The
 runner stays disabled and no timer/service is installed. Goal remains active
 and incomplete. [Exact evidence](review-status.md#protected-native-preview-and-contrast).
+
+
+## Native login, saved notes, mobile drawer and payment history
+
+- Sourcece5577f keeps password navigation behind cookie/profile setup. Frozen14
+  behavioral cases reproduce10 failures/four controls; repair passes14/14. An
+  independent review identifies two late-event gaps, reproduced on9bd; e342a89
+  guards the whole password attempt and all16 pass. Native9bd deliberately holds
+  its normal own-avatar update: session200, stable auth/loading, profile200 then
+  dashboard/editor navigation. Later sources retain distinct proof.
+- Source9bd09a6 links the notes drawer to its account-saved editor with44px target,
+  focus and ES/EN/FR/PT draft/sync guidance.49 existing privacy/access tests pass.
+  Cadeac7 aligns completion accessible names with visible localized action labels;
+  seven existing locale/state cases are strengthened and pass.
+- One fresh synthetic USER/fixture grant in Free tvm starts with zero learning
+  rows. Actual9bd UI writes two notes, normally watches two52-second clips, explicitly
+  completes lessons and answers24 quiz questions. Independent strict-CA read-only
+  proof confirms2notes/2completedprogress/2attempts/24answered/2summaries,100PLATINUM/
+  92GOLD, one attempt per lesson, no other scope, no SUPREME/course certificate.
+  Original-four User/learning/entitlement hashes and zero business rows preserved.
+- Initial CDP response-body lookup, null-field guard, numeric fetch.status misuse,
+  missing progress-field and ambiguous score selectors remain separate diagnostics.
+  Core final continuation9/9 does not rewrite interrupted reports. No actual old-
+  source live race reproduction is claimed; behavioral baseline provides that proof.
+- Latestcade readonly preparation incorrectly assumed random avatar avoidedPUT.
+  Profile intentionally changes it on each login. Two intents were intercepted;
+  one subsequent nominal avatar200 is strictly scoped. Latestwindow3password/3sync;
+  correction uses retained purpose600 state and zero further auth/mutations.
+- Actual nominal mobile320/390 diagnosis proves class picker0px/scroll956, class
+  hit blocked by textarea and44px editor link clipped behind footer.57f5de1 makes
+  panel flex/scroll, reserves96px picker and prevents footer/title shrinking.
+  Actual corrected picker96/editor225×44 hit/keyboard/route entry passes both
+  widths. Raw12/9/3 retains two premature generic-textarea assertions and locale
+  selector timeout; scoped hydrated-editor text/four-language controls stay pending.
+- c64c0fa stops deriving missing historical amounts from current course price;
+  API null and localized unavailable UI preserve real0/positive amounts. Same
+  frozen tests reproduce3fail/1control then33pass. InitialCI1934pass/1 outdated
+  numeric-only contract failure retained; f5fc45e explicitly tests nullable contract.
+  No schema, history, price, provider currency or financial-journal inference.
+- Final57 exact CI1935/40 normal (107 passed files/five skipped),39/1 actualPG,
+  types/webpack/lint0/25; Quality/Secret/CodeQL/protected Vercel build allgreen.
+  Exact555-file secret scan0. Required push checks not bypassed; initial missing
+  synthetic DATABASE_URL diagnostic retained and retry explicitly supplies fixture.
+- Fresh57 locked/configured native550app/45,769sealed/158client matches Git and
+  public inputs without supplied server secrets; Unix19/HTTPS11/full reinspect pass.
+  Earliercade45,768 separately reinspects. CA and private preview inputs have
+  verified owner-only local copies outside/tmp; production configuration remains
+  separate, and local backup is neither encrypted nor off-site.
+- All-five12-model strict-CA read-only AFTER01:41:29 matches full row hashes/global
+  counts/price80/zero business rows. Apps closed by leases01:29/01:37 and tunnel
+  01:38(exit0); all browsers closed, Chromium0 and purpose state deleted safely.
+  Root actor preparation and source artifacts remain separate from customer archive.
+
+Next: finish scoped editor/actual locale checks with reviewed selectors; preserve
+and publish this exact-source checkpoint. Dodo recipient/signed transactions,
+OAuth/SMTP, continuous-host/account/DNS, old deployment quarantine and production
+SQL/config/resume/deploy review remain open. No new spend, upgrade, service/timer,
+transaction/refund/mail or production activation. Goal active and incomplete.
+[Exact revisions and report scopes](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).

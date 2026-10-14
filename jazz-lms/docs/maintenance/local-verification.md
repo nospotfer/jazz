@@ -265,3 +265,36 @@ Private exact-source evidence is under
 `/tmp/jazz-maintenance/native-preview-contrast-verification/` and
 `/tmp/jazz-maintenance/native-preview-contrast-browser-evidence/`.
 [Detailed scope and gaps](review-status.md#protected-native-preview-and-contrast).
+
+
+## Fresh native learning and latest-source UI follow-up
+
+Exact application source `cadeac7` passes1,931 normal tests/40 skips,39 actual
+PostgreSQL checks/one REST skip,types/webpack/lint0errors/25existingwarnings. Its
+sixteen AuthPage cases include ten initial reproduced failures and two separately
+reproduced late-event failures. Existing seven player cases now verify accessible
+completion names in ES/EN/FR/PT across ready/saving/completed states. These suites
+are included in the normal total.
+
+Fresh locked configured build matches549 app Git blobs,45,768 sealed files and
+158 inspected client files; Unix19/HTTPS11 pass. Exact9bd actual normal UI saved
+and cache-cleared/reloaded two notes, watched two52-second clips to80%, explicitly
+completed both lessons and answered24 quiz questions (100%PLATINUM/92%GOLD).
+Strict-CA read-only final snapshots confirm every expected row and preserve
+original-four User/learning/entitlement fingerprints and zero business rows.
+Three native logins/session syncs and one own-avatar update belong to that closed
+window; saved-state continuations add none. Source9bd reports retain all helper
+failures and unresolved mobile entry separately. Purpose-created session state
+was deleted and owned processes closed before expiry; complete seal reinspection
+passes. Latestcade read-only UI window uses one further normal login/session,
+blocks learning/provider/payment/mail mutators and compares12 model hashes for
+all five synthetic actors. [Exact completed scopes](review-status.md#late-auth-events-and-localized-completion-labels).
+
+
+Latest57 exact CI confirms1,935/40 normal,39/1 persisted,types/build/lint0/25;
+555-file committed scan0. Nullable historical amounts have33 frozen targeted
+passes plus an explicit updated contract; no financial data/provider mutation.
+A550/45,769/158-file fresh sealed artifact passes Unix19/HTTPS11/reinspection.
+Actual320/390 drawer geometry/hit/keyboard/navigation is repaired; report12/9/3
+retains early unscoped textarea assertions and locale timeout. All-five12-model
+read-only comparison passes after closure. [Current scope](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
