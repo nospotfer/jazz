@@ -291,10 +291,24 @@ blocks learning/provider/payment/mail mutators and compares12 model hashes for
 all five synthetic actors. [Exact completed scopes](review-status.md#late-auth-events-and-localized-completion-labels).
 
 
-Latest57 exact CI confirms1,935/40 normal,39/1 persisted,types/build/lint0/25;
+Earlier57 exact CI confirms1,935/40 normal,39/1 persisted,types/build/lint0/25;
 555-file committed scan0. Nullable historical amounts have33 frozen targeted
 passes plus an explicit updated contract; no financial data/provider mutation.
 A550/45,769/158-file fresh sealed artifact passes Unix19/HTTPS11/reinspection.
 Actual320/390 drawer geometry/hit/keyboard/navigation is repaired; report12/9/3
 retains early unscoped textarea assertions and locale timeout. All-five12-model
 read-only comparison passes after closure. [Current scope](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+
+
+## Provider amount regression checkpoint
+
+Source `133716b` passes1,973 normal tests/47 intentional skips,108 passed files/
+five all-skipped,46 actual PostgreSQL checks/one REST skip,types/webpack and
+lint0errors/25existingwarnings. The seven added guarded PostgreSQL cases are
+skipped in the normal suite and pass in the separate database run; they extend
+`dodo-entitlement-postgres.test.ts`, so the command above and Quality job include
+them automatically. Frozen partial/invalid/zero/retry/coupon regressions and
+existing caller controls pass260/260,including18 actual PostgreSQL cases.
+Fresh locked installation/build use a clean556-file Git archive without private
+env files or builder server credentials. No schema, backfill or provider call.
+[Exact source/CI and distinct UI scopes](review-status.md#provider-amount-availability).

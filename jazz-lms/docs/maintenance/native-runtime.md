@@ -312,3 +312,11 @@ Latest57 sealed550/45,769/158-file artifact passes Unix19/HTTPS11 and complete
 post-closure reinspection. Both latest apps and tunnel closed by their fixed
 leases; all-five12-model read-only preservation passes. The earlier e32 restart/
 worker-exit/UID denial remain separate. [Current receipts](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+
+
+The later FB/BC builds each verify550 app blobs,45,769 sealed files and158 client
+files, with Unix19/HTTPS11 and post-closure full seals. Actual scoped editor and
+BC language controls pass; apps/tunnel/browser state are closed and all-five
+12-model strict-CA preservation passes at02:42:36 UTC October14. These scopes do
+not repeat or relabel the earlier e32 restart/worker/UID tests.
+[Latest UI checkpoint](review-status.md#scoped-notes-editor-and-language-controls).

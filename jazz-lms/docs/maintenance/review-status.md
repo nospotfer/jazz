@@ -1,13 +1,14 @@
 # Maintenance review checkpoints
 
-Updated 2026-10-13. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
+Updated 2026-10-14. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
 on `maintenance/initial-audit`. Source is unreleased and maintenance remains
 incomplete. The separately approved production Supabase recovery/export/unsafe-state
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application source: `e32a370`; see
-[protected native preview and contrast](#protected-native-preview-and-contrast).
+Current application source: `133716b`; see
+[provider amount availability](#provider-amount-availability). Actual UI evidence
+is bound separately to `fb37f9e`/`bc17899` below.
 
 ## First published checkpoint
 
@@ -720,3 +721,117 @@ final preservation/scan receipts accompany the checkpoint. Earlier reports remai
 immutable. Next: scoped editor hydration and actual locale controls, then remaining
 Dodo recipient/signed-transaction, OAuth/SMTP, stable-host/account/DNS, old Vercel
 quarantine and production review gates. The goal remains active and incomplete.
+
+## Scoped notes editor and language controls
+
+The two remaining UI checks now have actual browser evidence. On source
+`fb37f9e` (application code unchanged from `57f5de1`), the dedicated editor's
+scoped **Mis notas** textbox becomes enabled after its owned GET returns 200.
+At 320px for class 1 and 390px for class 2, displayed text hashes match the
+saved notes, with 13px, normal weight and normal style. No note edits occur.
+
+The same run reproduces the language-selector failure: four hydrated 44×44
+buttons sit inside a flex item squeezed to 2px, with clientWidth 0 and hidden
+overflow. The ES button has only 1px visible width; its center hits a neighboring
+SVG. The frozen report remains **10 checks, 9 passes, 1 failure**. This confirms
+the cause of the earlier timeout without changing historical reports.
+
+Commit `bc178997195afa3b0f5bf5e9e1cdb7720f57a6c3` adds `shrink-0` to the shared
+language-selector wrapper. A separate fresh, locked build matches 550 app Git
+blobs, 45,769 sealed files and 158 inspected client files. Unix **19/19** and
+HTTPS **11/11** checks pass, and supplied server secrets are absent from client
+files. The existing seven language component tests pass. An exact committed
+555-file Gitleaks export has zero findings.
+
+The corrected browser report passes **35/35 checks**, including 12 real ES, EN,
+FR and PT-BR clicks at 1440, 320 and 390px. The wrapper now has 176px client
+width; each language control is an unobstructed 44×44 target. Selected states
+and visible/accessibility labels update normally. Completion labels match
+Concluir, Complete, Valider and Concluir and remain reachable after normal
+toolbar scrolling; completion buttons are not pressed. A separate initial
+correction preflight rejected a mismatched purpose label before browser traffic
+(1 failed check); that diagnostic remains preserved.
+
+The whole window uses one native password request, one normal session sync and
+one strictly scoped normal synthetic avatar update. Corrected-source session
+reuse adds zero authentication or profile writes. No learning, financial, mail
+or playback mutation occurs. All browsers are closed and the purpose-created
+0600 session file is deleted after owner/type/link/mode checks.
+
+The strict-CA read-only AFTER snapshot at **02:42:36 UTC on October 14** matches
+the 02:23 baseline's full row hashes across all 12 app/content/learning/entitlement
+models, all five actors' global counts, course price 80 and zero business rows.
+The Auth avatar update is separate from this application-row comparison. Both
+source-bound apps and the temporary tunnel close cleanly before their deadlines;
+both full sealed reinspections pass without unlocking compiled files. This closes
+the scoped editor and language-control gaps. Dodo signed transactions and
+notification recipients, Google/SMTP, continuous hosting/account/DNS, old Vercel
+quarantine and production review remain open. No new spend or production change.
+
+Selected UI evidence is preserved in 26 files under
+`/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24/review-checkpoint-editor-locale-bc17899/`.
+All copies have matching hashes and owner-only permissions. The evidence scan's
+1,508 matches are individually verified manifest path/SHA256 pairs from the two
+fully inspected artifacts; there are zero other findings or scanner suppressions.
+This is local retention, without encryption or off-site recovery.
+
+## Provider amount availability
+
+Application source **`133716b582ce729ed2b41a548b17204841ff795c`** is published
+on the maintenance branch. Missing, NULL or malformed provider amounts previously
+became a zero charge and a phantom full discount. A synthetic helper probe with
+metadata originalPrice 29.99 and no total reproduced finalPrice 0 and discount
+29.99. This establishes a source defect, not an observed customer incident.
+
+The documented `total_amount` field is required integer minor units including
+tax. It now takes precedence over legacy `amount`, including genuine zero.
+Present malformed totals, negative facts and present invalid subtotal/metadata
+prices stay NULL; missing derived discounts stay NULL. Valid legacy decimal
+amount aliases retain their existing conversion. The exported general money
+helper, currency assumptions and gross/subtotal/tax inference remain unchanged.
+[Dodo payment contract](https://docs.dodopayments.com/api-reference/payments/get-payments-1).
+
+Purchase sync now stores nullable facts. An incomplete retry for the same payment
+keeps previously known amounts and fills only previously NULL fields; a complete
+snapshot retains existing replacement behavior. A new payment reference cannot
+inherit another payment's amounts. The nonnullable DiscountApplied row is never
+created from unknown amounts: incomplete same-payment retries preserve its money
+and update only an existing voucher link when needed; replacement payments clear
+stale monetary rows. Actual coupon identity, usage counting, owner/status checks
+and refund/dispute barriers keep their existing policy. Enrollment metrics count
+only an explicitly recorded zero as a free voucher enrollment.
+
+Frozen regression stages remain distinct: initial four-file baseline 30 failures/
+47 passing controls, a nested malformed-total follow-up, eight negative/late-coupon
+failures, and a present-malformed-metadata failure. No passing result overwrites
+those reports. The final targeted suite passes **260/260** across 12 files,
+including **18 actual PostgreSQL cases**, seven newly persisted regressions.
+Independent source review passes; existing caller contract fixtures need no
+adjustment. No schema, historical backfill or actual provider transaction occurs.
+
+Root verification on matching committed source/test hashes passes **1,973 normal
+tests/47 intentional skips** in 108 passed/five all-skipped files, **46 actual
+PostgreSQL tests/one REST-only skip** across five suites, types and lint **0 errors/
+25 existing warnings**. The normal skip count includes seven new guarded database
+cases, which pass in the separate PostgreSQL run. A clean 556-file Git archive
+without private env files passes fresh locked installation and webpack build;
+the builder receives no server credentials. Its source Gitleaks scan has zero
+findings. Required push hooks pass without bypass.
+
+These are source/local-database checks. Actual editor and language browser proof
+remains bound to FB/BC, fresh learning to 9bd and earlier Mux/PDF/contrast/runtime
+proof to e32. No new-source Dodo delivery, customer transaction, production fix or
+stable-host claim follows from these results. Financial journal/currency/tax,
+notification recipients, Google/SMTP, continuous-host/account/DNS and old Vercel
+quarantine remain release gates. The maintenance goal is active and incomplete.
+
+
+| Exact133 source check | Verified result |
+| --- | --- |
+| [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38503514876) | Success; downloaded ZIP confirms1,973/47 normal and46/1 persisted. Push38503510218 also succeeds. |
+| [Secret Scan PR](https://github.com/nospotfer/jazz/actions/runs/38503514872) | Success; push38503510177 also succeeds. |
+| [CodeQL](https://github.com/nospotfer/jazz/actions/runs/38503511409) and [aggregate](https://github.com/nospotfer/jazz/runs/115655785613) | Success on exact133 source. |
+| Existing protected Vercel build | Combined status success. Account/provider isolation remains unreconciled; no Vercel journey or production release claim. |
+
+Downloaded Quality ZIP SHA256:
+`7ace5fd49962f62157b390fbd3314e0159578e10dc3157591e4024fe1178ba78`.

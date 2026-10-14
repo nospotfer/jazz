@@ -408,3 +408,17 @@ partial for scoped editor hydration and actual locale controls. All-five full
 row hashes across12 models and zero business counts are unchanged. Browser
 state and apps/tunnel are closed; only normal scoped synthetic avatar setup wrote
 Auth metadata. No new fixture, learning, payment, mail or production write.
+
+
+## Scoped editor and language-control completion
+
+FB actual browser checks verify both saved notes in their hydrated dedicated
+editors at320/390. The same run reproduces a2px clipped language wrapper. BC
+adds one shared `shrink-0` class; its separate fresh artifact passes Unix19 and
+HTTPS11, then35/35 actual browser checks, including12 real ES/EN/FR/PT clicks
+at1440/320/390 and matching reachable completion labels. The earlier FB10/9/1
+and correction preflight1/0/1 remain separate diagnostics. Session reuse adds
+zero authentication/profile/learning/payment/mail writes. Strict-CA AFTER
+02:42:36 preserves all12 model hashes and five-actor/global counts. Both apps,
+tunnel and browsers close cleanly; purpose state is deleted and seals reverified.
+[Exact source and scope](review-status.md#scoped-notes-editor-and-language-controls).

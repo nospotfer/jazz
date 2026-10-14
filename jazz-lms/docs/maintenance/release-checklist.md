@@ -232,3 +232,22 @@ and rebuild if public values or application source change. Account/DNS/continuou
 host control, resource/recovery policy, old Vercel quarantine, unfinished provider
 journeys and explicit SQL/config/deploy/resume approval remain release gates.
 [Verified source/package limits](native-runtime.md).
+
+
+## Current source and UI checkpoint
+
+- [x] Source133 exact Quality/Secret Scan/CodeQL/protected build succeed; downloaded
+  logs confirm1,973/47 normal and46/1 persisted,types/build/lint0/25.
+- [x] Nullable provider accounting preserves true zero, same-payment facts and
+  late coupon linkage;260 targeted checks include18 actual PostgreSQL cases.
+- [x] Dedicated saved editor text/styles pass onFB at320/390. BC35/35 browser
+  checks include12 real language clicks at1440/320/390 and matching reachable
+  completion names. Previous failures remain separate; no learning/payment writes.
+- [x] All-five12-model strict-CA preservation and actual app/tunnel/browser cleanup
+  pass; purpose session deleted and both45,769-file seals reverified.
+- [ ] Complete actual provider journeys, notification recipients, continuous host/
+  account/DNS and old deployment quarantine; review exact production SQL/config/
+  source/resume changes. Temporary closed previews and local source checks do not
+  satisfy these gates. No paid upgrade or production release occurred.
+
+[Exact source and limits](review-status.md#provider-amount-availability).

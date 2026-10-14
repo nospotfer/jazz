@@ -112,14 +112,14 @@ relay secret is separate from Resend's signing secret.
 
 ## Operations and release
 
-The owner selected zero new hosting spend. Current source `57f5de1` passes
-1,935 normal tests/40 skips, 39 real PostgreSQL checks/one skip, types/build and
-lint 0 errors/25 warnings. Fresh private Unix/HTTPS builds are verified; the
+The owner selected zero new hosting spend. Current source `133716b` passes
+1,973 normal tests/47 skips, 46 real PostgreSQL checks/one skip, types/build and
+lint 0 errors/25 warnings. FB/BC private Unix/HTTPS builds are verified; the
 9bd browser checkpoint saves notes, watches two real clips and completes two
 quizzes with persisted Platinum/Gold results. Earlier desktop/mobile public
 layouts, contrast, four-role access, PDFs and certificate evidence remain
 separate. Stable hosting and production activation require review. See the
-[exact checkpoints and remaining gaps](docs/maintenance/review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+[exact checkpoints and remaining gaps](docs/maintenance/review-status.md#provider-amount-availability).
 
 Read [AGENTS.md](AGENTS.md) and the [maintenance handover](docs/maintenance/README.md).
 The maintenance branch is `maintenance/initial-audit`. Preview deployments are
@@ -158,5 +158,5 @@ from a single browser setting.
 
 The mobile drawer picker/editor link is verified at320/390 after its scroll/space
 repair. Unknown historical payment amounts are now explicit instead of borrowing
-current catalog price. Hydrated editor text and actual locale controls remain
-separate browser checks.
+current catalog price. Hydrated editor text passes at320/390 onFB. BC35/35 actual browser checks
+verify all four language controls and matching completion labels at desktop/320/390.

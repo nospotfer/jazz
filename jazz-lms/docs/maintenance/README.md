@@ -19,7 +19,7 @@ site attractive and easy to use while preserving its jazz identity.
 | [Public provider evidence](public-provider-evidence.md) | Deployed/legacy Supabase DNS failure and inspection limits | Documented |
 | [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Production exposure confirmed; hardening prepared separately, not applied |
 | [Supabase manager and recovery](supabase.md) | Existing customer-project status, preservation and bounded rollback | Approved recovery and private exports completed; offline data restore verified; INACTIVE after unsafe-state rollback |
-| [Separate preview](preview.md) | Guarded Free cloud backend, synthetic fixtures and customer-journey evidence | Native9bd fresh learning and latestcade auth/accessibility/source checks; earlier four-role/media/PDF/layout scopes preserved |
+| [Separate preview](preview.md) | Guarded Free cloud backend, synthetic fixtures and customer-journey evidence | Native9bd learning, FB hydrated mobile editors, BC35/35 real language controls; earlier four-role/media/PDF/layout scopes preserved |
 | [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
 | [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
 | [Zero-cost hosting](hosting.md) | Conditional stable hosting, old deployment quarantine and rollback | Monster + free named tunnel preferred if availability/account/DNS control exists; no setup or cutover performed |
@@ -83,7 +83,7 @@ transaction verification remain open. Goal is active and incomplete.
 [Latest checkpoint](review-status.md#protected-native-preview-and-contrast).
 
 
-Latest source `57f5de1` fixes password navigation ordering/late auth events,
+Earlier source `57f5de1` fixes password navigation ordering/late auth events,
 adds the drawer link to saved notes and aligns accessible completion labels in
 ES/EN/FR/PT. Exact CI confirms1,935 normal passes/40 skips,39 actual PostgreSQL
 passes/one skip,types/build/lint0/25 and committed555-file secret scan0. Fresh
@@ -98,3 +98,13 @@ The mobile drawer picker/editor link is verified at320/390 after its scroll/spac
 repair. Unknown historical payment amounts are now explicit instead of borrowing
 current catalog price. Hydrated editor text and actual locale controls remain
 separate browser checks.
+
+
+Current source `133716b` preserves missing/malformed provider amounts asNULL,
+retains same-payment known facts and correct voucher links, and clears stale
+accounting on replacement payments. Exact CI/downloaded logs confirm1,973 normal
+passes/47 skips and46 actual PostgreSQL passes/one skip; types/build/lint0/25 and
+556-file source scan0. The260 targeted payment checks include18 actual PostgreSQL
+cases. Actual browser proof stays bound to FB editors/BC35/35 language controls;
+all temporary processes are closed and all-five12-model preservation passes.
+[Current source and remaining gates](review-status.md#provider-amount-availability).

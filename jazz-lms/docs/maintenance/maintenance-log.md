@@ -878,3 +878,40 @@ OAuth/SMTP, continuous-host/account/DNS, old deployment quarantine and productio
 SQL/config/resume/deploy review remain open. No new spend, upgrade, service/timer,
 transaction/refund/mail or production activation. Goal active and incomplete.
 [Exact revisions and report scopes](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+
+
+## 2026-10-14 — scoped editor, real language controls and nullable provider amounts
+
+- FB scoped hydrated editors show the saved note hashes/styles at320/390. The
+  locale failure is now reproduced: four44px controls clipped into a2px wrapper.
+  bc17899 adds only shared selector `shrink-0`; separate fresh550/45,769/158-file
+  build passes Unix19/HTTPS11, then35/35 actual browser checks, including12 real
+  ES/EN/FR/PT clicks at1440/320/390 and matching reachable completion labels.
+  FB10/9/1 and a no-traffic purpose preflight1/0/1 remain immutable.
+- One native login/session sync/scoped own-avatar update belongs to that window;
+  corrected state reuse adds none. No learning/payment/mail writes or playback.
+  Strict-CA AFTER02:42:36 preserves all12 model hashes/five-actor global counts,
+  price80 and zero business rows. Both apps/tunnel/browsers close cleanly, state
+  is safely deleted and both complete seals pass.26 selected evidence files are
+  privately preserved locally;1,508 scanner matches are verified manifest hashes,
+  with0other findings/0suppressions. No encryption/off-site claim.
+- 133716b fixes missing/invalid/negative provider money becoming zero/phantom
+  discount. Canonical total has presence-aware precedence; real0 stays0. Partial
+  retries retain known facts only for the same payment; late coupons update only
+  existing voucher links; replacement references clear stale money rows. Unknown
+  voucher amounts are not classified asfree. No entitlement/reversal/coupon policy,
+  schema/backfill/currency/tax/journal or actual provider incident claim.
+- Separate failing freezes precede260 final targeted passes,including18 actual
+  PostgreSQL cases/seven new persisted regressions. Independent review passes;
+  existing caller fixtures remain valid. Root full normal1,973/47 and persisted
+  46/1,types/lint0/25,clean locked build and556-file source scan0 pass. Exact remote
+  Quality/Secret/CodeQL/protected build and downloaded Quality logs confirm them;
+  required push hooks pass without bypass. Earlier browser/runtime sources remain
+  distinct from this latest financial source.
+
+Next: preserve the exact-source CI/frozen failures and publish the updated draft
+review package. Essential Dodo recipient/signed-transaction, Google/SMTP, stable
+host/account/DNS, old Vercel quarantine and production review gates remain open.
+Zero new spend; no production mutation, transaction/refund/mail or service/timer.
+The maintenance goal remains active and incomplete.
+[Source checkpoint](review-status.md#provider-amount-availability).
