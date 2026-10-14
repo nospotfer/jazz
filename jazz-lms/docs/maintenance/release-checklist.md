@@ -26,10 +26,14 @@ SQL/configuration repair or another resume is authorized by that approval.
 
 ## Review gates
 
-- [ ] Close newly confirmed dashboard/course account-switch privacy and stale
-  progress-intent defects with source regressions and fresh native cross-tab
-  verification; frozen parent/component and six-route failures remain explicit.
-  [Current follow-up](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+- [x] Close newly confirmed dashboard/course account-switch privacy and stale
+  progress-intent verification: source4f395e0 repairs pass111 client cases/49
+  route regressions, exact CI2,130/47 and actual native cross-tab/empty-account/
+  account-UX/stale-hint409 checks. Separate4f pointer baseline confirms paywall
+  interference; final414 source/CI and native24/24 verify both logout clicks,
+  private retirement, reachable paywall CTA and full-viewport modal open/cancel.
+  Actual artificial delayed replies/provider payments remain separate gaps.
+  [Current follow-up](review-status.md#contained-paywall-and-complete-native-account-verification).
 - [x] Document and repair substantial auth/payment/media/quiz/notes/privacy/UX defects.
 - [x] Node 24, clean lockfile installation and Prisma generation succeed.
 - [x] Local webpack production build and clean Turbopack build succeed.

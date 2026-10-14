@@ -1022,3 +1022,61 @@ The maintenance goal remains active and incomplete.
   immutable reports remain separate; nothing is released to production.
 
 [Account access evidence](review-status.md#account-pages-without-a-course-purchase).
+
+## 2026-10-14 — Private-view source verification and native account evidence
+
+- Publish source4f395e0 after required hooks: whole private-frame owner retirement,
+  synchronous late-work generations, bounded refresh/recovery and seven verified
+  server expected-user contracts. Independent18-file review matches committed
+  blobs. Distinct frozen dashboard/admin/checkout/route failures are preserved;
+  final111 client cases,49 route regressions and22 account/paywall cases pass.
+- Fresh clean-source root QA and downloaded exact remote Quality logs agree:
+  2,130 normal/47 skips,46 actual PostgreSQL/one REST skip, types/build/lint0/23.
+  Exact570-file source and26 expanded CI text entries scan0. Quality/Secret Scan/
+  CodeQL and actual Vercel completed status pass; provider isolation remains open.
+- Fresh sealed native artifacts verify565 Git application blobs/45,785 immutable
+  files/158 client files, Unix19 and HTTPS11. Preserve original8/9 detector and
+  two5/6 menu diagnostics without overwriting or relabeling them as passes.
+- Normal-network native19/20 verifies real two-tab A sign-out/B sign-in,
+  refreshed own incomplete lesson, B's empty receipts/zero paid counts/current
+  identity, unobstructed readonly profile/settings, paid-course restriction and
+  actual stale A hint409. The final B menu click times out; physical actionability/
+  trusted dispatch remains unobserved, rather than assuming an application defect.
+- All browsers/owned app/tunnels close; strict-CA before/after all-five/12-model
+  hashes, global counts, learning and entitlements remain unchanged; sealed
+  reinspection passes. Six password/session requests across closed windows are
+  retained explicitly. Native artificial late-response privacy is unproved;
+  source regressions and actual normal-network observations have separate scope.
+- Prepare one fresh bounded foreground-tab/actionability observation. Zero
+  production change, new spend, provider transaction, mail or learning mutation.
+  Goal remains active; provider/production/hosting gates still require review.
+
+[Exact current evidence](review-status.md#private-view-ownership-and-account-access-source-verification).
+
+## 2026-10-14 — Confirmed paywall obstruction and complete account check
+
+- A fresh foreground4f19/20 observation resolves the narrower menu failure:
+  B's visible/focused/font-ready logout center hits an outside DIV; ordinary
+  trial click reports pointer interception, without unstable/detached/navigation
+  evidence. The later paywallz30 escapes its content and covers headerz30's menu.
+- Contain only content/paywall stacking. Independent source review finds inline
+  modalz90 would also be trapped, so final414 keeps the unchanged dialog as a
+  sibling. Only one application file changes; all18 original ownership-review
+  hashes remain unchanged, and supplemental source review/existing22 cases pass.
+- Required hooks pass on explicit synthetic DATABASE_URL/Node24; initial missing-
+  URL rejection stays retained. Exact414 remote Quality/Secret Scan/CodeQL/
+  Vercel status pass; downloaded logs2,130/47 normal,46/1 PostgreSQL, build/types/
+  lint0/23 agree. Exact570-file source and26 expanded CI entries scan0.
+- Fresh sealed configured414 build565/45,785/158, Unix19 and HTTPS11 pass.
+  Native24/24 verifies both real trusted logout clicks, SDK cross-tab retirement,
+  refreshed own B course/history/profile/settings/counters, actual409, paid gate,
+  physical paywall CTA and full-viewport header/sidebar modal coverage/cancel.
+  No checkout continue, voucher interaction, provider amount/payment/mail proof.
+- Strict-CA13:07:24→13:10:59 all-five/12-model/global/business/learning/entitlement
+  preservation passes; all browsers/owned app/tunnel close and sealed inspection
+  passes. Ten total password/session requests across all owner-test windows are
+  explicit, with bounded own-avatar/logout lifecycle actions outside model hashes.
+  Initial diagnostics are not relabeled. Zero new spend or production change;
+  broader provider/hosting/production gates remain, and the goal stays active.
+
+[Final source and native scope](review-status.md#contained-paywall-and-complete-native-account-verification).

@@ -61,26 +61,31 @@ persisted local journeys and actual provider inspection.
 | SEC-16 | High local credential handling | Ignored credential CSV and private app.env had0664 permissions, permitting group read/write and other-user read at the file level. Both are now0600 and remain Git-ignored; contents/keys unchanged. | Exact owner/regular-file/single-link metadata verified before chmod, then0600 confirmed. No exposure incident or production policy change claimed. |
 | OPS-11 | Medium recoverability | Supplied Dodo TEST key existed only under/tmp and could be lost on cleanup/reboot. Identical bytes are now retained separately from review evidence in a private durable configuration directory. | Owner-only0700/0600, exclusive creation and byte equality verified; one GET matches the existing test product/business/price. No automatic loading/rotation/payment/mail. [Retention](dodo.md#local-test-credential-retention). |
 | OPS-12 | Medium rollback preparedness | Proposed rollback included a closed maintenance page but no actual artifact. Standalone branded ES/EN/FR/PT fallback and exact503/header contract now exist for review. | Actual loopback HTTP/browser138/138 and separate file4/4 checks pass; initial109/110 CSS-zoom overflow source/report kept and wrapping repaired. No backend/provider/storage dependency or activation; host/DNS/quarantine review remains. [Artifact](maintenance-fallback.md). |
+| UX-19 | Medium account usability | Paid-content overlay intercepted free users' header-menu/sign-out clicks. Its stacking is now contained within the content area, with the unchanged full-viewport payment dialog outside that context. | Foreground4f baseline19/20 confirms physical interception; final414 native24/24 verifies both real logout clicks, paywall CTA and modal coverage/cancel, plus existing22 component cases. No checkout/payment or paid-gate change. |
 
 ## Open verification and release gates
 
-Confirmed source work in progress: **SEC-17 (high confidentiality/correctness)**.
-Dashboard and course-player account changes can retain prior identity/private
-children and accept late avatars/counters. The frozen component/parent baseline
-has 12 failures and five passing controls; six user-scoped read/progress routes
-have 24 failures and 18 controls for mismatching, blank and ambiguous owner hints.
-Implement whole-view owner retirement and expected-user consistency before
-server work, then verify regressions and actual native cross-tab behavior.
-No backend privilege bypass, notes leak or production repair is claimed.
-[Exact evidence and limits](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+**SEC-17 (high confidentiality/correctness)** is repaired in published source
+`4f395e0`, carried forward in `4145268`: dashboard/admin/course/lesson private frames retire on owner changes,
+and seven read/progress routes reject stale/blank/duplicate identity hints before
+server work. Distinct frozen failures remain explicit; final111 client cases and
+49 route regressions pass. Actual native cross-tab A sign-out/B sign-in removes
+old course controls and refreshes B's own incomplete state; actual stale-hint409
+is verified. After the separately confirmed paywall/menu layer fix, fresh414
+native24/24 also verifies both normal logout clicks and final private retirement.
+No backend privilege bypass,
+notes leak, production repair or actual delayed-response privacy proof is claimed.
+[Exact evidence and limits](review-status.md#contained-paywall-and-complete-native-account-verification).
 
-**UX-18 (medium account usability)** is fixed locally: registered users can open
+**UX-18 (medium account usability)** is fixed in source: registered users can open
 their own profile, settings and payment history without buying a course.
 The three exact account routes bypass the purchase overlay while authenticated
 ownership and paid content rules remain intact. Six frozen failures / nine
 controls become 15 passes; seven existing notes/paywall controls also pass.
-Native free-account checks remain pending.
-[Scope](review-status.md#account-pages-without-a-course-purchase).
+Actual native free-account history/profile/settings are unobstructed and show
+the correct owner; paid course routes remain gated. Final normal sign-out and
+physical menu/modal access pass on414.
+[Scope](review-status.md#contained-paywall-and-complete-native-account-verification).
 
 | ID | Priority | Gate | Exact next action |
 | --- | --- | --- | --- |

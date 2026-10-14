@@ -86,18 +86,24 @@ exports with zero findings, and retained 48-file evidence outside `/tmp` with
 matching hashes/owner-only modes. No separate intermediate `9cb3d3f` CI run or
 production fallback activation is claimed.
 
-**Private dashboard/course owner isolation remains in progress.** A closed
-component/parent baseline freezes 12 failures / five controls; a separate
-six-route owner-consistency baseline freezes 24 failures / 18 controls. Prior
-identity/private children or late results can survive an account switch, and a
-stale intent can reach a different verified cookie account. Whole-view retirement
-and server expected-user checks must pass source regressions and a fresh native
-cross-tab/empty-account journey. No backend privilege bypass or notes leak is
-demonstrated. [Current scope](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+**Private dashboard/admin/course/lesson ownership is repaired in source4f395e0.**
+Frozen component/parent12 failures/five controls, separate admin/checkout cases,
+original six-route24 failures/18 controls and seventh-route four failures/three
+controls remain distinct. Final111 client cases/49 route regressions pass;
+independent18-file review binds to committed blobs. Fresh root/CI2,130/47 normal,
+46/1 PostgreSQL, types/build/lint0/23 and570-file secret scan0 pass. Actual native
+cross-tab sign-out/sign-in, B empty payment history/current-owner controls and
+stale-hint409 pass. A separate foreground4f observation confirms the paywall
+physically intercepts B's logout; final414 repairs the stacking and passes24/24
+actual owner/account/menu/modal checks with both normal logouts. The earlier
+19/20 report and unclassified timeouts remain retained, and actual delayed-reply
+privacy remains a separate unproved scope.
+[Current scope](review-status.md#contained-paywall-and-complete-native-account-verification).
 
-Registered account access is corrected locally: profile, settings and payment
+Registered account access is corrected in source: profile, settings and payment
 history are available without a full-course purchase, while the authenticated
 owner boundary and paid content rules remain. Exact-HEAD frozen six failures /
 nine controls become 15 passes, plus seven notes/paywall controls. Genuine
-unobstructed free-account views remain a fresh native browser requirement.
-[Scope](review-status.md#account-pages-without-a-course-purchase).
+unobstructed native free-account views and own identity are verified; profile/
+preference edits and actual provider payments remain excluded.
+[Scope](review-status.md#private-view-ownership-and-account-access-source-verification).

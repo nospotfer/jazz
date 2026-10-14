@@ -6,8 +6,8 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application source: `a207f36`; see
-[payment history recovery and account isolation](#payment-history-recovery-and-account-isolation).
+Current application source: `4145268`; see
+[complete native account verification](#contained-paywall-and-complete-native-account-verification).
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
@@ -1031,5 +1031,134 @@ alongside seven existing lesson-notes/paywall controls. A former locked-profile
 control is deliberately replaced with a paid-video-route control, so both unpaid
 restriction and paid access still have useful coverage. These are closed
 component checks without network/provider/database calls. Actual unobstructed
-free-account profile/settings/history and ownership verification are pending on
-the fresh-source preview; older A207 browser evidence is not relabeled.
+free-account profile/settings/history and ownership verification were pending at
+this source-preparation checkpoint; the fresh-source observations below supersede
+that gap. Older A207 browser evidence is not relabeled.
+
+## Private-view ownership and account access source verification
+
+Source **`4f395e0569ab4037de7fe32a33a8e48cb8e4e35c`** retires the entire private
+dashboard, administration, course and lesson frame when the SDK account changes
+or signs out. Private children render only when the current SDK owner matches the
+verified server owner. A synchronous generation invalidates previous-owner reads,
+avatars, checkout replies, player progress/completion work and reconciliation
+refreshes; account changes remount the private frame. Same-owner token refreshes
+preserve it. A changed generation has one automatic refresh, followed by localized
+manual recovery; unresolved initialization has a finite fallback. The SDK hint
+does not grant roles or replace server authentication/entitlement checks. Already
+delivered HTML, cached bytes and previously issued media tokens are not erased.
+
+All seven affected read/progress routes verify the cookie identity first, then
+reject mismatching, blank or duplicate optional `expectedUserId` hints with409
+before database/access/mutation work. Missing hints remain compatible; unauthenticated
+requests remain401. The earlier purchases hint contract remains separate.
+
+Frozen before/after proofs remain distinct: dashboard/component17 cases had12
+failures/five controls; admin parent two failures; two checkout components eight
+failures/two controls; additional CourseView checkout four failures/one control.
+The original six-route42-case baseline had24 failures/18 controls; the seventh
+route separately had four failures/three controls. All49 route regressions now
+pass; the original server package passes134 cases with its existing controls.
+The final client package passes111 cases across seven suites, including27 parent/
+owner-boundary cases. Independent review's18 frozen runtime-file hashes match
+the committed blobs. Fixture/setup failures remain retained diagnostics.
+
+The exact three account-route exemptions pass22 component checks, preserving
+paid-content restrictions. Fresh Node24 clean-source verification passes **2,130
+normal tests /47 skips**, **46 actual PostgreSQL tests /one REST skip**, types,
+and lint **0 errors /23 warnings**. There are114 files with passing assertions and
+five without executed cases; Vitest's nested suite count is not a file count.
+The exact570-file committed export scans with zero findings/new suppressions.
+Required commit/push hooks pass without bypass.
+
+Actual [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38522879886)
+and push38522874985, Secret Scan PR38522879906/push38522874988, and
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/38522876079)/aggregate115716562170
+all pass. Downloaded Quality ZIP SHA256
+`8867462c07803ae3c655b40bca69be0c6251cefeb74fbb47b2659a2a76b54425`
+confirms those test/build/type/lint counts; its26 expanded text entries scan clean.
+The actual Vercel combined status reports deployment completed; its provider
+isolation remains unreconciled and no customer journey there is claimed.
+
+Fresh private HTTPS artifacts match565 Git application blobs,45,785 sealed files
+and158 inspected client files. Locked installation, configured webpack build,
+public-origin/key binding, server-secret exclusion, strict published CA, actual
+Unix19/19 and HTTPS11/11 checks pass. The latest normal-network native browser
+run passes19 of20 checks: actual A sign-out removes private course controls;
+real cross-tab B sign-in retires the generation and refreshes B's incomplete first
+lesson; current B authenticated reads return200 and a stale A purchases hint409.
+Free B sees its own empty history, identity, zero paid counters, unobstructed
+read-only profile/settings, and the paid dashboard route remains gated.
+Matching SSR identity is explicitly a source-derived equality inference,
+corroborated by actual B-owned reads and incomplete-course UI, not serialized-byte
+proof. No playback, learning, payment, mail or preference/profile edits occur.
+
+This run stops at B's final normal menu click timeout; physical hit/stability and
+trusted dispatch were not observed. It does not establish an application defect
+or prove B sign-out. Earlier8/9 detector and two5/6 menu diagnostics remain
+immutable and distinct. Actual artificial delayed-response privacy is unproved;
+closed source regressions cover it separately. All browser contexts and owned
+app/tunnel processes close; strict-CA all-five/12-model before/after hashes,
+global counts, learning/entitlements and business rows remain unchanged, and
+sealed reinspection passes. Six total password/session requests across those
+closed windows are recorded rather than resetting a consumed budget. A fresh
+bounded foreground/actionability observation is in preparation.
+
+The source and account UX are unreleased. Dodo recipients/transactions/delivery,
+Google/SMTP, continuous host/account/DNS, previous Vercel quarantine and production
+hardening/release remain required gates. No new spend or production change.
+
+## Contained paywall and complete native account verification
+
+A further foreground observation on exact4f preserves the **19/20** failing
+native baseline. The free account's sign-out button has a visible, focused,
+font-ready222×40 rectangle, but its center hits a DIV outside the menu. An ordinary
+Playwright trial confirms pointer interception, with no instability, detachment,
+viewport or scheduled-navigation issue; no B logout request is made. Header and
+later paywall both havez30, so the paywall escapes its content stacking context
+and covers the header dropdown. Earlier menu timeouts remain unclassified raw
+diagnostics; this new observation establishes the narrower actual defect.
+
+Final source **`4145268936bfd7b386dd51fd9f794459f7daa41c`** contains the paywall
+inside its own stacking context. Independent review catches and corrects the
+inline fixedz90 payment dialog being trapped there: the unchanged dialog is a
+sibling outside the isolated content/paywall. Only one application file differs
+from4f. Intermediatea056 is pushed together with its final correction and has
+no separate remote/native proof. All18 frozen ownership-review file hashes remain
+unchanged; the additional paywall/modal change has independent source review.
+The unchanged22 account/paywall component cases pass. Required hooks pass with
+explicit synthetic DATABASE_URL/Node24; the initial push rejection for a missing
+required synthetic URL is preserved, and hooks are not bypassed.
+
+Exact [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38569228404)
+and push38569223223, Secret Scan PR38569228825/push38569223311,
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/38569225324)/aggregate115869968073
+and the actual Vercel completed status all pass. Downloaded Quality ZIP SHA256
+`e0e74433ee4a925af288c78cf1659648b00d221854e9ef1cc2eb83fb6c35cf82`
+confirms2,130 normal/47 skips,46 actual PostgreSQL/one REST skip, types/build and
+lint0/23. The570-file exact committed export and26 expanded log entries scan0.
+Vercel provider isolation and customer journeys there remain unverified.
+
+A fresh414 locked-install/configured build again matches565 Git application
+blobs/45,785 immutable files/158 client files, compiled origin/public key, strict
+CA and server-secret exclusion; actual Unix19/19 and HTTPS11/11 pass. The
+normal-network native browser now passes **24/24**: actual SDK cross-tab A
+sign-out/B sign-in, private course retirement/refreshed B incomplete state,
+owned empty receipts/header/counters/profile/settings, actual stale-hint409,
+retained paid-course restriction, reachable purchase option, and dialog open/
+cancel with full-viewport physical coverage of header/sidebar/menu. Both actual
+sign-out buttons have unobstructed physical targets, pass ordinary trial clicks,
+receive trusted pointer/mouse/click events and perform normal logout; B's final
+sign-out removes the other tab's private frame. No forced clicks/fake SDK events.
+
+This window uses two password requests/two normal session syncs/one normal own
+avatar metadata PUT/two normal logouts. Ten password/session requests total
+across all closed owner-test windows remain explicit. There are no checkout
+continuations, voucher interactions, provider payments/mail, playback or learning
+writes, profile-form or preference edits. Actual delayed-response privacy and
+provider payment amounts are not proved by these geometry/ownership checks.
+Strict-CA before13:07:24/after13:10:59 all-five/12-model/global/learning/business/
+entitlement hashes remain unchanged. All contexts/Chromium/app/tunnel processes
+close cleanly; final sealed inspection passes. Existing services are preserved.
+The source remains unreleased, with zero new spend and all provider/production/
+hosting gates retained; the maintenance goal remains active and incomplete.
