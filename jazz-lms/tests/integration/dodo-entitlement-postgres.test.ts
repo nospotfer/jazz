@@ -63,7 +63,7 @@ describe.skipIf(!databaseUrl)("Dodo entitlements on isolated PostgreSQL", () => 
     await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: pricing.subtotalAmount,
       finalPrice: pricing.totalAmount, discountAmount: pricing.discountAmount });
     const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
-    expect(purchase).toMatchObject({ originalPrice: 29.99, finalPrice: null, discountAmount: null });
+    expect(purchase).toMatchObject({ originalPrice: null, finalPrice: null, discountAmount: null });
     expect(await client.discountApplied.count({ where: { purchaseId: purchase!.id } })).toBe(0);
   });
 
@@ -261,7 +261,7 @@ describe.skipIf(!databaseUrl)("Dodo entitlements on isolated PostgreSQL", () => 
       metadata: { userId, courseId, originalPrice: "29.99", voucherCode: voucher.code, providerDiscountCode: voucher.code },
     } };
     const pricing = extractDodoPricing(payload);
-    expect(pricing.discountAmount).toBe(0); // Monetary gross/net reconciliation remains a separate gap.
+    expect(pricing.discountAmount).toBeNull(); // Gross total and a merchant quote do not establish a monetary discount.
     await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: pricing.subtotalAmount,
       finalPrice: pricing.totalAmount, discountAmount: pricing.discountAmount, ...resolveDodoVoucherAccounting(payload) });
     expect((await client.voucherCode.findUnique({ where: { id: voucherId } }))?.currentUses).toBe(1);

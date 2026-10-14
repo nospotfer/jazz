@@ -13,7 +13,12 @@ import {
 import { isDodoWebhookConfigured } from "@/lib/payments/providers/dodo";
 import { DEFAULT_FULL_COURSE_PRICE_EUR, getKnownCatalogPrice } from "@/lib/pricing";
 import { isLocalTestRequest } from "@/lib/test-mode";
-import { validateVoucherForCourse } from "@/lib/vouchers";
+import {
+  lockPublishedCourseForGrant,
+  revalidateVoucherForGrant,
+  validateVoucherForCourse,
+  VoucherGrantError,
+} from "@/lib/vouchers";
 import { ensureVoucherDiscountSynced } from "@/lib/voucher-provider-sync";
 import { createClient } from "@/utils/supabase/server";
 import { randomUUID } from "crypto";
@@ -71,6 +76,7 @@ export async function POST(req: Request) {
     invalidRequest: "Solicitud inválida",
     courseNotFound: "Curso no encontrado",
     priceUnavailable: "El precio del curso no está disponible. Inténtalo de nuevo más tarde.",
+    quoteChanged: "El curso o el cupón cambió. Vuelve a intentarlo para validar el precio.",
     alreadyPurchased: "El curso ya fue comprado",
     paymentsUnavailable: "Pagos temporalmente no disponibles",
     paymentMethodUnavailable: "Método de pago no disponible para esta compra",
@@ -110,6 +116,7 @@ export async function POST(req: Request) {
         invalidRequest: "Solicitud inválida",
         courseNotFound: "Curso no encontrado",
         priceUnavailable: "El precio del curso no está disponible. Inténtalo de nuevo más tarde.",
+        quoteChanged: "El curso o el cupón cambió. Vuelve a intentarlo para validar el precio.",
         alreadyPurchased: "El curso ya fue comprado",
         paymentsUnavailable: "Pagos temporalmente no disponibles",
         paymentMethodUnavailable:
@@ -125,6 +132,7 @@ export async function POST(req: Request) {
         invalidRequest: "Invalid request",
         courseNotFound: "Course not found",
         priceUnavailable: "The course price is unavailable. Please try again later.",
+        quoteChanged: "The course or voucher changed. Try again to confirm the price.",
         alreadyPurchased: "Course already purchased",
         paymentsUnavailable: "Payments are temporarily unavailable",
         paymentMethodUnavailable:
@@ -141,6 +149,7 @@ export async function POST(req: Request) {
         invalidRequest: "Requête invalide",
         courseNotFound: "Cours introuvable",
         priceUnavailable: "Le prix du cours est indisponible. Réessayez plus tard.",
+        quoteChanged: "Le cours ou le code promo a changé. Réessayez pour confirmer le prix.",
         alreadyPurchased: "Le cours a déjà été acheté",
         paymentsUnavailable: "Les paiements sont temporairement indisponibles",
         paymentMethodUnavailable:
@@ -158,6 +167,7 @@ export async function POST(req: Request) {
         invalidRequest: "Solicitação inválida",
         courseNotFound: "Curso no encontrado",
         priceUnavailable: "O preço do curso está indisponível. Tente novamente mais tarde.",
+        quoteChanged: "O curso ou o cupom mudou. Tente novamente para confirmar o preço.",
         alreadyPurchased: "O curso já foi comprado",
         paymentsUnavailable: "Pagamentos temporariamente indisponíveis",
         paymentMethodUnavailable:
@@ -275,6 +285,7 @@ export async function POST(req: Request) {
 
     if (isFreeCourse) {
       await db.$transaction(async (tx) => {
+        await lockPublishedCourseForGrant(tx, courseId, configuredPrice);
         await tx.purchase.upsert({
           where: {
             userId_courseId: {
@@ -310,6 +321,7 @@ export async function POST(req: Request) {
     }
 
     if (voucherValidation?.valid && voucherValidation.isFree) {
+      const expectedQuote = voucherValidation;
       const providerVoucherPrefix =
         getProviderVoucherReferencePrefix(paymentProvider);
 
@@ -322,6 +334,16 @@ export async function POST(req: Request) {
         finalPrice: voucherValidation.finalPrice,
         localVoucherCode: voucherValidation.voucher.code,
         providerDiscountCode: voucherValidation.voucher.providerDiscountCode,
+        beforeFreeVoucherGrant: async (tx, voucherId) => {
+          if (voucherId !== expectedQuote.voucher.id) {
+            throw new VoucherGrantError("Quote changed", copy.quoteChanged);
+          }
+          await revalidateVoucherForGrant(tx, {
+            code: expectedQuote.voucher.code,
+            courseId,
+            userId: user.id,
+          }, expectedQuote);
+        },
       });
 
       const successUrl =
@@ -367,6 +389,14 @@ export async function POST(req: Request) {
     const dashboardSuccessUrl = `${origin}/dashboard?purchase=success&source=dashboard&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}&expectedUserId=${encodedExpectedUserId}`;
     const courseSuccessUrl = `${origin}/courses/${courseId}?success=true&courseId=${encodedCourseId}&checkoutAttemptId=${encodedCheckoutAttemptId}&expectedUserId=${encodedExpectedUserId}`;
 
+    // These are application quotes, not Dodo's charged amount or tax basis.
+    // The provider cart still determines the payment; settlement extraction
+    // must never turn these fields into an original price or discount fact.
+    const quotedOriginalPrice = voucherValidation?.valid
+      ? voucherValidation.originalPrice : configuredPrice;
+    const quotedDiscount = voucherValidation?.valid ? voucherValidation.discount : 0;
+    const quotedFinalPrice = voucherValidation?.valid
+      ? voucherValidation.finalPrice : configuredPrice;
     const checkoutMetadata = {
       purchaseType: "course",
       courseId: course.id,
@@ -374,7 +404,10 @@ export async function POST(req: Request) {
       checkoutAttemptId,
       language: selectedLanguage,
       courseTitle: course.title,
-      originalPrice: String(Number(numericPrice.toFixed(2))),
+      pricingProvenance: "catalog_quote_v1",
+      quotedOriginalPrice: String(Number(quotedOriginalPrice.toFixed(2))),
+      quotedDiscount: String(Number(quotedDiscount.toFixed(2))),
+      quotedFinalPrice: String(Number(quotedFinalPrice.toFixed(2))),
     };
 
     const createCheckout = async (providerDiscountCode?: string) => {
@@ -537,6 +570,19 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
+    if (error instanceof Error && error.name === "VoucherGrantError") {
+      const grantError = error as VoucherGrantError;
+      if (grantError.reason === "Course not found") {
+        return new NextResponse(copy.courseNotFound, { status: 404 });
+      }
+      if (grantError.reason === "Price unavailable") {
+        return new NextResponse(copy.priceUnavailable, { status: 503 });
+      }
+      if (grantError.reason === "Quote changed") {
+        return new NextResponse(copy.quoteChanged, { status: 409 });
+      }
+      return new NextResponse(grantError.message, { status: grantError.status });
+    }
     if (error instanceof Error && error.name === "VoucherRedemptionRejectedError") {
       return new NextResponse(error.message, { status: 409 });
     }

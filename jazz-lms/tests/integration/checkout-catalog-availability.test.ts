@@ -11,7 +11,8 @@ vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider:
 vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: () => 'dodo', isActivePaymentProviderConfigured: () => true,
   createProviderCheckout: mocks.provider, getProviderVoucherReferencePrefix: () => 'dodo-voucher' }));
 vi.mock('@/lib/payments/providers/dodo', () => ({ isDodoWebhookConfigured: () => true }));
-vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher }));
+vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher,
+  lockPublishedCourseForGrant: vi.fn(async () => undefined) }));
 vi.mock('@/lib/voucher-provider-sync', () => ({ ensureVoucherDiscountSynced: mocks.synchronize }));
 vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: () => false }));
 
@@ -68,11 +69,13 @@ test('control genuine numeric zero keeps the existing scoped free-course entitle
   });
   expect(mocks.provider).not.toHaveBeenCalled(); expect(mocks.grant).not.toHaveBeenCalled();
 });
-test.each([29.99, 80])('control positive catalog price %j keeps existing provider metadata29.99 policy unchanged', async (price) => {
+test.each([29.99, 80])('control positive catalog price %j remains an application quote without an accounting base', async (price) => {
   mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price });
   const response = await invoke(); expect(response.status).toBe(200);
   expect(mocks.provider).toHaveBeenCalledOnce();
-  expect(mocks.provider.mock.calls[0][0].customData.originalPrice).toBe('29.99');
+  expect(mocks.provider.mock.calls[0][0].customData).toMatchObject({ pricingProvenance: 'catalog_quote_v1',
+    quotedOriginalPrice: String(price), quotedDiscount: '0', quotedFinalPrice: String(price) });
+  expect(mocks.provider.mock.calls[0][0].customData.originalPrice).toBeUndefined();
   expect(mocks.upsert).not.toHaveBeenCalled(); expect(mocks.grant).not.toHaveBeenCalled();
 });
 test('control unauthenticated remains401 before course lookup or price processing', async () => {

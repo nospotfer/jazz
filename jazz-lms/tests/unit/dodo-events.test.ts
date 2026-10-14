@@ -71,7 +71,7 @@ describe("Dodo provider payment contracts", () => {
 
 describe("extractDodoPricing", () => {
   test.each([
-    ["legacy total", { amount: -100, metadata: { originalPrice: "29.99" } }, { subtotalAmount: 29.99, totalAmount: null, discountAmount: null }],
+    ["legacy total", { amount: -100, metadata: { originalPrice: "29.99" } }, { subtotalAmount: null, totalAmount: null, discountAmount: null }],
     ["legacy subtotal", { subtotal_amount: -100, total_amount: 2990 }, { subtotalAmount: null, totalAmount: 29.9, discountAmount: null }],
     ["metadata base", { total_amount: 2990, metadata: { originalPrice: "-5" } }, { subtotalAmount: null, totalAmount: 29.9, discountAmount: null }],
   ])("keeps negative %s money unknown", (_name, data, expected) => {
@@ -80,7 +80,7 @@ describe("extractDodoPricing", () => {
 
   test.each([undefined, null, "", "invalid", NaN, Infinity, {}, 123.5, -1, Number.MAX_SAFE_INTEGER + 1])(
     "keeps missing or malformed documented total unknown (%j)", (total_amount) => {
-      expect(extractDodoPricing({ data: { total_amount, metadata: { originalPrice: "29.99" } } })).toEqual({
+      expect(extractDodoPricing({ data: { total_amount, subtotal_amount: 2999, metadata: { originalPrice: "29.99" } } })).toEqual({
         subtotalAmount: 29.99, totalAmount: null, discountAmount: null,
       });
     },
@@ -104,7 +104,7 @@ describe("extractDodoPricing", () => {
     { payment: { amount: 2990 }, total_amount: 0 },
   ])("preserves documented zero over the legacy amount alias (%j)", (data) => {
     expect(extractDodoPricing({ data: { ...data, metadata: { originalPrice: "29.99" } } })).toEqual({
-      subtotalAmount: 29.99, totalAmount: 0, discountAmount: 29.99,
+      subtotalAmount: null, totalAmount: 0, discountAmount: null,
     });
   });
 
@@ -120,17 +120,17 @@ describe("extractDodoPricing", () => {
     expect(extractDodoPricing({ data: { payment: { total_amount: "invalid" }, total_amount: 2490, amount: 2990 } }).totalAmount).toBeNull();
   });
 
-  test("preserves explicit zero subtotal and zero metadata base instead of using truthiness", () => {
-    expect(extractDodoPricing({ data: { subtotal_amount: 0, total_amount: 0, metadata: { originalPrice: "29.99" } } })).toEqual({
+  test("preserves explicit comparable provider zero but does not promote zero metadata to a base", () => {
+    expect(extractDodoPricing({ data: { subtotal_amount: 0, total_amount: 0, currency: "EUR", tax: 0, metadata: { originalPrice: "29.99" } } })).toEqual({
       subtotalAmount: 0, totalAmount: 0, discountAmount: 0,
     });
     expect(extractDodoPricing({ data: { total_amount: 2490, metadata: { originalPrice: "0" } } })).toEqual({
-      subtotalAmount: 0, totalAmount: 24.9, discountAmount: 0,
+      subtotalAmount: null, totalAmount: 24.9, discountAmount: null,
     });
   });
 
   test("retains legacy decimal major-unit compatibility when documented total is absent", () => {
-    expect(extractDodoPricing({ data: { payment: { amount: "9.90" }, metadata: { originalPrice: "29.99" } } })).toEqual({
+    expect(extractDodoPricing({ data: { payment: { amount: "9.90", subtotal_amount: "29.99", currency: "EUR", tax: 0 }, metadata: { originalPrice: "29.99" } } })).toEqual({
       subtotalAmount: 29.99, totalAmount: 9.9, discountAmount: 20.09,
     });
   });
@@ -145,9 +145,9 @@ describe("extractDodoPricing", () => {
     });
 
     expect(pricing).toEqual({
-      subtotalAmount: 29.9,
+      subtotalAmount: null,
       totalAmount: 29.9,
-      discountAmount: 0,
+      discountAmount: null,
     });
   });
 
@@ -161,9 +161,9 @@ describe("extractDodoPricing", () => {
     });
 
     expect(pricing).toEqual({
-      subtotalAmount: 9.9,
+      subtotalAmount: null,
       totalAmount: 9.9,
-      discountAmount: 0,
+      discountAmount: null,
     });
   });
 
@@ -177,13 +177,13 @@ describe("extractDodoPricing", () => {
     });
 
     expect(pricing).toEqual({
-      subtotalAmount: 10,
+      subtotalAmount: null,
       totalAmount: 10,
-      discountAmount: 0,
+      discountAmount: null,
     });
   });
 
-  test("keeps metadata originalPrice as major units when provider subtotal is missing", () => {
+  test("does not treat metadata originalPrice as a provider subtotal", () => {
     const pricing = extractDodoPricing({
       data: {
         payment: {
@@ -196,9 +196,9 @@ describe("extractDodoPricing", () => {
     });
 
     expect(pricing).toEqual({
-      subtotalAmount: 29,
+      subtotalAmount: null,
       totalAmount: 9.9,
-      discountAmount: 19.1,
+      discountAmount: null,
     });
   });
 });

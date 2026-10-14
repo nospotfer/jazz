@@ -164,9 +164,9 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       userId: "user-1",
       courseId: "course-1",
       providerReferenceId: "dodo-pay:pay_123",
-      originalPrice: 29.9,
+      originalPrice: null,
       finalPrice: 29.9,
-      discountAmount: 0,
+      discountAmount: null,
       localVoucherCode: null,
       providerDiscountCode: null,
       providerDiscountId: null,
@@ -201,9 +201,9 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(
       expect.objectContaining({
         providerReferenceId: "dodo-pay:pay_124",
-        originalPrice: 9.9,
+        originalPrice: null,
         finalPrice: 9.9,
-        discountAmount: 0,
+        discountAmount: null,
       }),
     );
   });
@@ -221,7 +221,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     }));
     expect(response.status).toBe(200);
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({
-      localVoucherCode: null, providerDiscountCode: "ACTUAL20", providerDiscountId: "dsc_actual", finalPrice: 23.99, discountAmount: 6,
+      localVoucherCode: null, providerDiscountCode: "ACTUAL20", providerDiscountId: "dsc_actual", originalPrice: null, finalPrice: 23.99, discountAmount: null,
     }));
   });
 

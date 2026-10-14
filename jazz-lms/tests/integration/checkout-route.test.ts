@@ -96,6 +96,7 @@ vi.mock("@/lib/voucher-provider-sync", () => ({
 
 vi.mock("@/lib/vouchers", () => ({
   validateVoucherForCourse: mocks.validateVoucherForCourse,
+  lockPublishedCourseForGrant: vi.fn(async () => undefined),
 }));
 
 vi.mock("@/lib/test-mode", () => ({

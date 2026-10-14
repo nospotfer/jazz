@@ -229,7 +229,6 @@ export function extractDodoPricing(payload: LooseObject): {
   totalAmount: number | null;
   discountAmount: number | null;
 } {
-  const metadata = resolveDodoMetadata(payload);
   const data = asObject(payload.data);
   const payment = asObject(data.payment);
 
@@ -242,14 +241,20 @@ export function extractDodoPricing(payload: LooseObject): {
     : toProviderMoney(payment.amount !== undefined ? payment.amount : data.amount);
   const providerSubtotal = payment.subtotal_amount !== undefined
     ? payment.subtotal_amount : data.subtotal_amount;
-  const metadataPrice = toNumber(metadata.originalPrice);
+  // A merchant/catalog quote (including legacy originalPrice metadata) is not
+  // a provider subtotal. Nor does a charged total prove an undiscounted base.
+  // Retain the explicit legacy subtotal alias, without inventing absent facts.
   const subtotalAmount = providerSubtotal !== undefined
-    ? toProviderMoney(providerSubtotal)
-    : metadata.originalPrice !== undefined
-      ? metadataPrice !== null && metadataPrice >= 0 ? Number(metadataPrice.toFixed(2)) : null
-      : totalAmount;
-  const discountAmount = subtotalAmount !== null && totalAmount !== null
-    ? Number(Math.max(0, subtotalAmount - totalAmount).toFixed(2)) : null;
+    ? toProviderMoney(providerSubtotal) : null;
+  const currency = asString(payment.currency !== undefined ? payment.currency : data.currency)?.toUpperCase();
+  const tax = payment.tax !== undefined ? payment.tax : data.tax;
+  // Existing amount conversion supports the configured two-decimal EUR path.
+  // Dodo's documented total includes tax, so subtraction is comparable only
+  // with an explicit zero-tax basis. Other currencies/exponents remain outside
+  // this legacy derivation; neither a missing basis nor a quote proves zero tax.
+  const comparableProviderAmounts = currency === "EUR" && tax === 0;
+  const discountAmount = comparableProviderAmounts && subtotalAmount !== null && totalAmount !== null && subtotalAmount >= totalAmount
+    ? Number((subtotalAmount - totalAmount).toFixed(2)) : null;
 
   return {
     subtotalAmount,

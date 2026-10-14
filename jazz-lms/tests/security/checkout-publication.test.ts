@@ -10,7 +10,8 @@ vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider:
 vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: () => 'dodo', isActivePaymentProviderConfigured: () => true,
   createProviderCheckout: mocks.provider, getProviderVoucherReferencePrefix: () => 'dodo-voucher' }));
 vi.mock('@/lib/payments/providers/dodo', () => ({ isDodoWebhookConfigured: () => true }));
-vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher }));
+vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher,
+  lockPublishedCourseForGrant: vi.fn(async () => undefined) }));
 vi.mock('@/lib/voucher-provider-sync', () => ({ ensureVoucherDiscountSynced: mocks.synchronize }));
 vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: () => false }));
 
@@ -72,9 +73,11 @@ test('published zero-price course retains the verified actor and exact course fr
   });
   expect(mocks.provider).not.toHaveBeenCalled(); expect(mocks.grant).not.toHaveBeenCalled();
 });
-test('published paid course retains existing provider metadata policy and actor-course identity', async () => {
+test('published paid course retains quote provenance and actor-course identity', async () => {
   const response = await invoke(); expect(response.status).toBe(200); expect(mocks.provider).toHaveBeenCalledOnce();
-  expect(mocks.provider.mock.calls[0][0].customData).toMatchObject({ userId: actorId, courseId, originalPrice: '29.99' });
+  expect(mocks.provider.mock.calls[0][0].customData).toMatchObject({ userId: actorId, courseId,
+    pricingProvenance: 'catalog_quote_v1', quotedOriginalPrice: '80', quotedDiscount: '0', quotedFinalPrice: '80' });
+  expect(mocks.provider.mock.calls[0][0].customData.originalPrice).toBeUndefined();
   expect(mocks.transaction).not.toHaveBeenCalled(); expect(mocks.grant).not.toHaveBeenCalled();
 });
 test('published admin course checkout retains the same ordinary provider path', async () => {

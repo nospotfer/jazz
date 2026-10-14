@@ -7,7 +7,10 @@ vi.mock('next/headers', () => ({ cookies: async () => ({ get: () => undefined })
 const prohibited = vi.hoisted(() => ({ provider: vi.fn(), voucher: vi.fn(), grant: vi.fn(), fetch: vi.fn() }));
 vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: () => 'dodo', isActivePaymentProviderConfigured: () => true, createProviderCheckout: prohibited.provider, getProviderVoucherReferencePrefix: () => 'dodo-voucher' }));
 vi.mock('@/lib/payments/providers/dodo', () => ({ isDodoWebhookConfigured: () => true }));
-vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: prohibited.voucher }));
+vi.mock('@/lib/vouchers', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/vouchers')>(),
+  validateVoucherForCourse: prohibited.voucher,
+}));
 vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider: prohibited.grant }));
 vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: () => false }));
 

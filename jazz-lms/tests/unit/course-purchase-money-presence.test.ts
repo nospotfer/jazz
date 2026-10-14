@@ -95,7 +95,7 @@ describe("Purchase monetary availability", () => {
     await sync.upsertCoursePurchaseFromProvider({ ...identity,
       originalPrice: pricing.subtotalAmount, finalPrice: pricing.totalAmount, discountAmount: pricing.discountAmount,
     });
-    expect(purchase).toMatchObject({ originalPrice: 29.99, finalPrice: null, discountAmount: null });
+    expect(purchase).toMatchObject({ originalPrice: null, finalPrice: null, discountAmount: null });
     expect(discount).toBeNull();
     expect(upsertDiscount).not.toHaveBeenCalled();
   });

@@ -94,3 +94,4 @@ jobs:
           tests/security/lms-database-postgres.test.ts
           tests/security/checkout-authorization-postgres.test.ts
           tests/security/voucher-course-authority-postgres.test.ts
+          tests/security/checkout-course-concurrency-postgres.test.ts

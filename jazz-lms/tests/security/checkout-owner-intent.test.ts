@@ -7,7 +7,8 @@ vi.mock('@/lib/db', () => ({ db: { user: { findUnique: mocks.user }, course: { f
 vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider: mocks.grant }));
 vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: () => 'dodo', isActivePaymentProviderConfigured: () => true, createProviderCheckout: mocks.provider, getProviderVoucherReferencePrefix: () => 'dodo-voucher' }));
 vi.mock('@/lib/payments/providers/dodo', () => ({ isDodoWebhookConfigured: () => true }));
-vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher }));
+vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher,
+  lockPublishedCourseForGrant: vi.fn(async () => undefined) }));
 vi.mock('@/lib/voucher-provider-sync', () => ({ ensureVoucherDiscountSynced: mocks.synchronize }));
 vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: () => false }));
 const actor = { id: 'verified-cookie-owner', email: 'cookie-owner@example.test' };
