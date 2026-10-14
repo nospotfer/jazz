@@ -2,6 +2,7 @@ import type { SupportedLanguage } from '@/lib/language';
 import type { VoucherValidationError } from '@/lib/vouchers';
 
 export type VoucherFailureReason = VoucherValidationError
+  | 'Price unavailable'
   | 'Already purchased'
   | 'Unauthorized'
   | 'Too many attempts'
@@ -17,6 +18,7 @@ const failureCopy: Record<SupportedLanguage, Record<VoucherFailureReason, string
     'Max uses per user reached': 'Ya has alcanzado tu límite de uso de este código.',
     Inactive: 'Este código ya no está activo.',
     'Course not found': 'No se encontró el curso para este código.',
+    'Price unavailable': 'El precio del curso no está disponible temporalmente. Inténtalo más tarde.',
     'Below minimum order value': 'El precio del curso no alcanza el importe mínimo de este código.',
     'Voucher type mismatch': 'Este código de descuento debe aplicarse al comprar el curso.',
     'Already purchased': 'Ya tienes acceso a este curso.',
@@ -33,6 +35,7 @@ const failureCopy: Record<SupportedLanguage, Record<VoucherFailureReason, string
     'Max uses per user reached': 'You have already reached your usage limit for this code.',
     Inactive: 'This code is no longer active.',
     'Course not found': 'The course for this code was not found.',
+    'Price unavailable': 'The course price is temporarily unavailable. Please try again later.',
     'Below minimum order value': 'The course price is below this code’s minimum amount.',
     'Voucher type mismatch': 'Apply this discount code when purchasing the course.',
     'Already purchased': 'You already have access to this course.',
@@ -49,6 +52,7 @@ const failureCopy: Record<SupportedLanguage, Record<VoucherFailureReason, string
     'Max uses per user reached': 'Vous avez déjà atteint votre limite d’utilisation de ce code.',
     Inactive: 'Ce code n’est plus actif.',
     'Course not found': 'Le cours associé à ce code est introuvable.',
+    'Price unavailable': 'Le prix du cours est temporairement indisponible. Réessayez plus tard.',
     'Below minimum order value': 'Le prix du cours est inférieur au montant minimum de ce code.',
     'Voucher type mismatch': 'Appliquez ce code promo lors de l’achat du cours.',
     'Already purchased': 'Vous avez déjà accès à ce cours.',
@@ -65,6 +69,7 @@ const failureCopy: Record<SupportedLanguage, Record<VoucherFailureReason, string
     'Max uses per user reached': 'Você já atingiu seu limite de uso deste código.',
     Inactive: 'Este código não está mais ativo.',
     'Course not found': 'O curso deste código não foi encontrado.',
+    'Price unavailable': 'O preço do curso está temporariamente indisponível. Tente novamente mais tarde.',
     'Below minimum order value': 'O preço do curso está abaixo do valor mínimo deste código.',
     'Voucher type mismatch': 'Aplique este código de desconto ao comprar o curso.',
     'Already purchased': 'Você já tem acesso a este curso.',
