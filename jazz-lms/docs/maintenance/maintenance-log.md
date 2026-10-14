@@ -1151,3 +1151,70 @@ The maintenance goal remains active and incomplete.
   or learning write. Goal remains active/incomplete; broader gates retained.
 
 [Current evidence](review-status.md#checkout-publication-and-account-intent).
+
+
+## 2026-10-14 — Voucher availability, account intent and financial permissions
+
+- Publish four coherent source commits througha16c1abc. Preserve actual before
+  failures for published/known-price voucher grants, active redemption owner/
+  page retirement and recorded admin amounts. Catch an intermediate staff
+  financial disclosure in independent review; gate query/display withanalytics.read.
+- Fresh private2,311/57 normal,56/1 actual local PostgreSQL, types/build/lint0/22
+  and exact remote checks pass. Downloaded CI agrees;587 source/26 log scans0.
+- Two fresh582/45,802/158 artifacts pass Unix19/HTTPS11. First native attempt
+  correctly rejects a proof mode0664 before traffic; preserve original report,
+  correct writer/private-input verification and close that expiry window.
+- Corrected native window passes12 real four-language503/409 cases, then confirms
+  admin horizontal overflow at390. Whole run remains PARTIAL12/13; no natural
+  cookie-lag or provider transaction claim. Four acknowledged NULL/80 pairs
+  restore all course fields/timestamps. Three logins/session syncs bring cumulative
+  count24; normal logouts were not reached. Optional avatar intent blocked1/write0.
+- Browser contexts close; app/tunnel expiry closure and seal inspection pass.
+  Strict-CA22:45:26 all-five/12-model/global/business/learning/entitlement/raw-course
+  comparison is unchanged. Prepare separate read-only admin before/after proof.
+- Source quote/payment provenance and concurrent course edit guards remain
+  independent work; actual provider/OAuth/mail/hosting/production gates remain.
+  No new spend, provider charge/refund, third-party mail or production change.
+
+[Source and retained partials](review-status.md#voucher-availability-and-redemption-intent).
+
+
+## 2026-10-15 — Payment facts, transactional course intent and mobile admin
+
+- Commitb91/e8/bd/c1 fixes mobile shell, course grant lock/revalidation, quote
+  provenance and broken course shortcut. Preserve pricing26 baseline21fail/
+  5controls and ordering3 intermediate1fail/2controls; author222/independent13-file
+  checks pass. No merchant quote becomes a guessed payment base/discount.
+- Real PG interleavings preserve five direct and four checkout before failures;
+  after all stale writes0, exact0/full-voucher controls survive and250ms admin
+  lock waits through grant then proceeds. Use FOR NO KEY UPDATE for FK compatibility;
+  no early voucher row lock or paid-fulfillment policy change. Term-edit race kept.
+- Whole-QA2351/4/68 exposes three remaining fixture files. Preserve that report,
+  exact before bodies/names/counts; fixture-onlya631 final2355/0/68,67/1 actual PG
+  across eight suites, types/lint0/22 and mandatory source push pass.
+- Separate actuala16 admin baseline390/683 (sidebar288/content102),1440 fits;
+  freshc1a after320/390/768/1024/1440 eight geometry/three keyboard menu observations
+  and6permitted44px links per width pass in light theme. Actual logout204 in each
+  window, cumulative pairs26; no price/learning/public-table writes. Original
+  voucher12/13 not relabeled. Before/after strict-CA five/12-model/raw-course
+  timestamps match; browsers/app/tunnel/sockets close and complete seal passes.
+- Independent primary-contract review discovers PAY-22: /100 and2dp misread
+  explicit JPY/KWD. Record High source work with precision/persistence/display
+  regressions next; EUR provenance tests do not close it. Remote exact-source
+  Quality/downloaded logs/docs CI and durable selected evidence are finalizing.
+  No new spend, provider charge/refund, third-party mail or production mutation.
+- Retain the existing five synthetic login credentials separately from review
+  evidence under the durable private preview configuration directory,0700/0600.
+  No password rotation/provider call/session persistence or role assignment.
+  Existing provider input/CA remain separately private; local unencrypted retention
+  does not prove off-site recovery.
+
+[Current scope](review-status.md#quote-provenance-and-transactional-course-intent).
+
+- Exacta631 Quality PR/push, Secret Scan, CodeQL aggregate/analyses and classic
+  Vercel status pass; branch open CodeQL alerts0. Downloaded26-file Quality ZIP
+  agrees2355/68,67/1,eight persisted suites,types/build/lint0/22.591 source/26 log
+  scans0; remote provider isolation still unverified. Retain102 selected files
+  plus manifest/receipt under durable private review-checkpoint-quote-admin-a631e166,
+  copied hashes/modes verified and nonempty candidate scan0. Credentials/raw course
+  rows/sessions/screenshots excluded; local unencrypted/non-off-site limits kept.

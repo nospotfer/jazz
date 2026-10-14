@@ -1,6 +1,6 @@
 # Goal verification matrix
 
-Updated 2026-10-14. Local source is not a deployed production repair. Counts below
+Updated 2026-10-15. Local source is not a deployed production repair. Counts below
 are completed checkpoints; overlapping targeted suites must not be added together.
 
 | Requirement | Completed evidence | Remaining gap |
@@ -135,10 +135,38 @@ Unix19/HTTPS11 pass. Current native12 actual-response relay matrix passes on thr
 and four languages at390; the whole run retains an unawaited logout assertion
 interruption. A prior preflight has0 checkout. Both browser groups close, with
 page errors/forbidden mutations0 and cumulative19 sign-in/session pairs. Final
-normal sign-out, preservation and runtime closure remain separately pending;
+separate sign-out-only checks later pass both actual global204 responses, with
+six pairs in that window/21 cumulative; all-five/12-model preservation, owned
+runtime/tunnel closure and seal inspection pass. Original partial is retained;
 natural cookie lag and locked-player reachability are not established.
 
 Offline93 public index definitions/18 closed checks expose the prepared name-only
 guard's uniqueness limitation. Original SQL/inverse hashes remain unchanged; no
 live SQL/drift/column/extension equivalence or atomic-preflight claim follows.
 [Current checkout evidence and limits](review-status.md#checkout-publication-and-account-intent).
+
+
+Latest published voucher sourcea16c1abc passes2,311/57 normal and56/1 real
+PostgreSQL in seven suites, types/configured build/lint0/22. Two fresh
+582/45,802/158 artifacts and Unix19/HTTPS11 pass. First browser attempt has zero
+traffic and fails a proof-file mode guard. Second passes12 actual four-language
+503/409 cases but fails admin mobile overflow: whole-run PARTIAL12/13. Eight
+price transitions restore80, with publication/other public-table writes0.
+All-five/12-model/global/business/learning/entitlement and complete raw course/
+timestamps match after clean expiry closure and seal inspection. Three further
+password/session pairs bring the cumulative count to24; normal logouts were
+not reached. Separate admin before/after and quote-provenance/concurrent-intent
+repairs remain work. [Exact scope](review-status.md#voucher-availability-and-redemption-intent).
+
+
+Sourcea631e166 now passes2355/68 normal,67/1 real PostgreSQL in eight suites,
+types/lint0/22, with meaningful quote/provenance and transactional course fixes.
+The source-confirmed JPY/KWD conversion/precision issue remains High PAY-22.
+Freshc1a has identical application code; its586/45,806/158 build/Unix19/HTTPS11
+and native admin320/390/768/1024/1440 pass eight geometry observations, three
+keyboard menus and six permitted44px links per width (light theme). Two separate
+admin pairs bring cumulative count26, each with actual logout204. All-five/
+12-model/course timestamps unchanged and owned closure/seal pass. Originala16
+voucher12/13 andc1a2351/4/68 fixture diagnostic remain immutable. Actual Dodo,
+OAuth/mail, stable hosting and approved production hardening remain essential
+gaps. [Current source and bounds](review-status.md#quote-provenance-and-transactional-course-intent).

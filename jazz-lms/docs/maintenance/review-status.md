@@ -1,15 +1,74 @@
 # Maintenance review checkpoints
 
-Updated 2026-10-14. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
+Updated 2026-10-15. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
 on `maintenance/initial-audit`. Source is unreleased and maintenance remains
 incomplete. The separately approved production Supabase recovery/export/unsafe-state
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application/test source: `cd20569a`; see
-[checkout publication and account intent](#checkout-publication-and-account-intent).
+Latest published application/test source: `a631e166`; runtime `c1a419c` has
+identical application code (the later commit changes three fixtures only). See
+[quote provenance and transactional course intent](#quote-provenance-and-transactional-course-intent).
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
+
+
+## Voucher availability and redemption intent
+
+Four source commits (`b2ca5c3`, `9e5524b`, `730a28b`, `a16c1abc`) require
+published voucher courses with known numeric prices, verify captured redemption
+account intent, localize unavailable-price recovery, retire stale page work,
+and show recorded purchase amounts only with `analytics.read`. Known zero
+stays zero; unknown amounts do not become free access or revenue. The active
+`/redeem` caller was found in the App Router after an earlier components-only
+search missed it. Signed-out users must sign in and reopen the voucher link;
+`/auth` has no return-to contract.
+
+Frozen regressions retain actual before failures: backend36 (30 mocks/six real
+PostgreSQL), checkout seven, feedback ten, admin13 plus six permission cases on
+the intermediate patch, and redemption client24 plus the existing11 localization
+cases. Real NULL-price/draft/stale-account grants persisted before; after they
+are denied without purchase/discount/redemption/use writes. Static checks and
+voucher-limit races do not prove a concurrent course edit is protected.
+
+A fresh private Node24 clone passes **2,311 normal tests/57 intentional skips**,
+**56 real PostgreSQL tests/one REST-only skip** in seven guarded suites, types
+and lint0errors/22 existing warnings. Exact-source
+[Quality PR](https://github.com/nospotfer/jazz/actions/runs/38606950717),
+[Quality push](https://github.com/nospotfer/jazz/actions/runs/38606941010),
+[Secret Scan](https://github.com/nospotfer/jazz/actions/runs/38606950659) and
+[CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38606944470)
+pass. Downloaded Quality logs agree;587 committed files/26 expanded logs scan0.
+Classic Vercel success does not establish remote provider isolation.
+
+Two fresh configured artifacts each match582 application Git files/45,802 sealed
+files/158 inspected client assets and pass Unix19/HTTPS11. First native attempt
+stops before sign-in/browser creation/SQL on an artifact-proof mode0664 guard;
+original helper/report and expiry closure remain separate. Corrected writer uses
+umask077 and a fresh origin/artifact/gate. Root's earlier private-input assertion
+checked too few files; the correction is explicitly retained.
+
+Second native window passes **12 actual cases**: both voucher forms show the real
+price-unavailable503 in ES/EN/FR/PT; redemption shows the actual A-cookie409
+relayed unchanged in all four languages. Original browser POST never continues.
+Four NULL/80 pairs are acknowledged and restored; publication/other public-table
+writes0. Admin records and known sum160 are checked before its390px geometry
+assertion discovers horizontal overflow. Admin case does not pass; the whole
+run stays **PARTIAL12/13** and the original report is preserved.
+
+All browser contexts close. Three password/session pairs bring the cumulative
+owner/catalog/checkout/voucher count to24; normal provider logouts were not
+reached. One optional own-avatar intent is blocked; avatar writes0. App/tunnel
+expire cleanly and their processes/sockets are absent. Strict-CA22:45:26 read-only
+comparison confirms all-five/12-model/global/business/learning/entitlement hashes
+and complete raw course row/timestamps unchanged. Complete seal inspection passes.
+
+The following checkpoint verifies the separate mobile admin repair and closes
+quote-versus-payment provenance (PAY-21) and course intent (SEC-22); it does not
+relabel that original12/13 report. Currency precision (PAY-22) remains source work. Provider price/tax/currency authority, actual
+Dodo tests/notification recipients, Google/mail, continuous free hosting/DNS and
+exact production recovery/quarantine approval remain release gates. Zero new
+spend, provider transactions/refunds, third-party mail or production change.
 
 ## First published checkpoint
 
@@ -1349,3 +1408,93 @@ lock or a historical-entitlement revocation. Positive29.99 metadata and Dodo
 product/catalog/tax/currency parity remain separate release gates. No provider
 transaction/refund, third-party mail, pricing/config/schema or production change
 occurred. Zero new spend; the goal remains active and incomplete.
+
+
+## Quote provenance and transactional course intent
+
+Commits `b91a7fb`, `e8b9fab`, `bd49f00`, `c1a419c` and fixture-only `a631e166`
+repair mobile administration, transactional course intent and payment provenance.
+Checkout labels catalog80/coupon72 as quote metadata rather than29.99 payment
+facts. Provider cart/product configuration is unchanged. Extraction preserves
+actual final amounts including0; merchant metadata and gross totals cannot
+supply absent original/discount amounts. Legacy explicit provider subtotal can
+produce a difference only with EUR/zero-tax evidence and subtotal>=total;
+otherwise discount stays unknown. Applied coupon identity, entitlement/reversal
+rules and known same-reference facts remain intact. No historical backfill.
+
+The exacta16 pricing freeze has26 cases/21 failures/five controls; corrected26
+pass. A separate intermediate ordering boundary has one failure/two controls,
+then three passes. Author222 focused passes and independent13-file review cover
+quotes, actual totals, coupon usage, partial/same-reference/replacement/refund
+behavior and meaningful compatibility fixtures. These are closed mocks, not
+provider transactions. Whole source initially fails four older expectations;
+three fixture-only files correct guessed amount contracts and the missing mocked
+lock read, retaining names/counts and original assertions. Original2351/4/68
+report stays immutable; final fresh **2355/0/68**, types and lint0errors/22warnings
+pass. Eight guarded PostgreSQL suites separately pass **67/one REST-only skip**.
+
+Free-grant transactions retain a course `FOR NO KEY UPDATE` lock after the
+existing voucher advisory lock, rechecking publication/exact server price and
+revalidating the server voucher quote through the transaction client. Genuine
+free grants and voucher limits remain. The lock blocks publication/price edits
+while permitting ordinary FK KEY SHARE, avoiding the stronger lock's ordering
+risk. No early VoucherCode row lock is introduced; concurrent administrative
+voucher-term edits remain a separate gap. Paid historical fulfillment keeps its
+existing policy. Direct redemption course conflicts return400/503/409; checkout
+maps them to404/503/409. Quote409 does not use the session-conflict JSON shape.
+
+Frozen real PostgreSQL evidence proves five new direct-redemption interleavings
+and four checkout races: stale unpublish/NULL/known-price/zero-to-paid grants
+really persist before and leave all grant/accounting/use counts0 after. A real
+250ms lock timeout confirms the admin edit waits until the grant transaction
+finishes, then proceeds. Root's six new checkout cases preserve two legitimate
+0/full-voucher grants; together with four older owner/publication controls they
+pass10/10. Exact UUID-only fixture cleanup preserves unrelated data.
+
+Mobile admin now stacks the sidebar/content and exposes native expandable
+navigation with keyboard support and44px targets. Email and purchase identities
+wrap; recorded amounts/permission guards are unchanged. The broken creation
+shortcut now links to the existing course list; course authoring is still absent.
+Actuala16 baseline has390px viewport/683px document,288px sidebar/102px content;
+1440 fits. Separate freshc1a preview passes eight geometry observations at
+320/390/768/1024/1440 (including three open-menu states), three actual keyboard
+menu cases and six permitted44px links at every width. This is light-theme
+admin evidence; no new dark-theme visual claim. Actual normal global logout204
+and zero page errors/forbidden mutations pass. One pair in each separate admin
+window brings cumulative owner/catalog/checkout/voucher pairs to26. Original
+voucher12/13 and zero-traffic preflight reports remain unchanged.
+
+Fresh configuredc1a build matches586 Git application files/45,806 sealed files/
+158 inspected client files and passes Unix19/HTTPS11. Root before23:08:44 to
+after23:13:51 UTC strict-CA all-five/12-model/global/business/learning/entitlement
+and complete raw course/timestamp comparisons match. Browser/app/tunnel close
+cleanly, owned processes/sockets retire and seal reinspection passes. Both admin
+windows have zero course/learning/public-table writes. Sourcea631 differs from
+that runtime only in three test files; it is not a new native execution.
+
+Exact-source [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38652699048)
+and [Quality push](https://github.com/nospotfer/jazz/actions/runs/38652694052)
+pass; [Secret Scan](https://github.com/nospotfer/jazz/actions/runs/38652699044)
+and [CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38652694888)
+pass, with no open branch CodeQL alerts at inspection. Classic Vercel status is success;
+remote provider isolation remains unverified. Downloaded26-file Quality logs
+confirm2355/68 and67/1, types/build/lint0/22 and all eight persisted suites.
+591 committed files/26 expanded logs scan0. Selected102 evidence files plus
+manifest/retention receipt are copied byte-for-byte to the private durable
+`review-checkpoint-quote-admin-a631e166` directory under the existing
+`2026-10-13-recovery-689f1b24` backup. The nonempty103-file candidate scan finds0;
+credentials/raw course rows/session state/screenshots are excluded. All retained
+directories/files are0700/0600. This local unencrypted copy does not establish
+off-site recovery. Docs-head checks remain a separate finalization step.
+
+**PAY-22 remains High source work:** current currency-independent /100 conversion
+and two-decimal sync misread explicit JPY/KWD. These fixes establish bounded EUR
+provenance, not currency-aware persistence/display. Dodo documents
+[currency-specific smallest units](https://docs.dodopayments.com/api-reference/payments/get-payments-1).
+Sourcecounterexamples: JPY2990 becomes29.9 instead of2990; KWD2990 becomes29.9
+instead of2.990, and1.234 would round to1.23. No customer incident is claimed.
+Next: implement currency/precision representation and meaningful persisted
+regressions, preparing any schema change without production migration. Provider
+price authority/actual test transactions/notification recipients, OAuth/mail,
+continuous free hosting/DNS and exact production recovery/quarantine review remain
+gates. Zero new spend, real charge/refund, third-party mail or production change.

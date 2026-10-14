@@ -42,6 +42,15 @@ Read it explicitly only for the isolated test API. No automatic loading, key
 rotation or payment/email authority follows from that copy. Credentials remain
 separate from published and retained review evidence.
 
+Existing preview provider inputs/CA and the five synthetic login credentials have
+separate owner-only recovery files under
+`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/`.
+The synthetic file is `synthetic-preview-auth-fixtures-private.json`; it does not
+assign roles or restore sessions. Verify current database roles and construct a
+fresh source/origin/gate plan before use. Do not copy these credential files into
+the review evidence package or load them automatically. Retention is local and
+unencrypted; off-site recovery is not established.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

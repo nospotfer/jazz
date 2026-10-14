@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-Updated 2026-10-14. Preparation only: **no production release is authorized**.
+Updated 2026-10-15. Preparation only: **no production release is authorized**.
 Source repairs have not been released. The owner separately approved one
 production Supabase resume, private preservation and unsafe-state re-pause;
 those operations completed. Production is INACTIVE again. No production
@@ -343,3 +343,61 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   recovery/quarantine gates. No new spend or production action is inferred.
 
 [Exact scope](review-status.md#checkout-publication-and-account-intent).
+
+
+## Voucher authority and recorded admin amounts
+
+- [x] Published/known-price voucher validation and verified cookie/expected-owner
+  denial, active redemption response/timer retirement and four-language recovery
+  pass meaningful frozen regressions and actual local PostgreSQL persistence.
+- [x] Recorded0/unknown amounts and number-only known sums replace catalog-based
+  financial fiction; analytics.read gates financial query and whole display.
+- [x] Sourcea16c1abc clean2,311/57 normal,56/1 real PostgreSQL, types/build/lint0/22,
+  exact remote checks and committed-source/downloaded-log scans pass.
+- [x] Two fresh582/45,802/158 artifacts/Unix19/HTTPS11; second native passes12
+  actual503/409 cases. Eight acknowledged price transitions restore80 with full
+  row/timestamps unchanged; all-five/12-model preservation, owned app/tunnel/
+  browser closure and complete seal inspection pass. Original zero-traffic and
+  later12/13 partial reports stay separate; cumulative sign-in/session pairs24.
+- [x] Separately repair/verify admin320/390/768/1024/1440; actual logout204 in
+  each separate admin window. Original voucher-window logouts were not reached;
+  do not relabel that partial.
+- [ ] Complete source quote/payment provenance and concurrent course intent
+  repairs; resolve actual provider charge/tax/currency, notification recipients,
+  OAuth/mail, stable free hosting/DNS and reviewed production hardening/quarantine.
+
+[Exact scope](review-status.md#voucher-availability-and-redemption-intent).
+
+
+## Quote provenance and transactional course intent
+
+- [x] Tag catalog quotes separately from provider facts; actual final0/null,
+  coupon identity and known same-reference facts remain. Legacy discounts need
+  explicit compatible basis/ordering; product/cart unchanged. Frozen26+3, focused
+  222 and independent13-file review pass. No real provider payment is proven.
+- [x] Retain course no-key-update lock/recheck through free grant writes; real
+  post-validation edit failures and actual lock blocking/after-commit liveness
+  pass. Checkout6 new+4 existing PG and direct11 PG retain valid grant controls.
+  Administrative voucher-term edits remain a separate limitation.
+- [x] Finalsourcea631 fresh2355/68,67/1 actual PG in eight suites, types/lint0/22,
+  mandatory commit/push hooks. Initialc1a whole-QA four fixture failures retained;
+  later three-file fixture commit changes no runtime application code.
+- [x] Freshc1a586/45,806/158 artifact, Unix19/HTTPS11, five-width light-theme admin
+  eight geometry/three keyboard menus/all permitted44px links/actual logout204.
+  Separate before390/683 preserved. All-five/12-model/raw-course/timestamp hashes,
+  owned closure and sealed inspection pass; cumulative pairs26.
+- [ ] Fix PAY-22 currency exponents and precision across monetary representation/
+  persistence/display; verify JPY/KWD/unknown and same-reference/reversal cases.
+  Prepare any production migration for separate approval. No currency-aware or
+  whole-provider completion claim follows from the EUR provenance repair.
+- [x] Retain five existing synthetic login credentials separately from selected
+  review evidence, with durable private provider input/CA. Owner-only0700/0600;
+  no rotation, role assignment, browser session retention or automatic loading.
+  Local unencrypted copy does not establish off-site recovery.
+- [x] Exacta631 Quality/Secret Scan/CodeQL/Vercel status and downloaded logs agree;
+  source591/log26 scans0. Durable selected102+manifest/receipt hashes and0700/0600
+  modes match; nonempty candidate scan0. Remote provider isolation unverified.
+- [ ] Verify docs-head remote checks and actual Dodo/recipient/OAuth/mail/stable-host
+  and approved production recovery/quarantine/hardening gates. Keep zero new spend.
+
+[Exact scope](review-status.md#quote-provenance-and-transactional-course-intent).

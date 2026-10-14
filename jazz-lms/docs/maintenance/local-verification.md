@@ -53,7 +53,10 @@ npx vitest run --no-file-parallelism \
   tests/security/lesson-quiz-postgres.test.ts \
   tests/security/lesson-notes-postgres.test.ts \
   tests/integration/messages-postgres.test.ts \
-  tests/security/lms-database-postgres.test.ts
+  tests/security/lms-database-postgres.test.ts \
+  tests/security/checkout-authorization-postgres.test.ts \
+  tests/security/voucher-course-authority-postgres.test.ts \
+  tests/security/checkout-course-concurrency-postgres.test.ts
 ```
 
 Verified at source85f4e12: five suites, 39 passed, one Supabase REST-only case skipped. The
@@ -331,3 +334,35 @@ all-five12-model comparison, original-row restoration, owned app/tunnel/browser
 closure, session deletion and45,770-file seal reinspection pass. No extra
 learning mutation or whole-course replay was needed.
 [Exact source and limits](review-status.md#payment-history-recovery-and-account-isolation).
+
+
+## Voucher authority and recorded admin amounts
+
+Sourcea16c1abc passes a fresh private Node24 install,2,311 normal tests/57 opt-in
+skips, seven guarded actual PostgreSQL suites56/one REST skip, types and lint
+0 errors/22 existing warnings. Fresh configured webpack artifacts match582 Git
+application files/45,802 sealed files/158 inspected browser assets; root/CI
+counts agree. The six new voucher PostgreSQL cases use only explicit
+MAINTENANCE_DATABASE_URL at127.0.0.1:55432/jazz_maintenance, with no password,
+query/fragment overrides or remote target fallback. They clean only their unique
+fixture IDs. Normal-suite skips are not substituted for those persisted checks.
+
+[Source, native boundaries and retained initial failures](review-status.md#voucher-availability-and-redemption-intent).
+
+
+## Quote provenance and transactional course checks
+
+Finalsourcea631e166 fresh private Node24 checks pass2355 normal/68 intentional
+skips, eight actual guarded PostgreSQL suites67/one REST-only skip, types and
+lint0errors/22warnings. Four original whole-QA fixture failures remain retained;
+three fixture-only files correct old guessed amounts and an absent mock lock
+read without changing application code or dropping original assertions. The
+new checkout concurrency file is the eighth command above; it uses only the
+explicit disposable127.0.0.1:55432/jazz_maintenance target and exact UUID cleanup.
+
+Freshc1a configured586/45,806/158 artifact/Unix19/HTTPS11 and separate five-width
+light-theme admin keyboard/geometry/logout checks pass, with all-five/12-model
+preservation and clean owned closure/seal inspection. It is not a new execution
+ofa631; only its three test fixtures differ. Original voucher12/13 and other
+before/failure reports remain separate. Currency exponent handling is still
+high-priority source work. [Exact scope](review-status.md#quote-provenance-and-transactional-course-intent).
