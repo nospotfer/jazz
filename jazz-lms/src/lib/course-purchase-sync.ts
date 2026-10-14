@@ -13,9 +13,9 @@ type UpsertCoursePurchaseInput = {
   userId: string;
   courseId: string;
   providerReferenceId: string;
-  originalPrice: number;
-  discountAmount: number;
-  finalPrice: number;
+  originalPrice: number | null;
+  discountAmount: number | null;
+  finalPrice: number | null;
   voucherCode?: string | null;
   localVoucherCode?: string | null;
   providerDiscountCode?: string | null;
@@ -121,9 +121,9 @@ function isMissingRelationOrColumnError(error: unknown): boolean {
   );
 }
 
-function toMoney(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 0;
+function toMoney(value: number | null): number | null {
+  if (value === null || !Number.isFinite(value) || value < 0) {
+    return null;
   }
 
   return Number(value.toFixed(2));
@@ -291,12 +291,13 @@ export async function upsertCoursePurchaseFromProvider(
   const originalPrice = toMoney(input.originalPrice);
   const discountAmount = toMoney(input.discountAmount);
   const finalPrice = toMoney(input.finalPrice);
+  const completeMonetarySnapshot = originalPrice !== null && discountAmount !== null && finalPrice !== null;
   // Provider discount identity is authoritative even if a gross/tax-inclusive
   // total exceeds the metadata base price. Metadata alone cannot prove a paid
   // discount. Application-owned free redemptions continue to record vouchers.
   const hasProviderDiscount = Boolean(input.providerDiscountId || input.providerDiscountCode);
   const canResolveVoucher = hasProviderDiscount ||
-    (!input.providerReferenceId.startsWith("dodo-pay:") && (discountAmount > 0 || finalPrice === 0));
+    (!input.providerReferenceId.startsWith("dodo-pay:") && ((discountAmount !== null && discountAmount > 0) || finalPrice === 0));
   const desiredVoucherId = canResolveVoucher
     ? await resolveVoucherByInput(prisma, input)
     : null;
@@ -324,8 +325,24 @@ export async function upsertCoursePurchaseFromProvider(
       select: {
         id: true,
         voucherId: true,
+        providerReferenceId: true,
+        originalPrice: true,
+        finalPrice: true,
+        discountAmount: true,
       },
     });
+
+    const samePaymentReference = existingPurchase?.providerReferenceId === input.providerReferenceId;
+    // Partial retries may fill unknown facts for the same payment, but cannot
+    // overwrite known facts or combine a new total with a previous discount.
+    // A replacement payment must never inherit another reference's amounts.
+    const monetaryFacts = samePaymentReference && !completeMonetarySnapshot
+      ? {
+          originalPrice: toMoney(existingPurchase.originalPrice) ?? originalPrice,
+          finalPrice: toMoney(existingPurchase.finalPrice) ?? finalPrice,
+          discountAmount: toMoney(existingPurchase.discountAmount) ?? discountAmount,
+        }
+      : { originalPrice, finalPrice, discountAmount };
 
     const existingRedemption = existingPurchase
       ? await tx.voucherRedemption.findFirst({
@@ -389,18 +406,14 @@ export async function upsertCoursePurchaseFromProvider(
       update: {
         providerReferenceId: input.providerReferenceId,
         voucherId: effectiveVoucherId,
-        originalPrice,
-        finalPrice,
-        discountAmount,
+        ...monetaryFacts,
       },
       create: {
         courseId: input.courseId,
         userId: input.userId,
         providerReferenceId: input.providerReferenceId,
         voucherId: effectiveVoucherId,
-        originalPrice,
-        finalPrice,
-        discountAmount,
+        ...monetaryFacts,
       },
     });
 
@@ -457,6 +470,26 @@ export async function upsertCoursePurchaseFromProvider(
         });
       }
     };
+
+    // DiscountApplied has nonnullable money fields. Keep an existing row on a
+    // partial same-payment retry; clear stale amounts when the reference changes.
+    if (!completeMonetarySnapshot) {
+      if (existingPurchase && !samePaymentReference) {
+        await runDiscountSyncStep("deleteMany", async () => {
+          await tx.discountApplied.deleteMany({ where: { purchaseId: purchase.id } });
+        });
+      } else if (samePaymentReference) {
+        await runDiscountSyncStep("updateVoucher", async () => {
+          // Link newly confirmed coupon identity on an existing monetary row
+          // without writing any amount or creating a row for unknown prices.
+          await tx.discountApplied.updateMany({
+            where: { purchaseId: purchase.id },
+            data: { voucherId: effectiveVoucherId },
+          });
+        });
+      }
+      return;
+    }
 
     if (discountAmount > 0 || existingPurchase || effectiveVoucherId) {
       await runDiscountSyncStep("upsert", async () => {

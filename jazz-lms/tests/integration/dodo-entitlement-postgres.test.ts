@@ -58,6 +58,83 @@ describe.skipIf(!databaseUrl)("Dodo entitlements on isolated PostgreSQL", () => 
     } });
   };
 
+  test("stores a granted partial payment with NULL total and discount instead of phantom free amounts", async () => {
+    const pricing = extractDodoPricing({ data: { metadata: { originalPrice: "29.99" } } });
+    await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: pricing.subtotalAmount,
+      finalPrice: pricing.totalAmount, discountAmount: pricing.discountAmount });
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject({ originalPrice: 29.99, finalPrice: null, discountAmount: null });
+    expect(await client.discountApplied.count({ where: { purchaseId: purchase!.id } })).toBe(0);
+  });
+
+  test("a late coupon identity links the persisted discount row without replacing known monetary facts", async () => {
+    const known = { originalPrice: 100, finalPrice: 80, discountAmount: 20 };
+    await sync.upsertCoursePurchaseFromProvider({ ...input, ...known });
+    const providerDiscountId = `${prefix}-late-discount`;
+    await client.voucherCode.create({ data: { id: voucherId, code: `${prefix}-late-coupon`, type: "DISCOUNT_PERCENT",
+      discountPercent: 20, courseId, maxUses: 2, maxUsesPerUser: 1, metadata: { providerDiscountId } } });
+    const partial = { ...input, originalPrice: null, finalPrice: null, discountAmount: null, providerDiscountId };
+    await sync.upsertCoursePurchaseFromProvider(partial);
+    await sync.upsertCoursePurchaseFromProvider(partial);
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject({ ...known, voucherId });
+    expect(await client.discountApplied.findUnique({ where: { purchaseId: purchase!.id } })).toMatchObject({ ...known, voucherId });
+    expect((await client.voucherCode.findUnique({ where: { id: voucherId } }))!.currentUses).toBe(1);
+  });
+
+  test("preserves persisted same-payment facts and discount on a conflicting incomplete retry", async () => {
+    const known = { originalPrice: 100, finalPrice: 80, discountAmount: 20 };
+    await sync.upsertCoursePurchaseFromProvider({ ...input, ...known });
+    await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: null, finalPrice: 70, discountAmount: null });
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject(known);
+    expect(await client.discountApplied.findUnique({ where: { purchaseId: purchase!.id } })).toMatchObject(known);
+  });
+
+  test("a new payment reference cannot inherit old persisted amounts or a discount row", async () => {
+    await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: 100, finalPrice: 80, discountAmount: 20 });
+    const newReference = `dodo-pay:${prefix}-unpriced-payment`;
+    await sync.upsertCoursePurchaseFromProvider({ ...input, providerReferenceId: newReference,
+      originalPrice: 29.99, finalPrice: null, discountAmount: null });
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject({ providerReferenceId: newReference, originalPrice: 29.99, finalPrice: null, discountAmount: null });
+    expect(await client.discountApplied.count({ where: { purchaseId: purchase!.id } })).toBe(0);
+  });
+
+  test("preserves persisted real zero and its discount through a partial retry", async () => {
+    const zero = { originalPrice: 100, finalPrice: 0, discountAmount: 100 };
+    await sync.upsertCoursePurchaseFromProvider({ ...input, ...zero });
+    await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: null, finalPrice: null, discountAmount: null });
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject(zero);
+    expect(await client.discountApplied.findUnique({ where: { purchaseId: purchase!.id } })).toMatchObject(zero);
+  });
+
+  test("a complete snapshot fills persisted unknown facts and creates a discount row", async () => {
+    await sync.upsertCoursePurchaseFromProvider({ ...input, originalPrice: null, finalPrice: null, discountAmount: null });
+    const known = { originalPrice: 100, finalPrice: 80, discountAmount: 20 };
+    await sync.upsertCoursePurchaseFromProvider({ ...input, ...known });
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject(known);
+    expect(await client.discountApplied.findUnique({ where: { purchaseId: purchase!.id } })).toMatchObject(known);
+  });
+
+  test("actual coupon identity counts a partial settlement once without fabricating a monetary row", async () => {
+    const providerDiscountId = `${prefix}-unpriced-discount`;
+    await client.voucherCode.create({ data: { id: voucherId, code: `${prefix}-unpriced-coupon`, type: "DISCOUNT_PERCENT",
+      discountPercent: 20, courseId, maxUses: 2, maxUsesPerUser: 1, metadata: { providerDiscountId } } });
+    const payload = { data: { payment_id: paymentId, discount_id: providerDiscountId, metadata: { originalPrice: "29.99" } } };
+    const pricing = extractDodoPricing(payload);
+    const partial = { ...input, originalPrice: pricing.subtotalAmount, finalPrice: pricing.totalAmount,
+      discountAmount: pricing.discountAmount, ...resolveDodoVoucherAccounting(payload) };
+    await sync.upsertCoursePurchaseFromProvider(partial);
+    await sync.upsertCoursePurchaseFromProvider(partial);
+    const purchase = await client.purchase.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    expect(purchase).toMatchObject({ voucherId, finalPrice: null, discountAmount: null });
+    expect((await client.voucherCode.findUnique({ where: { id: voucherId } }))!.currentUses).toBe(1);
+    expect(await client.discountApplied.count({ where: { purchaseId: purchase!.id } })).toBe(0);
+  });
+
   test.each(["PROCESSING", "PROCESSED", "FAILED"] as const)("blocks refund-before-paid sequence with %s ledger event", async (status) => {
     await storeEvent("refund.succeeded", status);
     await expect(sync.upsertCoursePurchaseFromProvider(input)).rejects.toMatchObject({ name: "DodoPaymentRevokedError" });

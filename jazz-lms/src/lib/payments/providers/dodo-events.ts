@@ -40,10 +40,10 @@ export function toMoney(value: unknown): number {
   return Number(parsed.toFixed(2));
 }
 
-function toProviderMoney(value: unknown): number {
+function toProviderMoney(value: unknown): number | null {
   const parsed = toNumber(value);
-  if (parsed === null) {
-    return 0;
+  if (parsed === null || parsed < 0) {
+    return null;
   }
 
   const hasDecimalSeparator =
@@ -55,6 +55,12 @@ function toProviderMoney(value: unknown): number {
   }
 
   return Number(parsed.toFixed(2));
+}
+
+function toDocumentedProviderTotal(value: unknown): number | null {
+  const parsed = toNumber(value);
+  if (parsed === null || !Number.isSafeInteger(parsed) || parsed < 0) return null;
+  return Number((parsed / 100).toFixed(2));
 }
 
 export function readCustomString(
@@ -219,27 +225,31 @@ export function resolveDodoVoucherAccounting(payload: LooseObject): {
 }
 
 export function extractDodoPricing(payload: LooseObject): {
-  subtotalAmount: number;
-  totalAmount: number;
-  discountAmount: number;
+  subtotalAmount: number | null;
+  totalAmount: number | null;
+  discountAmount: number | null;
 } {
   const metadata = resolveDodoMetadata(payload);
   const data = asObject(payload.data);
   const payment = asObject(data.payment);
 
-  const totalAmount =
-    toProviderMoney(payment.amount) ||
-    toProviderMoney(data.amount) ||
-    toProviderMoney(payment.total_amount) ||
-    toProviderMoney(data.total_amount);
-  const subtotalAmount =
-    toProviderMoney(payment.subtotal_amount) ||
-    toProviderMoney(data.subtotal_amount) ||
-    toMoney(metadata.originalPrice) ||
-    totalAmount;
-  const discountAmount = Number(
-    Math.max(0, subtotalAmount - totalAmount).toFixed(2),
-  );
+  // The documented total is integer minor units, including tax. A present
+  // malformed total is unknown; a legacy alias must not replace it or real zero.
+  const documentedTotal = payment.total_amount !== undefined
+    ? payment.total_amount : data.total_amount;
+  const totalAmount = documentedTotal !== undefined
+    ? toDocumentedProviderTotal(documentedTotal)
+    : toProviderMoney(payment.amount !== undefined ? payment.amount : data.amount);
+  const providerSubtotal = payment.subtotal_amount !== undefined
+    ? payment.subtotal_amount : data.subtotal_amount;
+  const metadataPrice = toNumber(metadata.originalPrice);
+  const subtotalAmount = providerSubtotal !== undefined
+    ? toProviderMoney(providerSubtotal)
+    : metadata.originalPrice !== undefined
+      ? metadataPrice !== null && metadataPrice >= 0 ? Number(metadataPrice.toFixed(2)) : null
+      : totalAmount;
+  const discountAmount = subtotalAmount !== null && totalAmount !== null
+    ? Number(Math.max(0, subtotalAmount - totalAmount).toFixed(2)) : null;
 
   return {
     subtotalAmount,

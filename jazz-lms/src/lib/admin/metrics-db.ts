@@ -356,7 +356,7 @@ async function getEnrollmentsTimeseriesUncached(range: Range): Promise<Enrollmen
     range
   );
   const voucherBuckets = bucketize(
-    rows.filter((r) => r.voucherId != null && (r.finalPrice ?? 0) === 0),
+    rows.filter((r) => r.voucherId != null && r.finalPrice === 0),
     (r) => r.createdAt,
     () => 1,
     range
