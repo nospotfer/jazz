@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getVoucherFailureReason } from '@/lib/voucher-feedback';
 
 const mocks = vi.hoisted(() => ({
-  validate: vi.fn(), user: vi.fn(), existing: vi.fn(), latest: vi.fn(), redemptionCount: vi.fn(),
+  validate: vi.fn(), revalidate: vi.fn(), user: vi.fn(), existing: vi.fn(), latest: vi.fn(), redemptionCount: vi.fn(),
   lock: vi.fn(), purchase: vi.fn(), discount: vi.fn(), redemption: vi.fn(), updateMany: vi.fn(), update: vi.fn(),
 }));
 const tx = {
@@ -12,7 +12,10 @@ const tx = {
   purchase: { create: mocks.purchase }, discountApplied: { create: mocks.discount },
 };
 vi.mock('@/lib/db', () => ({ db: { purchase: { findUnique: mocks.existing }, $transaction: async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx) } }));
-vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.validate }));
+vi.mock('@/lib/vouchers', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/vouchers')>(),
+  validateVoucherForCourse: mocks.validate, revalidateVoucherForGrant: mocks.revalidate,
+}));
 vi.mock('@/utils/supabase/server', () => ({ createClient: () => ({ auth: { getUser: mocks.user } }) }));
 import { POST } from '@/app/api/vouchers/redeem/route';
 
@@ -24,7 +27,12 @@ const request = () => new Request('http://localhost:3010/api/vouchers/redeem', {
 beforeEach(() => {
   vi.resetAllMocks();
   mocks.user.mockResolvedValue({ data: { user: { id: 'fixture-user' } } });
-  mocks.validate.mockResolvedValue({ valid: true, voucher: { id: 'fixture-voucher' }, originalPrice: 29.90, finalPrice: 0, discount: 29.90 });
+  mocks.validate.mockResolvedValue({ valid: true, catalogPrice: 29.90, isFree: true,
+    voucher: { id: 'fixture-voucher', code: 'JAZZFREE', providerDiscountCode: 'JAZZFREE', type: 'FREE_ACCESS' },
+    originalPrice: 29.90, finalPrice: 0, discount: 29.90 });
+  // This existing suite isolates the final usage/error contracts. The separate
+  // authority suites exercise the real course-lock/revalidation helper and SQL.
+  mocks.revalidate.mockImplementation(async (_tx, _input, quote) => quote);
   mocks.existing.mockResolvedValue(null); mocks.latest.mockResolvedValue(activeVoucher);
   mocks.redemptionCount.mockResolvedValue(0); mocks.purchase.mockResolvedValue({ id: 'fixture-purchase' });
   mocks.updateMany.mockResolvedValue({ count: 1 });

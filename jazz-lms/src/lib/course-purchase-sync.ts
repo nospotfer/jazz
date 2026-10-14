@@ -21,6 +21,8 @@ type UpsertCoursePurchaseInput = {
   providerDiscountCode?: string | null;
   providerDiscountId?: string | null;
   preserveExistingVoucher?: boolean;
+  /** Checkout-only free-voucher intent. Paid provider fulfillment is unchanged. */
+  beforeFreeVoucherGrant?: (tx: Prisma.TransactionClient, voucherId: string) => Promise<void>;
 };
 
 type LooseObject = Record<string, unknown>;
@@ -308,6 +310,7 @@ export async function upsertCoursePurchaseFromProvider(
     if (isFreeVoucher) {
       if (!desiredVoucherId) throw new VoucherRedemptionRejectedError("Código de voucher inválido");
       await lockPaymentReference(tx, `voucher:${desiredVoucherId}`);
+      await input.beforeFreeVoucherGrant?.(tx, desiredVoucherId);
     }
     if (input.providerReferenceId.startsWith("dodo-pay:")) {
       await lockPaymentReference(tx, input.providerReferenceId);

@@ -2,7 +2,7 @@ import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { validateVoucherForCourse, type VoucherValidationError } from '@/lib/vouchers';
+import { validateVoucherForCourse, revalidateVoucherForGrant, VoucherGrantError, type VoucherValidationError } from '@/lib/vouchers';
 import { Prisma } from '@prisma/client';
 import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 
@@ -79,6 +79,9 @@ export async function POST(req: Request) {
     await db.$transaction(async (tx: Prisma.TransactionClient) => {
       // Share the lock with /api/checkout's free/100%-discount redemption path.
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`voucher:${result.voucher.id}`}, 0))`;
+      const grant = await revalidateVoucherForGrant(tx, {
+        code: voucherCode, courseId, userId: user.id, requiredType: 'FREE_ACCESS',
+      }, result);
       const latestVoucher = await tx.voucherCode.findUnique({
         where: { id: result.voucher.id },
         select: {
@@ -122,9 +125,9 @@ export async function POST(req: Request) {
           userId: user.id,
           courseId,
           voucherId: latestVoucher.id,
-          originalPrice: result.originalPrice,
-          finalPrice: result.finalPrice,
-          discountAmount: result.discount,
+          originalPrice: grant.originalPrice,
+          finalPrice: grant.finalPrice,
+          discountAmount: grant.discount,
         },
       });
 
@@ -132,9 +135,9 @@ export async function POST(req: Request) {
         data: {
           purchaseId: purchase.id,
           voucherId: latestVoucher.id,
-          originalPrice: result.originalPrice,
-          discountAmount: result.discount,
-          finalPrice: result.finalPrice,
+          originalPrice: grant.originalPrice,
+          discountAmount: grant.discount,
+          finalPrice: grant.finalPrice,
         },
       });
 
@@ -179,7 +182,7 @@ export async function POST(req: Request) {
       redirectUrl: '/dashboard',
     });
   } catch (error) {
-    if (error instanceof VoucherRedeemError) {
+    if (error instanceof VoucherRedeemError || error instanceof VoucherGrantError) {
       return NextResponse.json(
         {
           success: false,

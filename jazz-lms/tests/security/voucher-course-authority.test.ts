@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   latestRedemptionCount: vi.fn(), purchaseCreate: vi.fn(), discountCreate: vi.fn(),
   redemptionCreate: vi.fn(), voucherUpdate: vi.fn(), voucherUpdateMany: vi.fn(),
   rateLimit: vi.fn(), fetch: vi.fn(),
+  lockedCourse: vi.fn(), transactionVoucher: vi.fn(),
 }));
 
 vi.mock('@/lib/db', () => ({ db: {
@@ -34,7 +35,8 @@ let course: { id: string; price: unknown; isPublished?: unknown } | null;
 
 const tx = {
   $executeRaw: mocks.lock,
-  voucherCode: { findUnique: mocks.latestVoucher, update: mocks.voucherUpdate, updateMany: mocks.voucherUpdateMany },
+  $queryRaw: mocks.lockedCourse,
+  voucherCode: { findFirst: mocks.transactionVoucher, findUnique: mocks.latestVoucher, update: mocks.voucherUpdate, updateMany: mocks.voucherUpdateMany },
   voucherRedemption: { count: mocks.latestRedemptionCount, create: mocks.redemptionCreate },
   purchase: { create: mocks.purchaseCreate }, discountApplied: { create: mocks.discountCreate },
 };
@@ -71,12 +73,113 @@ beforeEach(() => {
   mocks.purchaseLookup.mockResolvedValue(null);
   mocks.transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx));
   mocks.latestVoucher.mockResolvedValue(voucher);
+  mocks.lockedCourse.mockImplementation(async () => course ? [course] : []);
+  mocks.transactionVoucher.mockResolvedValue(voucher);
   mocks.latestRedemptionCount.mockResolvedValue(0);
   mocks.purchaseCreate.mockResolvedValue({ id: 'synthetic-voucher-purchase' });
   mocks.voucherUpdateMany.mockResolvedValue({ count: 1 });
   mocks.rateLimit.mockReturnValue({ allowed: true, retryAfterSeconds: 0, remaining: 10, limit: 30 });
   mocks.fetch.mockImplementation(() => { throw new Error('External network is forbidden in voucher authority checks'); });
   vi.stubGlobal('fetch', mocks.fetch);
+});
+
+describe('grant transaction rejects course or voucher changes after initial validation', () => {
+  test.each([
+    ['unpublished', { isPublished: false }, 400, 'Course not found'],
+    ['unavailable', { price: null }, 503, 'Price unavailable'],
+    ['changed positive price', { price: 90 }, 409, 'Quote changed'],
+  ] as const)('%s cannot persist a stale full-voucher quote', async (_label, changed, status, reason) => {
+    mocks.transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => {
+      course = { ...course!, ...changed };
+      return callback(tx);
+    });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(status);
+    const body = await response.json();
+    expect(body.reason ?? body.error).toBe(reason);
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.discountCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+    expect(mocks.voucherUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+
+  test('a zero-to-paid price change cannot preserve a stale zero monetary snapshot', async () => {
+    course = { ...course!, price: 0 };
+    mocks.transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => {
+      course = { ...course!, price: 80 };
+      return callback(tx);
+    });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(409);
+    expect((await response.json()).reason).toBe('Quote changed');
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+  });
+
+  test('current voucher type is authoritative before a full-voucher grant', async () => {
+    mocks.transactionVoucher.mockResolvedValue({ ...voucher, type: 'DISCOUNT_PERCENT', discountPercent: 20 });
+    mocks.latestVoucher.mockResolvedValue({ ...voucher, type: 'DISCOUNT_PERCENT', discountPercent: 20 });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.reason ?? body.error).toBe('Voucher type mismatch');
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+  });
+
+  test('current minimum order value cannot be bypassed by the initial voucher snapshot', async () => {
+    mocks.transactionVoucher.mockResolvedValue({ ...voucher, minOrderValue: 100 });
+    mocks.latestVoucher.mockResolvedValue({ ...voucher, minOrderValue: 100 });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.reason ?? body.error).toBe('Below minimum order value');
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+  });
+
+  test('sub-cent catalog changes are detected even when the rounded amount is unchanged', async () => {
+    course = { ...course!, price: 80.004 };
+    mocks.transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => {
+      course = { ...course!, price: 80.003 };
+      return callback(tx);
+    });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(409);
+    expect((await response.json()).reason).toBe('Quote changed');
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+  });
+
+  test('an unchanged sub-cent catalog price preserves existing rounded money', async () => {
+    course = { ...course!, price: 80.004 };
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(200);
+    expect(mocks.purchaseCreate).toHaveBeenCalledWith({ data: {
+      userId: actor.id, courseId, voucherId: voucher.id, originalPrice: 80, finalPrice: 0, discountAmount: 80,
+    } });
+  });
+
+  test.each([
+    ['identity', { id: 'replacement-voucher' }],
+    ['provider code', { metadata: { providerDiscountCode: 'NEW_PROVIDER_CODE' } }],
+  ] as const)('changed voucher %s cannot borrow the initially validated grant intent', async (_label, changed) => {
+    mocks.transactionVoucher.mockResolvedValue({ ...voucher, ...changed });
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(409);
+    expect((await response.json()).reason).toBe('Quote changed');
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+  });
+
+  test('a failed course lock cannot degrade into an unlocked grant', async () => {
+    mocks.lockedCourse.mockRejectedValue(new Error('Closed synthetic lock failure'));
+    const response = await redeem(request('redeem'));
+    expect(response.status).toBe(500);
+    expect(await response.json()).toMatchObject({ success: false, error: 'Server error' });
+    expect(mocks.purchaseCreate).not.toHaveBeenCalled();
+    expect(mocks.redemptionCreate).not.toHaveBeenCalled();
+  });
 });
 afterEach(() => vi.unstubAllGlobals());
 

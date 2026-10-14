@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { PrismaClient } from '@prisma/client';
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const auth = vi.hoisted(() => ({ getUser: vi.fn(), fetch: vi.fn() }));
@@ -16,6 +17,23 @@ const actorIds = [actor.id, other.id];
 const voucherId = `${prefix}-voucher`, voucherCode = randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase();
 let db: typeof import('@/lib/db')['db'];
 let POST: typeof import('@/app/api/vouchers/redeem/route')['POST'];
+let administrator: PrismaClient;
+function gate() {
+  let release!: () => void;
+  const wait = new Promise<void>((resolve) => { release = resolve; });
+  return { wait, release };
+}
+let initialReadGate: { entered: ReturnType<typeof gate>; resume: ReturnType<typeof gate> } | null = null;
+let purchaseWriteGate: { entered: ReturnType<typeof gate>; resume: ReturnType<typeof gate> } | null = null;
+
+async function boundedGate(wait: Promise<void>) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([wait, new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Isolated voucher scheduling gate timed out')), 3_000);
+    })]);
+  } finally { if (timer) clearTimeout(timer); }
+}
 const purchaseScope = { courseId: { in: courseIds }, userId: { in: actorIds } };
 const redemptionScope = { voucherId, userId: { in: actorIds } };
 
@@ -58,6 +76,29 @@ describe.skipIf(!target)('real voucher validation and redemption on disposable P
     auth.fetch.mockImplementation(() => { throw new Error('External network is prohibited in isolated voucher checks'); });
     vi.stubGlobal('fetch', auth.fetch);
     db = (await import('@/lib/db')).db;
+    administrator = new PrismaClient({ datasources: { db: { url: target! } }, log: [] });
+    // Only schedule this fixture's actual SQL. No result or query is mocked.
+    db.$use(async (params, next) => {
+      const ownLookup = params.model === 'Purchase' && params.action === 'findUnique' &&
+        params.args?.where?.userId_courseId?.userId === actor.id;
+      if (ownLookup && initialReadGate) {
+        const pending = initialReadGate;
+        const result = await next(params);
+        pending.entered.release();
+        await pending.resume.wait;
+        if (initialReadGate === pending) initialReadGate = null;
+        return result;
+      }
+      const ownCreate = params.model === 'Purchase' && params.action === 'create' &&
+        params.args?.data?.userId === actor.id && params.args?.data?.courseId === paidCourse;
+      if (ownCreate && purchaseWriteGate) {
+        const pending = purchaseWriteGate;
+        pending.entered.release();
+        await pending.resume.wait;
+        if (purchaseWriteGate === pending) purchaseWriteGate = null;
+      }
+      return next(params);
+    });
     POST = (await import('@/app/api/vouchers/redeem/route')).POST;
     await db.$transaction(async (tx) => {
       await tx.user.createMany({ data: [{ ...actor, role: 'USER' }, { ...other, role: 'USER' }] });
@@ -74,6 +115,8 @@ describe.skipIf(!target)('real voucher validation and redemption on disposable P
     vi.clearAllMocks();
     auth.getUser.mockResolvedValue({ data: { user: actor }, error: null });
     await cleanOwnLearningFreeFixtures();
+    await db.course.update({ where: { id: paidCourse }, data: { price: 80, isPublished: true } });
+    await db.course.update({ where: { id: zeroCourse }, data: { price: 0, isPublished: true } });
     expect(await snapshot()).toEqual({ purchases: 0, discounts: 0, redemptions: 0, voucherUses: 0 });
   });
   afterAll(async () => {
@@ -83,6 +126,7 @@ describe.skipIf(!target)('real voucher validation and redemption on disposable P
       delete globalThis.prisma;
     }
     vi.unstubAllGlobals(); vi.unstubAllEnvs();
+    await administrator?.$disconnect();
   });
 
   test('NULL catalog price does not persist purchase, discount, redemption or usage', async ({ task }) => {
@@ -144,6 +188,79 @@ describe.skipIf(!target)('real voucher validation and redemption on disposable P
     const body = await denied.json();
     expect(body.reason ?? body.error).toBe('Max uses per user reached');
     expect(await snapshot()).toEqual({ purchases: 1, discounts: 1, redemptions: 1, voucherUses: 1 });
+    expect(auth.fetch).not.toHaveBeenCalled();
+  });
+
+  for (const [label, edit, status, reason] of [
+    ['unpublished', { isPublished: false }, 400, 'Course not found'],
+    ['unavailable price', { price: null }, 503, 'Price unavailable'],
+    ['changed known price', { price: 90 }, 409, 'Quote changed'],
+  ] as const) test(`administrator ${label} after validation cannot persist a stale grant`, async ({ task }) => {
+    const held = { entered: gate(), resume: gate() };
+    initialReadGate = held;
+    const pending = POST(request(paidCourse));
+    try {
+      await boundedGate(held.entered.wait);
+      await administrator.course.update({ where: { id: paidCourse }, data: edit });
+    } finally { held.resume.release(); }
+    const response = await pending;
+    const observed = { status: response.status, persisted: await snapshot() };
+    Object.assign(task.meta, { voucherCourseRaceSnapshot: observed });
+    expect(observed).toEqual({ status, persisted: { purchases: 0, discounts: 0, redemptions: 0, voucherUses: 0 } });
+    const body = await response.json();
+    expect(body.reason ?? body.error).toBe(reason);
+    if (reason === 'Quote changed') {
+      // A fresh request sees the new exact price and remains a legitimate grant.
+      const retried = await POST(request(paidCourse));
+      expect(retried.status).toBe(200);
+      const purchase = await db.purchase.findUniqueOrThrow({ where: { userId_courseId: { userId: actor.id, courseId: paidCourse } }, include: { discount: true } });
+      expect(purchase).toMatchObject({ originalPrice: 90, discountAmount: 90, finalPrice: 0 });
+      expect(purchase.discount).toMatchObject({ originalPrice: 90, discountAmount: 90, finalPrice: 0 });
+      expect(await snapshot()).toEqual({ purchases: 1, discounts: 1, redemptions: 1, voucherUses: 1 });
+    }
+    expect(auth.fetch).not.toHaveBeenCalled();
+  });
+
+  test('zero-to-paid edit after validation cannot persist zero accounting', async ({ task }) => {
+    const held = { entered: gate(), resume: gate() };
+    initialReadGate = held;
+    const pending = POST(request(zeroCourse));
+    try {
+      await boundedGate(held.entered.wait);
+      await administrator.course.update({ where: { id: zeroCourse }, data: { price: 80 } });
+    } finally { held.resume.release(); }
+    const response = await pending;
+    const observed = { status: response.status, persisted: await snapshot() };
+    Object.assign(task.meta, { voucherCourseRaceSnapshot: observed });
+    expect(observed).toEqual({ status: 409, persisted: { purchases: 0, discounts: 0, redemptions: 0, voucherUses: 0 } });
+    expect((await response.json()).reason).toBe('Quote changed');
+  });
+
+  test('course remains locked through the actual purchase transaction; edit works after commit', async ({ task }) => {
+    const held = { entered: gate(), resume: gate() };
+    purchaseWriteGate = held;
+    const pending = POST(request(paidCourse));
+    let blocked = false;
+    try {
+      await boundedGate(held.entered.wait);
+      try {
+        await administrator.$transaction(async (tx) => {
+          await tx.$executeRaw`SET LOCAL lock_timeout = '250ms'`;
+          await tx.$executeRaw`UPDATE "Course" SET "isPublished" = FALSE WHERE id = ${paidCourse}`;
+        });
+      } catch (error) {
+        const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+        const meta = error && typeof error === 'object' && 'meta' in error ? error.meta : undefined;
+        const databaseCode = meta && typeof meta === 'object' && 'code' in meta ? meta.code : undefined;
+        blocked = code === 'P2010' && databaseCode === '55P03';
+      }
+    } finally { held.resume.release(); }
+    const response = await pending;
+    const observed = { status: response.status, administratorEditBlocked: blocked, coursePublished: (await db.course.findUniqueOrThrow({ where: { id: paidCourse } })).isPublished, persisted: await snapshot() };
+    Object.assign(task.meta, { voucherCourseRaceSnapshot: observed });
+    expect(observed).toEqual({ status: 200, administratorEditBlocked: true, coursePublished: true, persisted: { purchases: 1, discounts: 1, redemptions: 1, voucherUses: 1 } });
+    const edited = await administrator.course.update({ where: { id: paidCourse }, data: { isPublished: false } });
+    expect(edited.isPublished).toBe(false);
     expect(auth.fetch).not.toHaveBeenCalled();
   });
 });
