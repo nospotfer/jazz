@@ -335,7 +335,7 @@ async function reconcileDodoFromCustomerEmail(input: {
   return null;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const supabase = createClient();
     const {
@@ -344,6 +344,13 @@ export async function GET() {
 
     if (!user) {
       return new NextResponse("No autorizado", { status: 401 });
+    }
+
+    // The browser hint binds this read to its current account; verified cookies
+    // remain the authority. A session switch must not return another owner's rows.
+    const expectedUserId = new URL(req.url).searchParams.get("expectedUserId");
+    if (expectedUserId !== null && expectedUserId !== user.id) {
+      return new NextResponse("La sesión ha cambiado", { status: 409 });
     }
 
     const purchases = await db.purchase.findMany({

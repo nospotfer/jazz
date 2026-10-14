@@ -101,7 +101,7 @@ describe('Security: Authentication enforcement', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     expect(response.status).toBe(401);
   });
 

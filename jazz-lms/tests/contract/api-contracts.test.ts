@@ -89,7 +89,7 @@ describe('API Contract: /api/purchases response shape', () => {
     ]);
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     const body = await response.json();
 
     expect(Array.isArray(body)).toBe(true);

@@ -253,7 +253,7 @@ describe('Functional: Purchase history access', () => {
     ]);
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     const body = await response.json();
 
     expect(body).toHaveLength(2);

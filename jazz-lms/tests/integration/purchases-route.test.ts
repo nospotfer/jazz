@@ -53,9 +53,50 @@ describe("GET /api/purchases", () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
 
     expect(response.status).toBe(401);
+  });
+
+  test.each([
+    ["u1", "u2"],
+    ["u2", "u1"],
+    ["u1", ""],
+  ])("rejects a stale client owner %s/%s before reading payment history", async (serverOwner, expectedOwner) => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: serverOwner } } });
+    mocks.purchaseFindMany.mockResolvedValue([
+      { id: "owner-private-purchase", finalPrice: 24.9, course: { title: "Owner private course" }, createdAt: new Date("2026-01-15T10:00:00Z") },
+    ]);
+
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request(`http://localhost/api/purchases?expectedUserId=${expectedOwner}`));
+
+    expect(response.status).toBe(409);
+    expect(mocks.purchaseFindMany).not.toHaveBeenCalled();
+    expect(await response.text()).not.toContain("Owner private course");
+  });
+
+  test("uses verified cookie identity for a matching client owner and a genuine empty history", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mocks.purchaseFindMany.mockResolvedValue([]);
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request("http://localhost/api/purchases?expectedUserId=u1"));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+    expect(mocks.purchaseFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "u1" } }));
+  });
+
+  test("a client owner hint cannot authorize an unauthenticated request", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: null } });
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request("http://localhost/api/purchases?expectedUserId=u1"));
+
+    expect(response.status).toBe(401);
+    expect(mocks.purchaseFindMany).not.toHaveBeenCalled();
   });
 
   test("returns formatted purchase list", async () => {
@@ -70,7 +111,7 @@ describe("GET /api/purchases", () => {
     ]);
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -98,7 +139,7 @@ describe("GET /api/purchases", () => {
           createdAt: new Date("2026-01-15T10:00:00Z"),
         },
       ]);
-      const response = await GET();
+      const response = await GET(new Request("http://localhost/api/purchases"));
       expect(response.status).toBe(200);
       responses.push(await response.json());
     }
@@ -120,7 +161,7 @@ describe("GET /api/purchases", () => {
     );
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
     const records = await response.json();
 
     expect(response.status).toBe(200);
@@ -132,7 +173,7 @@ describe("GET /api/purchases", () => {
     mocks.purchaseFindMany.mockRejectedValue(new Error("db down"));
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
 
     expect(response.status).toBe(500);
   });
