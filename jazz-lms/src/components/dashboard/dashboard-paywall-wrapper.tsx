@@ -138,6 +138,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   };
 
   return (
+    <>
     <div className="relative isolate min-h-full">
       <div className={showPaywall ? 'blur-sm pointer-events-none select-none' : ''}>
         {children}
@@ -184,6 +185,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
           </div>
         </div>
       )}
+    </div>
 
       <PaymentMethodModal
         isOpen={isMethodModalOpen}
@@ -205,6 +207,6 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
           void handlePurchase();
         }}
       />
-    </div>
+    </>
   );
 }
