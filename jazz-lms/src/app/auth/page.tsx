@@ -318,7 +318,7 @@ export default function AuthPage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (isMounted && event === "SIGNED_IN" && !passwordSignInPending.current) {
+      if (isMounted && event === "SIGNED_IN" && !passwordSignInStarted.current) {
         const dashboardTarget = justRegistered
           ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
           : "/dashboard";
@@ -433,8 +433,8 @@ export default function AuthPage() {
       return;
     }
 
-    // The password handler owns navigation until cookie sync and profile work
-    // settle. SIGNED_IN is emitted before those awaited operations finish.
+    // Once password login starts, only its handler may navigate. SIGNED_IN
+    // can arrive both before setup settles and after a failed cookie sync.
     passwordSignInStarted.current = true;
     passwordSignInPending.current = true;
     setLoginLoading(true);

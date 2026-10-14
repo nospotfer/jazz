@@ -170,6 +170,17 @@ describe('password login owns navigation until server cookies and profile work f
     expect(mocks.fetch).toHaveBeenCalledOnce();
   });
 
+  test('a late SIGNED_IN cannot navigate again after successful password login before unmount', async () => {
+    await renderAuth();
+    submitPassword();
+    await expectOnePasswordNavigation();
+
+    // The route transition need not unmount this page immediately.
+    await act(async () => { emit(); });
+    expect(mocks.router.replace).toHaveBeenCalledOnce();
+    expect(mocks.router.refresh).toHaveBeenCalledOnce();
+  });
+
   test('a delayed initial getSession cannot bypass a pending password cookie sync', async () => {
     const initial = deferred<SessionResult>(sessionResult);
     const sync = deferred(new Response('{}', { status: 200 }));
@@ -208,6 +219,19 @@ describe('password login owns navigation until server cookies and profile work f
     expect(await screen.findByText('Unable to sign in. Please try again.')).toBeTruthy();
     expectNoNavigation();
     expect(mocks.auth.getUser).not.toHaveBeenCalled();
+    expect(mocks.auth.updateUser).not.toHaveBeenCalled();
+  });
+
+  test('a late SIGNED_IN cannot navigate after password server-cookie synchronization failed', async () => {
+    mocks.fetch.mockResolvedValue(new Response('{}', { status: 500 }));
+    await renderAuth();
+    submitPassword();
+    expect(await screen.findByText('Unable to sign in. Please try again.')).toBeTruthy();
+    expectNoNavigation();
+
+    await act(async () => { emit(); });
+    expectNoNavigation();
+    expect(mocks.fetch).toHaveBeenCalledOnce();
     expect(mocks.auth.updateUser).not.toHaveBeenCalled();
   });
 
