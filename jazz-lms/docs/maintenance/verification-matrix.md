@@ -107,3 +107,18 @@ nine controls become 15 passes, plus seven notes/paywall controls. Genuine
 unobstructed native free-account views and own identity are verified; profile/
 preference edits and actual provider payments remain excluded.
 [Scope](review-status.md#private-view-ownership-and-account-access-source-verification).
+
+
+Current catalog/action source44ec58b has clean2,191/47 normal,46/1 persisted,
+types/build/lint0/23 and exact remote Quality/Secret Scan/CodeQL success. The61
+new cases cover paired prices, unknown free-grant rejection, voucher/course/open
+lifetime, removed-frame cleanup and finite duplicate diagnostics. Fresh locked
+artifact572/45,792/158, Unix19/HTTPS11 and577-file secret scan0 pass. Native
+owner reports retain separate21/22 and20/21 helper timing diagnostics; an additional
+B-only browser32/32 verifies24 catalog/dialog cases across four languages and
+1440/390, real paid-class2 denial/details80 and normal sign-out. All-five/12-model
+preservation, clean owned closure and sealed reinspection pass;15 total observed
+owner/catalog password/session pairs remain explicit. Prior41424/24 stays separate;
+actual player-modal reachability, artificial delayed replies and positive provider
+price/metadata/tax/currency parity remain unresolved.
+[Current source scope](review-status.md#catalog-prices-and-course-action-lifetime).

@@ -6,8 +6,8 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current application source: `4145268`; see
-[complete native account verification](#contained-paywall-and-complete-native-account-verification).
+Current application source: `44ec58b`; see
+[catalog prices and course-action lifetime](#catalog-prices-and-course-action-lifetime).
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
@@ -1162,3 +1162,105 @@ entitlement hashes remain unchanged. All contexts/Chromium/app/tunnel processes
 close cleanly; final sealed inspection passes. Existing services are preserved.
 The source remains unreleased, with zero new spend and all provider/production/
 hosting gates retained; the maintenance goal remains active and incomplete.
+
+
+## Catalog prices and course-action lifetime
+
+Source **`44ec58bebffd9735f9af6b4f51b6f5b1eb86a4f6`** repairs a confirmed
+catalog/UI family. Dashboard summaries and outlines fetch the price and ID from
+the same oldest published course; changed cache keys avoid reusing the earlier
+ID-only shape. The dashboard course widget, paywall, course details/enrolment and
+lesson-player modal now receive that known catalog price. Real numeric zero stays
+zero; missing, negative, nonfinite or nonnumeric values stay unavailable. The
+shared dialog displays a coherent voucher original/discount/final snapshot;
+unknown voucher amounts disable continuation and validation. Omitted legacy
+callers retain the prior default, while explicit NULL has an unavailable label
+and recovery hint. All current course callers provide an explicit price.
+
+The backend previously coerced NULL and malformed amounts into its free-grant
+branch. It now returns localized503 before voucher evaluation, purchase writes
+or provider checkout for an unavailable catalog price; explicit numeric0 retains
+the intended free path. Duplicate-purchase diagnostics now retain only the finite
+`already_purchased` category, removing customer/course/purchase identifiers and
+role. There is no claim of an actual provider incident or historic log scrubbing.
+
+Course/open epochs reject voucher callbacks from removed courses, closed dialogs
+and earlier openings, and reset displayed vouchers and parent checkout intent
+together. Course-ID keys retire course-specific purchase state. A frozen actual
+React commit-order test shows old course DOM removed while its action guard is
+still valid during the replacement's layout phase; synchronous cleanup now retires
+that guard and the player's mounted flag. Same-owner token refresh and immediate
+SDK owner invalidation retain their existing behavior.
+
+Frozen source baselines remain distinct: catalog10 has5 failures/5 controls;
+modal lifetime8 has6 failures/2 controls; checkout availability13 has9 failures/4
+controls; duplicate logging1 fails; customer caller20 has18 failures/2 controls;
+commit-order lifetime3 has1 failure/2 controls. Six additional modal safeguards
+pass. These61 new cases are included in the full suite. Initial harness diagnostics
+are preserved separately and excluded from the application failure counts.
+Independent review binds all22 source/test files to committed hashes. Twelve of
+the previous18 ownership-review source files remain unchanged; the six changed
+files have explicit current independent review.
+
+Fresh clean Node24 verification passes **2,191 normal tests/47 skips**,
+**46 actual PostgreSQL checks/one REST skip**, types and lint0 errors/23 existing
+warnings. Exact [Quality PR38579918169](https://github.com/nospotfer/jazz/actions/runs/38579918169)
+and push38579904074, Secret Scan PR38579918261/push38579904114,
+[CodeQL38579909536](https://github.com/nospotfer/jazz/actions/runs/38579909536)/aggregate115907021445
+and the actual Vercel completed status pass. Downloaded Quality ZIP SHA256
+`4e9281fe1ad80dc599182024f4c245bb826115b379e0d7d2deaa91932596117d`
+confirms those normal/persisted counts, types/build/lint;26 expanded entries scan0.
+The exact577-file committed export scans0 without new suppressions. Vercel
+provider isolation and journeys there remain unverified.
+
+A fresh configured locked-install artifact matches572 Git application blobs,
+45,792 sealed files and158 inspected client files. Public origin/key binding,
+server-secret exclusion, strict published CA and actual Unix19/HTTPS11 checks
+pass. A timestamp-shape rejection occurs before app/browser startup; canonical
+normalization preserves the original expiry and credentials. The first native
+run retains21/22 checks: current owner/account flows and class2 denial/details80
+pass, then the new helper checks a dynamic language wrapper before waiting for
+mount. The second retains20/21, stopping on an immediate redirect assertion.
+Neither old report records enough timing detail to relabel its failure as a pass.
+Both browser reports remain immutable; no application defect is established by
+those assertions. Prior414 native24/24 also remains a distinct historical scope.
+
+A separately scoped fresh B-only browser on the same verified source44 artifact,
+active gate and **unchanged expiry** passes **32/32**. Its24 quote/dialog cases
+cover dashboard CourseView, course details/enrolment and the dashboard paywall,
+ES/EN/FR/PT at1440/390. Actual ordinary language clicks set matching cookie and
+HTML language; the current trace observes the dynamic control count0 before the
+wait and1 after it. Catalog80 appears in CourseView/details and dialog base/total,
+with genuine zero discount; ordinary unobstructed open/cancel clicks pass. No
+voucher entry/validation or checkout continuation occurs. Paid class2 returns
+actual200 document responses for the requested lesson and redirected course
+details, then a locked course-details URL/owned frame/quote80 with no player.
+Normal B sign-out uses trusted clicks and an unobstructed target; zero uncaught
+client errors, forbidden mutations or session artifacts remain. This addon does
+not repeat or claim the earlier full cross-tab owner journey. The lesson-player
+payment dialog remains natively unexecuted: existing server access checks prevent
+B reaching its locked branch, while A already owns the course. Its caller/NULL/0
+behavior is covered by the separate real-component regressions.
+
+The originally launched helper SHA256
+`a12b38b1ef927e09f468cb0cbcaaa0f1d045ddae098cdac7537340b956d580a7`
+is retained separately. A later preparation-only revision is not the executed
+input and cannot be counted as evidence. The addon uses one B password request,
+one normal session sync, no avatar PUT and one normal logout. Together with the
+preceding two-actor run this active preview uses three password/session pairs;
+all closed owner/catalog windows total15, without resetting consumed budgets.
+Strict-CA before14:37:48/after14:51:12 all-five/12-model/global/business/learning/
+entitlement hashes remain unchanged. All browsers/Chromium/app/tunnel processes
+close cleanly and sealed reinspection passes. The first21/22 window separately
+preserves its own before14:25:45/after14:31:52 comparison and closure. Actual
+artificial delayed replies, provider charges and the unreachable player dialog
+are not proved by this catalog addon.
+
+**Positive billing parity remains unresolved:** checkout metadata still uses the
+existing29.99 default, while Dodo's cart charges its configured product price.
+Catalog/UI alignment does not verify the provider's charge, tax or currency.
+The dialog says the final amount is confirmed in checkout; this is not a
+reconciliation or a substitute for provider verification. No catalog SQL, provider
+price, schema, tax/currency policy, real transaction/refund or third-party mail
+change is authorized or performed. Production remains unreleased; all broader
+provider/hosting/hardening gates remain and the goal is incomplete.

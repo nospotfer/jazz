@@ -1080,3 +1080,35 @@ The maintenance goal remains active and incomplete.
   broader provider/hosting/production gates remain, and the goal stays active.
 
 [Final source and native scope](review-status.md#contained-paywall-and-complete-native-account-verification).
+
+
+## 2026-10-14 — Catalog availability and course-intent repair
+
+- Freeze distinct actual source regressions for hardcoded/missing/zero catalog
+  quotes, late voucher callbacks, malformed free grants, duplicate identifiers
+  and the React layout/passive-cleanup window. Preserve initial harness errors
+  separately.61 new cases are included in the whole suite.
+- Commit22 coherent source/test files as44ec58b. Two authors independently
+  review the other scope;12 earlier owner-source files remain unchanged and six
+  changed owner files have a fresh explicit review. No production/provider edit.
+- Fresh private clean clone:2,191/47 normal,46/1 actual local PostgreSQL, types/
+  lint0/23 pass. Required hooks are not bypassed. Exact remote checks pass and
+  downloaded Quality logs agree;577 committed files/26 log entries scan0.
+- Fresh configured locked build572/45,792/158, Unix19/HTTPS11 pass. Correct a
+  launch timestamp formatting rejection before startup without extending expiry.
+  Preserve raw21/22 dynamic-control and20/21 immediate-redirect helper diagnostics,
+  with no established app defect and no relabeled pass. B-only addon32/32 verifies
+  24 catalog/dialog cases in four languages at1440/390, actual class2 denial/
+  details80 and trusted normal B sign-out. Its launched a12b helper is distinct
+  from the later unused preparation revision. Source/expiry are unchanged.
+- Strict-CA14:37:48→14:51:12 all-five/12-model/global/business/learning/entitlement
+  fingerprints match; browsers/owned app/tunnel close cleanly and final seal passes.
+  Three password/session pairs in this preview and15 across owner/catalog windows
+  are explicit. Earlier41424/24 stays separate. No checkout continuation, voucher
+  validation, provider payment/mail or learning write; player modal remains
+  unreachable natively under the preserved access policy.
+- Positive backend29.99 metadata/provider catalog parity remains unresolved;
+  source availability/quote fixes do not authorize billing policy, SQL/provider
+  changes or production release. Zero new spend; the goal remains active.
+
+[Current evidence](review-status.md#catalog-prices-and-course-action-lifetime).

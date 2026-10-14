@@ -295,3 +295,22 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   immutable old deployments/cron. Continuous hosting and provider journeys remain.
 
 [Fallback artifact and reviewed serving contract](maintenance-fallback.md).
+
+
+## Catalog quote follow-up
+
+- [x] Repair paired selected-course pricing, unknown catalog free-grant handling,
+  voucher course/open lifetime and synchronous removed-frame action retirement.
+  Source44ec58b passes61 new cases included in clean2,191/47,46/1 persisted,
+  types/build/lint0/23, independent review and exact remote checks.
+- [x] Verify current catalog80 with a separately scoped B-only32/32 native run:
+  24 quote/dialog cases in four languages at1440/390, real class2 denial/details80,
+  normal sign-out and zero client errors. All-five/12-model preservation/owned
+  browser/app/tunnel closure and sealed reinspection pass. Earlier21/22 and20/21
+  helper timing diagnostics remain raw; prior41424/24 is separate. No native
+  player-modal or artificial delayed-response/provider-charge claim.
+- [ ] Reconcile positive catalog/UI price, existing29.99 checkout metadata and
+  actual Dodo product charge/tax/currency before a production purchase flow. No
+  catalog/provider mutation or actual charge is approved by the source repair.
+
+[Exact source and limits](review-status.md#catalog-prices-and-course-action-lifetime).
