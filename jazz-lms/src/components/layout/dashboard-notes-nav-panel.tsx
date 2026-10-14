@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Library } from 'lucide-react';
+import { useEffect, useId, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { ChevronDown, Library, PencilLine } from 'lucide-react';
 
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
@@ -30,6 +31,7 @@ export function DashboardNotesNavPanel({ currentUserId }: { currentUserId: strin
 
 function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
   const { t, language } = useDashboardPreferences();
+  const draftDescriptionId = useId();
   const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
@@ -183,13 +185,30 @@ function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
                 {t('lessonNotes', 'Lesson notes')}
               </p>
               {selectedNote ? (
-                <SidebarNoteDraft
-                  key={JSON.stringify([currentUserId, selectedNote.courseId, selectedNote.lessonId])}
-                  currentUserId={currentUserId}
-                  courseId={selectedNote.courseId}
-                  lessonId={selectedNote.lessonId}
-                  placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
-                />
+                <>
+                  <SidebarNoteDraft
+                    key={JSON.stringify([currentUserId, selectedNote.courseId, selectedNote.lessonId])}
+                    currentUserId={currentUserId}
+                    courseId={selectedNote.courseId}
+                    lessonId={selectedNote.lessonId}
+                    placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
+                    descriptionId={draftDescriptionId}
+                  />
+                  <p id={draftDescriptionId} className="text-xs leading-5 text-foreground/80 break-words">
+                    {t('notesPanelDraftHelp', 'Draft on this device. Use the editor to save and sync notes for lessons you can access.')}
+                  </p>
+                  <Link
+                    href={`/dashboard/notes/${encodeURIComponent(selectedNote.courseId)}/${encodeURIComponent(selectedNote.lessonId)}`}
+                    prefetch={false}
+                    aria-describedby={draftDescriptionId}
+                    className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold leading-5 text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    <PencilLine className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 whitespace-normal break-words text-center">
+                      {t('openNotesEditor', 'Open notes editor')}
+                    </span>
+                  </Link>
+                </>
               ) : null}
             </div>
           </>
@@ -199,11 +218,12 @@ function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
   );
 }
 
-function SidebarNoteDraft({ currentUserId, courseId, lessonId, placeholder }: {
+function SidebarNoteDraft({ currentUserId, courseId, lessonId, placeholder, descriptionId }: {
   currentUserId: string;
   courseId: string;
   lessonId: string;
   placeholder: string;
+  descriptionId: string;
 }) {
   const [content, setContent] = useState(() => readLessonNoteDraft(currentUserId, courseId, lessonId).content);
   return (
@@ -214,6 +234,7 @@ function SidebarNoteDraft({ currentUserId, courseId, lessonId, placeholder }: {
         writeLessonNoteDraft(currentUserId, courseId, lessonId, event.target.value);
       }}
       aria-label={placeholder}
+      aria-describedby={descriptionId}
       placeholder={placeholder}
       className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
     />
