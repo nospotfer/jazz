@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
+import { useOwnerAction } from '@/hooks/use-owner-action';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -26,6 +27,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
+  const { capture, isCurrent } = useOwnerAction();
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -79,6 +81,8 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   }[language];
 
   const checkoutCourse = async () => {
+    const token = capture();
+    if (!token) return;
     try {
       setIsLoading(true);
       setPaymentError('');
@@ -88,10 +92,12 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
+      if (!isCurrent(token)) return;
 
       // Redirect to the hosted provider checkout URL
       window.location.assign(response.data.url);
     } catch (error) {
+      if (!isCurrent(token)) return;
       if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
         setPaymentError(error.response.data);
         toast.error(error.response.data);
@@ -99,7 +105,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         toast.error(copy.somethingWrong);
       }
     } finally {
-      setIsLoading(false);
+      if (isCurrent(token)) setIsLoading(false);
     }
   };
 

@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { CourseViewClient } from "@/components/course/course-view-client";
 
@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   refresh: vi.fn(),
   replace: vi.fn(),
   searchParams: {} as Record<string, string>,
+  fetch: vi.fn(), listeners: new Set<(event: string, session: unknown) => void>(),
 }));
 
 vi.mock("next/dynamic", async () => {
@@ -67,6 +68,13 @@ vi.mock("@/lib/payment-modal-loader", () => ({
   loadPaymentMethodModal: vi.fn(),
   warmPaymentMethodModal: vi.fn(),
 }));
+vi.mock("@/utils/supabase/client", () => ({ createClient: () => ({ auth: {
+  onAuthStateChange: (listener: (event: string, session: unknown) => void) => {
+    mocks.listeners.add(listener);
+    listener("INITIAL_SESSION", { user: { id: "synthetic-student" } });
+    return { data: { subscription: { unsubscribe: () => mocks.listeners.delete(listener) } } };
+  },
+} }) }));
 
 vi.mock("next/image", () => ({
   __esModule: true,
@@ -96,6 +104,9 @@ describe("CourseViewClient free first class behavior", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.searchParams = {};
+    mocks.listeners.clear();
+    mocks.fetch.mockReset().mockResolvedValue({ ok: true, json: async () => ({ courses: [] }) });
+    vi.stubGlobal("fetch", mocks.fetch);
 
     Object.defineProperty(window, "requestIdleCallback", {
       writable: true,
@@ -113,7 +124,9 @@ describe("CourseViewClient free first class behavior", () => {
     });
   });
 
-  function renderView() {
+  afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+
+  function renderView(hasPurchased = false) {
     const lessonRoutesInOrder = Array.from(
       { length: 15 },
       (_, index) => `/courses/course-1/lessons/l${index + 1}`,
@@ -129,10 +142,10 @@ describe("CourseViewClient free first class behavior", () => {
       (_, index) => `Clase ${index + 1}`,
     );
 
-    render(
+    return render(
       <CourseViewClient
         userName="Student"
-        hasPurchased={false}
+        hasPurchased={hasPurchased}
         courseId="course-1"
         lessonRoutesByTitle={{}}
         lessonRoutesInOrder={lessonRoutesInOrder}
@@ -141,6 +154,38 @@ describe("CourseViewClient free first class behavior", () => {
       />,
     );
   }
+
+  test("paid progress merges duplicate lessons while binding the verified owner hint", async () => {
+    mocks.fetch.mockResolvedValue({ ok: true, json: async () => ({ courses: [
+      { id: "course-1", videos: [{ lessonId: "l1", progressPercent: 25 }] },
+      { id: "course-2", videos: [{ lessonId: "l1", progressPercent: 80 }] },
+    ] }) });
+    renderView(true);
+    expect(await screen.findByText(/80%.*visto/i)).toBeTruthy();
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+    const request = new URL(mocks.fetch.mock.calls[0][0], "https://synthetic.example");
+    expect(request.pathname).toBe("/api/dashboard/courses-progress");
+    expect(request.searchParams.getAll("expectedUserId")).toEqual(["synthetic-student"]);
+  });
+
+  test("unpaid first-class access does not initiate a purchased-course progress read", async () => {
+    renderView();
+    await act(async () => { await new Promise((yes) => setTimeout(yes, 10)); });
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+
+  test("late progress JSON ignored by abort cannot restore watched state after sign-out", async () => {
+    let finish!: (value: unknown) => void;
+    const json = vi.fn(() => new Promise((yes) => { finish = yes; }));
+    mocks.fetch.mockResolvedValue({ ok: true, json });
+    renderView(true);
+    await waitFor(() => expect(json).toHaveBeenCalledOnce());
+    const signal = mocks.fetch.mock.calls[0][1].signal;
+    await act(async () => { for (const listener of [...mocks.listeners]) listener("SIGNED_OUT", null); });
+    expect(signal.aborted).toBe(true);
+    await act(async () => finish({ courses: [{ id: "course-1", videos: [{ lessonId: "l1", progressPercent: 80 }] }] }));
+    expect(screen.queryByText(/80%.*visto/i)).toBeNull();
+  });
 
   test("opens first class route without requiring purchase", () => {
     renderView();

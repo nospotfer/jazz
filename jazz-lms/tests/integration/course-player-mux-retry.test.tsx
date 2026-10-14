@@ -38,6 +38,15 @@ vi.mock("next/dynamic", async () => {
   };
 });
 
+vi.mock("@/utils/supabase/client", () => ({
+  createClient: () => ({ auth: {
+    onAuthStateChange: (listener: (event: string, session: unknown) => void) => {
+      listener("INITIAL_SESSION", { user: { id: "user-1" } });
+      return { data: { subscription: { unsubscribe: () => undefined } } };
+    },
+  } }),
+}));
+
 vi.mock("axios", () => ({
   __esModule: true,
   default: {
@@ -163,6 +172,18 @@ describe("CoursePlayer Mux retry behavior", () => {
       }
       return Promise.resolve({ data: {} });
     });
+  });
+
+  test("background watch progress carries the originating owner hint", async () => {
+    render(<CoursePlayer {...baseProps} />);
+    await waitFor(() => expect(mocks.muxPlayerProps.current).not.toBeNull());
+    const update = mocks.muxPlayerProps.current?.onTimeUpdate as (event: Event) => Promise<void>;
+    await act(async () => update({ target: { duration: 100, currentTime: 40 } } as unknown as Event));
+    expect(mocks.axiosPut).toHaveBeenCalledOnce();
+    const url = new URL(String(mocks.axiosPut.mock.calls[0][0]), "https://synthetic.example");
+    expect(url.pathname).toBe("/api/courses/course-1/lessons/lesson-1/progress");
+    expect(url.searchParams.getAll("expectedUserId")).toEqual(["user-1"]);
+    expect(mocks.axiosPut.mock.calls[0][1]).toEqual({ isCompleted: false, progressPercent: 40, minutesRemaining: 1 });
   });
 
   test("re-fetches mux-playback when MuxPlayer fires onError (auto retry)", async () => {

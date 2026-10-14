@@ -79,3 +79,25 @@ Credential CSV/app.env0664→0600 and identical durable TEST-key retention are
 actual local changes; six durable preview provider values match a207 inputs.
 No key rotation, automatic loading or production configuration proof follows.
 [Operational scope](review-status.md#local-credential-boundaries-and-static-rollback-fallback).
+
+Latest published fallback/docs HEAD `8e68f68` has exact successful remote checks,
+downloaded 1,995/47 normal and 46/1 persisted counts, two 559-file committed
+exports with zero findings, and retained 48-file evidence outside `/tmp` with
+matching hashes/owner-only modes. No separate intermediate `9cb3d3f` CI run or
+production fallback activation is claimed.
+
+**Private dashboard/course owner isolation remains in progress.** A closed
+component/parent baseline freezes 12 failures / five controls; a separate
+six-route owner-consistency baseline freezes 24 failures / 18 controls. Prior
+identity/private children or late results can survive an account switch, and a
+stale intent can reach a different verified cookie account. Whole-view retirement
+and server expected-user checks must pass source regressions and a fresh native
+cross-tab/empty-account journey. No backend privilege bypass or notes leak is
+demonstrated. [Current scope](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+
+Registered account access is corrected locally: profile, settings and payment
+history are available without a full-course purchase, while the authenticated
+owner boundary and paid content rules remain. Exact-HEAD frozen six failures /
+nine controls become 15 passes, plus seven notes/paywall controls. Genuine
+unobstructed free-account views remain a fresh native browser requirement.
+[Scope](review-status.md#account-pages-without-a-course-purchase).

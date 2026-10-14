@@ -1,4 +1,5 @@
 import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProfile } from '@/lib/jazz-medal-progress';
@@ -17,6 +18,9 @@ export async function GET(request: Request) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
 
     const profile = await getUserJazzMedalProfile(user.id, language, user.email);
     return NextResponse.json(profile);

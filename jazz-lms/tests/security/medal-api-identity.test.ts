@@ -18,9 +18,9 @@ import { GET as profile } from '@/app/api/dashboard/quiz-medals/profile/route';
 import { GET as recognition } from '@/app/api/dashboard/course-completion-recognition/route';
 
 const endpoints = [
-  { name: 'medals', invoke: () => progress() },
+  { name: 'medals', invoke: () => progress(new Request('https://example.test/api/dashboard/quiz-medals')) },
   { name: 'profile', invoke: () => profile(new Request('https://example.test/api/profile?language=pt&userId=forged-cookie-user')) },
-  { name: 'recognition', invoke: () => recognition() },
+  { name: 'recognition', invoke: () => recognition(new Request('https://example.test/api/dashboard/course-completion-recognition')) },
 ];
 
 describe('medal APIs require a verified actor before granting owner access', () => {

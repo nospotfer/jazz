@@ -1,4 +1,5 @@
 import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProgress } from '@/lib/jazz-medal-progress';
@@ -6,7 +7,7 @@ import { getServerUser } from '@/lib/server-user';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const user = await getServerUser();
 
@@ -19,6 +20,9 @@ export async function GET() {
         activeProfileMedal: 'NONE',
       }, { status: 401 });
     }
+
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
 
     const progress = await getUserJazzMedalProgress(user.id, user.email);
     return NextResponse.json(progress);

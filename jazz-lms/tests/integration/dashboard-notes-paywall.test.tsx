@@ -32,14 +32,14 @@ describe('dashboard notes retain lesson-level access', () => {
     expect(save).toHaveBeenCalledOnce();
   });
 
-  test.each(['/dashboard/profile', '/dashboard/messages', '/dashboard/notes-other/course/lesson', '/dashboard/notes/course/lesson/extra'])('the notes exemption does not unlock %s', (pathname) => {
+  test.each(['/dashboard/videos', '/dashboard/messages', '/dashboard/notes-other/course/lesson', '/dashboard/notes/course/lesson/extra'])('the notes exemption does not unlock %s', (pathname) => {
     const { button } = renderNotes(pathname);
     expect(screen.getByText('Locked area')).toBeTruthy();
     expect(button.closest('.pointer-events-none')).not.toBeNull();
   });
 
   test('a full-course buyer can still use another dashboard route', () => {
-    const { save, button } = renderNotes('/dashboard/profile', true);
+    const { save, button } = renderNotes('/dashboard/videos', true);
     expect(screen.queryByText('Locked area')).toBeNull();
     fireEvent.click(button);
     expect(save).toHaveBeenCalledOnce();

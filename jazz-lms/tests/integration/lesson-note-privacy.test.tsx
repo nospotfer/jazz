@@ -50,7 +50,7 @@ describe('note drafts cannot cross account or lesson boundaries', () => {
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => window.setTimeout(() => callback(0), 1));
     vi.stubGlobal('cancelAnimationFrame', (id: number) => window.clearTimeout(id));
     mocks.fetch.mockImplementation(async (url: string, init?: RequestInit) => {
-      if (url === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{
+      if (String(url).split('?')[0] === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{
         id: 'course', videos: [{ lessonId: 'lesson-1', title: 'One' }, { lessonId: 'lesson-2', title: 'Two' }],
       }] }) };
       if (init?.method === 'PUT') return { ok: true, json: async () => ({ ok: true }) };
@@ -313,7 +313,7 @@ describe('note drafts cannot cross account or lesson boundaries', () => {
   test('an editor save cannot acknowledge a newer local-only sidebar draft', async () => {
     let finish!: (value: { status: number; ok: boolean }) => void;
     mocks.fetch.mockImplementation(async (url: string, init?: RequestInit) => {
-      if (url === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{ id: 'course', videos: [{ lessonId: 'lesson-1', title: 'One' }] }] }) };
+      if (String(url).split('?')[0] === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{ id: 'course', videos: [{ lessonId: 'lesson-1', title: 'One' }] }] }) };
       return init?.method === 'PUT' ? new Promise((resolve) => { finish = resolve; }) : response(serverNote());
     });
     const surfaces = render(<><LessonNotesEditor {...props} /><DashboardNotesNavPanel currentUserId="buyer" /></>);
@@ -338,7 +338,7 @@ describe('note drafts cannot cross account or lesson boundaries', () => {
   test('an owned sidebar edit made during GET wins over the delayed older server snapshot', async () => {
     let finish!: (value: ReturnType<typeof response>) => void;
     mocks.fetch.mockImplementation(async (url: string) => {
-      if (url === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{ id: 'course', videos: [{ lessonId: 'lesson-1', title: 'One' }] }] }) };
+      if (String(url).split('?')[0] === '/api/dashboard/courses-progress') return { ok: true, json: async () => ({ courses: [{ id: 'course', videos: [{ lessonId: 'lesson-1', title: 'One' }] }] }) };
       return new Promise((resolve) => { finish = resolve; });
     });
     render(<><LessonNotesEditor {...props} /><DashboardNotesNavPanel currentUserId="buyer" /></>);
@@ -403,5 +403,35 @@ describe('note drafts cannot cross account or lesson boundaries', () => {
     expect(puts()).toHaveLength(0);
     authChange(null);
     expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  test('sidebar progress request carries its verified owner hint before opening the owned draft', async () => {
+    render(<DashboardNotesNavPanel currentUserId="buyer" />);
+    await tick();
+    await tick(1000);
+    await tick(5);
+    const request = mocks.fetch.mock.calls.find(([url]) => String(url).startsWith('/api/dashboard/courses-progress'))!;
+    expect(new URL(request[0], 'https://synthetic.example').searchParams.getAll('expectedUserId')).toEqual(['buyer']);
+    expect(request[1].signal).toBeInstanceOf(AbortSignal);
+    expect(screen.getByRole('textbox')).toBeTruthy();
+    expect(puts()).toHaveLength(0);
+  });
+
+  test('late courses-progress JSON cannot reopen a retired sidebar draft surface', async () => {
+    let finish!: (value: unknown) => void;
+    const json = vi.fn(() => new Promise((yes) => { finish = yes; }));
+    mocks.fetch.mockResolvedValue({ ok: true, json });
+    render(<DashboardNotesNavPanel currentUserId="buyer" />);
+    await tick();
+    await tick(1000);
+    expect(json).toHaveBeenCalledOnce();
+    const signal = mocks.fetch.mock.calls[0][1].signal as AbortSignal;
+    authChange(null);
+    expect(signal.aborted).toBe(true);
+    await act(async () => finish({ courses: [{ id: 'course', videos: [{ lessonId: 'lesson-1', title: 'Old private lesson' }] }] }));
+    await tick(10);
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Open notes editor' })).toBeNull();
+    expect(puts()).toHaveLength(0);
   });
 });

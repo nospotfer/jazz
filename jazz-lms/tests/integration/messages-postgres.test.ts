@@ -92,7 +92,7 @@ describe.skipIf(!databaseUrl)("messaging routes on isolated PostgreSQL", () => {
     const professorResponse = await inboxRoute.GET();
     expect(professorResponse.status).toBe(200);
     expect((await professorResponse.json()).threads.find((row: { id: string }) => row.id === threadId)).toMatchObject({ unreadCount: 1, studentId, studentEmail });
-    const countResponse = await countRoute.GET();
+    const countResponse = await countRoute.GET(new Request('https://app.example.test/api/messages/unread-count'));
     expect(countResponse.status).toBe(200);
     expect((await countResponse.json()).count).toBeGreaterThanOrEqual(1);
   });

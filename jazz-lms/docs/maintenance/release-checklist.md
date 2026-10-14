@@ -26,6 +26,10 @@ SQL/configuration repair or another resume is authorized by that approval.
 
 ## Review gates
 
+- [ ] Close newly confirmed dashboard/course account-switch privacy and stale
+  progress-intent defects with source regressions and fresh native cross-tab
+  verification; frozen parent/component and six-route failures remain explicit.
+  [Current follow-up](review-status.md#fallback-publication-and-private-view-owner-follow-up).
 - [x] Document and repair substantial auth/payment/media/quiz/notes/privacy/UX defects.
 - [x] Node 24, clean lockfile installation and Prisma generation succeed.
 - [x] Local webpack production build and clean Turbopack build succeed.

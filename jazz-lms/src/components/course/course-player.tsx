@@ -6,6 +6,7 @@ import { DashboardPreferencesProvider } from "@/components/providers/dashboard-p
 import { useLanguage } from "@/components/providers/language-provider";
 import type { AppliedVoucher } from "@/components/vouchers/voucher-input";
 import { useConfettiStore } from "@/hooks/use-confetti-store";
+import { useAuthOwner, withExpectedUserId, type AuthOwnerToken } from "@/hooks/use-auth-owner";
 import { getCanonicalJazzClass } from "@/lib/course-lessons";
 import { languageToHtmlLang } from "@/lib/language";
 import {
@@ -35,7 +36,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
@@ -497,6 +498,22 @@ export const CoursePlayer = ({
   >("idle");
   const router = useRouter();
   const confetti = useConfettiStore();
+  const owner = useAuthOwner(currentUserId);
+  const { capture: captureOwner, isCurrent: isOwnerCurrent } = owner;
+  const mountedRef = useRef(false);
+  const activeLessonRef = useRef(lesson.id);
+  useLayoutEffect(() => { activeLessonRef.current = lesson.id; }, [lesson.id]);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
+  const captureWork = useCallback(() => {
+    const token = captureOwner();
+    return mountedRef.current && token ? { ...token, lessonId: activeLessonRef.current } : null;
+  }, [captureOwner]);
+  const isWorkCurrent = useCallback((token: AuthOwnerToken & { lessonId: string }) => (
+    mountedRef.current && activeLessonRef.current === token.lessonId && isOwnerCurrent(token)
+  ), [isOwnerCurrent]);
 
   const enforceNoRemotePlayback = useCallback(() => {
     const playerElement = muxPlayerRef.current as
@@ -803,6 +820,8 @@ export const CoursePlayer = ({
     let cancelled = false;
 
     const loadPlayback = async () => {
+      const token = captureWork();
+      if (!token) return;
       if (!canAccessLesson || !shouldLoadPlayback) {
         setPlaybackId("");
         setPlaybackToken("");
@@ -820,14 +839,14 @@ export const CoursePlayer = ({
         const response = await axios.get(
           `/api/lessons/${lesson.id}/mux-playback`,
         );
-        if (cancelled) return;
+        if (cancelled || !isWorkCurrent(token)) return;
 
         setPlaybackId(response.data.playbackId || "");
         setPlaybackToken(response.data.playbackToken || "");
         setThumbnailToken(response.data.thumbnailToken || "");
         setStoryboardToken(response.data.storyboardToken || "");
       } catch (error: unknown) {
-        if (cancelled) return;
+        if (cancelled || !isWorkCurrent(token)) return;
 
         const isAxiosErrorFn =
           typeof axios.isAxiosError === "function" ? axios.isAxiosError : null;
@@ -858,7 +877,7 @@ export const CoursePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
+  }, [canAccessLesson, lesson.id, shouldLoadPlayback, captureWork, isWorkCurrent, owner.ready, owner.generation]);
 
   // Reset retry state whenever the active lesson changes.
   useEffect(() => {
@@ -884,6 +903,8 @@ export const CoursePlayer = ({
   const RETRY_BASE_DELAY_MS = 250;
 
   const retryPlayback = useCallback(async () => {
+    const token = captureWork();
+    if (!token) return;
     if (muxRetryInFlightRef.current) return;
     muxRetryInFlightRef.current = true;
 
@@ -899,11 +920,13 @@ export const CoursePlayer = ({
       await new Promise<void>((resolve) => {
         window.setTimeout(() => resolve(), retryDelayMs);
       });
+      if (!isWorkCurrent(token)) return;
 
       const response = await axios.get(
         `/api/lessons/${lesson.id}/mux-playback`,
         { params: { _retry: Date.now() } },
       );
+      if (!isWorkCurrent(token)) return;
       setPlaybackId(response.data.playbackId || "");
       setPlaybackToken(response.data.playbackToken || "");
       setThumbnailToken(response.data.thumbnailToken || "");
@@ -911,6 +934,7 @@ export const CoursePlayer = ({
 
       // Defer reload to next tick so Mux player picks up new tokens.
       window.setTimeout(() => {
+        if (!isWorkCurrent(token)) return;
         const current = muxPlayerRef.current;
         if (!current) return;
         try {
@@ -928,13 +952,16 @@ export const CoursePlayer = ({
         }
       }, 50);
     } catch {
+      if (!isWorkCurrent(token)) return;
       setMuxRetryState("exhausted");
       setMuxRuntimeError(copy.muxRetryExhausted);
     } finally {
-      muxRetryInFlightRef.current = false;
+      if (isWorkCurrent(token)) muxRetryInFlightRef.current = false;
     }
   }, [
     copy.muxRetryExhausted,
+    captureWork,
+    isWorkCurrent,
     lesson.id,
     RETRY_BASE_DELAY_MS,
     setPlaybackId,
@@ -1000,12 +1027,15 @@ export const CoursePlayer = ({
   const openPdfPreview = useCallback(
     async (attachmentId: string) => {
       if (!canAccessAttachments) return;
+      const token = captureWork();
+      if (!token) return;
 
       setIsLoadingPdf(true);
       setPdfError("");
 
       try {
         await getAttachmentSignedUrl(attachmentId, false);
+        if (!isWorkCurrent(token)) return;
 
         setSelectedAttachmentId(attachmentId);
         setPreviewUrl((currentUrl) => {
@@ -1015,6 +1045,7 @@ export const CoursePlayer = ({
           return buildInlineProxyUrl(attachmentId);
         });
       } catch (error: unknown) {
+        if (!isWorkCurrent(token)) return;
         const message = axios.isAxiosError(error)
           ? error.response?.data?.error || copy.unableLoadPdf
           : copy.unableLoadPdf;
@@ -1036,11 +1067,13 @@ export const CoursePlayer = ({
           toast.error(message);
         }
       } finally {
-        setIsLoadingPdf(false);
+        if (isWorkCurrent(token)) setIsLoadingPdf(false);
       }
     },
     [
       canAccessAttachments,
+      captureWork,
+      isWorkCurrent,
       copy.loadedLegacyPdf,
       copy.unableLoadPdf,
       buildInlineProxyUrl,
@@ -1051,11 +1084,15 @@ export const CoursePlayer = ({
 
   const downloadPdf = async (attachmentId: string) => {
     if (!canAccessAttachments) return;
+    const token = captureWork();
+    if (!token) return;
 
     try {
       const data = await getAttachmentSignedUrl(attachmentId, true);
+      if (!isWorkCurrent(token)) return;
       window.open(data.signedUrl, "_blank", "noopener,noreferrer");
     } catch (error: unknown) {
+      if (!isWorkCurrent(token)) return;
       const fallbackAttachment = visibleAttachments.find(
         (item) => item.id === attachmentId,
       );
@@ -1074,6 +1111,8 @@ export const CoursePlayer = ({
 
   const handlePurchaseClick = async () => {
     if (isPurchasing) return;
+    const token = captureWork();
+    if (!token) return;
 
     setIsPurchasing(true);
     setPaymentError("");
@@ -1084,12 +1123,14 @@ export const CoursePlayer = ({
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
+      if (!isWorkCurrent(token)) return;
 
       if (response.data?.url) {
         window.location.assign(response.data.url);
         return;
       }
     } catch (error) {
+      if (!isWorkCurrent(token)) return;
       if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
@@ -1100,7 +1141,7 @@ export const CoursePlayer = ({
         toast.error(copy.unableCheckout);
       }
     } finally {
-      setIsPurchasing(false);
+      if (isWorkCurrent(token)) setIsPurchasing(false);
     }
   };
 
@@ -1159,6 +1200,8 @@ export const CoursePlayer = ({
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
+    const token = captureWork();
+    if (!token) return;
 
     const { duration, current, percent } = getPlaybackMetrics(event);
     if (!shouldPersistLessonProgress(percent, lastSavedPercent)) {
@@ -1174,7 +1217,7 @@ export const CoursePlayer = ({
       );
 
       await axios.put(
-        `/api/courses/${course.id}/lessons/${lesson.id}/progress`,
+        withExpectedUserId(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, token.ownerId),
         {
           isCompleted: false,
           progressPercent: percent,
@@ -1191,17 +1234,20 @@ export const CoursePlayer = ({
 
   const completeLesson = async () => {
     if (isCompleting || !canAccessLesson) return false;
+    const token = captureWork();
+    if (!token) return false;
 
     setIsCompleting(true);
     try {
       await axios.put(
-        `/api/courses/${course.id}/lessons/${lesson.id}/progress`,
+        withExpectedUserId(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, token.ownerId),
         {
           isCompleted: true,
           progressPercent: 100,
           minutesRemaining: 0,
         },
       );
+      if (!isWorkCurrent(token)) return false;
 
       setIsCompleted(true);
       confetti.onOpen();
@@ -1209,10 +1255,10 @@ export const CoursePlayer = ({
       router.refresh();
       return true;
     } catch {
-      toast.error(copy.somethingWrong);
+      if (isWorkCurrent(token)) toast.error(copy.somethingWrong);
       return false;
     } finally {
-      setIsCompleting(false);
+      if (isWorkCurrent(token)) setIsCompleting(false);
     }
   };
 
@@ -1225,10 +1271,12 @@ export const CoursePlayer = ({
   };
 
   const onConfirmCompleteLesson = async () => {
+    const token = captureWork();
+    if (!token) return;
     setIsConfirmCompleteOpen(false);
 
     const didCompleteLesson = await completeLesson();
-    if (!didCompleteLesson) {
+    if (!didCompleteLesson || !isWorkCurrent(token)) {
       return;
     }
 
@@ -1237,6 +1285,7 @@ export const CoursePlayer = ({
   };
 
   const handleQuizClose = () => {
+    if (!captureWork()) return;
     setIsQuizOpen(false);
 
     if (shouldRefreshAfterQuizClose) {
@@ -1244,6 +1293,10 @@ export const CoursePlayer = ({
       router.refresh();
     }
   };
+  const handleQuizSummaryChange = useCallback((summary: LessonQuizSummarySnapshot | null) => {
+    const token = captureWork();
+    if (token?.lessonId === lesson.id) setQuizSummary(summary);
+  }, [captureWork, lesson.id]);
 
   const hasCompletedQuiz = (quizSummary?.totalAttempts ?? 0) > 0;
   const isLessonAndQuizCompleted =
@@ -1297,7 +1350,10 @@ export const CoursePlayer = ({
     firstAttachmentId,
     shouldLoadPdfPreview,
     openPdfPreview,
+    owner.ready,
   ]);
+
+  if (!owner.ready) return null;
 
   return (
     <DashboardPreferencesProvider>
@@ -1719,7 +1775,7 @@ export const CoursePlayer = ({
         isOpen={isQuizOpen}
         initialSummary={quizSummary}
         onClose={handleQuizClose}
-        onSummaryChange={setQuizSummary}
+        onSummaryChange={handleQuizSummaryChange}
       />
 
       <PaymentMethodModal

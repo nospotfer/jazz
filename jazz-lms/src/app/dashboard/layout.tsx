@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/layout/sidebar';
+import { PrivateOwnerBoundary } from '@/components/auth/private-owner-boundary';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
 import { getCurrentUser } from '@/lib/admin';
 import { isAdminRole } from '@/lib/admin/permissions';
@@ -44,6 +45,7 @@ export default async function DashboardLayout({
 
   return (
     <DashboardPreferencesProvider>
+      <PrivateOwnerBoundary expectedUserId={user.id}>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <DashboardLocalTestReset />
         <CheckoutSessionGuard currentUserId={user.id} />
@@ -61,6 +63,7 @@ export default async function DashboardLayout({
           </main>
         </div>
       </div>
+      </PrivateOwnerBoundary>
     </DashboardPreferencesProvider>
   );
 }

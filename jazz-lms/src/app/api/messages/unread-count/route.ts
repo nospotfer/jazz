@@ -1,4 +1,5 @@
 import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -35,7 +36,7 @@ function isDatabaseUnavailableError(error: unknown): boolean {
   );
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = createClient();
     const {
@@ -45,6 +46,9 @@ export async function GET() {
     if (!user?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
+
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
 
     await ensureMessagingTables();
 

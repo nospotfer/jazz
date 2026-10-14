@@ -1,4 +1,6 @@
 import { CourseEnrollButton } from "@/components/course/course-enroll-button";
+import { PrivateOwnerBoundary } from "@/components/auth/private-owner-boundary";
+import { DashboardPreferencesProvider } from "@/components/providers/dashboard-preferences-provider";
 import { CheckoutSessionGuard } from "@/components/dashboard/checkout-session-guard";
 import {
   getCourseTranslationBundle,
@@ -139,6 +141,8 @@ export default async function CourseDetailPage({
   }
 
   return (
+    <DashboardPreferencesProvider>
+    <PrivateOwnerBoundary expectedUserId={user.id}>
     <div className="min-h-screen bg-background">
       <CheckoutSessionGuard currentUserId={user.id} />
       {/* Hero */}
@@ -245,5 +249,7 @@ export default async function CourseDetailPage({
         </div>
       </div>
     </div>
+    </PrivateOwnerBoundary>
+    </DashboardPreferencesProvider>
   );
 }

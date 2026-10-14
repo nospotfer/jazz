@@ -1,4 +1,5 @@
 import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
 import { assertLessonQuizAccess, isLessonQuizError } from "@/lib/lesson-quiz-server";
@@ -17,6 +18,9 @@ export async function PUT(
     if (!user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    const mismatch = expectedUserConsistencyResponse(req, user.id);
+    if (mismatch) return mismatch;
 
     await assertLessonQuizAccess({ userId: user.id, userEmail: user.email, courseId, lessonId, allowFreePreview: true });
     const { isCompleted, progressPercent, minutesRemaining } = await req.json();

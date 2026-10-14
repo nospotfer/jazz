@@ -963,3 +963,73 @@ local serving-contract evidence, not an activated host or a repaired production
 backend. Native e32/9bd/FB/BC/a207 app scopes remain distinct. Provider/merchant
 recipients/OAuth/mail/continuous-host/account/DNS/quarantine/production review
 gates remain essential; the goal is active and incomplete.
+
+## Fallback publication and private-view owner follow-up
+
+Documentation HEAD `8e68f68d63eebca6da89a5c11203467cb16ec62c` includes the prepared
+`9cb3d3f` fallback. Its exact [Quality PR run](https://github.com/nospotfer/jazz/actions/runs/38514816671)
+and push run 38514810716 pass; downloaded logs confirm **1,995 normal passes /
+47 skips**, **46 PostgreSQL passes / one REST skip**, build, types and lint
+0 errors / 25 warnings. Secret Scan PR 38514816735 and push 38514810694 pass,
+as do CodeQL run 38514813078 and aggregate 115691258799. The actual Vercel
+combined status reports a completed deployment; provider isolation remains
+unreconciled. There is no separate CI run for intermediate `9cb3d3f`.
+
+Both exact committed exports contain 559 files and scan with zero findings;
+expanded Quality logs also scan clean. The nine changed files between these
+commits are instruction/maintenance documents. Forty-eight selected fallback,
+publication and secret-free permission/credential-retention receipts are kept
+outside `/tmp` at
+`/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24/review-checkpoint-maintenance-fallback-9cb3d3f/`.
+Every copied byte hash and owner-only permission matches. All 34 scanner matches
+are independently verified path/SHA256 entries in the committed-file manifests;
+there are no other findings or new suppressions. Actual credentials, environments,
+configuration, actors and sessions are excluded. This retention is local,
+unencrypted and not off-site; the fallback remains inactive.
+
+A new high confidentiality/correctness issue is **confirmed and being repaired**.
+On `9cb3d3f`, a frozen closed-mock suite reproduces 12 failures with five passing
+controls: dashboard account changes retain old identity, protected SSR children,
+avatars or counters. Actual parent composition executes, with synthetic private
+children; the course player has the same unguarded sidebar consumer. Notes have
+their own existing owner guard and are not claimed to leak by this proof.
+
+On exact `8e68f68`, six user-scoped routes additionally have 24 frozen failing
+owner-consistency cases and 18 passing controls. A stale client identity hint
+does not stop reads or a progress update for the different, verified cookie
+owner. These are closed mocks with no provider/database calls, not a backend
+authorization bypass: the server still selects the authenticated account.
+Whole-view retirement, guarded late results and expected-user checks are in
+progress. Real cross-tab transport, refreshed SSR ownership and the empty-account
+native journey remain pending on a fresh exact-source preview.
+
+The same private-view retirement is being applied to the admin layout; two
+separate frozen actual-parent cases reproduce retained privileged children after
+account change/sign-out. Two checkout components have a separate frozen baseline
+of eight stale-response failures and two current-owner controls. These proofs
+remain distinct from the original 17 component cases. Source review also finds
+the active course-progress read: its separate exact-HEAD baseline has four
+failures and three controls. All seven read/progress routes now pass 49 closed
+owner-consistency regressions; full combined checks and native verification are
+still pending.
+
+## Account pages without a course purchase
+
+A separate local UX correction permits registered users to open their own
+`/dashboard/profile`, `/dashboard/payment` and `/dashboard/settings`, including
+canonical trailing-slash variants. Requiring a full-course purchase to manage
+an account or inspect its own receipts prevented useful account recovery and
+made successful empty history inaccessible. The server dashboard authentication
+and private owner boundary still apply; this changes the purchase overlay for
+these three exact pages only. Lessons, videos, messaging and course recognition
+retain their existing access rules. No API, entitlement, price or provider
+configuration is changed by this policy correction.
+
+On frozen exact `8e68f68`, the new component suite has **six failing account-page
+cases and nine passing paid/free controls**. The unchanged 15 cases now pass,
+alongside seven existing lesson-notes/paywall controls. A former locked-profile
+control is deliberately replaced with a paid-video-route control, so both unpaid
+restriction and paid access still have useful coverage. These are closed
+component checks without network/provider/database calls. Actual unobstructed
+free-account profile/settings/history and ownership verification are pending on
+the fresh-source preview; older A207 browser evidence is not relabeled.

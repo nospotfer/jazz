@@ -980,3 +980,45 @@ The maintenance goal remains active and incomplete.
   quarantine/activation review; it does not replace the native/provider scope.
 
 [Exact operational evidence and limits](review-status.md#local-credential-boundaries-and-static-rollback-fallback).
+
+## 2026-10-14 — Published fallback evidence and account-switch repair
+
+- Exact `8e68f68` Quality/Secret Scan/CodeQL and existing Vercel build status pass.
+  Downloaded Quality logs confirm 1,995 normal passes / 47 skips and 46 actual
+  PostgreSQL passes / one REST skip, build, types and lint 0 errors / 25 warnings.
+  Both 559-file committed exports and expanded CI logs scan clean. Intermediate
+  `9cb3d3f` has no separate CI run; only nine documents differ at the final HEAD.
+- Retain 48 selected fallback/publication and secret-free local-security receipts
+  outside `/tmp`, with matching byte hashes and files 0600/directories 0700.
+  All 34 scanner matches are exact committed-manifest path/hash records; zero
+  other findings or new suppressions. No credential/config/actor/session inputs
+  are copied. Retention remains local, unencrypted and not off-site.
+- New closed component/actual-parent proof freezes 12 failures / five controls
+  for previous-account dashboard identity, private SSR children, avatars and
+  counters. The course-player consumer also needs retirement. Existing notes
+  guards are preserved; no notes leak or backend privilege bypass is inferred.
+- Separate exact-HEAD route proof freezes 24 failures / 18 controls: stale owner
+  hints still read/update the verified cookie account, including progress. Repair
+  both private-view lifetime and server consistency; preserve server role/access
+  authority. Fresh-source cross-tab and empty-account browser checks are pending.
+- The draft PR accurately records this work as incomplete. No production operation,
+  new spend, payment transaction or mail is performed; the goal remains active.
+
+[Current follow-up](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+
+## 2026-10-14 — Registered account access
+
+- Confirm the purchase overlay blocks a free user's own profile, preferences and
+  payment history. Freeze a separate exact `8e68f68` component baseline with six
+  failures and nine passing controls, before changing the route policy.
+- Exempt only the three exact profile/payment/settings routes (plus trailing
+  slash). Server authentication, private-view ownership and course/lesson/medal/
+  message access remain intact; no price, entitlement or API change.
+- The unchanged 15 new cases and seven existing notes/paywall controls pass.
+  Replace the former locked-profile control with the paid videos route, retaining
+  free restrictions and paid access checks. No network/provider/database calls.
+- Fresh-source browser verification will exercise genuine empty free-account
+  history and unobstructed profile/settings. Earlier protected-view scopes and
+  immutable reports remain separate; nothing is released to production.
+
+[Account access evidence](review-status.md#account-pages-without-a-course-purchase).

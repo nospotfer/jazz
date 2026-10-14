@@ -51,8 +51,8 @@ persisted local journeys and actual provider inspection.
 | OPS-09 | Medium native stability | Expired request counters and raw identifier keys could accumulate without bound. Three fixed buckets now use hashed keys, expiry pruning and live-capacity denial without eviction. |26 storage regressions pass. Trusted ingress and restart/distributed limits remain separate. [Native safeguards](native-runtime.md). |
 | OPS-10 | High native integrity | Unnormalized ingress permitted IP/header spoofing; cache symlinks and mutable/npm-link/ambient configuration escaped artifact assumptions. Explicit policy/complete manifest/fresh locked producer and private launcher address confirmed defects. | Current1,995 normal passes include 512 earlier plus152 new cases. Exact e32 fresh548-file archive/45,766 sealed files/client-secret check, Unix runtime 19/HTTPS11, restart/cleanup/separate-UID/final inspection pass. Runner prepared and disabled; production boundaries remain. [Native package](native-runtime.md). |
 | AUTH-09 | High correctness | Password SIGNED_IN/initial-session effects could navigate before server-cookie/profile setup, followed by a late second redirect. Pending/mounted guards now keep navigation behind the handler. | Initial14 cases reproduce10 failures/four controls; two later cases reproduce late callback redirects. Final16/16 pass;9bd native held-avatar proof remains distinct from subsequent late-event correction. [Checkpoint](review-status.md#native-password-navigation-and-fresh-learning). |
-| UX-09 | Medium usability | Lesson notes drawer had no path to its existing account-saved editor. Added selected course/lesson link and four-language draft/sync explanation. | 49 existing notes/privacy/access cases pass; exact9bd desktop link navigates. Mobile320/390 geometry/hit/keyboard/route entry passes after57 scroll/min96 repair. Scoped editor hydration, displayed saved-text hashes and styles pass at both widths on FB. |
-| UX-10 | Medium accessibility | Completion button visible label was replaced by a different dynamic accessible name. Its aria-label now uses the visible localized action. | Seven component cases verify four locales and ready/saving/completed names. Actual BC browser checks verify reachable matching labels for ES/EN/FR/PT at 1440/320/390; no completion writes. |
+| UX-12 | Medium usability | Lesson notes drawer had no path to its existing account-saved editor. Added selected course/lesson link and four-language draft/sync explanation. | 49 existing notes/privacy/access cases pass; exact9bd desktop link navigates. Mobile320/390 geometry/hit/keyboard/route entry passes after57 scroll/min96 repair. Scoped editor hydration, displayed saved-text hashes and styles pass at both widths on FB. |
+| UX-13 | Medium accessibility | Completion button visible label was replaced by a different dynamic accessible name. Its aria-label now uses the visible localized action. | Seven component cases verify four locales and ready/saving/completed names. Actual BC browser checks verify reachable matching labels for ES/EN/FR/PT at 1440/320/390; no completion writes. |
 | UX-11 | Medium usability | Lesson toolbar squeezed the shared language selector to 2px and hid its controls. Its wrapper now prevents flex shrinking. | Actual FB clipping reproduction; BC fresh build and 35/35 browser checks, including 12 real language clicks at desktop/320/390 with unobstructed 44×44 controls. |
 | PAY-13 | Medium financial correctness | NULL recorded purchase amount became current catalog price, inventing past charges. API now returns null and UI shows a localized unavailable label, preserving real0/positive values. | Three frozen baseline failures/one control, then33 targeted passes; contract updated explicitly. No schema/currency/provider changes. |
 | PAY-14 | High financial correctness | Missing or malformed provider amounts became a zero charge and phantom full discount. Nullable extraction/sync preserve real zero and same-payment known facts; replacements clear stale accounting and partial retries retain voucher linkage. Unknown voucher amounts no longer count as free. | Distinct failing freezes, then260 targeted passes including18 actual PostgreSQL cases; independent review passes. Overall1,973/47 normal and46/1 persisted. No actual provider incident, schema/backfill, currency/tax policy or transaction claim. |
@@ -63,6 +63,24 @@ persisted local journeys and actual provider inspection.
 | OPS-12 | Medium rollback preparedness | Proposed rollback included a closed maintenance page but no actual artifact. Standalone branded ES/EN/FR/PT fallback and exact503/header contract now exist for review. | Actual loopback HTTP/browser138/138 and separate file4/4 checks pass; initial109/110 CSS-zoom overflow source/report kept and wrapping repaired. No backend/provider/storage dependency or activation; host/DNS/quarantine review remains. [Artifact](maintenance-fallback.md). |
 
 ## Open verification and release gates
+
+Confirmed source work in progress: **SEC-17 (high confidentiality/correctness)**.
+Dashboard and course-player account changes can retain prior identity/private
+children and accept late avatars/counters. The frozen component/parent baseline
+has 12 failures and five passing controls; six user-scoped read/progress routes
+have 24 failures and 18 controls for mismatching, blank and ambiguous owner hints.
+Implement whole-view owner retirement and expected-user consistency before
+server work, then verify regressions and actual native cross-tab behavior.
+No backend privilege bypass, notes leak or production repair is claimed.
+[Exact evidence and limits](review-status.md#fallback-publication-and-private-view-owner-follow-up).
+
+**UX-18 (medium account usability)** is fixed locally: registered users can open
+their own profile, settings and payment history without buying a course.
+The three exact account routes bypass the purchase overlay while authenticated
+ownership and paid content rules remain intact. Six frozen failures / nine
+controls become 15 passes; seven existing notes/paywall controls also pass.
+Native free-account checks remain pending.
+[Scope](review-status.md#account-pages-without-a-course-purchase).
 
 | ID | Priority | Gate | Exact next action |
 | --- | --- | --- | --- |

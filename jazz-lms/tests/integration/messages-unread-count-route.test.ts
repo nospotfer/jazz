@@ -34,7 +34,7 @@ describe('GET /api/messages/unread-count', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
 
     expect(response.status).toBe(401);
     expect(mocks.ensureTables).not.toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('GET /api/messages/unread-count', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: BigInt(7) }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -62,7 +62,7 @@ describe('GET /api/messages/unread-count', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: 2 }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -76,7 +76,7 @@ describe('GET /api/messages/unread-count', () => {
     });
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     const body = await response.json();
 
     expect(response.status).toBe(500);

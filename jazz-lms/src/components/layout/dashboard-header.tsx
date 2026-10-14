@@ -10,7 +10,8 @@ import { useUserJazzMedalProgress } from "@/hooks/use-user-jazz-medal-progress";
 import type { UserJazzMedalProgress } from "@/lib/lesson-quiz";
 import { resolveProfileAvatar } from "@/lib/profile-avatars";
 import { createClient } from "@/utils/supabase/client";
-import type { AuthChangeEvent } from "@supabase/supabase-js";
+import { useAuthOwner } from "@/hooks/use-auth-owner";
+import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import {
     Bell,
     LogOut,
@@ -79,18 +80,18 @@ export function DashboardHeader({
   const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
-  const supabase = createClient();
+  const owner = useAuthOwner(user.id);
+  const { capture, isCurrent } = owner;
   const { progress: medalProgress } =
     useUserJazzMedalProgress(initialMedalProgress);
   const { recognition } = useUserCourseCompletionRecognition();
-  const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
-    resolveProfileAvatar(user.id, user.user_metadata?.avatar_url),
-  );
+  const [avatarSnapshot, setAvatarSnapshot] = useState<{ key: string; url: string } | null>(null);
   const displayName =
     user.user_metadata?.full_name ||
     user.email?.split("@")[0] ||
     t("userFallback", "Usuario");
-  const avatarUrl = currentAvatarUrl;
+  const avatarUrl = avatarSnapshot?.key === `${user.id}:${owner.generation}`
+    ? avatarSnapshot.url : resolveProfileAvatar(user.id, user.user_metadata?.avatar_url);
   const initials = displayName
     .split(" ")
     .map((n: string) => n[0])
@@ -99,7 +100,10 @@ export function DashboardHeader({
     .slice(0, 2);
 
   // ── Notifications state ─────────────────────────────────────────
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const { value: unreadResult } = useOwnerScopedResource<{ count: number } | null>({
+    path: "/api/messages/unread-count", initialValue: null, emptyValue: null, intervalMs: 180000, initialDelayMs: 900, expectedUserId: user.id,
+  });
+  const unreadMessages = typeof unreadResult?.count === "number" ? unreadResult.count : 0;
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [activeNotif, setActiveNotif] = useState<Notification | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -143,29 +147,26 @@ export function DashboardHeader({
     router.push("/");
   };
 
-  // ── Click outside to close ──────────────────────────────────────
+  // Profile results are bound to the same owner generation as the frame.
   useEffect(() => {
-    const syncAvatarFromSession = async () => {
-      const {
-        data: { user: latestUser },
-      } = await supabase.auth.getUser();
-
-      if (latestUser) {
-        setCurrentAvatarUrl(
-          resolveProfileAvatar(
-            latestUser.id,
-            latestUser.user_metadata?.avatar_url,
-          ),
-        );
+    const token = capture();
+    if (!token) return;
+    let active = true;
+    const syncAvatar = async () => {
+      try {
+        const { data: { user: latestUser } } = await createClient().auth.getUser();
+        if (active && isCurrent(token) && latestUser?.id === token.ownerId) {
+          setAvatarSnapshot({ key: `${token.ownerId}:${token.generation}`, url: resolveProfileAvatar(latestUser.id, latestUser.user_metadata?.avatar_url) });
+        }
+      } catch {
+        // Preserve the verified owner's existing avatar on transient failure.
       }
     };
+    void syncAvatar();
+    return () => { active = false; };
+  }, [capture, isCurrent, owner.generation, owner.revision, user.id]);
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      syncAvatarFromSession();
-    });
-
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifDropdown(false);
@@ -179,132 +180,11 @@ export function DashboardHeader({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      subscription.unsubscribe();
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [supabase]);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let isMounted = true;
-    let intervalId: number | null = null;
-    let timeoutId: number | null = null;
-    let idleCallbackId: number | null = null;
-    let requestController: AbortController | null = null;
-
-    const stopPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    const hasSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      return Boolean(session);
-    };
-
-    const loadUnreadMessages = async () => {
-      if (document.visibilityState === "hidden") {
-        return;
-      }
-
-      if (!(await hasSession())) {
-        stopPolling();
-        if (isMounted) setUnreadMessages(0);
-        return;
-      }
-
-      requestController?.abort();
-      requestController = new AbortController();
-
-      try {
-        const response = await fetch("/api/messages/unread-count", {
-          signal: requestController.signal,
-        });
-
-        if (!isMounted) return;
-
-        if (response.status === 401) {
-          setUnreadMessages(0);
-          stopPolling();
-          return;
-        }
-
-        const data = await response.json();
-        setUnreadMessages(typeof data.count === "number" ? data.count : 0);
-      } catch (error) {
-        if (!isMounted) return;
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        setUnreadMessages(0);
-      }
-    };
-
-    const startPolling = () => {
-      stopPolling();
-
-      intervalId = window.setInterval(() => {
-        void loadUnreadMessages();
-      }, 180000);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        void loadUnreadMessages();
-      }
-    };
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (!isMounted) return;
-
-      if (event === "SIGNED_OUT") {
-        requestController?.abort();
-        stopPolling();
-        setUnreadMessages(0);
-      }
-
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        void loadUnreadMessages();
-        startPolling();
-      }
-    });
-
-    if (typeof window.requestIdleCallback === "function") {
-      idleCallbackId = window.requestIdleCallback(
-        () => {
-          void loadUnreadMessages();
-          startPolling();
-        },
-        { timeout: 1500 },
-      );
-    } else {
-      timeoutId = window.setTimeout(() => {
-        void loadUnreadMessages();
-        startPolling();
-      }, 900);
-    }
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      requestController?.abort();
-      stopPolling();
-      if (idleCallbackId !== null) {
-        window.cancelIdleCallback?.(idleCallbackId);
-      }
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
-      }
-    };
   }, []);
+
+  if (!owner.ready) return null;
 
   return (
     <>

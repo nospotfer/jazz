@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { NextRequest } from 'next/server';
+import { LANGUAGE_COOKIE_KEY } from '@/lib/language';
 
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
@@ -36,11 +38,9 @@ vi.mock('@/lib/db', () => ({
 
 describe('GET /api/dashboard/pdf-count', () => {
   const createRequest = (language = 'es') =>
-    ({
-      cookies: {
-        get: vi.fn(() => ({ value: language })),
-      },
-    }) as unknown as import('next/server').NextRequest;
+    new NextRequest('https://app.example.test/api/dashboard/pdf-count', {
+      headers: { cookie: `${LANGUAGE_COOKIE_KEY}=${language}` },
+    });
 
   beforeEach(() => {
     vi.clearAllMocks();

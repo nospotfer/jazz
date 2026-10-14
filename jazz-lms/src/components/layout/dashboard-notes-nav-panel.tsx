@@ -6,7 +6,8 @@ import { ChevronDown, Library, PencilLine } from 'lucide-react';
 
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
-import { useNoteOwner } from '@/hooks/use-note-owner';
+import { AuthOwnerContext, useAuthOwner } from '@/hooks/use-auth-owner';
+import { useOwnerScopedResource } from '@/hooks/use-owner-scoped-resource';
 import { readLessonNoteDraft, writeLessonNoteDraft } from '@/lib/lesson-note-drafts';
 
 interface CourseProgressVideo {
@@ -24,65 +25,23 @@ interface CourseProgressItem {
 }
 
 export function DashboardNotesNavPanel({ currentUserId }: { currentUserId: string }) {
-  const isCurrentOwner = useNoteOwner(currentUserId);
-  if (!isCurrentOwner) return null;
-  return <ScopedNotesNavPanel key={currentUserId} currentUserId={currentUserId} />;
+  const owner = useAuthOwner(currentUserId);
+  if (!owner.ready) return null;
+  return <AuthOwnerContext.Provider key={`${currentUserId}:${owner.generation}`} value={owner}>
+    <ScopedNotesNavPanel currentUserId={currentUserId} />
+  </AuthOwnerContext.Provider>;
 }
 
 function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
   const { t, language } = useDashboardPreferences();
   const draftDescriptionId = useId();
-  const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { value: data, isLoading: loading } = useOwnerScopedResource<{ courses: CourseProgressItem[] } | null>({
+    path: '/api/dashboard/courses-progress', initialValue: null, emptyValue: null, intervalMs: null, initialDelayMs: 300, expectedUserId: currentUserId,
+  });
+  const videos = useMemo(() => (data?.courses ?? []).flatMap((course) =>
+    course.videos.map((video) => ({ ...video, courseId: course.id }))
+  ), [data]);
   const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-
-    const loadCourses = () => {
-      setLoading(true);
-      fetch('/api/dashboard/courses-progress', { signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error('Unable to load courses');
-          return response.json();
-        })
-        .then((data) => {
-          if (!isMounted) return;
-
-          const nextCourses: CourseProgressItem[] = data.courses ?? [];
-          const flattened = nextCourses.flatMap((course) =>
-            course.videos.map((video) => ({ ...video, courseId: course.id }))
-          );
-
-          setVideos(flattened);
-          setLoading(false);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setLoading(false);
-        });
-    };
-
-    const idleCallback = window.requestIdleCallback?.(() => {
-      loadCourses();
-    }, { timeout: 1000 });
-
-    if (idleCallback !== undefined) {
-      return () => {
-        isMounted = false;
-        controller.abort();
-        window.cancelIdleCallback?.(idleCallback);
-      };
-    }
-
-    const timeoutId = window.setTimeout(loadCourses, 300);
-    return () => {
-      isMounted = false;
-      controller.abort();
-      window.clearTimeout(timeoutId);
-    };
-  }, []);
 
   const primaryCourseId = videos[0]?.courseId;
   const notesVideos = useMemo(() => videos

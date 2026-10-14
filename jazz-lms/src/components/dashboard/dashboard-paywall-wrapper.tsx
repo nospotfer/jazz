@@ -10,6 +10,7 @@ import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
 import { DEFAULT_FULL_COURSE_PRICE_EUR } from '@/lib/pricing';
+import { useOwnerAction } from '@/hooks/use-owner-action';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -29,6 +30,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
+  const { capture, isCurrent } = useOwnerAction();
 
   const copy = {
     es: {
@@ -64,6 +66,9 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
   const isLockedRoute = useMemo(() => {
     if (!pathname) return false;
     if (pathname === '/dashboard') return false;
+    // Course payment must not prevent managing the registered user's account.
+    // Authentication and owner checks still come from the dashboard boundary.
+    if (/^\/dashboard\/(?:profile|payment|settings)\/?$/.test(pathname)) return false;
     // The notes page and API enforce access to the individual lesson, including
     // the free first lesson and historical single-lesson purchases.
     if (/^\/dashboard\/notes\/[^/]+\/[^/]+\/?$/.test(pathname)) return false;
@@ -104,6 +109,8 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
 
   const handlePurchase = async () => {
     if (!courseId || isPurchasing) return;
+    const token = capture();
+    if (!token) return;
 
     try {
       setIsPurchasing(true);
@@ -114,6 +121,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
+      if (!isCurrent(token)) return;
 
       if (response.data?.url) {
         window.location.assign(response.data.url);
@@ -121,6 +129,7 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, children }: D
       }
       setIsPurchasing(false);
     } catch (error) {
+      if (!isCurrent(token)) return;
       if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
         setPaymentError(error.response.data);
       }

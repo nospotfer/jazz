@@ -24,7 +24,9 @@ import {
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useOwnerAction } from "@/hooks/use-owner-action";
+import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import { SaxLoadingOverlay } from "@/components/ui/sax-loading-overlay";
 
 const UnlockAnimation = dynamic(
@@ -511,9 +513,19 @@ export function CourseViewClient({
   >(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [progressByLessonId, setProgressByLessonId] = useState<
-    Record<string, number>
-  >({});
+  const { capture, isCurrent, ready } = useOwnerAction();
+  const { value: coursesProgress } = useOwnerScopedResource<{ courses: DashboardCourseProgressItem[] } | null>({
+    path: "/api/dashboard/courses-progress", initialValue: null, emptyValue: null, intervalMs: null, enabled: hasPurchased,
+  });
+  const progressByLessonId = useMemo(() => {
+    const nextProgress: Record<string, number> = {};
+    for (const course of coursesProgress?.courses ?? []) {
+      for (const video of course.videos ?? []) {
+        nextProgress[video.lessonId] = Math.max(nextProgress[video.lessonId] ?? 0, video.progressPercent ?? 0);
+      }
+    }
+    return nextProgress;
+  }, [coursesProgress]);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(
@@ -578,39 +590,15 @@ export function CourseViewClient({
   }, [searchParams]);
 
   useEffect(() => {
-    if (!hasPurchased) {
-      setProgressByLessonId({});
-      return;
-    }
-
-    fetch("/api/dashboard/courses-progress")
-      .then((response) => response.json())
-      .then((data) => {
-        const nextCourses: DashboardCourseProgressItem[] = data.courses ?? [];
-        const nextProgress: Record<string, number> = {};
-
-        for (const course of nextCourses) {
-          for (const video of course.videos ?? []) {
-            const key = video.lessonId;
-            const current = nextProgress[key] ?? 0;
-            nextProgress[key] = Math.max(current, video.progressPercent ?? 0);
-          }
-        }
-
-        setProgressByLessonId(nextProgress);
-      })
-      .catch(() => {
-        setProgressByLessonId({});
-      });
-  }, [hasPurchased]);
-
-  useEffect(() => {
     const purchaseStatus = searchParams.get("purchase");
     const source = searchParams.get("source");
 
     if (purchaseStatus !== "success" || source !== "dashboard") {
       return;
     }
+
+    const token = capture();
+    if (!token) return;
 
     const purchaseParamsKey = searchParams.toString();
     if (handledPurchaseParamsRef.current === purchaseParamsKey) {
@@ -620,9 +608,10 @@ export function CourseViewClient({
     handledPurchaseParamsRef.current = purchaseParamsKey;
 
     let cancelled = false;
+    const isActive = () => !cancelled && isCurrent(token);
 
     const finishAsPurchased = () => {
-      if (cancelled) {
+      if (!isActive()) {
         return;
       }
 
@@ -669,6 +658,7 @@ export function CourseViewClient({
       }
 
       const runReconciliation = async () => {
+        if (!isActive()) return false;
         try {
           const reconciliationPayload: {
             action: "reconcile";
@@ -693,7 +683,7 @@ export function CourseViewClient({
             reconciliationPayload,
           );
 
-          return Boolean(reconciliation.data?.purchased);
+          return isActive() && Boolean(reconciliation.data?.purchased);
         } catch {
           return false;
         }
@@ -708,7 +698,7 @@ export function CourseViewClient({
       const pollIntervalMs = 2000;
 
       for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-        if (cancelled) {
+        if (!isActive()) {
           return;
         }
 
@@ -722,7 +712,7 @@ export function CourseViewClient({
         });
       }
 
-      if (!cancelled) {
+      if (isActive()) {
         setIsVerifyingPurchase(false);
         setPaymentError(copy.purchasePending);
         handledPurchaseParamsRef.current = null;
@@ -734,7 +724,7 @@ export function CourseViewClient({
     return () => {
       cancelled = true;
     };
-  }, [searchParams, hasPurchased, router, courseId, copy.purchasePending]);
+  }, [searchParams, hasPurchased, router, courseId, copy.purchasePending, capture, isCurrent, ready]);
 
   useEffect(() => {
     if (hasPurchased) {
@@ -780,6 +770,8 @@ export function CourseViewClient({
 
   const handlePurchaseClick = useCallback(async () => {
     if (!courseId) return;
+    const token = capture();
+    if (!token) return;
 
     setIsPurchasing(true);
     setPaymentError("");
@@ -791,6 +783,7 @@ export function CourseViewClient({
         voucherCode: appliedVoucher?.voucher.code,
       });
 
+      if (!isCurrent(token)) return;
       if (response.data?.url) {
         setIsMethodModalOpen(false);
         setIsPurchasing(false);
@@ -799,6 +792,7 @@ export function CourseViewClient({
       }
       setIsPurchasing(false);
     } catch (error) {
+      if (!isCurrent(token)) return;
       if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
@@ -807,7 +801,7 @@ export function CourseViewClient({
       }
       setIsPurchasing(false);
     }
-  }, [appliedVoucher, courseId, language]);
+  }, [appliedVoucher, courseId, language, capture, isCurrent]);
 
   const primePaymentModal = useCallback(() => {
     warmPaymentMethodModal();
@@ -821,6 +815,8 @@ export function CourseViewClient({
 
   const handleCardClick = useCallback(
     (index: number) => {
+      const token = capture();
+      if (!token) return;
       const lesson = lessonsData[index];
       const lessonRoute =
         lessonRoutesInOrder[index] ||
@@ -835,7 +831,7 @@ export function CourseViewClient({
 
         setShowLessonNavigationOverlay(false);
         lessonNavigationTimeoutRef.current = window.setTimeout(() => {
-          setShowLessonNavigationOverlay(true);
+          if (isCurrent(token)) setShowLessonNavigationOverlay(true);
         }, LESSON_NAVIGATION_OVERLAY_THRESHOLD_MS);
 
         router.push(target);
@@ -856,7 +852,7 @@ export function CourseViewClient({
       setPinnedIndex(index);
       setHoveredIndex(null);
     },
-    [courseId, hasPurchased, lessonRoutesByTitle, lessonRoutesInOrder, router],
+    [courseId, hasPurchased, lessonRoutesByTitle, lessonRoutesInOrder, router, capture, isCurrent],
   );
 
   const handleClosePopup = useCallback(() => {

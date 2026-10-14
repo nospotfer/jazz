@@ -148,7 +148,7 @@ describe('API Contract: /api/messages/unread-count response shape', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: 3 }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     const body = await response.json();
 
     expect(body).toHaveProperty('count');
