@@ -1366,7 +1366,7 @@ export const CoursePlayer = ({
                         onClick={onMarkAsComplete}
                         disabled={isCompleteButtonDisabled}
                         title={completeButtonTooltip}
-                        aria-label={completeButtonTooltip}
+                        aria-label={copy.completeAction}
                         className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
                           isLessonAndQuizCompleted
                             ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20"

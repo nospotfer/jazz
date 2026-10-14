@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { CoursePlayer } from "@/components/course/course-player";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -143,18 +143,8 @@ function attachmentCalls() {
   );
 }
 
-function getCompleteButton() {
-  const button = screen
-    .getAllByRole("button")
-    .find((candidate) =>
-      (candidate.textContent || "").trim().startsWith("Concluir"),
-    );
-
-  if (!button) {
-    throw new Error("Complete button not found");
-  }
-
-  return button as HTMLButtonElement;
+function getCompleteButton(name = "Concluir") {
+  return screen.getByRole("button", { name }) as HTMLButtonElement;
 }
 
 function getGamificationButton() {
@@ -220,7 +210,7 @@ describe("CoursePlayer language switch behavior", () => {
     });
   });
 
-  test("does not refetch mux playback when language changes, but refreshes PDF language", async () => {
+  test("updates the accessible completion name and PDF language without refetching mux playback", async () => {
     const view = render(<CoursePlayer {...baseProps} />);
 
     await waitFor(
@@ -232,15 +222,29 @@ describe("CoursePlayer language switch behavior", () => {
     );
 
     expect(attachmentCalls()[0]?.[1]?.params?.language).toBe("es");
+    const completeButton = getCompleteButton();
+    expect(completeButton).toHaveProperty("disabled", true);
 
-    mocks.currentLanguage = "pt";
-    view.rerender(<CoursePlayer {...baseProps} />);
+    for (const [language, completionName] of [
+      ["en", "Complete"],
+      ["fr", "Valider"],
+      ["pt", "Concluir"],
+    ]) {
+      mocks.currentLanguage = language;
+      view.rerender(<CoursePlayer {...baseProps} />);
 
-    await waitFor(() => {
-      expect(attachmentCalls()).toHaveLength(2);
-    });
+      await waitFor(() => {
+        expect(attachmentCalls().at(-1)?.[1]?.params?.language).toBe(language);
+      });
 
-    expect(attachmentCalls()[1]?.[1]?.params?.language).toBe("pt");
+      expect(getCompleteButton(completionName)).toBe(completeButton);
+      expect(completeButton.querySelector("span")?.textContent?.trim()).toBe(
+        completionName,
+      );
+      expect(completeButton).toHaveProperty("disabled", true);
+    }
+
+    expect(attachmentCalls()).toHaveLength(4);
     expect(muxPlaybackCalls()).toHaveLength(1);
   });
 
@@ -320,6 +324,12 @@ describe("CoursePlayer language switch behavior", () => {
   });
 
   test("opens confirmation modal at 80% and completes lesson only after confirm", async () => {
+    let resolveCompletion!: () => void;
+    mocks.axiosPut.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveCompletion = () => resolve({ data: {} });
+      }),
+    );
     render(
       <CoursePlayer
         {...baseProps}
@@ -330,6 +340,7 @@ describe("CoursePlayer language switch behavior", () => {
 
     const completeButton = getCompleteButton();
     const gamificationButton = getGamificationButton();
+    expect(completeButton.title).toBe("Ir a gamificacion");
     expect(gamificationButton).toHaveProperty("disabled", true);
 
     fireEvent.click(completeButton);
@@ -347,10 +358,21 @@ describe("CoursePlayer language switch behavior", () => {
       expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
     });
 
+    expect(getCompleteButton()).toBe(completeButton);
+    expect(completeButton).toHaveProperty("disabled", true);
+    expect(completeButton.title).toBe("Guardando...");
+    expect(gamificationButton).toHaveProperty("disabled", true);
+
+    await act(async () => {
+      resolveCompletion();
+    });
+
     await waitFor(() => {
       expect(gamificationButton).toHaveProperty("disabled", false);
       expect(gamificationButton.className).toContain("from-yellow-400");
     });
+    expect(getCompleteButton()).toBe(completeButton);
+    expect(completeButton.title).toBe("Concluida");
   });
 
   test("keeps complete button disabled, gray and without icon below watch threshold", async () => {
@@ -385,6 +407,7 @@ describe("CoursePlayer language switch behavior", () => {
 
     expect(completeButton).toHaveProperty("disabled", false);
     expect(completeButton.className).toContain("text-emerald-400");
+    expect(completeButton.title).toBe("Concluida");
     expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
 
     fireEvent.click(completeButton);
