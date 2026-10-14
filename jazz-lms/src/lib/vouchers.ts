@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { getVoucherProviderDiscountCode } from '@/lib/voucher-provider-sync';
+import { getKnownCatalogPrice } from '@/lib/pricing';
 
 export type VoucherTypeValue = 'FREE_ACCESS' | 'DISCOUNT_PERCENT' | 'DISCOUNT_FIXED';
 
@@ -11,6 +12,7 @@ export type VoucherValidationError =
   | 'Max uses per user reached'
   | 'Inactive'
   | 'Course not found'
+  | 'Price unavailable'
   | 'Below minimum order value'
   | 'Voucher type mismatch';
 
@@ -85,6 +87,29 @@ export async function validateVoucherForCourse({
     };
   }
   const prisma = db;
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { id: true, price: true, isPublished: true },
+  });
+
+  if (!course || course.isPublished !== true) {
+    return {
+      valid: false,
+      error: 'Course not found',
+      message: 'Curso não encontrado.',
+    };
+  }
+
+  const knownPrice = getKnownCatalogPrice(course.price);
+  if (knownPrice === null) {
+    return {
+      valid: false,
+      error: 'Price unavailable',
+      message: 'Preço do curso temporariamente indisponível.',
+    };
+  }
+  const originalPrice = toMoney(knownPrice);
+
   const voucher = await prisma.voucherCode.findFirst({
     where: {
       code: normalizedCode,
@@ -164,20 +189,6 @@ export async function validateVoucherForCourse({
     }
   }
 
-  const course = await db.course.findUnique({
-    where: { id: courseId },
-    select: { id: true, price: true },
-  });
-
-  if (!course) {
-    return {
-      valid: false,
-      error: 'Course not found',
-      message: 'Curso não encontrado.',
-    };
-  }
-
-  const originalPrice = toMoney(Math.max(0, Number(course.price ?? 0)));
   if (voucher.minOrderValue !== null && originalPrice < voucher.minOrderValue) {
     return {
       valid: false,

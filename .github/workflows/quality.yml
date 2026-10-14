@@ -84,7 +84,7 @@ jobs:
         run: |
           npx prisma db push --skip-generate
           npx prisma db execute --schema prisma/schema.prisma --file prisma/setup-messaging.sql
-      - name: Check checkout authorization, reversals, concurrent quizzes, notes and messaging
+      - name: Check checkout and voucher authorization, reversals, quizzes, notes and messaging
         run: >-
           npx vitest run
           tests/integration/dodo-entitlement-postgres.test.ts
@@ -93,3 +93,4 @@ jobs:
           tests/integration/messages-postgres.test.ts
           tests/security/lms-database-postgres.test.ts
           tests/security/checkout-authorization-postgres.test.ts
+          tests/security/voucher-course-authority-postgres.test.ts

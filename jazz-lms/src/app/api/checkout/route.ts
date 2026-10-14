@@ -261,6 +261,12 @@ export async function POST(req: Request) {
       : null;
 
     if (voucherValidation && !voucherValidation.valid) {
+      if (voucherValidation.error === 'Price unavailable') {
+        return new NextResponse(copy.priceUnavailable, { status: 503 });
+      }
+      if (voucherValidation.error === 'Course not found') {
+        return new NextResponse(copy.courseNotFound, { status: 404 });
+      }
       return new NextResponse(
         voucherValidation.message || copy.invalidVoucher,
         { status: 400 },

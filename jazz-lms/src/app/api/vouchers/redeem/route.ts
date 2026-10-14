@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { validateVoucherForCourse, type VoucherValidationError } from '@/lib/vouchers';
 import { Prisma } from '@prisma/client';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 
 export const runtime = 'nodejs';
 
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
       );
     }
 
+    const ownerMismatch = expectedUserConsistencyResponse(req, user.id);
+    if (ownerMismatch) return ownerMismatch;
+
     const { voucherCode, courseId } = await req.json();
 
     const result = await validateVoucherForCourse({
@@ -48,7 +52,7 @@ export async function POST(req: Request) {
           error: result.error,
           message: result.message,
         },
-        { status: 400 }
+        { status: result.error === 'Price unavailable' ? 503 : 400 }
       );
     }
 

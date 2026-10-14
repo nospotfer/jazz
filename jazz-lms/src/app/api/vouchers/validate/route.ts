@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     });
 
     if (!result.valid) {
-      return NextResponse.json(result, { status: 400 });
+      return NextResponse.json(result, { status: result.error === 'Price unavailable' ? 503 : 400 });
     }
 
     return NextResponse.json(result);
