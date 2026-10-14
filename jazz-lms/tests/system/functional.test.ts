@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   courseFindUnique: vi.fn(),
+  courseGrantRead: vi.fn(),
   purchaseFindUnique: vi.fn(),
   purchaseUpsert: vi.fn(),
   purchaseFindMany: vi.fn(),
@@ -42,6 +43,7 @@ vi.mock('@/lib/db', () => ({
     user: { findUnique: mocks.findUser },
     lessonPurchase: { findMany: mocks.findLessonPurchases },
     $transaction: async (callback: (tx: any) => Promise<any>) => callback({
+      $queryRaw: mocks.courseGrantRead,
       purchase: {
         upsert: mocks.purchaseUpsert,
       },
@@ -93,6 +95,7 @@ describe('Functional: Free course purchase flow', () => {
       isPublished: true,
     });
     mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.courseGrantRead.mockResolvedValue([{ id: courseId, price: 0, isPublished: true }]);
     mocks.purchaseUpsert.mockResolvedValue({ id: 'p-new' });
 
     const { POST } = await import('@/app/api/checkout/route');

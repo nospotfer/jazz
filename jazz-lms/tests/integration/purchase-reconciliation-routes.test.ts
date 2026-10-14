@@ -57,7 +57,7 @@ for (const kind of ['auto', 'admin'] as const) {
       expect(mocks.retrieve).toHaveBeenCalledWith('pay_1');
       expect(mocks.upsert).toHaveBeenCalledWith(expect.objectContaining({
         userId: 'buyer', courseId: 'course-1', providerReferenceId: 'dodo-pay:pay_1',
-        originalPrice: 30, finalPrice: 32, discountAmount: 0,
+        originalPrice: null, finalPrice: 32, discountAmount: null,
         localVoucherCode: 'LOCAL10', providerDiscountCode: 'REMOTE10', providerDiscountId: 'discount_1',
       }));
     });
