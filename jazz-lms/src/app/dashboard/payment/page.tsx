@@ -9,7 +9,7 @@ interface PurchaseRecord {
   id: string;
   itemType: 'Curso';
   itemTitle: string;
-  amount: number;
+  amount: number | null;
   createdAt: string;
   currency: string;
 }
@@ -22,6 +22,7 @@ export default function PaymentPage() {
       title: 'Historial de pagos',
       subtitle: 'Consulta tus registros de pago con fecha, hora e importe',
       records: 'Registros',
+      amountUnavailable: 'Importe no disponible',
       noPurchasesTitle: 'Aún no hay compras',
       noPurchasesDesc: 'Tus registros de pago aparecerán aquí',
     },
@@ -30,6 +31,7 @@ export default function PaymentPage() {
       title: 'Payment history',
       subtitle: 'Review your payment records with date, time, and amount',
       records: 'Records',
+      amountUnavailable: 'Amount unavailable',
       noPurchasesTitle: 'No purchases yet',
       noPurchasesDesc: 'Your payment records will appear here',
     },
@@ -38,6 +40,7 @@ export default function PaymentPage() {
       title: 'Historique des paiements',
       subtitle: 'Consultez vos paiements avec la date, l’heure et le montant',
       records: 'Enregistrements',
+      amountUnavailable: 'Montant indisponible',
       noPurchasesTitle: 'Aucun achat pour le moment',
       noPurchasesDesc: 'Vos enregistrements de paiement apparaîtront ici',
     },
@@ -46,6 +49,7 @@ export default function PaymentPage() {
       title: 'Histórico de pagamentos',
       subtitle: 'Consulte seus pagamentos com data, horário e valor',
       records: 'Registros',
+      amountUnavailable: 'Valor indisponível',
       noPurchasesTitle: 'Aún no hay compras',
       noPurchasesDesc: 'Seus registros de pagamento aparecerão aqui',
     },
@@ -121,8 +125,12 @@ export default function PaymentPage() {
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-primary">
-                  {purchase.currency === 'EUR' ? '€' : `${purchase.currency} `}
-                  {purchase.amount.toFixed(2)}
+                  {purchase.amount === null ? copy.amountUnavailable : (
+                    <>
+                      {purchase.currency === 'EUR' ? '€' : `${purchase.currency} `}
+                      {purchase.amount.toFixed(2)}
+                    </>
+                  )}
                 </span>
               </div>
             ))}

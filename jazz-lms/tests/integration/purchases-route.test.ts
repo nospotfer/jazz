@@ -63,6 +63,7 @@ describe("GET /api/purchases", () => {
     mocks.purchaseFindMany.mockResolvedValue([
       {
         id: "p1",
+        finalPrice: 29.99,
         course: { title: "Jazz Basics", price: 29.99 },
         createdAt: new Date("2026-01-15T10:00:00Z"),
       },
@@ -81,6 +82,49 @@ describe("GET /api/purchases", () => {
       createdAt: "2026-01-15T10:00:00.000Z",
       currency: "EUR",
     });
+  });
+
+  test("keeps an unknown historical amount unknown when the catalog price changes", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    const { GET } = await import("@/app/api/purchases/route");
+    const responses = [];
+
+    for (const price of [29.99, 80, null]) {
+      mocks.purchaseFindMany.mockResolvedValue([
+        {
+          id: "historical-unrecorded",
+          finalPrice: null,
+          course: { title: "Jazz Basics", price },
+          createdAt: new Date("2026-01-15T10:00:00Z"),
+        },
+      ]);
+      const response = await GET();
+      expect(response.status).toBe(200);
+      responses.push(await response.json());
+    }
+
+    expect(responses.map((records) => records[0].amount)).toEqual([null, null, null]);
+    expect(responses[0]).toEqual(responses[1]);
+    expect(responses[1]).toEqual(responses[2]);
+  });
+
+  test("preserves recorded zero and positive amounts instead of current catalog prices", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mocks.purchaseFindMany.mockResolvedValue(
+      [0, 24.9].map((finalPrice, index) => ({
+        id: `recorded-${index}`,
+        finalPrice,
+        course: { title: "Jazz Basics", price: 80 },
+        createdAt: new Date("2026-01-15T10:00:00Z"),
+      })),
+    );
+
+    const { GET } = await import("@/app/api/purchases/route");
+    const response = await GET();
+    const records = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(records.map((record: { amount: number | null }) => record.amount)).toEqual([0, 24.9]);
   });
 
   test("returns 500 on internal errors", async () => {

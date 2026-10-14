@@ -354,7 +354,6 @@ export async function GET() {
         course: {
           select: {
             title: true,
-            price: true,
           },
         },
       },
@@ -367,7 +366,7 @@ export async function GET() {
       id: p.id,
       itemType: "Curso",
       itemTitle: p.course.title,
-      amount: p.finalPrice ?? p.course.price ?? 0,
+      amount: p.finalPrice ?? null,
       createdAt: p.createdAt.toISOString(),
       currency: "EUR",
     }));
