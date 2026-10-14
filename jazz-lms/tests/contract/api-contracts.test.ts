@@ -71,12 +71,19 @@ vi.mock('@/lib/course-translations', () => ({
 describe('API Contract: /api/purchases response shape', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  test('each purchase has required fields with correct types', async () => {
+  test('each purchase has required fields with a recorded or explicitly unknown amount', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1' } } });
     mocks.purchaseFindMany.mockResolvedValue([
       {
         id: 'p1',
-        course: { title: 'Jazz 101', price: 29.99 },
+        finalPrice: 29.99,
+        course: { title: 'Jazz 101', price: 80 },
+        createdAt: new Date('2026-01-01T00:00:00Z'),
+      },
+      {
+        id: 'p2',
+        finalPrice: null,
+        course: { title: 'Historical Jazz', price: 80 },
         createdAt: new Date('2026-01-01T00:00:00Z'),
       },
     ]);
@@ -86,6 +93,7 @@ describe('API Contract: /api/purchases response shape', () => {
     const body = await response.json();
 
     expect(Array.isArray(body)).toBe(true);
+    expect(body.map((item: { amount: number | null }) => item.amount)).toEqual([29.99, null]);
     for (const item of body) {
       expect(item).toHaveProperty('id');
       expect(item).toHaveProperty('itemType');
@@ -95,7 +103,7 @@ describe('API Contract: /api/purchases response shape', () => {
       expect(item).toHaveProperty('currency');
       expect(typeof item.id).toBe('string');
       expect(typeof item.itemTitle).toBe('string');
-      expect(typeof item.amount).toBe('number');
+      expect(item.amount === null || (typeof item.amount === 'number' && Number.isFinite(item.amount))).toBe(true);
       expect(item.currency).toBe('EUR');
       expect(item.itemType).toBe('Curso');
       // Validate ISO date format
