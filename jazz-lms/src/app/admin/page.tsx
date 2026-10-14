@@ -114,8 +114,8 @@ export default async function AdminDashboard() {
       <div className="card min-w-0">
         <h2 className="text-lg font-semibold text-jazz-dark dark:text-white mb-4">Acciones rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/admin/courses/new" className="btn-primary flex min-h-11 min-w-0 items-center justify-center text-center">
-            ➕ Crear nuevo curso
+          <Link href="/admin/courses" className="btn-primary flex min-h-11 min-w-0 items-center justify-center text-center">
+            📚 Ver cursos
           </Link>
           <Link href="/admin/users" className="btn-secondary flex min-h-11 min-w-0 items-center justify-center text-center">
             👥 Gestionar usuarios
