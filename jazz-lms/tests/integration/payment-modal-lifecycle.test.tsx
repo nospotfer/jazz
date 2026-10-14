@@ -77,7 +77,7 @@ beforeEach(() => {
 afterEach(async () => {
   cleanup(); await act(async () => { for (const finish of finishes) finish(); });
   expect(mocks.fetch).not.toHaveBeenCalled();
-  expect(mocks.post.mock.calls.every(([path]) => ['/api/vouchers/validate', '/api/checkout'].includes(path))).toBe(true);
+  expect(mocks.post.mock.calls.every(([path]) => ['/api/vouchers/validate', '/api/checkout?expectedUserId=synthetic-owner'].includes(path))).toBe(true);
   vi.unstubAllGlobals();
 });
 
