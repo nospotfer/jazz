@@ -8,6 +8,13 @@ Earlier source 27's 45-check report remains historical. Temporary app/tunnel and
 private lifecycle probes closed cleanly. No stable hosting service, account,
 DNS change or production release has been provisioned.
 
+The proposed closed maintenance page now has a real [standalone fallback and
+serving contract](maintenance-fallback.md). Its actual loopback browser/header
+checks pass138/138, with a separate4/4 local-file scope. This is an additional
+reviewable rollback asset, not a selected host, public-domain verification or
+production activation. The latest Next history/browser proof remains separate
+on a207; earlier e32 media/runtime checks above retain their original scope.
+
 ## Preferred conditional option
 
 Run the reviewed Node 24 / Next production build on the existing Monster machine

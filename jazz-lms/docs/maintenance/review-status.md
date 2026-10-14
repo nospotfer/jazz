@@ -918,3 +918,48 @@ scanner matches are individually verified as exact path/SHA256 records in the
 fully inspected seal manifest; zero other findings or new suppressions. The
 Quality ZIP's26 expanded text entries separately scan with zero findings. This
 is local retention, without encryption or off-site recovery.
+
+## Local credential boundaries and static rollback fallback
+
+The previous goal turn made concrete source/browser/CI progress. This follow-up
+finds ignored credential CSV and private app.env at0664. Owned regular/single-link
+metadata is verified, both files become0600, and Git exclusions/contents remain
+unchanged. This is a local permission correction, not evidence of an exposure
+incident or production account-policy change. The durable private preview input
+already holds the same six provider values as the verified a207 window; its old
+source/origin cannot be reused as a fresh launch. No credential values/digests
+are emitted. The TEST key is additionally retained in an owner-only durable
+configuration path; one bounded test product GET verifies the existing target/
+business/8000EUR price. No automatic loading, rotation, mail or transaction.
+[Dodo credential retention](dodo.md#local-test-credential-retention).
+
+Source **`9cb3d3f`** adds the actual closed maintenance fallback proposed by the
+rollback plan: standalone original-logo/jazz-gold HTML plus exact503/header JSON
+and [operator runbook](maintenance-fallback.md). No Next/backend/provider/analytics,
+forms, external assets, cookies/storage or background requests are required.
+Default Spanish remains readable without JS; actual native44px controls select
+ES/EN/FR/PT and matching document language/title. Manual recheck strips query,
+fragment/userinfo and makes a fresh same-origin rootGET, not a POST replay; file
+review preserves its local path. The precise meta style/script hashes and
+header-only frame-ancestors contract match the frozen artifact.
+
+Initial **109/110** real browser checks preserve the320px200%CSS-zoom overflow,
+source and screenshots. A wrapping/min-width correction then passes **138/138**
+actual loopback HTTP/browser checks:320/390/1440 both color preferences,24 real
+language clicks, keyboard/recheck/JS-disabled content, contrast minimum**5.72:1**,
+no horizontal overflow including200%CSS zoom, actual503/RetryAfter300/no-store/
+noindex/no-referrer/nosniff/CSP, HEAD503/body0 and unavailable nonGET/API/checkout/
+webhook requests with no forwarding. Fourteen expected503 resource console
+messages are separately classified; client/CSP errors and outside/storage/cookie/
+fetch/XHR/beacon activity are zero. Separate **4/4** local-file checks verify
+French and clean same-file recheck. Native-browser zoom/fullWCAG are not claimed.
+
+HTML SHA256 **`9dd0b14b1e06cf0ff002197c028bf798abbcd860996ab61e5c56f6d423587830`**
+matches actual receipts and the committed source; exact original logo bytes and
+JSON/CSP digests are independently checked. Source review passes. All owned
+browsers/server close, zero Chromium processes remain, and no shared runtime,
+DNS/account/production change or spend occurs. This is a prepared asset with
+local serving-contract evidence, not an activated host or a repaired production
+backend. Native e32/9bd/FB/BC/a207 app scopes remain distinct. Provider/merchant
+recipients/OAuth/mail/continuous-host/account/DNS/quarantine/production review
+gates remain essential; the goal is active and incomplete.

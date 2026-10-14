@@ -64,9 +64,9 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Latest57 mobile drawer geometry/hit/keyboard/route entry320/390, all-five
  12-model read-only preservation, closure and sealed reinspection pass. Exact
  CI1,935/40, persisted39/1 and source555-file scan0 pass.
-- [ ] Scoped hydrated-editor text and actual four-language controls remain pending;
- raw browser12/9/3 is preserved. Financial currency/tax/journal and provider
- journeys remain separate. [Current verification](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
+- [x] Scoped FB hydrated-editor text and BC35/35 actual four-language controls
+  verified; raw57 browser12/9/3 remains historical. Financial currency/tax/journal
+  and provider journeys remain separate. [Exact verification](review-status.md#scoped-notes-editor-and-language-controls).
 - [ ] Review production resource/recovery/timer policy, durable CA/configuration,
   named-tunnel identity and unavailable-queue/manual historical recovery before
   any production activation.
@@ -272,3 +272,18 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   switch/empty-account browser journeys remain excluded from this scoped window.
 
 [Exact source, retained diagnostics and limits](review-status.md#payment-history-recovery-and-account-isolation).
+
+## Local credentials and closed fallback
+
+- [x] Restrict ignored credential CSV and private app.env from0664 to0600,
+  preserving contents/keys. Retain TEST key bytes in a durable owner-only
+  configuration directory; one bounded GET verifies the unchanged test target.
+- [x] Build a concrete branded standalone fallback with four languages and
+  exact503/header contract, no backend/providers/tracking/storage dependency.
+  Actual browser/HTTP138/138 and separate file4/4 checks pass, independent
+  review passes and all owned processes close; initial109/110 zoom failure kept.
+- [ ] Review exact host/domain/quarantine/status/header behavior and approve
+  production activation. The file/JSON alone do not configure the host or retire
+  immutable old deployments/cron. Continuous hosting and provider journeys remain.
+
+[Fallback artifact and reviewed serving contract](maintenance-fallback.md).

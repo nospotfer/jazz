@@ -118,3 +118,10 @@ owner-mismatch409. Bounded root SQL touched only one synthetic grant, restored
 exactly; all-five12-model fingerprints match, temporary services are closed and
 the session deleted. No actual provider payment, spend or production change.
 [Current source, evidence and open gates](review-status.md#payment-history-recovery-and-account-isolation).
+
+The rollback proposal now includes a concrete [static maintenance fallback](maintenance-fallback.md)
+with original branding, four languages and a reviewable503/header contract.
+Actual browser/HTTP138/138 and separate local-file4/4 checks pass; initial zoom
+failure remains preserved. No activation occurred. Ignored credential CSV/app.env
+permissions are now0600, and the TEST key has protected durable local retention.
+[Operational checkpoint](review-status.md#local-credential-boundaries-and-static-rollback-fallback).

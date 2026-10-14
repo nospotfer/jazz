@@ -34,6 +34,14 @@ that emits only redacted metadata. Exclude the CSV from Git. Use credentials onl
 for this project and leave credential rotation to the user. Preserve unrelated
 local changes and shared Neurofactory services.
 
+Keep ignored credential CSV/private environment files owner-only (0600); ignored
+files can still expose credentials through filesystem permissions. The Dodo TEST
+key also has a protected durable copy at
+`/home/gabriel/.config/culturadeljazz-maintenance/dodo-test-api-key` (parent0700).
+Read it explicitly only for the isolated test API. No automatic loading, key
+rotation or payment/email authority follows from that copy. Credentials remain
+separate from published and retained review evidence.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

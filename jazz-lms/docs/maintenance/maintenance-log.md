@@ -952,3 +952,31 @@ The maintenance goal remains active and incomplete.
   retention is neither encrypted nor off-site.
 
 [Exact source checks and retained limits](review-status.md#payment-history-recovery-and-account-isolation).
+
+## 2026-10-14 — Credential file boundaries and concrete fallback
+
+- Actual metadata finds ignored CSV/private app.env0664; exact owned regular
+  single-link files now0600, contents unchanged. Existing durable private preview
+  configuration holds the same six provider values as the a207 window; its old
+  source/origin still needs a new build/gate before any reuse.
+- Supplied Dodo TEST key existed only under/tmp. Identical bytes now live in
+  ~/.config/culturadeljazz-maintenance/dodo-test-api-key, directory0700/file0600,
+  excluded from review evidence. One bounded test GET matches the previously
+  created product/business/8000EUR price. No rotation, activation, transaction,
+  refund, mail or webhook; both copies documented for the owner's later rotation.
+- Source9cb3d3f adds the missing concrete rollback asset: standalone original-
+  logo/jazz-gold maintenance HTML, ES/EN/FR/PT44px controls, JS-disabled Spanish,
+  strict hashedCSP and exact503/header review contract. Manual recheck is a fresh
+  rootGET dropping query/hash/userinfo, without priorPOST retry or background work.
+- Initial real109/110 browser run found320px 200%CSS-zoom overflow; original
+  source/report/screenshots kept. Wrapping repair then138/138 actual loopback
+  HTTP/browser checks and separate4/4 file checks pass. Minimum textcontrast5.72,
+  both preferences/three widths/24 real language switches, keyboard/recheck/noJS,
+  HEAD/body0 and unavailable API/mutating paths verified.14 expected503 console
+  messages distinguished; client/CSP/external/storage/cookie activity0.
+- Root verifies exact original logo/style/script hashes and contract; independent
+  review passes. All browsers/owned loopback server close. No shared service,
+  production/domain/account change or spend. The fallback requires actual host/
+  quarantine/activation review; it does not replace the native/provider scope.
+
+[Exact operational evidence and limits](review-status.md#local-credential-boundaries-and-static-rollback-fallback).

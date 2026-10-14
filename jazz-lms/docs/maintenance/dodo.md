@@ -159,3 +159,17 @@ refund, delivery, tax or currency claim**. The original row/timestamp and all-fi
 12-model fingerprints match afterward. Accounting source260 targeted checks
 and actual Dodo notification/transaction gates remain distinct.
 [Exact scope](review-status.md#payment-history-recovery-and-account-isolation).
+
+## Local test credential retention
+
+The owner-supplied TEST key now has an identical durable private copy at
+`/home/gabriel/.config/culturadeljazz-maintenance/dodo-test-api-key`, directory0700/
+file0600. The original `/tmp/jazz-maintenance/dodo-test-api-key` is preserved.
+One bounded test-mode product GET confirms the same previously created synthetic
+product/business and unchanged8000EUR minor-unit price. No transaction, refund,
+webhook, mail, shared-business setting or live resource was changed. Neither file
+is automatically loaded; account rotation remains the owner's decision and must
+account for both copies. Key contents and digest are excluded from evidence.
+
+This addresses local loss on/tmp cleanup, without encryption, off-site recovery
+or proof of merchant notification recipients. Those transaction gates remain.
