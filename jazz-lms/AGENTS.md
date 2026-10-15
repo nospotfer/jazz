@@ -71,7 +71,7 @@ is still required; plain `npm start` does not establish it. See
 | Pages (server) | `src/app/**/page.tsx` |
 | API routes | `src/app/api/**/route.ts` |
 | Server actions | `src/actions/*.ts` |
-| Shared libs | `src/lib/*.ts` (db, dodo-jazzlms, admin, sync-user, utils) |
+| Shared libs | `src/lib/**` (db, admin, sync-user, payments/provider, payments/providers/dodo) |
 | Auth utilities | `src/utils/supabase/{client,server,middleware}.ts` |
 | UI primitives | `src/components/ui/*.tsx` (shadcn/radix-based) |
 

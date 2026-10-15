@@ -309,8 +309,9 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   browser/app/tunnel closure and sealed reinspection pass. Earlier21/22 and20/21
   helper timing diagnostics remain raw; prior41424/24 is separate. No native
   player-modal or artificial delayed-response/provider-charge claim.
-- [ ] Reconcile positive catalog/UI price, existing29.99 checkout metadata and
-  actual Dodo product charge/tax/currency before a production purchase flow. No
+- [ ] Reconcile current server catalog/voucher quotes and actual Dodo product
+  charge/tax/currency before a production purchase flow. Checkout metadata now
+  records catalog_quote_v1 quotes; the archived29.99/live29.90 discrepancy remains. No
   catalog/provider mutation or actual charge is approved by the source repair.
 
 [Exact source and limits](review-status.md#catalog-prices-and-course-action-lifetime).
@@ -342,10 +343,18 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   operations after each apply and unchanged nonpublic extension metadata.
 - [ ] Before production recovery, review current target compatibility, source
   extension owner/initial/effective privilege gaps, hosted-platform differences
-  and225→227 currency-migration fingerprint ordering. Original SQL revisions
+  and the separately verified225→227 ordering against current production. Original SQL revisions
   remain frozen. The inverse restores unsafe grants and requires services closed;
   no automatic inverse or production operation is authorized by offline success.
-- [ ] Resolve catalog/provider price,29.99 metadata, tax/currency, actual Dodo
+- [x] Verify offline corrected restore → unchangedV4 at225 → literal additive
+  migration → strict read-only227 postcheck. Original65 tables/2,239 records/two
+  sequences are preserved through final owned-fixture cleanup;446 zero-row
+  permission operations pass after migration and reapply. The old225 inverse
+  rejects227. A separate manual227 cycle retains canonical facts and reproduces
+  full557 ACL/member-owner metadata. Containers removed; original inputs unchanged.
+  Normal code rollback retains columns/facts/safe grants; migration-history
+  reconciliation and current production compatibility remain separate review.
+- [ ] Resolve catalog/provider price parity, tax/currency, actual Dodo
   transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
   recovery/quarantine gates. No new spend or production action is inferred.
 

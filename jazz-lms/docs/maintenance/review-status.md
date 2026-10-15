@@ -73,8 +73,8 @@ status. Nine closed checks and24 actual isolated PostgreSQL checks pass. Real
 varchar-length, timestamp-precision and collation changes evade the old projection
 but are rejected before permission changes. The93-index guard and original
 permission bodies remain byte-identical. This225-column proposal deliberately
-rejects the later227-column currency schema; migration ordering needs a separately
-reviewed fingerprint. It does not establish collation provider/version equivalence.
+rejects the later227-column currency schema. The separately verified ordering
+below preserves that guard. It does not establish collation provider/version equivalence.
 
 A corrected, isolated archive restore now matches all51 extension-member owners,
 557 serialized ACL statements,67 role statements,65 tables/2,239 records and two
@@ -92,6 +92,30 @@ statements and member owners. All67 role statements and same-run nonpublic
 extension owner/ACL/initial/effective metadata stay unchanged. All owned containers
 and tmpfs are removed. No production or provider connection occurred, and the
 unsafe inverse is an explicitly isolated manual test, never failure cleanup.
+
+A later actual offline run verifies corrected restore → unchanged revision4 at
+225 columns → literal additive payment migration → distinct read-only revision5
+227-column postcheck. Original-column projections preserve all 65 tables, 2,239
+records and both sequences. The two new fields start NULL. Wrong ordering,
+second-column collision, an injected pre-commit fault, replay, the old inverse
+and explicit new-column ACL drift are rejected. The hardened 227-column state
+passes 446 zero-row permission operations after migration and again after a
+separate manual inverse/reapply; repeated operations are not unique new cases.
+
+One owned offline synthetic Purchase proves exact payment facts survive that
+manual cycle. Its full-row CAS cleanup restores the original data; no existing
+customer or User/Auth row is written. Independent comparison of the already
+captured inverse export also matches all 557 ACL statements and member-owner
+metadata. All five archive inputs retain their hashes and the owned container
+is absent. The literal migration does not reconcile `_prisma_migrations`.
+Application rollback keeps the columns, facts and safe permissions; the unsafe
+inverse remains separately reviewed/manual-only. Current production/platform
+compatibility and production approval are still required.
+
+Executed ordering verifier SHA256:
+`f6ebdfd4c1049457d9ffcdae7451d0e6a4886c1c9c2ca78c43886301e8b10a9e`.
+Read-only 227-column check SHA256:
+`b83acc623cce83f70169bc5b2dd434a4a593828311b30ad926f08d8e4de19dde`.
 
 The following revision3 results remain historical evidence:
 

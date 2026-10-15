@@ -104,8 +104,20 @@ The chosen local extension owner is not proof of source extension ownership, and
 matching serialized revocations does not prove source effective denial: the actual
 target postgres role retains ordinary and grant-option rights on those49 functions
 and two views. Source pg_init_privs,17.6 platform behavior and complete hosted
-recovery remain unverified. Revision4 binds the225-column archive; the two additive
-currency columns require a separately reviewed migration/fingerprint order.
+recovery remain unverified. Revision4 binds the225-column archive. A later actual
+isolated restore verifies unchanged revision4 → literal additive currency SQL →
+distinct read-only revision5 postcheck at227 columns. Both new fields start NULL;
+all65 original-column projections/2,239 records/two sequences remain unchanged.
+Wrong ordering, partial-column collision, transaction fault, replay, old225
+inverse and explicit new-column ACL drift fail closed. Each hardened227 check
+passes446 actual zero-row operations. A separately approved offline manual227
+inverse/reapply retains one owned synthetic payment row and canonical facts;
+full-row CAS cleanup restores the original data. Independent comparison of the
+existing inverse export matches557 ACL statements/member-owner metadata. All
+five preserved input hashes and container cleanup pass. These checks preserve
+the earlier source/platform limitations and authorize no production operation.
+Normal code rollback retains columns/facts/safe permissions; `_prisma_migrations`
+history reconciliation remains separate. See [migration order](payment-currency.md#verified-recovery-and-migration-order).
 
 The owner-only local checkpoint is
 `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-recovery-v4-20261015`:

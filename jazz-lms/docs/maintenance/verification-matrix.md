@@ -3,7 +3,7 @@
 Updated 2026-10-15. Local source is not a deployed production repair. Counts below
 are completed checkpoints; overlapping targeted suites must not be added together.
 
-Following application5c98715 and test-only f8d9254, exact5f9597a remote Quality,
+Following application8053c1b, exact91e87ae remote Quality,
 Secret Scan and CodeQL pass; downloaded Quality
 logs show2,533 normal passes/80 skips and80 persisted passes/one REST skip
 (79 actual SQL cases plus one metadata case), types/build and lint0errors/22
@@ -15,9 +15,17 @@ with24 actual isolated checks and nine closed checks. Corrected restore matches
 51 member owners/557 ACL/67 role statements. A separate combined restore/apply/
 manual inverse/reapply preserves65 tables/2,239 records/two sequences at all four
 stages and passes422 zero-row permission operations after each apply. Source
-extension ownership/initial/effective privileges, platform reconstruction and
-225→227 migration ordering remain unverified. No production changes follow from
-these offline checks. [Recovery scope](review-status.md#recovery-permissions-and-index-checks).
+extension ownership/initial/effective privileges and platform reconstruction
+remain unverified. A later actual offline run verifies unchangedV4 at225 →
+literal additive migration → strict read-only227 postcheck. Original65-table
+projections/2,239 records/two sequences and initialNULL fields are preserved;
+446 zero-row operations pass after migration and reapply. Six negative stages
+include rejecting the old225 inverse at227. A separate manual227 cycle retains
+one owned synthetic Purchase and canonical facts, followed by full-row CAS
+cleanup. Independent inverse-export comparison matches557 ACL/member-owner
+metadata; all inputs and container cleanup pass. Production compatibility and
+migration-history reconciliation remain separate. No production changes follow
+from these checks. [Recovery scope](review-status.md#recovery-permissions-and-index-checks).
 
 Exact5f fresh native artifact605 Git files/45,825 sealed/158 client files passes
 Unix19/HTTPS11 and17 monetary/auth browser checks. Independent final capture

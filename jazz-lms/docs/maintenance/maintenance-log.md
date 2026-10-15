@@ -1433,3 +1433,39 @@ The maintenance goal remains active and incomplete.
   remain unchanged. Root separately retains85 selected native-source/normalized
   proof files/495,020 bytes outside/tmp, rehashing every destination and preserving
   the original readability finding. Raw state/configuration/credentials are excluded.
+
+## 2026-10-15 — Recovery hardening and payment migration order verified
+
+- Prepared distinct derived227 column manifest, manual-only revision5 candidate/
+  inverse and read-only hardened postcheck. The original225 revision4 and93-index
+  guards remain frozen. Eighteen metadata/parser checks and eight closed runner
+  checks pass; root reviews the literal sources and a separate author review.
+- Actual network-none PG17.11 archive integration follows corrected restore →
+  unchangedV4 at225 → exact additive SQL → strict read-only227 check. It preserves
+  65 original-column table projections/2,239 records/two sequences and initially
+  NULL new fields. Wrong order, second-column collision, injected pre-commit
+  fault, migration replay, old225 inverse and explicit new-column ACL drift are
+  rejected. Hardened227 checks execute446 zero-row operations after migration
+  and again after manual inverse/reapply; these are overlapping checks.
+- One owned offline Purchase insert/delete demonstrates canonical fact retention
+  through the explicitly approved manual227 cycle. Full-row CAS cleanup restores
+  the original data; existing customer/User/Auth row writes0. Root independently
+  verifies369 captured file hashes, full557 inverse ACL/member-owner equality,
+  all five original archive input hashes and actual owned-container absence.
+- First root launch stops before Docker/run creation because the root copied a
+  disabled template's NULL input hashes. A new approval binds the literal
+  preservation manifest and five rehashed inputs; unchanged runner then passes.
+  This preparation failure remains separate from the actual completed run.
+- Normal code rollback keeps new columns/facts and safe permissions. Manual
+  inverse restores unsafe grants and is never automatic error cleanup. Literal
+  SQL leaves migration history unchanged; no broad migration replay is proposed.
+  Source extension owner/initial privileges, hosted-platform equivalence, current
+  production compatibility, provider journeys and production review remain open.
+- Correct stale current backlog references to hardcoded29.99 checkout metadata:
+  current source uses catalog_quote_v1 server/voucher quotes. Archived29.99 versus
+  live29.90/tax/provider parity remains a real unresolved production price gate.
+- Retain103 selected source/SQL/disabled-template/normalized-result files,
+  4,656,377 bytes plus manifest/receipt, outside/tmp in the owner-only currency
+  ordering checkpoint. Rehash every destination; credential-pattern findings0.
+  Archive/COPY/whole schema-role exports, owned raw rows/IDs, credentials and
+  enabled approvals are excluded. Local unencrypted evidence, not off-site backup.

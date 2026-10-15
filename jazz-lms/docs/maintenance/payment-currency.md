@@ -85,6 +85,52 @@ currency or rewrite old floats. Remote migrations, native journeys and actual
 provider transactions require their own source-bound evidence; local tests do
 not establish them.
 
+## Verified recovery and migration order
+
+The archived production schema has 225 public columns. Its unchanged revision4
+hardening must run before the additive payment migration; revision4 deliberately
+rejects the resulting 227-column schema. Do not weaken that check or remove the
+new columns to make an old inverse run.
+
+With services closed, the proposed order is: verify the current target and a
+fresh preservation snapshot, apply exact revision4 at 225 columns, execute only
+the reviewed additive SQL, then run the distinct read-only revision5 check for
+the hardened 227-column state. The latter binds both the migration hash and the
+derived column manifest, retains the 93-index guard and verifies effective
+browser denials and trusted CRUD privileges before application activation.
+
+An actual network-isolated PostgreSQL17 archive restore verified that order.
+All 65 original-column table projections, 2,239 records and two sequence states
+match after migration and final fixture cleanup. Both new fields are initially
+NULL. Each of the two hardened 227-column checks executes 446 zero-row permission
+operations; this is repeated coverage, not 892 unique cases. Premature 227
+verification, partial-column collision, an injected transaction fault, migration
+replay, the old 225-column inverse and a new-column grant all fail as expected.
+
+A separately approved offline manual revision5 inverse/reapply preserves one
+owned synthetic Purchase and its exact currency facts. Full-row compare-and-swap
+deletion removes only that fixture; no existing customer, User or Auth row is
+written. Independent comparison of the inverse schema export matches all 557
+archived ACL statements and member-owner metadata. The container is removed and
+all five original preservation inputs retain their hashes.
+
+Normal code rollback keeps the new columns, payment facts and hardened grants.
+The revision5 inverse restores unsafe permissions and is a separate manual
+recovery operation with services closed. It is never automatic failure cleanup.
+The literal migration leaves `_prisma_migrations` unchanged; historical migration
+bookkeeping remains a separate review, and broad `prisma migrate deploy` is not
+authorized. Source extension ownership/initial privileges, hosted-platform
+equivalence and current production compatibility remain unproven. None of these
+offline checks authorizes production resume, SQL or deployment.
+
+The owner-only local review checkpoint is
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-currency-ordering-20261015`.
+Its 103 selected files (4,656,377 bytes), plus manifest/receipt, retain exact
+sources, disabled templates and normalized results. Files are0600/directories0700
+and destination hashes were checked. Raw archive/COPY, whole schema/role exports,
+owned rows, credentials and enabled approvals are excluded. This is unencrypted
+local review evidence; off-site or full-platform recovery is not established.
+
 
 ## Verified isolated preview and later display follow-ups
 
@@ -122,8 +168,8 @@ native rendering evidence without making an actual provider/payment claim.
 The27 amount-only crops also expose awkward voucher character wrapping. Visible
 correct digits and complete DOM text do not prove readable number/currency groups;
 the subsequent presentation fix needs separate visual evidence. Production
-compatibility, migration/fingerprint ordering, tax/refund journal and provider
-delivery remain separate gates.
+compatibility, tax/refund journal and provider delivery remain separate gates.
+The later offline ordering proof above does not authorize a production migration.
 
 Presentation8053c1b addresses the observed wrapping without changing formatted
 text or monetary logic. A complete amount/ISO span cannot break inside the token;
