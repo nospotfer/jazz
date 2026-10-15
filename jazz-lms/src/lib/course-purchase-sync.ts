@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
+import { minorUnitsToMajor, normalizePaymentAmountMinor, normalizePaymentCurrency } from "@/lib/payment-money";
 import { Prisma } from "@prisma/client";
 import {
   asObject,
@@ -16,6 +17,8 @@ type UpsertCoursePurchaseInput = {
   originalPrice: number | null;
   discountAmount: number | null;
   finalPrice: number | null;
+  paymentCurrency?: string | null;
+  paymentAmountMinor?: string | null;
   voucherCode?: string | null;
   localVoucherCode?: string | null;
   providerDiscountCode?: string | null;
@@ -123,12 +126,12 @@ function isMissingRelationOrColumnError(error: unknown): boolean {
   );
 }
 
-function toMoney(value: number | null): number | null {
+function toMoney(value: number | null, round = true): number | null {
   if (value === null || !Number.isFinite(value) || value < 0) {
     return null;
   }
 
-  return Number(value.toFixed(2));
+  return round ? Number(value.toFixed(2)) : value;
 }
 
 function normalizeCode(value: string | null | undefined): string | null {
@@ -290,9 +293,13 @@ export async function upsertCoursePurchaseFromProvider(
   input: UpsertCoursePurchaseInput,
 ) {
   const prisma = db;
-  const originalPrice = toMoney(input.originalPrice);
-  const discountAmount = toMoney(input.discountAmount);
-  const finalPrice = toMoney(input.finalPrice);
+  const paidProvider = input.providerReferenceId.startsWith("dodo-pay:");
+  const paymentCurrency = paidProvider ? normalizePaymentCurrency(input.paymentCurrency) : null;
+  const paymentAmountMinor = paidProvider ? normalizePaymentAmountMinor(input.paymentAmountMinor) : null;
+  const originalPrice = toMoney(input.originalPrice, !paidProvider);
+  const discountAmount = toMoney(input.discountAmount, !paidProvider);
+  const finalPrice = paymentAmountMinor !== null
+    ? minorUnitsToMajor(paymentAmountMinor, paymentCurrency) : toMoney(input.finalPrice, !paidProvider);
   const completeMonetarySnapshot = originalPrice !== null && discountAmount !== null && finalPrice !== null;
   // Provider discount identity is authoritative even if a gross/tax-inclusive
   // total exceeds the metadata base price. Metadata alone cannot prove a paid
@@ -332,6 +339,8 @@ export async function upsertCoursePurchaseFromProvider(
         originalPrice: true,
         finalPrice: true,
         discountAmount: true,
+        paymentCurrency: true,
+        paymentAmountMinor: true,
       },
     });
 
@@ -341,11 +350,24 @@ export async function upsertCoursePurchaseFromProvider(
     // A replacement payment must never inherit another reference's amounts.
     const monetaryFacts = samePaymentReference && !completeMonetarySnapshot
       ? {
-          originalPrice: toMoney(existingPurchase.originalPrice) ?? originalPrice,
-          finalPrice: toMoney(existingPurchase.finalPrice) ?? finalPrice,
-          discountAmount: toMoney(existingPurchase.discountAmount) ?? discountAmount,
+          originalPrice: toMoney(existingPurchase.originalPrice, false) ?? originalPrice,
+          finalPrice: toMoney(existingPurchase.finalPrice, false) ?? finalPrice,
+          discountAmount: toMoney(existingPurchase.discountAmount, false) ?? discountAmount,
         }
       : { originalPrice, finalPrice, discountAmount };
+
+    // The exact pair describes the payment total only. It never assigns a unit
+    // to historical original/final/discount floats or DiscountApplied rows.
+    // Refresh complete snapshots together; a partial retry cannot combine a
+    // changed raw amount with a previous currency. New references inherit none.
+    const oldCurrency = normalizePaymentCurrency(existingPurchase?.paymentCurrency);
+    const oldMinor = normalizePaymentAmountMinor(existingPurchase?.paymentAmountMinor);
+    const completeIncomingPair = paymentCurrency !== null && paymentAmountMinor !== null;
+    const preservePriorPair = paidProvider && samePaymentReference && !completeIncomingPair &&
+      ((oldCurrency !== null && oldMinor !== null) || (paymentAmountMinor === null && oldMinor !== null));
+    const canonicalFacts = preservePriorPair
+      ? { paymentCurrency: oldCurrency, paymentAmountMinor: oldMinor }
+      : { paymentCurrency, paymentAmountMinor };
 
     const existingRedemption = existingPurchase
       ? await tx.voucherRedemption.findFirst({
@@ -410,6 +432,7 @@ export async function upsertCoursePurchaseFromProvider(
         providerReferenceId: input.providerReferenceId,
         voucherId: effectiveVoucherId,
         ...monetaryFacts,
+        ...canonicalFacts,
       },
       create: {
         courseId: input.courseId,
@@ -417,6 +440,7 @@ export async function upsertCoursePurchaseFromProvider(
         providerReferenceId: input.providerReferenceId,
         voucherId: effectiveVoucherId,
         ...monetaryFacts,
+        ...canonicalFacts,
       },
     });
 

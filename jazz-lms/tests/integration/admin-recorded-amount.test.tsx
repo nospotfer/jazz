@@ -27,31 +27,31 @@ afterEach(() => { cleanup(); expect(mocks.fetch).not.toHaveBeenCalled(); vi.unst
 
 test('recorded72 remains72 when the same purchase current catalog changes80 to100', async () => {
   mocks.recent.mockResolvedValue([purchase('recorded', 72, 80)]); const view = await renderPage();
-  expect(screen.getByText('Importe registrado: 72,00')).toBeTruthy();
-  expect(screen.getByText('Suma conocida (últimos 5 registros): 72,00')).toBeTruthy();
+  expect(screen.getByText('Importe registrado: 72,00 · Moneda no disponible')).toBeTruthy();
+  expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
   mocks.recent.mockResolvedValue([purchase('recorded', 72, 100)]); view.rerender(await AdminDashboard());
-  expect(screen.getByText('Importe registrado: 72,00')).toBeTruthy();
-  expect(screen.getByText('Suma conocida (últimos 5 registros): 72,00')).toBeTruthy();
+  expect(screen.getByText('Importe registrado: 72,00 · Moneda no disponible')).toBeTruthy();
+  expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
   expect(view.container.textContent).not.toContain('100,00');
 });
 test.each([null, undefined, NaN, Infinity, -1, '72'])('missing or malformed recorded amount%j staysunknown with a positive catalogprice', async (finalPrice) => {
   mocks.recent.mockResolvedValue([purchase('unknown', finalPrice, 80)]); const view = await renderPage();
   expect(screen.getByText('Importe registrado: No disponible')).toBeTruthy();
-  expect(screen.getByText('Suma conocida (últimos 5 registros): Sin importes conocidos')).toBeTruthy();
-  expect(screen.getByText('1 importe no disponible')).toBeTruthy();
+  expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
+  expect(screen.getByText('1 registros excluidos de los totales por falta de importe o moneda verificados.')).toBeTruthy();
   expect(view.container.textContent).not.toMatch(/€|Gratis|80[.,]00|Ingresos/);
 });
 test('recordedzero remains explicit0 rather than freeorcurrentcatalog80', async () => {
   mocks.recent.mockResolvedValue([purchase('zero', 0, 80)]); const view = await renderPage();
-  expect(screen.getByText('Importe registrado: 0,00')).toBeTruthy();
-  expect(screen.getByText('Suma conocida (últimos 5 registros): 0,00')).toBeTruthy();
+  expect(screen.getByText('Importe registrado: 0,00 · Moneda no disponible')).toBeTruthy();
+  expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
   expect(view.container.textContent).not.toMatch(/€|Gratis|80[.,]00/);
 });
-test('latestfive known amounts sum independentlyofunknown values and currentcatalog', async () => {
+test('latestfive legacy amounts retain individual facts but no unverified currency total', async () => {
   mocks.recent.mockResolvedValue([purchase('paid',72),purchase('zero',0),purchase('null',null),purchase('invalid',NaN),purchase('other',4.5)]);
   const view = await renderPage();
-  expect(screen.getByText('Suma conocida (últimos 5 registros): 76,50')).toBeTruthy();
-  expect(screen.getByText('2 importes no disponibles')).toBeTruthy();
+  expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
+  expect(screen.getByText('5 registros excluidos de los totales por falta de importe o moneda verificados.')).toBeTruthy();
   expect(screen.getAllByText('Importe registrado: No disponible')).toHaveLength(2);
   expect(view.container.textContent).not.toMatch(/€|Gratis|Ingresos/);
 });
@@ -68,7 +68,7 @@ test('control no purchases retains the existing genuineempty state', async () =>
 test('control queryscope remains five newest records with courseidentityanddate preserved', async () => {
   mocks.recent.mockResolvedValue([purchase('scope',72)]); await renderPage();
   expect(mocks.permission).toHaveBeenCalledExactlyOnceWith('admin.access');
-  expect(mocks.recent).toHaveBeenCalledExactlyOnceWith({ take:5, orderBy:{createdAt:'desc'}, select:{id:true,userId:true,createdAt:true,finalPrice:true,course:{select:{title:true}}} });
+  expect(mocks.recent).toHaveBeenCalledExactlyOnceWith({ take:5, orderBy:{createdAt:'desc'}, select:{id:true,userId:true,createdAt:true,finalPrice:true,paymentCurrency:true,paymentAmountMinor:true,course:{select:{title:true}}} });
   expect(mocks.purchases).toHaveBeenCalledExactlyOnceWith();
   expect(screen.getByRole('heading',{name:'Synthetic course scope'})).toBeTruthy();
   expect(screen.getByText('ID de usuario: synthetic-owner-scope')).toBeTruthy();
@@ -97,8 +97,8 @@ describe('analytics permission for actual recorded amounts', () => {
     expect(hasPermission(role, 'analytics.read')).toBe(false);
     await useRealAdminRole(role); const view = await renderPage();
     expect({ financeQueries: mocks.recent.mock.calls.length,
-      recordedAmountVisible: Boolean(screen.queryByText('Importe registrado: 72,34')),
-      financialSummaryVisible: Boolean(screen.queryByText(/^Suma conocida/)) })
+      recordedAmountVisible: Boolean(screen.queryByText('Importe registrado: 72,34 · Moneda no disponible')),
+      financialSummaryVisible: Boolean(screen.queryByText(/^Totales por moneda/)) })
       .toEqual({ financeQueries: 0, recordedAmountVisible: false, financialSummaryVisible: false });
     expect(screen.getByRole('heading', { name: 'Panel administrativo' })).toBeTruthy();
     expect(screen.getByText('Registros de compra')).toBeTruthy();
@@ -106,13 +106,13 @@ describe('analytics permission for actual recorded amounts', () => {
     expect(screen.getByRole('link', { name: /Gestionar usuarios/ }).getAttribute('href')).toBe('/admin/users');
     expect(view.container.textContent).not.toContain('Synthetic course private-amount');
   });
-  test.each(['SUPER_ADMIN', 'COURSE_ADMIN'])('analytics-authorized %s retains recorded amounts and known summary', async (role) => {
+  test.each(['SUPER_ADMIN', 'COURSE_ADMIN'])('analytics-authorized %s retains recorded amounts and excludes unknown-currency totals', async (role) => {
     expect(hasPermission(role, 'admin.access')).toBe(true);
     expect(hasPermission(role, 'analytics.read')).toBe(true);
     await useRealAdminRole(role); await renderPage();
     expect(mocks.recent).toHaveBeenCalledOnce();
-    expect(screen.getByText('Importe registrado: 72,34')).toBeTruthy();
-    expect(screen.getByText('Suma conocida (últimos 5 registros): 72,34')).toBeTruthy();
+    expect(screen.getByText('Importe registrado: 72,34 · Moneda no disponible')).toBeTruthy();
+    expect(screen.getByText('Sin totales con moneda verificada')).toBeTruthy();
   });
   test('ordinary USER still cannot obtain overview or financial queries', async () => {
     await useRealAdminRole('USER'); await expect(AdminDashboard()).rejects.toThrow();

@@ -179,13 +179,15 @@ export async function GET(req: Request) {
             checkpoint();
             if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, user.id, email) ||
                 readCustomString(resolveDodoMetadata(snapshot), "courseId", "course_id") !== courseId) continue;
-            const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
+            const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } = extractDodoPricing(snapshot);
             checkpoint();
             // Prisma cannot cancel an in-flight transaction. Await settlement
             // while retaining single-flight, count its commit, then stop new work.
             await upsertCoursePurchaseFromProvider({
               userId: user.id, courseId, providerReferenceId,
               originalPrice: subtotalAmount, finalPrice: totalAmount, discountAmount,
+              paymentCurrency,
+              paymentAmountMinor,
               ...resolveDodoVoucherAccounting(snapshot),
             });
             unlocked += 1;

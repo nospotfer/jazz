@@ -95,3 +95,5 @@ jobs:
           tests/security/checkout-authorization-postgres.test.ts
           tests/security/voucher-course-authority-postgres.test.ts
           tests/security/checkout-course-concurrency-postgres.test.ts
+          tests/security/payment-currency-schema-postgres.test.ts
+          tests/integration/dodo-currency-postgres.test.ts

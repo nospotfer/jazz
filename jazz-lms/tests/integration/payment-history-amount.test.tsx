@@ -65,6 +65,7 @@ const record = {
   itemType: "Curso",
   createdAt: "2026-01-15T10:00:00.000Z",
   currency: "EUR",
+  amountMinor: null,
 };
 
 describe("Payment history recorded amounts", () => {
@@ -80,8 +81,8 @@ describe("Payment history recorded amounts", () => {
   test("renders an unknown amount without crashing or confusing it with recorded zero or a positive charge", async () => {
     mocks.get.mockResolvedValue({ data: [
       { ...record, id: "unknown", itemTitle: "Unrecorded course", amount: null },
-      { ...record, id: "zero", itemTitle: "Zero-cost course", amount: 0 },
-      { ...record, id: "paid", itemTitle: "Paid course", amount: 24.9 },
+      { ...record, id: "zero", itemTitle: "Zero-cost course", amount: 0, amountMinor: "0" },
+      { ...record, id: "paid", itemTitle: "Paid course", amount: 24.9, amountMinor: "2490" },
     ] });
 
     render(<PaymentRenderBoundary><PaymentPage /></PaymentRenderBoundary>);
@@ -90,8 +91,8 @@ describe("Payment history recorded amounts", () => {
     const unknownRow = within(unknownTitle.parentElement!.parentElement!);
     expect(unknownRow.getByText("Importe no disponible")).toBeTruthy();
     expect(unknownRow.queryByText(/€/)).toBeNull();
-    expect(screen.getByText("€0.00")).toBeTruthy();
-    expect(screen.getByText("€24.90")).toBeTruthy();
+    expect(screen.getByText("0,00 EUR")).toBeTruthy();
+    expect(screen.getByText("24,90 EUR")).toBeTruthy();
     expect(screen.queryByRole("alert")).toBeNull();
     expect(mocks.get).toHaveBeenCalledTimes(1);
     expect(mocks.get.mock.calls[0]?.[0]).toBe("/api/purchases");
@@ -130,12 +131,12 @@ describe("Payment history recorded amounts", () => {
   });
 
   test.each([
-    ["es", "No se pudo cargar tu historial de pagos.", "Reintentar", "Cargando pagos...", "Importe no disponible", "Aún no hay compras"],
-    ["en", "Unable to load your payment history.", "Retry", "Loading payments...", "Amount unavailable", "No purchases yet"],
-    ["fr", "Impossible de charger votre historique des paiements.", "Réessayer", "Chargement des paiements...", "Montant indisponible", "Aucun achat pour le moment"],
-    ["pt", "Não foi possível carregar seu histórico de pagamentos.", "Tentar novamente", "Carregando pagamentos...", "Valor indisponível", "Ainda não há compras"],
+    ["es", "No se pudo cargar tu historial de pagos.", "Reintentar", "Cargando pagos...", "Importe no disponible", "Aún no hay compras", "0,00 EUR", "24,90 EUR"],
+    ["en", "Unable to load your payment history.", "Retry", "Loading payments...", "Amount unavailable", "No purchases yet", "EUR 0.00", "EUR 24.90"],
+    ["fr", "Impossible de charger votre historique des paiements.", "Réessayer", "Chargement des paiements...", "Montant indisponible", "Aucun achat pour le moment", "0,00 EUR", "24,90 EUR"],
+    ["pt", "Não foi possível carregar seu histórico de pagamentos.", "Tentar novamente", "Carregando pagamentos...", "Valor indisponível", "Ainda não há compras", "EUR 0,00", "EUR 24,90"],
   ])("keeps a failed request distinct from empty history and recovers recorded amounts after explicit retry (%s)", async (
-    language, errorCopy, retryCopy, loadingCopy, unavailableCopy, emptyCopy,
+    language, errorCopy, retryCopy, loadingCopy, unavailableCopy, emptyCopy, zeroMoney, paidMoney,
   ) => {
     mocks.language = language;
     const retry = Promise.withResolvers<{ data: unknown[] }>();
@@ -158,13 +159,13 @@ describe("Payment history recorded amounts", () => {
 
     await act(async () => retry.resolve({ data: [
       { ...record, id: "unknown", itemTitle: "Unrecorded course", amount: null },
-      { ...record, id: "zero", itemTitle: "Zero-cost course", amount: 0 },
-      { ...record, id: "paid", itemTitle: "Paid course", amount: 24.9 },
+      { ...record, id: "zero", itemTitle: "Zero-cost course", amount: 0, amountMinor: "0" },
+      { ...record, id: "paid", itemTitle: "Paid course", amount: 24.9, amountMinor: "2490" },
     ] }));
 
     expect(screen.getByText(unavailableCopy)).toBeTruthy();
-    expect(screen.getByText("€0.00")).toBeTruthy();
-    expect(screen.getByText("€24.90")).toBeTruthy();
+    expect(screen.getByText(zeroMoney)).toBeTruthy();
+    expect(screen.getByText(paidMoney)).toBeTruthy();
     expect(screen.queryByRole("alert")).toBeNull();
     expect(screen.queryByRole("status")).toBeNull();
     expect(screen.queryByText(emptyCopy)).toBeNull();
@@ -185,7 +186,7 @@ describe("Payment history recorded amounts", () => {
   test.each(["response", "error"])("aborts an unmounted request and ignores its late %s while a fresh page loads", async (outcome) => {
     const obsolete = Promise.withResolvers<{ data: unknown[] }>();
     mocks.get.mockReturnValueOnce(obsolete.promise).mockResolvedValueOnce({ data: [
-      { ...record, id: "current", itemTitle: "Current course", amount: 24.9 },
+      { ...record, id: "current", itemTitle: "Current course", amount: 24.9, amountMinor: "2490" },
     ] });
     const previous = render(<PaymentRenderBoundary><PaymentPage /></PaymentRenderBoundary>);
     await waitFor(() => expect(mocks.get).toHaveBeenCalledTimes(1));
@@ -198,7 +199,7 @@ describe("Payment history recorded amounts", () => {
     await screen.findByText("Current course");
     await act(async () => {
       if (outcome === "response") obsolete.resolve({ data: [
-        { ...record, id: "obsolete", itemTitle: "Obsolete course", amount: 80 },
+        { ...record, id: "obsolete", itemTitle: "Obsolete course", amount: 80, amountMinor: "8000" },
       ] });
       else obsolete.reject(new Error("Old request failure"));
     });
@@ -234,7 +235,7 @@ describe("Payment history recorded amounts", () => {
     expect(oldSignal.aborted).toBe(true);
     expect(mocks.get.mock.calls[1]?.[1]?.params).toEqual({ expectedUserId: "fixture-owner-b" });
     await act(async () => oldOwner.resolve({ data: [
-      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80 },
+      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80, amountMinor: "8000" },
     ] }));
     expect(screen.queryByText("Previous owner course")).toBeNull();
     expect(screen.getByRole("status", { name: "Cargando pagos..." })).toBeTruthy();
@@ -249,7 +250,7 @@ describe("Payment history recorded amounts", () => {
   test("changing owners clears already displayed history while the new request is pending", async () => {
     const next = Promise.withResolvers<{ data: unknown[] }>();
     mocks.get.mockResolvedValueOnce({ data: [
-      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80 },
+      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80, amountMinor: "8000" },
     ] }).mockReturnValueOnce(next.promise);
     render(<PaymentRenderBoundary><PaymentPage /></PaymentRenderBoundary>);
     await screen.findByText("Previous owner course");
@@ -274,7 +275,7 @@ describe("Payment history recorded amounts", () => {
 
   test("same-owner auth refresh updates neither history nor request count", async () => {
     mocks.get.mockResolvedValue({ data: [
-      { ...record, id: "current", itemTitle: "Current owner course", amount: 0 },
+      { ...record, id: "current", itemTitle: "Current owner course", amount: 0, amountMinor: "0" },
     ] });
     render(<PaymentRenderBoundary><PaymentPage /></PaymentRenderBoundary>);
     await screen.findByText("Current owner course");
@@ -292,7 +293,7 @@ describe("Payment history recorded amounts", () => {
     act(() => emitAuth("SIGNED_OUT", null));
     expect(signal.aborted).toBe(true);
     await act(async () => pending.resolve({ data: [
-      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80 },
+      { ...record, id: "old", itemTitle: "Previous owner course", amount: 80, amountMinor: "8000" },
     ] }));
     expect(screen.queryByText("Previous owner course")).toBeNull();
     expect(screen.queryByText("Aún no hay compras")).toBeNull();

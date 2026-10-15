@@ -1,5 +1,6 @@
 import { retrieveDodoReconciliationSnapshot } from '@/lib/payments/dodo-reconciliation';
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
+import { minorUnitsToMajor, normalizePaymentAmountMinor, normalizePaymentCurrency } from "@/lib/payment-money";
 import { db } from "@/lib/db";
 import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { getPaymentProvider } from "@/lib/payments/provider";
@@ -133,7 +134,7 @@ async function reconcileDodoFromWebhookEvents(input: {
     return null;
   }
 
-  const { subtotalAmount, totalAmount, discountAmount } =
+  const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } =
     extractDodoPricing(payload);
 
   try {
@@ -144,6 +145,8 @@ async function reconcileDodoFromWebhookEvents(input: {
       originalPrice: subtotalAmount,
       discountAmount,
       finalPrice: totalAmount,
+      paymentCurrency,
+      paymentAmountMinor,
       ...resolveDodoVoucherAccounting(payload),
     });
   } catch (error) {
@@ -216,7 +219,7 @@ async function reconcileDodoFromPaymentApi(input: {
     return null;
   }
 
-  const { subtotalAmount, totalAmount, discountAmount } =
+  const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } =
     extractDodoPricing(paymentPayload);
 
   try {
@@ -227,6 +230,8 @@ async function reconcileDodoFromPaymentApi(input: {
       originalPrice: subtotalAmount,
       discountAmount,
       finalPrice: totalAmount,
+      paymentCurrency,
+      paymentAmountMinor,
       ...resolveDodoVoucherAccounting(paymentPayload),
     });
   } catch (error) {
@@ -309,7 +314,7 @@ async function reconcileDodoFromCustomerEmail(input: {
     const snapshot = await retrieveDodoReconciliationSnapshot(payment);
     if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, input.userId, input.userEmail) ||
         readDodoCustomString(resolveDodoMetadata(snapshot), "courseId", "course_id") !== input.courseId) continue;
-    const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
+    const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } = extractDodoPricing(snapshot);
 
     try {
       await upsertCoursePurchaseFromProvider({
@@ -319,6 +324,8 @@ async function reconcileDodoFromCustomerEmail(input: {
         originalPrice: subtotalAmount,
         discountAmount,
         finalPrice: totalAmount,
+        paymentCurrency,
+        paymentAmountMinor,
         ...resolveDodoVoucherAccounting(snapshot),
       });
     } catch (error) {
@@ -369,14 +376,25 @@ export async function GET(req: Request) {
       },
     });
 
-    const formatted = purchases.map((p) => ({
-      id: p.id,
-      itemType: "Curso",
-      itemTitle: p.course.title,
-      amount: p.finalPrice ?? null,
-      createdAt: p.createdAt.toISOString(),
-      currency: "EUR",
-    }));
+    const formatted = purchases.map((p) => {
+      const amountMinor = normalizePaymentAmountMinor(p.paymentAmountMinor);
+      const currency = amountMinor !== null ? normalizePaymentCurrency(p.paymentCurrency) : null;
+      const legacyAmount = typeof p.finalPrice === "number" && Number.isFinite(p.finalPrice) && p.finalPrice >= 0
+        ? p.finalPrice : null;
+      return {
+        id: p.id,
+        itemType: "Curso",
+        itemTitle: p.course.title,
+        // Only a complete pair assigns a unit. Incomplete facts may retain an
+        // independent legacy numeric amount, always with an unavailable unit.
+        // An actual raw zero remains zero even when its currency is unknown.
+        amount: amountMinor !== null && currency !== null
+          ? minorUnitsToMajor(amountMinor, currency) : amountMinor === "0" ? 0 : legacyAmount,
+        amountMinor,
+        createdAt: p.createdAt.toISOString(),
+        currency,
+      };
+    });
 
     return NextResponse.json(formatted);
   } catch (error) {

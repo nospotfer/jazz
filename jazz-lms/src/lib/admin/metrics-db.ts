@@ -13,6 +13,8 @@
 
 import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/db';
+import { getExactPayment, recordedAmountKind, summarizePayments, type CurrencyTotal, type RecordedPayment } from '@/lib/admin/payment-totals';
+import { minorUnitsToMajor } from '@/lib/payment-money';
 
 // Admin metrics cache: 5 minutes, keyed by range. Matches the footer
 // promise shown on the Panel de Métricas ("actualizados cada 5 minutos").
@@ -100,6 +102,16 @@ export function computeDelta(current: number, previous: number): number | null {
 
 type TimeseriesBucket = { bucket: string; value: number };
 
+function bucketKey(date: Date, granularity: Granularity): string {
+  if (granularity === 'day') return date.toISOString().slice(0, 10);
+  if (granularity === 'week') {
+    const start = new Date(date);
+    start.setUTCDate(start.getUTCDate() - start.getUTCDay());
+    return start.toISOString().slice(0, 10);
+  }
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
 /**
  * Bucketiza uma lista de eventos (com campo Date) pela granularidade desejada.
  * Usado internamente e exportado para testes.
@@ -116,30 +128,17 @@ export function bucketize<T>(
     buckets.set(key, (buckets.get(key) ?? 0) + value);
   };
 
-  const bucketKey = (date: Date): string => {
-    if (range.granularity === 'day') {
-      return date.toISOString().slice(0, 10); // YYYY-MM-DD
-    }
-    if (range.granularity === 'week') {
-      const startOfWeek = new Date(date);
-      const day = startOfWeek.getUTCDay();
-      startOfWeek.setUTCDate(startOfWeek.getUTCDate() - day);
-      return startOfWeek.toISOString().slice(0, 10);
-    }
-    return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
-  };
-
   // Semeia todos os buckets do intervalo para evitar "buracos" no grafico.
   const cursor = new Date(range.from);
   while (cursor < range.to) {
-    addBucket(bucketKey(cursor), 0);
+    addBucket(bucketKey(cursor, range.granularity), 0);
     if (range.granularity === 'day') cursor.setUTCDate(cursor.getUTCDate() + 1);
     else if (range.granularity === 'week') cursor.setUTCDate(cursor.getUTCDate() + 7);
     else cursor.setUTCMonth(cursor.getUTCMonth() + 1);
   }
 
   for (const item of items) {
-    addBucket(bucketKey(getDate(item)), getValue(item));
+    addBucket(bucketKey(getDate(item), range.granularity), getValue(item));
   }
 
   return Array.from(buckets.entries())
@@ -151,30 +150,15 @@ export function bucketize<T>(
 // Agregacoes — Receita / Matriculas
 // -------------------------------------------------------------
 
-async function sumRevenueBetween(from: Date, to: Date): Promise<number> {
-  const result = await db.purchase.aggregate({
+async function paymentsBetween(from: Date, to: Date): Promise<RecordedPayment[]> {
+  return db.purchase.findMany({
     where: { createdAt: { gte: from, lt: to } },
-    _sum: { finalPrice: true },
+    select: { paymentCurrency: true, paymentAmountMinor: true },
   });
-  return result._sum.finalPrice ?? 0;
 }
 
 async function countPurchasesBetween(from: Date, to: Date): Promise<number> {
   return db.purchase.count({ where: { createdAt: { gte: from, lt: to } } });
-}
-
-async function countPaidPurchasesBetween(from: Date, to: Date): Promise<number> {
-  return db.purchase.count({
-    where: { createdAt: { gte: from, lt: to }, finalPrice: { gt: 0 } },
-  });
-}
-
-async function sumPaidRevenueBetween(from: Date, to: Date): Promise<number> {
-  const result = await db.purchase.aggregate({
-    where: { createdAt: { gte: from, lt: to }, finalPrice: { gt: 0 } },
-    _sum: { finalPrice: true },
-  });
-  return result._sum.finalPrice ?? 0;
 }
 
 async function countNewUsersBetween(from: Date, to: Date): Promise<number> {
@@ -214,10 +198,29 @@ async function completionCountsBetween(from: Date, to: Date): Promise<{
 // API publica do helper
 // -------------------------------------------------------------
 
+export type CurrencyMetric = {
+  byCurrency: (CurrencyTotal & { delta: number | null; comparisonUnavailable?: true })[];
+  unavailableCount: number;
+};
+
+function currencyMetric(current: RecordedPayment[], previous: RecordedPayment[], averagePaidOnly = false): CurrencyMetric {
+  const now = summarizePayments(current, averagePaidOnly);
+  const prior = summarizePayments(previous, averagePaidOnly);
+  return { ...now, byCurrency: now.byCurrency.map((total) => {
+    const old = prior.byCurrency.find((item) => item.currency === total.currency);
+    const unsafeComparison = total.value === null || (old !== undefined && old.value === null);
+    return {
+      ...total,
+      delta: total.value === null || old?.value == null ? null : computeDelta(total.value, old.value),
+      ...(unsafeComparison ? { comparisonUnavailable: true as const } : {}),
+    };
+  }) };
+}
+
 export type OverviewMetrics = {
-  revenue: { value: number; delta: number | null };
+  revenue: CurrencyMetric;
   enrollments: { value: number; delta: number | null };
-  averageTicket: { value: number; delta: number | null };
+  averageTicket: CurrencyMetric;
   newStudents: { value: number; delta: number | null };
   completionRate: { value: number; delta: number | null };
   vouchersRedeemed: { value: number; delta: number | null };
@@ -227,7 +230,7 @@ export type OverviewMetrics = {
 export async function getOverview(range: Range): Promise<OverviewMetrics> {
   const cached = unstable_cache(
     () => getOverviewUncached(range),
-    buildCacheKey('admin-metrics:overview', range),
+    buildCacheKey('admin-metrics:overview:currency-v1', range),
     { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
   );
   return cached();
@@ -235,14 +238,10 @@ export async function getOverview(range: Range): Promise<OverviewMetrics> {
 
 async function getOverviewUncached(range: Range): Promise<OverviewMetrics> {
   const [
-    revenueCurrent,
-    revenuePrev,
+    paymentsCurrent,
+    paymentsPrevious,
     enrollmentsCurrent,
     enrollmentsPrev,
-    paidRevenueCurrent,
-    paidCountCurrent,
-    paidRevenuePrev,
-    paidCountPrev,
     newStudentsCurrent,
     newStudentsPrev,
     completionCurrent,
@@ -252,14 +251,10 @@ async function getOverviewUncached(range: Range): Promise<OverviewMetrics> {
     medalsCurrent,
     medalsPrev,
   ] = await Promise.all([
-    sumRevenueBetween(range.from, range.to),
-    sumRevenueBetween(range.previousFrom, range.previousTo),
+    paymentsBetween(range.from, range.to),
+    paymentsBetween(range.previousFrom, range.previousTo),
     countPurchasesBetween(range.from, range.to),
     countPurchasesBetween(range.previousFrom, range.previousTo),
-    sumPaidRevenueBetween(range.from, range.to),
-    countPaidPurchasesBetween(range.from, range.to),
-    sumPaidRevenueBetween(range.previousFrom, range.previousTo),
-    countPaidPurchasesBetween(range.previousFrom, range.previousTo),
     countNewUsersBetween(range.from, range.to),
     countNewUsersBetween(range.previousFrom, range.previousTo),
     completionCountsBetween(range.from, range.to),
@@ -270,27 +265,18 @@ async function getOverviewUncached(range: Range): Promise<OverviewMetrics> {
     countMedalsEarnedBetween(range.previousFrom, range.previousTo),
   ]);
 
-  const ticketCurrent = paidCountCurrent > 0 ? paidRevenueCurrent / paidCountCurrent : 0;
-  const ticketPrev = paidCountPrev > 0 ? paidRevenuePrev / paidCountPrev : 0;
-
   const completionCurrentRate =
     completionCurrent.started > 0 ? completionCurrent.completed / completionCurrent.started : 0;
   const completionPrevRate =
     completionPrev.started > 0 ? completionPrev.completed / completionPrev.started : 0;
 
   return {
-    revenue: {
-      value: revenueCurrent,
-      delta: computeDelta(revenueCurrent, revenuePrev),
-    },
+    revenue: currencyMetric(paymentsCurrent, paymentsPrevious),
     enrollments: {
       value: enrollmentsCurrent,
       delta: computeDelta(enrollmentsCurrent, enrollmentsPrev),
     },
-    averageTicket: {
-      value: ticketCurrent,
-      delta: computeDelta(ticketCurrent, ticketPrev),
-    },
+    averageTicket: currencyMetric(paymentsCurrent, paymentsPrevious, true),
     newStudents: {
       value: newStudentsCurrent,
       delta: computeDelta(newStudentsCurrent, newStudentsPrev),
@@ -310,26 +296,43 @@ async function getOverviewUncached(range: Range): Promise<OverviewMetrics> {
   };
 }
 
-export async function getRevenueTimeseries(range: Range): Promise<TimeseriesBucket[]> {
+export type RevenueTimeseries = {
+  series: { currency: string; points: { bucket: string; amountMinor: string; value: number | null }[] }[];
+  unavailableCount: number;
+};
+
+export async function getRevenueTimeseries(range: Range): Promise<RevenueTimeseries> {
   const cached = unstable_cache(
     () => getRevenueTimeseriesUncached(range),
-    buildCacheKey('admin-metrics:revenue', range),
+    buildCacheKey('admin-metrics:revenue:currency-v1', range),
     { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
   );
   return cached();
 }
 
-async function getRevenueTimeseriesUncached(range: Range): Promise<TimeseriesBucket[]> {
+async function getRevenueTimeseriesUncached(range: Range): Promise<RevenueTimeseries> {
   const rows = await db.purchase.findMany({
     where: { createdAt: { gte: range.from, lt: range.to } },
-    select: { createdAt: true, finalPrice: true },
+    select: { createdAt: true, paymentCurrency: true, paymentAmountMinor: true },
   });
-  return bucketize(
-    rows,
-    (r) => r.createdAt,
-    (r) => r.finalPrice ?? 0,
-    range
-  );
+  const groups = new Map<string, Map<string, bigint>>();
+  let unavailableCount = 0;
+  for (const row of rows) {
+    const payment = getExactPayment(row);
+    if (payment === null) { unavailableCount += 1; continue; }
+    const buckets = groups.get(payment.currency) ?? new Map<string, bigint>();
+    const key = bucketKey(row.createdAt, range.granularity);
+    buckets.set(key, (buckets.get(key) ?? BigInt(0)) + BigInt(payment.amountMinor));
+    groups.set(payment.currency, buckets);
+  }
+  const seeded = bucketize([], () => range.from, () => 0, range).map((point) => point.bucket);
+  return { unavailableCount, series: [...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([currency, buckets]) => ({
+    currency,
+    points: [...new Set([...seeded, ...buckets.keys()])].sort().map((bucket) => {
+      const amountMinor = (buckets.get(bucket) ?? BigInt(0)).toString();
+      return { bucket, amountMinor, value: minorUnitsToMajor(amountMinor, currency) };
+    }),
+  })) };
 }
 
 export type EnrollmentBucket = { bucket: string; paid: number; voucher: number; total: number };
@@ -337,7 +340,7 @@ export type EnrollmentBucket = { bucket: string; paid: number; voucher: number; 
 export async function getEnrollmentsTimeseries(range: Range): Promise<EnrollmentBucket[]> {
   const cached = unstable_cache(
     () => getEnrollmentsTimeseriesUncached(range),
-    buildCacheKey('admin-metrics:enrollments', range),
+    buildCacheKey('admin-metrics:enrollments:currency-v1', range),
     { revalidate: METRICS_CACHE_TTL_SECONDS, tags: [METRICS_CACHE_TAG] },
   );
   return cached();
@@ -346,17 +349,17 @@ export async function getEnrollmentsTimeseries(range: Range): Promise<Enrollment
 async function getEnrollmentsTimeseriesUncached(range: Range): Promise<EnrollmentBucket[]> {
   const rows = await db.purchase.findMany({
     where: { createdAt: { gte: range.from, lt: range.to } },
-    select: { createdAt: true, finalPrice: true, voucherId: true },
+    select: { createdAt: true, finalPrice: true, paymentAmountMinor: true, voucherId: true },
   });
 
   const paidBuckets = bucketize(
-    rows.filter((r) => (r.finalPrice ?? 0) > 0),
+    rows.filter((r) => recordedAmountKind(r) === 'positive'),
     (r) => r.createdAt,
     () => 1,
     range
   );
   const voucherBuckets = bucketize(
-    rows.filter((r) => r.voucherId != null && r.finalPrice === 0),
+    rows.filter((r) => r.voucherId != null && recordedAmountKind(r) === 'zero'),
     (r) => r.createdAt,
     () => 1,
     range

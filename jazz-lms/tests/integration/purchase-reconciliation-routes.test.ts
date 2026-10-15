@@ -16,7 +16,7 @@ vi.mock('@/lib/payments/providers/dodo', () => ({
 vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider: mocks.upsert }));
 
 const payment = (extra: Record<string, unknown> = {}) => ({
-  payment_id: 'pay_1', status: 'succeeded', total_amount: 3200,
+  payment_id: 'pay_1', status: 'succeeded', total_amount: 3200, currency: 'EUR',
   customer: { email: 'buyer@example.test' },
   metadata: { userId: 'buyer', courseId: 'course-1', originalPrice: '30', voucherCode: 'LOCAL10', providerDiscountCode: 'REMOTE10' },
   ...extra,

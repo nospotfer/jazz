@@ -2,17 +2,8 @@ import { db } from '@/lib/db';
 import { AnalyticsCard } from '@/components/admin/analytics-card';
 import { can, requirePermission } from '@/lib/admin';
 import Link from 'next/link';
-
-function getRecordedAmount(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0
-    ? value
-    : null;
-}
-
-const amountFormatter = new Intl.NumberFormat('es-ES', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+import { formatRecordedPayment, summarizePayments } from '@/lib/admin/payment-totals';
+import { formatPaymentAmount } from '@/lib/payment-money';
 
 export default async function AdminDashboard() {
   await requirePermission('admin.access');
@@ -37,6 +28,8 @@ export default async function AdminDashboard() {
         userId: true,
         createdAt: true,
         finalPrice: true,
+        paymentCurrency: true,
+        paymentAmountMinor: true,
         course: { select: { title: true } },
       },
     }) : Promise.resolve([]),
@@ -44,18 +37,9 @@ export default async function AdminDashboard() {
 
   const purchaseRecords = recentPurchases.map((purchase) => ({
     purchase,
-    recordedAmount: getRecordedAmount(purchase.finalPrice),
+    recordedAmount: formatRecordedPayment(purchase),
   }));
-  const knownAmounts = purchaseRecords
-    .map(({ recordedAmount }) => recordedAmount)
-    .filter((amount): amount is number => amount !== null);
-  const knownTotal = knownAmounts.reduce((total, amount) => total + amount, 0);
-  const unavailableCount = purchaseRecords.length - knownAmounts.length;
-  const knownSummary = knownAmounts.length === 0
-    ? 'Sin importes conocidos'
-    : Number.isFinite(knownTotal)
-      ? amountFormatter.format(knownTotal)
-      : 'Suma no disponible';
+  const totals = summarizePayments(recentPurchases);
 
   const publicationRate = totalCourses > 0 ? `${Math.round((publishedCourses / totalCourses) * 100)}%` : '0%';
 
@@ -77,11 +61,14 @@ export default async function AdminDashboard() {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <h2 className="text-lg font-semibold text-jazz-dark dark:text-white">Compras recientes</h2>
           <div className="min-w-0 max-w-full break-words text-sm text-muted-foreground">
-            <p>Suma conocida (últimos 5 registros): {knownSummary}</p>
-            <p>{unavailableCount} {unavailableCount === 1 ? 'importe no disponible' : 'importes no disponibles'}</p>
+            <p>Totales por moneda (últimos 5 registros)</p>
+            {totals.byCurrency.length === 0 ? <p>Sin totales con moneda verificada</p> : totals.byCurrency.map((total) => (
+              <p key={total.currency}>{formatPaymentAmount(total.amountMinor, total.currency, 'es-ES')}</p>
+            ))}
+            <p>{totals.unavailableCount} registros excluidos de los totales por falta de importe o moneda verificados.</p>
           </div>
         </div>
-        <p className="mb-4 text-xs text-muted-foreground">Moneda e impuestos no verificados.</p>
+        <p className="mb-4 text-xs text-muted-foreground">Importes cobrados por moneda, sin conversión. Impuestos y reembolsos no desglosados.</p>
 
         <div className="divide-y divide-border">
           {recentPurchases.length === 0 ? (
@@ -97,8 +84,8 @@ export default async function AdminDashboard() {
                     <p className="mt-1 break-all text-sm text-muted-foreground">ID de usuario: {purchase.userId}</p>
                   </div>
                   <div className="min-w-0 max-w-full sm:text-right">
-                    <p className="break-words text-jazz-accent font-semibold">
-                      Importe registrado: {recordedAmount === null ? 'No disponible' : amountFormatter.format(recordedAmount)}
+                    <p className="break-words text-jazz-title-accent font-semibold">
+                      Importe registrado: {recordedAmount}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       {new Date(purchase.createdAt).toLocaleDateString('es-ES')}

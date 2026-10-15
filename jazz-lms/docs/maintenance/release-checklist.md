@@ -386,10 +386,14 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   eight geometry/three keyboard menus/all permitted44px links/actual logout204.
   Separate before390/683 preserved. All-five/12-model/raw-course/timestamp hashes,
   owned closure and sealed inspection pass; cumulative pairs26.
-- [ ] Fix PAY-22 currency exponents and precision across monetary representation/
-  persistence/display; verify JPY/KWD/unknown and same-reference/reversal cases.
-  Prepare any production migration for separate approval. No currency-aware or
-  whole-provider completion claim follows from the EUR provenance repair.
+- [x] Implement PAY-22 nullable canonical currency/minor facts, explicit ISO
+  exponents, same-snapshot extraction, retry/replacement guards, student display
+  and separate admin currency totals; frozen failures become focused passes.
+- [ ] Complete the new currency candidate's clean-install full checks/remote CI,
+  then a fresh isolated preview migration with old-field/NULL preservation and
+  source-bound native history/admin/contrast checks. Production needs separate
+  migration/deployment approval. See [migration compatibility and rollback](payment-currency.md).
+  Actual provider transactions and the full tax/refund journal remain unverified.
 - [x] Retain five existing synthetic login credentials separately from selected
   review evidence, with durable private provider input/CA. Owner-only0700/0600;
   no rotation, role assignment, browser session retention or automatic loading.

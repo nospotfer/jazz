@@ -5,6 +5,7 @@ import { CreditCard, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { createClient } from '@/utils/supabase/client';
+import { formatPaymentAmount, normalizePaymentAmountMinor } from '@/lib/payment-money';
 
 interface PurchaseRecord {
   id: string;
@@ -12,16 +13,36 @@ interface PurchaseRecord {
   itemTitle: string;
   amount: number | null;
   createdAt: string;
-  currency: string;
+  currency: string | null;
+  amountMinor: string | null;
 }
 
 function isPurchaseRecord(value: unknown): value is PurchaseRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as Record<string, unknown>;
   return typeof record.id === 'string' && record.itemType === 'Curso' &&
-    typeof record.itemTitle === 'string' && typeof record.currency === 'string' &&
+    typeof record.itemTitle === 'string' && (record.currency === null || typeof record.currency === 'string') &&
+    (record.amountMinor === null || typeof record.amountMinor === 'string') &&
     typeof record.createdAt === 'string' && Number.isFinite(Date.parse(record.createdAt)) &&
     (record.amount === null || (typeof record.amount === 'number' && Number.isFinite(record.amount)));
+}
+
+function RecordedAmount({ purchase, locale, unavailable, currencyUnavailable }: {
+  purchase: PurchaseRecord; locale: string; unavailable: string; currencyUnavailable: string;
+}) {
+  // The exact pair is authoritative. A compatibility float cannot replace its
+  // precision or acquire a currency merely because that code appears nearby.
+  const minor = normalizePaymentAmountMinor(purchase.amountMinor);
+  const formatted = minor === null ? null : formatPaymentAmount(minor, purchase.currency, locale);
+  if (formatted !== null) return <>{formatted}</>;
+
+  const legacyAmount = purchase.amount !== null && Number.isFinite(purchase.amount) && purchase.amount >= 0
+    ? purchase.amount : minor === '0' ? 0 : null;
+  if (legacyAmount === null) return <>{unavailable}</>;
+  return <>
+    <span>{String(legacyAmount)}</span>
+    <span className="block text-xs font-normal text-muted-foreground">{currencyUnavailable}</span>
+  </>;
 }
 
 export default function PaymentPage() {
@@ -33,6 +54,7 @@ export default function PaymentPage() {
       subtitle: 'Consulta tus registros de pago con fecha, hora e importe',
       records: 'Registros',
       amountUnavailable: 'Importe no disponible',
+      currencyUnavailable: 'Moneda no disponible',
       loadError: 'No se pudo cargar tu historial de pagos.',
       retry: 'Reintentar',
       loadingPayments: 'Cargando pagos...',
@@ -45,6 +67,7 @@ export default function PaymentPage() {
       subtitle: 'Review your payment records with date, time, and amount',
       records: 'Records',
       amountUnavailable: 'Amount unavailable',
+      currencyUnavailable: 'Currency unavailable',
       loadError: 'Unable to load your payment history.',
       retry: 'Retry',
       loadingPayments: 'Loading payments...',
@@ -57,6 +80,7 @@ export default function PaymentPage() {
       subtitle: 'Consultez vos paiements avec la date, l’heure et le montant',
       records: 'Enregistrements',
       amountUnavailable: 'Montant indisponible',
+      currencyUnavailable: 'Devise indisponible',
       loadError: 'Impossible de charger votre historique des paiements.',
       retry: 'Réessayer',
       loadingPayments: 'Chargement des paiements...',
@@ -69,6 +93,7 @@ export default function PaymentPage() {
       subtitle: 'Consulte seus pagamentos com data, horário e valor',
       records: 'Registros',
       amountUnavailable: 'Valor indisponível',
+      currencyUnavailable: 'Moeda indisponível',
       loadError: 'Não foi possível carregar seu histórico de pagamentos.',
       retry: 'Tentar novamente',
       loadingPayments: 'Carregando pagamentos...',
@@ -193,8 +218,8 @@ export default function PaymentPage() {
                 key={purchase.id}
                 className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-background border border-border rounded-lg p-4"
               >
-                <div>
-                  <p className="text-sm font-medium text-foreground">
+                <div className="min-w-0">
+                  <p className="break-words text-sm font-medium text-foreground">
                     {purchase.itemTitle}
                   </p>
                   <p className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 mt-0.5">
@@ -210,13 +235,9 @@ export default function PaymentPage() {
                     </span>
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-primary">
-                  {purchase.amount === null ? copy.amountUnavailable : (
-                    <>
-                      {purchase.currency === 'EUR' ? '€' : `${purchase.currency} `}
-                      {purchase.amount.toFixed(2)}
-                    </>
-                  )}
+                <span className="min-w-0 max-w-full break-words text-sm font-semibold text-jazz-title-accent sm:text-right">
+                  <RecordedAmount purchase={purchase} locale={dateLocale}
+                    unavailable={copy.amountUnavailable} currencyUnavailable={copy.currencyUnavailable} />
                 </span>
               </div>
             ))}

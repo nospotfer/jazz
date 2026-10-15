@@ -120,8 +120,9 @@ describe("GET /api/purchases", () => {
       itemType: "Curso",
       itemTitle: "Jazz Basics",
       amount: 29.99,
+      amountMinor: null,
       createdAt: "2026-01-15T10:00:00.000Z",
-      currency: "EUR",
+      currency: null,
     });
   });
 
@@ -145,6 +146,7 @@ describe("GET /api/purchases", () => {
     }
 
     expect(responses.map((records) => records[0].amount)).toEqual([null, null, null]);
+    expect(responses.map((records) => records[0].currency)).toEqual([null, null, null]);
     expect(responses[0]).toEqual(responses[1]);
     expect(responses[1]).toEqual(responses[2]);
   });
@@ -166,6 +168,7 @@ describe("GET /api/purchases", () => {
 
     expect(response.status).toBe(200);
     expect(records.map((record: { amount: number | null }) => record.amount)).toEqual([0, 24.9]);
+    expect(records.every((record: { currency: string | null; amountMinor: string | null }) => record.currency === null && record.amountMinor === null)).toBe(true);
   });
 
   test("returns 500 on internal errors", async () => {
@@ -336,6 +339,7 @@ describe("POST /api/purchases", () => {
             payment: {
               id: "pay_1",
               amount: 2990,
+              currency: "EUR",
               customer: {
                 email: "admin@neurofactory.net",
               },
@@ -379,6 +383,8 @@ describe("POST /api/purchases", () => {
       originalPrice: null,
       discountAmount: null,
       finalPrice: 29.9,
+      paymentCurrency: "EUR",
+      paymentAmountMinor: "2990",
       localVoucherCode: null,
       providerDiscountCode: null,
       providerDiscountId: null,

@@ -106,7 +106,7 @@ export async function POST() {
       const snapshot = await retrieveDodoReconciliationSnapshot(payment);
       if (!snapshot || !doesDodoPaymentBelongToUser(snapshot, user.id, email) ||
           readCustomString(resolveDodoMetadata(snapshot), "courseId", "course_id") !== courseId) continue;
-      const { subtotalAmount, totalAmount, discountAmount } = extractDodoPricing(snapshot);
+      const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } = extractDodoPricing(snapshot);
 
       try {
         await upsertCoursePurchaseFromProvider({
@@ -116,6 +116,8 @@ export async function POST() {
           originalPrice: subtotalAmount,
           finalPrice: totalAmount,
           discountAmount,
+          paymentCurrency,
+          paymentAmountMinor,
           ...resolveDodoVoucherAccounting(snapshot),
         });
         unlocked += 1;

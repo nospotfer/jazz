@@ -1,3 +1,5 @@
+import { getPaymentCurrencyExponent, minorUnitsToMajor, normalizePaymentAmountMinor, normalizePaymentCurrency } from "@/lib/payment-money";
+
 export type LooseObject = Record<string, unknown>;
 
 export function asObject(value: unknown): LooseObject {
@@ -40,7 +42,7 @@ export function toMoney(value: unknown): number {
   return Number(parsed.toFixed(2));
 }
 
-function toProviderMoney(value: unknown): number | null {
+function toProviderMoney(value: unknown, currency: string | null): number | null {
   const parsed = toNumber(value);
   if (parsed === null || parsed < 0) {
     return null;
@@ -49,18 +51,13 @@ function toProviderMoney(value: unknown): number | null {
   const hasDecimalSeparator =
     typeof value === "string" && (value.includes(".") || value.includes(","));
 
-  // Dodo webhook/payment API integer amounts are minor units (e.g. cents).
+  // Legacy integer aliases use explicit provider currency units, never cents by default.
   if (!hasDecimalSeparator && Number.isInteger(parsed)) {
-    return Number((parsed / 100).toFixed(2));
+    return minorUnitsToMajor(normalizePaymentAmountMinor(value), currency);
   }
 
-  return Number(parsed.toFixed(2));
-}
-
-function toDocumentedProviderTotal(value: unknown): number | null {
-  const parsed = toNumber(value);
-  if (parsed === null || !Number.isSafeInteger(parsed) || parsed < 0) return null;
-  return Number((parsed / 100).toFixed(2));
+  // Recognized legacy decimal-major facts stay independent of canonical units.
+  return parsed <= Number.MAX_SAFE_INTEGER ? parsed : null;
 }
 
 export function readCustomString(
@@ -228,38 +225,42 @@ export function extractDodoPricing(payload: LooseObject): {
   subtotalAmount: number | null;
   totalAmount: number | null;
   discountAmount: number | null;
+  paymentCurrency: string | null;
+  paymentAmountMinor: string | null;
 } {
   const data = asObject(payload.data);
   const payment = asObject(data.payment);
+  // Currency, raw total, aliases, subtotal and tax must describe one snapshot.
+  // An incomplete nested legacy payment cannot borrow outer financial facts.
+  const money = Object.keys(payment).length ? payment : data;
+  const paymentCurrency = normalizePaymentCurrency(money.currency);
 
   // The documented total is integer minor units, including tax. A present
   // malformed total is unknown; a legacy alias must not replace it or real zero.
-  const documentedTotal = payment.total_amount !== undefined
-    ? payment.total_amount : data.total_amount;
+  const documentedTotal = money.total_amount;
+  const legacyTotal = money.amount;
+  const paymentAmountMinor = normalizePaymentAmountMinor(documentedTotal !== undefined ? documentedTotal : legacyTotal);
   const totalAmount = documentedTotal !== undefined
-    ? toDocumentedProviderTotal(documentedTotal)
-    : toProviderMoney(payment.amount !== undefined ? payment.amount : data.amount);
-  const providerSubtotal = payment.subtotal_amount !== undefined
-    ? payment.subtotal_amount : data.subtotal_amount;
+    ? minorUnitsToMajor(paymentAmountMinor, paymentCurrency)
+    : toProviderMoney(legacyTotal, paymentCurrency);
+  const providerSubtotal = money.subtotal_amount;
   // A merchant/catalog quote (including legacy originalPrice metadata) is not
   // a provider subtotal. Nor does a charged total prove an undiscounted base.
   // Retain the explicit legacy subtotal alias, without inventing absent facts.
   const subtotalAmount = providerSubtotal !== undefined
-    ? toProviderMoney(providerSubtotal) : null;
-  const currency = asString(payment.currency !== undefined ? payment.currency : data.currency)?.toUpperCase();
-  const tax = payment.tax !== undefined ? payment.tax : data.tax;
-  // Existing amount conversion supports the configured two-decimal EUR path.
-  // Dodo's documented total includes tax, so subtraction is comparable only
-  // with an explicit zero-tax basis. Other currencies/exponents remain outside
-  // this legacy derivation; neither a missing basis nor a quote proves zero tax.
-  const comparableProviderAmounts = currency === "EUR" && tax === 0;
-  const discountAmount = comparableProviderAmounts && subtotalAmount !== null && totalAmount !== null && subtotalAmount >= totalAmount
-    ? Number((subtotalAmount - totalAmount).toFixed(2)) : null;
+    ? toProviderMoney(providerSubtotal, paymentCurrency) : null;
+  const tax = money.tax;
+  const digits = getPaymentCurrencyExponent(paymentCurrency);
+  // Both legacy provider amounts need the same explicit unit and zero-tax basis.
+  const discountAmount = digits !== null && tax === 0 && subtotalAmount !== null && totalAmount !== null && subtotalAmount >= totalAmount
+    ? Number((subtotalAmount - totalAmount).toFixed(digits)) : null;
 
   return {
     subtotalAmount,
     totalAmount,
     discountAmount,
+    paymentCurrency,
+    paymentAmountMinor,
   };
 }
 

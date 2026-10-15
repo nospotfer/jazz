@@ -170,3 +170,15 @@ admin pairs bring cumulative count26, each with actual logout204. All-five/
 voucher12/13 andc1a2351/4/68 fixture diagnostic remain immutable. Actual Dodo,
 OAuth/mail, stable hosting and approved production hardening remain essential
 gaps. [Current source and bounds](review-status.md#quote-provenance-and-transactional-course-intent).
+
+The next currency candidate fixes PAY-22 in source: nullable exact payment
+currency/minor text, explicit ISO exponents, coherent snapshot extraction,
+retry/replacement guards, honest history and separate admin currency totals.
+Frozen backend52, admin13, student23 and DTO17 cases retain their exact-d05
+failures and now pass. A separate intermediate snapshot-mixing eight cases
+(six failures/two controls) also pass after correction. Local schema6 preserves
+the old row/timestamps and includes five actual PostgreSQL representation
+checks. Light amount contrast now uses the existing title-accent token; actual
+post-class offline ratios pass both themes. Full clean-source QA/remote CI and
+a fresh migrated native preview remain pending; prior c1a evidence is not
+rebound to the candidate. [Currency scope and rollout](payment-currency.md).

@@ -138,6 +138,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -164,6 +165,8 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       userId: "user-1",
       courseId: "course-1",
       providerReferenceId: "dodo-pay:pay_123",
+      paymentCurrency: "EUR",
+      paymentAmountMinor: "2990",
       originalPrice: null,
       finalPrice: 29.9,
       discountAmount: null,
@@ -180,6 +183,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_124",
+          currency: "EUR",
           amount: 990,
         },
         metadata: {
@@ -201,6 +205,8 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(
       expect.objectContaining({
         providerReferenceId: "dodo-pay:pay_124",
+        paymentCurrency: "EUR",
+        paymentAmountMinor: "990",
         originalPrice: null,
         finalPrice: 9.9,
         discountAmount: null,
@@ -213,7 +219,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     const response = await POST(new Request("http://localhost/api/webhooks/dodo-jazzlms", {
       method: "POST", body: JSON.stringify({
         type: "payment.succeeded", data: {
-          payload_type: "Payment", payment_id: "pay_actual", status: "succeeded", total_amount: 2399,
+          payload_type: "Payment", payment_id: "pay_actual", status: "succeeded", total_amount: 2399, currency: "EUR",
           discounts: [{ discount_id: "dsc_actual", code: "ACTUAL20" }],
           metadata: { userId: "buyer", courseId: "course", originalPrice: "29.99", voucherCode: "OLDLOCAL", providerDiscountCode: "OLD20" },
         },
@@ -221,7 +227,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     }));
     expect(response.status).toBe(200);
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({
-      localVoucherCode: null, providerDiscountCode: "ACTUAL20", providerDiscountId: "dsc_actual", originalPrice: null, finalPrice: 23.99, discountAmount: null,
+      localVoucherCode: null, providerDiscountCode: "ACTUAL20", providerDiscountId: "dsc_actual", paymentCurrency: "EUR", paymentAmountMinor: "2399", originalPrice: null, finalPrice: 23.99, discountAmount: null,
     }));
   });
 
@@ -256,6 +262,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {},
@@ -345,6 +352,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -411,6 +419,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -449,6 +458,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {

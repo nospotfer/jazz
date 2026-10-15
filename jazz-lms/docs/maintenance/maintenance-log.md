@@ -1218,3 +1218,33 @@ The maintenance goal remains active and incomplete.
   plus manifest/receipt under durable private review-checkpoint-quote-admin-a631e166,
   copied hashes/modes verified and nonempty candidate scan0. Credentials/raw course
   rows/sessions/screenshots excluded; local unencrypted/non-off-site limits kept.
+
+
+## 2026-10-15 — Exact currency facts and readable payment records
+
+- PAY-22 source now stores a nullable canonical currency/minor-unit snapshot,
+  uses explicit SIX exponents, carries both fields through all paid ingestion
+  paths, preserves legacy facts separately on retries and clears unrelated facts
+  on replacement/free grants. No catalog/product/cart or hosting plan changed.
+- History no longer assumes EUR or two decimals. Admin sums/averages/series are
+  per currency, unknown records are excluded explicitly, exact large totals
+  remain displayable and unsafe chart/comparison projections are unavailable.
+- Frozen exactd05 regressions preserve backend52 (48fail/four controls), admin13
+  (11fail/two controls), student23 (18fail/five controls), DTO17
+  (14fail/three controls); each passes after correction. Existing financial,
+  ownership, permission and reversal controls remain. Independent review caught
+  a separate intermediate nested/outer snapshot binding and an unsafe comparison
+  incorrectly labeled Nuevo; both receive targeted fixes and retained evidence.
+- Disposable local PostgreSQL received two nullable TEXT columns with no
+  defaults/backfill. An existing scoped row, raw timestamps and table metadata
+  remained unchanged; schema6 includes five actual representation checks.
+  Production and the isolated cloud preview have not received this migration.
+- Offline browser measurement confirmed light amount contrast3.057student and
+  2.103admin. Both now use the existing darker title-accent token, preserving
+  branding; offline candidate ratios exceed5.5light/7.3dark. Native contrast and
+  rendering are separate pending evidence.
+- New [currency migration/rollback runbook](payment-currency.md) requires columns
+  before new generated clients; rollback retains additive columns/exact facts.
+  No production migration/deployment, real payment/refund, email, paid upgrade,
+  provider setting change or whole-goal completion is claimed. Clean exact-source
+  full QA/remote CI and a fresh migrated preview are the next verification steps.

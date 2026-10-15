@@ -75,41 +75,41 @@ describe("extractDodoPricing", () => {
     ["legacy subtotal", { subtotal_amount: -100, total_amount: 2990 }, { subtotalAmount: null, totalAmount: 29.9, discountAmount: null }],
     ["metadata base", { total_amount: 2990, metadata: { originalPrice: "-5" } }, { subtotalAmount: null, totalAmount: 29.9, discountAmount: null }],
   ])("keeps negative %s money unknown", (_name, data, expected) => {
-    expect(extractDodoPricing({ data })).toEqual(expected);
+    expect(extractDodoPricing({ data: { currency: "EUR", ...data } })).toMatchObject(expected);
   });
 
   test.each([undefined, null, "", "invalid", NaN, Infinity, {}, 123.5, -1, Number.MAX_SAFE_INTEGER + 1])(
     "keeps missing or malformed documented total unknown (%j)", (total_amount) => {
-      expect(extractDodoPricing({ data: { total_amount, subtotal_amount: 2999, metadata: { originalPrice: "29.99" } } })).toEqual({
+      expect(extractDodoPricing({ data: { currency: "EUR", total_amount, subtotal_amount: 2999, metadata: { originalPrice: "29.99" } } })).toMatchObject({
         subtotalAmount: 29.99, totalAmount: null, discountAmount: null,
       });
     },
   );
 
   test("keeps all absent monetary facts unknown without metadata", () => {
-    expect(extractDodoPricing({ data: {} })).toEqual({
+    expect(extractDodoPricing({ data: {} })).toMatchObject({
       subtotalAmount: null, totalAmount: null, discountAmount: null,
     });
   });
 
   test("keeps present malformed base metadata unknown without replacing it with the total", () => {
-    expect(extractDodoPricing({ data: { total_amount: 2990, metadata: { originalPrice: "invalid" } } })).toEqual({
+    expect(extractDodoPricing({ data: { currency: "EUR", total_amount: 2990, metadata: { originalPrice: "invalid" } } })).toMatchObject({
       subtotalAmount: null, totalAmount: 29.9, discountAmount: null,
     });
   });
 
   test.each([
     { total_amount: 0, amount: 2990 },
-    { payment: { total_amount: 0, amount: 2990 } },
-    { payment: { amount: 2990 }, total_amount: 0 },
+    { payment: { currency: "EUR", total_amount: 0, amount: 2990 } },
+    { payment: { currency: "EUR", total_amount: 0, amount: 2990 }, total_amount: 2990 },
   ])("preserves documented zero over the legacy amount alias (%j)", (data) => {
-    expect(extractDodoPricing({ data: { ...data, metadata: { originalPrice: "29.99" } } })).toEqual({
+    expect(extractDodoPricing({ data: { currency: "EUR", ...data, metadata: { originalPrice: "29.99" } } })).toMatchObject({
       subtotalAmount: null, totalAmount: 0, discountAmount: null,
     });
   });
 
   test("uses documented total over a conflicting legacy amount", () => {
-    expect(extractDodoPricing({ data: { total_amount: 2490, amount: 2990 } }).totalAmount).toBe(24.9);
+    expect(extractDodoPricing({ data: { currency: "EUR", total_amount: 2490, amount: 2990 } }).totalAmount).toBe(24.9);
   });
 
   test("does not substitute a legacy alias for a present malformed documented total", () => {
@@ -121,16 +121,16 @@ describe("extractDodoPricing", () => {
   });
 
   test("preserves explicit comparable provider zero but does not promote zero metadata to a base", () => {
-    expect(extractDodoPricing({ data: { subtotal_amount: 0, total_amount: 0, currency: "EUR", tax: 0, metadata: { originalPrice: "29.99" } } })).toEqual({
+    expect(extractDodoPricing({ data: { subtotal_amount: 0, total_amount: 0, currency: "EUR", tax: 0, metadata: { originalPrice: "29.99" } } })).toMatchObject({
       subtotalAmount: 0, totalAmount: 0, discountAmount: 0,
     });
-    expect(extractDodoPricing({ data: { total_amount: 2490, metadata: { originalPrice: "0" } } })).toEqual({
+    expect(extractDodoPricing({ data: { currency: "EUR", total_amount: 2490, metadata: { originalPrice: "0" } } })).toMatchObject({
       subtotalAmount: null, totalAmount: 24.9, discountAmount: null,
     });
   });
 
   test("retains legacy decimal major-unit compatibility when documented total is absent", () => {
-    expect(extractDodoPricing({ data: { payment: { amount: "9.90", subtotal_amount: "29.99", currency: "EUR", tax: 0 }, metadata: { originalPrice: "29.99" } } })).toEqual({
+    expect(extractDodoPricing({ data: { payment: { amount: "9.90", subtotal_amount: "29.99", currency: "EUR", tax: 0 }, metadata: { originalPrice: "29.99" } } })).toMatchObject({
       subtotalAmount: 29.99, totalAmount: 9.9, discountAmount: 20.09,
     });
   });
@@ -139,12 +139,13 @@ describe("extractDodoPricing", () => {
     const pricing = extractDodoPricing({
       data: {
         payment: {
+          currency: "EUR",
           amount: 2990,
         },
       },
     });
 
-    expect(pricing).toEqual({
+    expect(pricing).toMatchObject({
       subtotalAmount: null,
       totalAmount: 29.9,
       discountAmount: null,
@@ -155,12 +156,13 @@ describe("extractDodoPricing", () => {
     const pricing = extractDodoPricing({
       data: {
         payment: {
+          currency: "EUR",
           amount: 990,
         },
       },
     });
 
-    expect(pricing).toEqual({
+    expect(pricing).toMatchObject({
       subtotalAmount: null,
       totalAmount: 9.9,
       discountAmount: null,
@@ -171,12 +173,13 @@ describe("extractDodoPricing", () => {
     const pricing = extractDodoPricing({
       data: {
         payment: {
+          currency: "EUR",
           amount: "1000",
         },
       },
     });
 
-    expect(pricing).toEqual({
+    expect(pricing).toMatchObject({
       subtotalAmount: null,
       totalAmount: 10,
       discountAmount: null,
@@ -187,6 +190,7 @@ describe("extractDodoPricing", () => {
     const pricing = extractDodoPricing({
       data: {
         payment: {
+          currency: "EUR",
           amount: 990,
         },
         metadata: {
@@ -195,7 +199,7 @@ describe("extractDodoPricing", () => {
       },
     });
 
-    expect(pricing).toEqual({
+    expect(pricing).toMatchObject({
       subtotalAmount: null,
       totalAmount: 9.9,
       discountAmount: null,

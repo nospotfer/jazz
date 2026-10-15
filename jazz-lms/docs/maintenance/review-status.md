@@ -6,12 +6,36 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Latest published application/test source: `a631e166`; runtime `c1a419c` has
+Previously published application/test source: `a631e166`; runtime `c1a419c` has
 identical application code (the later commit changes three fixtures only). See
 [quote provenance and transactional course intent](#quote-provenance-and-transactional-course-intent).
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
+
+## Currency facts and readable amounts
+
+The current candidate carries PAY-22 across provider extraction, all paid ingest
+paths, persistence, student history and admin reporting. It stores an exact
+nullable currency/minor-unit snapshot, preserves legacy floats independently,
+and prevents partial retries or nested/outer payload fields from mixing units.
+Unknown units never become EUR. Admin totals/averages/charts stay separate by
+verified currency; large exact amounts survive without a rounded chart value.
+See [payment currency, compatibility and rollback](payment-currency.md).
+
+Exact prior-source failures are retained: backend52 (48fail/four controls),
+admin13 (11fail/two controls), student23 (18fail/five controls), DTO17
+(14fail/three auth controls). All pass after their fixes. Existing owner,
+permission, unknown/zero, coupon and reversal controls remain distinct. The
+local nullable-column migration preserved the original test row/timestamps and
+owner/RLS/ACL/index metadata; it did not alter a provider database.
+
+Light-theme amount contrast also failed an offline browser check (3.057student,
+2.103admin). Both amount styles now use the established title-accent token;
+offline candidate ratios pass both themes. This is not native screenshot or
+integration evidence. Full clean-checkout QA, remote CI and a freshly migrated
+isolated native preview are still pending for this candidate. No production
+migration, rollout, actual provider transaction or whole-goal completion follows.
 
 ## Voucher availability and redemption intent
 

@@ -366,3 +366,29 @@ preservation and clean owned closure/seal inspection. It is not a new execution
 ofa631; only its three test fixtures differ. Original voucher12/13 and other
 before/failure reports remain separate. Currency exponent handling is still
 high-priority source work. [Exact scope](review-status.md#quote-provenance-and-transactional-course-intent).
+
+
+## Currency representation candidate
+
+Focused PAY-22 checks cover exact provider units (including JPY/KWD/IQD/MGA),
+malformed canonical totals without alias fallback, coherent payment snapshots,
+legacy float independence, retries/replacements/refund barriers, nullable JSON
+DTOs and permission/owner-bound student/admin display. Schema tests use only
+`127.0.0.1:55432/jazz_maintenance`; the added generated-client metadata case also
+runs in the normal suite. Both new persisted suites are explicitly included in
+Quality CI: `tests/security/payment-currency-schema-postgres.test.ts` and
+`tests/integration/dodo-currency-postgres.test.ts`.
+
+Private frozen before/after evidence lives in the PAY-22 money, admin, student
+and schema review directories under `/tmp/jazz-maintenance/`. Initial harness
+failures are retained separately and excluded from application-regression
+counts. Spanish currency-code placement follows the actual shared formatter;
+unknown legacy values never acquire a currency merely to satisfy old fixtures.
+The old processed-event fixture now explicitly states EUR where it expects a
+EUR-scaled amount, and GET fixtures expect nullable currency/minor fields.
+
+Full exact-source checks and native migrated-preview evidence for this candidate
+are pending. Prior a631/c1a native evidence remains bound to those old sources.
+Follow [payment-currency.md](payment-currency.md) for migration ordering and safe
+rollback; neither `prisma db push` nor the legacy migration chain is an approved
+production rollout.

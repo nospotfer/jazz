@@ -246,7 +246,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { subtotalAmount, totalAmount, discountAmount } =
+    const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } =
       extractDodoPricing(payload);
 
     await upsertCoursePurchaseFromProvider({
@@ -256,6 +256,8 @@ export async function POST(req: Request) {
       originalPrice: subtotalAmount,
       finalPrice: totalAmount,
       discountAmount,
+      paymentCurrency,
+      paymentAmountMinor,
       ...resolveDodoVoucherAccounting(payload),
     });
 

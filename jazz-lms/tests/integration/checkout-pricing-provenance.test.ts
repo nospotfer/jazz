@@ -54,7 +54,7 @@ async function settle(data: Record<string, unknown>, reference = paymentReferenc
   const pricing = extractDodoPricing(payload);
   await upsertCoursePurchaseFromProvider({ userId: "owner-fixture", courseId: "course-fixture",
     providerReferenceId: reference, originalPrice: pricing.subtotalAmount, discountAmount: pricing.discountAmount,
-    finalPrice: pricing.totalAmount, ...resolveDodoVoucherAccounting(payload) });
+    finalPrice: pricing.totalAmount, paymentCurrency: pricing.paymentCurrency, paymentAmountMinor: pricing.paymentAmountMinor, ...resolveDodoVoucherAccounting(payload) });
 }
 
 beforeEach(() => {
