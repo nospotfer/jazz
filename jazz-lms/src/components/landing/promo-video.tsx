@@ -59,6 +59,7 @@ export function PromoVideo() {
       paragraph:
         "Vive una experiencia que cambiará para siempre tu forma de sentir la música. No necesitas ser músico ni experto para disfrutar el jazz.",
       cta: "Regístrate",
+      explore: "Ver las clases",
       courseSummary: "15 clases para descubrir el jazz, paso a paso.",
       muxError: "No se pudo cargar el video promocional.",
       fallbackLabel: "Vista previa de la primera clase",
@@ -75,6 +76,7 @@ export function PromoVideo() {
       paragraph:
         "Live an experience that will forever change the way you feel music. You do not need to be a musician or an expert to enjoy jazz.",
       cta: "Sign Up",
+      explore: "Explore the lessons",
       courseSummary: "15 lessons to discover jazz, step by step.",
       muxError: "Unable to load the promo video.",
       fallbackLabel: "First class preview",
@@ -91,6 +93,7 @@ export function PromoVideo() {
       paragraph:
         "Vivez une expérience qui changera à jamais votre façon de ressentir la musique. Vous n’avez pas besoin d’être musicien ou expert pour apprécier le jazz.",
       cta: "S’inscrire",
+      explore: "Découvrir les leçons",
       courseSummary: "15 leçons pour découvrir le jazz, pas à pas.",
       muxError: "Impossible de charger la vidéo de présentation.",
       fallbackLabel: "Aperçu du premier cours",
@@ -107,6 +110,7 @@ export function PromoVideo() {
       paragraph:
         "Viva uma experiência que mudará sua forma de sentir a música. Você não precisa ser músico nem especialista para apreciar o jazz.",
       cta: "Cadastre-se",
+      explore: "Ver as aulas",
       courseSummary: "15 aulas para descobrir o jazz, passo a passo.",
       muxError: "Não foi possível carregar o vídeo de apresentação.",
       fallbackLabel: "Prévia da primeira aula",
@@ -187,18 +191,15 @@ export function PromoVideo() {
   return (
     <div className="w-full bg-gray-100 dark:bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-8 sm:py-12 lg:py-14">
-        <div
-          data-testid="home-promo-message"
-          className="mb-6 rounded-xl border border-[var(--color-jazz-title-accent)]/60 bg-gradient-to-r from-[var(--color-jazz-cta)]/20 via-[var(--color-jazz-title-accent)]/12 to-transparent px-4 py-3 sm:px-5 sm:py-3.5 shadow-[0_10px_30px_rgba(212,175,55,0.16)]"
-        >
-          <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white tracking-wide">
-            {copy.promotionMessage}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* Left side - Text & CTA */}
-          <div className="flex flex-col justify-center space-y-6">
+          <div data-testid="home-promo-copy" className="flex flex-col justify-center space-y-6">
+            <p
+              data-testid="home-promo-message"
+              className="w-fit max-w-full rounded-lg border border-[var(--color-jazz-title-accent)]/40 bg-[var(--color-jazz-cta)]/10 px-4 py-2 text-sm font-semibold leading-relaxed text-foreground"
+            >
+              {copy.promotionMessage}
+            </p>
             <div>
               <p
                 data-testid="home-promo-pretitle"
@@ -219,16 +220,26 @@ export function PromoVideo() {
               <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
                 {copy.paragraph}
               </p>
-              <p className="mt-4 text-sm font-semibold text-foreground">{copy.courseSummary}</p>
             </div>
 
-            <button
-              onClick={() => router.push("/auth?tab=register")}
-              className="cta-highlight flex items-center gap-3 py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
-            >
-              <LogIn className="h-5 w-5" />
-              {copy.cta}
-            </button>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button
+                  onClick={() => router.push("/auth?tab=register")}
+                  className="cta-highlight flex min-h-12 w-full items-center justify-center gap-3 rounded-lg px-8 py-4 text-lg transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
+                >
+                  <LogIn className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  {copy.cta}
+                </button>
+                <a
+                  href="#board-courses"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-border bg-card px-6 py-3 font-semibold text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
+                >
+                  {copy.explore}
+                </a>
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">{copy.courseSummary}</p>
+            </div>
           </div>
 
           {/* Right side - Promo Video */}

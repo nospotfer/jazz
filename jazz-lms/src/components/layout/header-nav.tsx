@@ -72,11 +72,11 @@ export function HeaderNav() {
         </a>
       ))}
     </nav>
-    <details ref={menuRef} className="relative order-4 xl:hidden">
+    <details ref={menuRef} className="order-4 xl:hidden">
       <summary aria-label={menuLabel} className="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-border bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
         <Menu className="h-5 w-5" aria-hidden="true" />
       </summary>
-      <nav aria-label={menuLabel} className="absolute left-0 top-full z-50 mt-2 w-52 rounded-xl border border-border bg-card p-2 shadow-xl">
+      <nav aria-label={menuLabel} className="absolute inset-x-4 top-full z-50 mt-2 rounded-xl border border-border bg-card p-2 shadow-xl sm:left-auto sm:right-6 sm:w-64">
         {NAV_LINKS[language].map(link => (
           <a key={link.href} href={link.href} onClick={event => scrollToSection(event, link.href)} className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             {link.label}
