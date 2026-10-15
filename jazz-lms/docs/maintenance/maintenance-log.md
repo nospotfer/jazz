@@ -1356,3 +1356,80 @@ The maintenance goal remains active and incomplete.
   cases show four old name-projection failures plus three controls, then7/7 with
   the structural comparison; both complete SQL files and all eight DO bodies
   parse. The original bounded permission-mutation bodies remain unchanged.
+
+## 2026-10-15 — Column guards and corrected archive restore integrated
+
+- Proposed revision4 derives225 exact column expectations from archived DDL and
+  retains the93-index checks and original permission bodies unchanged. Nine
+  closed checks and24 actual isolated checks pass. Real varchar length,
+  timestamp precision and collation drift preserve the old projection but fail
+  the new locked checks. All65 COPY hashes/counts,2,239 rows/two sequences and422
+  zero-row permission operations pass; owned container/tmpfs cleanup is verified.
+- Corrected offline bootstrap precreates three exact extensions as postgres,
+  immediately restores its original role flags and strictly restores the other
+  853 archive entries. All51 member owners/557 serialized ACL/67 role statements,
+  65 exact row-multiset hashes/2,239 records/two sequences match. Source extension
+  ownership/initial/effective privileges remain unknown; target postgres still
+  has ordinary/grant-option rights on the49 functions/two views. Serialized
+  revocations are not proof of effective denial.
+- A separately reviewed combined run verifies corrected restore → exactv4 apply
+  → explicit manual inverse → reapply. All four stages preserve65 table hashes/
+  counts/two sequences,67 role statements and same-run nonpublic extension
+  metadata. Each apply passes422 zero-row operations; inverse restores557 ACL
+  statements/member owners and reapply reproduces hardened state. Independent
+  review rehashes37 normalized evidence files. No raw rows are published, no
+  production/provider connections occur, and owned container/tmpfs are removed.
+- Revision4 is bound to225 archived columns; the two additive payment columns
+  require separate227-column migration/fingerprint review. Collation provider/
+  version, hosted-platform recovery and source initial privileges are not proven.
+  Original SQL/receipts remain unchanged; no automatic inverse is introduced.
+- Root retains89 explicitly selected source/SQL/test/normalized proof files
+  (2,624,272 bytes) in the owner-only local recovery-v4 checkpoint, rehashes all
+  destination bytes/modes and records a manifest/receipt. Raw archive/COPY,
+  whole schema/role exports, credentials and enabled approvals are excluded.
+  Original preservation remains separate; local retention is unencrypted.
+
+## 2026-10-15 — Final native monetary facts and restoration verified
+
+- Fresh exact5f artifact605 Git files/45,825 sealed/158 client files passes
+  source/client-secret checks, Unix19 and HTTPS11. The initial read-only harness
+  rejects the pooler backend's false SSL flag before browser/fixture work. A
+  separate published-CA/hostname TLS1.3 endpoint handshake passes without database
+  credentials/SQL. Distinct reviewedv2 harnesses record upstream metadata apart
+  from strict client configuration;26 closed guards pass. Originals stay frozen.
+- Actual native17/17 verifies two logins,13 money observations and two normal
+  global204 logouts for canonicalKWD, tiny legacy nonzero and unknown-currency
+  zero across student/admin/voucher surfaces.27 amount-only crops pass individual
+  privacy inspection. Three Purchase phases+one restoration and two purpose-owned
+  fixture insert/delete pairs are acknowledged; no Dodo or mail action occurs.
+- Independent file review verifies the ten-record ownership journal, all12 model/
+  18 protected hashes, all five roles/learning state and both complete original
+  Purchase rows/microsecond timestamps. Canonical pairsNULL/business0, no owned
+  fixture remains. Auth budget adds two pairs to30 cumulative. All browser/app/
+  socket/tunnel resources close and final complete seal reinspection passes.
+- The crops reveal a separate readability defect: voucher break-all splits KWD,
+  tiny numbers and guidance inside words. Functional17/17 does not close that UX
+  issue; the following presentation fix and local visual proof remain distinct.
+- Read-only production metadata at08:19UTC confirms INACTIVE. No production,
+  shared-service, hosting-plan, DNS or paid-resource configuration is changed.
+
+## 2026-10-15 — Voucher amounts remain readable across line breaks
+
+- Presentation8053c1b replaces character-breaking cells with complete nowrap
+  formatted amount/ISO tokens and ordinary guidance wrapping. Exact text,
+  formatter logic, queries and permissions are unchanged. The existing64-digit
+  integration case retains exact-value/scroll-container assertions; only its
+  obsolete break-all assertion is removed. Existing18 cases/types/scoped lint
+  pass in a private env-free clone.
+- Actual async page output with synthetic permission/DB mocks and compiled
+  globals.css receives ten local Chromium observations: five problematic before,
+  five passing after (KWD1440light/390dark,tiny320light,unknownzero390dark,long320).
+  Numeric/ISO tokens stay on one line, guidance words stay intact, and all text
+  matches. Long table1286px stays inside240px scroller/document320; ordinary
+  scrolling reaches first/last glyphs.30 money-only crops are retained privately.
+- The local font fixture does not reproduce every old native line break. This
+  is component HTML/CSS evidence, not another native Next/Flight/auth/provider
+  execution. All local browser resources close; original native17/27 artifacts
+  remain unchanged. Root separately retains85 selected native-source/normalized
+  proof files/495,020 bytes outside/tmp, rehashing every destination and preserving
+  the original readability finding. Raw state/configuration/credentials are excluded.

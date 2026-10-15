@@ -2,7 +2,7 @@
 
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
-verification. Current application source `a207f36` passes 1,995 normal tests/47
+verification. Historical application source `a207f36` passes 1,995 normal tests/47
 intentional skips, 46 actual PostgreSQL tests/one REST-only skip, types, webpack
 and lint 0 errors/25 existing warnings. Its fresh sealed artifact actually ran
 through private Unix sockets and a protected temporary HTTPS tunnel. The earlier
@@ -11,6 +11,9 @@ denial; those lifecycle checks retain their original source binding.
 [Exact checkpoints and retained observations](review-status.md#payment-history-recovery-and-account-isolation).
 The earlier 512 safeguard cases and newer 152 launcher/transport/runner cases
 are included in the normal total.
+Latest source/test totals and later runtime scopes are recorded in the
+[verification matrix](verification-matrix.md); these earlier counts are retained
+for the exact safeguard/lifecycle evidence they describe.
 
 ## Trusted ingress
 

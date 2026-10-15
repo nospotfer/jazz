@@ -334,13 +334,17 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   closure and sealed reinspection pass. Six sign-in/session pairs this preview/21
   cumulative;0 avatar metadata writes. Earlier partials remain unchanged. No
   repeat of the matrix, natural cookie-lag claim or matching provider checkout.
-- [ ] Before production recovery, separately review an index-definition guard
-  integrated after deterministic locks, plus full column-definition fidelity and
-  extension owner/ACL recovery. Public/column ACL SQL matches in the retained e7
-  comparison; its51 extension members have proven owner drift. This is separate
-  from the later1f data restore. Proposed revision3 now checks93 index definitions
-  inside the locked transaction and passes20 actual isolated checks. Original
-  revision2 SQL/inverse remain frozen; production compatibility is not verified.
+- [x] Offline revision4 adds225-column definitions to the93-index locked guards;
+  24 actual drift/gate/atomicity/permission checks and nine closed checks pass.
+  A corrected archive restore matches51 member owners/557 ACL/67 role statements.
+  Combined corrected restore/apply/manual inverse/reapply preserves65 tables/
+  2,239 records/two sequences at every stage, with422 zero-row permission
+  operations after each apply and unchanged nonpublic extension metadata.
+- [ ] Before production recovery, review current target compatibility, source
+  extension owner/initial/effective privilege gaps, hosted-platform differences
+  and225→227 currency-migration fingerprint ordering. Original SQL revisions
+  remain frozen. The inverse restores unsafe grants and requires services closed;
+  no automatic inverse or production operation is authorized by offline success.
 - [ ] Resolve catalog/provider price,29.99 metadata, tax/currency, actual Dodo
   transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
   recovery/quarantine gates. No new spend or production action is inferred.
@@ -350,6 +354,17 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
 
 ## Voucher authority and recorded admin amounts
 
+- [x] Exact5f fresh configured native artifact, Unix19/HTTPS11 and17 browser
+  checks verify canonical/legacy/tiny/unknown-zero amounts across student/admin/
+  voucher surfaces. Independent12-model/18-hash/full-two-Purchase restoration,
+  two owned-row cleanup, two normal global204 logouts and complete runtime/
+  tunnel/browser closure pass. This is synthetic history, not Dodo proof;
+  voucher character wrapping exposed by27 private crops needs its own follow-up.
+- [x] Presentation8053c1b keeps complete amount/currency tokens together and wraps
+  guidance at words. Existing18 integration cases/types/scoped lint and five
+  local after browser renders pass, including64-digit horizontal scroll endpoints
+  without document overflow. Preserve30 synthetic money crops; this local
+  server-component/CSS proof is separate from the earlier native5f journey.
 - [x] Published/known-price voucher validation and verified cookie/expected-owner
   denial, active redemption response/timer retirement and four-language recovery
   pass meaningful frozen regressions and actual local PostgreSQL persistence.

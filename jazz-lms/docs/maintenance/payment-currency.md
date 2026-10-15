@@ -107,3 +107,29 @@ legacy floats remain unlabelled even when the final charge has a currency, and
 small positive legacy amounts must not round to0. These changes pass meaningful
 before/after cases and the final2533-test clean build; they were not part of the
 188 native execution. Full tax/refund journal and actual Dodo delivery remain gaps.
+
+A fresh exact5f native window now verifies those later display facts:17 checks
+cover two normal logins,13 student/admin/voucher observations and two actual
+global204 logouts. CanonicalKWD final, independent legacy base/discount, tiny
+nonzero legacy values and unknown-currency canonical0 are exercised. The existing
+synthetic Purchase receives three temporary five-field phases and one exact
+restoration; one inactive expired voucher/redemption pair is created and removed.
+Independent final read-only comparison matches all12 models/18 protected hashes
+and both full original Purchase rows/timestamps, with both canonical pairsNULL
+and business0. All owned runtime/browser/tunnel resources close. This updates
+native rendering evidence without making an actual provider/payment claim.
+
+The27 amount-only crops also expose awkward voucher character wrapping. Visible
+correct digits and complete DOM text do not prove readable number/currency groups;
+the subsequent presentation fix needs separate visual evidence. Production
+compatibility, migration/fingerprint ordering, tax/refund journal and provider
+delivery remain separate gates.
+
+Presentation8053c1b addresses the observed wrapping without changing formatted
+text or monetary logic. A complete amount/ISO span cannot break inside the token;
+guidance keeps ordinary word wrapping, and wide values stay horizontally
+scrollable. Eighteen existing integration cases/types/scoped lint pass. Five
+local after renders of the actual async page with synthetic read mocks and
+compiled CSS pass against five problematic before cases, including both scroll
+ends of a64-digit value. The font fixture differs from the native preview, so
+this does not relabel or repeat the authenticated5f backend/transport evidence.

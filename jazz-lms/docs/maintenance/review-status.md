@@ -12,8 +12,88 @@ identical application code (the later commit changes three fixtures only). See
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
+## Native voucher and payment facts
+
+A fresh exact5f9597a configured artifact matches605 application Git blobs and
+45,825 sealed files;158 client files contain the expected public configuration
+and no scanned server secrets. Actual Unix19/HTTPS11 checks pass. Seventeen
+native browser checks pass: two normal password/session logins,13 monetary
+observations and two actual normal global204 logouts. Both contexts and Chromium
+close; there is no stored browser session.
+
+Three temporary synthetic history phases verify a canonical1.233KWD final with
+independent unlabelled legacy base/discount, a nonzero1e-7 legacy final, and an
+unknown-currency canonical zero that overrides a legacy80. Student history,
+admin overview and voucher history display the intended facts at the scoped
+desktop/phone sizes and themes. These are synthetic data/rendering checks, not
+Dodo checkout, tax, exchange-rate, refund or notification proof.
+
+The controller acknowledges three five-field Purchase changes and one exact
+restoration, plus one insert/delete each for an inactive expired voucher and its
+owned redemption. Its ten-record journal and ownership backup pass independent
+file review. A separate read-only final capture matches all12 model/18 protected
+hashes, all five roles/learning state and both complete original Purchase rows,
+including microsecond timestamps. Both canonical pairs return NULL; business
+rows return0. Source-bound operation counts are not a provider/server audit.
+This window adds two password/session pairs,30 cumulative.
+
+All27 amount-only PNGs pass individual privacy review. That review also catches
+awkward character wrapping in voucher cells: correct visible characters alone
+do not establish comfortable readability. The presentation follow-up is separate
+from these authenticated5f checks. Owned app/socket/tunnel shutdown and final seal
+reinspection pass, with zero runtime warning/error counters. A fresh production
+Management API GET at08:19UTC confirms INACTIVE; no production change occurred.
+
+Presentation commit `8053c1b` repairs that wrapping: complete formatted amount/ISO
+tokens stay together, guidance wraps between words, and natural table width stays
+inside its horizontal scroller. Formatter output/text, queries and permissions
+are unchanged. Eighteen existing integration cases, source types and scoped lint
+pass. Local Chromium uses the actual async page output with synthetic read mocks
+and compiled application CSS: five before observations expose readability defects,
+five after observations pass, including KWD desktop/phone, tiny320, unknown zero
+and64-digit values. Long values reach both ends by ordinary horizontal scrolling
+without document overflow. The local font fixture differs from native; it does
+not reproduce every individual old line break and is not another authenticated
+Next/Flight/backend proof. Thirty new amount-only crops preserve that scope.
+
+The original exact5f native evidence is retained separately in the owner-only
+local `review-checkpoint-final-money-ui-5f-20261015` directory:85 selected files/
+495,020 bytes plus retention manifest/receipt, with verified hashes and0600/0700
+modes. Raw snapshots, ownership backup/ledger, configuration, actor references,
+credentials, enabled approvals and tunnel/build logs are excluded. Its historical
+readability finding remains intact; later presentation proof does not rewrite it.
+
 
 ## Recovery permissions and index checks
+
+Revision4 now also checks the 225 archived column definitions inside both locked
+scope checks: type and modifier, logical column order, nullability/default,
+collation identity, array dimensions, identity/generated markers and local/inherited
+status. Nine closed checks and24 actual isolated PostgreSQL checks pass. Real
+varchar-length, timestamp-precision and collation changes evade the old projection
+but are rejected before permission changes. The93-index guard and original
+permission bodies remain byte-identical. This225-column proposal deliberately
+rejects the later227-column currency schema; migration ordering needs a separately
+reviewed fingerprint. It does not establish collation provider/version equivalence.
+
+A corrected, isolated archive restore now matches all51 extension-member owners,
+557 serialized ACL statements,67 role statements,65 tables/2,239 records and two
+sequence states. The bootstrap precreates three exact extension versions as
+postgres, restores its original non-superuser flags immediately, and restores
+every other archive entry without ignoring ACL clauses. This corrects the earlier
+member-owner drift; the source extension owners and initial privileges remain
+unknown. Effective source privileges and full hosted-platform recovery are unproven.
+
+A separate integration run verifies corrected restore → exact revision4 apply →
+manual inverse → reapply. All65 archived table hashes/counts and two sequences
+match at every stage. Both applications pass422 actual zero-row permission
+operations each; these repeat the same coverage. Inverse restores all557 ACL
+statements and member owners. All67 role statements and same-run nonpublic
+extension owner/ACL/initial/effective metadata stay unchanged. All owned containers
+and tmpfs are removed. No production or provider connection occurred, and the
+unsafe inverse is an explicitly isolated manual test, never failure cleanup.
+
+The following revision3 results remain historical evidence:
 
 The proposed hardening revision3 checks all 93 archived index definitions inside
 the existing locked transaction, before and after permission changes. It also

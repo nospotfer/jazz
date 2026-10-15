@@ -48,9 +48,26 @@ has not been launched or proven. Never disable raw-body signature validation
 to make a relay test pass. [CLI documentation](https://docs.dodopayments.com/developer-resources/sdks/cli).
 
 Customer Test Mode Emails and merchant/team notifications are separate. Turning
-off test customer emails does not suppress merchant or webhook-failure alerts.
+off test customer emails does not establish merchant or webhook-alert suppression.
 No reviewed API parameter suppresses them per checkout/refund. Live/shared
 communication settings remain unchanged. [Communication preferences](https://docs.dodopayments.com/features/communication-preferences).
+
+Rechecked2026-10-15: the documented customer switch is dashboard-only and
+customer-only; team email preferences are configured per recipient. The pinned
+[official SDK](https://github.com/dodopayments/dodopayments-node/tree/f38a877c6a466038097446729cb51e5f16892d3f/src/resources)
+checkout/payment/refund create schemas provide no all-mail suppression field,
+and its public resource index provides no merchant recipient/preferences API.
+Portal `send_email` only controls portal-link mail. These checks did not access
+the account or change settings.
+
+Primary webhook documentation conflicts: the
+[current guide](https://docs.dodopayments.com/developer-resources/webhooks#email-alerts)
+says failing-delivery email alerts are unavailable, while the
+[August5 changelog](https://docs.dodopayments.com/changelog/v1.112.0#2-a-rebuilt-webhooks-experience)
+describes configurable recipients. Neither proves this account's actual settings.
+Recipient/settings evidence or provider clarification remains necessary before
+transactions; do not infer that alerts are absent or silently suppress shared
+business notifications. No test transaction or mail was sent during this review.
 
 The current source helper has now created and independently retrieved two
 bounded TEST-only coupons: percentage10% (1000 basis points) and fixedEUR5

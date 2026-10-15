@@ -88,6 +88,18 @@ These nine checks are separate from normal and persisted CI totals. They prove
 the pinned engine's strict chain/hostname behavior, not deployed CA packaging,
 exclusive CA trust or actual production TLS configuration.
 
+The later exact5f preview uses Supabase's shared session pooler. A fresh read-only
+PG17.11 query observes `pg_stat_ssl.ssl=false`; the first new harness incorrectly
+required true and stopped before fixture/browser writes. That view describes
+the backend's immediate connection, while the pooler is an intermediary
+([PostgreSQL statistics](https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-SSL-VIEW),
+[Supabase topology](https://supabase.com/docs/guides/troubleshooting/monitor-supavisor-postgres-connections)).
+The separate client→pooler handshake passes TLS1.3 with the published CA and
+hostname verification, without sending database credentials or SQL. Revised
+private harnesses retain strict CA/config/engine checks and explicitly bind the
+observed upstream false flag. Neither that flag nor the endpoint handshake proves
+the complete managed internal transport; no SSL/provider setting was changed.
+
 ## Diagnostics verification follow-up
 
 The later diagnostics source `27d7b4c` passes **1,077 normal tests / 40 skips**

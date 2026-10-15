@@ -3,6 +3,36 @@
 Updated 2026-10-15. Local source is not a deployed production repair. Counts below
 are completed checkpoints; overlapping targeted suites must not be added together.
 
+Following application5c98715 and test-only f8d9254, exact5f9597a remote Quality,
+Secret Scan and CodeQL pass; downloaded Quality
+logs show2,533 normal passes/80 skips and80 persisted passes/one REST skip
+(79 actual SQL cases plus one metadata case), types/build and lint0errors/22
+existing warnings. Fresh head-ref CodeQL alerts:0. The table below preserves
+earlier journey-specific source bindings; its older counts are not latest totals.
+
+Latest recovery evidence: revision4 checks225 archived columns plus93 indexes,
+with24 actual isolated checks and nine closed checks. Corrected restore matches
+51 member owners/557 ACL/67 role statements. A separate combined restore/apply/
+manual inverse/reapply preserves65 tables/2,239 records/two sequences at all four
+stages and passes422 zero-row permission operations after each apply. Source
+extension ownership/initial/effective privileges, platform reconstruction and
+225→227 migration ordering remain unverified. No production changes follow from
+these offline checks. [Recovery scope](review-status.md#recovery-permissions-and-index-checks).
+
+Exact5f fresh native artifact605 Git files/45,825 sealed/158 client files passes
+Unix19/HTTPS11 and17 monetary/auth browser checks. Independent final capture
+matches12 models/18 protected hashes and both complete Purchase rows; two owned
+voucher rows are removed, both canonical pairsNULL/business0 and all browsers/
+app/tunnel closed. The27 private money crops expose character-wrapping problems
+despite correct facts; readability follow-up is separate. No actual provider
+transaction. [Native scope](review-status.md#native-voucher-and-payment-facts).
+
+Presentation8053c1b addresses that discovered wrapping while preserving formatted
+text and bounded table scrolling. Five actual local after renders pass against
+five problematic before renders, including64-digit scroll endpoints. Existing18
+integration cases/types/scoped lint pass. This uses real async page markup/CSS
+with synthetic read mocks, separately from the authenticated5f native journey.
+
 | Requirement | Completed evidence | Remaining gap |
 | --- | --- | --- |
 | Public UX/UI | Current exact-e32 native HTTPS:12 public layouts at 1440/320/390 in both themes and48 computed contrast checks pass; light gold fixed with three lines. Earlier actual responsive/focus/privacy suite15/15 remains separate. Guest selector diagnostic2/2 passes. | Initial primary selector ambiguity remains documented; no application cause established. Inherited certificate/guarantee and price/tax promises require owner evidence. |

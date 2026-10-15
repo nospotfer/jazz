@@ -74,8 +74,53 @@ leave different ordinary permissions. Its two databases used a fresh container
 with no network, published ports, host inputs or real archive; cleanup is verified.
 The sampled function has no non-NULL initial ACL, so this does not test populated
 pg_init_privs or reproduce the source PostgreSQL 17.6 platform. Source extension
-owners and initial privileges remain uncaptured. Exact extension privilege
-equivalence and a corrected restore remain unverified.
+owners and initial privileges remain uncaptured. Exact source extension privilege
+equivalence remains unverified. The corrected restore below supersedes the earlier
+member-owner mismatch without filling those missing source facts.
+
+### Corrected member ownership and combined hardening
+
+A new actual network-none PostgreSQL17.11 restore precreates pgcrypto1.3,
+uuid-ossp1.1 and pg_stat_statements1.11 as postgres. Only inside the disposable
+container, postgres temporarily receives SUPERUSER for that prerequisite; its
+original flags are immediately restored. Archive accounting is explicit: four
+preprovided entries and853 restored entries, with no ignored ACL clauses. The
+same archive supplies the postgres database identity/owner; runtime database
+settings are deliberately omitted. All51 member owners,557 serialized ACL
+statements,67 role/settings/membership statements,65 exact table row-multiset
+hashes/2,239 records and two sequences match. Original inputs remain unchanged.
+
+A fresh combined verifier then performs revision4 apply, explicit manual inverse
+and reapply on that corrected restore. The225-column/93-index locked guards pass;
+all65 table COPY hashes/counts and both sequence states match at all four stages.
+Each application passes422 zero-row permission operations. Inverse returns all557
+ACL statements/member owners and public permissions to baseline; reapply reproduces
+the first hardened state. All67 role statements and nonpublic extension metadata,
+including same-run initial/effective privileges, remain unchanged. Cleanup removes
+the owned container and tmpfs. Neither run connects to production or a provider.
+
+This reproduces the archive's unsafe grants before the isolated hardening test.
+The chosen local extension owner is not proof of source extension ownership, and
+matching serialized revocations does not prove source effective denial: the actual
+target postgres role retains ordinary and grant-option rights on those49 functions
+and two views. Source pg_init_privs,17.6 platform behavior and complete hosted
+recovery remain unverified. Revision4 binds the225-column archive; the two additive
+currency columns require a separately reviewed migration/fingerprint order.
+
+The owner-only local checkpoint is
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-recovery-v4-20261015`:
+89 selected source/SQL/test/normalized-evidence files,2,624,272 bytes, independently
+rehashed with0600 files/0700 directories. It excludes archive/COPY bytes, whole
+schema/role exports, credentials and enabled execution approvals. Its manifest
+retains exact source bindings; this is local unencrypted review evidence, not an
+off-site backup or a self-contained production recovery package.
+
+Frozen revision4 candidate SHA256:
+`8cfc5faddf45826b65593c51abc2aa75e79c7c785d64fd4661cdec0fd869436c`;
+manual inverse:
+`f5abfffc07a7d8f10af853a29a3c7d36a6a4a0ae9003e294afb0ee35cd34682d`.
+Both live under the checkpoint's `v4/source/`; never use their isolated operator
+attestations as target identity or production approval.
 
 One existing NOT VALID realtime CHECK flag is preserved,
 and its partitioned-parent predicate was not independently evaluated. Runtime
@@ -83,7 +128,7 @@ configuration, OAuth/SMTP/signing/encryption keys, Storage history and an atomic
 DB/Storage snapshot were not reproduced. A narrowly documented initdb bootstrap
 pre-satisfied one role CREATE while retaining original ALTER/GRANT semantics.
 
-All five temporary verifier containers are removed; existing local and cloud
+All five original temporary verifier containers are removed; existing local and cloud
 fixture databases are untouched. Five private verification reports and their
 integrity manifest were hash-copied into the durable local backup's
 offline-verification directory. This remains a local backup, with no encrypted
