@@ -42,9 +42,14 @@ npm run audit:pdfs -- --config /private/pdf-audit.json --project-ref PROJECT_REF
 npm run test:payments:backend # Targeted backend payment validation
 npm run test:payments:frontend:real # Real Dodo checkout frontend E2E
 npm run test:payments:all # Backend + frontend real + build
-npx prisma migrate dev --name <name>  # Apply migrations
 npx prisma generate  # Regenerate Prisma Client after schema changes
 ```
+
+The legacy migration chain has no complete initial PostgreSQL baseline. Follow
+the README's `db push` setup only for a new disposable database; do not treat
+`migrate dev` or `migrate deploy` as a verified bootstrap or recovery command.
+Existing databases need individually reviewed SQL and migration-history handling
+from `docs/maintenance/payment-currency.md`, with separate production approval.
 
 The inventoried legacy seeds/admin/media mutators require a separate literal
 `ENABLE_LOCAL_LEGACY_MUTATIONS=1`, development/test runtime and the dedicated
@@ -79,6 +84,7 @@ is still required; plain `npm start` does not establish it. See
 
 - **Role field is string-based**: `User.role` is a `String` with `@default("USER")`, not a Prisma enum. Use constants from `src/lib/admin/permissions.ts`.
 - **Prisma Client must be regenerated** after any `schema.prisma` change: run `npx prisma generate`.
+- **Applied migration SQL is immutable**: keep the bytes of recorded migrations unchanged; put later changes in a new migration. The four historically recorded checksums are protected by `tests/security/historical-migration-integrity.test.ts`. Source restoration does not update a database ledger; see `docs/maintenance/payment-currency.md` before reconciliation or replay.
 - **Next.js proxy**: `src/proxy.ts` handles language cookies and root/dashboard/admin session processing. API routes must enforce their own authentication and authorization.
 - **Test framework is configured**: Vitest for unit/integration/contract/security/system and Playwright for E2E.
 - **Real Dodo frontend E2E requires env preconditions** (`PAYMENTS_E2E_REAL_ENABLED=1`, `PAYMENTS_E2E_STORAGE_STATE`, `PAYMENTS_E2E_COURSE_ID`).

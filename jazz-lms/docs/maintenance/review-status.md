@@ -6,11 +6,26 @@ incomplete. The separately approved production Supabase recovery/export/unsafe-s
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Previously published application/test source: `a631e166`; runtime `c1a419c` has
-identical application code (the later commit changes three fixtures only). See
-[quote provenance and transactional course intent](#quote-provenance-and-transactional-course-intent).
-Earlier accounting, editor, language, learning and media scopes retain their
-separate source bindings below.
+Current source/test checkpoint `ac62f4a` restores an applied migration's exact
+historical SQL and adds four checksum regressions. A clean env-free local suite
+passes2,537 normal tests with80 intentional skips. Landing changes remain bound
+to`1e381a3`; the latest authenticated monetary browser proof is`5f9597a`, with
+later voucher presentation checked separately. Remote checks and earlier
+accounting, editor, language, learning and media evidence retain their exact
+source bindings below.
+
+## Historical migration source and offline ledger verification
+
+Sourceac62f4a restores the exact237-byte March18 SQL matching the archived
+checksum; four immutable-file regressions pass. The ledger is not rewritten.
+Two bounded offline history rehearsals stop before any resolve: the first
+reveals valid empty historical log strings and leads to a one-predicate verifier
+correction with15 passing closed checks. The second reaches strict227 and an
+actual initial Prisma5.17 status reporting the three expected missing names,
+then its next database read reports an inconsistent recovery state. The cause
+and post-status preservation are unproven. Both owned containers are absent and
+the five original backup inputs remain unchanged. No production action occurs.
+[Exact scope and next step](payment-currency.md#historical-sql-source-and-bookkeeping).
 
 ## Landing press and footer accessibility
 
@@ -37,6 +52,32 @@ The owner-only local `review-checkpoint-landing-accessibility-1e381a3` retains11
 selected files/4,070,273 bytes, including90 public crops, plus manifest/receipt.
 Destination hashes/modes and credential-pattern scan pass; no credentials or
 runtime state are included. Local unencrypted retention is not off-site backup.
+
+A later whole-page review captures the complete Spanish homepage at390 and1440
+in both themes. All seven sections render coherently; the15 course subtitles
+and three biography paragraphs are readable in the inspected mobile crops.
+No card, biography or section-order change is justified by these captures.
+Four original full-page PNGs and four clearly labeled derived inspection crops
+remain distinct. A misleading scaled preview suggested missing dark-mode cats;
+the original-resolution crops show the complete illustration in both dark views.
+The subtitle scrollHeight check is not a general unclamped-text proof, and these
+four cases do not replace320px, translated or interaction checks.
+
+The reused public-only build was made from91e plus two reviewed files;302 runtime/
+public source files match1e byte-for-byte. It is not a new exact-Git producer or
+provider proof. The run allows193 local reads, four explicit promo503 fixtures,
+eight blocked optional prefetches and no external/mutating requests or page
+errors. All browsers and the owned3081 server close; root independently confirms
+the PID and listener are absent. The owner-only local whole-landing checkpoint
+retains16 selected files/7,785,058 bytes, including the eight images.
+
+The remaining visual limitation is source-image quality: several lesson photos
+are only102–191px wide, while desktop cards display219px and the promo fallback
+550px. A bounded review of21 historical/public blobs finds no sharper original
+of the same composition. Larger authorized originals remain a medium-priority
+asset follow-up; CSS enlargement cannot restore detail. This is not a finding
+about healthy Mux playback. The public image README now points to the active
+components and explains the local fallback boundary.
 
 ## Native voucher and payment facts
 

@@ -1490,3 +1490,46 @@ The maintenance goal remains active and incomplete.
   selected files/4,070,273 bytes including90 public crops outside/tmp with verified
   modes/hashes and pattern findings0. No credentials/runtime state; local
   unencrypted retention only. All owned browsers/server close; no provider action.
+
+## 2026-10-15 — Whole-page review and historical migration source repair
+
+- Four actual ES whole-page captures at390/1440 in both themes complete the
+  composition review. Fifteen default mobile course subtitles and the biography
+  remain readable. No card, biography or section-order change is justified.
+  Four derived inspection crops resolve a misleading scaled dark-image preview;
+  the original captures contain the complete JazzCats illustration.
+- The public-only artifact remains91e plus two reviewed files, with302 runtime/
+  public source bytes matching1e.193 allowed local reads/four promo503 fixtures/
+  eight optional blocks, external/mutating requests and errors0. All browser/
+  server resources close; root independently confirms ownedPID/listener absence.
+  Retain16 selected files/7,785,058 bytes outside/tmp, including eight images.
+- Source photos are undersized;21 bounded historical/public blobs contain no
+  sharper original of the same composition. Larger originals remain an explicit
+  medium-priority asset follow-up. Correct the image README's inactive hero
+  pointer; no re-encoding, new imagery or healthy-Mux quality claim.
+- A narrow read of the archived four-row migration ledger finds one SQL checksum
+  mismatch. Restore the exact237-byte March18 file from Git in sourceac62f4a;
+  preserve all ledger rows. Four source regressions change3PASS/1FAIL→4PASS in
+  an env-free fixture. Scoped lint passes0errors/0warnings. Its first minimal
+  lint fixture lackedsrc/app and broke JSON parsing on a Next advisory; retain
+  the diagnostic and fix the fixture with the existing public app page.
+- March24 webhook and April22 index structures already exist without ledger
+  acknowledgements. Their frozen metadata passes73/12 comparisons, not actual
+  database tests. A separate bounded actual Prisma resolve proof is being
+  prepared; no ledger mutation, production command or automatic replay occurs.
+- Clean env-free sourceac62f4a normal suite passes2,537 tests/80 intentional
+  skips on Node24.21.0. This adds the four immutable-history regressions to the
+  prior2,533; persisted database and remote checks keep their separate bindings.
+- The actual Prisma-history rehearsal has two closed failures. Revision1 stops
+  before hardening/CLI because successful zero-step historical rows use empty
+  log strings; retain its191 captured files and exact source snapshot. A narrow
+  NULL-or-empty predicate preserves values, rejects whitespace/nonempty logs and
+  changes the same15 synthetic checks from one error/14 controls to15 passes.
+- Revision2 reaches corrected restore→V4→literal currency→strict227, actual
+  webhook enum/PK and original65-table/2,239-row/two-sequence checks. Its one
+  actual status command reports the expected three missing names. The next read
+  fails with PostgreSQL not accepting connections/inconsistent recovery state.
+  No resolve intent/command occurs; do not infer post-status ledger preservation.
+  Root verifies both owned containers absent and all five backup inputs unchanged.
+  The cause remains unknown; an empty diagnostic with database logs/memory
+  evidence is being prepared. No production action or successful history claim.

@@ -131,6 +131,59 @@ and destination hashes were checked. Raw archive/COPY, whole schema/role exports
 owned rows, credentials and enabled approvals are excluded. This is unencrypted
 local review evidence; off-site or full-platform recovery is not established.
 
+## Historical SQL source and bookkeeping
+
+The preserved migration ledger contains four successful records. Three source
+checksums match the repository; the March18 provider-reference migration had
+been rewritten after its recorded application. Source commit `ac62f4a` restores
+its exact237 bytes from Git commit `738125d`, matching the recorded SHA256
+`d4c4904d32daf99e9385d4a338053ee88c7e2f1f6e6330a98684c3729d35ff63`.
+The ledger is unchanged. Four immutable-source regressions reproduce three
+passes/one failure before restoration and four passes afterward. They protect
+file history, not database schema or proof that every historical SQL ran.
+
+The archived schema already contains the webhook-event feature and metrics
+indexes, but their March24/April22 migration names are absent from the ledger.
+The new literal currency operation also leaves its October15 ledger entry
+absent. Names alone are insufficient: feature definitions and exact target
+state must be verified before acknowledging an existing change.
+
+A separate isolated rehearsal targets Prisma5.17 `migrate resolve --applied`
+for exactly these missing names, only after verifying the existing structures
+and227 columns:
+
+- `202603240001_add_payment_webhook_events`
+- `202604220001_admin_metrics_indexes`
+- `202610150001_purchase_payment_currency`
+
+It must preserve all four complete original records, add only three official
+acknowledgements, compare every source checksum and retain all other data and
+security invariants. Successful acknowledgement records current verified state;
+it does not invent historical SQL execution. No direct ledger edits, blanket
+replay or already-applied migration resolve is proposed.
+
+Two isolated attempts have stopped before any resolve. The first exposed a
+verifier assumption: two successful historical zero-step rows have empty log
+strings, while two have NULL. The corrected predicate accepts either exact form,
+rejects nonempty/whitespace logs and preserves the original values. Fifteen
+closed checks reproduce one old-source error/fourteen controls, then all pass.
+
+The second attempt completes corrected restore, exactV4, literal currency SQL,
+strict227, actual webhook enum/PK checks and the original65-table/2,239-row/two-
+sequence projection. Actual initial `migrate status` reports the expected three
+missing names. Its next ledger read fails because the local PostgreSQL server
+reports that recovery has not reached a consistent state. No resolve intent or
+command occurs; post-status ledger preservation is unverified. The cause is
+under investigation, and out-of-memory termination has not been established.
+Both containers are removed; independent rehashes preserve all five original
+backup inputs. The successful empty-image CLI ABI check is a separate scope.
+
+History reconciliation remains an open release gate. A successful status alone
+is not checksum or schema-drift proof. Full fresh-database migration bootstrap
+also remains separate: the partial legacy chain expects existing core tables.
+Documented disposable setup uses `db push`; production requires a fresh target,
+preservation, exact SQL/configuration plan and separate approval.
+
 
 ## Verified isolated preview and later display follow-ups
 

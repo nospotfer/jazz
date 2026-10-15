@@ -257,3 +257,23 @@ tall and keyboard activation returns to top. Build/types/scoped lint pass. Root
 preserves earlier fallback-font and focus-predicate diagnostics, and retains117
 selected files/90 public crops outside/tmp. Browsers/server closed; no provider
 or full accessibility-audit claim. [Scope](review-status.md#landing-press-and-footer-accessibility).
+
+Whole-page follow-up: four ES renders at390/1440 in light/dark, with four original
+full-page captures and four derived inspection crops, verify page composition
+and readable default mobile course titles/biography. No further layout change
+is justified. Source bytes match1e across302 runtime/public files; build producer
+is91e plus two reviewed edits, so this remains a limited local visual proof.
+Requests193 local/four promo503 fixtures/eight optional prefetch blocks, external/
+mutating traffic and errors0; owned browser/server closure independently checked.
+Low-resolution original photos remain a medium-priority asset limitation after
+a bounded21-blob search. No generic clamp, all-language or healthy Mux claim.
+
+Historical migration source: exact237-byte March18 restoration changes the four
+checksum cases from3PASS/1FAIL to4PASS; clean local sourceac62f4a normal suite
+passes2,537/80. Actual history reconciliation remains unverified: the first
+offline attempt rejects valid empty historical logs;15 closed controls pass
+after the narrow predicate correction. The second reaches strict227, actual
+webhook enum/PK prerequisites and initial Prisma status, then fails on database
+recovery before any resolve. Both containers are removed and all five original
+backup inputs rehash unchanged. No successful ledger reconciliation, general
+schema-drift, clean migration bootstrap or production proof is claimed.

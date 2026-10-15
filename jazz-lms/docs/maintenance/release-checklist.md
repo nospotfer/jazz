@@ -360,6 +360,15 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   full557 ACL/member-owner metadata. Containers removed; original inputs unchanged.
   Normal code rollback retains columns/facts/safe grants; migration-history
   reconciliation and current production compatibility remain separate review.
+- [x] Restore the applied March18 SQL's exact237 bytes and protect all four
+  recorded checksums. Four before/after regressions and clean local sourceac62f4a
+  normal suite2,537/80 pass; no existing ledger record is changed.
+- [ ] Finish the actual isolated Prisma5.17 history rehearsal. Two attempts stop
+  before any resolve; the second verifies strict227 and the expected initial
+  status, then PostgreSQL reports recovery on the next read. Diagnose that
+  failure before proceeding. Require all seven checksums, four original raw rows,
+  exactly three official acknowledgements and all other data/security invariants.
+  Source/ABI checks alone do not close this gate. [Evidence](payment-currency.md#historical-sql-source-and-bookkeeping).
 - [ ] Resolve catalog/provider price parity, tax/currency, actual Dodo
   transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
   recovery/quarantine gates. No new spend or production action is inferred.
