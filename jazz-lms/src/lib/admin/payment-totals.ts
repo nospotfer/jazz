@@ -55,10 +55,22 @@ export function summarizePayments(records: RecordedPayment[], averagePaidOnly = 
   return { byCurrency, unavailableCount };
 }
 
+/** An unverified unit supplies no scale at which a recorded float can be rounded. */
+export function formatLegacyRecordedAmount(legacy: unknown, locale = 'es-ES'): string {
+  if (typeof legacy !== 'number' || !Number.isFinite(legacy) || legacy < 0) return 'No disponible';
+  const parts = new Intl.NumberFormat(locale, { maximumSignificantDigits: 21 }).formatToParts(legacy === 0 ? 0 : legacy);
+  const fraction = parts.find(part => part.type === 'fraction')?.value ?? '';
+  let amount = parts.map(part => part.value).join('');
+  if (fraction.length < 2) {
+    const zeroParts = new Intl.NumberFormat(locale, { minimumFractionDigits: 2 }).formatToParts(0);
+    if (!fraction) amount += zeroParts.find(part => part.type === 'decimal')!.value;
+    amount += zeroParts.find(part => part.type === 'fraction')!.value.slice(fraction.length);
+  }
+  return `${amount} · Moneda no disponible`;
+}
+
 export function formatRecordedPayment(record: RecordedPayment, locale = 'es-ES'): string {
   const payment = getExactPayment(record);
   if (payment !== null) return formatPaymentAmount(payment.amountMinor, payment.currency, locale) ?? 'No disponible';
-  const legacy = record.finalPrice;
-  if (typeof legacy !== 'number' || !Number.isFinite(legacy) || legacy < 0) return 'No disponible';
-  return `${new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(legacy)} · Moneda no disponible`;
+  return formatLegacyRecordedAmount(record.finalPrice, locale);
 }
