@@ -72,5 +72,7 @@ export function formatLegacyRecordedAmount(legacy: unknown, locale = 'es-ES'): s
 export function formatRecordedPayment(record: RecordedPayment, locale = 'es-ES'): string {
   const payment = getExactPayment(record);
   if (payment !== null) return formatPaymentAmount(payment.amountMinor, payment.currency, locale) ?? 'No disponible';
+  // Zero has the same numeric value at every scale, even when its unit is unknown.
+  if (normalizePaymentAmountMinor(record.paymentAmountMinor) === '0') return formatLegacyRecordedAmount(0, locale);
   return formatLegacyRecordedAmount(record.finalPrice, locale);
 }
