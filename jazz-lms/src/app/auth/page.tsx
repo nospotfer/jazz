@@ -532,13 +532,11 @@ export default function AuthPage() {
         oauthFlow === "register"
           ? `/dashboard?welcome=${REGISTRATION_WELCOME_VALUE}`
           : "/dashboard";
-      const oauthCookieOptions = "path=/; max-age=600; samesite=lax; secure";
-
       // Keep OAuth context in short-lived cookies so callback can recover it
       // even when providers strip custom query params from redirect URLs.
-      document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; ${oauthCookieOptions}`;
-      document.cookie = `oauth_lang=${encodeURIComponent(language)}; ${oauthCookieOptions}`;
-      document.cookie = `oauth_next=${encodeURIComponent(oauthNextPath)}; ${oauthCookieOptions}`;
+      document.cookie = `oauth_flow=${encodeURIComponent(oauthFlow)}; path=/; max-age=600; samesite=lax; secure`;
+      document.cookie = `oauth_lang=${encodeURIComponent(language)}; path=/; max-age=600; samesite=lax; secure`;
+      document.cookie = `oauth_next=${encodeURIComponent(oauthNextPath)}; path=/; max-age=600; samesite=lax; secure`;
 
       const callbackUrl = new URL(
         redirectTo || `${window.location.origin}/auth/callback`,
