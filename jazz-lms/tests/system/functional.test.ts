@@ -263,7 +263,7 @@ describe('Functional: Purchase history access', () => {
     expect(body).toHaveLength(2);
     expect(body[0].itemTitle).toBe('Advanced');
     expect(body[1].itemTitle).toBe('Basics');
-    // All have EUR
-    expect(body.every((p: Record<string, unknown>) => p.currency === 'EUR')).toBe(true);
+    // Catalog prices do not establish the currency or amount of an old purchase.
+    expect(body.every((p: Record<string, unknown>) => p.currency === null && p.amountMinor === null && p.amount === null)).toBe(true);
   });
 });

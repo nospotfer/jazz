@@ -108,7 +108,7 @@ describe('payment sweep authentication', () => {
   test('grants an eligible paid course to the verified payment owner', async () => {
     vi.stubEnv('CRON_SECRET', 'test-cron-secret');
     mocks.listDodoPaymentsForCustomer.mockResolvedValue([
-      { id: 'payment-1', status: 'succeeded', amount: 3000, customer: { email: 'student@example.test' }, metadata: { courseId: 'course-1', userId: 'student-1' } },
+      { id: 'payment-1', status: 'succeeded', amount: 3000, currency: 'EUR', customer: { email: 'student@example.test' }, metadata: { courseId: 'course-1', userId: 'student-1' } },
     ]);
 
     const response = await GET(new Request('https://example.test/api/cron/payments-sweep', {
@@ -120,6 +120,7 @@ describe('payment sweep authentication', () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledOnce();
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({
       userId: 'student-1', courseId: 'course-1', providerReferenceId: 'dodo-pay:payment-1', finalPrice: 30,
+      paymentCurrency: 'EUR', paymentAmountMinor: '3000',
     }));
   });
 

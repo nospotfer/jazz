@@ -101,10 +101,12 @@ describe('API Contract: /api/purchases response shape', () => {
       expect(item).toHaveProperty('amount');
       expect(item).toHaveProperty('createdAt');
       expect(item).toHaveProperty('currency');
+      expect(item).toHaveProperty('amountMinor');
       expect(typeof item.id).toBe('string');
       expect(typeof item.itemTitle).toBe('string');
       expect(item.amount === null || (typeof item.amount === 'number' && Number.isFinite(item.amount))).toBe(true);
-      expect(item.currency).toBe('EUR');
+      expect(item.currency).toBeNull();
+      expect(item.amountMinor).toBeNull();
       expect(item.itemType).toBe('Curso');
       // Validate ISO date format
       expect(new Date(item.createdAt).toISOString()).toBe(item.createdAt);
