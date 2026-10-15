@@ -335,9 +335,12 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   cumulative;0 avatar metadata writes. Earlier partials remain unchanged. No
   repeat of the matrix, natural cookie-lag claim or matching provider checkout.
 - [ ] Before production recovery, separately review an index-definition guard
-  integrated after deterministic locks, plus unresolved column/extension ACL
-  equivalence. The separate93-index/18-check proposal never authorizes SQL or
-  removes revision2's capture-to-lock race. Original SQL/inverse remain frozen.
+  integrated after deterministic locks, plus full column-definition fidelity and
+  extension owner/ACL recovery. Public/column ACL SQL matches in the retained e7
+  comparison; its51 extension members have proven owner drift. This is separate
+  from the later1f data restore. Proposed revision3 now checks93 index definitions
+  inside the locked transaction and passes20 actual isolated checks. Original
+  revision2 SQL/inverse remain frozen; production compatibility is not verified.
 - [ ] Resolve catalog/provider price,29.99 metadata, tax/currency, actual Dodo
   transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
   recovery/quarantine gates. No new spend or production action is inferred.

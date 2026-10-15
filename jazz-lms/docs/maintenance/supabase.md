@@ -49,17 +49,35 @@ A new network-disabled, unpublished, resource-bounded PostgreSQL 17 verifier
 restored the archive with exit-on-error and a single transaction. It matched
 all **65 archive COPY table counts / 2,239 records**, both sequence states,
 table owners/RLS/kinds, role flags and 67 role/settings/membership statements.
-Public/LMS table/column/schema/type/default ACL SQL matches. Six LMS user-reference
+The earlier metadata comparison matches public/LMS table, column, schema, type
+and default ACL SQL. Six LMS user-reference
 aggregates and completed-owned quiz-summary references contain no missing links.
 All **68 Storage object IDs and file hashes / 6,423,774 bytes** match the archive;
 no public bucket or Vault secret rows were present. Customer records were not
 exposed through an app, Auth service, Storage API or published port.
 
 This verifies exported archive data, not a live-source count comparison or
-historical completeness. Source/restored extension ACL SQL differs for 49
-function and two pg_stat_statements view revocations from postgres; those source
-clauses executed successfully, but exact extension creator/initial-privilege
-equivalence is unproven. One existing NOT VALID realtime CHECK flag is preserved,
+historical completeness. The retained extension ACL comparison belongs to attempt
+`e7d45224`, separately from the later successful data restore `1f1df47a`, which
+has no retained final schema dump. It contains 51 source-only revocations: 49
+functions and two pg_stat_statements views, all from postgres. These are not
+column ACL differences. Corresponding dump headers positively show all 51 member
+owners changing from postgres to supabase_admin. Successful execution of the
+source revocations does not establish matching effective permissions.
+
+A new offline comparator preserves clause multiplicity and member-owner metadata;
+all 16 closed tests pass. A separate synthetic PostgreSQL 17.11 reproduction
+confirms that an owner can revoke its ordinary EXECUTE while retaining grant
+options, consistent with [PostgreSQL's privilege rules](https://www.postgresql.org/docs/17/ddl-priv.html),
+and that the same successful REVOKE under another member owner can
+leave different ordinary permissions. Its two databases used a fresh container
+with no network, published ports, host inputs or real archive; cleanup is verified.
+The sampled function has no non-NULL initial ACL, so this does not test populated
+pg_init_privs or reproduce the source PostgreSQL 17.6 platform. Source extension
+owners and initial privileges remain uncaptured. Exact extension privilege
+equivalence and a corrected restore remain unverified.
+
+One existing NOT VALID realtime CHECK flag is preserved,
 and its partitioned-parent predicate was not independently evaluated. Runtime
 configuration, OAuth/SMTP/signing/encryption keys, Storage history and an atomic
 DB/Storage snapshot were not reproduced. A narrowly documented initdb bootstrap

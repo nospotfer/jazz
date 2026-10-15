@@ -1314,3 +1314,45 @@ The maintenance goal remains active and incomplete.
   pass. Fresh head-ref query0 confirms the three old97 cookie records disappear
   from this PR scope after literal clarification; no dismissal or insecure-cookie
   incident. Final docs-head verification and private handoff follow separately.
+
+## 2026-10-15 — Recovery permission evidence corrected
+
+- Offline comparison independently reproduces 557 source and 506 restored ACL
+  clauses. The 51 source-only clauses are 49 function and two view revocations;
+  public and column ACL SQL matches. All 51 corresponding dump headers show
+  member owners changing from postgres to supabase_admin. This comparison is
+  from attempt e7, separately from the later successful1f data restore, whose
+  final schema dump was not retained. New comparator tests pass16/16.
+- An isolated two-database PostgreSQL17.11 toy verifies the owner/ordinary-grant
+  distinction and the different result of identical successful revocations when
+  the member owner differs. The sampled extension has no non-NULL initial ACL;
+  populated pg_init_privs and the original17.6 platform remain untested. Two
+  initial harness assumptions failed closed and are retained separately; final
+  assertions and independent review pass. No real archive/provider/production
+  input was used; all three temporary containers are removed.
+- This narrows the recovery defect and its evidence; it does not repair the
+  production backend or prove complete extension permission equivalence.
+
+## 2026-10-15 — Locked index-definition guard verified offline
+
+- Proposed hardening revision3 adds exact93 index definitions and current
+  valid/ready/live preconditions to both existing locked scope checks, with new
+  action/manifest gates before locks. Earlier source/inverse are unchanged. A
+  historical index receipt summary has an inconsistent canonical-hash field;
+  actual manifest self-hash, parser pin and file hashes agree and remain intact.
+- Actual fresh network-none PostgreSQL verification passes20 checks. Same-name
+  uniqueness, key-order and predicate changes preserve the old name projection
+  but are rejected by the new structural guard. Wrong target/manifest/action
+  and default-off fail before a contended lock; injected post-mutation failure
+  rolls back permission changes. Apply/manual inverse/reapply preserve all65
+  COPY content hashes/counts,2,239 records and two sequences.422 zero-row CRUD/RPC
+  operations confirm browser denials and trusted access. Owned container/tmpfs
+  cleanup is verified. No production, preview or provider connection occurred.
+- Column-definition fidelity, extension privilege recovery, the new currency
+  migration's fingerprint ordering and hosted-platform reconstruction remain
+  separate release gates. Index usability flags are future preconditions, not
+  historical dump evidence. This is a proposed recovery safeguard, not a deploy.
+- Independent review confirms the actual results and cleanup. Seven closed
+  cases show four old name-projection failures plus three controls, then7/7 with
+  the structural comparison; both complete SQL files and all eight DO bodies
+  parse. The original bounded permission-mutation bodies remain unchanged.

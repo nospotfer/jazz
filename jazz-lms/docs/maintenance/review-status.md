@@ -13,6 +13,33 @@ Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
 
+## Recovery permissions and index checks
+
+The proposed hardening revision3 checks all 93 archived index definitions inside
+the existing locked transaction, before and after permission changes. It also
+requires current indexes to be valid, ready and live; these flags are new safety
+preconditions, not facts captured by the old dump. Distinct action and manifest
+attestations are required before taking locks. Earlier SQL and inverse remain
+unchanged; no production operation is authorized by the new proposal.
+
+An actual isolated PostgreSQL17 test passes20 checks, including same-name changes
+to uniqueness, key order and predicates that the old name-only projection misses.
+Wrong target, manifest and action fail before a contended lock. A failure after
+permission changes rolls the transaction back. Apply, manual inverse and reapply
+preserve all65 archive COPY content hashes/counts,2,239 records and two sequences;
+422 zero-row operations confirm browser denials and trusted-role CRUD. The fresh
+network-disabled container is removed. This does not prove full column-definition
+fidelity, hosted-platform reconstruction or production schema compatibility.
+
+The separate recovery comparison now preserves owner metadata as well as ACL
+clauses. Its16 closed tests pass. All51 retained extension ACL differences are
+49 function and two view revocations, with corresponding member owners changing
+from postgres to supabase_admin. Public/column ACL SQL matches. These observations
+belong to the earlier e7 comparison, separately from the later successful1f data
+restore, which has no retained final schema dump. A synthetic owner-permission
+reproduction passes, but source extension owners and initial ACLs remain unknown.
+[Recovery evidence and limits](supabase.md#offline-archived-data-recovery-verification).
+
 ## Landing hero and usable mobile navigation
 
 Application artifact `5c98715` now gives the first free-lesson offer a compact
