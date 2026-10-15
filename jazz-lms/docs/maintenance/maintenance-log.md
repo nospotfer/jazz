@@ -1533,3 +1533,38 @@ The maintenance goal remains active and incomplete.
   Root verifies both owned containers absent and all five backup inputs unchanged.
   The cause remains unknown; an empty diagnostic with database logs/memory
   evidence is being prepared. No production action or successful history claim.
+
+
+## 2026-10-15 — Offline migration history rehearsal completed
+
+- A bounded empty signal trace identifies the correct Prisma engine PID/start
+  identity at SIGTERM; PostgreSQL's generic "server process" label did not prove
+  a database backend was killed. Correct that earlier interpretation. Primary
+  Linux/PostgreSQL source review supports orphan adoption by namespace PID1 and
+  handling of an unknown signalled child as a database crash.
+- A fresh empty control adds Docker init while retaining the pinned PG17.11
+  image,1GiB/no network/no ports and one version/status command. Its first run
+  stops before CLI because the image reports `.postgres-wrapp`, not `postgres`.
+  Accepting that exact observed comm yields a successful second control: init
+  PID1/PostgreSQL PID7 remain stable, the same engine SIGTERM occurs without
+  database recovery and OOM-kill increment is0. Original failures/source retained;
+  root independently confirms owned containers absent.
+- Verifier022a7d9 differs from frozen30a1921 only by Docker --init and an inspect
+  assertion requiring it. Existing15 closed checks pass. A fresh bounded actual
+  archive run-a5ec90a2205e completes corrected restore, exactV4 at225, literal
+  currency SQL, strict227, initial status, three official Prisma5.17 resolves and
+  final status. All7 literal checksums match; original4 complete ledger rows and
+  microsecond-precision raw JSON bytes are preserved. Only3 new ledger records
+  are added; no direct ledger DML or customer/Auth/User/Purchase fixture occurs.
+- Root independently compares archive/before/final65-table/2,239-row COPY
+  multisets and both sequence states. The final projection excludes only the3
+  validated new ledger ID/name pairs; final count2,242. Strict227/446 zero-row
+  permission operations, old roles/ACL/index and nonpublic catalog invariants
+  pass.286 captured-file hashes and all5 original backup inputs recheck unchanged;
+  the actual owned container is absent. Production/hosted-platform compatibility,
+  unknown source extension ownership/initial privileges and fresh bootstrap
+  remain unproved; no production/provider action is taken.
+- Close the separate bounded photo-source search: eight selected ES/EN PDFs for
+  lessons1/2/4/7,734,573 bytes/26 pages, contain no embedded bitmap rows in actual
+  Poppler output. No extraction/image edit; FR/PT and unrelated PDFs unopened.
+  Larger originals remain optional UX-30 work, not an ongoing search loop.

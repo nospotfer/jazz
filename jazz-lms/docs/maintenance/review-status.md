@@ -17,15 +17,26 @@ source bindings below.
 ## Historical migration source and offline ledger verification
 
 Sourceac62f4a restores the exact237-byte March18 SQL matching the archived
-checksum; four immutable-file regressions pass. The ledger is not rewritten.
-Two bounded offline history rehearsals stop before any resolve: the first
-reveals valid empty historical log strings and leads to a one-predicate verifier
-correction with15 passing closed checks. The second reaches strict227 and an
-actual initial Prisma5.17 status reporting the three expected missing names,
-then its next database read reports an inconsistent recovery state. The cause
-and post-status preservation are unproven. Both owned containers are absent and
-the five original backup inputs remain unchanged. No production action occurs.
-[Exact scope and next step](payment-currency.md#historical-sql-source-and-bookkeeping).
+checksum; four immutable-file regressions pass. Production history is unchanged.
+Two earlier offline attempts stop before any resolve. The first exposes valid
+empty historical log strings; the second reaches strict227/initial status but
+its next read encounters database recovery. Their failures remain recorded.
+
+An empty signal trace proves the SIGTERM target is Prisma's engine, correcting
+the earlier inference that PostgreSQL's generic log identified a backend.
+Primary source review and an empty `--init` control support a PID1 orphan-reaping
+artifact: the same engine shutdown no longer triggers database recovery.
+
+The complete corrected rehearsal then passes in `run-a5ec90a2205e`: initial
+status, exactly three official Prisma5.17 resolves and final status. All seven
+literal SQL checksums match and the four original ledger records retain their
+complete raw bytes. Archived/before/final comparisons preserve65 tables/2,239
+original rows/two sequences; only the three validated new ledger records are
+excluded from the final projection. Strict227 and446 zero-row permission checks
+pass. Root rehashes286 captured files, all five backup inputs remain unchanged
+and the owned container is confirmed absent. Production/platform compatibility,
+fresh migration bootstrap and provider/release gates remain open.
+[Exact scope and diagnostics](payment-currency.md#historical-sql-source-and-bookkeeping).
 
 ## Landing press and footer accessibility
 
@@ -74,7 +85,9 @@ retains16 selected files/7,785,058 bytes, including the eight images.
 The remaining visual limitation is source-image quality: several lesson photos
 are only102–191px wide, while desktop cards display219px and the promo fallback
 550px. A bounded review of21 historical/public blobs finds no sharper original
-of the same composition. Larger authorized originals remain a medium-priority
+of the same composition. A separate selection of eight ES/EN lesson1/2/4/7 PDFs
+(26 pages) contains no embedded bitmaps; FR/PT and unrelated PDFs were not opened.
+Larger authorized originals remain a medium-priority
 asset follow-up; CSS enlargement cannot restore detail. This is not a finding
 about healthy Mux playback. The public image README now points to the active
 components and explains the local fallback boundary.

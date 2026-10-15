@@ -117,9 +117,9 @@ all five original preservation inputs retain their hashes.
 Normal code rollback keeps the new columns, payment facts and hardened grants.
 The revision5 inverse restores unsafe permissions and is a separate manual
 recovery operation with services closed. It is never automatic failure cleanup.
-The literal migration leaves `_prisma_migrations` unchanged; historical migration
-bookkeeping remains a separate review, and broad `prisma migrate deploy` is not
-authorized. Source extension ownership/initial privileges, hosted-platform
+The literal migration leaves `_prisma_migrations` unchanged; the separate offline
+rehearsal below verifies the three bounded history acknowledgements. Broad
+`prisma migrate deploy` is not authorized. Source extension ownership/initial privileges, hosted-platform
 equivalence and current production compatibility remain unproven. None of these
 offline checks authorizes production resume, SQL or deployment.
 
@@ -138,7 +138,7 @@ checksums match the repository; the March18 provider-reference migration had
 been rewritten after its recorded application. Source commit `ac62f4a` restores
 its exact237 bytes from Git commit `738125d`, matching the recorded SHA256
 `d4c4904d32daf99e9385d4a338053ee88c7e2f1f6e6330a98684c3729d35ff63`.
-The ledger is unchanged. Four immutable-source regressions reproduce three
+The preserved production ledger is unchanged. Four immutable-source regressions reproduce three
 passes/one failure before restoration and four passes afterward. They protect
 file history, not database schema or proof that every historical SQL ran.
 
@@ -148,7 +148,7 @@ The new literal currency operation also leaves its October15 ledger entry
 absent. Names alone are insufficient: feature definitions and exact target
 state must be verified before acknowledging an existing change.
 
-A separate isolated rehearsal targets Prisma5.17 `migrate resolve --applied`
+A separate isolated rehearsal verifies Prisma5.17 `migrate resolve --applied`
 for exactly these missing names, only after verifying the existing structures
 and227 columns:
 
@@ -156,13 +156,13 @@ and227 columns:
 - `202604220001_admin_metrics_indexes`
 - `202610150001_purchase_payment_currency`
 
-It must preserve all four complete original records, add only three official
-acknowledgements, compare every source checksum and retain all other data and
+It preserves all four complete original records, adds only three official
+acknowledgements, compares every source checksum and retains all other data and
 security invariants. Successful acknowledgement records current verified state;
 it does not invent historical SQL execution. No direct ledger edits, blanket
 replay or already-applied migration resolve is proposed.
 
-Two isolated attempts have stopped before any resolve. The first exposed a
+Two earlier isolated attempts stopped before any resolve. The first exposed a
 verifier assumption: two successful historical zero-step rows have empty log
 strings, while two have NULL. The corrected predicate accepts either exact form,
 rejects nonempty/whitespace logs and preserves the original values. Fifteen
@@ -173,12 +173,44 @@ strict227, actual webhook enum/PK checks and the original65-table/2,239-row/two-
 sequence projection. Actual initial `migrate status` reports the expected three
 missing names. Its next ledger read fails because the local PostgreSQL server
 reports that recovery has not reached a consistent state. No resolve intent or
-command occurs; post-status ledger preservation is unverified. The cause is
-under investigation, and out-of-memory termination has not been established.
+command occurs; that attempt does not prove post-status ledger preservation.
 Both containers are removed; independent rehashes preserve all five original
 backup inputs. The successful empty-image CLI ABI check is a separate scope.
 
-History reconciliation remains an open release gate. A successful status alone
+An empty-container trace identifies the later SIGTERM target as Prisma's own
+schema engine, with the same PID/start identity from spawn through kill. The
+generic PostgreSQL "server process" log did not identify a database backend.
+PostgreSQL was namespace PID1. Linux adopts orphaned children into PID1, and
+PostgreSQL17.11's reaper handles a signalled unknown child as a crash before
+checking backend membership. These primary sources support the fixture-reaper
+explanation: [Linux PID namespaces](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html),
+[PostgreSQL17.11 source](https://github.com/postgres/postgres/blob/REL_17_11/src/backend/postmaster/postmaster.c#L2627-L2636).
+
+A controlled empty run adds [Docker `--init`](https://docs.docker.com/reference/cli/docker/container/run/#init)
+while retaining the pinned image,1GiB memory, no network/ports and one version/
+status invocation. Init is PID1 and PostgreSQL PID7. The same engine SIGTERM
+occurs without database recovery/reinitialization; all four readiness/metadata
+samples remain healthy and OOM-kill counters stay zero. An earlier control
+stopped before any CLI because the image's postmaster comm is `.postgres-wrapp`;
+the corrected guard accepts that exact observed name. Both control containers
+are removed. This controlled result supports the diagnosis; it does not
+retrospectively prove every detail of the earlier failed archive attempt.
+
+Actual run `run-a5ec90a2205e`, verifier SHA256
+`022a7d9b64128515f80dad3512f845c684c50fd9bc7480540542ba0585872c81`,
+then passes the complete offline history rehearsal with `--init`. The original
+four ledger rows match byte-for-byte, including microsecond timestamps, NULL/
+empty logs and zero-step values. Exactly three official resolves add three new
+records; final status succeeds and all seven checksums match literal SQL.
+Independent root comparison of archived/before/final COPY multisets preserves
+65 tables and2,239 original records, excluding only the three validated new
+ledger ID/name pairs (2,242 final records). Both sequences, old column values,
+nonpublic extension metadata, role/ACL/index guards and nullable currency fields
+are preserved;446 zero-row permission operations pass. No customer/Auth/User/
+Purchase fixture is created or edited. All five backup inputs rehash unchanged
+and the owned container is independently confirmed absent.
+
+This closes the offline history-reconciliation gate. A successful status alone
 is not checksum or schema-drift proof. Full fresh-database migration bootstrap
 also remains separate: the partial legacy chain expects existing core tables.
 Documented disposable setup uses `db push`; production requires a fresh target,

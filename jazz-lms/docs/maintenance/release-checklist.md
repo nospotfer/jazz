@@ -363,12 +363,15 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
 - [x] Restore the applied March18 SQL's exact237 bytes and protect all four
   recorded checksums. Four before/after regressions and clean local sourceac62f4a
   normal suite2,537/80 pass; no existing ledger record is changed.
-- [ ] Finish the actual isolated Prisma5.17 history rehearsal. Two attempts stop
-  before any resolve; the second verifies strict227 and the expected initial
-  status, then PostgreSQL reports recovery on the next read. Diagnose that
-  failure before proceeding. Require all seven checksums, four original raw rows,
-  exactly three official acknowledgements and all other data/security invariants.
-  Source/ABI checks alone do not close this gate. [Evidence](payment-currency.md#historical-sql-source-and-bookkeeping).
+- [x] Complete the actual isolated Prisma5.17 history rehearsal after diagnosing
+  the fixture's PID1 reaping artifact and adding Docker init. Run-a5ec90a2205e
+  verifies all seven SQL checksums, byte-identical four original ledger rows,
+  exactly three official resolves/final status,65 original table projections/
+  2,239 rows/two sequences and446 permission operations. Root independently
+  compares captured COPY facts, rehashes286 files/five backup inputs and confirms
+  owned-container absence. Earlier failures remain preserved. This closes the
+  offline gate; current production/platform compatibility and release approval
+  remain separate. [Evidence](payment-currency.md#historical-sql-source-and-bookkeeping).
 - [ ] Resolve catalog/provider price parity, tax/currency, actual Dodo
   transaction/delivery/recipient, OAuth/SMTP, stable free hosting/DNS and production
   recovery/quarantine gates. No new spend or production action is inferred.
