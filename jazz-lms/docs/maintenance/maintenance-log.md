@@ -1469,3 +1469,24 @@ The maintenance goal remains active and incomplete.
   ordering checkpoint. Rehash every destination; credential-pattern findings0.
   Archive/COPY/whole schema-role exports, owned raw rows/IDs, credentials and
   enabled approvals are excluded. Local unencrypted evidence, not off-site backup.
+
+## 2026-10-15 — Press and footer controls verified visually
+
+- Source1e381a3 changes three class strings: press hover/focus uses the existing
+  readable jazz accent; footer back-to-top gains44px target, padding and an
+  explicit bright2px keyboard outline. Content/handlers/hero/menu/voucher logic
+  remain unchanged. Light hover contrast improves1.91→5.86.
+- The initial font fixture uses the wrong CSS spacing for Next's mock parser;
+  the author corrects it. Root then catches that a non-none shadow/outline-width
+  predicate does not establish visible painted contrast. Actual fonts reproduce the
+  defects; after-transition focus diagnostics expose footer outline2.24/1.85.
+  Explicit outline color raises that to7.26/8.59; press actual ring5.86/7.34.
+- Final actual local Next production12-case matrix passes ES320/390/1440light/dark
+  and EN/FR/PT390light/dark: real Inter/Playfair, hover, painted2px focus,44px hit,
+  keyboard return-to-top, below-fold widths/images. Client errors/external reads/
+  mutations0. Build including types and scoped lint pass. Two capture interruptions
+  remain diagnostic; original reports are not relabeled as final proof.
+- Root reviews eight public crops and source/report hashes, then retains117
+  selected files/4,070,273 bytes including90 public crops outside/tmp with verified
+  modes/hashes and pattern findings0. No credentials/runtime state; local
+  unencrypted retention only. All owned browsers/server close; no provider action.

@@ -12,6 +12,32 @@ identical application code (the later commit changes three fixtures only). See
 Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
+## Landing press and footer accessibility
+
+Application checkpoint `1e381a3` changes three class strings in the public press
+and footer components. Press hover titles use the existing jazz accent, raising
+light-mode contrast from1.91:1 to5.86:1. Back-to-top becomes at least44px tall and
+has a solid2px outline with an explicit bright accent on its dark footer surface.
+Hero, navigation, voucher presentation, copy and click handlers are unchanged.
+
+Actual isolated local Next production browser checks pass all12 cases:
+ES320/390/1440 light/dark, plus EN/FR/PT390 light/dark. Inter and Playfair load;
+below-fold widths, loaded images, target hits, keyboard activation and return to
+top pass without page errors, external reads or mutations. Painted focus checks
+wait for transitions and inspect the actual colored2px ring layer. Press focus
+contrast is5.86/7.34 and footer outline7.26/8.59 in light/dark. Build including
+TypeScript and scoped lint pass; no mirrored CSS tests are added.
+
+Earlier fallback-font reports and two interrupted screenshot helpers remain
+diagnostics. The initial non-none shadow/outline-width predicates did not prove
+painted contrast; root review exposed the faint2.24/1.85 footer outline, leading
+to the final source correction and separate proof. All browser/server resources
+close. This is public frontend evidence, not provider/Auth/media/payment proof.
+The owner-only local `review-checkpoint-landing-accessibility-1e381a3` retains117
+selected files/4,070,273 bytes, including90 public crops, plus manifest/receipt.
+Destination hashes/modes and credential-pattern scan pass; no credentials or
+runtime state are included. Local unencrypted retention is not off-site backup.
+
 ## Native voucher and payment facts
 
 A fresh exact5f9597a configured artifact matches605 application Git blobs and

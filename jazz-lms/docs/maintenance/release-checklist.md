@@ -1,5 +1,11 @@
 # Production review and rollback checklist
 
+- [x] Application1e381a3: press hover and genuinely painted focus contrast,
+  44px footer back-to-top and explicit high-contrast keyboard outline verified
+  across12 local production-browser cases. Build/types/scoped lint pass; public
+  evidence retained outside/tmp and owned browsers/server closed. This does not
+  authorize production deployment or establish provider journeys.
+
 Updated 2026-10-15. Preparation only: **no production release is authorized**.
 Source repairs have not been released. The owner separately approved one
 production Supabase resume, private preservation and unsafe-state re-pause;

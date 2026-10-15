@@ -247,3 +247,13 @@ provider/account/mail/DB flow. Existing Secure OAuth hint writes are clarified
 for static analysis;10 before/after controls pass. Exactf8 remote Quality/Secret
 Scan/CodeQL checks pass; fresh head-ref alert query0, no dismissal.
 [Exact landing evidence](review-status.md#landing-hero-and-usable-mobile-navigation).
+
+Application1e381a3 separately repairs press hover/focus contrast and footer touch/
+focus appearance. Actual isolated local production12-case matrix (ES320/390/1440
+both themes plus EN/FR/PT390 both) passes with actual Inter/Playfair, no overflow,
+broken loaded images, client errors, external reads or mutations. Painted press
+ring contrast5.86/7.34 and solid2px footer outline7.26/8.59 pass; back-to-top is44px
+tall and keyboard activation returns to top. Build/types/scoped lint pass. Root
+preserves earlier fallback-font and focus-predicate diagnostics, and retains117
+selected files/90 public crops outside/tmp. Browsers/server closed; no provider
+or full accessibility-audit claim. [Scope](review-status.md#landing-press-and-footer-accessibility).
