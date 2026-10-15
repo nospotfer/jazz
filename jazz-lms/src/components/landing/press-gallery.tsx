@@ -206,7 +206,7 @@ export function Press() {
                   key={item.id}
                   type="button"
                   onClick={() => setSelectedCardId(item.id)}
-                  className="group rounded-2xl border border-border bg-card overflow-hidden text-left transition hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500"
+                  className="group rounded-2xl border border-border bg-card overflow-hidden text-left transition hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jazz-title-accent"
                 >
                   <div className="relative h-44 w-full">
                     <Image
@@ -224,7 +224,7 @@ export function Press() {
                       <span>{typeLabel}</span>
                     </div>
 
-                    <h3 className="text-foreground font-bold text-lg leading-tight group-hover:text-yellow-500 transition-colors">
+                    <h3 className="text-foreground font-bold text-lg leading-tight group-hover:text-jazz-title-accent transition-colors">
                       {item.title}
                     </h3>
 

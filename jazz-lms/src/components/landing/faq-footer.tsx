@@ -373,7 +373,7 @@ export function FAQFooter() {
               {/* Back to top */}
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-2 title-accent hover:text-[var(--color-jazz-cta)] transition-colors group"
+                className="flex min-h-11 min-w-11 items-center gap-2 rounded-md px-3 title-accent hover:text-[var(--color-jazz-cta)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-jazz-title-accent)] group"
                 aria-label={copy.topAria}
               >
                 <span className="text-xs uppercase tracking-widest">
