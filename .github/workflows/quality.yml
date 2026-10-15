@@ -85,8 +85,10 @@ jobs:
           npx prisma db push --skip-generate
           npx prisma db execute --schema prisma/schema.prisma --file prisma/setup-messaging.sql
       - name: Check checkout and voucher authorization, reversals, quizzes, notes and messaging
+        # These files share schema/ACL fixtures. Keep files serial; concurrency
+        # inside the checkout/voucher tests still exercises real racing requests.
         run: >-
-          npx vitest run
+          npx vitest run --no-file-parallelism
           tests/integration/dodo-entitlement-postgres.test.ts
           tests/security/lesson-quiz-postgres.test.ts
           tests/security/lesson-notes-postgres.test.ts
