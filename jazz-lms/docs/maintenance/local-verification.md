@@ -411,3 +411,16 @@ Exact188 native58, Unix19/HTTPS11, independent18-hash preservation, original
 NULL-pair restoration and owned closure/seal pass. Later97e5e06 voucher/precision/
 unknown-zero views have source/component proof only. See the current
 [checkpoint and exact boundaries](review-status.md#currency-facts-and-readable-amounts).
+
+
+## Public landing visual checkpoint
+
+Exact5c98715 clean2533/80 normal/types/webpack/lint0/22 passes. Actual loopback
+public verification uses no provider credentials, blocks external/auth-prefetch
+requests and fulfills promo playback with503.154 property assertions pass across
+320/390/1440 in both themes plus four locale checks. Four targeted existing
+Playwright cases pass; f8d9254 changes only the opened-menu test coverage and
+application sources match5c. First-visit and necessary-only screenshots are
+separate, with no privacy-policy change. Original navigation clipping and initial
+harness timeout reports are retained. All owned browsers/previews are closed.
+[Exact scope](review-status.md#landing-hero-and-usable-mobile-navigation).

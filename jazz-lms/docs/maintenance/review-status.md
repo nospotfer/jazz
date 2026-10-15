@@ -13,6 +13,64 @@ Earlier accounting, editor, language, learning and media scopes retain their
 separate source bindings below.
 
 
+## Landing hero and usable mobile navigation
+
+Application artifact `5c98715` now gives the first free-lesson offer a compact
+callout, puts registration and a localized lesson-exploration link together,
+fills the phone content width with both actions and centers the desktop hero
+columns. Existing typography, imagery, four-language course copy, content and
+pricing are preserved. These are incremental visual and usability improvements;
+the rest of the landing page remains available for further review.
+
+Actual97 before renders exposed an opened390px navigation panel atx330/right538,
+expanding document width to538. At320 the toggle wraps to the left, so simply
+flipping its popup alignment would introduce another clipped layout. The menu
+now uses the positioned header as its boundary: actual390 bounds16–374 and320
+bounds16–304, with all seven links wholly visible and at least44px tall.
+
+Actual after verification passes154 assertions across six viewport/theme cases
+(320/390/1440, light/dark) and four locale checks. Keyboard and pointer menu
+navigation scroll to courses and close the panel; the new native exploration
+link works. Primary actions are342px/272px wide on390/320 phones,60px tall, and
+appear about42px/58px earlier than before. The secondary action also fits the
+initial844px fold in those Spanish views. Desktop column center difference0.
+These observations do not prove every translation fits every possible screen.
+
+Four targeted existing Playwright cases pass: offer/hero geometry, unavailable
+promo fallback and both mobile course/menu journeys. `f8d9254` strengthens the
+opened-menu regression to check the panel, all links and document width after
+opening, preventing Playwright auto-scrolling from hiding clipping. That later
+commit changes one test file only; application files remain identical to5c.
+Exact5c clean Node24 QA passes2533 normal tests/80 skips, types, webpack build and
+lint0errors/22 existing warnings.
+
+Before18/after19 public screenshots and88 selected artifacts plus manifest/
+receipt are retained privately in `review-checkpoint-landing-5c98715`, with
+verified bytes/hashes and0700/0600 modes. Initial timeout attempts remain separate
+harness diagnostics; final drivers settle after DOMContentLoaded. Browser
+requests stay on the loopback app, promo playback is a local503 fixture and
+prefetched auth routes are blocked. No actual video/provider/account/form/DB
+journey ran. First-visit privacy banners and clear views after the ordinary
+necessary-only choice are retained separately; consent policy is unchanged.
+All browsers and both finite local preview wrappers are closed.
+
+The same source includes `b7f77ab`: the already-Secure OAuth hint cookie options
+are written directly in each assignment to clarify static analysis. Existing
+intercepted-write and real-SDK controls pass10/10 before and after, types pass
+and the two scoped lint warnings are unchanged. This does not repair an actual
+insecure cookie or prove OAuth works. Exactf8d9254
+[Quality PR](https://github.com/nospotfer/jazz/actions/runs/38693579620),
+[Quality push](https://github.com/nospotfer/jazz/actions/runs/38693574139),
+[Secret Scan](https://github.com/nospotfer/jazz/actions/runs/38693579614) and
+[CodeQL analyses](https://github.com/nospotfer/jazz/actions/runs/38693575709)
+pass. Its fresh exact head-ref alert query returns0, removing those three
+medium97 records from this PR scope without dismissal. This is static clarity,
+not an insecure-cookie incident or actual OAuth integration verification.
+
+Latest source is published for draft review; downloaded Quality evidence and
+final documentation-head checks remain separately recorded. Production
+is unchanged and the maintenance goal remains incomplete.
+
 ## Currency facts and readable amounts
 
 Application source `97e5e06` carries PAY-22 through provider extraction, all paid
@@ -76,8 +134,9 @@ Downloaded26-file Quality logs agree with2533/80 normal and80/1 persisted checks
 The exact head-ref alert query nevertheless returns three medium cookie records
 (5/6/12), while merge/branch filters return0; their investigation is separate from
 successful check status. Actual source and existing intercepted-write tests show
-Secure on all three OAuth hint cookies; a direct-literal source clarification and
-fresh static rescan are being prepared, with no alert dismissal or exploit claim.
+Secure on all three OAuth hint cookies. The later direct-literal clarification
+and successful fresh head-ref rescan are recorded in the landing checkpoint
+above; no alert dismissal or exploit claim follows.
 
 Selected214 review files plus manifest/receipt are retained under the private
 `review-checkpoint-currency-97e5e06` recovery directory. Bytes/hashes and0700/0600

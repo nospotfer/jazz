@@ -197,3 +197,15 @@ precision/unknown-zero follow-ups have55 targeted source/component checks,
 not a new native execution. No Dodo transaction, production migration or paid
 hosting change. Broader landing-page visual polish is the next UX pass.
 [Exact scope](review-status.md#currency-facts-and-readable-amounts).
+
+
+Public landing source5c improves the hero and repairs actual390 mobile-menu
+clipping while preserving the different320 toggle position.154 assertions across
+six viewport/theme cases and four locales, plus four existing E2E cases, pass.
+Exact5c full2533/80/types/build/lint0/22 passes; f8 adds test coverage only. Before18/
+after19 public PNGs and88 selected artifacts are retained privately; owned
+browsers/local wrappers close. Promo video is an explicit local503 fixture, no
+provider/account/mail/DB flow. Existing Secure OAuth hint writes are clarified
+for static analysis;10 before/after controls pass. Exactf8 remote Quality/Secret
+Scan/CodeQL checks pass; fresh head-ref alert query0, no dismissal.
+[Exact landing evidence](review-status.md#landing-hero-and-usable-mobile-navigation).

@@ -86,6 +86,9 @@ persisted local journeys and actual provider inspection.
 
 | PAY-23 | Medium monetary reporting | Voucher redemption cells assumed EUR; unlabelled legacy amounts rounded to two decimals, and unknown-currency raw0 fell back to a conflicting old amount. Shared precision-preserving legacy display and zero precedence repair the views while leaving voucher configuration terms unchanged. | Frozen188 voucher18:14FAIL/4controls and precision16:8FAIL/8controls; frozenf5 zero8:4FAIL/4controls all pass after correction. Combined55 and final97e5e06 whole2533/80 pass. No new native voucher/tiny-positive/unknown-zero claim. |
 
+| UX-25 | Medium navigation usability | Open public navigation extended148px beyond a390px screen; the toggle changes rows on320, requiring a header-bound panel. | Actual97 screenshot/geometry before390 right538; exact5c after39016–374/32016–304, seven whole44px links, keyboard/pointer scrolling and closure pass both themes. Strengthened existing opened-menu viewport regressions pass both mobile journeys. |
+| UX-26 | Medium landing clarity | Large promotion banner dominated the hero and phone registration used a narrow action. Compact callout, full-width mobile primary/secondary actions and centered desktop columns improve the first screen. | Exact5c154 assertions/six viewport-theme cases/four locales,37 before/after public PNGs and four targeted existing E2E pass. Primary60px targets move earlier; existing content/branding/consent/pricing remain. Local unavailable-video fixture, not real Mux proof. |
+
 ## Open verification and release gates
 
 **SEC-17 (high confidentiality/correctness)** is repaired in published source

@@ -423,10 +423,30 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   and0700/0600 modes. Four synthetic webhook-vector test labels are explicitly
   redacted in derived JSON reports; original hashes/counts remain. Local copy
   is unencrypted and not off-site.
-- [ ] Verify cookie-clarification/docs-head CI and refresh the private handoff.
+- [x] Verify f8 cookie clarification: exact CodeQL checks pass/head-ref alerts0,
+  no dismissal; actual Secure output was already present before.
+- [ ] Verify final documentation-head CI and refresh the private handoff.
 - [ ] Continue landing-page visual hierarchy/spacing/mobile polish; later voucher/
   tiny-positive/unknown-currency-zero changes have no fresh native UI claim yet.
 - [ ] Resolve provider/notification recipients, Google/mail, stable free hosting/DNS
   and concrete approved production hardening/recovery/migration/release plan.
   The new columns also require revision of production column fingerprints before
   any hardening application; existing SQL/inverse remain unmodified proposals.
+
+
+## Landing hero and mobile navigation checkpoint
+
+- [x] Reproduce390 open-menu clipping, preserve320 wrap control and repair both
+  using header bounds; seven links fully visible/44px with pointer/keyboard.
+- [x] Compact offer, mobile full-width actions, localized exploration link and
+  centered desktop columns; preserve content/branding/consent/pricing.
+- [x] Exact5c2533/80 normal/types/webpack/lint0/22;154 public-browser assertions
+  across six viewport/theme cases/four locales and four targeted E2E pass.
+- [x] Retain37 public PNGs and88 selected artifacts plus manifest/receipt with
+  verified hashes/private modes; local unencrypted/not off-site. Browsers and
+  both public preview wrappers closed; no provider/account/DB activity.
+- [x] Exactf8 Quality PR/push, Secret Scan and CodeQL checks pass; fresh head-ref
+  medium cookie records0 without dismissal.
+- [ ] Verify final documentation-head remote checks and read-back.
+- [ ] Continue remaining public/customer/admin journeys and visual review; resolve
+  existing provider, hosting and production gates before completion/release.

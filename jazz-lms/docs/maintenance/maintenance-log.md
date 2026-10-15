@@ -1286,3 +1286,31 @@ The maintenance goal remains active and incomplete.
   four derived JSON reports redact only title/fullName, preserving statuses and
   recording original/retained hashes. Actual private-input scan0; raw rows,
   credentials/sessions/screenshots excluded. Local unencrypted/non-off-site.
+
+
+## 2026-10-15 — Landing hero polish and mobile menu repair
+
+- Actual97 public-only baseline18 screenshots exposes390 open-menu right538
+  and document538;320 toggle wraps left and its old panel fits.5c98715 anchors
+  the panel to header bounds, preserving both layouts. Open menu now16–374 at390
+  and16–304 at320; all seven44px links, pointer/keyboard navigation/closure pass.
+- Compact existing offer copy, full-width mobile registration and localized
+  exploration link, and centered desktop hero columns preserve branding/content/
+  pricing.154 assertions pass across six viewport/theme cases and four locales;
+  four targeted existing Playwright cases pass. f8d9254 strengthens viewport
+  checks after opening; its application files are identical to5c.
+- Exact5c clean2533/80, types/build/lint0/22 passes. Retain88 selected visual
+  artifacts plus manifest/receipt, including37 public before/after PNGs. Initial
+  timeout harness reports stay separate; final DOMContentLoaded driver succeeds.
+  Promo is a local503 fixture; external/auth-prefetch requests blocked. Privacy
+  first-visit/necessary-only states remain distinct. All owned browsers and both
+  finite loopback wrappers are closed, no provider/account/form/DB action.
+- b7f77ab makes already-Secure OAuth hint cookie options explicit in three writes.
+  Before/after10 closed component/SDK cases pass; full types0 and unchanged two
+  scoped warnings. Actual97 head-ref medium warnings require fresh source scan;
+  no insecure-cookie exploit, provider OAuth success or alert dismissal claimed.
+
+- Exactf8 Quality PR38693579620/push38693574139, Secret Scan and CodeQL checks
+  pass. Fresh head-ref query0 confirms the three old97 cookie records disappear
+  from this PR scope after literal clarification; no dismissal or insecure-cookie
+  incident. Final docs-head verification and private handoff follow separately.
