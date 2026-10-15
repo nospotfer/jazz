@@ -35,6 +35,12 @@ for (const width of [320, 390]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
 
     await header.locator("summary").click();
+    const mobileNavigation = header.locator("details nav");
+    await expect(mobileNavigation).toBeInViewport({ ratio: 1 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    for (const link of await mobileNavigation.getByRole("link").all()) {
+      await expect(link).toBeInViewport({ ratio: 1 });
+    }
     await header.getByRole("link", { name: "Cursos", exact: true }).click();
     await expect(header.locator("details")).not.toHaveAttribute("open");
     const firstLesson = page.locator("#board-courses button").first();
