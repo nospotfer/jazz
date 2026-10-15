@@ -1568,3 +1568,15 @@ The maintenance goal remains active and incomplete.
   lessons1/2/4/7,734,573 bytes/26 pages, contain no embedded bitmap rows in actual
   Poppler output. No extraction/image edit; FR/PT and unrelated PDFs unopened.
   Larger originals remain optional UX-30 work, not an ongoing search loop.
+
+
+## 2026-10-15 — Current handoff summary reconciled
+
+- Replace the maintenance overview's accumulated historical "current" paragraphs
+  with a concise verified checkpoint, deliverable index and explicit remaining
+  Dodo/Google/mail/price/hosting/production gates. Keep individual old results in
+  their existing source-bound reports; no evidence is relabeled as new execution.
+- Correct the verification matrix's stale open history gate to the completed
+  actual rehearsal and independent acceptance. Update published CI totals and
+  the bounded PDF-photo search outcome. No application, account or provider
+  configuration change; no repeat of completed recovery/browser tests.

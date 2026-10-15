@@ -3,12 +3,12 @@
 Updated 2026-10-15. Local source is not a deployed production repair. Counts below
 are completed checkpoints; overlapping targeted suites must not be added together.
 
-Following application8053c1b, exact91e87ae remote Quality,
-Secret Scan and CodeQL pass; downloaded Quality
-logs show2,533 normal passes/80 skips and80 persisted passes/one REST skip
+Published verification checkpoint9544d13 passes exact Quality PR/push, Secret Scan
+and CodeQL, with0 open head-ref alerts. Downloaded Quality logs verify2,537
+normal passes/80 intentional skips and80 persisted passes/one REST skip
 (79 actual SQL cases plus one metadata case), types/build and lint0errors/22
-existing warnings. Fresh head-ref CodeQL alerts:0. The table below preserves
-earlier journey-specific source bindings; its older counts are not latest totals.
+existing warnings. The table below preserves earlier journey-specific source
+bindings; its older counts are not latest totals.
 
 Latest recovery evidence: revision4 checks225 archived columns plus93 indexes,
 with24 actual isolated checks and nine closed checks. Corrected restore matches
@@ -23,9 +23,9 @@ projections/2,239 records/two sequences and initialNULL fields are preserved;
 include rejecting the old225 inverse at227. A separate manual227 cycle retains
 one owned synthetic Purchase and canonical facts, followed by full-row CAS
 cleanup. Independent inverse-export comparison matches557 ACL/member-owner
-metadata; all inputs and container cleanup pass. Production compatibility and
-migration-history reconciliation remain separate. No production changes follow
-from these checks. [Recovery scope](review-status.md#recovery-permissions-and-index-checks).
+metadata; all inputs and container cleanup pass. Current production compatibility
+remains separate. The completed offline history rehearsal below closes its
+isolated ledger-reconciliation gate. No production changes follow from these checks. [Recovery scope](review-status.md#recovery-permissions-and-index-checks).
 
 Exact5f fresh native artifact605 Git files/45,825 sealed/158 client files passes
 Unix19/HTTPS11 and17 monetary/auth browser checks. Independent final capture
@@ -43,12 +43,12 @@ with synthetic read mocks, separately from the authenticated5f native journey.
 
 | Requirement | Completed evidence | Remaining gap |
 | --- | --- | --- |
-| Public UX/UI | Current exact-e32 native HTTPS:12 public layouts at 1440/320/390 in both themes and48 computed contrast checks pass; light gold fixed with three lines. Earlier actual responsive/focus/privacy suite15/15 remains separate. Guest selector diagnostic2/2 passes. | Initial primary selector ambiguity remains documented; no application cause established. Inherited certificate/guarantee and price/tax promises require owner evidence. |
+| Public UX/UI | Source-e32 native HTTPS:12 public layouts at 1440/320/390 in both themes and48 computed contrast checks pass; light gold fixed with three lines. Earlier actual responsive/focus/privacy suite15/15 remains separate. Guest selector diagnostic2/2 passes. | Initial primary selector ambiguity remains documented; no application cause established. Inherited certificate/guarantee and price/tax promises require owner evidence. |
 | Registration / verification | Safe pending-account/no-JS POST proof; real local emailed OTP → verification → sign-in passes. Stored production email enabled/confirmation required, SMTP fields configured. | Production INACTIVE after approved preservation/rollback. Native password login and held-profile navigation ordering are verified on exact9bd HTTPS;16 auth regression cases pass. Registration/real mail delivery remain pending because synthetic cloud signup is disabled. |
 | Password recovery / Google | Actual local emailed PKCE recovery/new-password login passes; stored Google enabled/nonce check on, client fields and Resend SMTP present. | Production reset callback missing; broad global preview redirects need approved release correction. Google-console/real isolated OAuth and mail delivery remain unverified. [Stored configuration](supabase.md). |
 | Free / paid / legacy access | Four persisted roles: free first lesson only; course buyer all lessons; legacy lesson 2 plus free first; admin preview. Free paid-media/progress/quiz denied. Synthetic checkout grants course access; repeat purchase denied. Four native roles/access denials also pass on the production-built HTTPS frontend. | Actual Dodo test checkout/webhook/return/reversal. New individual lesson sales remain intentionally 410. |
 | Vouchers | Actual local actor: invalid denied/no purchase; FREE_ACCESS → paid access; one purchase/redemption/use; retry denied/cleanup verified. Four-language feedback and 19 component/atomic-error cases pass. Current helper created and retrieved scoped TEST percentage10% / flat EUR5 coupons in seven bounded provider requests. | Provider coupon acceptance is not redemption or native voucher binding. Actual checkout and tax/FX/settlement/account settings remain unverified. |
-| Video / PDFs | Current e32 actual Mux decode and four-language private PDF bytes pass. Fresh viewport-before-navigation320/390 PDF text is visibly confirmed in both themes, separate visual 7/7; completion 7/7 is narrower. Mux inventory16 and archived 15 lesson mappings plus promo match;68 original PDF hashes/structures and60 class labels verified. | Earlier sad-document screenshots and incomplete primary response remain preserved. Structure/labels do not establish video semantics or translation accuracy. Restricted preview excludes Spotify/Cast. No remapping/deletion justified. |
+| Video / PDFs | Source-e32 actual Mux decode and four-language private PDF bytes pass. Fresh viewport-before-navigation320/390 PDF text is visibly confirmed in both themes, separate visual 7/7; completion 7/7 is narrower. Mux inventory16 and archived 15 lesson mappings plus promo match;68 original PDF hashes/structures and60 class labels verified. | Earlier sad-document screenshots and incomplete primary response remain preserved. Structure/labels do not establish video semantics or translation accuracy. Restricted preview excludes Spotify/Cast. No remapping/deletion justified. |
 | Notes / progress / quizzes | Local persistence/locales/mobile and PostgreSQL concurrency/ownership tests pass. Cloud learning26/26:15 completed lessons,16 attempts/192 answers/15 PLATINUM summaries. Cache leak fixed; final notes pointer/privacy/recovery19/19 includes real manual-save200 after labeled intercepted500. Separate9bd actual native UI adds fresh-actor2notes/2completedlessons/2attempts24answers2summaries100PLATINUM/92GOLD, independently verified; original-four preserved. | Latest57 mobile drawer320/390 geometry/hit/keyboard/route entry passes. FB scoped hydrated editor text/styles pass at both widths; BC35/35 browser checks include12 real language clicks at1440/320/390.16auth/seven label cases are distinct. Earlier interrupted11 logic checks remain distinct; quiz contention has real local PG proof with no repeated cloud quiz mutation after patch. [Cloud evidence](preview.md#learning-and-note-recovery-follow-up). |
 | Medals / certificates | 1–15 numbering, 15/15 SUPREME and full-course eligibility; legacy 1/15 gets no whole-course certificate. Local vector PDF/Unicode proof; exact-source HTTPS normal button click downloads valid 862,196-byte A4 vector certificate. | Four-theme/viewport private layout and medal contrast checks pass. Historical forged awards cannot be assumed repaired. |
 | Messaging | Persisted route/role tests and native signature/trusted-authentication/deduplication checks. Student-owned threads, cross-student denial and authorized local professor reply tested with outbound disabled. Bounded HTML parser and actual inbox text-encoding regressions pass; CodeQL marks alerts 14/15 fixed. | Live receiving/webhook disabled, MX absent; real delivery/notification/inbound reply require approved activation and controlled mail. |
@@ -57,7 +57,7 @@ with synthetic read mocks, separately from the authenticated5f native journey.
 | Dodo provider | Eight live GETs verify €29.90 tax-exclusive product/business and webhook/signing. TEST key/product verified; test-only product aligned to unchanged fixture EUR80, two coupon APIs accepted, webhook inventory0. Controlled customer address privately recorded. | Existing deployed preview shares live resources/development wrong-mode key401. Merchant/webhook-alert recipients, actual isolated transactions/signatures/reversal and dashboard currency/tax/settlement remain pending. |
 | Supabase / schema / storage | Approved production resume/export/re-pause completed. Actual26 public table grants, ledger/messaging RLS gaps and self-role escalation confirmed. Offline archive65 COPY tables/2,239 records/two sequences and68 Storage object hashes match; durable private local backup exists. | New hardening/code/config/resume review required. Extension ACL equivalence/full platform/atomic snapshot/off-site retention remain explicit limits. Production INACTIVE again; no exploit write or SQL repair. [Recovery outcome](supabase.md). |
 | Security / accounting | Auth/cron/media/quiz/notes/signatures/reversals/coupon/privacy defects fixed with regressions. Native limiter/sweep76, producer/ingress512 and launcher/transport/disabled-runner 152 cases are included in current1,995 normal passes. Actual runtime/restart/cleanup/UID denial and sealed reinspection pass. | Process-local/restart/uncancellable Prisma and unavailable-queue recovery limits remain. Production config/hardening, financial journal/currency/tax and historic exposure need review. No timer/production execution enabled. |
-| Install / runtime / build | Node24.21.0/Next16.4/Prisma5.17. Current a207 fresh locked configured webpack artifact:551 application Git blobs/45,770 sealed files/158 client files checked. Actual Unix19/HTTPS11, closure/reinspection pass; e32 restart/worker/UID remains separate. Native engine9 strict TLS checks pass. | Production audit0/dev lint-chain5 high findings remain. Live Node20/settings await approval. Durable CA/config, continuous host, resource/recovery policy and named-tunnel identity remain unverified. |
+| Install / runtime / build | Node24.21.0/Next16.4/Prisma5.17. Source-a207 fresh locked configured webpack artifact:551 application Git blobs/45,770 sealed files/158 client files checked. Actual Unix19/HTTPS11, closure/reinspection pass; e32 restart/worker/UID remains separate. Native engine9 strict TLS checks pass. | Production audit0/dev lint-chain5 high findings remain. Live Node20/settings await approval. Durable CA/config, continuous host, resource/recovery policy and named-tunnel identity remain unverified. |
 | Normal automated checks | Exact a207 source and downloaded CI:1,995 normal passes/47 intentional skips,108 files with passes/five all-skipped;46 actual PostgreSQL passes/one REST skip; types/build and lint0/25. Quality/Secret Scan/CodeQL and actual protected Vercel build status pass.556-file committed export scan0. | Existing Vercel account/provider isolation remains unreconciled; build success is not customer-journey or production proof. Earlier reports remain immutable. |
 | Separate cloud backend | Free tvm25 hardened tables/five synthetic actors/60 private PDFs. Native9bd fresh UI2notes/2completedlessons/2attempts24answers and100PLATINUM/92GOLD independently verified. 57 drawer320/390 picker96/link225×44 hit/keyboard/route entry, FB hydrated editors and BC35/35 real language controls pass. All-five12-model preservation passes at02:42:36; apps/tunnel/browser state closed. | Historical correction12/9/3, FB10/9/1 clipping and purpose preflight1/0/1 remain separate. Older two buyer errors remain unclassified. Auth budgets remain distinct: earlier11, fresh-learning3, later-nominal3, focused-editor1; correction state reuse adds0. Dodo/OAuth/SMTP/stable hosting/production remain gates. |
 | Real persisted checks | Five guarded PostgreSQL suites pass46/one REST skip on exact a207 and3cc CI, including seven nullable-accounting regressions and earlier real3-second acquisition cases. Dedicated local Supabase security mode separately5/5 passes. | Fixtures cannot prove production grant repair; actual production remains paused and unsafe until reviewed hardening. |
@@ -266,14 +266,30 @@ is91e plus two reviewed edits, so this remains a limited local visual proof.
 Requests193 local/four promo503 fixtures/eight optional prefetch blocks, external/
 mutating traffic and errors0; owned browser/server closure independently checked.
 Low-resolution original photos remain a medium-priority asset limitation after
-a bounded21-blob search. No generic clamp, all-language or healthy Mux claim.
+a bounded21-blob search and8 selected ES/EN lesson PDFs with0 embedded bitmaps.
+Other languages/unrelated PDFs remain unopened. No generic clamp, all-language
+or healthy Mux claim.
 
 Historical migration source: exact237-byte March18 restoration changes the four
 checksum cases from3PASS/1FAIL to4PASS; clean local sourceac62f4a normal suite
-passes2,537/80. Actual history reconciliation remains unverified: the first
-offline attempt rejects valid empty historical logs;15 closed controls pass
-after the narrow predicate correction. The second reaches strict227, actual
-webhook enum/PK prerequisites and initial Prisma status, then fails on database
-recovery before any resolve. Both containers are removed and all five original
-backup inputs rehash unchanged. No successful ledger reconciliation, general
-schema-drift, clean migration bootstrap or production proof is claimed.
+passes2,537/80. Two earlier offline attempts stop before any resolve; their
+empty-log predicate and PID1 container-reaping diagnostics remain preserved.
+An empty trace identifies the correct Prisma engine as the SIGTERM target;
+Docker init prevents the demonstrated database recovery in a controlled run.
+
+Completed actual run-a5ec90a2205e then verifies corrected restore, exactV4 at225,
+literal currency SQL, strict227, initial status, exactly3 official Prisma5.17
+resolves and final status. All7 literal SQL checksums match; all4 original full
+ledger rows and microsecond-precision raw bytes are unchanged. Independent
+archive/before/final comparisons preserve65 tables/2,239 original records/two
+sequences, excluding only3 validated new ledger ID/name pairs (2,242 final
+records). Strict227 and446 zero-row permission operations pass; no customer/
+Auth/User/Purchase fixture is created or edited. Root rehashes286 captured files,
+all5 backup inputs remain unchanged and the owned container is confirmed absent.
+Independent acceptance checks59 targeted captures, incremental IDs/acknowledgements,
+raw originals, data, sequences and permission outputs. The owner-only durable
+352-file/4,023,885-byte selected checkpoint excludes customer COPY, raw ledger IDs,
+credentials and enabled approvals. Offline history reconciliation is complete;
+current production compatibility, unknown source extension privileges, general
+schema drift and clean migration bootstrap remain unproved.
+[Scope and retained diagnostics](payment-currency.md#historical-sql-source-and-bookkeeping).

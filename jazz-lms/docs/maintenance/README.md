@@ -1,127 +1,96 @@
 # Initial maintenance and stabilization
 
-Started 2026-10-13 on `maintenance/initial-audit` from repository `main` commit
-`c897f36`. Authenticated Vercel inspection subsequently identified the actual
-live deployment as a June 11 redeploy with reported source `50c2f87f`; see the
-[Vercel audit](vercel.md). The user explicitly requested UX/UI improvements that make the
-site attractive and easy to use while preserving its jazz identity.
+Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-15.
+[Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
+changes. **The goal is incomplete and the changes are not deployed.** The owner
+requested a stable, tested project and a more attractive, usable website while
+preserving its jazz identity. The hosting budget is zero incremental spend.
+
+## Current verified checkpoint
+
+- Published verification checkpoint `9544d13` passes Quality PR/push, Secret Scan and CodeQL,
+  with zero open head-ref alerts. Downloaded logs verify 2,537 normal passes/80
+  intentional skips, 80 persisted passes/one REST skip (79 actual PostgreSQL cases
+  plus one metadata case), types, webpack build and lint 0 errors/22 existing warnings.
+- Landing changes improve the hero, mobile actions/menu, contrast, touch targets
+  and keyboard focus. Application `1e381a3` has 12 local production-browser cases;
+  the later whole-page review covers 390/1440px in both themes. Voucher amount
+  wrapping is separately verified at `8053c1b`. [Visual evidence](review-status.md#landing-press-and-footer-accessibility).
+- Exact `5f9597a` is the latest configured authenticated monetary preview: 19 Unix-runtime checks,
+  11 HTTPS checks and 17 native checks, with independent 12-model/18-hash/full-Purchase
+  restoration and owned-resource cleanup. Earlier registration/recovery,
+  four-role access, learning, Mux, native PDFs and certificates retain their
+  individual source bindings. These checks do not prove Dodo, Google or real mail
+  delivery. [Journey matrix](verification-matrix.md).
+- The approved customer Supabase resume/preservation/unsafe-state rollback is
+  complete. Its private archive preserves 65 tables/2,239 records/two sequences;
+  all 68 exported Storage files are verified. Production was last confirmed
+  INACTIVE. Critical browser grants and self-role escalation require the prepared
+  hardening together with repaired code/configuration before another resume.
+- Offline recovery now verifies exact 225-column hardening, literal additive
+  currency SQL and strict 227 postchecks. The completed Prisma5.17 history
+  rehearsal preserves all four original ledger records byte-for-byte, adds
+  exactly three official acknowledgements and matches all seven SQL checksums.
+  Original data/sequences and 446 permission operations pass. This is offline
+  evidence, not current production or complete hosted-platform equivalence.
+  [Recovery and history](payment-currency.md#historical-sql-source-and-bookkeeping).
+
+Reviewed evidence is retained owner-only outside `/tmp`, including the
+`review-checkpoint-history-completed-9544d13-20261015` checkpoint under
+`/home/gabriel/backups/culturadeljazz-maintenance/`. Credentials, customer COPY
+rows, raw ledger IDs and enabled execution approvals are excluded from that
+selected package. Retention is local and unencrypted; off-site recovery is not
+established. Temporary preview processes and disposable recovery containers are
+closed. Historical reports remain unchanged in [review checkpoints](review-status.md).
+
+## Remaining verification and decisions
+
+| Gate | Evidence or decision still needed |
+| --- | --- |
+| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Account evidence for customer, merchant/team and webhook-alert recipients before the prepared sandbox transactions. The controlled customer email is known; it does not authorize mail to unknown team recipients. TEST product/coupon API acceptance and synthetic app journeys are already verified. |
+| Google login and cloud registration/recovery mail | Google account/console access after the security-blocked reauthentication, plus an approved controlled recipient and bounded configuration for real mail. Local OTP/PKCE recovery is verified; cloud SMTP/OAuth delivery is not. |
+| Price, currency and tax authority | Review the archived EUR 29.99 catalog interpretation against the live EUR 29.90 tax-exclusive product. Current source stores server quotes separately from canonical charged facts. No production catalog/provider change is authorized. |
+| Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
+| Production recovery and release | Fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence, followed by explicit owner approval. Offline success does not authorize production changes. |
+
+The existing Vercel production and preview settings share the customer Supabase
+backend and live Dodo resources; they are unsuitable for isolated testing. The
+separate Free Supabase preview uses synthetic actors/private generated PDFs.
+Its archived-data recovery checks run in other disposable containers; customer
+backup data is never loaded into the journey preview. No paid Vercel upgrade,
+real charge/refund or third-party message is included.
 
 ## Deliverables
 
-| Artifact | Purpose | Current state |
-| --- | --- | --- |
-| [Maintenance log](maintenance-log.md) | Findings, changes, checks, next action | In progress |
-| [Service inventory](service-inventory.md) | Infrastructure, account access and verification gaps | In progress |
-| [Prioritized backlog](backlog.md) | Confirmed defects and deferred work | In progress |
-| [Verification matrix](verification-matrix.md) | Requirement-by-requirement evidence | In progress |
-| [Release and rollback](release-checklist.md) | Concrete production review package | In progress |
-| [Local verification](local-verification.md) | Guarded databases, native Auth/storage and browser reproduction | Documented |
-| [Public provider evidence](public-provider-evidence.md) | Deployed/legacy Supabase DNS failure and inspection limits | Documented |
-| [Database review](database.md) | Schema, RLS, role prerequisites and backup gates | Production exposure confirmed; hardening prepared separately, not applied |
-| [Supabase manager and recovery](supabase.md) | Existing customer-project status, preservation and bounded rollback | Approved recovery and private exports completed; offline data restore verified; INACTIVE after unsafe-state rollback |
-| [Separate preview](preview.md) | Guarded Free cloud backend, synthetic fixtures and customer-journey evidence | Native9bd learning, FB hydrated mobile editors, BC35/35 real language controls; earlier four-role/media/PDF/layout scopes preserved |
-| [Resend audit](resend.md) | Read-only account evidence and activation sequence | Documented; receiving disabled |
-| [Vercel audit](vercel.md) | Authoritative live target, environments, runtime, cron and account gates | Authenticated; shared production/preview dependencies verified |
-| [Zero-cost hosting](hosting.md) | Conditional stable hosting, old deployment quarantine and rollback | Monster + free named tunnel preferred if availability/account/DNS control exists; no setup or cutover performed |
-| [Dodo audit](dodo.md) | Live product, tax setting, webhook and test-mode access | Test product and two coupon APIs verified; transactions and notification review pending |
-| [Native safeguards](native-runtime.md) | Counters, sweeps, trusted ingress and reproducible release builds | Fresh sealed artifact, Unix launcher/HTTPS/restart/cleanup verified; runner prepared and disabled; production activation pending |
-| [Operational scripts](operational-scripts.md) | Deployment/mutator hazards and safe prerequisites | Legacy mutators quarantined to explicit disposable local targets |
-| [Review checkpoints](review-status.md) | Exact revisions, draft PR, remote checks and protected preview | Follow-up Quality, Secret Scan, CodeQL and Vercel build passed |
-
-The goal is not complete until installation/build/checks are reproducible,
-accessible critical/high defects are fixed and verified, relevant customer
-journeys pass in a verified preview, and the production review package is ready.
-Unverified integrations and deferred requirements must remain explicit.
-
-The customer Supabase project is paused again after the explicitly approved
-resume/preservation/unsafe-state rollback. A private database archive and all
-68 current Storage files were preserved, and an isolated offline restore matched
-65 table COPY counts / 2,239 archived records and all file hashes. Exact extension
-ACL equivalence, full platform recovery and encrypted off-site retention remain
-separate gaps. Inspection confirmed critical browser grants and unrestricted
-self-role updates; production hardening and code release need a concrete new
-review. The older local project is absent from this account's inventory.
-Vercel configuration
-confirms the deployed server and all three target environments use the same
-Supabase project. Production and preview also share live Dodo credentials; the
-existing Vercel configuration is unsuitable for isolated customer/payment testing.
-An independent Free Supabase preview now has hardened tables, synthetic accounts
-and private generated PDFs. Its local frontend uses only the new backend;
-all 29 initial cloud-backend browser checks pass. Historical source `e32a370` was
-freshly built, sealed and verified through a Basic-protected temporary HTTPS
-tunnel and private Unix sockets. Four native roles, actual Mux playback,
-certificates and fresh mobile PDF text pass. Twelve public layouts and 48
-computed contrast checks pass after a three-line gold-text contrast repair.
-Separate browser reports retain initial observations; the final independent
-snapshot preserves learning, purchases and zero business records.
-Earlier source 27's 45 checks and other reports remain historical and immutable.
-The temporary app and tunnel closed cleanly before their deadlines.
-This is neither Vercel runtime proof nor stable production hosting. The owner
-selected a zero incremental hosting budget. The offline customer archive was never loaded
-into the customer-journey preview or existing fixture databases. Dodo test access
-is now valid, but transactions await notification/recipient review.
+| Artifact | Purpose |
+| --- | --- |
+| [Maintenance log](maintenance-log.md) | Findings, changes, checks and next action |
+| [Service inventory](service-inventory.md) | Infrastructure, ownership, account access and billing gaps |
+| [Prioritized backlog](backlog.md) | Repaired defects, deferred work and release gates |
+| [Verification matrix](verification-matrix.md) | Requirement-by-requirement evidence and remaining gaps |
+| [Release and rollback](release-checklist.md) | Production review, activation and rollback requirements |
+| [Local verification](local-verification.md) | Guarded databases, native Auth/storage and browser reproduction |
+| [Public provider evidence](public-provider-evidence.md) | Observed deployed failures and inspection limits |
+| [Database review](database.md) / [Supabase recovery](supabase.md) | Permissions, preservation and hosted-platform recovery limits |
+| [Payment currency and migration history](payment-currency.md) | Canonical facts, additive migration, exact recovery order and ledger reconciliation |
+| [Separate preview](preview.md) | Isolated backend, synthetic fixtures and source-bound customer journeys |
+| [Dodo](dodo.md) / [Resend](resend.md) / [Vercel](vercel.md) | Provider inventories and remaining account/configuration gates |
+| [Zero-cost hosting](hosting.md) / [Maintenance fallback](maintenance-fallback.md) | Conditional stable host, quarantine and verified static rollback asset |
+| [Native safeguards](native-runtime.md) | Reproducible artifacts, private ingress, lifecycle and disabled daily runner |
+| [Operational scripts](operational-scripts.md) | Mutator hazards and explicit disposable-target prerequisites |
+| [Review checkpoints](review-status.md) | Exact revisions, PR, CI, preview evidence and historical limits |
 
 ## Authorized work
 
 Local changes, tooling, commits, pushes, pull requests, previews and bounded
 subagents are authorized. Production inspection is authorized. Production writes,
-migrations, deployment, destructive operations, real charges/refunds, plan
-changes and messages to third parties require explicit approval. Credentials
-remain local and redacted; rotation is left to the user. Test customer data and
-payment environments must be isolated from production.
+migrations, deployments, destructive operations, real charges/refunds, plan
+changes and messages to third parties require explicit owner approval. Credentials
+remain local and redacted; rotation is left to the owner. Test customer data and
+payment environments must stay isolated from production.
 
-Historical source `e32a370` includes the bounded limiter/sweep, validated
-ingress, explicit environment, immutable release producer, private preview
-launcher and disabled reconciliation runner. Clean verification and downloaded
-exact-source CI confirm 1,915 normal tests/40 skips, 39 actual PostgreSQL tests/
-one skip, types/build and lint 0 errors/25 existing warnings. Fresh locked
-configured build matches 548 archived application Git blobs, verifies 45,766
-sealed files and excludes supplied server secrets from 157 client files.
-Actual restart, worker-exit cleanup, separate-UID denial and reinspection pass.
-Production hosting/account/DNS/quarantine, Google/mail and Dodo notification/
-transaction verification remain open. Goal is active and incomplete.
-[Latest checkpoint](review-status.md#protected-native-preview-and-contrast).
-
-
-Earlier source `57f5de1` fixes password navigation ordering/late auth events,
-adds the drawer link to saved notes and aligns accessible completion labels in
-ES/EN/FR/PT. Exact CI confirms1,935 normal passes/40 skips,39 actual PostgreSQL
-passes/one skip,types/build/lint0/25 and committed555-file secret scan0. Fresh
-sealed550/45,769/158-file build and Unix19/HTTPS11 pass. Exact9bd browser learning
-independently persists two notes/two completed lessons/two quizzes24answers with
-PLATINUM/GOLD, preserving original-four records. Browser and source scopes remain
-separate; latest mobile notes-entry verification is tracked in the
-[current checkpoint](review-status.md#mobile-drawer-recovery-and-recorded-payment-amounts).
-The goal remains active and incomplete; no paid upgrade or production release.
-
-The mobile drawer picker/editor link is verified at320/390 after its scroll/space
-repair. Unknown historical payment amounts are now explicit instead of borrowing
-current catalog price. Hydrated editor text and actual locale controls remain
-separate browser checks.
-
-
-Earlier source `133716b` preserves missing/malformed provider amounts asNULL,
-retains same-payment known facts and correct voucher links, and clears stale
-accounting on replacement payments. Exact CI/downloaded logs confirm1,973 normal
-passes/47 skips and46 actual PostgreSQL passes/one skip; types/build/lint0/25 and
-556-file source scan0. The260 targeted payment checks include18 actual PostgreSQL
-cases. Actual browser proof stays bound to FB editors/BC35/35 language controls;
-all temporary processes are closed and all-five12-model preservation passes.
-[Current source and remaining gates](review-status.md#provider-amount-availability).
-
-Current source `a207f36` makes payment-history failures recoverable and prevents
-stale financial rows across account changes. Exact CI confirms 1,995 normal
-passes/47 skips and 46 PostgreSQL passes/one skip. A fresh sealed native HTTPS
-window passes 31/31 history checks across four languages/mobile/desktop: €80,
-unavailable, €0 and restored €80, plus controlled error/real retry and actual
-owner-mismatch409. Bounded root SQL touched only one synthetic grant, restored
-exactly; all-five12-model fingerprints match, temporary services are closed and
-the session deleted. No actual provider payment, spend or production change.
-[Current source, evidence and open gates](review-status.md#payment-history-recovery-and-account-isolation).
-
-The rollback proposal now includes a concrete [static maintenance fallback](maintenance-fallback.md)
-with original branding, four languages and a reviewable503/header contract.
-Actual browser/HTTP138/138 and separate local-file4/4 checks pass; initial zoom
-failure remains preserved. No activation occurred. Ignored credential CSV/app.env
-permissions are now0600, and the TEST key has protected durable local retention.
-[Operational checkpoint](review-status.md#local-credential-boundaries-and-static-rollback-fallback).
+Completion requires the full audited scope, fixed and verified accessible
+critical/high defects, reproducible installation/build/checks, passing relevant
+preview journeys and a production review package. Missing integration evidence
+and deferred requirements remain explicit; a green build alone does not complete
+the goal.
