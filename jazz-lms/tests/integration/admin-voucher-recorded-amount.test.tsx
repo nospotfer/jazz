@@ -94,7 +94,6 @@ test('64-digit canonical values render exactly within the bounded scrolling tabl
   await page([redemption('synthetic-use', 'synthetic-student', recordedPurchase({ paymentCurrency: 'KWD', paymentAmountMinor: minor }))]);
   const cells = within(screen.getAllByRole('row')[1]).getAllByRole('cell');
   expect(cells[6].textContent).toBe(formatPaymentAmount(minor, 'KWD', 'es-ES'));
-  expect(cells[6].className).toContain('break-all');
   expect(screen.getByRole('table').parentElement?.className).toContain('overflow-x-auto');
 });
 

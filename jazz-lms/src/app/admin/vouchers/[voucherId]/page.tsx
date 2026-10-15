@@ -4,6 +4,21 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+function RecordedAmount({ value }: { value: string }) {
+  const separator = " · ";
+  const separatorIndex = value.indexOf(separator);
+
+  return separatorIndex === -1 ? (
+    <span className="whitespace-nowrap">{value}</span>
+  ) : (
+    <>
+      <span className="whitespace-nowrap">{value.slice(0, separatorIndex)}</span>
+      {separator}
+      <span className="whitespace-normal">{value.slice(separatorIndex + separator.length)}</span>
+    </>
+  );
+}
+
 export default async function AdminVoucherDetailPage({
   params,
 }: {
@@ -158,14 +173,14 @@ export default async function AdminVoucherDetailPage({
                       <td className="px-3 py-2 text-xs font-mono">
                         {redemption.purchase?.id || "-"}
                       </td>
-                      <td className="max-w-[12rem] break-all px-3 py-2 text-sm">
-                        {formatLegacyRecordedAmount(redemption.purchase?.originalPrice)}
+                      <td className="px-3 py-2 text-sm">
+                        <RecordedAmount value={formatLegacyRecordedAmount(redemption.purchase?.originalPrice)} />
                       </td>
-                      <td className="max-w-[12rem] break-all px-3 py-2 text-sm">
-                        {formatLegacyRecordedAmount(redemption.purchase?.discountAmount)}
+                      <td className="px-3 py-2 text-sm">
+                        <RecordedAmount value={formatLegacyRecordedAmount(redemption.purchase?.discountAmount)} />
                       </td>
-                      <td className="max-w-[12rem] break-all px-3 py-2 text-sm">
-                        {formatRecordedPayment(redemption.purchase ?? {})}
+                      <td className="px-3 py-2 text-sm">
+                        <RecordedAmount value={formatRecordedPayment(redemption.purchase ?? {})} />
                       </td>
                     </tr>
                   );
