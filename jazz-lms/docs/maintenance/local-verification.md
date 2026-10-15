@@ -392,3 +392,22 @@ are pending. Prior a631/c1a native evidence remains bound to those old sources.
 Follow [payment-currency.md](payment-currency.md) for migration ordering and safe
 rollback; neither `prisma db push` nor the legacy migration chain is an approved
 production rollout.
+
+
+## Currency checkpoint full verification
+
+Exact97e5e06 passes2533 normal tests/80 intentional skips in a private clean
+Node24 checkout without app.env/provider credentials, plus types, lint0errors/22
+warnings and webpack build. Package/lock unchanged from the fresh currency
+install. Exact188 separately passes80 checks/one REST skip in ten guarded
+PostgreSQL suites:79 actual database cases and one generated-client metadata
+case. Add `--no-file-parallelism` across these shared-schema files; concurrency
+inside grant/voucher tests remains enabled. The original40P01 fixture failure,
+three obsolete whole-suite fixtures and initial NBSP control diagnostic remain
+retained rather than counted as application regressions. Later display-only
+commits change no schema, ingest, provider or database guard.
+
+Exact188 native58, Unix19/HTTPS11, independent18-hash preservation, original
+NULL-pair restoration and owned closure/seal pass. Later97e5e06 voucher/precision/
+unknown-zero views have source/component proof only. See the current
+[checkpoint and exact boundaries](review-status.md#currency-facts-and-readable-amounts).

@@ -405,3 +405,28 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
   and approved production recovery/quarantine/hardening gates. Keep zero new spend.
 
 [Exact scope](review-status.md#quote-provenance-and-transactional-course-intent).
+
+
+## Currency checkpoint and remaining visual work
+
+- [x] Exact97e5e06 clean2533/80 normal, types/configured webpack/lint0/22; frozen
+  currency, voucher, precision and unknown-zero failures become passes.
+- [x] Exact188 ten guarded persisted suites80/1 (79 actual PG/one metadata);
+  file serialization fixes fixture deadlock without disabling request races.
+- [x] Isolated cloud additive migration preserves18 hashes/old fields/timestamps;
+  native58/Unix19/HTTPS11, actual204 logouts, both pairs restoredNULL,
+  independent full model comparison and owned closure/seal inspection pass.
+- [x] Publish97e5e06; exact Quality PR/push, Secret Scan and CodeQL checks pass;
+  downloaded26-file logs agree. Three medium head-ref cookie records remain
+  under source/static-model review; passing check status does not resolve them.
+- [x] Retain214 selected files plus manifest/receipt outside/tmp, verified hashes
+  and0700/0600 modes. Four synthetic webhook-vector test labels are explicitly
+  redacted in derived JSON reports; original hashes/counts remain. Local copy
+  is unencrypted and not off-site.
+- [ ] Verify cookie-clarification/docs-head CI and refresh the private handoff.
+- [ ] Continue landing-page visual hierarchy/spacing/mobile polish; later voucher/
+  tiny-positive/unknown-currency-zero changes have no fresh native UI claim yet.
+- [ ] Resolve provider/notification recipients, Google/mail, stable free hosting/DNS
+  and concrete approved production hardening/recovery/migration/release plan.
+  The new columns also require revision of production column fingerprints before
+  any hardening application; existing SQL/inverse remain unmodified proposals.

@@ -1248,3 +1248,41 @@ The maintenance goal remains active and incomplete.
   No production migration/deployment, real payment/refund, email, paid upgrade,
   provider setting change or whole-goal completion is claimed. Clean exact-source
   full QA/remote CI and a fresh migrated preview are the next verification steps.
+
+
+## 2026-10-15 — Currency preview verified and financial views completed
+
+- Commitf0aa6de implements exact nullable payment facts. Three obsolete fixtures
+  are corrected in862c614;188f7b8 serializes shared PostgreSQL files after an
+  actual40P01 deadlock. Normal2491/80, persisted80/1 and build pass;79 persisted
+  cases are actual SQL and one is client metadata. Initial reports are retained.
+- Fresh sealed188 artifact602/45,822/158 passes Unix19/HTTPS11. The isolated Free
+  preview receives only two nullable TEXT columns/no backfill. Migration and
+  final independent read-only comparisons preserve18 protected/12 model hashes,
+  five roles, raw course/purchase fields/timestamps, policy and indexes.
+- Native58 passes currencies EUR/JPY/KWD/IQD/MGA, zero/unknown/restored history
+  and overview. Statistics cover KWD7d/restored30d only;36 representative amount
+  geometry/contrast observations pass320/390/1440 light/dark. Both actual global
+  logouts return204; seven variants/one restore are acknowledged by18-entry
+  verified journal. Both pairsNULL again; all browsers/app/tunnel close, owned
+  processes/sockets absent, final seal passes. Cumulative tracked pairs28.
+- f5cc174 removes assumed EUR in voucher redemptions and preserves legacy
+  precision.97e5e06 aligns unknown-currency raw0 with student/metric behavior;
+  unknown positive units never acquire a scale. Frozen voucher18, precision16
+  and zero8 preserve meaningful failures/controls and now pass; combined55.
+  Initial NBSP control fixture diagnostic remains separate. Final97 whole2533/80,
+  types/build/lint0/22 pass. These later UI changes are not rebound to188 native.
+- No paid upgrade, production change, real Dodo payment/refund or mail. Release
+  still needs actual provider/Google/mail/host and reviewed production authority.
+  Owner asked about UI progress: landing mobile actions/dialogs/readability and
+  student/admin usability are repaired; broader landing visual polish is next.
+
+- Exact97 GitHub Quality PR/push, Secret Scan and CodeQL checks pass; downloaded26
+  logs agree2533/80 and80/1, pattern scan0. Exact head-ref alert query finds three
+  medium OAuth-hint cookie records despite Secure in actual source/tests; direct
+  literal clarification/static rescan is prepared separately, no dismissal.
+- Retain214 selected files plus manifest/receipt privately outside/tmp. Nonempty
+  pattern gate first stops on a generated synthetic webhook-vector test label;
+  four derived JSON reports redact only title/fullName, preserving statuses and
+  recording original/retained hashes. Actual private-input scan0; raw rows,
+  credentials/sessions/screenshots excluded. Local unencrypted/non-off-site.

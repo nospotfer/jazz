@@ -84,3 +84,26 @@ facts intact. Do not automatically drop the columns, clear facts, infer legacy
 currency or rewrite old floats. Remote migrations, native journeys and actual
 provider transactions require their own source-bound evidence; local tests do
 not establish them.
+
+
+## Verified isolated preview and later display follow-ups
+
+The exact188f7b8 sealed artifact received a separately scoped migration on the
+existing Free maintenance preview only. Two nullable TEXT columns/no defaults or
+backfill were verified, with all18 old protected hashes unchanged. Native58
+checks pass: student/overview currency variants, representative KWD/restored
+statistics and320/390/1440 light/dark amount geometry/contrast, actual logins and
+global204 logouts. Seven temporary pair updates plus one restoration are
+acknowledged; independent final read-only comparison preserves all12 models,
+raw course/purchase timestamps, roles, policy and indexes, and both pairs areNULL.
+All owned browser/app/tunnel resources are closed and the artifact seal passes.
+Production has not received these columns.
+
+Later97e5e06 source separately repairs voucher redemption display and legacy
+precision. The final charge uses a complete canonical pair first; canonical raw0
+can be shown as0 with currency unavailable because zero is scale-independent.
+Unknown positive raw units never acquire a guessed scale. Original/discount
+legacy floats remain unlabelled even when the final charge has a currency, and
+small positive legacy amounts must not round to0. These changes pass meaningful
+before/after cases and the final2533-test clean build; they were not part of the
+188 native execution. Full tax/refund journal and actual Dodo delivery remain gaps.

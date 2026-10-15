@@ -15,27 +15,83 @@ separate source bindings below.
 
 ## Currency facts and readable amounts
 
-The current candidate carries PAY-22 across provider extraction, all paid ingest
-paths, persistence, student history and admin reporting. It stores an exact
-nullable currency/minor-unit snapshot, preserves legacy floats independently,
-and prevents partial retries or nested/outer payload fields from mixing units.
-Unknown units never become EUR. Admin totals/averages/charts stay separate by
-verified currency; large exact amounts survive without a rounded chart value.
+Application source `97e5e06` carries PAY-22 through provider extraction, all paid
+ingest paths, persistence, student history and admin reporting. It stores exact
+nullable currency/minor-unit facts, uses explicit SIX exponents and prevents
+partial retries or nested/outer objects from mixing units. Legacy floats retain
+their independent provenance. Admin totals/averages/charts stay separate by
+verified currency; unsafe numeric chart/comparison values remain unavailable.
 See [payment currency, compatibility and rollback](payment-currency.md).
 
 Exact prior-source failures are retained: backend52 (48fail/four controls),
 admin13 (11fail/two controls), student23 (18fail/five controls), DTO17
-(14fail/three auth controls). All pass after their fixes. Existing owner,
-permission, unknown/zero, coupon and reversal controls remain distinct. The
-local nullable-column migration preserved the original test row/timestamps and
-owner/RLS/ACL/index metadata; it did not alter a provider database.
+(14fail/three auth controls). All pass after correction. A fresh private Node24
+install precedes the full checks. Three obsolete whole-suite amount fixtures
+were corrected in `862c614` without runtime changes. Shared-schema PostgreSQL
+files ran in parallel and reproduced an actual40P01 fixture deadlock; `188f7b8`
+serializes files while preserving real races inside tests. That exact source
+passes80 checks in ten persisted suites (79 actual PostgreSQL cases and one
+client-metadata case), with one REST-only skip. Initial failures stay separate.
 
-Light-theme amount contrast also failed an offline browser check (3.057student,
-2.103admin). Both amount styles now use the established title-accent token;
-offline candidate ratios pass both themes. This is not native screenshot or
-integration evidence. Full clean-checkout QA, remote CI and a freshly migrated
-isolated native preview are still pending for this candidate. No production
-migration, rollout, actual provider transaction or whole-goal completion follows.
+A fresh sealed `188f7b8` artifact matches602 Git application files/45,822 sealed
+files/158 inspected client assets. The isolated Free cloud preview received only
+two nullable TEXT columns, with no defaults/backfill. Before/after migration
+preserves old fields/raw timestamps, all12 model hashes and six additional
+protected hashes; both new pairs initially remain NULL. Production received no
+migration. Unix19 and actual protected HTTPS11 checks pass.
+
+Native browser verification passes58: two actual logins, eight student histories,
+eight admin overviews, two scheduled statistics variants,36 representative
+geometry/amount-contrast observations and two actual normal global204 logouts.
+EUR/JPY/KWD/IQD/MGA, real0, unknown currency and original legacy values display as
+planned. KWD and restored records are checked at320/390/1440 in both themes;
+statistics cover KWD7d and restored30d only, with unscheduled range prefetches
+blocked. Minimum amount contrast is5.521light/7.663dark student,
+5.864/7.336overview and7.557/12.167statistics. This is amount/KPI evidence,
+not a whole-page accessibility certification or every chart/currency combination.
+
+Seven scoped two-column variants and one restoration are acknowledged in an
+18-entry verified hash-chain journal. Independent final read-only SQL confirms
+all18 protected/12 model hashes, five roles, original raw course/purchases and
+timestamps unchanged, with both pairs NULL again. Browser contexts/owned Chrome,
+app/tunnel processes and sockets are gone; clean closure and complete sealed
+reinspection pass. This window consumes two login/session pairs, bringing the
+tracked cumulative windows to28. No Dodo transaction, mail or learning write ran.
+
+Separate follow-ups `f5cc174` and `97e5e06` remove assumed EUR from voucher
+redemption records, preserve unlabelled legacy precision and show canonical raw0
+as0 even when currency is unknown. Frozen voucher18 (14fail/four controls),
+precision16 (eight fail/eight controls) and unknown-zero8 (four fail/four controls)
+now pass; combined55 controls pass. Initial nonbreaking-space fixture diagnostics
+are retained. Final `97e5e06` clean-source checks pass2533 normal tests/80
+intentional skips, types, lint0errors/22 existing warnings and webpack build.
+These later display fixes have source/component evidence, not a new native run;
+the completed native artifact remains bound to `188f7b8`.
+
+Exact97e5e06 [Quality PR](https://github.com/nospotfer/jazz/actions/runs/38690838575),
+[Quality push](https://github.com/nospotfer/jazz/actions/runs/38690833263),
+[Secret Scan](https://github.com/nospotfer/jazz/actions/runs/38690838583) and
+[CodeQL checks](https://github.com/nospotfer/jazz/actions/runs/38690835304) pass.
+Downloaded26-file Quality logs agree with2533/80 normal and80/1 persisted checks.
+The exact head-ref alert query nevertheless returns three medium cookie records
+(5/6/12), while merge/branch filters return0; their investigation is separate from
+successful check status. Actual source and existing intercepted-write tests show
+Secure on all three OAuth hint cookies; a direct-literal source clarification and
+fresh static rescan are being prepared, with no alert dismissal or exploit claim.
+
+Selected214 review files plus manifest/receipt are retained under the private
+`review-checkpoint-currency-97e5e06` recovery directory. Bytes/hashes and0700/0600
+modes are verified; nonempty candidate scans exclude actual private inputs. Four
+retained whole-test JSON reports redact only a generated synthetic webhook-key
+label in title/fullName; original hashes and transformation are recorded, with
+statuses/counts unchanged. The initial pattern gate stopped before copying that
+label. Credentials, raw model snapshots, sessions and screenshots are excluded.
+This is local unencrypted retention, not off-site recovery.
+
+Actual provider transactions, OAuth/mail, continuous free hosting/DNS and approved
+production hardening/recovery/release remain gates. No new spend,
+production rollout or whole-goal completion follows. The next UX pass returns to
+the public landing page for broader visual hierarchy, spacing and mobile polish.
 
 ## Voucher availability and redemption intent
 

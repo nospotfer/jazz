@@ -182,3 +182,18 @@ checks. Light amount contrast now uses the existing title-accent token; actual
 post-class offline ratios pass both themes. Full clean-source QA/remote CI and
 a fresh migrated native preview remain pending; prior c1a evidence is not
 rebound to the candidate. [Currency scope and rollout](payment-currency.md).
+
+
+Latest currency checkpoint: exact97e5e06 clean2533/80 normal, types/build and
+lint0/22. Exact188 ten persisted suites80/1 (79 actual PostgreSQL cases plus one
+client-metadata case) pass after file serialization; real within-test races stay
+active. Fresh602/45,822/158 artifact, isolated nullable-column migration,
+Unix19/HTTPS11 and native58 pass. Independent final12-model/18-protected-hash
+comparison restores both pairsNULL and preserves raw timestamps/roles/policy/
+indexes; all owned browser/app/tunnel resources close and seal inspection passes.
+Native statistics are KWD7d/restored30d only;36 representative amount geometry/
+contrast observations cover320/390/1440 in both themes. Later voucher/legacy
+precision/unknown-zero follow-ups have55 targeted source/component checks,
+not a new native execution. No Dodo transaction, production migration or paid
+hosting change. Broader landing-page visual polish is the next UX pass.
+[Exact scope](review-status.md#currency-facts-and-readable-amounts).
