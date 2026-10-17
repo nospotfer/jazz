@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { validateVoucherForCourse } from '@/lib/vouchers';
@@ -106,13 +107,13 @@ export async function POST(req: Request) {
     });
 
     if (!result.valid) {
-      return NextResponse.json(result, { status: 400 });
+      return NextResponse.json(result, { status: result.error === 'Price unavailable' ? 503 : 400 });
     }
 
     return NextResponse.json(result);
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[VOUCHER_VALIDATE_DB_UNAVAILABLE]', error);
+      console.error('[VOUCHER_VALIDATE_DB_UNAVAILABLE]', safeErrorDiagnostic(error));
       return NextResponse.json(
         {
           valid: false,
@@ -123,7 +124,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error('[VOUCHER_VALIDATE_ERROR]', error);
+    console.error('[VOUCHER_VALIDATE_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         valid: false,

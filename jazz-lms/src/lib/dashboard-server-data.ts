@@ -1,39 +1,50 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 
 import { db } from '@/lib/db';
 import type { SupportedLanguage } from '@/lib/language';
+import { getKnownCatalogPrice } from '@/lib/pricing';
 
-const getFirstPublishedCourseIdCached = unstable_cache(
+const getFirstPublishedCourseSummaryCached = unstable_cache(
   async () => {
     const firstCourse = await db.course.findFirst({
       where: { isPublished: true },
       orderBy: { createdAt: 'asc' },
-      select: { id: true },
+      select: { id: true, price: true },
     });
 
-    return firstCourse?.id ?? null;
+    if (!firstCourse) return null;
+    return {
+      id: firstCourse.id,
+      price: getKnownCatalogPrice(firstCourse.price),
+    };
   },
-  ['dashboard-first-published-course-id'],
+  ['dashboard-first-published-course-summary'],
   { revalidate: 300 },
 );
 
-export const getFirstPublishedCourseId = cache(async () => {
+export const getFirstPublishedCourseSummary = cache(async () => {
   try {
-    return await getFirstPublishedCourseIdCached();
+    return await getFirstPublishedCourseSummaryCached();
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load first published course.', error);
+    console.error('[dashboard-server-data] Unable to load first published course.', safeErrorDiagnostic(error));
     return null;
   }
 });
 
+export const getFirstPublishedCourseId = cache(async () => (
+  (await getFirstPublishedCourseSummary())?.id ?? null
+));
+
 const getPublishedCourseOutlineCached = unstable_cache(
   async () => {
-    return db.course.findFirst({
+    const course = await db.course.findFirst({
       where: { isPublished: true },
       orderBy: { createdAt: 'asc' },
       select: {
         id: true,
+        price: true,
         chapters: {
           where: { isPublished: true },
           orderBy: { position: 'asc' },
@@ -51,8 +62,9 @@ const getPublishedCourseOutlineCached = unstable_cache(
         },
       },
     });
+    return course ? { ...course, price: getKnownCatalogPrice(course.price) } : null;
   },
-  ['dashboard-published-course-outline'],
+  ['dashboard-published-course-outline-with-price'],
   { revalidate: 180 },
 );
 
@@ -60,7 +72,7 @@ export const getPublishedCourseOutline = cache(async () => {
   try {
     return await getPublishedCourseOutlineCached();
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published course outline.', error);
+    console.error('[dashboard-server-data] Unable to load published course outline.', safeErrorDiagnostic(error));
     return null;
   }
 });
@@ -109,7 +121,7 @@ export const getPublishedCoursesForPdfView = cache(async (language: SupportedLan
   try {
     return await getPublishedCoursesForPdfViewCached(language);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published courses for pdf view.', error);
+    console.error('[dashboard-server-data] Unable to load published courses for pdf view.', safeErrorDiagnostic(error));
     return [];
   }
 });
@@ -146,7 +158,7 @@ export const getPublishedCourseForLessonPage = cache(async (courseId: string) =>
   try {
     return await getPublishedCourseForLessonPageCached(courseId);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load published lesson course tree.', error);
+    console.error('[dashboard-server-data] Unable to load published lesson course tree.', safeErrorDiagnostic(error));
     return null;
   }
 });
@@ -160,7 +172,7 @@ export const hasAnyCoursePurchase = cache(async (userId: string) => {
 
     return Boolean(purchase);
   } catch (error) {
-    console.error('[dashboard-server-data] Unable to load course purchase state.', error);
+    console.error('[dashboard-server-data] Unable to load course purchase state.', safeErrorDiagnostic(error));
     return false;
   }
 });

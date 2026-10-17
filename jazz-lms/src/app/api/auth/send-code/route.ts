@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La URL de Supabase no está configurada en el entorno del servidor.",
+            "La verificación por correo no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La clave pública de Supabase no está configurada en el entorno del servidor.",
+            "La verificación por correo no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "SUPABASE_SERVICE_ROLE_KEY es obligatoria para la verificación por correo.",
+            "La verificación por correo no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.",
+            "La verificación por correo no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -98,23 +99,22 @@ export async function POST(request: Request) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Also check Supabase Auth for fully registered users (with password)
-    const { data: userData } = await supabase.auth.admin.listUsers();
-    const existingSupaUser = userData?.users?.find(
-      (u) => u.email?.toLowerCase() === normalizedEmail,
-    );
-    if (!existingSupaUser) {
-      return NextResponse.json(
-        { error: "No se encontró la cuenta. Primero crea tu cuenta." },
-        { status: 404 },
-      );
-    }
-
-    if (existingSupaUser.email_confirmed_at) {
-      return NextResponse.json(
-        { error: "Este correo ya está registrado. Inicia sesión en su lugar." },
-        { status: 409 },
-      );
+    // A known DB id gives an exact auth lookup regardless of directory size.
+    // Unknown/auth-only accounts go through OTP without any directory scan.
+    if (existingUser) {
+      const { data, error } = await supabase.auth.admin.getUserById(existingUser.id);
+      if (error || !data.user || data.user.email?.toLowerCase() !== normalizedEmail) {
+        return NextResponse.json(
+          { error: "No se pudo comprobar la cuenta. Inténtalo de nuevo más tarde." },
+          { status: 503 },
+        );
+      }
+      if (data.user.email_confirmed_at) {
+        return NextResponse.json(
+          { error: "Este correo ya está registrado. Inicia sesión en su lugar." },
+          { status: 409 },
+        );
+      }
     }
 
     const { error } = await supabase.auth.signInWithOtp({
@@ -125,7 +125,13 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("Supabase OTP error:", error);
+      if (error.code === "user_not_found") {
+        return NextResponse.json({
+          success: true,
+          message: "Si tu cuenta está pendiente de verificación, recibirás un código en tu correo.",
+        });
+      }
+      console.error("Supabase OTP error:", safeErrorDiagnostic(error));
       const isRateLimit = error.message?.toLowerCase().includes("rate limit");
       if (isRateLimit) {
         return NextResponse.json(
@@ -138,7 +144,10 @@ export async function POST(request: Request) {
         );
       }
 
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json(
+        { error: "No se pudo enviar el código de verificación. Inténtalo de nuevo más tarde." },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json({
@@ -146,7 +155,7 @@ export async function POST(request: Request) {
       message: "Código de verificación enviado a tu correo",
     });
   } catch (error) {
-    console.error("Error sending verification code:", error);
+    console.error("Error sending verification code:", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "No se pudo enviar el código de verificación" },
       { status: 500 },

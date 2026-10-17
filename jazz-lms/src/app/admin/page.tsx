@@ -1,10 +1,13 @@
 import { db } from '@/lib/db';
 import { AnalyticsCard } from '@/components/admin/analytics-card';
-import { requirePermission } from '@/lib/admin';
+import { can, requirePermission } from '@/lib/admin';
 import Link from 'next/link';
+import { formatRecordedPayment, summarizePayments } from '@/lib/admin/payment-totals';
+import { formatPaymentAmount } from '@/lib/payment-money';
 
 export default async function AdminDashboard() {
   await requirePermission('admin.access');
+  const canReadFinancialRecords = await can('analytics.read');
 
   const [
     totalCourses,
@@ -17,40 +20,55 @@ export default async function AdminDashboard() {
     db.user.count(),
     db.purchase.count(),
     db.course.count({ where: { isPublished: true } }),
-    db.purchase.findMany({
+    canReadFinancialRecords ? db.purchase.findMany({
       take: 5,
       orderBy: { createdAt: 'desc' },
-      include: {
-        course: true,
+      select: {
+        id: true,
+        userId: true,
+        createdAt: true,
+        finalPrice: true,
+        paymentCurrency: true,
+        paymentAmountMinor: true,
+        course: { select: { title: true } },
       },
-    }),
+    }) : Promise.resolve([]),
   ]);
 
-  const totalRevenue = recentPurchases.reduce((total, purchase) => {
-    return total + (purchase.course.price || 0);
-  }, 0);
+  const purchaseRecords = recentPurchases.map((purchase) => ({
+    purchase,
+    recordedAmount: formatRecordedPayment(purchase),
+  }));
+  const totals = summarizePayments(recentPurchases);
 
   const publicationRate = totalCourses > 0 ? `${Math.round((publishedCourses / totalCourses) * 100)}%` : '0%';
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-jazz-dark dark:text-white">Panel administrativo</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Vista general de cursos, usuarios e ingresos</p>
+        <h1 className="break-words text-2xl font-bold text-jazz-dark dark:text-white sm:text-3xl">Panel administrativo</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Vista general de cursos, usuarios y compras registradas</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 sm:gap-6">
         <AnalyticsCard title="Total de cursos" value={totalCourses} subtitle={`${publishedCourses} publicados`} icon="📚" />
         <AnalyticsCard title="Total de usuarios" value={totalUsers} subtitle="Usuarios registrados" icon="👥" />
-        <AnalyticsCard title="Total de ventas" value={totalPurchases} subtitle="Compras completadas" icon="🛒" />
+        <AnalyticsCard title="Registros de compra" value={totalPurchases} subtitle="Incluye accesos gratuitos" icon="🛒" />
         <AnalyticsCard title="Tasa de publicación" value={publicationRate} subtitle="Cursos publicados" icon="📊" />
       </div>
 
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
+      {canReadFinancialRecords && <div className="card min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <h2 className="text-lg font-semibold text-jazz-dark dark:text-white">Compras recientes</h2>
-          <p className="text-sm text-muted-foreground">Ingresos (últimas 5): € {totalRevenue.toFixed(2)}</p>
+          <div className="min-w-0 max-w-full break-words text-sm text-muted-foreground">
+            <p>Totales por moneda (últimos 5 registros)</p>
+            {totals.byCurrency.length === 0 ? <p>Sin totales con moneda verificada</p> : totals.byCurrency.map((total) => (
+              <p key={total.currency}>{formatPaymentAmount(total.amountMinor, total.currency, 'es-ES')}</p>
+            ))}
+            <p>{totals.unavailableCount} registros excluidos de los totales por falta de importe o moneda verificados.</p>
+          </div>
         </div>
+        <p className="mb-4 text-xs text-muted-foreground">Importes cobrados por moneda, sin conversión. Impuestos y reembolsos no desglosados.</p>
 
         <div className="divide-y divide-border">
           {recentPurchases.length === 0 ? (
@@ -58,18 +76,16 @@ export default async function AdminDashboard() {
               <p className="text-muted-foreground">Aún no se ha realizado ninguna compra</p>
             </div>
           ) : (
-            recentPurchases.map((purchase) => (
-              <div key={purchase.id} className="py-4 first:pt-0 last:pb-0">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-jazz-dark dark:text-white">{purchase.course.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">ID de usuario: {purchase.userId}</p>
+            purchaseRecords.map(({ purchase, recordedAmount }) => (
+              <div key={purchase.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words font-semibold text-jazz-dark dark:text-white">{purchase.course.title}</h3>
+                    <p className="mt-1 break-all text-sm text-muted-foreground">ID de usuario: {purchase.userId}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-jazz-accent font-semibold">
-                      {purchase.course.price
-                        ? `€ ${purchase.course.price.toFixed(2)}`
-                        : 'Gratis'}
+                  <div className="min-w-0 max-w-full sm:text-right">
+                    <p className="break-words text-jazz-title-accent font-semibold">
+                      Importe registrado: {recordedAmount}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       {new Date(purchase.createdAt).toLocaleDateString('es-ES')}
@@ -80,18 +96,18 @@ export default async function AdminDashboard() {
             ))
           )}
         </div>
-      </div>
+      </div>}
 
-      <div className="card">
+      <div className="card min-w-0">
         <h2 className="text-lg font-semibold text-jazz-dark dark:text-white mb-4">Acciones rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/admin/courses/new" className="btn-primary text-center">
-            ➕ Crear nuevo curso
+          <Link href="/admin/courses" className="btn-primary flex min-h-11 min-w-0 items-center justify-center text-center">
+            📚 Ver cursos
           </Link>
-          <Link href="/admin/users" className="btn-secondary text-center">
+          <Link href="/admin/users" className="btn-secondary flex min-h-11 min-w-0 items-center justify-center text-center">
             👥 Gestionar usuarios
           </Link>
-          <Link href="/admin/stats" className="btn-secondary text-center">
+          <Link href="/admin/stats" className="btn-secondary flex min-h-11 min-w-0 items-center justify-center text-center">
             📊 Ver informes
           </Link>
         </div>

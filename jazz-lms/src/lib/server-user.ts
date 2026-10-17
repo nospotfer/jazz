@@ -5,17 +5,17 @@ import { createClient } from '@/utils/supabase/server';
 export const getServerUser = cache(async () => {
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    // Session cookies are client-controlled. Validate with Supabase before
+    // using the user's identity for database queries or authorization.
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (session?.user) {
-    return session.user;
+    return error ? null : user ?? null;
+  } catch {
+    // A validation failure must never fall back to the cookie's user object.
+    return null;
   }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user ?? null;
 });

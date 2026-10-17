@@ -1,8 +1,12 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 
-import { CANONICAL_JAZZ_CLASSES } from '@/lib/course-lessons';
+import { CANONICAL_JAZZ_CLASSES, getCanonicalJazzClass } from '@/lib/course-lessons';
+import { getCourseNoteClassNumber } from '@/lib/course-notes';
 import { getCourseTranslationBundle, resolveLessonTitle } from '@/lib/course-translations';
 import { db } from '@/lib/db';
+import { isAdminRole } from '@/lib/admin/permissions';
+import { resolveLessonAccessPolicy } from '@/lib/lesson-access';
 import {
   LESSON_QUIZ_QUESTION_COUNT,
   buildUserJazzMedalProgress,
@@ -27,18 +31,35 @@ const emptyRecognitionSnapshot: CourseCompletionRecognitionSnapshot = {
   medal: 'NONE',
 };
 
-type PublishedJazzQuizLesson = {
+type PublishedJazzLesson = {
   id: string;
   title: string;
   classNumber: number;
 };
 
-type PublishedJazzQuizLessonSet = {
+type PublishedJazzLessonSet = {
   courseId: string | null;
-  lessons: PublishedJazzQuizLesson[];
+  lessons: PublishedJazzLesson[];
 };
 
-const getPublishedJazzQuizLessons = cache(async () => {
+function getPublishedLessonClassNumber(title: string, index: number) {
+  const explicitClassNumber = getCourseNoteClassNumber(`${title} `);
+  if (explicitClassNumber && getCanonicalJazzClass(explicitClassNumber)) {
+    return explicitClassNumber;
+  }
+
+  const normalizeTitle = (value: string) => value.normalize('NFKD')
+    .replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  const normalizedTitle = normalizeTitle(title);
+  const canonicalClass = CANONICAL_JAZZ_CLASSES.find((lesson) =>
+    Object.values(lesson.subtitles).some((subtitle) => normalizeTitle(subtitle) === normalizedTitle)
+  );
+
+  // Position orders lessons within a chapter; it does not identify a course class.
+  return canonicalClass?.classNumber ?? index + 1;
+}
+
+const getPublishedJazzLessons = cache(async () => {
   const firstPublishedCourse = await db.course.findFirst({
     where: { isPublished: true },
     orderBy: { createdAt: 'asc' },
@@ -54,11 +75,6 @@ const getPublishedJazzQuizLessons = cache(async () => {
               id: true,
               title: true,
               position: true,
-              quizQuestions: {
-                where: { isActive: true },
-                select: { id: true },
-                take: 1,
-              },
             },
           },
         },
@@ -75,11 +91,10 @@ const getPublishedJazzQuizLessons = cache(async () => {
 
   const lessons = firstPublishedCourse.chapters
     .flatMap((chapter) => chapter.lessons)
-    .filter((lesson) => lesson.quizQuestions.length > 0)
     .map((lesson, index) => ({
       id: lesson.id,
       title: lesson.title,
-      classNumber: typeof lesson.position === 'number' && lesson.position > 0 ? lesson.position : index + 1,
+      classNumber: getPublishedLessonClassNumber(lesson.title, index),
     }));
 
   return {
@@ -88,18 +103,19 @@ const getPublishedJazzQuizLessons = cache(async () => {
   };
 });
 
-const getUserEntitledJazzQuizLessons = cache(async (
+const getUserEntitledJazzLessons = cache(async (
   userId: string,
-  publishedCourse: PublishedJazzQuizLessonSet
+  publishedCourse: PublishedJazzLessonSet,
+  verifiedUserEmail?: string | null,
 ) => {
   if (!publishedCourse.courseId || publishedCourse.lessons.length === 0) {
     return {
       hasAccess: false,
-      lessons: [] as PublishedJazzQuizLesson[],
+      lessons: [] as PublishedJazzLesson[],
     };
   }
 
-  const [fullCoursePurchase, lessonPurchases] = await Promise.all([
+  const [fullCoursePurchase, lessonPurchases, dbUser] = await Promise.all([
     db.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -120,9 +136,17 @@ const getUserEntitledJazzQuizLessons = cache(async (
         lessonId: true,
       },
     }),
+    db.user.findUnique({ where: { id: userId }, select: { role: true } }),
   ]);
 
-  if (fullCoursePurchase) {
+  const ownerEmail = process.env.ADMIN_OWNER_EMAIL?.trim().toLowerCase() ?? '';
+  const userEmail = verifiedUserEmail?.trim().toLowerCase() ?? '';
+  const access = resolveLessonAccessPolicy({
+    isAdminOwner: Boolean(ownerEmail && userEmail && ownerEmail === userEmail),
+    isAdminRole: isAdminRole(dbUser?.role), hasFullPurchase: Boolean(fullCoursePurchase),
+    hasLessonPurchase: false, isFreePreviewLesson: false,
+  });
+  if (access.canUseGamification) {
     return {
       hasAccess: true,
       lessons: publishedCourse.lessons,
@@ -167,15 +191,15 @@ const getUserJazzMedalSummaryRows = cache(async (userId: string, lessonIds: stri
   }>>;
 });
 
-export const getUserJazzMedalProgress = cache(async (userId: string) => {
+export const getUserJazzMedalProgress = cache(async (userId: string, verifiedUserEmail?: string | null) => {
   try {
-    const publishedCourse = await getPublishedJazzQuizLessons();
+    const publishedCourse = await getPublishedJazzLessons();
 
     if (!publishedCourse.courseId) {
       return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
     }
 
-    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+    const entitledLessons = await getUserEntitledJazzLessons(userId, publishedCourse, verifiedUserEmail);
 
     if (!entitledLessons.hasAccess) {
       return buildUserJazzMedalProgress(0, publishedCourse.lessons.length || defaultLessonCount, 'NONE');
@@ -193,22 +217,23 @@ export const getUserJazzMedalProgress = cache(async (userId: string) => {
       getHighestQuizMedal(summaries.map((summary) => summary.bestMedal))
     );
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load medal progress.', error);
+    console.error('[jazz-medal-progress] Unable to load medal progress.', safeErrorDiagnostic(error));
     return buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
   }
 });
 
 export const getUserCourseCompletionRecognition = cache(async (
-  userId: string
+  userId: string,
+  verifiedUserEmail?: string | null,
 ): Promise<CourseCompletionRecognitionSnapshot> => {
   try {
-    const publishedCourse = await getPublishedJazzQuizLessons();
+    const publishedCourse = await getPublishedJazzLessons();
 
     if (!publishedCourse.courseId || publishedCourse.lessons.length === 0) {
       return emptyRecognitionSnapshot;
     }
 
-    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+    const entitledLessons = await getUserEntitledJazzLessons(userId, publishedCourse, verifiedUserEmail);
 
     if (!entitledLessons.hasAccess || entitledLessons.lessons.length === 0) {
       return emptyRecognitionSnapshot;
@@ -239,7 +264,7 @@ export const getUserCourseCompletionRecognition = cache(async (
       }),
     ]);
 
-    const totalLessons = entitledLessonIds.length;
+    const totalLessons = publishedCourse.lessons.length;
     const completionPercent = clampQuizPercent((completedLessons / totalLessons) * 100);
     const summaryByLessonId = new Map(summaries.map((summary) => [summary.lessonId, summary]));
     const fullyCompletedQuizLessonIds = new Set(
@@ -257,12 +282,13 @@ export const getUserCourseCompletionRecognition = cache(async (
       .filter((value): value is number => typeof value === 'number');
     const rawScorePercent =
       scoreRows.length > 0
-        ? scoreRows.reduce((total, value) => total + value, 0) / scoreRows.length
+        ? scoreRows.reduce((total, value) => total + value, 0) / totalLessons
         : 0;
     const scorePercent = clampQuizPercent(rawScorePercent);
     const medal = getQuizMedalTier(scorePercent);
     const isEligible =
-      totalLessons > 0 && completionPercent >= 100 && quizzesWithMedalCount === totalLessons;
+      totalLessons > 0 && entitledLessonIds.length === totalLessons &&
+      completionPercent >= 100 && quizzesWithMedalCount === totalLessons;
 
     return {
       isEligible,
@@ -274,17 +300,18 @@ export const getUserCourseCompletionRecognition = cache(async (
       medal,
     };
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load course completion recognition.', error);
+    console.error('[jazz-medal-progress] Unable to load course completion recognition.', safeErrorDiagnostic(error));
     return emptyRecognitionSnapshot;
   }
 });
 
 export const getUserJazzMedalProfile = cache(async (
   userId: string,
-  language: SupportedLanguage
+  language: SupportedLanguage,
+  verifiedUserEmail?: string | null,
 ): Promise<UserJazzMedalProfileSnapshot> => {
   try {
-    const publishedCourse = await getPublishedJazzQuizLessons();
+    const publishedCourse = await getPublishedJazzLessons();
 
     if (!publishedCourse.courseId) {
       const progress = buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
@@ -302,7 +329,7 @@ export const getUserJazzMedalProfile = cache(async (
       };
     }
 
-    const entitledLessons = await getUserEntitledJazzQuizLessons(userId, publishedCourse);
+    const entitledLessons = await getUserEntitledJazzLessons(userId, publishedCourse, verifiedUserEmail);
 
     if (!entitledLessons.hasAccess) {
       return {
@@ -362,7 +389,7 @@ export const getUserJazzMedalProfile = cache(async (
       }),
     };
   } catch (error) {
-    console.error('[jazz-medal-progress] Unable to load medal profile.', error);
+    console.error('[jazz-medal-progress] Unable to load medal profile.', safeErrorDiagnostic(error));
     const progress = buildUserJazzMedalProgress(0, defaultLessonCount, 'NONE');
 
     return {

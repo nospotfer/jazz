@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -154,7 +155,7 @@ export async function GET(req: Request) {
       },
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHERS_EXPORT_ERROR]', error);
+    console.error('[ADMIN_VOUCHERS_EXPORT_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao exportar vouchers.' },
       { status: 500 }

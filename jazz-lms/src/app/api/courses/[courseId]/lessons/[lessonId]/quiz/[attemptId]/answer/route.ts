@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from "next/server";
 
 import {
@@ -30,28 +31,6 @@ export async function POST(
     const questionId =
       typeof body?.questionId === "string" ? body.questionId : "";
     const optionId = typeof body?.optionId === "string" ? body.optionId : "";
-    const answers = Array.isArray(body?.answers)
-      ? (
-          body.answers as Array<{
-            questionId?: unknown;
-            selectedOptionId?: unknown;
-          }>
-        ).flatMap((entry) => {
-          if (
-            typeof entry?.questionId !== "string" ||
-            typeof entry?.selectedOptionId !== "string"
-          ) {
-            return [];
-          }
-
-          return [
-            {
-              questionId: entry.questionId,
-              selectedOptionId: entry.selectedOptionId,
-            },
-          ];
-        })
-      : [];
 
     if (!questionId || !optionId) {
       return NextResponse.json(
@@ -76,7 +55,6 @@ export async function POST(
       attemptId,
       questionId,
       optionId,
-      answers,
     });
 
     return NextResponse.json(payload);
@@ -91,7 +69,7 @@ export async function POST(
       );
     }
 
-    console.log("[LESSON_QUIZ_ANSWER_ERROR]", error);
+    console.log("[LESSON_QUIZ_ANSWER_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         error: "Internal Server Error",

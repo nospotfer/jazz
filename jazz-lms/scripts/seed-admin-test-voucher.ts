@@ -14,6 +14,9 @@
  *   npx tsx scripts/seed-admin-test-voucher.ts
  */
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
+
+assertLegacyLocalMutationAllowed();
 
 const INTERNAL_TEST_CODE = 'ADMIN99TEST';
 const INTERNAL_TEST_DISCOUNT_PERCENT = 99.98;

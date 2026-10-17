@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('[AUTH_SESSION_SYNC_ERROR]', error);
+    console.error('[AUTH_SESSION_SYNC_ERROR]', safeErrorDiagnostic(error));
     return new NextResponse('Error interno del servidor', { status: 500 });
   }
 }

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { ensureAdminApiPermission } from "@/lib/admin-api";
 import { db } from "@/lib/db";
 import { removeVoucherDiscountSync } from "@/lib/voucher-provider-sync";
@@ -87,7 +88,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("[ADMIN_VOUCHER_DETAIL_ERROR]", error);
+    console.error("[ADMIN_VOUCHER_DETAIL_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,
@@ -170,6 +171,10 @@ export async function DELETE(
       metadata: voucher.metadata,
     });
 
+    if (!providerSync.ok) {
+      return NextResponse.json({ success: false, error: "Provider sync failed", providerSync }, { status: 503 });
+    }
+
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.voucherCode.delete({
         where: { id: voucher.id },
@@ -210,7 +215,7 @@ export async function DELETE(
         : `Voucher ${result.code} eliminado.`,
     });
   } catch (error) {
-    console.error("[ADMIN_VOUCHER_DELETE_ERROR]", error);
+    console.error("[ADMIN_VOUCHER_DELETE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

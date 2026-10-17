@@ -12,8 +12,3 @@ regexes = [
   '''\[YOUR-PASSWORD\]''',
   '''header\.bm90LWpzb24\.signature''',
 ]
-paths = [
-  '''(^|/)docs/.*\.md$''',
-  '''(^|/)VERCEL_SETUP\.md$''',
-  '''(^|/)\.env\.example$''',
-]

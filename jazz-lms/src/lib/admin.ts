@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 
 import { db } from '@/lib/db';
@@ -67,7 +68,7 @@ const getAuthContext = cache(async (): Promise<AuthContext | null> => {
       },
     };
   } catch (error) {
-    console.error('[admin:getAuthContext] Database unavailable. Falling back to Supabase-only context.', error);
+    console.error('[admin:getAuthContext] Database unavailable. Falling back to Supabase-only context.', safeErrorDiagnostic(error));
     return {
       user: {
         id: user.id,

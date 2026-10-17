@@ -117,7 +117,7 @@ describe("Password reset QA flow", () => {
 
     const redirectOption = mocks.supabaseAuth.resetPasswordForEmail.mock.calls[0][1]
       ?.redirectTo as string;
-    expect(redirectOption).toContain("/auth/reset-password/callback");
+    expect(new URL(redirectOption).pathname).toBe("/auth/reset-password/callback");
 
     expect(await screen.findByText(/check your inbox!/i)).toBeTruthy();
   });
@@ -197,5 +197,24 @@ describe("Password reset QA flow", () => {
       expect(mocks.supabaseAuth.signOut).toHaveBeenCalledTimes(1);
     });
     expect(mocks.routerReplace).toHaveBeenCalledWith("/auth?tab=login");
+  });
+
+  test('a forged callback hint cannot display an authenticated reset form', async () => {
+    window.history.replaceState({}, '', '/auth/reset-password?recovery=1');
+    const ResetPasswordPage = (await import('@/app/auth/reset-password/page')).default;
+    render(<ResetPasswordPage />);
+    expect(await screen.findByRole('heading', { name: /invalid reset link/i })).toBeTruthy();
+    expect(screen.queryByLabelText(/^new password$/i)).toBeNull();
+    expect(mocks.supabaseAuth.getUser).toHaveBeenCalledOnce();
+  });
+
+  test('consumed implicit credentials are removed from the URL', async () => {
+    mocks.supabaseAuth.getSession.mockResolvedValue({ data: { session: { access_token: 'fixture' } } });
+    window.history.replaceState({}, '', '/auth/reset-password?lang=en#access_token=fixture&refresh_token=fixture-refresh&type=recovery');
+    const ResetPasswordPage = (await import('@/app/auth/reset-password/page')).default;
+    render(<ResetPasswordPage />);
+    expect(await screen.findByLabelText(/^new password$/i)).toBeTruthy();
+    expect(window.location.hash).toBe('');
+    expect(window.location.search).toBe('?lang=en');
   });
 });

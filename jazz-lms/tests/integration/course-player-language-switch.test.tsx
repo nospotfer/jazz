@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 
 import { CoursePlayer } from "@/components/course/course-player";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   currentLanguage: "es",
+  realQuiz: false,
   axiosGet: vi.fn(),
   axiosPost: vi.fn(),
   axiosPut: vi.fn(),
@@ -14,19 +15,37 @@ const mocks = vi.hoisted(() => ({
   routerRefresh: vi.fn(),
   confettiOpen: vi.fn(),
   warmPaymentMethodModal: vi.fn(),
+  toastSuccess: vi.fn(), toastError: vi.fn(),
+  ownerId: 'user-1' as string | null,
+  authListeners: new Set<(event: string, session: unknown) => void>(),
 }));
 
 vi.mock("next/dynamic", async () => {
   const react = await vi.importActual<typeof import("react")>("react");
 
+  const { LessonQuizOverlay } = await vi.importActual<typeof import("@/components/course/lesson-quiz-overlay")>("@/components/course/lesson-quiz-overlay");
   return {
     __esModule: true,
-    default: () =>
-      react.forwardRef(function DynamicStub() {
-        return null;
-      }),
+    default: (loader: () => Promise<unknown>) => {
+      if (String(loader).includes("lesson-quiz-overlay")) {
+        return function Quiz(props: React.ComponentProps<typeof LessonQuizOverlay>) {
+          return mocks.realQuiz ? react.createElement(LessonQuizOverlay, props) : null;
+        };
+      }
+      return react.forwardRef(function DynamicStub() { return null; });
+    },
   };
 });
+
+vi.mock("@/utils/supabase/client", () => ({
+  createClient: () => ({ auth: {
+    onAuthStateChange: (listener: (event: string, session: unknown) => void) => {
+      mocks.authListeners.add(listener);
+      listener("INITIAL_SESSION", mocks.ownerId ? { user: { id: mocks.ownerId } } : null);
+      return { data: { subscription: { unsubscribe: () => mocks.authListeners.delete(listener) } } };
+    },
+  } }),
+}));
 
 vi.mock("axios", () => ({
   __esModule: true,
@@ -86,8 +105,8 @@ vi.mock("@/lib/payment-modal-loader", () => ({
 
 vi.mock("sonner", () => ({
   toast: {
-    success: vi.fn(),
-    error: vi.fn(),
+    success: mocks.toastSuccess,
+    error: mocks.toastError,
     info: vi.fn(),
   },
 }));
@@ -118,6 +137,7 @@ const course = {
 } as any;
 
 const baseProps = {
+  currentUserId: 'user-1',
   course,
   lesson,
   lessonId: "lesson-1",
@@ -142,18 +162,8 @@ function attachmentCalls() {
   );
 }
 
-function getCompleteButton() {
-  const button = screen
-    .getAllByRole("button")
-    .find((candidate) =>
-      (candidate.textContent || "").trim().startsWith("Concluir"),
-    );
-
-  if (!button) {
-    throw new Error("Complete button not found");
-  }
-
-  return button as HTMLButtonElement;
+function getCompleteButton(name = "Concluir") {
+  return screen.getByRole("button", { name }) as HTMLButtonElement;
 }
 
 function getGamificationButton() {
@@ -175,6 +185,9 @@ describe("CoursePlayer language switch behavior", () => {
     vi.useRealTimers();
     vi.clearAllMocks();
     mocks.currentLanguage = "es";
+    mocks.realQuiz = false;
+    mocks.ownerId = "user-1";
+    mocks.authListeners.clear();
 
     Object.defineProperty(window, "requestIdleCallback", {
       writable: true,
@@ -219,7 +232,28 @@ describe("CoursePlayer language switch behavior", () => {
     });
   });
 
-  test("does not refetch mux playback when language changes, but refreshes PDF language", async () => {
+  test("a real quiz launch summary may update the player without issuing another quiz launch", async () => {
+    mocks.realQuiz = true;
+    const summary = { bestScorePercent: 100, bestCorrectCount: 12, bestMedal: "PLATINUM", totalAttempts: 1, lastAttemptAt: null };
+    mocks.axiosPost.mockResolvedValue({ data: { summary, attempt: {
+      attemptId: "synthetic-issued-attempt", questionCount: 1, answeredCount: 0,
+      questions: [{ questionId: "synthetic-question", orderIndex: 0, prompt: "Synthetic issued question", sourceLabel: null,
+        selectedOptionId: null, isAnswered: false, isCorrect: null, correctOptionId: null,
+        options: [{ id: "synthetic-option", label: "A", text: "Synthetic first option", position: 0 }] }],
+    } } });
+    const view = render(<CoursePlayer {...baseProps} initialIsCompleted initialProgressPercent={100} hasQuizAvailable />);
+    fireEvent.click(getGamificationButton());
+    expect(await screen.findByText(/Synthetic issued question/)).toBeTruthy();
+    await act(async () => { await Promise.resolve(); });
+    expect(mocks.axiosPost).toHaveBeenCalledExactlyOnceWith("/api/courses/course-1/lessons/lesson-1/quiz", { restart: false, language: "es" });
+    // A parent render with unchanged lesson/auth must preserve the actual open quiz.
+    view.rerender(<CoursePlayer {...baseProps} initialIsCompleted initialProgressPercent={100} hasQuizAvailable />);
+    await act(async () => { await Promise.resolve(); });
+    expect(mocks.axiosPost).toHaveBeenCalledOnce();
+    mocks.realQuiz = false;
+  });
+
+  test("updates the accessible completion name and PDF language without refetching mux playback", async () => {
     const view = render(<CoursePlayer {...baseProps} />);
 
     await waitFor(
@@ -231,15 +265,29 @@ describe("CoursePlayer language switch behavior", () => {
     );
 
     expect(attachmentCalls()[0]?.[1]?.params?.language).toBe("es");
+    const completeButton = getCompleteButton();
+    expect(completeButton).toHaveProperty("disabled", true);
 
-    mocks.currentLanguage = "pt";
-    view.rerender(<CoursePlayer {...baseProps} />);
+    for (const [language, completionName] of [
+      ["en", "Complete"],
+      ["fr", "Valider"],
+      ["pt", "Concluir"],
+    ]) {
+      mocks.currentLanguage = language;
+      view.rerender(<CoursePlayer {...baseProps} />);
 
-    await waitFor(() => {
-      expect(attachmentCalls()).toHaveLength(2);
-    });
+      await waitFor(() => {
+        expect(attachmentCalls().at(-1)?.[1]?.params?.language).toBe(language);
+      });
 
-    expect(attachmentCalls()[1]?.[1]?.params?.language).toBe("pt");
+      expect(getCompleteButton(completionName)).toBe(completeButton);
+      expect(completeButton.querySelector("span")?.textContent?.trim()).toBe(
+        completionName,
+      );
+      expect(completeButton).toHaveProperty("disabled", true);
+    }
+
+    expect(attachmentCalls()).toHaveLength(4);
     expect(muxPlaybackCalls()).toHaveLength(1);
   });
 
@@ -319,6 +367,12 @@ describe("CoursePlayer language switch behavior", () => {
   });
 
   test("opens confirmation modal at 80% and completes lesson only after confirm", async () => {
+    let resolveCompletion!: () => void;
+    mocks.axiosPut.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveCompletion = () => resolve({ data: {} });
+      }),
+    );
     render(
       <CoursePlayer
         {...baseProps}
@@ -329,6 +383,7 @@ describe("CoursePlayer language switch behavior", () => {
 
     const completeButton = getCompleteButton();
     const gamificationButton = getGamificationButton();
+    expect(completeButton.title).toBe("Ir a gamificacion");
     expect(gamificationButton).toHaveProperty("disabled", true);
 
     fireEvent.click(completeButton);
@@ -346,10 +401,21 @@ describe("CoursePlayer language switch behavior", () => {
       expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
     });
 
+    expect(getCompleteButton()).toBe(completeButton);
+    expect(completeButton).toHaveProperty("disabled", true);
+    expect(completeButton.title).toBe("Guardando...");
+    expect(gamificationButton).toHaveProperty("disabled", true);
+
+    await act(async () => {
+      resolveCompletion();
+    });
+
     await waitFor(() => {
       expect(gamificationButton).toHaveProperty("disabled", false);
       expect(gamificationButton.className).toContain("from-yellow-400");
     });
+    expect(getCompleteButton()).toBe(completeButton);
+    expect(completeButton.title).toBe("Concluida");
   });
 
   test("keeps complete button disabled, gray and without icon below watch threshold", async () => {
@@ -384,6 +450,7 @@ describe("CoursePlayer language switch behavior", () => {
 
     expect(completeButton).toHaveProperty("disabled", false);
     expect(completeButton.className).toContain("text-emerald-400");
+    expect(completeButton.title).toBe("Concluida");
     expect(completeButton.querySelector(".lucide-circle-check-big")).not.toBeNull();
 
     fireEvent.click(completeButton);
@@ -400,5 +467,65 @@ describe("CoursePlayer language switch behavior", () => {
     await waitFor(() => {
       expect(mocks.axiosPut).toHaveBeenCalledTimes(1);
     });
+  });
+});
+
+
+describe('CoursePlayer completion belongs to the active owner and mounted frame', () => {
+  function retire(event: string) {
+    mocks.ownerId = event === 'SIGNED_OUT' ? null : 'user-2';
+    for (const listener of [...mocks.authListeners]) listener(event, mocks.ownerId ? { user: { id: mocks.ownerId } } : null);
+  }
+  async function startCompletion() {
+    mocks.currentLanguage = 'es';
+    const view = render(<CoursePlayer {...baseProps} initialProgressPercent={80} hasQuizAvailable />);
+    fireEvent.click(getCompleteButton());
+    fireEvent.click(screen.getByRole('button', { name: /si, completar e ir al quiz/i }));
+    await waitFor(() => expect(mocks.axiosPut).toHaveBeenCalledOnce());
+    const request = new URL(String(mocks.axiosPut.mock.calls[0][0]), 'https://synthetic.example');
+    expect(request.searchParams.getAll('expectedUserId')).toEqual(['user-1']);
+    expect(mocks.axiosPut.mock.calls[0][1]).toEqual({ isCompleted: true, progressPercent: 100, minutesRemaining: 0 });
+    return view;
+  }
+  test.each([
+    ['SIGNED_IN', true], ['SIGNED_IN', false], ['SIGNED_OUT', true], ['SIGNED_OUT', false],
+  ])('late completion after %s (success=%s) cannot refresh, toast or celebrate', async (event, success) => {
+    vi.clearAllMocks();
+    mocks.ownerId = 'user-1';
+    let resolve!: (value: unknown) => void;
+    let reject!: (error: Error) => void;
+    mocks.axiosPut.mockReturnValueOnce(new Promise((yes, no) => { resolve = yes; reject = no; }));
+    await startCompletion();
+    await act(async () => retire(String(event)));
+    expect(screen.queryByRole('button', { name: 'Concluir' })).toBeNull();
+    await act(async () => { if (success) resolve({ data: {} }); else reject(new Error('synthetic request failure')); });
+    expect(mocks.routerRefresh).not.toHaveBeenCalled();
+    expect(mocks.confettiOpen).not.toHaveBeenCalled();
+    expect(mocks.toastSuccess).not.toHaveBeenCalled();
+    expect(mocks.toastError).not.toHaveBeenCalled();
+  });
+  test('late successful completion after unmount cannot navigate or notify', async () => {
+    vi.clearAllMocks();
+    mocks.ownerId = 'user-1';
+    let resolve!: (value: unknown) => void;
+    mocks.axiosPut.mockReturnValueOnce(new Promise((yes) => { resolve = yes; }));
+    const view = await startCompletion();
+    view.unmount();
+    await act(async () => resolve({ data: {} }));
+    expect(mocks.routerRefresh).not.toHaveBeenCalled();
+    expect(mocks.confettiOpen).not.toHaveBeenCalled();
+    expect(mocks.toastSuccess).not.toHaveBeenCalled();
+  });
+  test('same-owner token refresh permits legitimate pending completion exactly once', async () => {
+    vi.clearAllMocks();
+    mocks.ownerId = 'user-1';
+    let resolve!: (value: unknown) => void;
+    mocks.axiosPut.mockReturnValueOnce(new Promise((yes) => { resolve = yes; }));
+    await startCompletion();
+    await act(async () => { for (const listener of [...mocks.authListeners]) listener('TOKEN_REFRESHED', { user: { id: 'user-1' } }); });
+    await act(async () => resolve({ data: {} }));
+    expect(mocks.routerRefresh).toHaveBeenCalledOnce();
+    expect(mocks.confettiOpen).toHaveBeenCalledOnce();
+    expect(mocks.toastSuccess).toHaveBeenCalledOnce();
   });
 });

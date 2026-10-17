@@ -77,7 +77,7 @@ export default async function JazzSpecialistPage() {
 
   const cookieStore = await cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
-  const medalProgress = await getUserJazzMedalProgress(user.id);
+  const medalProgress = await getUserJazzMedalProgress(user.id, user.email);
 
   if (!medalProgress.hasSupremeMedal) {
     redirect('/dashboard/profile');

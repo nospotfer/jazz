@@ -41,47 +41,47 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
     },
     es: {
       eyebrow: 'Certificado oficial',
-      subtitle: 'Registro formal de finalizacion y logro academico.',
-      certificateTitle: 'Certificado de Finalizacion',
+      subtitle: 'Registro formal de finalización y logro académico.',
+      certificateTitle: 'Certificado de Finalización',
       certificateSubtitle: 'Por medio del presente se certifica que',
       completionLabel: (completed, total) => `Programa completado integralmente: ${completed} de ${total} clases`,
       scoreLabel: (score) => `Conquista personal de aprendizaje validada en ${score}%`,
       teacherName: 'Enric Vieira',
       buttonLabel: 'Descargar Certificado en PDF',
       gratitudeLines: (name) => [
-        `${name} ha cumplido satisfactoriamente los requisitos academicos y practicos establecidos para este programa de formacion.`,
-        'El participante completo la totalidad de las clases, finalizo las evaluaciones requeridas y mantuvo un progreso constante durante todo el proceso.',
-        'Este certificado se emite como constancia formal de dedicacion individual, disciplina sostenida y aprendizaje verificado.',
+        `${name} ha cumplido satisfactoriamente los requisitos académicos y prácticos establecidos para este programa de formación.`,
+        'El participante completó la totalidad de las clases, finalizó las evaluaciones requeridas y mantuvo un progreso constante durante todo el proceso.',
+        'Este certificado se emite como constancia formal de dedicación individual, disciplina sostenida y aprendizaje verificado.',
       ],
     },
     fr: {
       eyebrow: 'Certificat officiel',
-      subtitle: 'Attestation formelle de reussite et de progression academique.',
-      certificateTitle: 'Certificat de Reussite',
-      certificateSubtitle: 'Par le present document, il est certifie que',
-      completionLabel: (completed, total) => `Programme integralement complete: ${completed} sur ${total} cours`,
-      scoreLabel: (score) => `Accomplissement personnel valide a ${score}%`,
+      subtitle: 'Attestation formelle de réussite et de progression académique.',
+      certificateTitle: 'Certificat de Réussite',
+      certificateSubtitle: 'Par le présent document, il est certifié que',
+      completionLabel: (completed, total) => `Programme intégralement complété : ${completed} sur ${total} cours`,
+      scoreLabel: (score) => `Accomplissement personnel validé à ${score}%`,
       teacherName: 'Enric Vieira',
-      buttonLabel: 'Telecharger le Certificat PDF',
+      buttonLabel: 'Télécharger le Certificat PDF',
       gratitudeLines: (name) => [
-        `${name} a rempli avec succes les exigences academiques et pratiques de ce programme de formation.`,
-        'Le participant a suivi l ensemble des cours, termine les evaluations requises et maintenu une progression reguliere tout au long du parcours.',
-        'Ce certificat est delivre en reconnaissance officielle de l engagement personnel, de la discipline et de l apprentissage confirme.',
+        `${name} a rempli avec succès les exigences académiques et pratiques de ce programme de formation.`,
+        'Le participant a suivi l’ensemble des cours, terminé les évaluations requises et maintenu une progression régulière tout au long du parcours.',
+        'Ce certificat est délivré en reconnaissance officielle de l’engagement personnel, de la discipline et de l’apprentissage confirmé.',
       ],
     },
     pt: {
       eyebrow: 'Certificado oficial',
-      subtitle: 'Registro formal de conclusao e aproveitamento academico.',
-      certificateTitle: 'Certificado de Conclusao',
+      subtitle: 'Registro formal de conclusão e aproveitamento acadêmico.',
+      certificateTitle: 'Certificado de Conclusão',
       certificateSubtitle: 'Certificamos, para os devidos fins, que',
-      completionLabel: (completed, total) => `Programa concluido integralmente: ${completed} de ${total} aulas`,
+      completionLabel: (completed, total) => `Programa concluído integralmente: ${completed} de ${total} aulas`,
       scoreLabel: (score) => `Conquista individual de aprendizagem validada em ${score}%`,
       teacherName: 'Enric Vieira',
       buttonLabel: 'Baixar Certificado em PDF',
       gratitudeLines: (name) => [
-        `${name} cumpriu com exito os requisitos academicos e praticos estabelecidos para este programa de formacao.`,
-        'O participante concluiu todas as aulas previstas, finalizou as avaliacoes obrigatorias e demonstrou evolucao consistente ao longo de todo o percurso.',
-        'Este certificado e emitido como comprovacao formal de dedicacao pessoal, disciplina continua e progresso de aprendizagem verificado.',
+        `${name} cumpriu com êxito os requisitos acadêmicos e práticos estabelecidos para este programa de formação.`,
+        'O participante concluiu todas as aulas previstas, finalizou as avaliações obrigatórias e demonstrou evolução consistente ao longo de todo o percurso.',
+        'Este certificado é emitido como comprovação formal de dedicação pessoal, disciplina contínua e progresso de aprendizagem verificado.',
       ],
     },
   };
@@ -98,7 +98,7 @@ export default async function CourseCompletionRecognitionPage() {
 
   const cookieStore = await cookies();
   const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
-  const recognition = await getUserCourseCompletionRecognition(user.id);
+  const recognition = await getUserCourseCompletionRecognition(user.id, user.email);
 
   if (!recognition.isEligible) {
     redirect('/dashboard/profile');

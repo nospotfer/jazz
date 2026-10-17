@@ -11,7 +11,7 @@ import {
   warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
 import { shouldResetCheckoutTransientState } from "@/lib/checkout-return";
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { getKnownCatalogPrice } from "@/lib/pricing";
 import axios from "axios";
 import {
   Loader2,
@@ -24,7 +24,11 @@ import {
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useOwnerAction } from "@/hooks/use-owner-action";
+import { withExpectedUserId } from "@/hooks/use-auth-owner";
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from "@/lib/checkout-helpers";
+import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import { SaxLoadingOverlay } from "@/components/ui/sax-loading-overlay";
 
 const UnlockAnimation = dynamic(
@@ -213,6 +217,7 @@ interface FloatPopupProps {
   position: { x: number; y: number };
   hasPurchased: boolean;
   onPurchaseClick: () => void;
+  isPriceAvailable: boolean;
   copy: {
     close: string;
     backToDashboard: string;
@@ -228,6 +233,7 @@ function FloatPopup({
   lesson,
   onClose,
   isPinned,
+  isPriceAvailable,
   position,
   hasPurchased,
   onPurchaseClick,
@@ -294,12 +300,13 @@ function FloatPopup({
                     {copy.backToDashboard}
                   </button>
                   <button
+                    disabled={!isPriceAvailable}
                     onClick={(e) => {
                       e.stopPropagation();
                       onClose();
                       onPurchaseClick();
                     }}
-                    className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="h-5 w-5" />
                     {copy.buyFullCourse}
@@ -388,6 +395,7 @@ interface CourseViewProps {
   userName: string;
   hasPurchased: boolean;
   courseId: string | null;
+  coursePrice: number | null;
   lessonRoutesByTitle: Record<string, string>;
   lessonRoutesInOrder: string[];
   lessonIdsInOrder: string[];
@@ -401,18 +409,21 @@ export function CourseViewClient({
   userName,
   hasPurchased: initialHasPurchased,
   courseId,
+  coursePrice,
   lessonRoutesByTitle,
   lessonRoutesInOrder,
   lessonIdsInOrder,
   lessonTitlesInOrder,
 }: CourseViewProps) {
   const { language } = useDashboardPreferences();
+  const catalogPrice = getKnownCatalogPrice(coursePrice);
+  const priceLabel = catalogPrice === null ? null : `€${catalogPrice.toFixed(2)}`;
   void userName;
   const copy = {
     es: {
       classPrefix: "Clase",
       processing: "Procesando...",
-      buyFullCourse: "Comprar curso completo — €29.99",
+      buyFullCourse: priceLabel === null ? "Precio no disponible" : `Comprar curso completo — ${priceLabel}`,
       chooseMethod: "Aplicar voucher y continuar",
       watched: "visto",
       purchaseRequired: "Compra requerida",
@@ -434,7 +445,7 @@ export function CourseViewClient({
     en: {
       classPrefix: "Class",
       processing: "Processing...",
-      buyFullCourse: "Buy full course — €29.99",
+      buyFullCourse: priceLabel === null ? "Price unavailable" : `Buy full course — ${priceLabel}`,
       chooseMethod: "Apply voucher and continue",
       watched: "watched",
       purchaseRequired: "Purchase required",
@@ -456,7 +467,7 @@ export function CourseViewClient({
     fr: {
       classPrefix: "Cours",
       processing: "Traitement...",
-      buyFullCourse: "Acheter le cours complet — €29.99",
+      buyFullCourse: priceLabel === null ? "Prix indisponible" : `Acheter le cours complet — ${priceLabel}`,
       chooseMethod: "Appliquer un code et continuer",
       watched: "vu",
       purchaseRequired: "Achat requis",
@@ -478,7 +489,7 @@ export function CourseViewClient({
     pt: {
       classPrefix: "Aula",
       processing: "Processando...",
-      buyFullCourse: "Comprar curso completo — €29.99",
+      buyFullCourse: priceLabel === null ? "Preço indisponível" : `Comprar curso completo — ${priceLabel}`,
       chooseMethod: "Aplicar voucher e continuar",
       watched: "assistido",
       purchaseRequired: "Compra necessária",
@@ -511,9 +522,19 @@ export function CourseViewClient({
   >(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [progressByLessonId, setProgressByLessonId] = useState<
-    Record<string, number>
-  >({});
+  const { capture, isCurrent, ready } = useOwnerAction();
+  const { value: coursesProgress } = useOwnerScopedResource<{ courses: DashboardCourseProgressItem[] } | null>({
+    path: "/api/dashboard/courses-progress", initialValue: null, emptyValue: null, intervalMs: null, enabled: hasPurchased,
+  });
+  const progressByLessonId = useMemo(() => {
+    const nextProgress: Record<string, number> = {};
+    for (const course of coursesProgress?.courses ?? []) {
+      for (const video of course.videos ?? []) {
+        nextProgress[video.lessonId] = Math.max(nextProgress[video.lessonId] ?? 0, video.progressPercent ?? 0);
+      }
+    }
+    return nextProgress;
+  }, [coursesProgress]);
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(
@@ -578,39 +599,15 @@ export function CourseViewClient({
   }, [searchParams]);
 
   useEffect(() => {
-    if (!hasPurchased) {
-      setProgressByLessonId({});
-      return;
-    }
-
-    fetch("/api/dashboard/courses-progress")
-      .then((response) => response.json())
-      .then((data) => {
-        const nextCourses: DashboardCourseProgressItem[] = data.courses ?? [];
-        const nextProgress: Record<string, number> = {};
-
-        for (const course of nextCourses) {
-          for (const video of course.videos ?? []) {
-            const key = video.lessonId;
-            const current = nextProgress[key] ?? 0;
-            nextProgress[key] = Math.max(current, video.progressPercent ?? 0);
-          }
-        }
-
-        setProgressByLessonId(nextProgress);
-      })
-      .catch(() => {
-        setProgressByLessonId({});
-      });
-  }, [hasPurchased]);
-
-  useEffect(() => {
     const purchaseStatus = searchParams.get("purchase");
     const source = searchParams.get("source");
 
     if (purchaseStatus !== "success" || source !== "dashboard") {
       return;
     }
+
+    const token = capture();
+    if (!token) return;
 
     const purchaseParamsKey = searchParams.toString();
     if (handledPurchaseParamsRef.current === purchaseParamsKey) {
@@ -620,9 +617,10 @@ export function CourseViewClient({
     handledPurchaseParamsRef.current = purchaseParamsKey;
 
     let cancelled = false;
+    const isActive = () => !cancelled && isCurrent(token);
 
     const finishAsPurchased = () => {
-      if (cancelled) {
+      if (!isActive()) {
         return;
       }
 
@@ -669,6 +667,7 @@ export function CourseViewClient({
       }
 
       const runReconciliation = async () => {
+        if (!isActive()) return false;
         try {
           const reconciliationPayload: {
             action: "reconcile";
@@ -693,7 +692,7 @@ export function CourseViewClient({
             reconciliationPayload,
           );
 
-          return Boolean(reconciliation.data?.purchased);
+          return isActive() && Boolean(reconciliation.data?.purchased);
         } catch {
           return false;
         }
@@ -708,7 +707,7 @@ export function CourseViewClient({
       const pollIntervalMs = 2000;
 
       for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-        if (cancelled) {
+        if (!isActive()) {
           return;
         }
 
@@ -722,7 +721,7 @@ export function CourseViewClient({
         });
       }
 
-      if (!cancelled) {
+      if (isActive()) {
         setIsVerifyingPurchase(false);
         setPaymentError(copy.purchasePending);
         handledPurchaseParamsRef.current = null;
@@ -734,7 +733,7 @@ export function CourseViewClient({
     return () => {
       cancelled = true;
     };
-  }, [searchParams, hasPurchased, router, courseId, copy.purchasePending]);
+  }, [searchParams, hasPurchased, router, courseId, copy.purchasePending, capture, isCurrent, ready]);
 
   useEffect(() => {
     if (hasPurchased) {
@@ -779,18 +778,21 @@ export function CourseViewClient({
   }, [pinnedIndex]);
 
   const handlePurchaseClick = useCallback(async () => {
-    if (!courseId) return;
+    if (!courseId || catalogPrice === null) return;
+    const token = capture();
+    if (!token) return;
 
     setIsPurchasing(true);
     setPaymentError("");
     try {
-      const response = await axios.post("/api/checkout", {
+      const response = await axios.post(withExpectedUserId("/api/checkout", token.ownerId), {
         courseId,
         source: "dashboard",
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
 
+      if (!isCurrent(token)) return;
       if (response.data?.url) {
         setIsMethodModalOpen(false);
         setIsPurchasing(false);
@@ -799,7 +801,10 @@ export function CourseViewClient({
       }
       setIsPurchasing(false);
     } catch (error) {
-      if (
+      if (!isCurrent(token)) return;
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        setPaymentError(getCheckoutSessionChangedMessage(language));
+      } else if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
       ) {
@@ -807,20 +812,23 @@ export function CourseViewClient({
       }
       setIsPurchasing(false);
     }
-  }, [appliedVoucher, courseId, language]);
+  }, [appliedVoucher, courseId, language, capture, isCurrent, catalogPrice]);
 
   const primePaymentModal = useCallback(() => {
     warmPaymentMethodModal();
   }, []);
 
   const openPaymentModal = useCallback(() => {
+    if (!courseId || catalogPrice === null) return;
     warmPaymentMethodModal();
     setPaymentError("");
     setIsMethodModalOpen(true);
-  }, []);
+  }, [courseId, catalogPrice]);
 
   const handleCardClick = useCallback(
     (index: number) => {
+      const token = capture();
+      if (!token) return;
       const lesson = lessonsData[index];
       const lessonRoute =
         lessonRoutesInOrder[index] ||
@@ -835,7 +843,7 @@ export function CourseViewClient({
 
         setShowLessonNavigationOverlay(false);
         lessonNavigationTimeoutRef.current = window.setTimeout(() => {
-          setShowLessonNavigationOverlay(true);
+          if (isCurrent(token)) setShowLessonNavigationOverlay(true);
         }, LESSON_NAVIGATION_OVERLAY_THRESHOLD_MS);
 
         router.push(target);
@@ -856,7 +864,7 @@ export function CourseViewClient({
       setPinnedIndex(index);
       setHoveredIndex(null);
     },
-    [courseId, hasPurchased, lessonRoutesByTitle, lessonRoutesInOrder, router],
+    [courseId, hasPurchased, lessonRoutesByTitle, lessonRoutesInOrder, router, capture, isCurrent],
   );
 
   const handleClosePopup = useCallback(() => {
@@ -909,7 +917,7 @@ export function CourseViewClient({
                 onMouseEnter={primePaymentModal}
                 onFocus={primePaymentModal}
                 onTouchStart={primePaymentModal}
-                disabled={isPurchasing || isVerifyingPurchase}
+                disabled={isPurchasing || isVerifyingPurchase || catalogPrice === null || !courseId}
                 className="mx-auto bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-2 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 inline-flex items-center justify-center gap-2"
               >
                 {isPurchasing || isVerifyingPurchase ? (
@@ -1082,6 +1090,7 @@ export function CourseViewClient({
                         position={popupPosition}
                         hasPurchased={hasPurchased}
                         onPurchaseClick={openPaymentModal}
+                        isPriceAvailable={catalogPrice !== null && Boolean(courseId)}
                         copy={copy}
                       />
                     )}
@@ -1101,6 +1110,7 @@ export function CourseViewClient({
           position={popupPosition}
           hasPurchased={hasPurchased}
           onPurchaseClick={openPaymentModal}
+          isPriceAvailable={catalogPrice !== null && Boolean(courseId)}
           copy={copy}
         />
       )}
@@ -1127,7 +1137,7 @@ export function CourseViewClient({
         isLoading={isPurchasing}
         language={language}
         courseId={courseId ?? ""}
-        basePrice={DEFAULT_FULL_COURSE_PRICE_EUR}
+        basePrice={catalogPrice}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {

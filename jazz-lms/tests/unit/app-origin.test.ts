@@ -82,6 +82,25 @@ describe("app-origin helpers", () => {
 
     vi.unstubAllEnvs();
   });
+
+  test('development callbacks preserve the browser loopback host and cookie scope', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+    const { resolveServerAppOrigin } = await import('@/lib/app-origin');
+    expect(resolveServerAppOrigin('http://localhost:3010', '127.0.0.1:3010')).toBe('http://127.0.0.1:3010');
+    expect(resolveServerAppOrigin('http://127.0.0.1:3010', 'localhost:3010')).toBe('http://localhost:3010');
+    for (const host of ['attacker.example', '127.0.0.1:9000', 'localhost:3010@attacker.example', '127.0.0.1:3010/path']) {
+      expect(resolveServerAppOrigin('http://localhost:3010', host)).toBe('http://localhost:3010');
+    }
+    vi.unstubAllEnvs();
+  });
+
+  test('production ignores client Host hints and retains the configured origin', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('APP_URL', 'https://www.culturadeljazz.com');
+    const { resolveServerAppOrigin } = await import('@/lib/app-origin');
+    expect(resolveServerAppOrigin('https://preview.example.test', 'localhost:3010')).toBe('https://www.culturadeljazz.com');
+    vi.unstubAllEnvs();
+  });
 });
 
 afterAll(() => {

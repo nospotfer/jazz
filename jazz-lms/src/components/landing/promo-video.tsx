@@ -1,18 +1,22 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/language-provider";
+import { useAnalyticsConsent } from "@/components/analytics/use-analytics-consent";
+import { isAnalyticsUrlAllowed, readAnalyticsConsent, sanitizeAnalyticsUrl } from "@/lib/analytics/consent";
+import { guardAnalyticsNavigation } from "@/lib/analytics/navigation";
 import MuxPlayer from "@mux/mux-player-react";
 import type MuxPlayerElement from "@mux/mux-player";
 import { LogIn, Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export function PromoVideo() {
   const router = useRouter();
   const { language } = useLanguage();
+  const { analytics } = useAnalyticsConsent();
+  const allowVideoAnalytics = analytics && typeof window !== "undefined" && isAnalyticsUrlAllowed(window.location.href);
   const [isMuted, setIsMuted] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
   const muxPlayerRef = useRef<MuxPlayerElement | null>(null);
   const nativeVideoRef = useRef<HTMLVideoElement | null>(null);
   const [shouldLoadPlayer, setShouldLoadPlayer] = useState(false);
@@ -23,6 +27,15 @@ export function PromoVideo() {
   const [storyboardToken, setStoryboardToken] = useState("");
   const [muxRuntimeError, setMuxRuntimeError] = useState("");
   const [playerRetryCount, setPlayerRetryCount] = useState(0);
+
+  useLayoutEffect(() => guardAnalyticsNavigation(destinationAllowed => {
+    // Disable an already mounted player before a query/private history update.
+    if (muxPlayerRef.current) {
+      const allowed = destinationAllowed && readAnalyticsConsent().analytics;
+      muxPlayerRef.current.disableTracking = !allowed;
+      muxPlayerRef.current.disableCookies = !allowed;
+    }
+  }), []);
   const posterUrl = playbackId
     ? `https://image.mux.com/${playbackId}/thumbnail.webp?time=1${thumbnailToken ? `&token=${encodeURIComponent(thumbnailToken)}` : ""}`
     : "";
@@ -46,14 +59,16 @@ export function PromoVideo() {
       paragraph:
         "Vive una experiencia que cambiará para siempre tu forma de sentir la música. No necesitas ser músico ni experto para disfrutar el jazz.",
       cta: "Regístrate",
-      muxError: "No se pudo cargar el video promocional de Mux.",
+      explore: "Ver las clases",
+      courseSummary: "15 clases para descubrir el jazz, paso a paso.",
+      muxError: "No se pudo cargar el video promocional.",
       fallbackLabel: "Vista previa de la primera clase",
       loading: "Cargando video promocional...",
       mute: "Silenciar",
       unmute: "Activar sonido",
     },
     en: {
-      promotionMessage: "Register and receive the first course for free",
+      promotionMessage: "Register and receive the first lesson for free",
       pretitle: "Online Course · With Enric Vazquez Ramonich",
       titleTop: "The Culture",
       titleBottomPrefix: "of",
@@ -61,14 +76,16 @@ export function PromoVideo() {
       paragraph:
         "Live an experience that will forever change the way you feel music. You do not need to be a musician or an expert to enjoy jazz.",
       cta: "Sign Up",
-      muxError: "Unable to load the Mux promo video.",
+      explore: "Explore the lessons",
+      courseSummary: "15 lessons to discover jazz, step by step.",
+      muxError: "Unable to load the promo video.",
       fallbackLabel: "First class preview",
       loading: "Loading promo video...",
       mute: "Mute",
       unmute: "Unmute",
     },
     fr: {
-      promotionMessage: "Inscrivez-vous et recevez le premier cours gratuitement",
+      promotionMessage: "Inscrivez-vous et recevez la première leçon gratuitement",
       pretitle: "Cours en ligne · Avec Enric Vazquez Ramonich",
       titleTop: "La Culture",
       titleBottomPrefix: "du",
@@ -76,26 +93,30 @@ export function PromoVideo() {
       paragraph:
         "Vivez une expérience qui changera à jamais votre façon de ressentir la musique. Vous n’avez pas besoin d’être musicien ou expert pour apprécier le jazz.",
       cta: "S’inscrire",
-      muxError: "Impossible de charger la vidéo promo Mux.",
+      explore: "Découvrir les leçons",
+      courseSummary: "15 leçons pour découvrir le jazz, pas à pas.",
+      muxError: "Impossible de charger la vidéo de présentation.",
       fallbackLabel: "Aperçu du premier cours",
       loading: "Chargement de la vidéo promo...",
       mute: "Couper le son",
       unmute: "Activer le son",
     },
     pt: {
-      promotionMessage: "Regístrate y recibe la primera clase gratis",
-      pretitle: "Curso Online · Con Enric Vazquez Ramonich",
-      titleTop: "La Cultura",
-      titleBottomPrefix: "del",
-      subtitle: "Entra en el mundo del jazz",
+      promotionMessage: "Cadastre-se e receba a primeira aula grátis",
+      pretitle: "Curso online · Com Enric Vázquez Ramonich",
+      titleTop: "A Cultura",
+      titleBottomPrefix: "do",
+      subtitle: "Entre no mundo do jazz",
       paragraph:
-        "Vive una experiencia que cambiará para siempre la forma en que sientes la música. No necesitas ser músico ni especialista para disfrutar el jazz.",
-      cta: "Regístrate",
-      muxError: "No fue posible cargar el video promocional de Mux.",
-      fallbackLabel: "Vista previa de la primera clase",
-      loading: "Cargando video promocional...",
+        "Viva uma experiência que mudará sua forma de sentir a música. Você não precisa ser músico nem especialista para apreciar o jazz.",
+      cta: "Cadastre-se",
+      explore: "Ver as aulas",
+      courseSummary: "15 aulas para descobrir o jazz, passo a passo.",
+      muxError: "Não foi possível carregar o vídeo de apresentação.",
+      fallbackLabel: "Prévia da primeira aula",
+      loading: "Carregando vídeo de apresentação...",
       mute: "Silenciar",
-      unmute: "Activar sonido",
+      unmute: "Ativar som",
     },
   }[language];
 
@@ -168,20 +189,17 @@ export function PromoVideo() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] w-full bg-gray-100 dark:bg-black flex items-start">
-      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-6 sm:py-8">
-        <div
-          data-testid="home-promo-message"
-          className="mb-6 rounded-xl border border-[var(--color-jazz-title-accent)]/60 bg-gradient-to-r from-[var(--color-jazz-cta)]/20 via-[var(--color-jazz-title-accent)]/12 to-transparent px-4 py-3 sm:px-5 sm:py-3.5 shadow-[0_10px_30px_rgba(212,175,55,0.16)]"
-        >
-          <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white tracking-wide">
-            {copy.promotionMessage}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start min-h-[72vh]">
+    <div className="w-full bg-gray-100 dark:bg-black">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-8 sm:py-12 lg:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* Left side - Text & CTA */}
-          <div className="flex flex-col justify-center space-y-8">
+          <div data-testid="home-promo-copy" className="flex flex-col justify-center space-y-6">
+            <p
+              data-testid="home-promo-message"
+              className="w-fit max-w-full rounded-lg border border-[var(--color-jazz-title-accent)]/40 bg-[var(--color-jazz-cta)]/10 px-4 py-2 text-sm font-semibold leading-relaxed text-foreground"
+            >
+              {copy.promotionMessage}
+            </p>
             <div>
               <p
                 data-testid="home-promo-pretitle"
@@ -189,16 +207,14 @@ export function PromoVideo() {
               >
                 {copy.pretitle}
               </p>
-              <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-2">
-                {copy.titleTop}
-              </h1>
-              <h1 className="text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-4">
-                {copy.titleBottomPrefix} <em className="title-accent">Jazz</em>
+              <h1 className="font-serif text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.08] tracking-tight">
+                <span className="block">{copy.titleTop}</span>
+                <span className="mt-2 block">{copy.titleBottomPrefix} <em className="title-accent">Jazz</em></span>
               </h1>
             </div>
 
             <div className="border-l-4 title-accent-border pl-6">
-              <h2 className="title-accent text-3xl sm:text-4xl font-bold italic mb-4">
+              <h2 className="title-accent font-serif text-2xl sm:text-3xl font-semibold italic mb-4">
                 {copy.subtitle}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg leading-relaxed">
@@ -206,26 +222,43 @@ export function PromoVideo() {
               </p>
             </div>
 
-            <button
-              onClick={() => router.push("/auth?tab=register")}
-              className="cta-highlight flex items-center gap-3 py-4 px-10 rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-105 w-fit text-lg"
-            >
-              <LogIn className="h-5 w-5" />
-              {copy.cta}
-            </button>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button
+                  onClick={() => router.push("/auth?tab=register")}
+                  className="cta-highlight flex min-h-12 w-full items-center justify-center gap-3 rounded-lg px-8 py-4 text-lg transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
+                >
+                  <LogIn className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  {copy.cta}
+                </button>
+                <a
+                  href="#board-courses"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-border bg-card px-6 py-3 font-semibold text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-auto"
+                >
+                  {copy.explore}
+                </a>
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">{copy.courseSummary}</p>
+            </div>
           </div>
 
           {/* Right side - Promo Video */}
           <div
             data-testid="home-promo-video-frame"
             className="relative w-full aspect-[16/10] lg:max-h-[62vh] rounded-xl overflow-hidden shadow-2xl border border-[var(--color-jazz-title-accent)]/60"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
           >
             {hasMuxPlayback ? (
               shouldUseMuxPlayer ? (
                 <MuxPlayer
+                  key={allowVideoAnalytics ? "analytics-enabled" : "analytics-disabled"}
                   ref={muxPlayerRef}
+                  disableTracking={!allowVideoAnalytics}
+                  disableCookies={!allowVideoAnalytics}
+                  metadata={{
+                    page_url: typeof window !== "undefined" ? sanitizeAnalyticsUrl(window.location.href) : "",
+                    video_title: "La Cultura del Jazz · Presentación",
+                    video_source_url: `https://stream.mux.com/${playbackId}.m3u8`,
+                  }}
                   playbackId={playbackId}
                   tokens={{
                     playback: playbackToken || undefined,
@@ -326,9 +359,8 @@ export function PromoVideo() {
             {hasMuxPlayback ? (
               <button
                 onClick={toggleMute}
-                className={`absolute bottom-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 ${
-                  isHovered ? "opacity-100" : "opacity-0"
-                }`}
+                type="button"
+                className="absolute bottom-4 right-4 z-20 min-h-11 min-w-11 rounded-full bg-black/60 p-3 text-white transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label={isMuted ? copy.unmute : copy.mute}
               >
                 {isMuted ? (

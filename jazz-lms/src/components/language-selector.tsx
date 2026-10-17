@@ -14,7 +14,7 @@ export function LanguageSelector() {
 
   return (
     <div
-      className="inline-flex items-center rounded-md border border-[var(--color-jazz-title-accent)]/60 overflow-hidden"
+      className="inline-flex shrink-0 items-center rounded-md border border-[var(--color-jazz-title-accent)]/60 overflow-hidden"
       aria-label={label}
     >
       {SUPPORTED_LANGUAGES.map((currentLanguage) => {
@@ -23,8 +23,9 @@ export function LanguageSelector() {
         return (
           <button
             key={currentLanguage}
+            type="button"
             onClick={() => setLanguage(currentLanguage as SupportedLanguage)}
-            className={`px-2 py-1 text-[10px] sm:text-xs font-semibold transition-colors ${
+            className={`min-h-11 w-11 min-w-11 px-1 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${
               isActive
                 ? 'bg-[var(--color-jazz-cta)] text-black'
                 : 'bg-transparent text-gray-700 dark:text-gray-200 hover:bg-[var(--color-jazz-title-accent)]/20'

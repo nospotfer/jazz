@@ -10,7 +10,8 @@ import { useUserJazzMedalProgress } from "@/hooks/use-user-jazz-medal-progress";
 import type { UserJazzMedalProgress } from "@/lib/lesson-quiz";
 import { resolveProfileAvatar } from "@/lib/profile-avatars";
 import { createClient } from "@/utils/supabase/client";
-import type { AuthChangeEvent } from "@supabase/supabase-js";
+import { useAuthOwner } from "@/hooks/use-auth-owner";
+import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import {
     Bell,
     LogOut,
@@ -79,18 +80,18 @@ export function DashboardHeader({
   const { t, language } = useDashboardPreferences();
   const router = useRouter();
   const pathname = usePathname();
-  const supabase = createClient();
+  const owner = useAuthOwner(user.id);
+  const { capture, isCurrent } = owner;
   const { progress: medalProgress } =
     useUserJazzMedalProgress(initialMedalProgress);
   const { recognition } = useUserCourseCompletionRecognition();
-  const [currentAvatarUrl, setCurrentAvatarUrl] = useState(
-    resolveProfileAvatar(user.id, user.user_metadata?.avatar_url),
-  );
+  const [avatarSnapshot, setAvatarSnapshot] = useState<{ key: string; url: string } | null>(null);
   const displayName =
     user.user_metadata?.full_name ||
     user.email?.split("@")[0] ||
     t("userFallback", "Usuario");
-  const avatarUrl = currentAvatarUrl;
+  const avatarUrl = avatarSnapshot?.key === `${user.id}:${owner.generation}`
+    ? avatarSnapshot.url : resolveProfileAvatar(user.id, user.user_metadata?.avatar_url);
   const initials = displayName
     .split(" ")
     .map((n: string) => n[0])
@@ -99,7 +100,10 @@ export function DashboardHeader({
     .slice(0, 2);
 
   // ── Notifications state ─────────────────────────────────────────
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const { value: unreadResult } = useOwnerScopedResource<{ count: number } | null>({
+    path: "/api/messages/unread-count", initialValue: null, emptyValue: null, intervalMs: 180000, initialDelayMs: 900, expectedUserId: user.id,
+  });
+  const unreadMessages = typeof unreadResult?.count === "number" ? unreadResult.count : 0;
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [activeNotif, setActiveNotif] = useState<Notification | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -143,29 +147,26 @@ export function DashboardHeader({
     router.push("/");
   };
 
-  // ── Click outside to close ──────────────────────────────────────
+  // Profile results are bound to the same owner generation as the frame.
   useEffect(() => {
-    const syncAvatarFromSession = async () => {
-      const {
-        data: { user: latestUser },
-      } = await supabase.auth.getUser();
-
-      if (latestUser) {
-        setCurrentAvatarUrl(
-          resolveProfileAvatar(
-            latestUser.id,
-            latestUser.user_metadata?.avatar_url,
-          ),
-        );
+    const token = capture();
+    if (!token) return;
+    let active = true;
+    const syncAvatar = async () => {
+      try {
+        const { data: { user: latestUser } } = await createClient().auth.getUser();
+        if (active && isCurrent(token) && latestUser?.id === token.ownerId) {
+          setAvatarSnapshot({ key: `${token.ownerId}:${token.generation}`, url: resolveProfileAvatar(latestUser.id, latestUser.user_metadata?.avatar_url) });
+        }
+      } catch {
+        // Preserve the verified owner's existing avatar on transient failure.
       }
     };
+    void syncAvatar();
+    return () => { active = false; };
+  }, [capture, isCurrent, owner.generation, owner.revision, user.id]);
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      syncAvatarFromSession();
-    });
-
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifDropdown(false);
@@ -179,142 +180,18 @@ export function DashboardHeader({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      subscription.unsubscribe();
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [supabase]);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let isMounted = true;
-    let intervalId: number | null = null;
-    let timeoutId: number | null = null;
-    let idleCallbackId: number | null = null;
-    let requestController: AbortController | null = null;
-
-    const stopPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    const hasSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      return Boolean(session);
-    };
-
-    const loadUnreadMessages = async () => {
-      if (document.visibilityState === "hidden") {
-        return;
-      }
-
-      if (!(await hasSession())) {
-        stopPolling();
-        if (isMounted) setUnreadMessages(0);
-        return;
-      }
-
-      requestController?.abort();
-      requestController = new AbortController();
-
-      try {
-        const response = await fetch("/api/messages/unread-count", {
-          signal: requestController.signal,
-        });
-
-        if (!isMounted) return;
-
-        if (response.status === 401) {
-          setUnreadMessages(0);
-          stopPolling();
-          return;
-        }
-
-        const data = await response.json();
-        setUnreadMessages(typeof data.count === "number" ? data.count : 0);
-      } catch (error) {
-        if (!isMounted) return;
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        setUnreadMessages(0);
-      }
-    };
-
-    const startPolling = () => {
-      stopPolling();
-
-      intervalId = window.setInterval(() => {
-        void loadUnreadMessages();
-      }, 180000);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        void loadUnreadMessages();
-      }
-    };
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (!isMounted) return;
-
-      if (event === "SIGNED_OUT") {
-        requestController?.abort();
-        stopPolling();
-        setUnreadMessages(0);
-      }
-
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        void loadUnreadMessages();
-        startPolling();
-      }
-    });
-
-    if (typeof window.requestIdleCallback === "function") {
-      idleCallbackId = window.requestIdleCallback(
-        () => {
-          void loadUnreadMessages();
-          startPolling();
-        },
-        { timeout: 1500 },
-      );
-    } else {
-      timeoutId = window.setTimeout(() => {
-        void loadUnreadMessages();
-        startPolling();
-      }, 900);
-    }
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      requestController?.abort();
-      stopPolling();
-      if (idleCallbackId !== null) {
-        window.cancelIdleCallback?.(idleCallbackId);
-      }
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
-      }
-    };
   }, []);
+
+  if (!owner.ready) return null;
 
   return (
     <>
       <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="relative flex items-center justify-between h-16 px-3 sm:px-6 lg:px-8">
-          {/* Spacer for hamburger on mobile */}
-          <div className="w-10 lg:hidden" />
-
+        <div className="relative flex min-w-0 flex-col gap-2 px-3 py-2 sm:px-6 lg:min-h-16 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:px-8">
           {/* Search bar */}
-          <div className="hidden sm:flex flex-1 max-w-md">
+          <div className="ml-14 hidden min-w-0 flex-1 sm:flex lg:ml-0 lg:max-w-md">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -323,26 +200,27 @@ export function DashboardHeader({
                 name="courseSearch"
                 autoComplete="off"
                 placeholder={t("courses", "Cursos") + "..."}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
+                className="min-h-11 w-full min-w-0 pl-10 pr-4 py-2 bg-background border border-primary/40 hover:border-primary/70 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/70 transition-colors"
               />
             </div>
           </div>
 
           {pathname === "/dashboard" && (
-            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 text-sm font-semibold text-white/95 tracking-wide whitespace-nowrap pointer-events-none">
+            <div className="hidden max-w-40 shrink-0 truncate text-sm font-semibold text-foreground tracking-wide 2xl:block">
               {t("welcomeShort", "Bienvenido,")} {displayName.split(" ")[0]}.
             </div>
           )}
 
           {/* Right side */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex w-full min-w-0 flex-wrap items-center justify-end gap-2 lg:w-auto lg:shrink-0 lg:flex-nowrap">
+            <div className="flex w-full items-center justify-end gap-2 pl-14 sm:w-auto sm:pl-0">
             <ThemeToggle />
             {medalProgress?.hasSupremeMedal ? (
               <Link
                 href="/dashboard/jazz-specialist"
                 aria-label={t("supremeMedalPage", "Jazz specialist medal")}
                 title={t("supremeMedalPage", "Jazz specialist medal")}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-yellow-300/40 bg-gradient-to-br from-yellow-300/90 via-amber-300 to-yellow-500 text-black shadow-[0_0_24px_rgba(250,204,21,0.35)] transition-transform hover:scale-[1.04]"
               >
                 <JazzMedalIcon medal="GOLD" size="sm" />
               </Link>
@@ -358,7 +236,7 @@ export function DashboardHeader({
                   "courseRecognitionPage",
                   "Course completion recognition",
                 )}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-400/35 bg-gradient-to-br from-slate-200 via-stone-200 to-slate-300 text-slate-900 shadow-[0_0_20px_rgba(71,85,105,0.28)] transition-transform hover:scale-[1.04]"
               >
                 <ScrollText className="h-5 w-5" />
               </Link>
@@ -367,20 +245,26 @@ export function DashboardHeader({
               href="/dashboard/settings"
               aria-label={t("settings", "Settings")}
               title={t("settings", "Settings")}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-accent transition-colors"
             >
               <Settings className="h-5 w-5 text-muted-foreground" />
             </Link>
+            </div>
+            <div className="flex w-full min-w-0 items-center justify-end gap-2 sm:w-auto">
             <LanguageSelector />
 
             {/* ── Notifications bell ── */}
-            <div className="relative" ref={notifRef}>
+            <div className="static shrink-0 lg:relative" ref={notifRef}>
               <button
+                type="button"
+                aria-label={t("notifications", "Notificaciones")}
+                aria-expanded={showNotifDropdown}
+                aria-controls="dashboard-notifications"
                 onClick={() => {
                   setShowNotifDropdown((v) => !v);
                   setShowUserMenu(false);
                 }}
-                className="relative p-2 rounded-lg hover:bg-accent transition-colors"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg hover:bg-accent transition-colors"
               >
                 <Bell className="h-5 w-5 text-muted-foreground" />
                 {unreadCount > 0 && (
@@ -390,7 +274,7 @@ export function DashboardHeader({
 
               {/* Dropdown */}
               {showNotifDropdown && (
-                <div className="absolute right-0 mt-2 w-[calc(100vw-1rem)] max-w-96 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div id="dashboard-notifications" className="absolute left-3 right-3 top-full mt-2 max-h-[calc(100dvh-9rem)] max-w-96 overflow-y-auto bg-card border border-border rounded-xl shadow-2xl z-50 sm:left-auto sm:right-6 sm:w-96 lg:right-0">
                   <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
                       {t("notifications", "Notificaciones")}
@@ -448,11 +332,15 @@ export function DashboardHeader({
             {/* ── User avatar + menu ── */}
             <div className="relative" ref={userMenuRef}>
               <button
+                type="button"
+                aria-label={t("profile", "Perfil")}
+                aria-expanded={showUserMenu}
+                aria-controls="dashboard-user-menu"
                 onClick={() => {
                   setShowUserMenu((v) => !v);
                   setShowNotifDropdown(false);
                 }}
-                className="flex items-center gap-2 pl-2 border-l border-border cursor-pointer hover:opacity-80 transition-opacity"
+                className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-lg border-l border-border px-2 cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <div className="flex shrink-0 flex-col items-center justify-center gap-1">
                   {avatarUrl ? (
@@ -471,11 +359,11 @@ export function DashboardHeader({
                     </div>
                   )}
                 </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium text-foreground leading-none">
+                <div className="hidden min-w-0 max-w-40 text-left xl:block">
+                  <p className="truncate text-sm font-medium text-foreground leading-none">
                     {displayName}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="truncate text-xs text-muted-foreground mt-0.5">
                     {user.email}
                   </p>
                 </div>
@@ -483,7 +371,7 @@ export function DashboardHeader({
 
               {/* Dropdown */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-[min(14rem,calc(100vw-1rem))] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                <div id="dashboard-user-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-9rem)] w-[min(14rem,calc(100vw-1rem))] overflow-y-auto bg-card border border-border rounded-xl shadow-2xl z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-medium text-foreground truncate">
@@ -555,6 +443,7 @@ export function DashboardHeader({
                   </div>
                 </div>
               )}
+            </div>
             </div>
           </div>
         </div>

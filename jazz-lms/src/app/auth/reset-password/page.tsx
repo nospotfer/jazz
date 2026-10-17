@@ -1,5 +1,6 @@
 "use client";
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { useLanguage } from "@/components/providers/language-provider";
 import { createClient } from "@/utils/supabase/client";
 import { LogOut, X } from "lucide-react";
@@ -8,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createClient({ flowType: "implicit" }), []);
+  const supabase = useMemo(() => createClient(), []);
   const { language } = useLanguage();
   const copy = {
     es: {
@@ -160,11 +161,15 @@ export default function ResetPasswordPage() {
           return;
         }
 
-        // If coming from callback route with recovery=1, the code was already
-        // validated on the server, so trust that and show the form
+        // The callback marker is a navigation hint, not proof of a session.
         if (isFromCallback) {
-          console.info("[auth/reset-password] valid recovery session from callback");
-          setTokenValid(true);
+          const { data, error: identityError } = await supabase.auth.getUser();
+          if (identityError || !data.user) {
+            setTokenError(copy.tokenInvalid);
+            setTokenValid(false);
+          } else {
+            setTokenValid(true);
+          }
           setLoadingToken(false);
           return;
         }
@@ -336,10 +341,19 @@ export default function ResetPasswordPage() {
 
         window.sessionStorage.removeItem(recoveryReloadKey);
 
+        // Remove consumed credentials from the address bar/history after the
+        // provider establishes a session. Preserve unrelated navigation hints.
+        const cleanUrl = new URL(window.location.href);
+        for (const key of ['token_hash', 'token', 'code', 'access_token', 'refresh_token', 'type', 'expires_in', 'expires_at', 'token_type']) {
+          cleanUrl.searchParams.delete(key);
+        }
+        cleanUrl.hash = '';
+        window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search);
+
         logRecoveryDebug("token-valid");
         setTokenValid(true);
       } catch (err) {
-        console.error("[auth/reset-password] unexpected-bootstrap-error", err);
+        console.error("[auth/reset-password] unexpected-bootstrap-error", safeErrorDiagnostic(err));
         setTokenError(copy.tokenValidationFailed);
         setTokenValid(false);
       } finally {
@@ -351,7 +365,7 @@ export default function ResetPasswordPage() {
   }, [supabase, copy.tokenInvalid, copy.tokenValidationFailed]);
 
   const inputClasses =
-    "w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
+    "w-full px-3 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
 
   const handleUpdatePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -416,7 +430,7 @@ export default function ResetPasswordPage() {
           <button
             type="button"
             onClick={() => router.push("/auth?tab=login")}
-            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
             aria-label={copy.closeAuth}
           >
             <X className="h-4 w-4" />
@@ -426,7 +440,7 @@ export default function ResetPasswordPage() {
             type="button"
             onClick={handleLogout}
             disabled={isExitingAuth}
-            className="inline-flex items-center gap-2 text-sm text-[#D1D5DB] hover:text-white transition-colors disabled:opacity-60"
+            className="inline-flex items-center gap-2 text-sm text-foreground hover:text-foreground transition-colors disabled:opacity-60"
           >
             <LogOut className="h-4 w-4" />
             {isExitingAuth ? copy.exiting : copy.logout}
@@ -435,15 +449,15 @@ export default function ResetPasswordPage() {
 
         <div className="p-5 sm:p-8 space-y-5">
           {loadingToken ? (
-            <div className="text-center text-[#D1D5DB]">
+            <div className="text-center text-foreground">
               {copy.validatingLink}
             </div>
           ) : !tokenValid ? (
             <div className="space-y-4">
-              <h1 className="text-xl sm:text-2xl font-bold text-white">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 {copy.invalidTitle}
               </h1>
-              <p className="text-sm text-[#9CA3AF]">{tokenError}</p>
+              <p className="text-sm text-muted-foreground">{tokenError}</p>
               <button
                 type="button"
                 onClick={() => router.push("/auth/forgot-password")}
@@ -454,22 +468,22 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => router.push("/auth?tab=login")}
-                className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-base font-medium transition-colors"
+                className="w-full py-3 border border-input text-foreground hover:text-foreground hover:border-primary rounded-lg text-base font-medium transition-colors"
               >
                 {copy.backToLogin}
               </button>
             </div>
           ) : (
             <>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 {copy.createNewPassword}
               </h1>
 
-              <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <form method="post" onSubmit={handleUpdatePassword} className="space-y-4">
                 <div>
                   <label
                     htmlFor="newPassword"
-                    className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                    className="block text-sm font-medium text-foreground mb-1.5"
                   >
                     {copy.newPassword}
                   </label>
@@ -491,7 +505,7 @@ export default function ResetPasswordPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       aria-label={
                         showPassword ? copy.hidePassword : copy.showPassword
                       }
@@ -524,7 +538,7 @@ export default function ResetPasswordPage() {
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#9CA3AF] mt-1.5">
+                  <p className="text-xs text-muted-foreground mt-1.5">
                     {copy.minCharacters}
                   </p>
                 </div>
@@ -532,7 +546,7 @@ export default function ResetPasswordPage() {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                    className="block text-sm font-medium text-foreground mb-1.5"
                   >
                     {copy.confirmNewPassword}
                   </label>
@@ -568,7 +582,7 @@ export default function ResetPasswordPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/auth?tab=login")}
-                  className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-base font-medium transition-colors"
+                  className="w-full py-3 border border-input text-foreground hover:text-foreground hover:border-primary rounded-lg text-base font-medium transition-colors"
                 >
                   {copy.backToLogin}
                 </button>

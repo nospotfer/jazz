@@ -7,6 +7,7 @@
  * - Cache em memoria (5 min) para reduzir custo e quota.
  */
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import type { Range } from './metrics-db';
 
 type Ok = {
@@ -102,7 +103,7 @@ async function fetchTrafficFromGa4(range: Range): Promise<TrafficResult> {
 
     return { ok: true, data: { sessions, users, topPages, sources } };
   } catch (error) {
-    console.error('[metrics-ga] GA4 Data API failed, returning unavailable.', error);
+    console.error('[metrics-ga] GA4 Data API failed, returning unavailable.', safeErrorDiagnostic(error));
     return { ok: true, unavailable: true, reason: 'api_error' };
   }
 }

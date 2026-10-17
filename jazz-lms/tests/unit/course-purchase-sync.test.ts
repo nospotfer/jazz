@@ -44,6 +44,8 @@ describe("upsertCoursePurchaseFromProvider", () => {
         },
         $transaction: async (callback: (tx: any) => Promise<unknown>) =>
           callback({
+            $executeRaw: vi.fn().mockResolvedValue(1),
+            paymentWebhookEvent: { findMany: vi.fn().mockResolvedValue([]) },
             purchase: {
               findUnique: purchaseFindUnique,
               upsert: purchaseUpsert,
@@ -141,6 +143,8 @@ describe("upsertCoursePurchaseFromProvider", () => {
         },
         $transaction: async (callback: (tx: any) => Promise<unknown>) =>
           callback({
+            $executeRaw: vi.fn().mockResolvedValue(1),
+            paymentWebhookEvent: { findMany: vi.fn().mockResolvedValue([]) },
             purchase: {
               findUnique: purchaseFindUnique,
               upsert: purchaseUpsert,
@@ -234,6 +238,8 @@ describe("upsertCoursePurchaseFromProvider", () => {
         },
         $transaction: async (callback: (tx: any) => Promise<unknown>) =>
           callback({
+            $executeRaw: vi.fn().mockResolvedValue(1),
+            paymentWebhookEvent: { findMany: vi.fn().mockResolvedValue([]) },
             purchase: {
               findUnique: purchaseFindUnique,
               upsert: purchaseUpsert,
