@@ -14,6 +14,23 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Owner-controlled Google setup and closed preview
+
+Oct16 Google preparation uses exact application source `f1df347`. Replacement
+project ownership/billing-off and the supplied isolated Web client are verified;
+the owner reports app/test-user/minimal-scope setup complete. Fresh build/seal,
+Unix19/HTTPS11 and seven actual authorize-start checks pass. The owner did not
+complete Google login before the window expired.
+
+Oct17 fresh reads confirm restored preview Auth settings, Google/signup disabled,
+clean app/tunnel shutdown, every original row preserved across25 public/three
+Auth tables and the complete45,826-file seal. The new confirmed Auth actor has
+no Google identity/session/sign-in/application row. Selected24-file/33,251-byte
+evidence is retained outside/tmp without credentials. See the
+[Google ownership and test runbook](google-oauth.md) for exact scope, private
+credential locations and a fresh-window plan. Production remains INACTIVE and
+unchanged; actual OAuth exchange and existing-customer continuity remain gates.
+
 ## Historical migration source and offline ledger verification
 
 Sourceac62f4a restores the exact237-byte March18 SQL matching the archived

@@ -150,6 +150,13 @@ SQL/configuration repair or another resume is authorized by that approval.
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirect changes and Google console settings;
   verify actual isolated OAuth/SMTP/recovery after service restoration.
+- [x] Prepare the owner-controlled replacement Google project/Web client and
+  verify the isolated preview's expired window restores its provider settings,
+  closes cleanly and preserves every original row. Credentials remain private
+  on both machines. [Current state and test runbook](google-oauth.md).
+- [ ] Complete a real owner Google login in a fresh protected preview; verify
+  exact identity/session/USER role, existing-user continuity and separate
+  production-client/configuration rollback before proposing a production switch.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
 - [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
   protected preview, actual follow-up CI/CodeQL success and remaining gaps.

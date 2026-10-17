@@ -1580,3 +1580,131 @@ The maintenance goal remains active and incomplete.
   actual rehearsal and independent acceptance. Update published CI totals and
   the bounded PDF-photo search outcome. No application, account or provider
   configuration change; no repeat of completed recovery/browser tests.
+
+
+## 2026-10-16 — Replacement Google Sign-in project under owner control
+
+- Fresh personal-account credentials authenticate successfully; the exact legacy
+  OAuth project read returns 403/IAM_PERMISSION_DENIED. The credential inventory
+  records a separate legacy Google account, but its ownership of that project
+  is not verified. The owner reports its 2FA unavailable and requests replacing
+  the known integration using the controlled personal account.
+- Create only `culturadeljazz-auth-bf40f8` (Cultura del Jazz Auth), outside an
+  organization, for isolated replacement preparation. Exact project/IAM/billing
+  readbacks all return 200: ACTIVE, expected personal-account Owner binding,
+  billingEnabled=false and no linked billing account. No API enablement, billing
+  write, production change or global CLI configuration change. Tokens remain in
+  process memory and are neither printed nor retained.
+- The confirmed old dependency is Google Sign-in through Supabase. The new
+  project does not recover the old mailbox or establish an inventory of other
+  legacy assets. Standard Google Auth Platform branding/audience/Web OAuth
+  client setup is next in the owner's browser; isolated callback setup and
+  actual user/identity continuity checks precede any reviewed production switch.
+  Existing Supabase users, purchases and production provider settings are not
+  modified by this project creation. Isolated OAuth is still unverified.
+
+
+## 2026-10-16 — Owner-supplied OAuth client secured on both machines
+
+- Owner reports completing the new Google app/Web client and authorizes using
+  its downloaded JSON on Monster and Behemoth. Existing trusted SSH access works;
+  validate the exact supplied file without printing its contents. Project/client
+  match, Google endpoints, one isolated Supabase callback and empty JavaScript
+  origins pass. Protect the original file/directory with 0600/0700 and retain
+  byte-identical 0600 copies in project-specific 0700 directories on both hosts.
+  No secret enters Git, browser environment variables or global gcloud settings.
+- Fresh exact preview reads return ACTIVE_HEALTHY, Google/signup disabled,
+  no custom SMTP or enabled Auth/notification hooks. Read-only database query
+  returns 201 with one SUPER_ADMIN/four USER records; correct the first summary's
+  mistaken classification of that successful 201 response. No identity/session,
+  role, application data or production mutation occurs.
+- Stage only Google client ID, secret, disabled-provider flag and nonce-check
+  flag on the isolated backend, retaining the original four fields privately
+  for rollback. PATCH returns 200; immediate GET is stale, delayed GET shows the
+  expected client and nonce check with provider/signup still disabled and every
+  unrelated setting unchanged. The populated secret representation differs from
+  the source JSON and is not its plain SHA256; do not claim exact equality or
+  successful OAuth. Actual login must verify the provider exchange.
+- No application/tunnel started or login/send-email operation performed. Next:
+  owner's Google Audience test-user and three minimal identity scopes, followed
+  by a fresh protected HTTPS preview/source/origin/gate and bounded real OAuth
+  plan. Production cutover and existing-user/purchase continuity remain gates.
+
+
+## 2026-10-16 — Protected Google OAuth preview ready for owner login
+
+- Owner reports saving the test-user entry and minimal identity scopes. Prepare
+  a new source/origin/gate plan bound to exact f1df347 and the separate preview
+  project. Fresh project/role/actor/trigger checks find five original Auth users,
+  no existing personal-account row and no custom Auth-user triggers; Auth mail
+  hooks and notifications are disabled. Create one confirmed preview Auth user
+  through the admin API without an invitation/password or application grant.
+  The normal application callback will create its ordinary USER row.
+- Capture SHA256/counts for all25 public base tables/1,510 rows and three Auth
+  tables. After that single actor creation, the projection excluding only its
+  exact ID preserves every original public/Auth row. No new app user, Google
+  identity or session exists before the human login.
+- Fresh locked install/configured webpack/sealing passes on Node24.21.0 with
+  45,826 immutable files. All147 inspected client assets exclude the supplied
+  server-secret values. Fresh private Unix runtime19 and external HTTPS11 checks
+  pass. Initial probes ran before startup readiness and fail with missing-socket/
+  unavailable-gate errors; retain those diagnostics rather than relabeling them.
+- Enable Google only in the isolated preview window, retaining signup disabled,
+  nonce checking enabled and mail/payment/tracking credentials absent. A bounded
+  guardian verifies the exact temporary origin/redirect settings and restores
+  the previous three fields on stop/expiry. Provider cutoff is12:57:49UTC and
+  private runtime access expires12:58:09UTC on Oct16. No production change.
+- One real unauthenticated authorize start returns302 to Google and passes seven
+  checks: new client, exact isolated callback, HTTPS Google host, basic email/
+  profile scopes, code flow and state. No human Google login or secret exchange
+  is yet verified. Copy an owner-only local access page to Behemoth and open it
+  in the normal browser; its temporary gate password stays out of chat and Git.
+  Owner completes Google authentication directly. Verify exact actor identity/
+  USER role/session and original-row preservation before recording success and
+  closing the owned runtime, tunnel and temporary provider configuration.
+
+
+## 2026-10-17 — Expired OAuth preview closed and preserved
+
+- Owner returns after missing the Oct16 test window. Recover the original
+  launcher completion: stopped/clean, expiry reason, zero warning/error counters.
+  Guardian receipt confirms restoring the previous isolated Google/origin/
+  redirect fields; tunnel exits0. Fresh process inspection finds no matching
+  owned preview process, run directory or socket. No new window is started for
+  this status request. Replace the expired Behemoth access page with a closed
+  notice while preserving both provider credential files.
+- Fresh exact Management API reads confirm preview ACTIVE_HEALTHY, Google and
+  signup disabled, original origin/redirects restored and new client still
+  staged. Production remains INACTIVE; no production change occurs.
+- Repeat the bounded read-only preservation check: every original row in25
+  public tables and three Auth tables matches its baseline. The single new
+  confirmed preview Auth user has no Google identity, sign-in timestamp, session
+  or application User row. No human login or provider secret exchange completed.
+  The Google project/app/client and owner-reported test-user/scopes remain
+  prepared; next is a fresh protected window when the owner can log in directly.
+- Complete post-expiry release inspection passes all45,826 immutable files.
+  Retain24 selected metadata/result files (33,251 bytes) outside/tmp with a
+  reverified manifest, initial startup failures and explicit unverified-login
+  limits. Credential files, gate HTML/password and raw Auth configuration are
+  excluded; selected bytes contain neither the new OAuth secret nor manager
+  token. Current handoff records no active window. No off-site recovery claim.
+
+
+## 2026-10-17 — Google ownership runbook and active-goal handoff
+
+- Owner resumes the full maintenance goal. Classify the preceding closure/status
+  turn as progress: actual expiry/rollback/data/seal evidence changed the next
+  action. Reset the blocked audit for this resumed run; the goal remains active
+  and incomplete. Do not count the historical Oct15 impasse against this run.
+- Add a Google ownership/test/release runbook with the verified replacement,
+  private credential locations on both machines, existing actor reuse, fresh
+  source/origin/gate and before/after preservation, bounded Auth rollback and
+  manual owner login. Explain API readback limits and distinguish Web client
+  credentials from a personal Cloud CLI login. No legacy account recovery or
+  repeat app/account creation is required for the known sign-in replacement.
+- Reconcile the overview, backlog, verification/release references and app-agent
+  guidance with the closed Oct16 preview and Oct17 readbacks. Keep production,
+  human OAuth/identity continuity, Dodo, SMTP and hosting/DNS gates explicit.
+  Ask owner availability asynchronously before opening another timed preview;
+  continue independent handoff publication rather than starting an unattended
+  window that may expire before login.

@@ -10,6 +10,12 @@ plan change, real payment/refund or customer message was performed. The separate
 Free synthetic preview remains independent; see [preview isolation](preview.md).
 Credentials, customer archives and raw responses remain private outside Git.
 
+The Oct16 owner-controlled Google replacement and its expired isolated test
+window are documented separately in the [Google sign-in runbook](google-oauth.md).
+Oct17 reads confirm its provider settings restored with signup disabled; no
+human login or production Auth change occurred. This supersedes the old Google
+account-access gate without claiming the integration works end to end.
+
 ## Approved recovery outcome
 
 - Resume POST returned 200; exact project/org/region remained unchanged,

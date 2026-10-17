@@ -1,6 +1,6 @@
 # Initial maintenance and stabilization
 
-Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-15.
+Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-17.
 [Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
 changes. **The goal is incomplete and the changes are not deployed.** The owner
 requested a stable, tested project and a more attractive, usable website while
@@ -8,7 +8,7 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
 
 ## Current verified checkpoint
 
-- Published verification checkpoint `9544d13` passes Quality PR/push, Secret Scan and CodeQL,
+- Completed verification checkpoint `f1df347` passes Quality PR/push, Secret Scan and CodeQL,
   with zero open head-ref alerts. Downloaded logs verify 2,537 normal passes/80
   intentional skips, 80 persisted passes/one REST skip (79 actual PostgreSQL cases
   plus one metadata case), types, webpack build and lint 0 errors/22 existing warnings.
@@ -34,6 +34,14 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
   Original data/sequences and 446 permission operations pass. This is offline
   evidence, not current production or complete hosted-platform equivalence.
   [Recovery and history](payment-currency.md#historical-sql-source-and-bookkeeping).
+- Google sign-in now has a replacement project owned by the controlled personal
+  account, with billing disabled/unlinked at its Oct16 verification. The new Web
+  client is validated and protected on both machines. Fresh exact `f1df347`
+  build/seal, Unix19/HTTPS11 and seven real authorize-start checks pass. The
+  window expired without a human login; Oct17 verifies original-row preservation,
+  restored Auth settings, clean closure and the full45,826-file seal. Actual
+  Google login/secret exchange and existing-customer continuity remain pending.
+  [Ownership and next test](google-oauth.md).
 
 Reviewed evidence is retained owner-only outside `/tmp`, including the
 `review-checkpoint-history-completed-9544d13-20261015` checkpoint under
@@ -42,13 +50,16 @@ rows, raw ledger IDs and enabled execution approvals are excluded from that
 selected package. Retention is local and unencrypted; off-site recovery is not
 established. Temporary preview processes and disposable recovery containers are
 closed. Historical reports remain unchanged in [review checkpoints](review-status.md).
+The separate `review-checkpoint-google-oauth-preparation-f1df347-20261017`
+package retains24 selected files/33,251 bytes without credential files, temporary
+gate HTML/password or raw Auth configuration.
 
 ## Remaining verification and decisions
 
 | Gate | Evidence or decision still needed |
 | --- | --- |
 | Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Account evidence for customer, merchant/team and webhook-alert recipients before the prepared sandbox transactions. The controlled customer email is known; it does not authorize mail to unknown team recipients. TEST product/coupon API acceptance and synthetic app journeys are already verified. |
-| Google login and cloud registration/recovery mail | Google account/console access after the security-blocked reauthentication, plus an approved controlled recipient and bounded configuration for real mail. Local OTP/PKCE recovery is verified; cloud SMTP/OAuth delivery is not. |
+| Google login and cloud registration/recovery mail | Replacement Google project/app/client and owner-reported test-user/scopes are prepared. A fresh protected window and actual owner login/identity verification remain; the console setup need not be repeated. Controlled SMTP recipients and a bounded delivery plan remain separate. Local OTP/PKCE recovery is verified; cloud SMTP/OAuth delivery is not. |
 | Price, currency and tax authority | Review the archived EUR 29.99 catalog interpretation against the live EUR 29.90 tax-exclusive product. Current source stores server quotes separately from canonical charged facts. No production catalog/provider change is authorized. |
 | Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
 | Production recovery and release | Fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence, followed by explicit owner approval. Offline success does not authorize production changes. |
@@ -75,6 +86,7 @@ real charge/refund or third-party message is included.
 | [Payment currency and migration history](payment-currency.md) | Canonical facts, additive migration, exact recovery order and ledger reconciliation |
 | [Separate preview](preview.md) | Isolated backend, synthetic fixtures and source-bound customer journeys |
 | [Dodo](dodo.md) / [Resend](resend.md) / [Vercel](vercel.md) | Provider inventories and remaining account/configuration gates |
+| [Google sign-in](google-oauth.md) | Replacement ownership, private credential locations, expired-window evidence and the bounded login/release runbook |
 | [Zero-cost hosting](hosting.md) / [Maintenance fallback](maintenance-fallback.md) | Conditional stable host, quarantine and verified static rollback asset |
 | [Native safeguards](native-runtime.md) | Reproducible artifacts, private ingress, lifecycle and disabled daily runner |
 | [Operational scripts](operational-scripts.md) | Mutator hazards and explicit disposable-target prerequisites |
