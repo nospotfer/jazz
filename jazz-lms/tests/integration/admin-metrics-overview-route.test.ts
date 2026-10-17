@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
+// Keep the actual range helpers while preventing Prisma initialization or queries.
+vi.mock('@/lib/db', () => ({
+  db: new Proxy({}, {
+    get() {
+      throw new Error('Unexpected database access in isolated metrics route tests');
+    },
+  }),
+}));
+
 function makeReq(range = '30d') {
   return new Request(`http://localhost:3000/api/admin/metrics/overview?range=${range}`, {
     method: 'GET',
@@ -9,10 +18,12 @@ function makeReq(range = '30d') {
 describe('GET /api/admin/metrics/overview', () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.stubEnv('DATABASE_URL', undefined);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   test('returns 403 when admin permission check fails', async () => {

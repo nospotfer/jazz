@@ -1708,3 +1708,13 @@ The maintenance goal remains active and incomplete.
   Ask owner availability asynchronously before opening another timed preview;
   continue independent handoff publication rather than starting an unattended
   window that may expire before login.
+
+- Required pre-push lint passes with0 errors/22 existing warnings, but the
+  integration gate exposes two existing metrics-route tests that partially
+  import the real database module without DATABASE_URL. Push is blocked; no
+  hook is bypassed. Preserve the704-pass/2-fail/29-skip first result privately.
+  Isolate that file's database dependency with a throwing query guard and
+  explicitly unset/restore DATABASE_URL per test, retaining the real range
+  helpers and route assertions. All three focused cases then pass with no
+  database configuration. Runtime application code and provider state are
+  unchanged; rerun the required publication gates on the corrected source.
