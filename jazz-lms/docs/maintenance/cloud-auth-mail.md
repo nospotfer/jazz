@@ -128,12 +128,50 @@ are excluded. Retention is local/unencrypted, with no off-site recovery claim.
 Working inputs remain protected separately under
 `/tmp/jazz-maintenance/cloud-auth-recovery-automated-preparation-20261019/`.
 
-Further work first needs a loopback-only browser proof that each already-issued,
-validated redirect can continue once in the same context, preserving real
-responses/cookies and never replaying verification or a completed code exchange.
-That preparation has no hosted-mail authority. Actual recovery/new-password
-login and a fresh complete repaired registration remain release gates; any new
-mail requires a fresh bounded approval.
+The subsequent loopback-only proof below verifies redirect continuation. Future
+hosted use still needs a coherent new guardian/parent/retrieval scope, fresh
+namespace/configuration/actor/source/origin/gate/lease checks and explicit mail
+approval. Actual recovery/new-password login and a fresh complete repaired
+registration remain release gates; no existing allowance can be reused.
+
+### Separate loopback redirect correction
+
+A separate disabled future broker and continuation module pass103 synthetic
+checks:60 redirect guards,16 actual copied-broker ledger/marker integration cases
+and27 inherited broker assertions. The adapter uses recorded actor/reservation/
+response times, not invented identity or timestamps, and carries all three
+exhausted prior budgets. Entry/callback/reset markers are exclusive, persisted
+before navigation and rejected on recreation/restart. The future broker refuses
+activation before reading config or credential inputs.
+
+The exact final module passes an actual headless Chrome/Playwright1.58.2 fixture
+at22:58:20UTC. Only an ephemeral loopback backend and fresh synthetic profile are
+used, with all non-loopback host resolution forced to fail. Before continuation,
+the actual provider-like303 bypasses routing and the callback backend receives
+zero requests. After continuation, the same context receives real backend307 and
+200 exactly once each; two synthetic cookies survive, the form renders and replay
+is refused. This proves the transport correction, not hosted Auth recovery.
+
+The actual fixture also corrects two assumptions missed by mocks: DNS-failed
+redirects have timing0 and must be bound to their exact timed parent rather than
+inventing a timestamp; final200 can precede the URL commit, requiring an exact-URL
+wait bounded by the remaining lease. Wrong-parent/frame, stale, non-DNS and
+expired-window controls fail closed. A completed-response timing hypothesis is
+explicitly disproved. Earlier startup failures were an overlong Unix socket
+path, initially misclassified as sandbox failure; only fixture launch/temp paths
+change. Failed attempts remain recorded. All browsers/children/servers/listening
+ports/locks close, and all synthetic profiles/temp directories are removed.
+
+Owner-only local preparation retention is
+`/home/gabriel/backups/culturadeljazz-maintenance/recovery-redirect-preparation-20261020/`:
+17 selected code/finite-proof files,157,526 bytes; manifest SHA256
+`e1bc6b4bdf60d31ea9b0b08d436ec380c9fdf69899a18c815451514dd5f9a77e`.
+The exact module hash is
+`e0756f9c7f3989d6d3bfdf5e45cb9f58c74556faf59366eb3ef7e269b40b697a`.
+The package includes a controlled test alias in code and synthetic fixture values,
+with no actual credentials, bodies, links, codes or browser state. Retention is
+local/unencrypted, not off-site recovery. No real providers, current/personal
+profiles, emails or production resources are used by this fixture.
 
 ## Evening one-reset window and delivery
 

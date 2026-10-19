@@ -45,8 +45,9 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [ ] Complete recovery exchange and old/new password checks in a fresh bounded
   window. The latest automated reset is delivered and reaches provider303;
   Playwright redirected requests bypass the private native adapter before the
-  application callback. Prove same-context redirect continuation with a loopback
-  fixture first. Initial3+evening1+automated1 actions are spent (four emails);
+  application callback. Separate same-context continuation now passes103 synthetic
+  checks and actual loopback before/after proof; prepare a fresh hosted scope and
+  verify the real exchange. Initial3+evening1+automated1 actions are spent (four emails);
   no new send follows from this checkbox. Public HTTPS, a fresh complete repaired
   registration and production Auth remain separate gates.
   [Bounded email windows](cloud-auth-mail.md).

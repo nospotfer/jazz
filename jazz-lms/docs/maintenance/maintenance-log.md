@@ -1934,3 +1934,18 @@ The maintenance goal remains active and incomplete.
   actor/browser state, email bodies/links/tokens/codes. Local unencrypted
   retention establishes no off-site backup. Update the inventory/backlog/
   verification/release/runbook and preserve the broader incomplete goal.
+
+- Later independent transport preparation passes103 synthetic checks and exact
+  final actual loopback browser proof22:58:20UTC. Before303 bypasses routing;
+  after307/200 occur once each in the same context with cookies/form/replay checks.
+  Actual findings repair failed-request timing0 parent binding and final URL commit
+  waiting, plus copied-broker ledger/marker integration and three-budget history.
+  The overlong socket path was initially misclassified as sandbox failure; retain
+  earlier failures and the disproved completed-response timing hypothesis.
+  All fixture resources close and synthetic profiles/temp directories are removed.
+  New broker remains disabled before input reads; no hosted call or extra email.
+  Retain/re-hash17 code/finite-proof files157,526 bytes owner-only outside/tmp,
+  manifest e1bc6b4bdf60d31ea9b0b08d436ec380c9fdf69899a18c815451514dd5f9a77e.
+  No actual secrets/bodies/recovery values; a controlled alias and synthetic values
+  remain in code. Fresh coherent activation scope and separate approval still
+  precede any hosted use. Actual hosted recovery remains incomplete.

@@ -38,8 +38,13 @@ The preceding documentation head1da1b0a passes exact Quality/Secret PR+push and
 CodeQL with the same source30 test/build counts. Exact analyses have zero
 results/errors/open PR-ref alerts; CodeQL warns that full PR-diff retrieval is
 limited to300 changed files. Documentation verification does not extend hosted
-runtime proof beyond source30d848a. Redirect correction is being prepared in a
-separate synthetic/loopback scope; it does not complete hosted recovery.
+runtime proof beyond source30d848a. A subsequent disabled redirect correction
+passes103 synthetic checks and an actual loopback-only before/after browser proof:
+real303 bypass before, same-context307/200 once each after, cookies/form/replay
+checks and complete owned cleanup. All profiles/temp directories are removed.
+Source hashes and17 selected preparation files are retained owner-only outside
+/tmp. This remains separate from hosted recovery and grants no new mail scope.
+[Prepared correction](cloud-auth-mail.md#separate-loopback-redirect-correction).
 
 ## Oct19 evening reset delivery and closed window
 
