@@ -1,7 +1,11 @@
 # Isolated cloud Auth email verification
 
-Updated 2026-10-19. Status: **CLOSED; CONFIRMATION AND PASSWORD LOGIN PASS;
-RECOVERY INCOMPLETE**. The first actual registration attempt exposed a
+Updated 2026-10-20 (Madrid; event times below are UTC). Status: **CLOSED; CONFIRMATION AND PASSWORD LOGIN PASS;
+RECOVERY INCOMPLETE**. A separately approved evening reset email is delivered,
+but its link is opened outside the controlled browser and the owner copies an
+expired-link error address. The password remains unchanged. Both windows restore
+all settings and close owned resources; no further email is authorized.
+The first actual registration attempt exposed a
 provider-method defect. On repaired source, the owner receives and verifies the
 code, the original password reaches the dashboard, and normal logout clears all
 actor sessions. Recovery email is accepted, but no recovery exchange or password
@@ -9,7 +13,7 @@ change is observed before expiry. All Auth settings are restored, all original
 rows preserved, and owned application/browser/transport resources closed.
 Production is unchanged and its Supabase project remains INACTIVE.
 
-## Authorized scope and current budget
+## Initial approved scope and exhausted budget
 
 The owner explicitly approved at most three email-send actions to one controlled
 Gmail alias: registration verification, one verification resend and one password
@@ -45,7 +49,7 @@ rebuilding did not extend it or reset the budget.
 | Actual confirmation and password | Confirmation resend200 and verification200; owner confirms inbox receipt. Auth and application verification become true, USER role remains unchanged and the initial password fingerprint is identical. Actual password token200, cookie sync200 and dashboard200 pass. |
 | Initial normal logout | Provider204; all test-actor sessions, including the server-created verification session, become zero. Original25 public/three Auth projections and public table set remain unchanged. |
 | Recovery request | Actual provider200 after normal logout, with PKCE retained in the same dedicated browser context. The owner is asked to paste the emailed link into that browser's private helper. No link/OTP is requested in chat. |
-| Recovery limit | The owner reports a new-password form, but the controlled context still shows the link helper/forgot-password page. The guarded update returns `RESET_FORM_REQUIRED`; no provider verification, callback, reset form or password update is observed. The window expires before clarification. The password fingerprint remains unchanged. |
+| Recovery limit | The owner reports a new-password form, but the controlled context still shows the link helper/forgot-password page. The guarded update returns `RESET_FORM_REQUIRED`; no provider verification, callback, reset form or password update is observed in that controlled context. The window expires before clarification. The password fingerprint remains unchanged. |
 | Final preservation | At12:05:38UTC, all original six accounts and every original row across25 public/three Auth tables match. The public table set is unchanged. The new actor remains a verified USER with one email identity and zero sessions. |
 | Final configuration | At12:06:57UTC, every original Auth field matches the pre-window snapshot: signup/Google/custom SMTP disabled, nonce checking enabled. Production remains INACTIVE; production writes0. |
 | Final resources | Native runtime stops cleanly at expiry with warn0/error0. Browser broker/process/socket and private Chrome lock are absent; the remote tunnel exits0 and its exact owned Unix socket is removed. All three build seals pass after closure:45,828/45,828/45,830 files. |
@@ -55,6 +59,68 @@ messages. See the primary [Management API logs reference](https://supabase.com/d
 and [log-query guidance](https://supabase.com/docs/guides/observability/advanced-log-filtering).
 Provider counters and logs support the stated event; absence of other matching
 events alone would not establish absence of all errors or delivery.
+
+## Evening one-reset window and delivery
+
+At21:45UTC the owner explicitly approves exactly one additional reset email for
+the same existing test USER, with a fresh protected window capped at25 minutes.
+The prior three-action budget remains exhausted. The new lease is21:46:00 to
+22:11:00UTC; closure happens early. Across both approvals, four send actions are
+used and exactly three emails are sent. No further send/retry is authorized.
+
+Fresh reads verify the same confirmed USER, initial password fingerprint and
+zero sessions, every original public/Auth row and the25-table public set.
+The existing exact30d848a artifact passes its complete45,830-file inspection;
+new native19/private-SSH11 checks pass. The same browser profile is reused only
+after its closed receipt, absent lock/socket and owner-only permissions are
+verified. A new gate and fixed deadline replace expired access.
+
+The guardian owns only eight SMTP/origin fields. Templates and computed metadata
+are unchanged; signup/Google remain disabled and nonce checking enabled.
+The executed controller has20 pure scope/clipboard assertions; the guardian
+has11 fake scope checks. A parent reservation and one-time permit are consumed
+before the actual `/recover` request, which returns200 at approximately21:49UTC.
+The [Resend usage endpoint](https://www.resend.com/changelog/account-usage-api)
+reports daily3/100 and monthly3/3000 after the earlier2/2. A bounded
+[sent-email metadata query](https://resend.com/docs/api-reference/emails/list-emails)
+matches exactly one new email to the controlled alias at21:49:18UTC, with
+`last_event: delivered`. No other recipient data or email body is retained/read.
+
+The owner accidentally opens the link in the usual browser and subsequently
+copies a callback with `error_code=otp_expired`, without an authorization code.
+Read-only finite Auth metadata shows a recovery/S256 code issued at21:49:31UTC,
+an empty stored recovery token and zero actor sessions. The code value itself is
+never read. This establishes issuance outside the private browser, not a
+successful PKCE exchange or password change. The controlled browser records
+only forgot-page/assets/reset-request responses; it never observes provider
+verification, callback, user authentication or a password update. A callback/
+controller-resume extension passes27 pure checks but is **not executed** once
+the copied address is known to contain the expired-link error.
+
+SMTP restoration completes at21:57:43UTC. At21:58:47UTC, independent reads prove
+every original Auth field restored, the initial password unchanged, USER role,
+zero sessions, every original row/account and public table set unchanged, and
+production INACTIVE with zero writes. Browser/native/SSH processes close cleanly;
+owned sockets/run directory and the private Chrome lock are absent. The full
+45,830-file seal passes again at21:59:52UTC. The executed controller hash is
+`313354e6cd7327a1942b3dbaf1054147ecc461ad56b139672fde6dcff4791d0e`.
+Its console/page/warning/block/command-failure counts are all zero over this
+narrow request-only scope; dashboard and successful recovery are not covered.
+
+The next prepared test will retrieve only its newly approved controlled test
+email through the provider's read-only API and pass the validated recovery link
+privately to the same browser that requested it. It must record this different
+input source honestly rather than claim a human Gmail link exchange. It remains
+separate, unapproved and unexecuted; it cannot reuse either exhausted budget.
+
+The23-file/37,470-byte evening checkpoint is retained/rehashed owner-only at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-reset-delivery-30d848a-20261019-evening/`.
+Manifest SHA256:
+`fda3caccdf6f27822036d938a7502ba202a3cf67c9f2638a3cb85f7c10cf43f1`.
+Selected evidence contains no supplied credential, raw email body, link, token,
+authorization code or personal-browser state. Local retention is unencrypted and
+does not establish off-site recovery. Raw working inputs remain outside that
+package under `/tmp/jazz-maintenance/cloud-auth-recovery-20261019-evening/`.
 
 ## Repair and user-facing implications
 

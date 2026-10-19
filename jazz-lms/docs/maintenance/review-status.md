@@ -1,6 +1,6 @@
 # Maintenance review checkpoints
 
-Updated 2026-10-19. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
+Updated 2026-10-20. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
 on `maintenance/initial-audit`. Source is unreleased and maintenance remains
 incomplete. The separately approved production Supabase recovery/export/unsafe-state
 rollback completed; production is paused again. A provider build success is not
@@ -13,6 +13,39 @@ to`1e381a3`; the latest authenticated monetary browser proof is`5f9597a`, with
 later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
+
+## Oct19 evening reset delivery and closed window
+
+The owner separately approves one additional reset email to the existing
+controlled USER. Exact30d848a reuses its completely inspected45,830-file artifact
+with a fresh gate and native19/private-SSH11 proof. The25-minute lease starts
+21:46UTC; its eight-field SMTP/origin scope changes no template or metadata.
+The one action is reserved before transport; `/recover`200 and Resend usage2→3
+pass. Exactly one new controlled-alias email at21:49:18 has provider metadata
+`delivered`.
+
+The owner opens the link in the usual browser, then copies an `otp_expired`
+callback without a code. Finite Auth metadata shows recovery/S256 code issuance
+21:49:31, empty recovery token and zero sessions; no code value is read. The
+private browser observes no verification/callback/user/password-update request.
+Its20 scope/clipboard assertions and guardian11 fake checks are boundary proof,
+not successful recovery. A later27-check callback/resume extension is prepared
+but never executed. The password is unchanged; no new app defect is inferred.
+
+Early SMTP restoration completes21:57:43UTC. Independent21:58:47 reads verify
+all original Auth fields, six pre-mail accounts/1,511 original public rows,
+25 public/three Auth projections/table set, USER role and zero actor sessions.
+Production is INACTIVE/unchanged. Browser/native/SSH close; exact owned sockets,
+run directory and Chrome lock are absent. Narrow forgot/reset-request browser
+counters are all zero; no general dashboard/recovery-health claim follows.
+All four approved send actions are used, with exactly three total emails. No
+further email follows from a prepared future provider-retrieval test.
+[Current scope and evidence](cloud-auth-mail.md#evening-one-reset-window-and-delivery).
+
+Post-closure45,830-file inspection passes21:59:52UTC. Selected23-file/37,470-byte
+evidence is retained/rehashed owner-only outside/tmp, with0 supplied-secret/raw
+recovery-value matches; raw inputs and personal-browser state are excluded.
+Local unencrypted retention does not establish off-site recovery.
 
 ## Oct19 cloud confirmation and registration repair
 

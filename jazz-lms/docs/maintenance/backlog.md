@@ -1,6 +1,6 @@
 # Prioritized maintenance backlog
 
-Updated 2026-10-19. Source fixes are on the maintenance branch;
+Updated 2026-10-20. Source fixes are on the maintenance branch;
 **none has been deployed to production**. Evidence distinguishes mocked tests,
 persisted local journeys and actual provider inspection.
 
@@ -8,7 +8,7 @@ persisted local journeys and actual provider inspection.
 
 | ID | Priority | Finding and resulting behavior | Evidence / remaining check |
 | --- | --- | --- | --- |
-| AUTH-01 | High registration availability | Existing unconfirmed accounts entered public Signup through login OTP and failed when signup was disabled. Source30d848a uses signup-confirmation resend for registration and resend, preserving pending credentials. | Actual original-source app400/provider422 `signup_disabled`; four real-SDK closed-transport regressions fail before and85 focused checks pass after. Repaired hosted confirmation, owner-received OTP, unchanged password fingerprint and original-password dashboard login pass. Final preservation/restoration/closure verified; recovery exchange and fresh complete registration on repaired source remain unproven. All three email actions consumed. [Email evidence](cloud-auth-mail.md). |
+| AUTH-01 | High registration availability | Existing unconfirmed accounts entered public Signup through login OTP and failed when signup was disabled. Source30d848a uses signup-confirmation resend for registration and resend, preserving pending credentials. | Actual original-source app400/provider422 `signup_disabled`; four real-SDK closed-transport regressions fail before and85 focused checks pass after. Repaired hosted confirmation, owner-received OTP, unchanged password fingerprint and original-password dashboard login pass. Final preservation/restoration/closure verified; recovery exchange and fresh complete registration on repaired source remain unproven. Initial3 plus the separate evening1 action are consumed; latest reset delivery is verified but its copied link returns otp_expired. [Email evidence](cloud-auth-mail.md). |
 | UX-31 | Medium auth usability | Remembered email replaced the verified address, resend lacked a cooldown, and the light-theme verification heading was white on white. Source0de3c28 preserves explicit valid email, adds localized countdown/overlap protection and uses theme foreground text. |52 focused checks/types pass; included in the actual30d848a native build. No production deployment. [Email scope](cloud-auth-mail.md). |
 | SEC-01 | High | Server identity trusted cookie session data; now validates `auth.getUser()` and fails closed. | Forged/unverified identity regressions; persisted customer-role negatives. |
 | SEC-02 | High | Cron accepted spoofable Vercel header; now requires configured bearer `CRON_SECRET`. | Missing/wrong/spoof tests pass. Vercel project and live deployment env names lack the secret; approved release configuration required. Live sweep not invoked. |

@@ -1841,3 +1841,54 @@ The maintenance goal remains active and incomplete.
   Reconcile inventory/backlog/verification/release/runbook with the closed state.
   Full maintenance goal remains incomplete: hosted recovery/new registration,
   Dodo, stable zero-cost hosting/DNS and reviewed production hardening/release.
+
+
+## 2026-10-19 evening UTC — One approved reset delivery and early closure
+
+- Owner returns to Behemoth/Gmail and explicitly approves one additional reset
+  test after the earlier three-action allowance is exhausted. New scoped ledger,
+  parent reservation/one-time permit, fresh gate and25-minute lease21:46–22:11UTC.
+  Source30d848a reuses its complete45,830-file inspected artifact; actual
+  native19/private-SSH11 pass. No new build or application repair is inferred.
+- Fresh checks preserve the same verified USER, unchanged password, zero
+  sessions, every original public/Auth row/account and the25-table public set.
+  New dedicated browser namespace reuses only the verified closed private
+  profile. Actual provider transport stays HTTPS; app transport stays private
+  owner-only Unix sockets/verified SSH. No public HTTPS/DNS claim or personal
+  browser/profile inspection.
+- Exact eight-field SMTP/origin guardian changes no template or derived metadata;
+  public signup/Google remain disabled and nonce check enabled. Executed broker
+  has20 pure scope/clipboard checks; guardian11 fake checks. The reserved single
+  reset returns200. Provider usage rises from2 to3 and a read-only metadata query
+  matches exactly one controlled test email, created21:49:18UTC, delivered.
+  Across both approvals, four actions are consumed and three emails sent.
+- Owner accidentally opens the link in the usual browser and later copies an
+  otp_expired callback without a code. Read-only finite Auth metadata records a
+  recovery/S256 code issued21:49:31, empty recovery token and sessions0. Code
+  values are never read. The private browser sees only forgot-page/assets/reset
+  responses: no verification/callback/user/password update. The initial password
+  remains unchanged. A27-check callback/resume extension is prepared but not
+  executed after the copied address proves to be the expired-link error.
+- Stop the browser normally, then restore SMTP21:57:43UTC before stopping native
+  and SSH. All exits0/clean, exact owned sockets/run directory/Chrome lock absent,
+  no unrelated process cleanup. Independent21:58:47 reads prove every Auth field
+  restored, original six accounts/1,511 public rows/25 public+three Auth table
+  projections/table set preserved, unchanged password, USER and sessions0.
+  Production remains INACTIVE with zero writes. Full45,830-file post-closure
+  inspection passes21:59:52UTC.
+- Narrow browser console/warning/page/block/command-failure counts are all0;
+  this request-only scope does not certify recovery or dashboard health. Actual
+  executed controller hash313354e6cd7327a1942b3dbaf1054147ecc461ad56b139672fde6dcff4791d0e
+  remains separate from the unexecuted callback extension. No email body, token,
+  code, copied error URL or personal browser state is included in review evidence.
+- Prepare a separate future automated test that reads only its newly approved
+  controlled sent email through the provider API and passes its validated link
+  privately to the same requesting browser. Its different input source must be
+  explicit; it is not proof of a human Gmail click. No further email is approved,
+  no current window remains, and full maintenance completion is still unverified.
+- Retain/re-hash23 selected files/37,470 bytes owner-only outside/tmp; manifest
+  fda3caccdf6f27822036d938a7502ba202a3cf67c9f2638a3cb85f7c10cf43f1.
+  Destination modes/hashes and supplied-secret/raw-recovery-value scan pass.
+  Raw credentials/provider/Auth/actor inputs, email bodies, links/codes/tokens
+  and personal-browser state are excluded. Retention is local and unencrypted;
+  no off-site recovery is established.

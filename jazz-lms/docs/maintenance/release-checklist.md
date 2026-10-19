@@ -6,7 +6,7 @@
   evidence retained outside/tmp and owned browsers/server closed. This does not
   authorize production deployment or establish provider journeys.
 
-Updated 2026-10-19. Preparation only: **no production release is authorized**.
+Updated 2026-10-20. Preparation only: **no production release is authorized**.
 Source repairs have not been released. The owner separately approved one
 production Supabase resume, private preservation and unsafe-state re-pause;
 those operations completed. Production is INACTIVE again. No production
@@ -44,10 +44,16 @@ SQL/configuration repair or another resume is authorized by that approval.
   owned browser/runtime/transport closed and all three full seals reverified.
 - [ ] Complete recovery exchange and old/new password checks in a fresh bounded
   window. The owner-reported form was not observed in the controlled browser;
-  no password update occurred before expiry. All three send actions are consumed;
-  no additional send follows from this checkbox. Public HTTPS, fresh complete
+  no password update occurred. A separately approved evening reset email is
+  delivered, but its link is consumed outside the private browser and the copied
+  address has otp_expired. Initial3+additional1 actions are consumed; no
+  additional send follows from this checkbox. Public HTTPS, fresh complete
   registration on repaired source and production Auth remain separate checks.
   [Bounded email window](cloud-auth-mail.md).
+- [x] Close the additional evening window early: all eight owned Auth fields and
+  every unrelated setting restored, original rows/accounts/table set preserved,
+  password unchanged/actor sessions0 and owned browser/native/SSH/socket cleanup
+  verified. Provider delivery is separate from recovery exchange.
 
 - [x] Close newly confirmed dashboard/course account-switch privacy and stale
   progress-intent verification: source4f395e0 repairs pass111 client cases/49
