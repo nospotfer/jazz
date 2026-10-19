@@ -1718,3 +1718,56 @@ The maintenance goal remains active and incomplete.
   helpers and route assertions. All three focused cases then pass with no
   database configuration. Runtime application code and provider state are
   unchanged; rerun the required publication gates on the corrected source.
+
+
+## 2026-10-19 — Actual Google first/returning login and final sign-out
+
+- Owner returns at Behemoth. Reuse the prepared replacement Web client and the
+  predeclared Auth actor after fresh provider/role checks; no account recreation,
+  password, invitation, purchase or admin grant. New source/origin/gate plan pins
+  clean fc8d813; disabled payment/mail/cron/tracking configuration is explicit.
+- Fresh locked Node24 build seals45,827 immutable files;147 client assets omit
+  supplied server/Google/management secrets. Readiness-bound Unix19, HTTPS11 and
+  seven no-follow authorize-start checks pass before enabling Google access.
+- Owner performs Google login, normal logout, returning Google login and final
+  normal logout in normal Chrome. Independent backend checks prove exact Auth/
+  application ID and Google identity reuse, stable application creation and
+  Google identity fingerprints, a new returning session, USER role and no
+  purchases. Final sessions0. No personal-browser console/network is captured.
+- All original25 public tables/1,510 rows plus three Auth tables retain their
+  counts/SHA256 projections, excluding only the exact declared actor. All Auth
+  fields match the pre-window snapshot after guardian restoration. Signup and
+  Google disabled, nonce check enabled; production remains INACTIVE/unchanged.
+- App and tunnel exit0; owned processes/run directory absent, helper replaced by
+  a closed notice, full45,827-file seal reverified. Runtime receipt is clean
+  cleanup with warn0/error2: the causes are not recorded. Source review identifies
+  absent-credential automatic reconciliation as a candidate, not proof of those
+  historical events. Follow up with bounded closed-helper reproduction.
+- Retain/re-hash22 selected files/39,349 bytes in the owner-only actual Google
+  checkpoint outside/tmp, excluding credentials/raw Auth/gate HTML/actor mapping.
+  The private actor recovery reference now records verified login and sessions0,
+  with no role/session authority. Retention remains local and unencrypted.
+- Cloud SMTP/registration/reset, Dodo recipients/transactions, production Google
+  identity continuity, stable free host/DNS, pricing and coordinated approved
+  production hardening/recovery/release remain open. Google console/client setup
+  and the passed isolated login do not need repeating as routine prerequisites.
+
+
+## 2026-10-19 — Explicit unavailable response for unconfigured reconciliation
+
+- Bounded review of the two unclassified Google-window errors identifies a
+  dashboard background path that always calls the Dodo reader. A separate
+  closed-network reproduction proves absent/whitespace keys throw before fetch,
+  producing route500 and one finite error log, with no DB/upsert work. The
+  desired503 regression fails2/7 against the unchanged parent route; its source
+  hash matches the original fc8d813 Git blob. This does not identify the two
+  historical events, whose request evidence was not captured.
+- Source33dd19f: after verified authentication, missing/blank API key now returns
+  explicit503 provider_unavailable. No provider/network/DB/upsert/error-log work
+  occurs; unauthenticated401 remains. Configured failures retain diagnostics and
+  historical fulfillment remains independent of the current product ID.
+- Final164 focused tests, touched-file lint0/0 and full TypeScript pass. New tests
+  run the actual reader with intercepted fetch and synthetic auth/DB/upsert;
+  no credential/provider/server/customer operation is used. Two existing mocked
+  suites now declare/restore their synthetic configured environment explicitly.
+  Native Google evidence stays bound to its earlier fc8d813 artifact.

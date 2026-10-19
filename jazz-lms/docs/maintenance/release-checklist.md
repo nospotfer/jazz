@@ -6,7 +6,7 @@
   evidence retained outside/tmp and owned browsers/server closed. This does not
   authorize production deployment or establish provider journeys.
 
-Updated 2026-10-15. Preparation only: **no production release is authorized**.
+Updated 2026-10-19. Preparation only: **no production release is authorized**.
 Source repairs have not been released. The owner separately approved one
 production Supabase resume, private preservation and unsafe-state re-pause;
 those operations completed. Production is INACTIVE again. No production
@@ -148,14 +148,17 @@ SQL/configuration repair or another resume is authorized by that approval.
   decisions and actual isolated checkout, delivery, reconciliation/coupon/reversal.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
-- [ ] Review exact production Auth redirect changes and Google console settings;
-  verify actual isolated OAuth/SMTP/recovery after service restoration.
+- [ ] Review exact production Auth redirects, Google client/customer continuity
+  and rollback. Isolated OAuth passes Oct19; actual cloud SMTP/recovery remains.
 - [x] Prepare the owner-controlled replacement Google project/Web client and
   verify the isolated preview's expired window restores its provider settings,
   closes cleanly and preserves every original row. Credentials remain private
   on both machines. [Current state and test runbook](google-oauth.md).
-- [ ] Complete a real owner Google login in a fresh protected preview; verify
-  exact identity/session/USER role, existing-user continuity and separate
+- [x] Complete actual first and returning owner Google login on isolated fc8d813;
+  verify the same Auth/application/Google identity, USER role, original-row
+  preservation, final sessions0, all Auth fields restored and clean service closure.
+  Full45,827-file seal passes; two finite error counters remain unclassified.
+- [ ] Review existing production-customer identity continuity and separate
   production-client/configuration rollback before proposing a production switch.
 - [ ] Prepare exact production configuration/SQL diff and approved sequence.
 - [x] Draft PR #46 and [review checkpoints](review-status.md) record exact source,
@@ -502,3 +505,15 @@ journeys and explicit SQL/config/deploy/resume approval remain release gates.
 - [ ] Verify final documentation-head remote checks and read-back.
 - [ ] Continue remaining public/customer/admin journeys and visual review; resolve
   existing provider, hosting and production gates before completion/release.
+
+## Oct19 real Google login checkpoint
+
+- [x] Fresh locked fc8d813 build,147 client-asset secret exclusions, Unix19,
+  HTTPS11 and authorize-start7 pass before owner access.
+- [x] First/returning owner Google login, final normal sign-out,25 public/three
+  Auth table preservation, exact Auth restoration, app/tunnel closure and complete
+  45,827-file reinspection pass. Credential-free22-file/39,349-byte evidence is
+  retained outside/tmp; no off-site recovery claim.
+- [ ] Classify or reproduce the two finite application error counters without
+  inventing a historical cause. Production OAuth continuity, SMTP, Dodo,
+  host/DNS/pricing and concrete production approval remain separate gates.

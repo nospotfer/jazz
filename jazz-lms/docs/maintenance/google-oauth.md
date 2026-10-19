@@ -1,8 +1,9 @@
 # Google sign-in ownership and verification
 
-Updated 2026-10-17. The replacement Google configuration is prepared, but an
-actual Google login has not completed. Production configuration is unchanged;
-its Supabase project was confirmed INACTIVE on Oct17.
+Updated 2026-10-19. Actual first and returning Google login now pass on the
+isolated preview. Final normal sign-out removes the session; settings and
+services are restored/closed. Production configuration is unchanged and its
+Supabase project was confirmed INACTIVE on Oct19.
 
 ## Ownership and current state
 
@@ -11,8 +12,8 @@ its Supabase project was confirmed INACTIVE on Oct17.
 | Legacy Google project | Its number matches the stored production OAuth client prefix. The controlled personal account authenticates successfully but its exact project read returns 403. A legacy account is recorded in the credential inventory; its ownership is not verified, and the owner reports its 2FA unavailable. |
 | Replacement Google project | `culturadeljazz-auth-bf40f8`, display name Cultura del Jazz Auth. Oct16 exact project/IAM/billing reads confirm ACTIVE, the controlled personal account has Owner, billing disabled and no linked billing account. |
 | Replacement app and Web client | Owner reports creating the app, retaining Testing, adding the controlled test account and saving the three identity scopes. Supplied client JSON validates the replacement project and one isolated callback. Console audience/scope settings beyond that report have not been independently inspected. |
-| Isolated Supabase | `tvmhuacxctdgmejziaxg`, Jazz-LMS-Maintenance-Preview. New client credentials remain staged. Oct17 reads confirm Google and signup disabled, with the original site URL/redirect list restored. |
-| Test identity | One confirmed Auth user was created without a password, invitation or content grant. Oct17 verification finds no Google identity, session, sign-in timestamp or application User row. Existing five synthetic accounts remain unchanged. |
+| Isolated Supabase | `tvmhuacxctdgmejziaxg`, Jazz-LMS-Maintenance-Preview. Actual Oct19 OAuth passes on exact source `fc8d813`. After closure every Auth field matches the pre-window snapshot, with Google/signup disabled, nonce checking enabled and the staged client preserved. |
+| Test identity | The precreated confirmed Auth user is reused for both Google logins; the application profile and Google identity are unique and stable, role USER, no purchases. Final sessions are zero. All five original synthetic accounts and every original row remain unchanged. |
 | Production Supabase | `feavujcllgbzlvdvkkxx`. No replacement client, redirect, account, schema or deployment change has been made. Its previously approved resume/preservation/re-pause authorization is consumed. |
 
 The confirmed legacy dependency is Sign in with Google through Supabase. This
@@ -42,11 +43,42 @@ CLI identities and unrelated services. Existing credentials must be read
 explicitly for a bounded project operation; no automatic loading or key rotation
 is authorized.
 
+## Oct19 actual first login, returning login and sign-out
+
+A fresh locked build from exact `fc8d813` seals45,827 immutable files;147
+inspected client assets contain no supplied server/Google/management secrets.
+Unix19, HTTPS11 and seven no-follow authorize-start checks pass before owner
+access. Google is enabled only in the protected, leased preview; signup stays
+disabled and no custom SMTP/hooks/identity notifications are enabled.
+
+The owner completes Google login in normal Chrome on Behemoth. Independent
+backend reads verify reuse of the predeclared Auth ID, matching application ID,
+verified email, one Google identity, one session and USER role with no purchases.
+After normal sign-out and a second Google login, application ID/creation and
+Google identity fingerprints remain identical and the session fingerprint is
+new. Final normal sign-out leaves zero actor sessions.
+
+Before/after comparisons preserve25 public tables/1,510 original rows and three
+Auth tables, excluding only the exact declared test actor. The guardian restores
+all Auth fields to the private pre-window snapshot. App/tunnel exit cleanly,
+the run directory/processes are absent, the entire45,827-file seal passes again,
+and Behemoth's access file is replaced with a closed notice.
+
+The runtime receipt records zero warnings and **two error counters without a
+retained cause**. Owner reports and backend invariants prove the listed auth
+outcomes; no personal-browser console/network capture or error-free dashboard
+claim follows. Automatic reconciliation with payment credentials intentionally
+absent is a source-backed candidate: its missing-key500 is independently
+reproduced and repaired in33dd19f to explicit503 with closed-network regressions.
+That separate fix is not a retrospective attribution. Production customer
+continuity and actual SMTP remain unverified.
+
 ## Starting a new isolated test window
 
-The Oct16 origin, gate and access page have expired. Do not reuse their approval,
-cookies, sessions or tunnel URL. The current Behemoth access page is a closed
-notice, not a working test link. Time a new window to the owner's availability.
+The Oct16 and Oct19 origins, gates and access pages are closed. Do not reuse
+their cookies, sessions or tunnel URLs. Behemoth's access page is a closed notice.
+Time another human-login window to the owner's availability; the completed Oct19
+login checks do not need repeating merely because a temporary preview closed.
 
 1. Pin a clean committed source and a fresh private run directory. Prepare a new
    protected HTTPS origin, gate and fixed expiry using the existing
@@ -105,8 +137,9 @@ Management API success alone does not prove the applied state: the immediate
 Oct16 GET was stale and the later readback showed the changes. The API returned
 a populated secret representation different from the supplied secret and its
 plain SHA256. Do not treat it as a verified plaintext readback, overwrite the
-source file with it, or copy the returned value to another client. The actual
-Google-to-Supabase exchange remains the test of the supplied secret.
+source file with it, or copy the returned value to another client. Oct19 actual
+Google-to-Supabase exchanges validate the supplied secret operationally; they do
+not establish plaintext equality with the Management API representation.
 
 Before the owner's login, a no-follow authorize request can verify the Google
 HTTPS host, new client, exact isolated callback, basic identity scopes, code
@@ -159,5 +192,17 @@ Its 24 selected files/33,251 bytes retain source-bound build/seal, Unix19/HTTPS1
 seven authorize-start conditions, initial startup failures, restoration/closure
 and original-row preservation. Post-expiry inspection verifies 45,826 immutable
 files. Credential files, gate HTML/password and raw Auth configuration are
-excluded. This is local unencrypted evidence, not off-site recovery. Actual
-Google login, secret exchange and existing-customer continuity remain unverified.
+excluded. That earlier local unencrypted package predates actual Google login
+and secret exchange; it does not establish existing-customer continuity.
+
+The later actual-login package is owner-only at:
+
+```text
+/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-google-login-fc8d813-20261019
+```
+
+Its22 selected files/39,349 bytes are rehashed and exclude credentials, raw Auth
+configuration, actor references, gate HTML/password and personal-browser state.
+It retains first/returning login, sign-out, preservation, restoration, complete
+seal and the two unclassified error counters. This remains local unencrypted
+retention; production continuity, cloud mail and off-site recovery are separate.

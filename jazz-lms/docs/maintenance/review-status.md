@@ -1,12 +1,12 @@
 # Maintenance review checkpoints
 
-Updated 2026-10-15. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
+Updated 2026-10-19. Draft review: [PR #46](https://github.com/nospotfer/jazz/pull/46)
 on `maintenance/initial-audit`. Source is unreleased and maintenance remains
 incomplete. The separately approved production Supabase recovery/export/unsafe-state
 rollback completed; production is paused again. A provider build success is not
 proof of an isolated, working preview. Historical checkpoints below retain the
 evidence available at their dates; the latest sections supersede old access gates.
-Current source/test checkpoint `ac62f4a` restores an applied migration's exact
+Earlier source/test checkpoint `ac62f4a` restores an applied migration's exact
 historical SQL and adds four checksum regressions. A clean env-free local suite
 passes2,537 normal tests with80 intentional skips. Landing changes remain bound
 to`1e381a3`; the latest authenticated monetary browser proof is`5f9597a`, with
@@ -14,7 +14,34 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
-## Owner-controlled Google setup and closed preview
+## Oct19 actual Google login and closed preview
+
+Exact source `fc8d813` passes a fresh locked build and45,827-file seal,147
+client-asset secret exclusions, Unix19/HTTPS11 and seven authorize-start checks.
+The owner completes Google login, normal sign-out, returning Google login and
+final normal sign-out in Chrome on Behemoth. Independent reads prove matching
+Auth/application/Google identity, unchanged application ID/creation fingerprint,
+a fresh returning session, USER role and no purchases. Final sessions are zero.
+All original25 public tables/1,510 rows and three Auth tables are unchanged,
+excluding only the declared test actor.
+
+The guardian restores every Auth field to the pre-window snapshot. App/tunnel
+exit0 with clean owned cleanup, the run directory/processes are absent, Behemoth
+has a closed access notice and the full seal passes again. Production remains
+INACTIVE with no writes. The22-file/39,349-byte selected package
+`review-checkpoint-google-login-fc8d813-20261019` is retained/rehashed owner-only
+without credentials, raw Auth config, gate HTML or personal-browser state.
+
+Runtime diagnostics are warn0/error2 with no retained cause; neither actual
+OAuth success nor clean shutdown proves an error-free dashboard. Automatic
+reconciliation with intentionally absent payment credentials is a source-backed
+candidate; its missing-key500 is separately reproduced/repaired in33dd19f to
+explicit503 with164 focused closed-network checks. That does not identify the
+past events. Existing production-customer continuity,
+controlled SMTP, Dodo and final hosting/release gates remain open. See the
+[Google runbook](google-oauth.md).
+
+## Oct16–17 Google preparation and expired preview
 
 Oct16 Google preparation uses exact application source `f1df347`. Replacement
 project ownership/billing-off and the supplied isolated Web client are verified;
