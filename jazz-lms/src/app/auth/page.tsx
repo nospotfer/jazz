@@ -268,8 +268,9 @@ export default function AuthPage() {
     if (tabParam === "register" || flowParam === "register") {
       setActiveTab("register");
     }
-    if (urlEmail) {
-      setLoginEmail(urlEmail);
+    const normalizedUrlEmail = urlEmail?.trim().toLowerCase();
+    if (normalizedUrlEmail && isValidEmailAddress(normalizedUrlEmail)) {
+      setLoginEmail(normalizedUrlEmail);
     }
 
     if (oauthError) {
@@ -291,8 +292,12 @@ export default function AuthPage() {
     if (typeof window === "undefined") return;
 
     const rememberedEmail = window.localStorage.getItem(REMEMBER_EMAIL_KEY);
+    const explicitEmail = new URLSearchParams(window.location.search)
+      .get("email")?.trim().toLowerCase();
     if (rememberedEmail) {
-      setLoginEmail(rememberedEmail);
+      if (!explicitEmail || !isValidEmailAddress(explicitEmail)) {
+        setLoginEmail(rememberedEmail);
+      }
       setRememberMe(true);
     } else {
       setRememberMe(false);

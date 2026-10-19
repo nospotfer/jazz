@@ -27,6 +27,23 @@ describe('auth forms share the server email policy', () => {
   });
   afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
+  test.each([
+    { query: '?email=New%2BJazz%40Example.COM&just_registered=1', remembered: 'previous@example.com', expected: 'new+jazz@example.com', checked: true },
+    { query: '?email=New%2BJazz%40Example.COM&just_registered=1', remembered: null, expected: 'new+jazz@example.com', checked: false },
+    { query: '?email=invalid-address', remembered: 'previous@example.com', expected: 'previous@example.com', checked: true },
+    { query: '', remembered: 'previous@example.com', expected: 'previous@example.com', checked: true },
+  ])('prefills $expected from $query without changing the remember choice', async ({ query, remembered, expected, checked }) => {
+    window.history.replaceState({}, '', `/auth${query}`);
+    if (remembered) window.localStorage.setItem('auth:rememberEmail', remembered);
+    const AuthPage = (await import('@/app/auth/page')).default;
+    render(<AuthPage />);
+
+    expect((screen.getByLabelText(/^email$/i) as HTMLInputElement).value).toBe(expected);
+    expect((screen.getByRole('checkbox', { name: /remember me/i }) as HTMLInputElement).checked).toBe(checked);
+    expect(window.localStorage.getItem('auth:rememberEmail')).toBe(remembered);
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+
   test('registration blocks an email the backend rejects before account or OTP work', async () => {
     window.history.replaceState({}, '', '/auth?tab=register');
     const AuthPage = (await import('@/app/auth/page')).default;

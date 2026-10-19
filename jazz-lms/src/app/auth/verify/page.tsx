@@ -3,7 +3,16 @@
 import { useLanguage } from "@/components/providers/language-provider";
 import { isValidEmailAddress } from "@/lib/email-validation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const RESEND_COOLDOWN_SECONDS = 65;
+const MAX_RESEND_RETRY_SECONDS = 3600;
+
+function boundedRetrySeconds(value: unknown) {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0
+    ? Math.min(value, MAX_RESEND_RETRY_SECONDS)
+    : RESEND_COOLDOWN_SECONDS;
+}
 
 export default function VerifyCodePage() {
   const router = useRouter();
@@ -32,6 +41,8 @@ export default function VerifyCodePage() {
       verifyButton: "Verificar código",
       resending: "Enviando...",
       resendButton: "Reenviar código",
+      resendWait: (seconds: number) =>
+        `Puedes reenviar el código en ${seconds} ${seconds === 1 ? "segundo" : "segundos"}.`,
       backToLogin: "Volver a iniciar sesión",
     },
     en: {
@@ -55,6 +66,8 @@ export default function VerifyCodePage() {
       verifyButton: "Verify code",
       resending: "Sending...",
       resendButton: "Resend code",
+      resendWait: (seconds: number) =>
+        `You can resend the code in ${seconds} ${seconds === 1 ? "second" : "seconds"}.`,
       backToLogin: "Back to sign in",
     },
     fr: {
@@ -81,6 +94,8 @@ export default function VerifyCodePage() {
       verifyButton: "Vérifier le code",
       resending: "Envoi...",
       resendButton: "Renvoyer le code",
+      resendWait: (seconds: number) =>
+        `Vous pourrez renvoyer le code dans ${seconds} ${seconds === 1 ? "seconde" : "secondes"}.`,
       backToLogin: "Retour à la connexion",
     },
     pt: {
@@ -105,6 +120,8 @@ export default function VerifyCodePage() {
       verifyButton: "Verificar código",
       resending: "Enviando...",
       resendButton: "Reenviar código",
+      resendWait: (seconds: number) =>
+        `Você pode reenviar o código em ${seconds} ${seconds === 1 ? "segundo" : "segundos"}.`,
       backToLogin: "Voltar ao login",
     },
   }[language];
@@ -114,8 +131,45 @@ export default function VerifyCodePage() {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
+  const [verificationComplete, setVerificationComplete] = useState(false);
+  const [cooldownEndsAt, setCooldownEndsAt] = useState(0);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const actionPending = useRef(false);
+  const resendDeadline = useRef(0);
+  const mounted = useRef(false);
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      if (redirectTimer.current !== null) clearTimeout(redirectTimer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!cooldownEndsAt) return;
+    const updateCountdown = () => {
+      const seconds = Math.max(0, Math.ceil((cooldownEndsAt - Date.now()) / 1000));
+      setCooldownSeconds(seconds);
+      if (seconds === 0) {
+        resendDeadline.current = 0;
+        setCooldownEndsAt(0);
+      }
+    };
+    const interval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+    return () => clearInterval(interval);
+  }, [cooldownEndsAt]);
+
+  const startResendCooldown = (seconds: number) => {
+    const deadline = Date.now() + seconds * 1000;
+    resendDeadline.current = deadline;
+    setCooldownEndsAt(deadline);
+    setCooldownSeconds(seconds);
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -135,6 +189,7 @@ export default function VerifyCodePage() {
 
   const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (actionPending.current) return;
 
     const normalizedEmail = email.trim().toLowerCase();
     if (!isValidEmailAddress(normalizedEmail) || !/^\d{6,10}$/.test(code.trim())) {
@@ -142,10 +197,12 @@ export default function VerifyCodePage() {
       return;
     }
 
+    actionPending.current = true;
     setSubmitting(true);
     setError("");
     setMessage("");
 
+    let verified = false;
     try {
       const res = await fetch("/api/auth/verify-code", {
         method: "POST",
@@ -157,25 +214,30 @@ export default function VerifyCodePage() {
       });
 
       const data = await res.json();
+      if (!mounted.current) return;
       if (!res.ok) {
         setError(data.error || copy.invalidCode);
         return;
       }
 
+      verified = true;
+      setVerificationComplete(true);
       setMessage(copy.verified);
-      setTimeout(() => {
+      redirectTimer.current = setTimeout(() => {
         router.push(
           `/auth?tab=login&email=${encodeURIComponent(normalizedEmail)}&just_registered=1`,
         );
       }, 1200);
     } catch {
-      setError(copy.verifyFailed);
+      if (mounted.current) setError(copy.verifyFailed);
     } finally {
-      setSubmitting(false);
+      if (!verified) actionPending.current = false;
+      if (mounted.current) setSubmitting(false);
     }
   };
 
   const handleResendCode = async () => {
+    if (actionPending.current || Date.now() < resendDeadline.current) return;
     const normalizedEmail = email.trim().toLowerCase();
 
     if (!isValidEmailAddress(normalizedEmail)) {
@@ -183,6 +245,7 @@ export default function VerifyCodePage() {
       return;
     }
 
+    actionPending.current = true;
     setResending(true);
     setError("");
     setMessage("");
@@ -194,17 +257,23 @@ export default function VerifyCodePage() {
         body: JSON.stringify({ email: normalizedEmail }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || copy.resendFailed);
+      const data = await res.json().catch(() => null);
+      if (!mounted.current) return;
+      if (res.status === 429) {
+        startResendCooldown(boundedRetrySeconds(data?.retryAfterSeconds));
+      }
+      if (!res.ok || !data) {
+        setError(typeof data?.error === "string" ? data.error : copy.resendFailed);
         return;
       }
 
+      startResendCooldown(RESEND_COOLDOWN_SECONDS);
       setMessage(copy.resendSuccess);
     } catch {
-      setError(copy.resendFailed);
+      if (mounted.current) setError(copy.resendFailed);
     } finally {
-      setResending(false);
+      actionPending.current = false;
+      if (mounted.current) setResending(false);
     }
   };
 
@@ -212,7 +281,7 @@ export default function VerifyCodePage() {
     <div className="flex items-center justify-center min-h-screen bg-background p-3 sm:p-4">
       <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden">
         <div className="p-5 sm:p-8 space-y-5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">
             {copy.title}
           </h1>
           <p className="text-sm text-muted-foreground text-center">
@@ -232,6 +301,7 @@ export default function VerifyCodePage() {
                 type="email"
                 name="email"
                 autoComplete="email"
+                disabled={submitting || resending || verificationComplete}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={inputClasses}
@@ -252,6 +322,7 @@ export default function VerifyCodePage() {
                 type="text"
                 name="verificationCode"
                 autoComplete="one-time-code"
+                disabled={submitting || resending || verificationComplete}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 value={code}
@@ -264,19 +335,19 @@ export default function VerifyCodePage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 dark:text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
             {message && !error && (
-              <p className="text-sm text-green-700 dark:text-green-400 bg-green-900/20 border border-green-700/40 rounded-lg px-3 py-2">
+              <p role="status" className="text-sm text-green-700 dark:text-green-400 bg-green-900/20 border border-green-700/40 rounded-lg px-3 py-2">
                 {message}
               </p>
             )}
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || resending || verificationComplete}
               className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? copy.verifying : copy.verifyButton}
@@ -287,7 +358,8 @@ export default function VerifyCodePage() {
             <button
               type="button"
               onClick={handleResendCode}
-              disabled={resending}
+              disabled={submitting || resending || verificationComplete || cooldownSeconds > 0}
+              aria-describedby={cooldownSeconds > 0 ? "resend-cooldown" : undefined}
               className="text-sm text-primary hover:text-primary/80 disabled:opacity-70 transition-colors"
             >
               {resending ? copy.resending : copy.resendButton}
@@ -300,6 +372,11 @@ export default function VerifyCodePage() {
               {copy.backToLogin}
             </button>
           </div>
+          {cooldownSeconds > 0 && (
+            <p id="resend-cooldown" role="timer" aria-live="off" className="text-sm text-muted-foreground">
+              {copy.resendWait(cooldownSeconds)}
+            </p>
+          )}
         </div>
       </div>
     </div>
