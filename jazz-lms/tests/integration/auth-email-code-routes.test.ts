@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({
   getUserById: vi.fn(),
   createUser: vi.fn(),
   updateUserById: vi.fn(),
-  signInWithOtp: vi.fn(),
+  resend: vi.fn(),
   verifyOtp: vi.fn(),
   userFindUnique: vi.fn(),
   userUpsert: vi.fn(),
@@ -21,7 +21,7 @@ vi.mock("@supabase/supabase-js", () => ({
         createUser: mocks.createUser,
         updateUserById: mocks.updateUserById,
       },
-      signInWithOtp: mocks.signInWithOtp,
+      resend: mocks.resend,
       verifyOtp: mocks.verifyOtp,
     },
   }),
@@ -78,7 +78,7 @@ beforeEach(() => {
     error: null,
   });
   mocks.updateUserById.mockResolvedValue({ error: null });
-  mocks.signInWithOtp.mockResolvedValue({ error: null });
+  mocks.resend.mockResolvedValue({ error: null });
   mocks.verifyOtp.mockResolvedValue({ data: { user: null }, error: null });
   mocks.userFindUnique.mockResolvedValue(null);
   mocks.userUpsert.mockResolvedValue({ id: "uid-upsert" });
@@ -102,12 +102,12 @@ describe("POST /api/auth/send-code", () => {
     const { POST } = await import("@/app/api/auth/send-code/route");
 
     expect((await POST(requestJson({ email: "student@example.com" }))).status).toBe(503);
-    expect(mocks.signInWithOtp).not.toHaveBeenCalled();
+    expect(mocks.resend).not.toHaveBeenCalled();
     expect(mocks.listUsers).not.toHaveBeenCalled();
   });
 
-  test("reports a disabled OTP configuration instead of claiming email was sent", async () => {
-    mocks.signInWithOtp.mockResolvedValue({ error: { code: "otp_disabled", message: "OTP disabled" } });
+  test("reports a disabled email provider instead of claiming email was sent", async () => {
+    mocks.resend.mockResolvedValue({ error: { code: "email_provider_disabled", message: "Email disabled" } });
     const { POST } = await import("@/app/api/auth/send-code/route");
 
     expect((await POST(requestJson({ email: "student@example.com" }))).status).toBe(400);
@@ -127,7 +127,7 @@ describe("POST /api/auth/send-code", () => {
   });
 
   test("does not enumerate unknown accounts or create them during resend", async () => {
-    mocks.signInWithOtp.mockResolvedValue({ error: { code: "user_not_found", message: "not found" } });
+    mocks.resend.mockResolvedValue({ error: { code: "user_not_found", message: "not found" } });
     const { POST } = await import("@/app/api/auth/send-code/route");
     const response = await POST(requestJson({ email: "student@example.com" }));
 
@@ -139,8 +139,8 @@ describe("POST /api/auth/send-code", () => {
     );
     expect(mocks.listUsers).not.toHaveBeenCalled();
     expect(mocks.createUser).not.toHaveBeenCalled();
-    expect(mocks.signInWithOtp).toHaveBeenCalledWith({
-      email: "student@example.com", options: { shouldCreateUser: false },
+    expect(mocks.resend).toHaveBeenCalledWith({
+      type: "signup", email: "student@example.com",
     });
   });
 
@@ -158,7 +158,7 @@ describe("POST /api/auth/send-code", () => {
   });
 
   test("returns 429 on Supabase OTP rate limiting", async () => {
-    mocks.signInWithOtp.mockResolvedValue({
+    mocks.resend.mockResolvedValue({
       error: { message: "rate limit exceeded" },
     });
 
@@ -185,11 +185,9 @@ describe("POST /api/auth/send-code", () => {
     await expect(response.json()).resolves.toEqual(
       expect.objectContaining({ success: true }),
     );
-    expect(mocks.signInWithOtp).toHaveBeenCalledWith({
+    expect(mocks.resend).toHaveBeenCalledWith({
+      type: "signup",
       email: "student@example.com",
-      options: {
-        shouldCreateUser: false,
-      },
     });
     expect(mocks.getUserById).toHaveBeenCalledWith("uid-after-first-50");
     expect(mocks.listUsers).not.toHaveBeenCalled();
@@ -207,7 +205,7 @@ describe("POST /api/auth/register", () => {
     expect(mocks.updateUserById).not.toHaveBeenCalled();
     expect(mocks.userUpsert).not.toHaveBeenCalled();
     expect(mocks.listUsers).not.toHaveBeenCalled();
-    expect(mocks.signInWithOtp).toHaveBeenCalledWith({ email: "student@example.com", options: { shouldCreateUser: false } });
+    expect(mocks.resend).toHaveBeenCalledWith({ type: "signup", email: "student@example.com" });
   });
 
   test.each([
@@ -223,7 +221,7 @@ describe("POST /api/auth/register", () => {
     expect(mocks.listUsers).not.toHaveBeenCalled();
     expect(mocks.createUser).not.toHaveBeenCalled();
     expect(mocks.updateUserById).not.toHaveBeenCalled();
-    expect(mocks.signInWithOtp).not.toHaveBeenCalled();
+    expect(mocks.resend).not.toHaveBeenCalled();
     expect(mocks.userUpsert).not.toHaveBeenCalled();
   });
 
@@ -236,11 +234,11 @@ describe("POST /api/auth/register", () => {
     expect(mocks.createUser).not.toHaveBeenCalled();
     expect(mocks.updateUserById).not.toHaveBeenCalled();
     expect(mocks.userUpsert).not.toHaveBeenCalled();
-    expect(mocks.signInWithOtp).not.toHaveBeenCalled();
+    expect(mocks.resend).not.toHaveBeenCalled();
   });
 
   test("saves the newly created pending identity even when initial OTP delivery fails", async () => {
-    mocks.signInWithOtp.mockResolvedValue({ error: { message: "Email delivery failed" } });
+    mocks.resend.mockResolvedValue({ error: { message: "Email delivery failed" } });
     const { POST } = await import("@/app/api/auth/register/route");
 
     expect((await POST(requestJson({ email: "student@example.com", password: "password123", fullName: "Student" }))).status).toBe(400);
@@ -302,7 +300,7 @@ describe("POST /api/auth/register", () => {
         }),
       }),
     );
-    expect(mocks.signInWithOtp).toHaveBeenCalledTimes(1);
+    expect(mocks.resend).toHaveBeenCalledTimes(1);
   });
 
   test("resumes pending registration without replacing its password or profile", async () => {
@@ -325,7 +323,7 @@ describe("POST /api/auth/register", () => {
     expect(mocks.createUser).not.toHaveBeenCalled();
     expect(mocks.updateUserById).not.toHaveBeenCalled();
     expect(mocks.userUpsert).not.toHaveBeenCalled();
-    expect(mocks.signInWithOtp).toHaveBeenCalledOnce();
+    expect(mocks.resend).toHaveBeenCalledOnce();
     expect(mocks.listUsers).not.toHaveBeenCalled();
     expect(await response.json()).toMatchObject({ success: true, pendingRegistration: true });
   });

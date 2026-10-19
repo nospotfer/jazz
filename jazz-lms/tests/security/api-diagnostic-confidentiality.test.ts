@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@supabase/supabase-js", () => ({ createClient: () => ({ auth: {
-  admin: { createUser: mocks.createUser }, signInWithOtp: mocks.otp, verifyOtp: mocks.verifyOtp,
+  admin: { createUser: mocks.createUser }, resend: mocks.otp, verifyOtp: mocks.verifyOtp,
 } }) }));
 vi.mock("@/utils/supabase/server", () => ({ createClient: () => ({ auth: { getUser: mocks.getUser } }) }));
 vi.mock("@/utils/supabase/admin", () => ({ createAdminClient: () => { throw new Error("Unexpected storage client"); } }));

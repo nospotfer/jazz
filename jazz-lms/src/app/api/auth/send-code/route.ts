@@ -94,13 +94,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use Supabase Admin client to send OTP via Supabase's built-in email
+    // Resend confirmation for a pending account without public signup or login.
     const supabase = createClient(url!, serviceRoleKey!, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
     // A known DB id gives an exact auth lookup regardless of directory size.
-    // Unknown/auth-only accounts go through OTP without any directory scan.
+    // Unknown/auth-only accounts use the non-creating resend endpoint directly.
     if (existingUser) {
       const { data, error } = await supabase.auth.admin.getUserById(existingUser.id);
       if (error || !data.user || data.user.email?.toLowerCase() !== normalizedEmail) {
@@ -117,11 +117,9 @@ export async function POST(request: Request) {
       }
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.resend({
+      type: "signup",
       email: normalizedEmail,
-      options: {
-        shouldCreateUser: false,
-      },
     });
 
     if (error) {

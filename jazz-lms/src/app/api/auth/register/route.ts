@@ -179,12 +179,11 @@ export async function POST(request: Request) {
       });
     }
 
-    // Send verification only; existing credentials stay unchanged.
-    const { error: otpError } = await supabase.auth.signInWithOtp({
+    // Confirm the admin-created pending account without entering public signup.
+    // OTP magic-link sign-in can re-enter Signup for an unconfirmed account.
+    const { error: otpError } = await supabase.auth.resend({
+      type: "signup",
       email: normalizedEmail,
-      options: {
-        shouldCreateUser: false,
-      },
     });
 
     if (otpError) {
