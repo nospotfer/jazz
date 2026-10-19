@@ -97,9 +97,9 @@ export default function ResetPasswordPage() {
       tokenInvalid:
         "Este link de redefinição é inválido ou expirou. Solicite um novo.",
       tokenValidationFailed:
-        "No fue posible validar el enlace de restablecimiento. Solicita uno nuevo.",
+        "Não foi possível validar o link de redefinição. Solicite um novo.",
       minPassword: "A senha deve ter pelo menos 8 caracteres",
-      updateFailed: "No fue posible actualizar la contraseña",
+      updateFailed: "Não foi possível atualizar a senha",
       updated: "Senha atualizada com sucesso!",
       validatingLink: "Validando link de redefinição...",
       invalidTitle: "Link de redefinição inválido",
@@ -113,7 +113,7 @@ export default function ResetPasswordPage() {
       confirmNewPassword: "Confirmar nova senha",
       passwordPlaceholder: "Sua nova senha",
       confirmPasswordPlaceholder: "Confirme sua nova senha",
-      passwordMismatch: "Las contraseñas no coinciden",
+      passwordMismatch: "As senhas não coincidem",
       hidePassword: "Ocultar senha",
       showPassword: "Mostrar senha",
       minCharacters: "Mínimo de 8 caracteres",
@@ -211,7 +211,7 @@ export default function ResetPasswordPage() {
             hasToken: Boolean(recoveryToken),
             hasAccessToken: Boolean(readParam("access_token")),
             hasRefreshToken: Boolean(readParam("refresh_token")),
-            recoveryType,
+            isRecoveryType: recoveryType === "recovery",
             referrerHasSupabaseVerify: document.referrer.includes(
               "/auth/v1/verify",
             ),
@@ -240,7 +240,7 @@ export default function ResetPasswordPage() {
 
             if (otpError) {
               logRecoveryDebug("verify-otp-failed", {
-                errorMessage: otpError.message,
+                diagnostic: safeErrorDiagnostic(otpError),
               });
               hadCredentialValidationError = true;
             } else {
@@ -254,9 +254,7 @@ export default function ResetPasswordPage() {
           const hashErrorDescription = readParam("error_description");
 
           if (hashErrorDescription) {
-            logRecoveryDebug("hash-error", {
-              hashErrorDescription,
-            });
+            logRecoveryDebug("hash-error");
             setTokenError(copy.tokenInvalid);
             setTokenValid(false);
             setLoadingToken(false);
@@ -272,7 +270,7 @@ export default function ResetPasswordPage() {
 
             if (sessionError) {
               logRecoveryDebug("set-session-failed", {
-                errorMessage: sessionError.message,
+                diagnostic: safeErrorDiagnostic(sessionError),
               });
               setTokenError(copy.tokenInvalid);
               setTokenValid(false);
@@ -388,7 +386,7 @@ export default function ResetPasswordPage() {
         password,
       });
       if (updateError) {
-        setError(updateError.message || copy.updateFailed);
+        setError(copy.updateFailed);
         return;
       }
 

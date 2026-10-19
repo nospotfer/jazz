@@ -14,6 +14,24 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 recovery error privacy and localization
+
+The reset page still logged arbitrary URL error descriptions/type and raw
+OTP/session provider prose. Four rendered-component regressions reproduce those
+private-detail emissions; four further cases reject unlocalized update errors
+across ES/EN/FR/PT. All eight fail before the repair and pass afterward.
+Diagnostics now retain only owned stages, booleans and the existing finite
+error categories/statuses. Update failures use localized copy, and three
+Portuguese messages no longer fall back to Spanish.
+
+The three focused files pass 47 tests; full types and touched-file lint pass
+without errors or warnings. Independent diff review finds no identity, PKCE,
+session, update-payload, success-timing or logout/navigation change. These are
+mocked component/route checks, with no email/provider operation or deployment.
+The prepared hosted retest remains explicitly bound to the earlier sealed
+source30d848a, with no new mail authority. Later source proof does not retroactively
+complete the incomplete hosted recovery below.
+
 ## Oct19 late automated reset delivery and redirect gap
 
 One newly approved automated reset on the same sealed source30d848a produces

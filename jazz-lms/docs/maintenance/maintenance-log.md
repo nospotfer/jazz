@@ -1949,3 +1949,28 @@ The maintenance goal remains active and incomplete.
   No actual secrets/bodies/recovery values; a controlled alias and synthetic values
   remain in code. Fresh coherent activation scope and separate approval still
   precede any hosted use. Actual hosted recovery remains incomplete.
+
+## 2026-10-20 — Recovery diagnostics and localized failures
+
+- Independent local source review finds four remaining raw diagnostic surfaces:
+  URL error description/type and OTP/session provider prose. Four synthetic
+  rendered-component cases reproduce those emissions. Update failures also
+  display provider prose; four ES/EN/FR/PT cases fail the localized contract.
+- Freeze the original source/final regression contract before repair. All eight
+  cases fail; after replacing raw diagnostic values with booleans and the existing
+  finite helper, and update errors with owned copy, all eight pass. Correct three
+  Portuguese messages that were still Spanish.
+- Three focused files pass 47 checks. Full types and scoped lint pass with no
+  touched-file warnings. Independent read-only review finds no identity, PKCE,
+  session, password-update payload, success-timing or logout/navigation change.
+  All provider calls are mocked, unexpected fetch is denied, and no email,
+  actual password change or production operation is performed.
+- Separately finish the disabled coherent hosted retest preparation: 155 offline
+  checks include the previous 103 transport checks, with actual generated helper
+  schemas and recorded browser acceptance times. Parent independently reruns its
+  14 generated-pipeline cases. All three old mail budgets remain spent. Retain
+  30 selected files/232,904 bytes owner-only outside /tmp; no credentials/body/
+  browser state. Exact code/barrier change plan and rollback are reviewable.
+- A new one-email approval question is pending. The hosted plan remains frozen
+  to sealed source30d848a and needs fresh actual preflight before any activation.
+  The new source-only privacy/copy proof does not complete hosted recovery.

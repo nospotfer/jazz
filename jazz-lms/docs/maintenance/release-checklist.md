@@ -32,6 +32,10 @@ SQL/configuration repair or another resume is authorized by that approval.
 
 ## Review gates
 
+- [x] Repair reset-page diagnostic privacy and localization: eight new component
+  regressions fail before repair and pass after; 47 focused checks, types and
+  scoped lint pass. No identity/PKCE/session/update/logout logic changes and no
+  provider operation. Hosted recovery remains a separate unchecked gate below.
 - [x] Published application source30d848a: exact Quality/Secret Scan PR/push and
   CodeQL pass; logs verify2,576 normal/80 skips,80 persisted/one skip,
   types/webpack/static31-of-31 and lint0errors/22 warnings. Exact PR-ref analyses

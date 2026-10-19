@@ -173,6 +173,35 @@ with no actual credentials, bodies, links, codes or browser state. Retention is
 local/unencrypted, not off-site recovery. No real providers, current/personal
 profiles, emails or production resources are used by this fixture.
 
+### Coherent hosted retest preparation
+
+The follow-up owner-only package
+`/tmp/jazz-maintenance/recovery-hosted-preparation-20261020/` is prepared and
+disabled. Its 155 offline checks include the earlier 103 transport checks;
+these counts overlap. Actual generated records bind parent reservation,
+browser numeric acceptance time, dispatcher receipt, bounded reader and
+guardian. Metadata reads are limited to six latest-five polls over 60 seconds;
+at most two body GETs may read the same one fresh controlled test message.
+All three historical send budgets remain spent.
+
+The proposed one-send, one-password-update, eight-field, 25-minute scope is
+awaiting a new explicit owner reply. Every operational entry remains disabled;
+reviewed enabling changes and fresh provider/USER/full-seal/native19/private11
+checks precede any send. Reuse the exact sealed source30 public-build origin
+with a fresh gate/deadline. Original accounts remain preserved; normal logout
+and cleanup are scoped to the same controlled synthetic actor.
+
+Thirty selected preparation files (232,904 bytes) are retained/rehashed
+owner-only outside /tmp, manifest
+`960edd60dd15147a528134459be3955a1e878de5dc88702d79ed3a4171f741cf`.
+No actual credentials, message bodies or browser state are included. This is
+local unencrypted retention, not off-site recovery or hosted proof.
+
+A later source-only follow-up removes raw reset-page diagnostic/error prose
+and corrects Portuguese copy, with eight failing-before/passing-after cases
+and 47 focused checks. It changes no recovery protocol. That source verification
+does not extend the frozen source30 hosted artifact or grant another email.
+
 ## Evening one-reset window and delivery
 
 At21:45UTC the owner explicitly approves exactly one additional reset email for
