@@ -40,8 +40,8 @@ cloud SMTP remain separate. See the [Google sign-in runbook](google-oauth.md).
 - All 79 copied backup artifacts are independently hash-verified in an
   owner-only directory outside temporary storage:
   `/home/gabriel/backups/culturadeljazz-maintenance/2026-10-13-recovery-689f1b24`.
-  Raw API-key responses and credential packets are excluded. This is a local
-  preservation copy, not an encrypted off-site backup.
+  Raw API-key responses and credential packets are excluded. The original local
+  preservation is unchanged; an encrypted second-host copy is verified below.
 
 The initial manager evidence below is retained as historical preflight. It no
 longer means that production SQL/data preservation has never been attempted.
@@ -150,8 +150,74 @@ pre-satisfied one role CREATE while retaining original ALTER/GRANT semantics.
 All five original temporary verifier containers are removed; existing local and cloud
 fixture databases are untouched. Five private verification reports and their
 integrity manifest were hash-copied into the durable local backup's
-offline-verification directory. This remains a local backup, with no encrypted
-off-site copy or complete platform-recovery claim.
+offline-verification directory. These historical restore reports do not establish
+off-site custody or complete platform recovery.
+
+## Encrypted second-host preservation — Oct20
+
+The original production preservation now has an encrypted copy on both Monster
+and Behemoth, outside `/tmp`. The scope is exactly the original79 artifacts plus
+their original local manifest: **80 files / 7,757,784 plaintext bytes**. Later
+review packages, preview credentials and personal keyrings are excluded. This
+is a copy of the Oct13 preservation, not a fresh production snapshot.
+
+Both machines hold the same7,827,280-byte `preservation.gpg` at:
+
+`/home/gabriel/backups/culturadeljazz-maintenance/encrypted-preservation/20261020-production-archive-v1/`
+
+Its SHA256 is
+`c53f73927f96d0ab6f18d86338623a8c89627e14123240fe1a7860b0980993e9`.
+The original manifest SHA256 remains
+`a03bfb14997f9b98e4cce7369c34e66f08214b4eb20dad4714ea814fd1f51dac`.
+Actual execution freshly hashes each source before, during and after streaming
+tar directly into AES256 GnuPG encryption; it creates no plaintext tar archive.
+All original source signatures, bytes and hashes remain unchanged. Only encrypted
+bytes travel over the already verified strict-known-host SSH connection.
+
+On Behemoth, actual decryption verifies all80 unique regular members and every
+file hash, then drains the stream and requires GnuPG exit0 and complete integrity
+success. Nothing is extracted to disk. A separate second run succeeds from the
+five durable receiver files: `reverify.py`, `remote_worker.py`,
+`verification-spec-private.json`, `verification-receipt.json` and `RECOVERY.md`.
+The receiver can repeat verification without Monster, provider access or email:
+
+```bash
+/usr/bin/python3 /home/gabriel/backups/culturadeljazz-maintenance/encrypted-preservation/20261020-production-archive-v1/reverify.py
+```
+
+The dedicated RSA3072 recipient private key remains **only on Behemoth** under
+`/home/gabriel/.config/culturadeljazz-maintenance/backup-key-20261020/gpg`.
+Its fingerprint is `530B89495C232FA7A7363D4FA6553387439E169C`. Monster receives
+only the public certificate, under the separate `backup-pub-20261020/gpg` home.
+No private-key export or personal-keyring access occurs. Actual source/archive/
+receiver metadata/key files are0600 under0700 private boundaries, and both
+isolated GnuPG agents are confirmed closed after verification.
+
+**Custody limits:** the Behemoth private key is online and has no passphrase.
+Independent offline key escrow and physical off-site separation are unverified;
+losing that key loses decryption of both encrypted copies. Preserve the key and
+ciphertext together when planning recovery. This closes the second-host copy
+gap, not off-site, periodic retention, atomic DB/Storage, platform/configuration
+or complete account recovery. Original manifest flags remain historical and
+are not rewritten. Actual extraction/restoration needs a separate private target
+and the reviewed database recovery procedure; this copy authorizes no production
+resume, SQL/configuration change or deployment.
+
+Preparation passed13 source-bound real synthetic GPG/tar checks, including wrong
+source hashes, symlinks, duplicate members, damaged ciphertext with a matching
+transfer digest and owned cleanup. Actual production-archive encryption and
+durable receiver verification are separate successful evidence. Private operator
+code and finite receipts originate at
+`/tmp/jazz-maintenance/encrypted-second-host-preservation-20261020/`; the durable
+copy and receiver verifier above do not depend on that temporary directory.
+Twelve selected operator-code/finite-proof files,55,571 bytes, are separately
+rehashed and retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-encrypted-preservation-20261020/`,
+manifest SHA256
+`b4a99ce9a7d1ed3341027fa8fc67740335defba775c258a17cd45bb183574982`.
+That selected package excludes ciphertext, keys, member specifications,
+credentials and customer rows. Independent read-only source/receipt and document
+reviews find no material issue.
 
 ## Verified project and account
 

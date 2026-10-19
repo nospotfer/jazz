@@ -14,6 +14,23 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 encrypted second-host preservation
+
+The original79 production preservation artifacts plus their unchanged manifest
+are encrypted and hash-verified on Monster and Behemoth:80 files/7,757,784
+plaintext bytes,7,827,280 ciphertext bytes. Actual receiver decryption verifies
+every member hash and complete GnuPG integrity without extraction. A second
+successful run uses only the five durable receiver verifier/spec/receipt/help
+files; it requires neither Monster nor provider/email access. Original source
+signatures/hashes are unchanged, files/directories are0600/0700 and both scoped
+GnuPG agents close. Preparation separately passes13 real synthetic checks.
+
+The dedicated private key is only on Behemoth and has no passphrase; Monster has
+only public material. Physical off-site separation, independent key escrow,
+periodic retention and full platform/configuration recovery remain unverified.
+No production/provider/Auth/mail operation occurs. [Exact paths, checksums and
+re-verification command](supabase.md#encrypted-second-host-preservation--oct20).
+
 ## Oct20 recovery error privacy and localization
 
 The reset page still logged arbitrary URL error descriptions/type and raw
@@ -31,6 +48,13 @@ mocked component/route checks, with no email/provider operation or deployment.
 The prepared hosted retest remains explicitly bound to the earlier sealed
 source30d848a, with no new mail authority. Later source proof does not retroactively
 complete the incomplete hosted recovery below.
+
+Published application/test source46a4dc9 passes exact Quality PR/push and Secret
+Scan PR/push plus CodeQL. Downloaded logs verify2,584 normal passes/80 skips,
+753 integration passes/29 skips,80 persisted passes/one REST skip,
+types/webpack/static31-of-31 and lint0errors/22 existing warnings. Exact analyses
+have0 results/errors/open PR-ref alerts; the300-changed-file diff retrieval
+warning and five earlier main alerts remain separate.
 
 ## Oct19 late automated reset delivery and redirect gap
 

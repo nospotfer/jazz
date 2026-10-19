@@ -1974,3 +1974,34 @@ The maintenance goal remains active and incomplete.
 - A new one-email approval question is pending. The hosted plan remains frozen
   to sealed source30d848a and needs fresh actual preflight before any activation.
   The new source-only privacy/copy proof does not complete hosted recovery.
+
+## 2026-10-20 — Encrypted second-host preservation
+
+- Scope exactly79 original Oct13 production preservation artifacts plus their
+  unchanged local manifest:80 files/7,757,784 bytes. Exclude later review and
+  preview credential trees. Read-only feasibility confirms trusted Behemoth SSH,
+  available system GnuPG and space; no paid service or production access needed.
+- Peer review resolves a long agent-socket path and two early/partial cleanup
+  gaps. Final source-bound13 real synthetic GPG/tar checks pass, including
+  damaged ciphertext with a matching transfer digest. Actual source inspection
+  passes before execution; no synthetic result is used as customer-data proof.
+- Actual execution succeeds: fresh source hashes before/during/after, streamed
+  tar→AES256 encryption with no plaintext archive, ciphertext-only transfer,
+  matching7,827,280-byte copies, exact80 decrypted member hashes and complete
+  GnuPG integrity/exit0. Original inode/owner/mode/size/mtime/ctime signatures
+  and hashes remain unchanged. The original manifest is not rewritten.
+- Persist five private receiver verifier/spec/receipt/help files beside the
+  Behemoth archive, then run the verifier from those durable files. All80 members
+  and integrity checks pass again without extraction or Monster/provider/email
+  dependency. Receiver archive/key files remain0600 under0700 boundaries; both
+  dedicated GnuPG agents are confirmed closed. [Paths and checksums](supabase.md#encrypted-second-host-preservation--oct20).
+- Dedicated RSA3072 private key stays on Behemoth; Monster receives only public
+  material. Key is online with no passphrase and no independent escrow. Physical
+  off-site separation, periodic retention, atomic DB/Storage and full platform/
+  configuration recovery remain open. No production/Auth/SMTP/DNS/billing or
+  mail operation occurs; the separate recovery approval question stays pending.
+- Retain/re-hash12 selected operator-code/finite-proof files/55,571 bytes under
+  the owner-only durable review checkpoint. Exclude ciphertext, keys, member
+  specifications, credentials and customer rows. Independent read-only source/
+  actual-receipt and document reviews find no material issue; no restore or
+  physical off-site claim is added.

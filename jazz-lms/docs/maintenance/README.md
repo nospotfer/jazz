@@ -1,6 +1,6 @@
 # Initial maintenance and stabilization
 
-Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-19.
+Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-20.
 [Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
 changes. **The goal is incomplete and the changes are not deployed.** The owner
 requested a stable, tested project and a more attractive, usable website while
@@ -8,8 +8,8 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
 
 ## Current verified checkpoint
 
-- Published source/test checkpoint `fc8d813` passes Quality PR/push, Secret Scan and CodeQL,
-  with zero open head-ref alerts. Downloaded logs verify 2,537 normal passes/80
+- Published source/test checkpoint `46a4dc9` passes Quality PR/push, Secret Scan and CodeQL,
+  with zero open head-ref alerts. Downloaded logs verify 2,584 normal passes/80
   intentional skips, 80 persisted passes/one REST skip (79 actual PostgreSQL cases
   plus one metadata case), types, webpack build and lint 0 errors/22 existing warnings.
 - Landing changes improve the hero, mobile actions/menu, contrast, touch targets
@@ -27,6 +27,11 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
   all 68 exported Storage files are verified. Production was last confirmed
   INACTIVE. Critical browser grants and self-role escalation require the prepared
   hardening together with repaired code/configuration before another resume.
+- The original preservation now has an encrypted second-host copy on Behemoth:
+  all80 files/7,757,784 plaintext bytes pass decrypted hashes and full integrity,
+  including a second run from durable receiver files. The receiver-only private
+  key is online without a passphrase; physical off-site separation, independent
+  key custody and periodic retention remain open. [Verifier and custody](supabase.md#encrypted-second-host-preservation--oct20).
 - Offline recovery now verifies exact 225-column hardening, literal additive
   currency SQL and strict 227 postchecks. The completed Prisma5.17 history
   rehearsal preserves all four original ledger records byte-for-byte, adds
@@ -66,7 +71,7 @@ files/39,349 bytes, including the explicit two-error diagnostic limitation.
 | Gate | Evidence or decision still needed |
 | --- | --- |
 | Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Account evidence for customer, merchant/team and webhook-alert recipients before the prepared sandbox transactions. The controlled customer email is known; it does not authorize mail to unknown team recipients. TEST product/coupon API acceptance and synthetic app journeys are already verified. |
-| Cloud auth mail and production Google transition | Actual first/returning isolated Google login and normal final sign-out pass. Production client/callback/customer continuity remain a reviewed release operation. Controlled SMTP recipients and bounded cloud registration/reset delivery remain unverified; local emailed OTP/PKCE proof is separate. |
+| Cloud auth mail and production Google transition | Actual first/returning isolated Google login, hosted email confirmation, password login and logout pass. Hosted reset emails are delivered, but recovery exchange remains incomplete. The prepared automated retest needs its separate pending approval; prior mail budgets are spent. Fresh complete registration and production client/template/callback/customer continuity remain gates. [Email evidence](cloud-auth-mail.md). |
 | Price, currency and tax authority | Review the archived EUR 29.99 catalog interpretation against the live EUR 29.90 tax-exclusive product. Current source stores server quotes separately from canonical charged facts. No production catalog/provider change is authorized. |
 | Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
 | Production recovery and release | Fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence, followed by explicit owner approval. Offline success does not authorize production changes. |

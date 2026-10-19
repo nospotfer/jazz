@@ -129,6 +129,14 @@ SQL/configuration repair or another resume is authorized by that approval.
   private DB and 68 Storage files exported, offline archived-data restore verified,
   unsafe browser permissions confirmed, same project re-paused. Extension ACL and
   platform/off-site recovery limits remain explicit. [Outcome](supabase.md).
+- [x] Encrypt the exact original80-file preservation and verify the copy on
+  Behemoth, including full decrypted member hashes, GnuPG integrity and a second
+  run from durable receiver files. Original inputs remain unchanged; private
+  key stays on Behemoth, public-only material on Monster. [Custody and verifier](supabase.md#encrypted-second-host-preservation--oct20).
+- [ ] Establish physical off-site separation, independent key custody and
+  periodic backup retention/recovery. The dedicated Behemoth key is online with
+  no passphrase; the second-host copy alone does not close these gates or prove
+  full hosted-platform recovery.
 - [x] Create and harden a separate Free Supabase preview with synthetic accounts,
   course and private PDFs; actual native password login and direct-REST denial
   verified. No production clone or paid resource. [Isolation](preview.md).
