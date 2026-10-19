@@ -38,6 +38,13 @@ export async function POST() {
       return new NextResponse("No autorizado", { status: 401 });
     }
 
+    if (!process.env.DODO_PAYMENTS_API_KEY?.trim()) {
+      return NextResponse.json(
+        { reason: "provider_unavailable", provider: "dodo" },
+        { status: 503 },
+      );
+    }
+
     const email = user.email.trim().toLowerCase();
 
     const sinceISO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();

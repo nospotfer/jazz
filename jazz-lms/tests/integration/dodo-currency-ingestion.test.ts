@@ -42,6 +42,7 @@ async function invoke(route: Route, payment: ReturnType<typeof record>) {
 beforeEach(() => {
   vi.resetAllMocks(); Reflect.deleteProperty(globalThis, "__jazzPaymentSweepStateV1");
   vi.stubEnv("CRON_SECRET", "currency-fixture-only");
+  vi.stubEnv("DODO_PAYMENTS_API_KEY", "synthetic-currency-ingestion-key");
   mocks.getUser.mockResolvedValue({ data: { user: { id: "currency-actor", email: "currency@example.test" } } });
   mocks.events.mockResolvedValue([]); mocks.grant.mockResolvedValue(undefined); mocks.verify.mockReturnValue(true);
   mocks.fetch.mockImplementation(() => { throw new Error("Network prohibited"); }); vi.stubGlobal("fetch", mocks.fetch);

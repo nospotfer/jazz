@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(), permission: vi.fn(), user: vi.fn(), course: vi.fn(),
@@ -30,6 +30,7 @@ async function invoke(kind: 'auto' | 'admin', body: unknown = { email: 'buyer@ex
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.stubEnv('DODO_PAYMENTS_API_KEY', 'synthetic-reconciliation-route-key');
   mocks.getUser.mockResolvedValue({ data: { user: { id: 'buyer', email: 'buyer@example.test' } } });
   mocks.permission.mockResolvedValue({ ok: true, userId: 'admin' });
   mocks.user.mockResolvedValue({ id: 'buyer', email: 'buyer@example.test' });
@@ -39,6 +40,8 @@ beforeEach(() => {
   mocks.retrieve.mockResolvedValue(payment({ discounts: [{ code: 'REMOTE10', discount_id: 'discount_1' }] }));
   mocks.upsert.mockResolvedValue(undefined);
 });
+
+afterEach(() => vi.unstubAllEnvs());
 
 for (const kind of ['auto', 'admin'] as const) {
   describe(`${kind} reconciliation`, () => {
