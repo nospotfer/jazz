@@ -14,6 +14,33 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct19 late automated reset delivery and redirect gap
+
+One newly approved automated reset on the same sealed source30d848a produces
+one delivered test email; observed usage rises3→4. The same message is retrieved
+twice after a matched-text-wrapper parser repair, with no body/link in review
+evidence and no owner Gmail action. Actual provider verification303 is observed,
+but Playwright's redirected-request behavior bypasses the private native adapter
+before the application callback. No password update or old/new login check occurs.
+The initial password remains unchanged and actor sessions are zero.
+
+The original25-minute deadline is unchanged despite one pre-send guardian
+readback failure and restored retry. Every Auth field, all six original accounts/
+1,511 public rows/25 public+three Auth projections/table set are preserved. All
+owned services/sockets/profile lock close normally, native warn0/error0, and the
+45,830-file seal passes after closure. Narrow browser counters are zero; this is
+not recovery/dashboard health. Selected30 files/30,301 bytes are retained and
+rehashed owner-only, without raw inputs or credentials. Across all three
+approvals five actions are spent and four emails sent; no further mail authority.
+[Exact automated test and limits](cloud-auth-mail.md#automated-one-reset-window-and-private-redirect-limit).
+
+The preceding documentation head1da1b0a passes exact Quality/Secret PR+push and
+CodeQL with the same source30 test/build counts. Exact analyses have zero
+results/errors/open PR-ref alerts; CodeQL warns that full PR-diff retrieval is
+limited to300 changed files. Documentation verification does not extend hosted
+runtime proof beyond source30d848a. Redirect correction is being prepared in a
+separate synthetic/loopback scope; it does not complete hosted recovery.
+
 ## Oct19 evening reset delivery and closed window
 
 The owner separately approves one additional reset email to the existing

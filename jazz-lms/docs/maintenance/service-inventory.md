@@ -5,18 +5,15 @@ dated in their rows. Production inspection plus
 explicitly approved Supabase recovery/preservation/re-pause are recorded below;
 source and isolated environment changes do not imply a released fix.
 
-Oct19 cloud Auth follow-up: actual hosted confirmation on repaired30d848a reaches
-the owner's inbox, verifies a new regular USER and preserves its initial password;
-password login and normal logout/session removal pass. One reset email is
-accepted within the unchanged two-email hourly limit. The separate evening
-one-reset email is delivered; a recovery code is issued outside the private
-browser, but the copied callback has otp_expired. Recovery exchange remains
-unverified and the password is unchanged. All original six accounts and25 public/
-three Auth projections remain preserved; final actor sessions0. Every Auth field
-is restored and owned browser/runtime/transport resources are closed. Actual
-application transport used private Unix sockets and verified SSH; three failed
-temporary hostname allocations do not establish working public HTTPS.
-[Exact scope](cloud-auth-mail.md).
+Oct19 cloud Auth follow-up: repaired30d848a passes hosted confirmation,
+original-password login and normal logout. The latest separately approved
+one-reset email is delivered and its automated link reaches actual provider303,
+but Playwright redirect handling bypasses the private adapter before the app
+callback. Recovery is incomplete, password unchanged and actor sessions0.
+All original data and Auth settings are preserved/restored; owned services close
+and the45,830-file seal passes again. Public preview HTTPS remains unproven.
+Across three approvals five send actions are spent and four emails sent; no
+further mail authority. [Exact scope](cloud-auth-mail.md).
 
 | Service | Verified evidence | Remaining access / release checks |
 | --- | --- | --- |
@@ -28,7 +25,7 @@ temporary hostname allocations do not establish working public HTTPS.
 | Mux | Authenticated Neurofactory / Jazz-LMS-Project. 16 ready HD/premium assets, 560.4 min, lessons 1–15 + promo; signed IDs, zero public/static MP4 copies. Signer matches; unsigned lesson403/signed manifest200; actual isolated player advances. Archived15 lesson mappings match distinct cached signed assets/class labels; promo is separate. | Snapshot ID/label consistency is not human content review or current health. Legacy mapping script has stale IDs/duplicated final slot; do not run it. Invoice/amount due unverified. No deletion/remapping justified. |
 | Mux account / usage | Active monthly Pay-as-you-go through Stripe; automatic cold storage enabled, DRM inactive. No live streams/webhooks/API tokens. Dashboard credits used $1.45 in observed cycle, two views; last 24h no error categories, last 30d two player-code-2 occurrences. | Credits used are not invoice amount due. Team recovery/billing-owner records still incomplete. Optional tracking changes will reduce measurement unless visitors opt in; premium playback quality preserved. |
 | Dodo Payments | Live €29.90 tax-exclusive product/business and webhook/signing verified. TEST key works; one product aligned to unchanged synthetic EUR80 and two scoped coupon APIs accepted; webhook inventory empty. Native contracts/reversals/coupon concurrency and nullable provider accounting fixed locally (260 targeted passes/18 actual PostgreSQL); no actual malformed customer incident established. [Audit](dodo.md). | Deployed preview shares live resources/development wrong-mode key401. Controlled customer email recorded; merchant/webhook-alert recipients, dedicated signed delivery, transactions and dashboard owner/MFA/KYC/payout/currency/price/license remain. No transaction, refund or mail made. |
-| Resend | Sending domain verified `eu-west-1`. Oct19 initial SMTP sends two emails; the separately approved evening reset is delivered, increasing observed usage to daily3/100 and monthly3/3000. Owner confirmation/verification passes, but hosted reset exchange remains incomplete. Earlier usage-zero/two snapshots retain their dates. Receiving and sole project webhook **disabled**, apex receiving MX absent; received usage0. | Hosted recovery exchange remains incomplete. Native inbound/reply/notification paths are unverified; receiving DNS/webhook/env activation and additional controlled mail need review. Professor Gmail DMARC-gray compatibility remains an inference; fail-closed checks retained. See [email evidence](cloud-auth-mail.md), [Resend audit](resend.md) and [messaging runbook](messaging.md). |
+| Resend | Sending domain verified `eu-west-1`. Oct19 initial SMTP sends two emails; separate evening and automated resets are delivered, increasing latest observed usage to daily4/100 and monthly4/3000. Owner confirmation/verification passes, but hosted reset exchange remains incomplete. Earlier usage-zero/two snapshots retain their dates. Receiving and sole project webhook **disabled**, apex receiving MX absent; received usage0. | Hosted recovery exchange remains incomplete. Native inbound/reply/notification paths are unverified; receiving DNS/webhook/env activation and additional controlled mail need review. Professor Gmail DMARC-gray compatibility remains an inference; fail-closed checks retained. See [email evidence](cloud-auth-mail.md), [Resend audit](resend.md) and [messaging runbook](messaging.md). |
 | Google OAuth / GA4 | Owner-controlled replacement project/client protected on Monster/Behemoth. Oct19 exact fc8d813 first and returning Google login/secret exchange pass, preserving Auth/application/Google identity, USER role and original rows. Final sessions0; all Auth settings restored and app/tunnel closed. Full45,827-file seal passes. Optional GA4 source reviewed. | Two finite runtime errors remain unclassified; personal browser console/network not captured. Preview proof does not establish production client/customer continuity, SMTP, legacy asset transfer or GA4 Enhanced Measurement. Production Auth remains unchanged. [Google scope](google-oauth.md). |
 | OpenReplay | Public browser/source confirmed session recording attempted on auth without consent. Vercel enablement true in all three targets. Local opt-in/homepage-only/redaction/withdrawal repairs pass checks. | Provider account/usage/retention/historic recordings and HTTPS transport unverified; sensitive keys unreadable. Private/student/auth/payment exclusion is a source repair awaiting release. |
 | Spotify / external music | Existing playlist/course music UI preserved. The restricted HTTPS preview intentionally blocks Spotify embeds and optional Mux Google Cast; actual CSP events identify those hosts without PDF failure. | External embed/Cast interaction remains unverified in this restricted preview; no production policy change. |

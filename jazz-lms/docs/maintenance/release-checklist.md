@@ -43,17 +43,21 @@ SQL/configuration repair or another resume is authorized by that approval.
   preserved, actor sessions0/password unchanged, every Auth field restored;
   owned browser/runtime/transport closed and all three full seals reverified.
 - [ ] Complete recovery exchange and old/new password checks in a fresh bounded
-  window. The owner-reported form was not observed in the controlled browser;
-  no password update occurred. A separately approved evening reset email is
-  delivered, but its link is consumed outside the private browser and the copied
-  address has otp_expired. Initial3+additional1 actions are consumed; no
-  additional send follows from this checkbox. Public HTTPS, fresh complete
-  registration on repaired source and production Auth remain separate checks.
-  [Bounded email window](cloud-auth-mail.md).
+  window. The latest automated reset is delivered and reaches provider303;
+  Playwright redirected requests bypass the private native adapter before the
+  application callback. Prove same-context redirect continuation with a loopback
+  fixture first. Initial3+evening1+automated1 actions are spent (four emails);
+  no new send follows from this checkbox. Public HTTPS, a fresh complete repaired
+  registration and production Auth remain separate gates.
+  [Bounded email windows](cloud-auth-mail.md).
 - [x] Close the additional evening window early: all eight owned Auth fields and
   every unrelated setting restored, original rows/accounts/table set preserved,
   password unchanged/actor sessions0 and owned browser/native/SSH/socket cleanup
   verified. Provider delivery is separate from recovery exchange.
+- [x] Close the automated window early: all eight Auth fields/unrelated settings
+  restored, unchanged password/USER/sessions0, all original data preserved and
+  browser/native/SSH/socket/profile cleanup verified. Full45,830-file seal passes.
+  Delivery and provider303 do not prove callback exchange or a password change.
 
 - [x] Close newly confirmed dashboard/course account-switch privacy and stale
   progress-intent verification: source4f395e0 repairs pass111 client cases/49

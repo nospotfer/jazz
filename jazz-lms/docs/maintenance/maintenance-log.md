@@ -1892,3 +1892,45 @@ The maintenance goal remains active and incomplete.
   Raw credentials/provider/Auth/actor inputs, email bodies, links/codes/tokens
   and personal-browser state are excluded. Retention is local and unencrypted;
   no off-site recovery is established.
+
+
+## 2026-10-19 late UTC — Automated reset delivery and closed private redirect test
+
+- Owner explicitly approves one additional automated reset/retrieval test for
+  the same controlled verified USER. Exact source30d848a reuses the inspected
+  45,830-file artifact; native19/private-SSH11 pass. Fixed22:24:31–22:49:31UTC
+  lease, fresh gate, exact eight Auth fields, no template/rate/plan/prod changes.
+- A pre-send guardian readback mismatch causes safe restoration. Preserve that
+  failure and early browser startup failure separately. Three full Auth reads
+  match the original baseline before one same-scope/same-expiry reactivation.
+  Add only finite diagnostics and User-Agent/no-cache; strict checks remain.
+  Two new guard controls bring its fake suite to17. The mismatch cause remains
+  unproven, not retrospectively explained by the later successful activation.
+- Parent reservation precedes the sole browser permit/request. Actual recover200
+  at22:31:21 sends one new email; metadata confirms delivered and usage3→4.
+  Read only that same email body twice: first parsing rejects wrapped text; two
+  regressions fail before repair, final18 cases pass with matched wrappers and
+  malformed/foreign controls. Strict URL/uniqueness checks remain; no raw body
+  saved or link/credential in review evidence. No owner Gmail/clipboard action.
+- Actual browser provider verify303 occurs once, with no app callback/form/user/
+  update response. Installed Playwright1.58.2 and primary routing docs establish
+  redirect bypass of context routing; private adapter continuation is missing.
+  Password unchanged; old/new password checks not run. A scoped read-only test
+  History attempt fails with SQLite OperationalError; no address recovered or
+  personal profile accessed. No verification-link replay/Auth DB code extraction.
+- Normal browser/provider closure, independent22:38:21 all-Auth equality and
+  USER/password unchanged/sessions0/production INACTIVE. The22:38:22 preservation
+  proves six original accounts/1,511 public rows/25 public+three Auth projections
+  and table set unchanged. Native/SSH exit0; native warn0/error0. Exact owned
+  process/socket/run/profile cleanup verified22:39:52; full45,830-file seal
+  passes22:40:45. Narrow browser counters0 do not certify recovered login.
+- Total across all approvals: five actions used, exactly four actual emails.
+  No more mail authority. Prepare the redirect correction with a fresh synthetic
+  loopback-only browser fixture, not another provider send. Hosted recovery and
+  fresh complete registration remain release gates; source app is unchanged.
+- Retain/re-hash30 selected files/30,301 bytes owner-only outside/tmp, manifest
+  0828a2446e68db1d6a08039e61dacd1406ac8e342e8e16aa454772ab9816abf3.
+  Supplied-secret/raw-recovery-URL scans0. Exclude raw credentials/provider/Auth/
+  actor/browser state, email bodies/links/tokens/codes. Local unencrypted
+  retention establishes no off-site backup. Update the inventory/backlog/
+  verification/release/runbook and preserve the broader incomplete goal.

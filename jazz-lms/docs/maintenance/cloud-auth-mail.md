@@ -1,17 +1,15 @@
 # Isolated cloud Auth email verification
 
-Updated 2026-10-20 (Madrid; event times below are UTC). Status: **CLOSED; CONFIRMATION AND PASSWORD LOGIN PASS;
-RECOVERY INCOMPLETE**. A separately approved evening reset email is delivered,
-but its link is opened outside the controlled browser and the owner copies an
-expired-link error address. The password remains unchanged. Both windows restore
-all settings and close owned resources; no further email is authorized.
-The first actual registration attempt exposed a
-provider-method defect. On repaired source, the owner receives and verifies the
-code, the original password reaches the dashboard, and normal logout clears all
-actor sessions. Recovery email is accepted, but no recovery exchange or password
-change is observed before expiry. All Auth settings are restored, all original
-rows preserved, and owned application/browser/transport resources closed.
-Production is unchanged and its Supabase project remains INACTIVE.
+Updated 2026-10-20 (Madrid; event times below are UTC). Status: **CLOSED;
+CONFIRMATION AND PASSWORD LOGIN PASS; RECOVERY INCOMPLETE**. The latest separately
+approved automated reset sends one delivered email. Its validated link reaches
+actual provider verification303, but the redirect bypasses the private browser
+transport before the application callback. The test password is unchanged.
+All temporary settings and original data are preserved, actor sessions are zero,
+and owned services are closed. Production remains INACTIVE and unchanged.
+Across all three mail approvals, five send actions are consumed and four emails
+are sent; no further email is authorized. Earlier checkpoints retain their dates
+and narrower results below.
 
 ## Initial approved scope and exhausted budget
 
@@ -60,6 +58,83 @@ and [log-query guidance](https://supabase.com/docs/guides/observability/advanced
 Provider counters and logs support the stated event; absence of other matching
 events alone would not establish absence of all errors or delivery.
 
+## Automated one-reset window and private redirect limit
+
+The owner explicitly approves one additional automated reset email and retrieval
+of that fresh controlled test email. It uses the existing verified USER and exact
+application source `30d848a`; no application source change or deployment follows.
+The fresh fixed lease is22:24:31–22:49:31UTC. Native19/private-SSH11 and the full
+45,830-file artifact inspection pass before the eight-field SMTP/origin window.
+Signup/Google stay disabled, nonce checking stays enabled, and templates/hooks/
+notifications/rates remain unchanged.
+
+The first guardian restores settings before any send after an unexpected owned
+field readback. Its cause is unproven; no other local guardian is found. Three
+independent full Auth reads then match the original baseline. One reactivation
+keeps the same scope, original expiry and unspent one-action allowance. It adds
+only redacted mismatch diagnostics and consistent User-Agent/no-cache headers;
+the strict assertion and rollback checks remain unchanged. Its17 fake checks
+include two new mismatch/foreign-change controls. The first failed browser
+startup occurs before Chromium launch and is retained separately.
+
+The parent reserves the sole action before issuing the browser permit. Actual
+`/recover`200 at22:31:21UTC sends exactly one fresh controlled email; Resend
+metadata confirms delivery and daily/monthly usage rises3→4. No additional send
+occurs. Scoped retrieval reads the **same one message twice**, not two messages:
+the first parse rejects wrapped plain-text duplicates of a valid HTML link.
+Two new regressions reproduce that helper defect; the final18-case suite also
+covers bracketed text and malformed closers. Only matched text presentation
+wrappers are removed; HTML links and strict provider/token/type/query/callback
+validation and unique-target checks remain intact. The second bounded retrieval
+passes and transfers the link in a protected600 file. Raw bodies are never saved,
+and links/tokens/codes are excluded from review evidence. This input source is
+`SCOPED_SENT_EMAIL_API`, not an owner Gmail click or clipboard operation.
+
+The controlled browser observes one actual provider verification303. It observes
+no application recovery callback, authenticated-user response, reset form or
+password update; old/new password login checks are not run. Installed
+Playwright1.58.2 automatically continues Chromium redirected requests without
+another routing callback. Thus the redirect can bypass this private SSH/native
+adapter and reach the unavailable public hostname. The primary
+[routing reference](https://playwright.dev/docs/api/class-page#page-route) and
+[request-history API](https://playwright.dev/docs/api/class-page#page-requests)
+explain the boundary. This identifies a test-transport limitation, not an
+application recovery defect. A read-only attempt to inspect only the dedicated
+test browser's History encounters SQLite OperationalError; no address is
+recovered and no personal profile is accessed. The provider link is not replayed,
+no Auth database code is extracted, and the password is not changed.
+
+Browser and provider guardian close normally before their deadline. Independent
+22:38:21UTC readback matches **every** original Auth field, unchanged password,
+verified USER/zero sessions and production INACTIVE. The22:38:22 comparison
+preserves all six pre-mail accounts,1,511 original public rows,25 public/three
+Auth projections and the table set. Native/SSH exit0; native warn0/error0.
+The owned processes/run directory/profile lock and exactly matched unlistened
+SSH socket are absent at22:39:52UTC. The complete45,830-file seal passes again
+at22:40:45UTC. Browser console/warning/page/block/command counts are all zero over
+this narrow request/verification scope; that does not establish recovery or
+dashboard health. The executed broker hash is
+`3d982aad3afb55ea904ca294de76cea1aab4cfd7155c1e4e479d24ae47037d2e`.
+Original71 preparation checks, later17 guardian checks and18 reader checks are
+separate overlapping helper evidence, not hosted completion.
+
+Selected30 files/30,301 bytes are retained/rehashed owner-only in
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-automated-reset-30d848a-20261020/`.
+Manifest SHA256:
+`0828a2446e68db1d6a08039e61dacd1406ac8e342e8e16aa454772ab9816abf3`.
+Supplied-secret/raw-recovery-URL scans find zero matches. Raw credentials,
+provider/Auth/actor inputs, email bodies, links, codes, tokens and browser state
+are excluded. Retention is local/unencrypted, with no off-site recovery claim.
+Working inputs remain protected separately under
+`/tmp/jazz-maintenance/cloud-auth-recovery-automated-preparation-20261019/`.
+
+Further work first needs a loopback-only browser proof that each already-issued,
+validated redirect can continue once in the same context, preserving real
+responses/cookies and never replaying verification or a completed code exchange.
+That preparation has no hosted-mail authority. Actual recovery/new-password
+login and a fresh complete repaired registration remain release gates; any new
+mail requires a fresh bounded approval.
+
 ## Evening one-reset window and delivery
 
 At21:45UTC the owner explicitly approves exactly one additional reset email for
@@ -107,11 +182,10 @@ owned sockets/run directory and the private Chrome lock are absent. The full
 Its console/page/warning/block/command-failure counts are all zero over this
 narrow request-only scope; dashboard and successful recovery are not covered.
 
-The next prepared test will retrieve only its newly approved controlled test
-email through the provider's read-only API and pass the validated recovery link
-privately to the same browser that requested it. It must record this different
-input source honestly rather than claim a human Gmail link exchange. It remains
-separate, unapproved and unexecuted; it cannot reuse either exhausted budget.
+At that closure checkpoint, the separately prepared automated test remained
+unapproved and unexecuted. Its later approval, actual delivery/retrieval, private
+redirect limitation and complete closure are recorded in the automated section
+above; neither earlier exhausted budget was reused.
 
 The23-file/37,470-byte evening checkpoint is retained/rehashed owner-only at
 `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-reset-delivery-30d848a-20261019-evening/`.
@@ -188,10 +262,11 @@ native runtime receipt records warn0/error0.
 
 Still required before the full hosted email journey can pass:
 
-1. Resolve which browser/form the owner saw. A continuation needs a fresh bounded
-   source/origin/gate/transport plan and current role/configuration checks. The
-   retained dedicated profile preserves PKCE state, but neither token validity
-   nor a successful exchange is assumed. Closed access must not be reused.
+1. Correct and prove the private browser redirect continuation with a synthetic
+   loopback fixture before another hosted attempt. A continuation needs a fresh
+   bounded source/origin/gate/transport plan and current role/configuration
+   checks. Retained PKCE state or old links grant no new access or mail authority;
+   no further owner Gmail/browser step is required by the prepared automation.
 2. Complete recovery, prove the old password fails and the replacement succeeds,
    sign out, and repeat preservation/restoration/closure. No additional email
    send is authorized; any new send needs separately bounded scope.
