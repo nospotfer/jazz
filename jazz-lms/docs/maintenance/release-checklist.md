@@ -32,6 +32,23 @@ SQL/configuration repair or another resume is authorized by that approval.
 
 ## Review gates
 
+- [x] Published application source30d848a: exact Quality/Secret Scan PR/push and
+  CodeQL pass; logs verify2,576 normal/80 skips,80 persisted/one skip,
+  types/webpack/static31-of-31 and lint0errors/22 warnings. Exact PR-ref analyses
+  have0 results/errors/open alerts; legacy main alerts remain separate.
+- [x] Repair hosted pending-account confirmation on source30d848a; actual
+  controlled inbox/OTP, unchanged password fingerprint, password login and normal
+  logout/session removal pass. Preserve the separate original-source failure.
+- [x] Close the bounded mail window: all original rows/accounts and25-table set
+  preserved, actor sessions0/password unchanged, every Auth field restored;
+  owned browser/runtime/transport closed and all three full seals reverified.
+- [ ] Complete recovery exchange and old/new password checks in a fresh bounded
+  window. The owner-reported form was not observed in the controlled browser;
+  no password update occurred before expiry. All three send actions are consumed;
+  no additional send follows from this checkbox. Public HTTPS, fresh complete
+  registration on repaired source and production Auth remain separate checks.
+  [Bounded email window](cloud-auth-mail.md).
+
 - [x] Close newly confirmed dashboard/course account-switch privacy and stale
   progress-intent verification: source4f395e0 repairs pass111 client cases/49
   route regressions, exact CI2,130/47 and actual native cross-tab/empty-account/
@@ -149,7 +166,8 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity
-  and rollback. Isolated OAuth passes Oct19; actual cloud SMTP/recovery remains.
+  and rollback. Isolated OAuth and cloud SMTP confirmation pass Oct19; hosted
+  recovery exchange and production Auth continuity remain.
 - [x] Prepare the owner-controlled replacement Google project/Web client and
   verify the isolated preview's expired window restores its provider settings,
   closes cleanly and preserves every original row. Credentials remain private

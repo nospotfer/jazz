@@ -14,6 +14,50 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct19 cloud confirmation and registration repair
+
+Actual source910f216 registration creates a pending USER but returns400 because
+the provider rejects its OTP request with422 `signup_disabled`; no email is sent.
+Source30d848a changes registration and resend to signup confirmation, with four
+closed real-SDK regression failures before repair and85 focused checks passing
+after. Source0de3c28 also repairs email prefill, resend timing and light-theme
+verification text, covered by52 focused checks.
+
+Both source commits are pushed. Exact30d848a Quality PR/push, Secret Scan
+PR/push and CodeQL complete successfully. Downloaded Quality logs verify2,576
+normal passes/80 intentional skips,80 persisted passes/one skip, successful
+types/webpack/static31-of-31 and lint0errors/22 existing warnings. Persisted
+counts include79 actual SQL cases and one metadata case. Exact PR-ref
+JavaScript/Actions analyses report0 results/errors; open PR-ref alerts0. Five
+legacy main alerts remain open. The local pre-push gate separately passes745
+integration cases/29 skips; overlapping suites are not added together.
+
+Fresh30d848a build/seal45,830,158 client credential exclusions, native19 and
+private-SSH11 pass. The owner receives and verifies the code; the initial password
+fingerprint is unchanged, password login reaches the dashboard and normal logout
+removes all actor sessions. Recovery email is accepted, but the owner-reported
+new-password form is not observed in the controlled browser. The guarded update
+stops with RESET_FORM_REQUIRED and the window expires before clarification;
+password unchanged, no recovery exchange or update observed. All three email
+actions are consumed, with exactly two actual sends recorded; no further send
+is authorized.
+
+Final independent reads preserve every original row/account and the25-table
+public set, with the new verified USER at sessions0. Every Auth field matches
+its original snapshot. Native/browser/tunnel resources close, exact owned sockets
+are absent and all three full build seals pass again. Native diagnostics are
+warn0/error0; the separately counted browser13 console errors/12 deliberate
+blocks are not fully attributed. Production remains INACTIVE and unchanged.
+Public temporary-hostname DNS fails; actual native responses use private Unix
+sockets and verified SSH while Auth uses actual provider HTTPS. This does not
+establish public HTTPS, a complete fresh repaired registration or a released
+production fix. [Full email evidence and limits](cloud-auth-mail.md).
+
+The owner-only local `review-checkpoint-auth-mail-30d848a-20261019` retains32
+selected files/93,263 bytes outside/tmp. Destination hashes/modes and supplied
+secret exclusions pass; raw Auth/configuration/actor/browser/gate/credential
+inputs are excluded. Local unencrypted retention establishes no off-site backup.
+
 ## Oct19 actual Google login and closed preview
 
 Exact source `fc8d813` passes a fresh locked build and45,827-file seal,147

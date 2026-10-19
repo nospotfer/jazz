@@ -1771,3 +1771,73 @@ The maintenance goal remains active and incomplete.
   no credential/provider/server/customer operation is used. Two existing mocked
   suites now declare/restore their synthetic configured environment explicitly.
   Native Google evidence stays bound to its earlier fc8d813 artifact.
+
+
+## 2026-10-19 — Hosted confirmation repair, partial recovery and verified closure
+
+- Owner authorizes at most three send actions to one controlled Gmail alias:
+  registration, one resend and reset. Count failed actions, reserve before
+  browser continuation and preserve the ledger across builds/controller
+  restarts. All three are consumed; exactly two emails are sent. No additional
+  recipient/send/retry, payment, production change, paid resource or DNS change.
+- Three Cloudflare Quick Tunnel allocations on Monster/Behemoth fail DNS,
+  including public resolver checks; pinned valid-TLS edge gives530/1016. Working
+  public HTTPS is not established. Instead, actual gated native response bytes
+  travel through private0600 Unix sockets over strictly verified existing SSH
+  into a dedicated Behemoth Chrome profile. Supabase Auth uses real provider
+  HTTPS. No fabricated app/provider responses or personal browser/mail access.
+- Source910 registration returns400 after creating one pending Auth/app USER.
+  Finite provider logs establish `/otp`422/signup_disabled and Resend usage0.
+  Primary GoTrue source explains the unconfirmed-user MagicLink→Signup path.
+  Source30d848a uses signup-confirmation resend in both server routes, preserving
+  pending credentials/profile/role without enabling public signup. Four installed
+  SDK/intercepted-transport cases fail before repair;85 focused checks then pass,
+  with types/scoped lint0/0. This is a repair of an observed provider failure.
+- Source0de3c28 separately fixes explicit login-email precedence, localized resend
+  cooldown/overlap protection and the light-theme verification heading, with52
+  focused checks/types passing. Both commits are pushed and remain undeployed.
+- Exact30 clean locked build seals45,830 files and checks158 client files for
+  supplied server/SMTP credentials. Actual native19/private-SSH11 pass. Guardian
+  has34 fake checks, browser helper76 pure checks; these are boundary tests,
+  not independent SMTP health proof. Two initial guardian activations restore
+  settings on unexpected computed template metadata; the refined readback allows
+  only the matching confirmation flag without adding a PATCH field. Final
+  scope remains nine bounded Auth fields and an unchanged2/hour mail limit.
+- Actual resend200 reaches the owner's inbox; owner enters the code and
+  verification200 confirms Auth/app email. The initial password fingerprint
+  remains identical. Password token200, cookie sync200 and dashboard200 pass;
+  normal provider logout204 removes every actor session. A private controller
+  hydration wait fixes the earlier fill/click timing without another email send.
+- Reset request200 consumes action3. The owner reports a new-password form, but
+  the controlled context still shows the recovery helper/forgot-password page.
+  Guarded update returns RESET_FORM_REQUIRED: no provider verification, callback,
+  reset form or password update is observed. The fixed window expires before
+  clarification. Password unchanged, recovery incomplete; old/new password
+  acceptance is not established. A fresh complete registration on repaired
+  source also remains unproven because source910 created the current actor.
+- At12:05:38UTC, final full-row/hash projections preserve all six pre-mail
+  accounts and1,511 original public rows across25 public/three Auth tables,
+  excluding only the exact new verified USER/email identity; actor sessions0.
+  No new/removed public table. At12:06:57UTC every original Auth field matches
+  the pre-window snapshot, signup/Google/custom SMTP disabled and nonce enabled.
+  Production independently remains INACTIVE, with zero production writes.
+- Native runtime expires cleanly, warn0/error0. Dedicated broker/process/socket
+  and Chrome lock are absent; tunnel exits0 and only the exact owned unlistened
+  Unix socket is removed. All three full seals pass after closure:
+  45,828/45,828/45,830. Browser13 console errors and12 deliberate policy blocks
+  remain distinct counts with unproven attribution; zero page errors does not
+  establish an error-free dashboard/media/payment experience.
+- Exact30 Quality PR/push, Secret Scan PR/push and CodeQL succeed. Actual logs
+  verify2,576 normal/80 skips,80 persisted/one skip (79 SQL plus one metadata),
+  types/webpack/static31-of-31 and lint0errors/22 warnings. Exact PR-ref
+  JavaScript/Actions analyses have0 results/errors/open alerts; five legacy main
+  alerts remain open. Mandatory local integration gate passes745/29 without
+  hook bypass. Earlier source910 CI is not used as source30 verification.
+- Retain/re-hash32 selected files/93,263 bytes in owner-only local
+  `review-checkpoint-auth-mail-30d848a-20261019`, excluding raw provider/Auth/
+  actor/gate/browser state and credentials. Supplied-secret scan has0 matches.
+  Manifest9a68e157649b29e2baa96290aa538156500b6c1641345fa620ad68e8a565e991.
+  Local retention is unencrypted; off-site recovery remains unestablished.
+  Reconcile inventory/backlog/verification/release/runbook with the closed state.
+  Full maintenance goal remains incomplete: hosted recovery/new registration,
+  Dodo, stable zero-cost hosting/DNS and reviewed production hardening/release.
