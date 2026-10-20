@@ -1,5 +1,10 @@
 # Production review and rollback checklist
 
+- [ ] Establish a verified containment method for production recovery. The
+  isolated inactive-schema PATCH returned404; its successful restore and full
+  preservation do not establish a production pre-exposure control. The preview
+  is healthy again and production remains INACTIVE. [Actual control result](production-readiness.md#actual-isolated-control-result).
+
 ## Oct20 current production checkpoint
 
 Exact Jazz Vercel protection and pause are applied. Two independent read-only

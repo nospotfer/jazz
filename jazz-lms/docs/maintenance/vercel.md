@@ -7,6 +7,14 @@ generated URL even with the existing bypass. Three historical URLs now redirect
 anonymous requests to SSO. Cron is still enabled, `dev` remains unresolved and
 the backend remains INACTIVE. [Changes, evidence and rollback](production-readiness.md).
 
+Fresh CLI identity is `neurofactory`; the current and preceding Gabriel-scoped
+GitHub previews still return404 to that login and302 SSO anonymously. Behemoth
+has no alternate CLI login in ten standard locations checked. Installed63.1.2
+cron help and pinned official source expose only `add`, `list` and `run`; the
+bounded source review found no global disable contract. The dashboard action
+remains pending. Configured `disabledAt=null` does not prove invocation behavior
+during pause, and no cron was invoked. [Exact limits](production-readiness.md#actual-vercel-changes-and-verification).
+
 Observed 2026-10-13 through authenticated REST GETs and public HTML requests.
 The following original audit predates the Oct20 protection/pause changes.
 No environments, aliases, deployments or plans changed in either checkpoint.

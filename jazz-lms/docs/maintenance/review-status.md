@@ -1,5 +1,14 @@
 # Maintenance review checkpoints
 
+## Oct20 isolated API control closes with preserved data
+
+The exact preview is healthy again at17:19 UTC. Its sole inactive empty-schema
+PATCH returns404; one pause/restore is completed and every full29-table
+fingerprint, hardened catalog and exact Auth/PostgREST setting is preserved.
+Earlier probe-contract and short-observation failures remain separate. This
+does not establish production containment; production remains INACTIVE.
+[Actual results, source checks and remaining work](production-readiness.md#actual-isolated-control-result).
+
 ## Oct20 current production checkpoint
 
 Exact Jazz Vercel protection and pause are applied. Two independent read-only

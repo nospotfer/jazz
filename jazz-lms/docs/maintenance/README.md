@@ -2,7 +2,7 @@
 
 Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-20.
 [Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
-changes. **The goal is incomplete and the changes are not deployed.** The owner
+changes. **The goal is incomplete and the changes are unreleased in production.** The owner
 requested a stable, tested project and a more attractive, usable website while
 preserving its jazz identity. The hosting budget is zero incremental spend.
 
@@ -13,7 +13,12 @@ verified propagation, including the existing bypass. Supabase remains INACTIVE.
 [Current security/hosting/recovery checkpoint](production-readiness.md) separates
 completed containment from the remaining Data API, cron and hosting gates.
 
-- Last fully verified publication `fc1f144` passes all five Quality PR/push,
+The isolated pause/control/restore experiment closes at17:19 UTC with all29
+table fingerprints and exact settings preserved. Its inactive schema PATCH
+returns404, so it does not establish a safe production recovery control. The
+preview is healthy again; production stays paused. [Result and next action](production-readiness.md#actual-isolated-control-result).
+
+- Preceding verified publication `cdaefdf` passes all five Quality PR/push,
   Secret Scan PR/push and CodeQL workflows, with zero open head-ref alerts.
   Downloaded logs verify 2,674 normal passes/80 intentional skips, 80 persisted
   passes/one skip, types, webpack build and lint 0 errors/22 existing warnings.

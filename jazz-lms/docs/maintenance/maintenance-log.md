@@ -2539,3 +2539,40 @@ The maintenance goal remains active and incomplete.
   Closed/frozen sources, all four unpaid payments and every spent action remain
   preserved. Actual readiness/API health, signed fulfillment and refund gates
   remain open; goal active/incomplete and the financial-test loop stopped.
+
+## 2026-10-20 — Isolated inactive-schema control closes with preserved data
+
+- The exact preview's sole inactive `db_schema=""` PATCH returns404. The one
+  original pause and one restore finish with ACTIVE_HEALTHY at17:19 UTC. All25
+  public/four Auth table fingerprints, hardened catalog and exact Auth/PostgREST
+  settings remain unchanged; the original401/42501 zero-row routing is restored.
+  GraphQL was already disabled. No production configuration write, schema change,
+  backend resume, SQL apply, deployment or new refund occurs in this checkpoint.
+- Preserve the first root-OpenAPI probe failure and the second short PAUSING
+  observation failure. The reviewed continuation completes only unspent stages
+  on the original pause. Its pausedGET404 prerequisite was fixed before running.
+  Final cumulative90 management/21 public/eight read-only SQL calls include one
+  rejected schema PATCH, one pause and one restore. Root repeats17/20/16 source
+  checks and independently compares original/final private snapshots. No active
+  disable fallback, data restore or replayed write is used.
+- Two older orphan Next.js processes tied to the isolated backend are found and
+  stopped with SIGTERM before the experiment. Both are absent afterward. This
+  supplements earlier scope-specific closure receipts, which did not cover them.
+- Fresh Vercel CLI identity is neurofactory; separate Gabriel previews remain
+  inaccessible to it. Source/installed63.1.2 cron commands are add/list/run only;
+  a bounded47-request primary-source review leaves the disable route unresolved.
+  The dashboard action remains pending. Configured cron metadata does not prove
+  scheduler or in-flight behavior while paused; no payment sweep is invoked.
+- Production remains INACTIVE at17:13 UTC. Its empty paused key list is
+  inconclusive; healthy preview metadata separately lists two legacy/two new
+  keys. A reversible legacy switch is documented but no key is changed or
+  rotated, and all-key/pre-exposure containment is unproven.
+- Same-payment recovery phase/runtime source passes59/32 independently repeated
+  offline tests; the production SQL operator passes21. Actual adapters, receipts,
+  containment and bounded activation remain separate work, with old spent
+  financial reservations unchanged. No additional financial request is made.
+- Retained75-file/515,165-byte control/source checkpoint passes exact rehash and
+  nine selected current credential-value checks with zero matches. Raw provider
+  responses, private snapshots, keys and enabled inputs are excluded. Separate
+  public cron-source copy verifies56 files/5,284,290 bytes. Local unencrypted
+  custody, no off-site or activation claim. [Results and next gates](production-readiness.md).

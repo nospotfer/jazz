@@ -1,8 +1,10 @@
 # Production recovery checkpoint — 2026-10-20
 
 The old Vercel application is now protected and paused. Production Supabase
-remains INACTIVE; no production SQL, backend resume or application deployment
-occurred in this checkpoint. The improved application remains unreleased.
+remains INACTIVE; no production SQL, production backend resume or production
+application deployment occurred in this checkpoint. The improved application
+remains unreleased. The isolated preview was separately paused and restored in
+the control experiment below.
 
 ## Actual Vercel changes and verification
 
@@ -39,6 +41,25 @@ project PATCH input does not accept `crons`. No payment-sweep request was made.
 [pause contract](https://vercel.com/docs/rest-api/projects/pause-a-project),
 [cron control](https://vercel.com/docs/cron-jobs/manage-cron-jobs).
 
+Fresh readback at 16:55 UTC still confirms the four active/`www` requests return
+503, including the retained bypass. The current CLI identity is `neurofactory`;
+its default project listing establishes no access to the separate Gabriel scope.
+GitHub reports successful Preview deployments for `cdaefdf` and `fc1f144` there,
+but both authenticated deployment lookups return404 and anonymous roots redirect
+to SSO. These are automatic preview records, not verified isolated deployments.
+No alternative CLI login was found in ten standard Behemoth locations.
+
+The installed Vercel63.1.2 help and pinned official CLI source support cron
+`add`, `list` and `run`, with no global disable command. A bounded primary-source
+review also found no supported disable route/body in the OpenAPI, SDK or public
+dashboard code examined. This does not prove a private endpoint cannot exist.
+Current docs establish explicit disable behavior across promotions/rollbacks;
+they do not establish scheduler or in-flight behavior during project pause.
+`disabledAt=null` is configured state, not proof that an invocation continues.
+The dashboard action remains pending; no cron was run.
+[Official CLI commands](https://vercel.com/docs/cli/crons),
+[pinned list-command source](https://api.github.com/repos/vercel/vercel/git/blobs/ce608c57b01769e23881d33b08b006b7c87cf694).
+
 Six offline guard tests and independent source review pass. They cover exact
 team/project/current deployment, allowed writes, deadline/headroom, baseline
 drift and the pause outcome. The original immediate edge failure is preserved
@@ -66,11 +87,52 @@ Stored configuration alone also does not exclude a role-level override.
 [official encoder](https://github.com/supabase/cli/blob/8803a3e90dd18ca14c857026da20f7a073bc6b22/apps/cli/src/commands/config/push/push.encoders.ts#L392),
 [effective-config limits](https://supabase.com/docs/reference/api/v2-get-project-config).
 
-Next is a bounded isolated control-plane test, preserving settings and data,
-to establish the actual disable/pause/resume behavior before relying on it in
-production. REST/GraphQL containment does not by itself disable Auth, Storage,
-Realtime or direct SQL. Old-server protection alone cannot contain direct
-Supabase access. No blind production PATCH or resume was attempted here.
+### Actual isolated control result
+
+The experiment on `tvmhuacxctdgmejziaxg` closes at 17:19:36 UTC with
+`CLOSED_PAUSED_CONTROL_NOT_ESTABLISHED`. The sole empty-schema PATCH, issued
+only after INACTIVE was independently confirmed, returns404. One restore with
+literal `{}` returns200 and reaches ACTIVE_HEALTHY. Original exposed schemas
+remain `public,graphql_public`; no active-disable fallback was attempted.
+
+Independent comparison verifies every row-count/hash fingerprint across all25
+public and four Auth tables, the hardened catalog, and exact Auth/PostgREST
+settings are unchanged. The isolated public tables contain1,517 rows. REST
+returns the same zero-row `Purchase` probe's401/`42501` table-permission denial
+before and after; GraphQL's extension was already disabled. This verifies
+preservation and original routing, not a newly effective API restriction.
+
+Two earlier controller limits remain recorded. A publishable key cannot read
+the OpenAPI root, so the first attempt stops before mutations and preserves all
+data/settings. The next attempt's sole pause returns200, but its35-second
+observation limit ends while PAUSING. A separately reviewed continuation finishes
+the unspent stages on that same pause; it does not pause again or reset ledgers.
+Its pausedGET404 handling was corrected and tested before activation.
+
+Cumulative execution uses one pause, one rejected schema PATCH, one restore,
+eight fixed read-only SQL calls,90 management requests and21 public probes.
+The final source packages independently pass17,20 and16 offline cases; those
+overlapping helper suites are not application-test or live-health totals.
+All windows are closed. A separately discovered older two-process Next.js
+preview was stopped with SIGTERM before testing; no app/tunnel/browser was
+started by this control. Prior scope-specific closures had not covered it.
+
+This negative result rules out relying on this inactive-project PATCH for
+production recovery. REST/GraphQL containment also does not disable Auth,
+Storage, Realtime or direct SQL. Old-server protection alone cannot contain
+direct Supabase access. Production remains INACTIVE, freshly verified at
+17:13 UTC; no production schema PATCH or resume was attempted.
+
+Read-only key metadata is also inconclusive: inactive production returns200
+with an empty key list and `legacy.enabled=true`, while the healthy preview
+lists two legacy and two new keys. An empty paused inventory is not evidence
+that no keys exist. The documented legacy-key switch is reversible, but covers
+legacy keys only; the new-key PATCH contract has no `enabled` field. No key was
+created, changed, disabled, deleted or rotated. A separate isolated gateway
+control is being prepared; it cannot by itself prove all-key containment or
+paused-project applicability.
+[Legacy switch](https://supabase.com/docs/reference/api/v1-update-project-legacy-api-keys),
+[new-key update](https://supabase.com/docs/reference/api/v1-update-project-api-key).
 
 ## Current SQL source and order
 
@@ -95,6 +157,12 @@ deploy. Prefer closed service/re-pause over reintroducing unsafe grants.
 Full extension initial-ACL recovery and clean database bootstrap remain broader
 recovery claims, not inherent blockers to correctly scoped in-place revokes.
 
+A preparation-only SQL stage operator now passes21 independently repeated
+offline checks for exact sources/order, durable reservations, stale-proof
+rejection and ambiguous-write stopping. Its CLI remains inert. Genuine current
+containment evidence and reviewed executor/receipt-validator implementations are
+still required; this package does not make production execution ready.
+
 ## Hosting and refund work
 
 Fresh DNS/RDAP still identify Squarespace registration, Google Domains
@@ -117,6 +185,17 @@ SDK retry defaults and a generic idempotency option do not establish refund
 replay safety. No Dodo request occurs in that offline preparation.
 [Refund error contract](https://docs.dodopayments.com/api-reference/error-codes).
 
+The separate16:31 UTC read-only payment/line-item pair still finds succeeded,
+zero refunds and the full USD8997 refundable; canonical line-item currency is
+independently checked. The old spent reservation's bytes remain unchanged.
+New recovery-phase and runtime-adapter packages independently pass59 and32
+offline checks. They preserve the old marker, capture errors privately, require
+fresh same-payment/native proofs and create no checkout/card/account path.
+The composer preserves the sealed build's native origin while binding a fresh
+webhook origin separately. Actual transport, current receipts, endpoint/runtime
+setup, bounded continuation and reversal/closure proof remain unfinished. No
+additional refund request was made in this checkpoint.
+
 Selected finite evidence/source is retained privately under
 `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-production-readiness-20261020`.
 Raw provider responses, rollback credentials, browser state and active/private
@@ -125,3 +204,14 @@ four current used secret values have zero literal matches. Manifest SHA256 is
 `c1e2b5ee41c18d21b80955f50ece22508e824ae6e7da9c9e02e9d9c488976733`.
 This local unencrypted package is not off-site
 backup or activation authority. Full maintenance and release remain incomplete.
+
+The later isolated-control/source checkpoint retains75 files/515,165 bytes,
+with exact copy hashes,0600 files/0700 directories and zero matches for nine
+selected current credential values. Raw provider responses, Auth snapshots,
+keys and enabled runtime inputs are excluded; the Dodo TEST key was not loaded
+for that scan. Its local unencrypted receipt SHA256 is
+`b48e8aff6ab08433a193c36310455b9da00a6f8cc67524eda22c57c195fa6ebe`
+under `review-checkpoint-isolated-control-20261020` in the same backup root.
+The separate public cron-source copy verifies56 files/5,284,290 bytes, receipt
+`0601f9c582d4c89ddc07b1551cde2cda5f89f4895b78677f89e423ce526adb0a`.
+Neither package establishes off-site recovery or grants activation authority.
