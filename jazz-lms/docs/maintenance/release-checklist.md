@@ -38,8 +38,9 @@ technical work; authorization does not imply a completed deployment.
 - [x] Repair reset-page diagnostic privacy and localization: eight new component
   regressions fail before repair and pass after; 47 focused checks, types and
   scoped lint pass. No identity/PKCE/session/update/logout logic changes and no
-  provider operation. Actual sealed30d848a recovery passes separately below;
-  fresh current-source registration/recovery remain unchecked.
+  provider operation. Fresh3e5b2c1 registration and separate uninterrupted recovery
+  now pass below. The successful recovery journey does not exercise every
+  failure diagnostic or all four languages; production remains unreleased.
 - [x] Published application source30d848a: exact Quality/Secret Scan PR/push and
   CodeQL pass; logs verify2,576 normal/80 skips,80 persisted/one skip,
   types/webpack/static31-of-31 and lint0errors/22 warnings. Exact PR-ref analyses
@@ -58,17 +59,56 @@ technical work; authorization does not imply a completed deployment.
 - [x] Independently close that Oct20 scope: every Auth field restored, original25
   public tables/1,511 rows/three Auth projections/six accounts preserved, verified
   USER with changed password/sessions0, all owned resources closed and complete
-  45,830-file seal passes. Current fixture stays protected/separate. First
+  45,830-file seal passes. Its then-current fixture is now historical. First
   controller1 block/1 command failure; resumed12 blocks/14 console errors versus
   native0/0; do not claim an error-free dashboard. Retain the four harness
   failures separately from application behavior and45 files/247,001 bytes,
   manifest73c507f4669d2f0186640d4801a168fb4b9f7e1099d791fa448a2cf7072fab49.
-- [ ] Verify fresh complete registration and uninterrupted recovery on current
-  source, with fresh bounded plans/technical checks under continuing owner
-  authorization. Six prior actions/five emails are spent; no closed ledger or
-  old password input is reusable authority. No new Oct20 provider-quota snapshot
-  is claimed. Public HTTPS and production Auth/customer continuity remain separate.
-  [Bounded email evidence](cloud-auth-mail.md#oct20-hosted-recovery-with-controller-repair).
+- [x] Complete fresh registration on exact sealed3e5b2c1/45,831: register200 with
+  pending=false, one fresh Resend email/one metadata GET/one body GET,
+  verification200, password login/matching dashboard and normal logout204→home
+  in one uninterrupted fresh protected browser. At actual transport, the permit
+  requires a provider GET within five seconds and live guardian PID/start-time
+  identity; stale READY alone grants no send.
+- [x] Independently close that registration scope: eight prior actors/1,513 public
+  rows/28 projections/23 existing sessions preserved; pinned new USER confirmed/
+  app-verified, one identity/sessions0; every Auth field restored, production
+  INACTIVE/zero production writes, resources closed and45,831-file seal passes.
+  Browser7 blocks/7 console errors/0 page errors remain partially unclassified.
+  Retain44 files/294,368 bytes, manifest
+  6b9648aa1386bc05507cfd86cf1439dc691a2e896edb7518e82a937c10a35b7d;
+  actual-input/private-value matches0, fixture separate0600. No password-unchanged
+  claim without a fingerprint comparison.
+- [x] Preserve the preceding stale-READY setup failure: guardian rollback08:57
+  precedes accepted registration09:00; pending USER retained, no verification,
+  eight metadata requests (two initial403)/zero bodies/no matched Resend email.
+  Built-in delivery and the unretained metadata-drift cause remain unverified.
+  The later zero-mail nine-field probe passes ten exact flag GETs and five full
+  baseline restore reads; replay passes without proving an earlier comparator bug.
+- [x] Complete uninterrupted recovery on sealed3e5b2c1/45,831: one reset200,
+  one metadata GET/body GET, provider303→callback307→reset200/getUser/form,
+  one PUT200, automatic204, old400/new200/dashboard and final normal204→home.
+  The reset begins09:43:30.733 within the five-second permit from the actual
+  provider GET09:43:29.491 and live guardian PID/start-time check. No controller
+  repair/restart/authenticated-session/profile continuation or verification URL
+  replay occurs; the scoped redirect adapter retains the original verification.
+- [x] Independently close that current-source recovery scope: all nine accounts/
+  1,514 public rows/25 public+three Auth tables/23 original sessions retained;
+  all other eight actors' rows unchanged; same confirmed/app-verified USER,
+  one email identity/sessions0. Only encrypted password/last-sign-in/updated-at
+  Auth fields change; current durable old fingerprint matches before and differs
+  after, alongside actual old400/new200. Full Auth is restored/stable across two
+  independent GETs, production INACTIVE/zero writes, resources terminal/absent
+  and full45,831-file post-seal passes. Browser9 blocks/11 console errors/0 page
+  errors/0 command failures remain incompletely attributed; native0/0 is separate.
+  Retain49 files/266,630 bytes, manifest
+  a89011efae3877029bedb3abb0525496b1a73285655def28baab198c9258f285,
+  with zero actual-used private-input/private-pattern/recovery-URL matches.
+  Credentials stay separate0600; selected retention is local/unencrypted.
+  Seven closed mail scopes consume nine actions/seven observed Resend emails,
+  plus unverified earlier built-in delivery; no closed ledger/old credential
+  grants live authority. Public HTTPS, production continuity and later-ba105
+  Auth proof remain separate. [Current scope](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1).
 - [x] Close the additional evening window early: all eight owned Auth fields and
   every unrelated setting restored, original rows/accounts/table set preserved,
   password unchanged/actor sessions0 and owned browser/native/SSH/socket cleanup
@@ -204,8 +244,9 @@ technical work; authorization does not imply a completed deployment.
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity
   and rollback. Isolated OAuth/confirmation pass Oct19 and sealed30d848a recovery
-  passes Oct20 with controller repair/profile continuation. Fresh current-source
-  registration/recovery and production Auth continuity remain.
+  passes Oct20 with controller repair/profile continuation. Fresh3e5b2c1
+  registration and separate uninterrupted recovery now pass; public HTTPS and
+  production Auth/customer continuity remain unverified.
 - [x] Prepare the owner-controlled replacement Google project/Web client and
   verify the isolated preview's expired window restores its provider settings,
   closes cleanly and preserves every original row. Credentials remain private

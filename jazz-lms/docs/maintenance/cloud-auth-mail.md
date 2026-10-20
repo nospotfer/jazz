@@ -1,22 +1,156 @@
 # Isolated cloud Auth email verification
 
 Updated 2026-10-20 (Madrid; event times below are UTC). Status: **CLOSED;
-HOSTED RECOVERY PASSES WITH CONTROLLER REPAIR AND PROFILE CONTINUATION**.
-Sealed source `30d848a` completes the actual callback/form/identity, one password
-update, old-password rejection, new-password dashboard login and normal logout.
-This is not an uninterrupted fresh current-source journey. Every Auth field is
-restored, original data is preserved, the controlled USER has zero sessions and
-all owned resources are closed. Production remains INACTIVE and unchanged.
+FRESH REGISTRATION AND UNINTERRUPTED RECOVERY PASS ON SEALED `3e5b2c1`**.
+The two separate protected-browser journeys pass with independent data
+preservation, exact Auth restoration, zero controlled-actor sessions and all
+owned resources closed. The older `30d848a` recovery pass retains its separate
+controller-repair/same-profile-continuation qualification. Production remains
+INACTIVE with zero production writes; integration and release gates remain open.
 
-The four closed mail scopes have consumed six send actions and sent five emails.
-Their ledgers remain spent and grant no live access. The owner's Oct20 continuing
-authorization covers further bounded controlled tests and reviewed project
-operations once technical prerequisites and rollback are ready; do not ask for
-the same approval again. Use a fresh plan/ledger and the
-[root operating contract](../../../AGENTS.md). Historical checkpoints below retain
-their original dates and narrower results.
+Seven closed mail scopes have consumed nine send actions, with seven observed
+Resend emails. Built-in delivery after the failed registration setup remains
+unverified and is not counted as an observed Resend email. Closed ledgers grant
+no live access. The owner's Oct20 continuing authorization covers further bounded
+controlled tests and reviewed project operations once technical prerequisites
+and rollback are ready; do not repeat the same approval question. Use fresh
+plans/ledgers and the [root operating contract](../../../AGENTS.md). Historical
+checkpoints retain their original dates and narrower results.
+
+## Oct20 uninterrupted recovery on sealed source 3e5b2c1
+
+The `recovery-current-source-proof-20261020` scope uses exact source
+`3e5b2c180316997d732ac96e64e7937bf41d8341` and its45,831-file sealed artifact.
+The fixed09:40:18.707–10:05:18.707 UTC lease closes early after completion.
+Actual native19/private-SSH11 checks and five consecutive exact active provider
+readbacks precede the browser journey. Only the eight SMTP/origin fields and the
+exact reset callback allowlist are temporarily changed; all template fields and
+metadata remain equal to the baseline.
+
+The reset form is ready before the parent independently checks current provider
+state at09:43:29.491 UTC, verifies the live guardian PID/start-time identity and
+absence of a closed receipt, and issues a source/scope/window-bound permit valid
+for at most five seconds. The actual reset POST begins at09:43:30.733 UTC within
+that permit and returns200. One metadata GET and one body GET retrieve the one
+fresh matching Resend email. Provider verification303, application callback307,
+reset page200 and exact confirmed-user/form checks pass. The scoped redirect
+adapter uses the original verification request without replay. The browser is
+fresh and uninterrupted: no controller repair, restart, authenticated-session
+resume or profile continuation occurs during the actual run.
+
+Exactly one password PUT200 is followed by automatic logout204, rejection of the
+old password400, new-password login200 with the verified dashboard, and final
+normal logout204 to home. Independent09:45:39 UTC readback retains all nine
+accounts, all1,514 public rows and the25-public/three-Auth table set. Every other
+actor's rows and all23 original session rows are unchanged. The controlled UUID
+is preserved, with role USER, Auth confirmation/app verification true, one email
+identity and zero sessions. Its only changed row fields are
+`auth.users.encrypted_password`, `last_sign_in_at` and `updated_at`. The old
+password fingerprint matches the explicitly selected current durable fixture
+before the test and differs afterward, alongside the actual old400/new200 proof.
+
+Every Auth field is restored and stable across two independent full GETs.
+Browser/native/SSH resources terminate successfully; owned remote processes and
+sockets are absent, and complete45,831-file post-closure inspection passes.
+Native warnings/errors are0/0. The restricted browser records nine blocked
+requests,11 console errors, zero page errors and zero command failures. These
+counters are not fully attributed; this is not an error-free dashboard or
+general-integration health claim. Private SSH does not establish public DNS/TLS,
+production/customer continuity or Auth proof for the separate later `ba105`
+Dodo TEST artifact. Production remains INACTIVE with zero production writes.
+
+Current credentials are retained separately in the owner-only0600, explicitly
+loaded fixture
+`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/mail-test-auth-fixture-20261020-current-source-private.json`.
+The earlier Oct20 fixture is historical. Neither fixture grants role/session
+authority, and neither belongs in review evidence.
+
+Retain49 selected files/266,630 bytes, including six normalized actual browser
+stage snapshots, in
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-current-recovery-3e5b2c1-20261020`.
+Manifest SHA256:
+`a89011efae3877029bedb3abb0525496b1a73285655def28baab198c9258f285`.
+Actual-used private-input/private-pattern/recovery-URL matches are zero.
+Credentials, raw provider/database/mail data, browser state and enabled inputs
+are excluded. Retention is local and unencrypted, with no off-site claim.
+Working finite receipts are `closed-test-summary.json` and
+`independent-preservation-summary.json` under the scope's private preparation
+root; this result does not complete the maintenance goal or release production.
+
+## Oct20 fresh registration on sealed source 3e5b2c1
+
+The `fresh-registration-proof-20261020` scope uses exact source
+`3e5b2c180316997d732ac96e64e7937bf41d8341` and its45,831-file sealed artifact.
+Its fixed09:24:33.534–09:49:33.534 UTC window closes early after the completed
+flow. Actual native19/private-SSH11 checks pass. Transport proof covers private
+Unix sockets over verified SSH; public HTTPS remains unproven. The later `ba105`
+native Dodo TEST opt-in build is a separate artifact and inherits no Auth journey
+proof.
+
+Five consecutive provider readbacks precede SMTP readiness. At actual registration and verification transport,
+each permit requires a current provider GET no older than five seconds, the live guardian's PID/start-time identity, matching source/scope/window
+and no closed receipt. Historical READY alone grants no send. One registration
+returns200 with `pendingRegistration=false` and sends the one observed Resend
+email. Exactly one metadata GET and one body GET retrieve that fresh controlled
+message; no optional resend is used. The actual verification request returns200,
+followed by normal password login, the matching dashboard and normal logout204
+to home. This fresh protected browser completes the flow without restart or
+profile continuation.
+
+Independent09:28:28 UTC readback preserves all eight prior accounts, including
+the earlier pending registration actor, all1,513 original public rows and all28
+projections across25 public and three Auth tables. The public table set and all23
+pre-existing global session rows are unchanged. The new Auth/app UUID matches
+the independent pin; its role is USER, Auth confirmation/app email verification
+are true, it has one email/one total identity and zero sessions. No before/after
+password-fingerprint comparison is claimed; actual password login establishes
+the observed credential behavior.
+
+Every Auth key/value is exactly restored and stable across two independent GETs.
+Owned browser/native/SSH resources close, remote owned processes/sockets are
+absent and full45,831-file reinspection passes. Production remains INACTIVE with
+zero production writes. The restricted browser records seven blocked requests,
+seven console errors and zero page errors. These counters are not fully
+attributed and do not establish an error-free dashboard or general service health.
+
+Retain44 selected files/294,368 bytes in
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-fresh-registration-3e5b2c1-20261020`.
+Manifest SHA256:
+`6b9648aa1386bc05507cfd86cf1439dc691a2e896edb7518e82a937c10a35b7d`.
+Actual-input/private-value matches are zero. The new registration fixture stays
+separate and owner-only0600; credentials, provider snapshots, mail bodies and
+browser state are excluded from selected review evidence. Retention is local
+and unencrypted and grants no role/session authority.
+
+### Earlier stale-readiness setup and metadata diagnostic
+
+The preceding `fresh-registration-preparation-20261020` attempt does not prove
+delivery. Its guardian rolls back at08:57:24 UTC after detecting
+`mailer_templates_custom_contents` drift. The failure-point GET was not retained,
+so the exact drift and cause remain unproven. Stale READY is then used for the
+accepted09:00 registration after custom SMTP has already been restored. The
+pending USER is retained unconfirmed/app-unverified with zero sessions; no
+verification or login occurs. Eight metadata requests, including two initial403
+responses before the User-Agent correction, find no matching fresh Resend
+message; zero bodies are read. Built-in mail delivery remains unverified. This
+setup failure does not establish an application registration defect.
+
+An intervening one-field probe aborts with coarse I/O diagnostics; its original
+HTTP classification is unavailable. Five independent full-baseline reads pass
+before the corrected nine-field zero-mail diagnostic. Its ten fresh GETs show
+the exact Token template,13 boolean metadata flags and only the confirmation
+custom flag true. All unrelated GET fields stay unchanged. Apply/restore PATCH
+responses return200 and five consecutive full-baseline reads prove restoration.
+Offline replay of those ten GETs passes the frozen guardian comparator. This
+does not identify the earlier unretained drift or prove a comparator defect.
+No email, runtime or database query occurs in that diagnostic.
 
 ## Oct20 hosted recovery with controller repair
+
+This historical checkpoint predates the completed `3e5b2c1` registration above.
+Its four-scope/six-action/five-email totals and then-open registration/recovery
+items are superseded by the two current-source proofs above. Its qualified
+source30 recovery result remains historical and separate.
 
 The fresh fixed scope runs from08:22:05.682 to08:47:05.682 UTC on exact sealed
 source `30d848ae12de7476847b2f2d1e88ddad8def43ec`. Native19/private-SSH11 and the
@@ -47,11 +181,11 @@ and session continuation, not an application password-payload change.
 The continued flow observes exactly one actual password PUT200, automatic
 logout204, old-password token400, new-password token200 with cookie sync/dashboard
 access, and final normal logout204 to the home page. The password is changed;
-older email-test password files are historical. Current test credentials are
-retained separately at the owner-only, explicitly loaded
+older email-test password files are historical. At this checkpoint credentials
+were retained separately at the owner-only, explicitly loaded
 `/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/mail-test-auth-fixture-20261020-private.json`.
-This fixture is excluded from review evidence and grants no role or session
-permission.
+That fixture is now historical, superseded by the current-source fixture above.
+It is excluded from review evidence and grants no role or session permission.
 
 Retain the harness failures as such: embedded remote-Python compilation failed
 before services; the initial SDK-shaped update was blocked before transport; a
@@ -84,9 +218,9 @@ limit. Working finite summaries are in the prepared root's
 `independent-final-auth-and-actor-readback.json` and
 `actual-closed-retention-receipt.json`.
 
-Still required: a fresh complete registration on repaired current source and an
-uninterrupted fresh current-source recovery journey. The current mail actor was
-created during the original failed registration. Fresh bounded tests continue
+The then-open fresh registration and uninterrupted current-source recovery gates
+are now closed by the separate `3e5b2c1` proofs above. The mail actor was created
+during the original failed registration. Further bounded tests continue
 under the owner's authorization with new technical checks and ledgers; neither
 a spent window nor retained fixture substitutes for those checks. Production
 Auth/customer continuity and public HTTPS remain separate release work.
@@ -409,23 +543,19 @@ native runtime receipt records warn0/error0.
 
 ## Remaining verification after the Oct20 checkpoint
 
-The actual Oct20 recovery result above supersedes the earlier incomplete reset
-attempts. The redirect continuation and old/new password/logout checks pass on
-sealed source30d848a with the documented controller repair and same-profile
-continuation. Those results do not establish a fresh current-source run.
+Fresh registration and uninterrupted recovery now pass on the exact sealed
+`3e5b2c1` artifact in separate closed scopes. The older source30 repaired/
+continued-profile result remains distinct. Nonzero restricted-browser counters
+are not fully attributed, and private SSH does not prove public HTTPS or general
+integration health. Later application artifacts inherit none of these hosted
+journey claims automatically.
 
-1. Demonstrate a fresh complete registration on repaired current source. The
-   existing controlled mail actor was created by the failed original-source
-   registration; later confirmation is narrower evidence.
-2. Run an uninterrupted fresh current-source recovery journey, preserving the
-   successful callback/form/identity/update/old-new-login/logout checks and
-   independent data/configuration/resource closure.
-
-Both use the owner's continuing authorization, fresh bounded source/origin/gate/
-transport plans and current-role/configuration checks. Historical ledgers remain
-spent. Retained credentials and PKCE state grant no live access. Production
-client/template/callback/customer continuity and release readiness remain
-technical review work; no production deployment has occurred.
+Historical ledgers remain spent. Any further controlled test uses a fresh bounded
+plan, current source/origin/gate/transport and independent live configuration
+checks under the owner's continuing authorization. Retained credentials and
+PKCE state grant no live access. Production client/template/callback/customer
+continuity and release readiness remain technical review work; no production
+deployment or completion of the maintenance goal has occurred.
 
 ## Publication and retention
 

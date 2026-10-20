@@ -61,16 +61,30 @@ unencrypted; off-site recovery is not established.
 
 The separately controlled email-test USER now has a verified changed password.
 Its current credentials are in the owner-only, explicitly loaded recovery file
-`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/mail-test-auth-fixture-20261020-private.json`.
-Older email-test password files are historical. The fixture grants no role or
+`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/mail-test-auth-fixture-20261020-current-source-private.json`.
+Earlier Oct20 and older email-test password files are historical. The fixture grants no role or
 session authority and must stay separate from retained review evidence. Oct20
 hosted recovery passes callback/form/identity, one password update, old-password
 rejection, new-password dashboard login and normal logout on sealed source30d848a.
 Original data is preserved, settings are restored and owned services are closed. A test
 adapter repair required a same-profile session continuation; an uninterrupted
-fresh current-source journey remains a distinct verification scope. Further
+fresh current-source journey subsequently passes on sealed3e5b2c1 without a
+browser/controller restart or profile/session resume. It preserves all nine
+accounts/1,514 public rows/23 original sessions; only the controlled password and
+sign-in timestamps change, actor sessions0, full Auth restored and45,831-file seal
+passes. Private redirect adaptation remains distinct from public HTTPS. Further
 controlled tests use the owner's continuing authorization and a fresh bounded
 plan; do not reuse a closed window or spent action ledger.
+
+Fresh registration also passes uninterrupted on sealed application source
+`3e5b2c1` (Oct20), including actual confirmation, password login, dashboard and
+normal logout. Original data/settings are preserved/restored and resources are
+closed. The new registration USER's separate owner-only fixture is
+`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/registration-auth-fixture-20261020b-private.json`.
+It grants no role/session authority and stays outside review evidence. The first
+fresh-registration scope remains a closed setup failure with a separate pending
+actor; never overwrite it or reset its spent ledger. Private browser transport
+does not prove public HTTPS; seven blocks/seven console errors are unclassified.
 
 ## Evidence
 

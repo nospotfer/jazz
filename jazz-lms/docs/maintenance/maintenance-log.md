@@ -2071,3 +2071,80 @@ The maintenance goal remains active and incomplete.
   lint and full types pass. The actual Unix-child fixture carries synthetic TEST
   fields without any provider traffic. No real checkout, webhook, refund or
   production deployment is established by these checks.
+
+## 2026-10-20 — Fresh current-source registration and uninterrupted recovery close
+
+- On exact sealed3e5b2c1/45,831, a fresh protected browser completes
+  registration200/pending=false, one observed Resend email/one metadata GET/
+  one body GET, verification200, password login/matching dashboard and normal
+  logout204→home. Eight prior actors/1,513 public rows/23 original sessions and
+  all28 projections remain unchanged; the pinned new USER is confirmed/
+  app-verified with one identity/sessions0. All Auth fields restore, owned
+  resources close and the full seal passes. Retain44 files/294,368 bytes,
+  manifest `6b9648aa1386bc05507cfd86cf1439dc691a2e896edb7518e82a937c10a35b7d`.
+- The earlier stale-READY registration remains a setup failure: its guardian
+  had rolled back before registration, a pending actor is retained, no matching
+  fresh Resend record is found and built-in delivery is unverified. The later
+  zero-mail metadata diagnostic restores completely without establishing the
+  earlier unretained drift's cause. Do not reclassify that attempt as an app defect.
+- The separate09:40:18.707–10:05:18.707 UTC recovery scope uses the same sealed
+  source with a fresh browser and no controller repair/restart/authenticated or
+  profile resume. Actual reset09:43:30.733 follows current provider GET
+  09:43:29.491 within its five-second live guardian/source/window-bound permit.
+  One reset200/metadata GET/body GET/provider303/callback307/reset200/getUser/form/
+  PUT200, automatic204, old400/new200/dashboard and normal final204→home pass.
+  The scoped redirect adapter preserves the original provider verification;
+  no URL replay occurs.
+- Independent closure preserves all nine accounts/1,514 public rows/23 original
+  sessions and every other eight actors' rows across25 public+three Auth tables.
+  Same confirmed/app-verified USER/identity1/sessions0; only encrypted password,
+  last-sign-in and updated-at Auth fields change. The selected current durable
+  fixture's fingerprint matches before and differs afterward alongside actual
+  old400/new200. Full Auth restoration is stable across two independent GETs,
+  all owned resources terminate and full45,831-file reinspection passes.
+  Production remains INACTIVE/zero writes. Retain49 files/266,630 bytes,
+  manifest `a89011efae3877029bedb3abb0525496b1a73285655def28baab198c9258f285`.
+- Both packages are local/unencrypted and exclude credentials/raw provider/DB/
+  mail data/browser state/enabled inputs, with zero actual private-input matches;
+  recovery also has zero actual recovery-URL matches. Current credentials are
+  separate0600 in `mail-test-auth-fixture-20261020-current-source-private.json`
+  under the protected native-preview configuration backup; the previous Oct20
+  fixture is historical. Seven closed mail scopes consume nine send actions/
+  seven observed Resend emails, plus unverified earlier built-in delivery.
+- Registration7 blocks/7 console errors and recovery9 blocks/11 console errors
+  remain incompletely attributed; both have0 page errors, recovery0 command
+  failures/native0/0. Do not infer an error-free dashboard, public HTTPS, later
+  ba105 Auth proof, production release or goal completion. Older30d848a recovery
+  retains its controller-repair/same-profile-continuation qualification.
+  [Exact current scopes and retained paths](cloud-auth-mail.md).
+
+## 2026-10-20 — Published native TEST profile and verified Dodo setup
+
+- Publishedba105 exact Quality PR39400258917/push39400254159 and Secret Scan
+  PR39400258966/push39400254060 pass. Downloaded Quality logs show2,628 normal
+  passes/80 intentional skips and80 persisted passes/one skip; types/webpack/
+  static31-of-31 and lint0errors/22warnings pass. All CodeQL checks succeed and
+  the actual09:38 UTC head-ref read has0 open alerts. This source's explicit
+  leased Dodo TEST profile retains default preview denial and production startup
+  denial; synthetic configuration checks do not establish actual payments.
+- A fresh public QuickTunnel probe passes DNS through system/1.1.1.1/8.8.8.8 and
+  verified TLS to the expected502 for a deliberately absent origin, then closes
+  its owned process. Earlier closed-host NXDOMAIN does not establish a current
+  general DNS blocker. Each actual hostname still needs fresh verification;
+  the later dedicated Dodo host passes its own public DNS/TLS checks. A temporary
+  hostname is no stable production hosting or domain-migration proof.
+- Current actual setup under `/tmp/jazz-maintenance/dodo-baseline-actual-20261020`
+  verifies TEST product GET200, one enabled owned TEST endpoint, a confirmed new
+  controlled USER with all29 original table fingerprints preserved, actual
+  native19/private-SSH11 and actual native invalid-signature401. Invalid-signature
+  rejection does not establish valid signed provider delivery.
+- The first headless browser logs in successfully; independent SQL verifies
+  USER/purchases0. A selector fails before checkout click, then normal204 logout
+  and owned profile removal pass. No checkout/card action occurs in that attempt.
+  The wait correction and next fresh browser phase remain active only through
+  10:22 UTC at this checkpoint; no later result is assumed here.
+- Dodo account-owner information is pending, not a new approval question.
+  Actual checkout/card/payment, signed delivery/return/reconciliation/reversal,
+  dashboard ownership/payout/currency/tax, stable zero-cost hosting and production
+  readiness remain separate work. No charge/refund, provider-health or full
+  integration pass is claimed, and no production deployment occurs.

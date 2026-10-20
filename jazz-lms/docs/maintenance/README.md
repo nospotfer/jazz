@@ -8,8 +8,8 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
 
 ## Current verified checkpoint
 
-- Published source/test checkpoint `46a4dc9` passes Quality PR/push, Secret Scan and CodeQL,
-  with zero open head-ref alerts. Downloaded logs verify 2,584 normal passes/80
+- Published source/test checkpoint `ba105bb` passes Quality PR/push, Secret Scan and CodeQL,
+  with zero open head-ref alerts. Downloaded logs verify 2,628 normal passes/80
   intentional skips, 80 persisted passes/one REST skip (79 actual PostgreSQL cases
   plus one metadata case), types, webpack build and lint 0 errors/22 existing warnings.
 - Landing changes improve the hero, mobile actions/menu, contrast, touch targets
@@ -52,6 +52,14 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
   preserve401, configured historical grants and failure diagnostics;164 focused
   checks pass. This independently fixes missing-configuration behavior without
   attributing the two historical Google-window error counters.
+- Oct20 fresh registration passes uninterrupted on sealed `3e5b2c1`: one actual
+  confirmation email, code verification, normal password login, matching dashboard
+  and logout. Independent checks preserve all eight prior accounts,1,513 public
+  rows and23 existing sessions; the new confirmed USER has zero sessions. Every
+  Auth field is restored, owned services are closed and all45,831 sealed files
+  pass reinspection. Seven blocked requests/seven console errors remain
+  unclassified; private SSH does not prove public HTTPS. The earlier stale-readiness
+  setup failure and pending actor are retained. [Registration evidence](cloud-auth-mail.md).
 - Oct20 sealed `30d848a` passes hosted recovery: actual provider303/callback307/
   reset200, verified account identity, one password update, old-password rejection,
   new-password dashboard login and normal logout to the main page. The test
@@ -60,6 +68,14 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
   Auth settings are preserved/restored, actor sessions are zero, services are
   closed and the45,830-file seal passes. Browser diagnostics remain qualified.
   [Actual recovery evidence](cloud-auth-mail.md).
+- A separate uninterrupted fresh recovery run also passes on sealed `3e5b2c1`,
+  without controller repair, browser restart or session/profile resume: one reset
+  email and verification, one password update, old400/new200/dashboard and normal
+  logout. All nine accounts/1,514 public rows/23 existing sessions remain preserved,
+  with only the intended password/sign-in timestamps changed. Auth is restored,
+  services closed and the45,831-file seal passes. Nine blocks/11 console errors
+  remain incompletely attributed; the scoped private redirect adapter does not
+  prove public HTTPS. [Current recovery](cloud-auth-mail.md).
 
 Reviewed evidence is retained owner-only outside `/tmp`, including the
 `review-checkpoint-history-completed-9544d13-20261015` checkpoint under
@@ -77,16 +93,31 @@ The Oct20 hosted-recovery checkpoint retains45 selected code/finite-proof
 files/247,001 bytes, excluding credentials, provider snapshots, mail bodies,
 recovery URLs and browser state. Its separate current test credential fixture is
 owner-only and must not be copied into review evidence.
+The separate fresh-registration checkpoint retains44 selected files/294,368
+bytes with zero actual-input/private-pattern matches. Its manifest is
+`6b9648aa1386bc05507cfd86cf1439dc691a2e896edb7518e82a937c10a35b7d`;
+credentials and provider/message bodies remain excluded.
+The current recovery checkpoint separately retains49 selected files/266,630
+bytes, manifest`a89011efae3877029bedb3abb0525496b1a73285655def28baab198c9258f285`,
+with zero actual-input/private-pattern/recovery-URL matches. Credentials stay
+separate; selected review evidence is local and unencrypted.
 
 ## Remaining verification and decisions
 
 | Gate | Evidence or decision still needed |
 | --- | --- |
-| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Review actual merchant/team and webhook-alert settings before bounded sandbox transactions; continuing owner approval covers project tests and controlled messages. TEST product/coupon API acceptance and synthetic app journeys are already verified. Preserve unrelated shared services. |
-| Cloud auth mail and production Google transition | Isolated Google login, hosted confirmation/login/logout and Oct20 recovery/password change/old-new login/logout pass. Fresh complete current-source registration and an uninterrupted recovery run remain the next technical checks under continuing approval. Production client/template/callback/customer continuity remain release prerequisites. [Email evidence](cloud-auth-mail.md). |
+| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Explicit leased native TEST configuration and the exact fresh sealed build are ready; actual checkout, signed delivery and reversal checks remain. Dashboard account/team and alert settings are unobserved; continuing approval covers bounded project tests and controlled messages. Preserve unrelated shared services. |
+| Cloud auth mail and production Google transition | Isolated Google login and uninterrupted fresh registration on sealed3e5 pass. Separate uninterrupted current-application recovery also passes on sealed3e5; earlier sealed30d848a controller repair/profile continuation stays historical. Production client/template/callback/customer continuity remain release prerequisites. [Email evidence](cloud-auth-mail.md). |
 | Price, currency and tax authority | Reconcile the archived EUR 29.99 catalog interpretation with the live EUR 29.90 tax-exclusive product before purchase activation. Current source stores server quotes separately from canonical charged facts; no catalog/provider price change has been performed. |
 | Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
 | Production recovery and release | Verify fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence under the owner's continuing authorization. Offline success alone does not establish production readiness. |
+
+A fresh Oct20 Quick Tunnel capability check resolves a newly allocated hostname
+through system/Cloudflare/Google resolvers and verifies TLS edge routing. Its502
+is expected for the deliberately absent origin; no application or data was
+exposed. Both probes are closed. This supersedes a general tunnel-DNS blocker;
+each actual webhook still needs its own fresh ingress check and stable hosting
+remains unprovisioned.
 
 The existing Vercel production and preview settings share the customer Supabase
 backend and live Dodo resources; they are unsuitable for isolated testing. The

@@ -14,7 +14,92 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 current-source Auth passes and published TEST setup
+
+Exact sealed `3e5b2c180316997d732ac96e64e7937bf41d8341`/45,831 now passes
+fresh registration and separate uninterrupted recovery. Registration observes
+register200/pending=false, one fresh Resend email/one metadata GET/one body GET,
+verification200, password login/matching dashboard and normal logout204→home.
+Independent closure preserves the eight prior actors/1,513 public rows/23
+sessions; the new pinned USER is confirmed/app-verified with one identity/
+sessions0. Recovery separately observes one reset200/provider303/callback307/
+reset200/getUser/form/PUT200, automatic204, old400/new200/dashboard and final
+normal204→home. The actual reset starts within five seconds of the independent
+current provider GET/live guardian identity check. No controller repair,
+browser restart, authenticated/profile resume or provider verification replay
+occurs during that run; the scoped redirect adapter retains the original request.
+
+Recovery closure retains all nine accounts/1,514 public rows/25 public+three Auth
+tables/23 original sessions and every other eight actors' rows. The same
+confirmed/app-verified USER has one email identity/sessions0. Only
+`auth.users.encrypted_password`, `last_sign_in_at` and `updated_at` change;
+the selected current fixture's old password fingerprint matches before and
+differs afterward alongside actual old400/new200. Both scopes restore every Auth
+field, close owned resources and pass complete45,831-file reinspection.
+Production remains INACTIVE with zero production writes. Registration records
+7 blocks/7 console errors/0 page errors; recovery9 blocks/11 console errors/
+0 page errors/0 command failures, with native0/0. Attribution remains incomplete;
+neither journey certifies an error-free dashboard or general integration health.
+
+Selected local/unencrypted retention excludes credentials, raw provider/DB/mail
+data, browser state and enabled inputs:
+
+- Registration:44 files/294,368 bytes at
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-fresh-registration-3e5b2c1-20261020`,
+  manifest `6b9648aa1386bc05507cfd86cf1439dc691a2e896edb7518e82a937c10a35b7d`.
+- Recovery:49 files/266,630 bytes, including six normalized actual browser stage
+  snapshots, at
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-current-recovery-3e5b2c1-20261020`,
+  manifest `a89011efae3877029bedb3abb0525496b1a73285655def28baab198c9258f285`.
+
+Both selected packages have zero actual-input/private-value matches; recovery's
+actual recovery-URL scan also has zero matches. No off-site retention is claimed.
+The current mail fixture is separately0600 at
+`/home/gabriel/backups/culturadeljazz-maintenance/native-preview-configuration/mail-test-auth-fixture-20261020-current-source-private.json`;
+the earlier Oct20 fixture is historical. Seven closed mail scopes consume nine
+send actions/seven observed Resend emails. Built-in delivery after the earlier
+stale-readiness setup is unverified. Historical ledgers and fixtures grant no
+live authority. The older30d848a controller-repair/same-profile-continuation
+result stays distinct. [Exact Auth evidence](cloud-auth-mail.md).
+
+Published native TEST-profile source `ba105` has exact
+[Quality PR39400258917](https://github.com/nospotfer/jazz/actions/runs/39400258917)/
+[push39400254159](https://github.com/nospotfer/jazz/actions/runs/39400254159) and
+[Secret Scan PR39400258966](https://github.com/nospotfer/jazz/actions/runs/39400258966)/
+[push39400254060](https://github.com/nospotfer/jazz/actions/runs/39400254060) PASS.
+Downloaded Quality logs verify2,628 normal passes/80 intentional skips,
+80 persisted passes/one skip, types/webpack/static31-of-31 and lint0errors/
+22 warnings. All CodeQL checks succeed and the actual09:38 UTC head-ref read has
+zero open alerts. This explicit leased TEST profile has no actual payment pass
+and inherits no3e5 Auth journey proof; no production deployment follows.
+
+Fresh QuickTunnel capability now passes DNS on the system/1.1.1.1/8.8.8.8
+resolvers and verified HTTPS to the deliberately absent origin's expected502;
+the owned probe closes cleanly. The earlier closed hostname's NXDOMAIN is not a
+current general DNS blocker. Each actual hostname still requires a fresh check;
+the dedicated Dodo host passes its own public DNS/TLS checks. Stable free hosting
+and production migration remain separate.
+
+The current Dodo baseline root is
+`/tmp/jazz-maintenance/dodo-baseline-actual-20261020`. Verified setup comprises a
+fresh TEST product GET200, one enabled owned TEST endpoint, a confirmed new
+controlled USER with29 original table fingerprints preserved, actual native19/
+private-SSH11 and actual native invalid-signature401. The first headless browser
+logs in with SQL roleUSER/purchases0, then fails a selector before checkout click;
+normal204 logout and its profile removal pass. No checkout/card action occurs in
+that first attempt.
+At this checkpoint the corrected-wait fresh browser phase is active only through
+10:22 UTC. Valid signed provider delivery, checkout/return/reconciliation/reversal
+and account-owner/payout/currency/tax evidence remain unverified. The owner
+question concerns account information, not another approval. An enabled endpoint,
+invalid-signature rejection and login establish no charge/refund or provider
+health claim. Maintenance, full integration and production release remain open.
+
 ## Oct20 actual hosted recovery and continuing authorization
+
+This source30 checkpoint, its then-current fixture/totals and its then-open fresh
+registration/recovery gates are historical; the current capsule above supersedes
+those gates without changing the qualified result below.
 
 Sealed source30d848a now passes actual hosted recovery: one reset request200,
 one metadata GET/body GET of the same fresh controlled record, one provider303,
