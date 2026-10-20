@@ -4,7 +4,12 @@ Authenticated [manager inspection and approved recovery](supabase.md) identifies
 the deployed feav project in Free Neurofactory Org, eu-west-1/PG17. It is now
 INACTIVE after the approved rollback: brief recovery allowed private DB/Storage
 exports and read-only inspection, which confirmed unsafe production grants.
-No production hardening SQL or code release has been authorized or applied.
+No production hardening SQL or code release has been applied. Current
+maintenance authorization is recorded in the root operating contract; older
+approval labels below are historical. The [Oct20 recovery checkpoint](production-readiness.md)
+identifies authoritative V4 → literal currency → strict227 sources and current
+containment/target/TLS/preservation prerequisites. Vercel protection/pause is now
+applied, but direct Supabase Data API containment remains unverified.
 
 ## Confirmed recovered production exposure
 
@@ -189,7 +194,7 @@ course, quiz, notes, messages and private-storage journeys before release. Local
 API behavior does not prove the production connection role or production policy
 deployment.
 
-## Production approval package
+## Historical V2 production proposal
 
 An exact private archived-baseline package is now prepared and tested outside
 Git. Revision2 passes **25/25 offline checks**, including default-off/manual

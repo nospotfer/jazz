@@ -1,7 +1,15 @@
 # Vercel account and deployment audit
 
+**Oct20 update:** exact Jazz project All Deployments Authentication and pause
+both return200. Independent readbacks confirm paused/protected state; after an
+initial propagation failure, two actual checks prove503 on `www` and the active
+generated URL even with the existing bypass. Three historical URLs now redirect
+anonymous requests to SSO. Cron is still enabled, `dev` remains unresolved and
+the backend remains INACTIVE. [Changes, evidence and rollback](production-readiness.md).
+
 Observed 2026-10-13 through authenticated REST GETs and public HTML requests.
-No project settings, environments, aliases, deployments or plans were changed.
+The following original audit predates the Oct20 protection/pause changes.
+No environments, aliases, deployments or plans changed in either checkpoint.
 Raw responses and recovered credentials remain outside Git with private file
 permissions. Published evidence contains identifiers and selected metadata only.
 

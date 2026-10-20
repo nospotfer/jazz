@@ -1,5 +1,11 @@
 # Zero-cost production hosting review
 
+**Oct20 access refresh:** registrar/DNS/Cloudflare/Netlify authority remains
+unestablished locally; the owner has been asked to check the exact domain in
+Squarespace. Vercel protection/pause is now applied and verified on production;
+explicit cron disable and broader historical/bypass coverage remain incomplete.
+[Fresh facts, actual effects and next prerequisites](production-readiness.md).
+
 Prepared 2026-10-13. **Proposal only.** The owner selected zero new hosting spend.
 The protected [native temporary HTTPS preview](preview.md#protected-native-preview-and-contrast)
 now verifies exact application source `e32a370`, with fresh sealed build,
@@ -61,7 +67,8 @@ Vercel Authentication**. Current policy permits that method/scope on all plans
 without a paid add-on. Verify every generated/custom/historical URL and any
 bypass/share/team access; the separate Gabriel-scoped history is unresolved.
 Authentication does not revoke credentials or stop cron by itself. No quarantine
-action has occurred. [Protection scope](https://vercel.com/docs/deployment-protection),
+action occurred during this original proposal; the Oct20 update above supersedes
+that state. [Protection scope](https://vercel.com/docs/deployment-protection),
 [pause scope](https://vercel.com/docs/rest-api/projects/pause-a-project).
 
 Rebuild with canonical www origins, review exact Auth callbacks and durable TLS,

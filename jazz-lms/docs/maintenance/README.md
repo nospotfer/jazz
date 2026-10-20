@@ -8,15 +8,21 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
 
 ## Current verified checkpoint
 
-- Published source/test checkpoint `ba105bb` passes Quality PR/push, Secret Scan and CodeQL,
-  with zero open head-ref alerts. Downloaded logs verify 2,628 normal passes/80
-  intentional skips, 80 persisted passes/one REST skip (79 actual PostgreSQL cases
-  plus one metadata case), types, webpack build and lint 0 errors/22 existing warnings.
+Production Vercel is now protected and paused; public roots return503 after
+verified propagation, including the existing bypass. Supabase remains INACTIVE.
+[Current security/hosting/recovery checkpoint](production-readiness.md) separates
+completed containment from the remaining Data API, cron and hosting gates.
+
+- Last fully verified publication `fc1f144` passes all five Quality PR/push,
+  Secret Scan PR/push and CodeQL workflows, with zero open head-ref alerts.
+  Downloaded logs verify 2,674 normal passes/80 intentional skips, 80 persisted
+  passes/one skip, types, webpack build and lint 0 errors/22 existing warnings.
+  Later documentation checkpoints do not extend the source-bound browser proofs.
 - Landing changes improve the hero, mobile actions/menu, contrast, touch targets
   and keyboard focus. Application `1e381a3` has 12 local production-browser cases;
   the later whole-page review covers 390/1440px in both themes. Voucher amount
   wrapping is separately verified at `8053c1b`. [Visual evidence](review-status.md#landing-press-and-footer-accessibility).
-- Exact `5f9597a` is the latest configured authenticated monetary preview: 19 Unix-runtime checks,
+- Earlier `5f9597a` verifies an authenticated monetary preview: 19 Unix-runtime checks,
   11 HTTPS checks and 17 native checks, with independent 12-model/18-hash/full-Purchase
   restoration and owned-resource cleanup. Earlier registration/recovery,
   four-role access, learning, Mux, native PDFs and certificates retain their
@@ -106,7 +112,7 @@ separate; selected review evidence is local and unencrypted.
 
 | Gate | Evidence or decision still needed |
 | --- | --- |
-| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Explicit leased native TEST configuration and the exact fresh sealed build are ready; actual checkout, signed delivery and reversal checks remain. Dashboard account/team and alert settings are unobserved; continuing approval covers bounded project tests and controlled messages. Preserve unrelated shared services. |
+| Dodo coupons, reconciliation and reversals | Actual sealedba105 TEST payment, signed native delivery and canonical purchase pass. A separate refund-only POST409 leaves the purchase retained; cause and reversal remain unverified. Private error-capture repair passes12 offline tests without another Dodo call or allowance. Fresh same-payment checks/bindings precede continuation. Dashboard account/team and alert settings remain unobserved. |
 | Cloud auth mail and production Google transition | Isolated Google login and uninterrupted fresh registration on sealed3e5 pass. Separate uninterrupted current-application recovery also passes on sealed3e5; earlier sealed30d848a controller repair/profile continuation stays historical. Production client/template/callback/customer continuity remain release prerequisites. [Email evidence](cloud-auth-mail.md). |
 | Price, currency and tax authority | Reconcile the archived EUR 29.99 catalog interpretation with the live EUR 29.90 tax-exclusive product before purchase activation. Current source stores server quotes separately from canonical charged facts; no catalog/provider price change has been performed. |
 | Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
@@ -136,6 +142,7 @@ bounded plans under the owner's continuing authorization.
 | [Prioritized backlog](backlog.md) | Repaired defects, deferred work and release gates |
 | [Verification matrix](verification-matrix.md) | Requirement-by-requirement evidence and remaining gaps |
 | [Release and rollback](release-checklist.md) | Production review, activation and rollback requirements |
+| [Current production checkpoint](production-readiness.md) | Applied Vercel quarantine, actual edge checks, authoritative SQL order and remaining containment/access gates |
 | [Local verification](local-verification.md) | Guarded databases, native Auth/storage and browser reproduction |
 | [Public provider evidence](public-provider-evidence.md) | Observed deployed failures and inspection limits |
 | [Database review](database.md) / [Supabase recovery](supabase.md) | Permissions, preservation and hosted-platform recovery limits |

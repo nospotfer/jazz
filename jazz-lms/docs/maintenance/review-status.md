@@ -1,6 +1,13 @@
 # Maintenance review checkpoints
 
-## Latest Oct20 checkpoint: payment verified; refund409 unresolved
+## Oct20 current production checkpoint
+
+Exact Jazz Vercel protection and pause are applied. Two independent read-only
+checks confirm503 on production even with the retained bypass; Supabase stays
+INACTIVE. Cron disable, direct Data API containment and stable free hosting
+remain incomplete. [Actual effects, limits and rollback](production-readiness.md).
+
+## Earlier Oct20 checkpoint: payment verified; refund409 unresolved
 
 The sealedba105 TEST payment and signed native fulfillment now pass fresh
 independent readback: canonical USD89.97/tax0, one exact purchase/processed event,
