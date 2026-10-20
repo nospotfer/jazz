@@ -88,7 +88,7 @@ does not prove public HTTPS; seven blocks/seven console errors are unclassified.
 
 The controlled Dodo TEST USER has separate credentials in the owner-only
 `native-preview-configuration/dodo-test-auth-fixture-20261020-private.json`
-under the same maintenance backup root. Its latest closed scope verifies USER,
+under the same maintenance backup root. Its first closed scope verifies USER,
 zero sessions and no purchases. The separate owner-only
 `dodo-unpaid-test-checkout-20261020-private.json` in that directory preserves the
 original checkout, unpaid TEST payment, private provider links and all five spent
@@ -146,6 +146,27 @@ and the spent marker. The automatic financial-test loop is stopped; first improv
 offline phase-specific diagnostics and verify SDK readiness. Visible inputs and
 a Pay click do not establish accepted transport, and an empty response list does
 not prove that no request occurred. Do not silently grant a second card attempt.
+
+The later SDK-verified scope now proves one successful TEST payment, matching
+signed native webhook and canonical purchase (USD89.97/tax0). Corrected storage
+reference and explicit UTC readbacks preserve all29 original fingerprints/nine
+prior accounts/23 sessions; actor sessions0. Its six services/endpoint/profile
+are closed and the full45,831-file artifact seal passes. This supersedes the
+earlier unpaid-only status without changing those historical scopes or budgets.
+
+A separate refund-only continuation creates no actor/checkout/card. Its sole
+full-refund POST returns409 with no refund ID; readback shows no refunds and
+USD8997 still refundable. The helper discarded the error body, so the cause is
+unknown. All four services/endpoint are closed, original data is preserved and
+the same purchase remains; no refund/access reversal is claimed. The owner-only
+recovery record is `native-preview-configuration/dodo-paid-test-refund-conflict-20261020-private.json`
+under the maintenance backup root. The durable spent refund reservation is
+`/home/gabriel/.config/culturadeljazz-maintenance/dodo-succeeded-test-payment-20261020-refund-attempt-private.json`.
+Keep both separate from review evidence; neither authorizes automatic loading,
+role/session restoration, expired-scope reuse or financial retry. Do not clear
+spent markers or replay checkout/card to diagnose this409. Establish bounded
+private failure capture and a concrete provider recovery plan before any further
+request; continuing maintenance authorization remains in force.
 
 ## Evidence
 

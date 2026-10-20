@@ -1,5 +1,22 @@
 # Production review and rollback checklist
 
+## Latest Oct20 checkpoint: payment verified; refund409 unresolved
+
+The sealedba105 TEST payment and signed native fulfillment now pass fresh
+independent readback: canonical USD89.97/tax0, one exact purchase/processed event,
+all29 original fingerprints/nine prior accounts/23 sessions preserved, actor
+sessions0. Both closed scopes pass complete45,831-file artifact hashing.
+
+A separate refund-only scope creates no actor/checkout/card. Its sole full-refund
+POST returns409/no refund ID; subsequent GETs show zero refunds and USD8997 still
+refundable. The error body was discarded by the helper, so the cause is unknown.
+All four temporary services finish0, endpoint404/socket absence pass, and the
+purchase remains. Refund/access reversal is unverified; spent local/global
+reservations are preserved. No retry or production change occurs. Next: bounded
+failure diagnostics/provider recovery, plus independent production-hardening,
+hosting and release work. [Scope and limits](dodo.md#oct20-sdk-verified-scope-details).
+Earlier unpaid-only/preparation-only checkpoint statements below are historical.
+
 - [x] Application1e381a3: press hover and genuinely painted focus contrast,
   44px footer back-to-top and explicit high-contrast keyboard outline verified
   across12 local production-browser cases. Build/types/scoped lint pass; public

@@ -1,5 +1,22 @@
 # Prioritized maintenance backlog
 
+## Latest Oct20 checkpoint: payment verified; refund409 unresolved
+
+The sealedba105 TEST payment and signed native fulfillment now pass fresh
+independent readback: canonical USD89.97/tax0, one exact purchase/processed event,
+all29 original fingerprints/nine prior accounts/23 sessions preserved, actor
+sessions0. Both closed scopes pass complete45,831-file artifact hashing.
+
+A separate refund-only scope creates no actor/checkout/card. Its sole full-refund
+POST returns409/no refund ID; subsequent GETs show zero refunds and USD8997 still
+refundable. The error body was discarded by the helper, so the cause is unknown.
+All four temporary services finish0, endpoint404/socket absence pass, and the
+purchase remains. Refund/access reversal is unverified; spent local/global
+reservations are preserved. No retry or production change occurs. Next: bounded
+failure diagnostics/provider recovery, plus independent production-hardening,
+hosting and release work. [Scope and limits](dodo.md#oct20-sdk-verified-scope-details).
+Earlier unpaid-only/preparation-only checkpoint statements below are historical.
+
 Updated 2026-10-20. Source fixes are on the maintenance branch;
 **none has been deployed to production**. Evidence distinguishes mocked tests,
 persisted local journeys and actual provider inspection.
@@ -61,7 +78,7 @@ SDK-readiness review next, no new activated scope or second-card authority.
 | SEC-12 | High confidentiality | Auth/payment failures logged raw errors, customer emails and voucher capabilities; Dodo response details also entered voucher metadata/webhook diagnostics. Source27d7b4c uses finite owned diagnostics and status values, retaining discount retry/limit decisions. | 38 new real-helper/closed-mock route regressions; clean1,077 normal/40 skips and 39 persisted/one skip, types/build/lint 0 errors/25 warnings; actual GitHub checks pass. Existing historic diagnostics are preserved, not scrubbed; production unreleased. |
 | SEC-13 | High confidentiality | Registration, vouchers, messaging, media, dashboard/admin helpers and browser error boundaries retained raw exception logging. Registration/resend also returned provider prose. Application-owned logs now use the existing finite diagnostic contract; customer auth/video failures omit server setup instructions. | Source491a02c:53 new closed-mock regressions reproduce all53 failures before repair and pass after it. Clean1,130 normal/40 skips, types/build/lint pass; the53 cases are included. Remote publication recorded separately. No provider/customer requests or historic scrub. |
 | SEC-14 | High project isolation | OpenReplay selected the first organization project when the configured ID did not match, then queried another application's users. Failed user queries also appeared as healthy zero activity. Exact validated project/key match is now mandatory; failed main/daily queries report unavailable. | Closed mock reproduces wrong-project queries with zero network calls.45 new ownership/configuration/request/failure/healthy-metric cases pass; clean1,175 normal/40 skips, types/build/lint pass. Same-organization wrong-project selection is proven; live access/cross-tenant exposure is not. |
-| PAY-01 | High | Standard Webhooks decoding/signature normalization incompatible with Dodo. | Independent vectors and malformed/unicode/replay/configuration negatives; actual delivery unverified. |
+| PAY-01 | High | Standard Webhooks decoding/signature normalization incompatible with Dodo. | Independent vectors and malformed/unicode/replay/configuration negatives; actual sealedba105 signed payment delivery/native processed purchase now passes. Full refund/access reversal remains unverified after TEST POST409. |
 | PAY-02 | High | Reconciliation could grant another customer's payment or restore refunded access. | Matching owner/course/detail ID, persistent reversal ledger and real PostgreSQL races/reversal tests. |
 | PAY-03 | High | Failed/won refund/dispute events revoked access; actual payment_id ignored. | Provider-shaped lifecycle/ID regressions. Successful partial-refund revocation policy preserved. |
 | PAY-04 | High | Free vouchers exceeded concurrent limits; coupon edits could affect unrelated provider discounts. | Atomic limits, persistent races, provider ownership/lifecycle regressions and real voucher browser journey. |

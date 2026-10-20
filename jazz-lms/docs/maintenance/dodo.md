@@ -1,13 +1,120 @@
 # Dodo product, webhook and sandbox audit
 
-Updated2026-10-20. The latest scope is
-**CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED**. One UI card action is spent;
-provider transport/acceptance remains unverified and the TEST payment is unpaid.
-The automated financial-test loop is stopped; no refund, positive fulfillment or
-entitlement is verified.
+## Latest Oct20 checkpoint: payment verified; refund409 unresolved
+
+The sealedba105 TEST payment and signed native fulfillment now pass fresh
+independent readback: canonical USD89.97/tax0, one exact purchase/processed event,
+all29 original fingerprints/nine prior accounts/23 sessions preserved, actor
+sessions0. Both closed scopes pass complete45,831-file artifact hashing.
+
+A separate refund-only scope creates no actor/checkout/card. Its sole full-refund
+POST returns409/no refund ID; subsequent GETs show zero refunds and USD8997 still
+refundable. The error body was discarded by the helper, so the cause is unknown.
+All four temporary services finish0, endpoint404/socket absence pass, and the
+purchase remains. Refund/access reversal is unverified; spent local/global
+reservations are preserved. No retry or production change occurs. Next: bounded
+failure diagnostics/provider recovery, plus independent production-hardening,
+hosting and release work. [Scope and limits](dodo.md#oct20-sdk-verified-scope-details).
+Earlier unpaid-only/preparation-only checkpoint statements below are historical.
+
+## Oct20 SDK-verified scope details
+
+Original fixed14:50:20.703–15:20:20.703 UTC scope uses sealed applicationba105
+and the existing controlled USER, one checkout/Continue/SDK reload/card submission.
+Actual current-frame SDK initialization/session-token APIs return200, three
+public assets match source hashes and the frame reports ready. Card transport200
+precedes exact TEST payment succeeded readback. Product EUR8000 tax-exclusive
+and actual charged USD8997/tax0 are distinct canonical facts. The signed listener
+and native processed ledger match the exact success event/payload hash/HTTP200.
+
+Two verification-helper defects initially block formal proof: Purchase storage
+uses `dodo-pay:` instead of a raw payment ID, and PostgreSQL TIMESTAMP(3) values
+without an offset parse two hours early on the Madrid Node host. Three storage
+predicates are corrected; the query projects createdAt/processedAt and compares
+ledger bounds explicitly in UTC. Original source/raw diagnostics/failed receipt
+are retained. Eight focused storage/UTC groups pass, including separate real
+UTC/Madrid Node processes; these are offline controls. Actual15:35:41.922 fresh
+three read_only SELECT201s then pass all29 original fingerprints/nine prior
+accounts/23 sessions, current10 accounts/1,517 public rows, exact canonical
+purchase1/event1 and actor sessions0. The current snapshot timestamp remains
+actual; a separate historical evidence cutoff grants no expired write authority.
+
+The original scope's six actual services exit0, normal logout/profile removal and
+endpoint40415:20:18.867/socket absence pass. Independent post-closure artifact
+inspection hashes45,831 entries/611 source entries/46 explicit links, verifies
+permissions/Node binary/manifest and excludes only mutable .next/cache. Eight
+synthetic tamper controls pass. This artifact-only check grants no startup or
+lease authority and does not replace live configuration validation.
+
+## Oct20 refund-only continuation: sole POST409, no reversal proof
+
+The separate fixed15:39:49.546–16:09:49.546 UTC scope reuses only the exact
+succeeded payment/controlled USER and unchanged sealed artifact. Zero new
+actor/checkout/card/Continue/bootstrap; at most one full refund and one dedicated
+TEST endpoint. Actual provider product/checkout/payment readbacks pass. Fresh
+three-SELECT proofs before refund and at15:44:30.962 retain all originals and
+actor sessions0, exact purchase1/payment-success-event1. The full TEST profile
+is validated before startup; actual private Unix runtime19 checks pass.
+
+The corrected Cloudflare config routes to a dedicated Unix webhook socket.
+The new endpoint is created disabled, then enabled with all six intended filters
+and exact metadata/readback. Public GET on the actual webhook path returns403/
+empty body; invalid signature returns401/36 bytes. Cloudflare's robots.txt returns
+its own200, so that path is explicitly rejected as origin proof. Private runtime
+robots checks remain separate. Signed refund delivery is not established by
+these negative probes.
+
+Fourteen offline financial-scope/handler/independent negative groups and seven
+runtime groups pass before activation. The sole refund operation checks fresh
+canonical purchase proof, current endpoint ownership/enabled/exact filters,
+policy/signer/input hashes and live Unix identity, then rechecks proof/readiness
+after awaited GETs. Both local and owner-only global intent records fsync file
+and directory before POST. Canonical refund money conflicts reject; absent money
+stays explicitly unknown. Same-endpoint cleanup supports bounded recovery;
+financial attempts do not automatically repeat.
+
+Actual full-refund POST at15:42:04.327 returns409/no refund ID. A root observation
+retains this actual latest-HTTP-pointer readback before later cleanup overwrites
+that pointer; it is not presented as a captured raw HTTP response. The helper
+discarded the error body, so no specific balance/account/settlement cause is
+established. Exact provider payment/line-item GET200s at15:43:09.848 report
+succeeded, refunds0/refund_statusNULL and one USD8997 refundable item. One spent
+local/global reservation remains, no native refund event/access reversal is
+claimed, and the valid paid TEST purchase is retained. The [official SDK](https://github.com/dodopayments/dodopayments-typescript#retries)
+retries409 by default; this general behavior does not establish this conflict's
+cause or renew the closed scope's financial allowance. This helper uses direct
+fetch and performs no such retry.
+
+The same owned endpoint is disabled/deleted with independent404; all four actual
+service handles finish0, process groups0 and listener socket absence pass. Complete
+45,831-file artifact hashing passes15:45:45.111. The original lease is unchanged
+and this scope closes early. A separate0600 recovery record and durable spent
+reservation are documented in root AGENTS; they stay outside selected review
+evidence and grant no autoload/role/session/activation/retry authority. No provider
+key is rotated, funds added, real charge/refund, paid upgrade or production change
+occurs. Next is bounded private failure capture and a concrete recovery plan for
+this same409 attempt; continue independent production readiness work meanwhile.
+
+Updated2026-10-20. Latest scope: **CLOSED_REFUND_HTTP_409_PAYMENT_REMAINS_SUCCEEDED**.
+The earlier unpaid scopes below remain historical; their spent ledgers are preserved.
 The owner has continuing authorization for fresh bounded isolated
 work under the [root contract](../../../AGENTS.md); closed action budgets are
 not renewed. Zero-cost hosting and unreleased production limits remain.
+
+## Paid/refund-conflict evidence custody
+
+Selected147 source/finite evidence files (860,547 bytes) are retained under the
+maintenance backup root in
+`review-checkpoint-dodo-paid-refund-conflict-ba105-20261020`, manifest
+`b59e8d99b96e9ca8872fd24b110f166f4d0135e1cd84c3aa937f196c2e72cab9`.
+Every source/copy rehash matches; exact scanning finds zero matches for15 actual-
+used secret values and11 private URLs. Files0600/directories0700 are verified.
+Historical frozen manifests remain historical; current helper changes and
+original pre-fix sources have separate bytes/hashes. Raw provider/DB/mail/browser
+state, enabled plans/configuration, credentials and recovery records are excluded.
+This local unencrypted package grants no activation/financial authority and does
+not establish off-site recovery. Separate private recovery/spent global intent
+remain owner-only. No source/evidence cleanup deletes the valid paid TEST purchase.
 
 ## Oct20 settled document: UI card action spent, transport unverified
 
