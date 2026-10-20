@@ -52,6 +52,14 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
   preserve401, configured historical grants and failure diagnostics;164 focused
   checks pass. This independently fixes missing-configuration behavior without
   attributing the two historical Google-window error counters.
+- Oct20 sealed `30d848a` passes hosted recovery: actual provider303/callback307/
+  reset200, verified account identity, one password update, old-password rejection,
+  new-password dashboard login and normal logout to the main page. The test
+  adapter needed an SDK request-shape repair and same-profile session continuation;
+  this is not an uninterrupted fresh current-source run. All original rows and
+  Auth settings are preserved/restored, actor sessions are zero, services are
+  closed and the45,830-file seal passes. Browser diagnostics remain qualified.
+  [Actual recovery evidence](cloud-auth-mail.md).
 
 Reviewed evidence is retained owner-only outside `/tmp`, including the
 `review-checkpoint-history-completed-9544d13-20261015` checkpoint under
@@ -65,23 +73,28 @@ package retains24 selected files/33,251 bytes without credential files, temporar
 gate HTML/password or raw Auth configuration. The later actual Google login
 package `review-checkpoint-google-login-fc8d813-20261019` retains22 selected
 files/39,349 bytes, including the explicit two-error diagnostic limitation.
+The Oct20 hosted-recovery checkpoint retains45 selected code/finite-proof
+files/247,001 bytes, excluding credentials, provider snapshots, mail bodies,
+recovery URLs and browser state. Its separate current test credential fixture is
+owner-only and must not be copied into review evidence.
 
 ## Remaining verification and decisions
 
 | Gate | Evidence or decision still needed |
 | --- | --- |
-| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Account evidence for customer, merchant/team and webhook-alert recipients before the prepared sandbox transactions. The controlled customer email is known; it does not authorize mail to unknown team recipients. TEST product/coupon API acceptance and synthetic app journeys are already verified. |
-| Cloud auth mail and production Google transition | Actual first/returning isolated Google login, hosted email confirmation, password login and logout pass. Hosted reset emails are delivered, but recovery exchange remains incomplete. The prepared automated retest needs its separate pending approval; prior mail budgets are spent. Fresh complete registration and production client/template/callback/customer continuity remain gates. [Email evidence](cloud-auth-mail.md). |
-| Price, currency and tax authority | Review the archived EUR 29.99 catalog interpretation against the live EUR 29.90 tax-exclusive product. Current source stores server quotes separately from canonical charged facts. No production catalog/provider change is authorized. |
+| Dodo checkout, coupons, webhook delivery/reconciliation and reversals | Review actual merchant/team and webhook-alert settings before bounded sandbox transactions; continuing owner approval covers project tests and controlled messages. TEST product/coupon API acceptance and synthetic app journeys are already verified. Preserve unrelated shared services. |
+| Cloud auth mail and production Google transition | Isolated Google login, hosted confirmation/login/logout and Oct20 recovery/password change/old-new login/logout pass. Fresh complete current-source registration and an uninterrupted recovery run remain the next technical checks under continuing approval. Production client/template/callback/customer continuity remain release prerequisites. [Email evidence](cloud-auth-mail.md). |
+| Price, currency and tax authority | Reconcile the archived EUR 29.99 catalog interpretation with the live EUR 29.90 tax-exclusive product before purchase activation. Current source stores server quotes separately from canonical charged facts; no catalog/provider price change has been performed. |
 | Stable zero-cost hosting and DNS | Confirm continuous Monster operation and legitimate Cloudflare/registrar DNS access, or provide an existing suitable free host. Temporary protected HTTPS preview is verified; no stable host or domain cutover is provisioned. |
-| Production recovery and release | Fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence, followed by explicit owner approval. Offline success does not authorize production changes. |
+| Production recovery and release | Verify fresh target compatibility/backup, exact SQL/Auth/runtime configuration, old-deployment/cron quarantine and deployment/rollback sequence under the owner's continuing authorization. Offline success alone does not establish production readiness. |
 
 The existing Vercel production and preview settings share the customer Supabase
 backend and live Dodo resources; they are unsuitable for isolated testing. The
 separate Free Supabase preview uses synthetic actors/private generated PDFs.
 Its archived-data recovery checks run in other disposable containers; customer
-backup data is never loaded into the journey preview. No paid Vercel upgrade,
-real charge/refund or third-party message is included.
+backup data is never loaded into the journey preview. Paid Vercel upgrades and
+real charges/refunds remain excluded; controlled project test messages use
+bounded plans under the owner's continuing authorization.
 
 ## Deliverables
 
@@ -106,12 +119,14 @@ real charge/refund or third-party message is included.
 
 ## Authorized work
 
-Local changes, tooling, commits, pushes, pull requests, previews and bounded
-subagents are authorized. Production inspection is authorized. Production writes,
-migrations, deployments, destructive operations, real charges/refunds, plan
-changes and messages to third parties require explicit owner approval. Credentials
-remain local and redacted; rotation is left to the owner. Test customer data and
-payment environments must stay isolated from production.
+The owner explicitly approved the pending maintenance actions on Oct20 and asked
+us to continue without repeated permission questions. The [root operating contract](../../../AGENTS.md)
+records continuing authorization for prepared bounded tests, controlled project
+messages and reviewed production recovery/release operations once technical
+prerequisites and rollback are ready. Historical approval gates are not new
+permission requests. Keep the zero-cost budget, isolated test data/providers,
+unrelated Neurofactory services and owner-led credential rotation. Real charges/
+refunds and paid plan changes remain outside this maintenance scope.
 
 Completion requires the full audited scope, fixed and verified accessible
 critical/high defects, reproducible installation/build/checks, passing relevant

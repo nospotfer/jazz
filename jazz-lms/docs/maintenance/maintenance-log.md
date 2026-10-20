@@ -2005,3 +2005,51 @@ The maintenance goal remains active and incomplete.
   specifications, credentials and customer rows. Independent read-only source/
   actual-receipt and document reviews find no material issue; no restore or
   physical off-site claim is added.
+
+
+## 2026-10-20 — Hosted recovery passes with controller repair and continuation
+
+- The owner explicitly approves the pending plans and continuing bounded project
+  maintenance. Follow the current root contract rather than asking the same
+  permission again; fresh technical plans, targets, ledgers and rollback remain
+  required. Real charges/refunds, paid plans, unrelated services and credential
+  rotation stay outside scope. Historical permission statements retain their
+  dates and are superseded for current operations.
+- Run the fresh08:22:05.682–08:47:05.682 UTC scope on sealed30d848a after actual
+  native19/private-SSH11 and45,830-file checks. Exactly eight temporary isolated
+  Auth fields; no template/hook/notification/signup/Google/nonce/rate/billing or
+  production change. One reset request200 consumes the action; retrieve exactly
+  one fresh matching record with one metadata GET and one body GET. Before continuation,
+  provider303/callback307/reset200 each occur once; actual getUser matches the confirmed
+  controlled USER and the form is visible. No provider-link replay.
+- The initial update click is denied before a provider PUT/attempt marker because
+  the installed SDK adds two null PKCE fields. Preserve the real-SDK synthetic
+  contract and narrow policy repair. Graceful controller closure and validated
+  continuation reuse the same protected profile/session and spent ledger.
+  Exactly one actual password PUT200 then passes, followed by automatic204,
+  old-password400, new-password200/dashboard and normal final204 to home.
+- Retain embedded-Python pre-service compilation failure, the initial SDK-shaped
+  request denial before transport, stale-lock assertion and wrong expected final
+  logout destination as harness failures, not app defects. First controller: one block/one command
+  failure. Resumed:12 blocks/14 console errors, zero warnings/page errors/command
+  failures; native0/0. Do not infer complete error attribution or an error-free
+  dashboard. The pass is source30 with repair/continuation, not an uninterrupted
+  fresh current-source recovery.
+- Independent08:36:20 readback restores every Auth key/value and confirms all
+  extra mail hooks/notifications disabled, verified USER/password changed and
+  sessions0. At08:36:27 the original25 public tables/1,511 rows, three Auth
+  projections/table set and six accounts are preserved. All owned resources
+  close and the full45,830-file seal passes by08:38:39. Production remains
+  INACTIVE/zero writes. Current test credentials are stored separately in the
+  protected Oct20 mail fixture; older password files are historical.
+- Six total historical send actions are spent and five emails sent. No new daily/
+  monthly provider usage was read today; Oct19 counters remain historical.
+  Retain/re-hash45 selected files/247,001 bytes, manifest
+  `73c507f4669d2f0186640d4801a168fb4b9f7e1099d791fa448a2cf7072fab49`,
+  with zero actual-secret/raw-recovery-URL matches. Provider snapshots, credentials,
+  bodies and browser state are excluded; retention stays local/unencrypted.
+- Continue fresh complete repaired registration and uninterrupted current-source
+  recovery under the continuing approval, with fresh bounded plans/technical
+  checks. Dodo, stable zero-cost hosting, production compatibility/hardening/
+  release and the full maintenance completion criteria remain separate work.
+  [Closed recovery evidence](cloud-auth-mail.md#oct20-hosted-recovery-with-controller-repair).

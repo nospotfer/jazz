@@ -14,6 +14,41 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 actual hosted recovery and continuing authorization
+
+Sealed source30d848a now passes actual hosted recovery: one reset request200,
+one metadata GET/body GET of the same fresh controlled record, one provider303,
+application callback307 and reset200, exact confirmed USER/getUser and visible
+form, one password PUT200, automatic logout204, old-password400, new-password200
+with dashboard access and final normal logout204 to home. No provider link is
+replayed. This is a same-profile continuation after repairing the test controller's
+strict handling of the SDK's two null PKCE fields, not an uninterrupted fresh
+current-source run or an application payload repair.
+
+The first controller has one policy block/one command failure; the resumed
+controller has12 blocks and14 console errors, zero warnings/page errors/command
+failures. Native counters are0/0. Embedded-Python compilation, pre-transport SDK
+rejection, stale-lock assertion and wrong expected logout destination are retained
+harness failures. These results do not establish an error-free dashboard.
+
+Independent final checks restore every Auth field and preserve the original25
+public tables/1,511 rows, three Auth projections and six accounts. The mail actor
+remains USER, now has its verified changed password and sessions0; current private
+credentials are separate from review evidence. All owned services close and the
+45,830-file seal passes. Production stays INACTIVE/unchanged. Retain/re-hash45
+selected files/247,001 bytes, manifest
+`73c507f4669d2f0186640d4801a168fb4b9f7e1099d791fa448a2cf7072fab49`.
+Local unencrypted evidence excludes provider snapshots, credentials, email bodies
+and browser state. No new Oct20 provider-quota reading is claimed.
+
+The owner has given continuing authorization for bounded controlled tests and
+reviewed project operations after technical prerequisites/rollback are ready;
+historical unanswered-approval statements are superseded by the
+[root contract](../../../AGENTS.md). Six historical send actions/five emails are
+spent; closed windows stay closed. Fresh complete registration and an
+uninterrupted fresh current-source recovery journey remain next work, alongside
+Dodo, hosting and production readiness. [Exact recovery evidence](cloud-auth-mail.md#oct20-hosted-recovery-with-controller-repair).
+
 ## Oct20 encrypted second-host preservation
 
 The original79 production preservation artifacts plus their unchanged manifest
@@ -45,9 +80,9 @@ The three focused files pass 47 tests; full types and touched-file lint pass
 without errors or warnings. Independent diff review finds no identity, PKCE,
 session, update-payload, success-timing or logout/navigation change. These are
 mocked component/route checks, with no email/provider operation or deployment.
-The prepared hosted retest remains explicitly bound to the earlier sealed
-source30d848a, with no new mail authority. Later source proof does not retroactively
-complete the incomplete hosted recovery below.
+The subsequent hosted test remains bound to the earlier sealed source30d848a
+and passes with the controller repair/profile continuation recorded above. The
+later source-only privacy/copy proof is not an actual current-source journey.
 
 Published application/test source46a4dc9 passes exact Quality PR/push and Secret
 Scan PR/push plus CodeQL. Downloaded logs verify2,584 normal passes/80 skips,

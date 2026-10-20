@@ -6,11 +6,14 @@
   evidence retained outside/tmp and owned browsers/server closed. This does not
   authorize production deployment or establish provider journeys.
 
-Updated 2026-10-20. Preparation only: **no production release is authorized**.
-Source repairs have not been released. The owner separately approved one
-production Supabase resume, private preservation and unsafe-state re-pause;
-those operations completed. Production is INACTIVE again. No production
-SQL/configuration repair or another resume is authorized by that approval.
+Updated 2026-10-20. **Source repairs have not been released to production.**
+The owner has given continuing authorization for the prepared maintenance plans,
+including fresh bounded tests and reviewed production operations once their
+technical prerequisites and rollback are ready. Do not repeat historical approval
+questions; follow the [root contract](../../../AGENTS.md). The earlier production
+resume/preservation/unsafe-state re-pause completed and production remains
+INACTIVE. Current compatibility, isolation, recovery and rollback gates remain
+technical work; authorization does not imply a completed deployment.
 
 ## Recorded production baseline
 
@@ -35,7 +38,8 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Repair reset-page diagnostic privacy and localization: eight new component
   regressions fail before repair and pass after; 47 focused checks, types and
   scoped lint pass. No identity/PKCE/session/update/logout logic changes and no
-  provider operation. Hosted recovery remains a separate unchecked gate below.
+  provider operation. Actual sealed30d848a recovery passes separately below;
+  fresh current-source registration/recovery remain unchecked.
 - [x] Published application source30d848a: exact Quality/Secret Scan PR/push and
   CodeQL pass; logs verify2,576 normal/80 skips,80 persisted/one skip,
   types/webpack/static31-of-31 and lint0errors/22 warnings. Exact PR-ref analyses
@@ -43,18 +47,28 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Repair hosted pending-account confirmation on source30d848a; actual
   controlled inbox/OTP, unchanged password fingerprint, password login and normal
   logout/session removal pass. Preserve the separate original-source failure.
-- [x] Close the bounded mail window: all original rows/accounts and25-table set
-  preserved, actor sessions0/password unchanged, every Auth field restored;
-  owned browser/runtime/transport closed and all three full seals reverified.
-- [ ] Complete recovery exchange and old/new password checks in a fresh bounded
-  window. The latest automated reset is delivered and reaches provider303;
-  Playwright redirected requests bypass the private native adapter before the
-  application callback. Separate same-context continuation now passes103 synthetic
-  checks and actual loopback before/after proof; prepare a fresh hosted scope and
-  verify the real exchange. Initial3+evening1+automated1 actions are spent (four emails);
-  no new send follows from this checkbox. Public HTTPS, a fresh complete repaired
-  registration and production Auth remain separate gates.
-  [Bounded email windows](cloud-auth-mail.md).
+- [x] Close the initial Oct19 mail window: original rows/accounts/table set
+  preserved, then-unchanged password/sessions0, every Auth field restored and
+  browser/runtime/transport/full seals closed. This remains historical evidence.
+- [x] Complete actual Oct20 recovery on sealed30d848a: one reset200, one metadata
+  GET/body GET, provider303→callback307→reset200/getUser/form, one PUT200,
+  automatic204, old400, new200/dashboard and final normal204→home. A narrow
+  SDK-null-field controller repair and same-profile continuation are explicit;
+  this is not an uninterrupted fresh current-source run.
+- [x] Independently close that Oct20 scope: every Auth field restored, original25
+  public tables/1,511 rows/three Auth projections/six accounts preserved, verified
+  USER with changed password/sessions0, all owned resources closed and complete
+  45,830-file seal passes. Current fixture stays protected/separate. First
+  controller1 block/1 command failure; resumed12 blocks/14 console errors versus
+  native0/0; do not claim an error-free dashboard. Retain the four harness
+  failures separately from application behavior and45 files/247,001 bytes,
+  manifest73c507f4669d2f0186640d4801a168fb4b9f7e1099d791fa448a2cf7072fab49.
+- [ ] Verify fresh complete registration and uninterrupted recovery on current
+  source, with fresh bounded plans/technical checks under continuing owner
+  authorization. Six prior actions/five emails are spent; no closed ledger or
+  old password input is reusable authority. No new Oct20 provider-quota snapshot
+  is claimed. Public HTTPS and production Auth/customer continuity remain separate.
+  [Bounded email evidence](cloud-auth-mail.md#oct20-hosted-recovery-with-controller-repair).
 - [x] Close the additional evening window early: all eight owned Auth fields and
   every unrelated setting restored, original rows/accounts/table set preserved,
   password unchanged/actor sessions0 and owned browser/native/SSH/socket cleanup
@@ -176,8 +190,8 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Offline-validate exact baseline-bound production hardening revision 2:
   25 checks / 422 zero-row operations, unchanged archive content and 14 Auth/app
   identities; private SQL/inverse hashes and durable review copy recorded.
-- [ ] Approve exact 26-table/RPC/default-privilege hardening and runtime
-  compatibility before another resume. Existing June code has additional
+- [ ] Finish exact 26-table/RPC/default-privilege hardening and runtime
+  compatibility review before another resume under the continuing authorization. Existing June code has additional
   undeployed security defects; SQL-only recovery is not a complete release.
 - [x] Verify live Dodo product/business, €29.90 EUR tax-exclusive base price,
   active webhook route/filters and exact signing-secret match through GETs.
@@ -189,8 +203,9 @@ SQL/configuration repair or another resume is authorized by that approval.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity
-  and rollback. Isolated OAuth and cloud SMTP confirmation pass Oct19; hosted
-  recovery exchange and production Auth continuity remain.
+  and rollback. Isolated OAuth/confirmation pass Oct19 and sealed30d848a recovery
+  passes Oct20 with controller repair/profile continuation. Fresh current-source
+  registration/recovery and production Auth continuity remain.
 - [x] Prepare the owner-controlled replacement Google project/Web client and
   verify the isolated preview's expired window restores its provider settings,
   closes cleanly and preserves every original row. Credentials remain private
@@ -235,17 +250,19 @@ messaging/RLS SQL in a guarded transaction, without legacy history replay.
    prepare only reviewed setup-messaging.sql and required missing columns.
 3. Review harden-lms-rls.sql and harden-messaging-rls.sql separately. Confirm
    owner/BYPASSRLS and trusted CRUD, shared dependencies and function/view grants.
-4. Get explicit approval for exact SQL and sequence. No production seed, db push,
-   reset, wipe, full legacy-policy replay or financial schema migration.
+4. Review the exact SQL, sequence and rollback against current production under
+   continuing authorization. Do not substitute generic seed/db push/reset/wipe
+   or full legacy-policy replay for a scoped verified migration.
 5. Verify browser denial/server continuity with approved synthetic identities;
    retain pre-change metadata for reviewed forward repair.
 
-## Release after explicit approval
+## Release once technical prerequisites are ready
 
 Changing DNS alone does not retire trusted old servers. The June deployment's
 direct vercel.app URL and cron may still reach production with their immutable
-credentials after Supabase resumes. Prepare and approve a verified old-project/
-deployment quarantine before another resume, covering generated URLs and cron.
+credentials after Supabase resumes. Prepare and verify the exact old-project/
+deployment quarantine before another resume, covering generated URLs and cron,
+under the continuing authorization.
 The prepared free scope is All Deployments Vercel Authentication, explicit cron
 disable and paused active production. Verify actual targets/bypasses before
 claiming coverage; [hosting review](hosting.md) records current primary policy.
@@ -260,9 +277,10 @@ DNS move or deployment-protection change has been performed for this plan.
    path; deploy the approved code revision.
 3. Verify public discovery/noindex, identity/recovery/OAuth, video/private PDFs,
    free/paid negatives, quiz/notes/certificate/admin and cron access. Provider
-   tests and any third-party messages need the explicit approved scope.
-4. Inspect sanitized deployment/webhook/media/accounting failures. No unapproved
-   real charge, refund or customer email.
+   tests and controlled messages use fresh bounded plans within the continuing
+   authorization; customer outreach is not inferred from a test.
+4. Inspect sanitized deployment/webhook/media/accounting failures. Real charges,
+   refunds, paid plans, unrelated services and credential rotation remain excluded.
 5. Record actual deployment ID/commit and each check before reporting success.
 
 ## Rollback / forward repair
