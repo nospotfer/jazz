@@ -1,5 +1,15 @@
 # Maintenance review checkpoints
 
+## Oct20 legacy-key restoration and free recovery capacity
+
+The separate isolated legacy-key control verifies gateway denial and restoration
+of the same key at17:41 UTC. All29 fingerprints, catalog and exact settings match;
+delayed flag reads and the runner's initial stop remain preserved. Current17:59
+account metadata confirms one active/one paused Free project and sole ownership,
+supporting a candidate replacement slot. No destination is created. The October13
+archive is not proven current; managed restore/Auth/Storage/hosting and refund
+execution remain unfinished. [Actual evidence and limits](production-readiness.md#legacy-key-control-and-free-replacement-candidate).
+
 ## Oct20 isolated API control closes with preserved data
 
 The exact preview is healthy again at17:19 UTC. Its sole inactive empty-schema

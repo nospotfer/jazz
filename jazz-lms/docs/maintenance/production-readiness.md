@@ -128,11 +128,51 @@ with an empty key list and `legacy.enabled=true`, while the healthy preview
 lists two legacy and two new keys. An empty paused inventory is not evidence
 that no keys exist. The documented legacy-key switch is reversible, but covers
 legacy keys only; the new-key PATCH contract has no `enabled` field. No key was
-created, changed, disabled, deleted or rotated. A separate isolated gateway
-control is being prepared; it cannot by itself prove all-key containment or
-paused-project applicability.
+created, changed, disabled, deleted or rotated in that schema-control scope.
+The later isolated legacy-key control is recorded below; it cannot by itself
+prove all-key containment or paused-project applicability.
 [Legacy switch](https://supabase.com/docs/reference/api/v1-update-project-legacy-api-keys),
 [new-key update](https://supabase.com/docs/reference/api/v1-update-project-api-key).
+
+### Legacy-key control and free replacement candidate
+
+The separate legacy-key test now verifies an actual gateway denial followed by
+restoration of the same existing key. Its disable and re-enable PUTs both return
+200. Immediate flag reads lag each change; the runner stops on its first stale
+restore readback rather than repeating a mutation. Subsequent bounded read-only
+closure verifies enabled=true and the original service-role zero-row200/[] route
+at17:41 UTC. Independent Python comparison matches all29 full fingerprints,
+the complete catalog and exact Auth/PostgREST settings. Cumulative control usage
+is21 management requests, including four read-only SQL calls, seven public probes
+and exactly two legacy PUTs. The original stopped result remains preserved.
+
+This establishes the selected legacy key's denial and restoration on the active
+preview. It does not establish newer-key coverage, paused-project behavior or
+safe production exposure. No app, tunnel, browser, key rotation or financial
+operation is started by this test. Production remains paused.
+
+A replacement backend is a conditional alternative to waking the unsafe source.
+The current account read at17:59 UTC confirms one Free organization, the caller
+as sole Owner/Admin, one active preview and one paused production project. This
+supports a candidate second active Free slot; no project is created or reserved.
+The current [Free policy](https://supabase.com/docs/guides/platform/billing-on-supabase)
+excludes paused projects from that active-project limit.
+
+The restore design must harden an empty destination before a data-only import;
+replaying the full original archive can restore unsafe ACLs. The retained
+October13 snapshot is not proven equal to current production. Two current
+read-only backup metadata responses list zero logical backups and no physical
+backup dates; they do not prove the underlying paused data or backups absent.
+Preserving later data or deciding an accepted recovery point remains a prerequisite.
+Archive-only checks verify zero Vault secret/MFA-factor/challenge/recovery rows,
+25 MFA authentication-method claims, and zero parsed pgsodium column labels.
+These facts do not establish complete encryption or managed-platform portability.
+
+Official [Auth migration guidance](https://supabase.com/docs/guides/troubleshooting/migrating-auth-users-between-projects)
+supports password-hash/user migration, with re-login after changing signing keys.
+Actual new-target schema/role compatibility, Auth identity behavior, Storage bytes
+and associations, OAuth/SMTP settings, hosting and rollback still need proof.
+No source guard is relaxed, no database is imported and no destination is created.
 
 ## Current SQL source and order
 
@@ -196,6 +236,17 @@ webhook origin separately. Actual transport, current receipts, endpoint/runtime
 setup, bounded continuation and reversal/closure proof remain unfinished. No
 additional refund request was made in this checkpoint.
 
+Concrete readback/wiring now passes43 independently repeated offline cases. It
+retains the original SQL exclusions and UTC projections, validates actual scoped
+rows and signed-core journal/ledger provenance, and deliberately does not invent
+missing historical raw webhook bytes. A separate root endpoint controller passes
+12 cases, including private409 capture, ownership before writes, fixed deadlines
+and ambiguous-disable cleanup without retry. Its copied native/tunnel/listener
+helpers remain inactive. Historical input hashes and the original spent marker
+are rechecked; no new lease, endpoint, service or financial reservation is created.
+Fresh native HTTP probes, dynamic receipt wiring, actual execution and closure
+remain required. These offline suites are not live refund or reversal evidence.
+
 Selected finite evidence/source is retained privately under
 `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-production-readiness-20261020`.
 Raw provider responses, rollback credentials, browser state and active/private
@@ -215,3 +266,12 @@ under `review-checkpoint-isolated-control-20261020` in the same backup root.
 The separate public cron-source copy verifies56 files/5,284,290 bytes, receipt
 `0601f9c582d4c89ddc07b1551cde2cda5f89f4895b78677f89e423ce526adb0a`.
 Neither package establishes off-site recovery or grants activation authority.
+
+The later legacy-control/free-recovery/source checkpoint retains86 selected
+files/5,498,641 bytes under `review-checkpoint-legacy-and-free-recovery-20261020`.
+Its receipt is `b0d192502f3c7ec4113c2cb0ea911da658a4b75e9a57892a0f0b11af1cff7ef6`.
+Exact source/copy hashes and0600/0700 permissions pass; the selected current
+management token and legacy JWT have zero literal matches. The Dodo TEST key
+is not loaded for this scan. Actual credential/input registries, enabled plans,
+financial reservations and raw provider/Auth/customer/browser bodies are excluded.
+This local unencrypted evidence is not an off-site backup or activation authority.

@@ -18,11 +18,17 @@ table fingerprints and exact settings preserved. Its inactive schema PATCH
 returns404, so it does not establish a safe production recovery control. The
 preview is healthy again; production stays paused. [Result and next action](production-readiness.md#actual-isolated-control-result).
 
-- Preceding verified publication `cdaefdf` passes all five Quality PR/push,
+- Preceding verified publication `59a58f0` passes all five Quality PR/push,
   Secret Scan PR/push and CodeQL workflows, with zero open head-ref alerts.
   Downloaded logs verify 2,674 normal passes/80 intentional skips, 80 persisted
   passes/one skip, types, webpack build and lint 0 errors/22 existing warnings.
   Later documentation checkpoints do not extend the source-bound browser proofs.
+- A separate legacy-key control verifies actual denial and same-key restoration,
+  with all29 fingerprints/permissions/settings preserved after delayed readbacks.
+  It covers that legacy key only. Current account metadata supports a candidate
+  free replacement slot, but source-data currency and managed restore/cutover
+  prerequisites remain unresolved; no replacement project is created.
+  [Current recovery options](production-readiness.md#legacy-key-control-and-free-replacement-candidate).
 - Landing changes improve the hero, mobile actions/menu, contrast, touch targets
   and keyboard focus. Application `1e381a3` has 12 local production-browser cases;
   the later whole-page review covers 390/1440px in both themes. Voucher amount

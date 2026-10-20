@@ -2576,3 +2576,40 @@ The maintenance goal remains active and incomplete.
   responses, private snapshots, keys and enabled inputs are excluded. Separate
   public cron-source copy verifies56 files/5,284,290 bytes. Local unencrypted
   custody, no off-site or activation claim. [Results and next gates](production-readiness.md).
+
+## 2026-10-20 — Legacy gateway control restored; free recovery option checked
+
+- The isolated legacy disable/re-enable PUTs return200/200. Actual gateway
+  denial is observed, but immediate flag reads lag both changes. The runner's
+  stopped closure remains intact. A bounded read-only continuation verifies the
+  same original key200/[] and enabled=true at17:41; independent full29/catalog/
+  Auth/PostgREST equality passes. Exactly two PUTs,21 management requests/four
+  read-only SQL calls and seven public probes; no repeated mutation or resources.
+- Root first catches a missing exact catalog comparison in preparation. A new
+  copy adds it; the regression fails against the original and17 cases pass with
+  repair. Existing original sources/scopes remain unchanged. Legacy-only proof
+  does not cover new keys, paused behavior or production exposure.
+- Read-only account metadata confirms Free/sole owner, one active preview and
+  one paused production project. Six GETs support a candidate replacement slot;
+  no project, charge, plan or DNS change. Two separate backup metadata reads list
+  no logical backups or physical dates, without proving underlying backups absent.
+  Production stays INACTIVE; the October13 archive remains point-in-time evidence.
+- Primary-source replacement review supports empty-schema hardening followed by
+  data-only import. A full archive can reintroduce unsafe ACLs. Current-data/RPO,
+  encryption, managed schema, imported Auth, Storage, hosting and rollback gates
+  remain. Archive-only Vault/MFA-factor/challenge/recovery counts are0, AMR25;
+  zero parsed column labels and an unqualified extension parser are not complete
+  portability proof. No sourceguard relaxation or destination import occurs.
+- Concrete refund collectors/wiring pass43 independently repeated cases; root
+  endpoint lifecycle passes12, including preserved filters and a sole unspent
+  DELETE after an ambiguous disable, with exact ownership checked first. Original
+  signed-core journal/ledger provenance replaces an unavailable raw-body demand.
+  Historical hashes/spent marker match. No new TEST key load, lease, endpoint,
+  service, reservation or refund request occurs. Actual execution remains next.
+- Published59a58f0 has all five workflows green; both downloaded Quality logs
+  verify2674 normal/80 persisted passes, with existing skips and22 lint warnings.
+  Private root/source preparation remains separate from application/browser proof.
+- Retained86 selected files/5,498,641 bytes pass exact hashes,0600/0700 modes and
+  zero matches for the two selected current control credentials. Actual inputs,
+  raw responses and financial reservations are excluded; no TEST key is loaded
+  for scanning. Local unencrypted custody, no off-site/activation claim.
