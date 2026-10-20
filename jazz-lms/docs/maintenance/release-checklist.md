@@ -35,11 +35,12 @@ technical work; authorization does not imply a completed deployment.
 
 ## Review gates
 
-- [x] Published documentation checkpointd025e05 has five successful exact-head
+- [x] Published documentation checkpointd2a9bee has five successful exact-head
   workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run
   ([run IDs/events](review-status.md)). Downloaded Quality verifies2,628 normal/80 intentional skips,
   80 persisted/one skip, types/webpack/static31-of-31 and lint0errors/22warnings;
-  fresh head-ref CodeQL alerts0. Actual Auth remains sealed3e5 and actual Dodo
+  actual PR-head CodeQL alerts0 with both analyses on the exact commit. Actual
+  Auth remains sealed3e5 and actual Dodo
   remainsba105/45,831; publication extends neither journey nor production release.
 - [x] Repair reset-page diagnostic privacy and localization: eight new component
   regressions fail before repair and pass after; 47 focused checks, types and
@@ -272,16 +273,31 @@ technical work; authorization does not imply a completed deployment.
   Owned browser/cleanup processes0, profile/socket absent and Card/Continue6
   markers absent; full45,831 post-seal passes11:02:03.581. V2 retention51 files/
   387,062 bytes passes exact rehash/zero actual-used private-value/URL matches,
-  including the actual closure checker. [Latest scope and manifest](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
+  including the actual closure checker. [Earlier scope and manifest](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
+- [x] Close the separate11:24:16.375–11:54:16.375 UTC continuation early around
+  11:34 as CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME. Two actual link-expired
+  redirects; zero new actor/checkout/payment/billing/card/refund actions. Preserve
+  before-state/six effect ledgers/29 fingerprints/nine prior accounts/23 sessions;
+  current10 accounts/1,515 rows/confirmedUSER/identity1/sessions0/purchases0.
+  Second normal logout fails before Auth POST; exact retained-profile cleanup
+  verifies live user and one global204 without password login, then independent
+  sessions0 proof precedes deletion. All five services terminal0/profile/socket
+  absent/endpoint GET40411:34:19/full45,831 seal11:34:24/retention51 files249,223
+  bytes pass. [Latest scope and manifest](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
+- [x] Correct the prior checkout-resume proposal: the documented checkout_url is
+  single-use and needs a new session per attempt. Bare API payment links and
+  reconstructed opaque queries have no equivalent documented resume guarantee;
+  cause beyond the observed rejection remains unproven.
 - [ ] Review customer/team/webhook-alert recipients, dashboard/currency/tax
   decisions and complete actual isolated payment, positive signed delivery,
-  return/reconciliation/coupon/reversal. First baseline remains
-  CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE; latest follow-up has only an unpaid
-  record/quote, not a completed charge/settlement/refund/fulfillment. The owner
+  return/reconciliation/coupon/reversal. Earlier windows retain their historical
+  controller-failure/unpaid-record evidence; the latest continuation cannot resume
+  its old links. No completed charge/settlement/refund/fulfillment is verified. The owner
   supplied a likely account email; membership/login/settings remain unverified.
-  Next preparation reuses already-existing unpaid payment/original actor/checkout
-  only under a fresh lease/exact GET, preserving creation times/spent ledgers;
-  it is not activated at this checkpoint and needs no repeated approval question.
+  Separate fresh-session preparation uses only the existing USER, one new normal
+  app checkout/one TEST card/one full TEST refund, zero actors/coupons, same
+  protected browser and actual observed/provider-bound redirect query verbatim;
+  it is not activated and needs no repeated approval question.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity

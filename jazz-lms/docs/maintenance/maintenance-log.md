@@ -2249,3 +2249,46 @@ The maintenance goal remains active and incomplete.
   membership/settings, not an approval block. Earlier baseline, d025 exact CI and
   sealed3e5 Auth evidence remain separately bound. Completed payment/refund/signed
   fulfillment, stable zero-cost hosting and production release remain open.
+
+## 2026-10-20 — Checkout continuation closes; single-use contract corrects plan
+
+- Run jazz-dodo-baseline-continuation-20261020 uses actualba105/45,831 and the
+  fixed11:24:16.375–11:54:16.375 UTC lease, closing early around11:34 as
+  CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME. Two fresh browsers actually
+  redirect to the same TEST origin's `/status/[opaque]/link-expired` shape.
+  Neither resumes an actually observed redirect query, no raw session query is
+  reconstructed, and the bare API link is navigated without that observed query.
+  Cause beyond provider rejection remains unproven.
+- No new actor/checkout/payment/billing/card/refund action occurs. Existing
+  unpaid payment still reads requires_payment_method11:28:52.499 with original
+  10:39:39.286317 creation time; before-state/all six effect ledgers stay exact.
+  Fresh runtime19/private-SSH11/negative401/DNS3/TLS/absent-origin502 are setup
+  only. First browser normal logout/profile deletion passes; second normal
+  logout fails before any Auth POST. Exact retained-profile cleanup uses live
+  Auth-user GET and one global204 without password login, then independent
+  sessions0 proof precedes matching profile deletion.
+- Independent closure11:32:28.530 preserves25 public tables/29 original
+  fingerprints/nine prior accounts/23 sessions/refresh tokens/ledger; current10
+  Auth/app accounts/1,515 public rows/confirmedUSER/identity1/sessions0/purchases0.
+  All five services terminal0/profile/socket absent/Cloudflare group members0;
+  exact endpoint GET40411:34:19.664 and full45,831 seal11:34:24.291 pass.
+- Selected retention passes51 files/249,223 bytes, exact rehash and zero
+  actual-used secret/private provider URL matches at
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-continuation-ba105-20261020`,
+  manifest `4d3f3ce80e696aabdc2e134fadabe2dd6be48d2b2b915232a7ae7e38820aacf7`.
+  Excludes raw provider/DB/mail data, browser state, enabled inputs, credentials
+  and recovery files; local/unencrypted, no off-site claim.
+- The primary single-use checkout_url contract supersedes the earlier reuse
+  proposal. No equivalent bare payment.payment_link/reconstructed-query resume
+  promise is established. Separate dodo-fresh-session-20261020 preparation uses
+  the existing USER, one new normal app checkout/one TEST card/one full TEST
+  refund, zero actors/coupons, the same browser and verbatim actual observed/
+  provider-bound redirect query. No activation yet. [Current detail and primary sources](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
+- Published documentationd2a9bee has five actual successful runs: Quality
+  PR39413379424/push39413374034, Secret Scan PR39413379345/push39413373977 and
+  dynamic CodeQL39413376244. Both downloaded Quality logs show2,628 normal/80
+  skips,80 persisted/one skip, types/webpack31/lint0errors22warnings. Exact-commit
+  CodeQL analyses and open-alert count0 are on refs/pull/46/head; no nonexistent
+  maintenance-branch analysis is inferred. Earlierba105 runtime and3e5 Auth
+  proofs remain separate. Full goal, completed financial integration and
+  production release remain incomplete.

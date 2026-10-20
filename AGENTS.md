@@ -98,6 +98,21 @@ role/session restoration or activation. Any continuation needs fresh independent
 actor/provider checks and a new source/origin/gate plan. Preserve original
 timestamps and spent actions; do not recreate the account or checkout to resume.
 
+The Oct20 continuation closes without a card attempt: both the bare payment API
+link and the original checkout redirect to a provider `link-expired` status page.
+Dodo documents checkout URLs as single-use, so do not assume a closed checkout
+can resume or that its payment API link replaces the observed browser URL.
+Preserve the old unpaid payment, captures and ledgers. A subsequent payment test
+is a separate, reviewed fixed scope with at most one new normal application
+checkout, one card attempt and one full TEST refund, reusing the confirmed USER
+without creating an account. Prepare its helpers before creating the checkout;
+retain one browser profile and carry the actual observed redirect, including its
+opaque session query, unchanged after matching it to the exact provider receipt.
+Never reconstruct that query or silently renew a closed action allowance. The
+owner's continuing authorization covers this bounded isolated test; another
+routine approval is not required. The provider rejection alone does not prove
+whether expiry, consumption or missing browser context caused it.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

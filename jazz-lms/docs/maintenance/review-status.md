@@ -14,7 +14,41 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
-## Oct20 Dodo follow-up closes with an unpaid TEST payment
+## Oct20 Dodo continuation closes after link-expired redirects
+
+The latest actualba105/45,831 scope is
+`CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME`: the fixed11:24:16.375–11:54:16.375
+UTC lease closes early around11:34. Two fresh browsers redirect to the same TEST
+origin's `/status/[opaque]/link-expired` shape. No new actor/checkout/payment,
+billing/card/refund action occurs; the original before-state and all six effect
+ledgers remain exact. The earlier unpaid payment remains `requires_payment_method`.
+The first browser logs out normally. The second normal logout fails before any
+Auth POST; exact-profile cleanup verifies live identity, uses one global204
+without password login, then independent sessions0 proof precedes profile deletion.
+The cause beyond observed provider rejection remains unproven.
+
+Independent11:32:28.530 closure preserves29 original fingerprints/nine prior
+accounts/23 sessions/refresh tokens/ledger, with current10 Auth/app accounts/
+1,515 public rows and confirmedUSER/identity1/sessions0/purchases0. All five
+services finish terminal0, profiles/socket are absent, exact endpoint GET404
+passes11:34:19.664 and the full45,831-file seal passes11:34:24.291. Selected
+retention passes51 files/249,223 bytes, exact rehash and zero actual-used secret/
+private provider URL matches; local/unencrypted, no off-site claim. Its directory
+is `review-checkpoint-dodo-continuation-ba105-20261020` under the maintenance
+backup root, manifest
+`4d3f3ce80e696aabdc2e134fadabe2dd6be48d2b2b915232a7ae7e38820aacf7`.
+[Latest finite scope and exclusions](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
+
+The documented single-use `checkout_url` contract supersedes the earlier reuse
+proposal; neither a bare API payment link nor a reconstructed opaque query has
+a documented resume guarantee. A separate fresh-session scope is preparation
+only: existing USER, one new normal app checkout, one TEST card attempt and one
+full TEST refund, zero actors/coupons, same browser profile and the actual
+observed/provider-bound redirect query preserved verbatim. It is not activated.
+No payment/refund/positive fulfillment, account membership or production-release
+proof follows.
+
+## Earlier Oct20 follow-up closes with an unpaid TEST payment
 
 The10:31:06.315–11:01:06.315 UTC follow-up on actualba105/45,831 closes early
 around10:59. It reuses the original confirmed USER and exact checkout created
@@ -52,11 +86,10 @@ manifest `e2450f3d3b9302c33c407bd12e4717683b8223a0267477c1d3285869bbba0466`.
 The selection includes the actual closure checker and excludes raw provider/DB/
 mail data, browser state, enabled inputs and the separate private recovery file;
 it is local and unencrypted, not off-site. Comprehensive status remains
-`CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE`. Next continuation is
-preparation only, reusing the already-existing unpaid payment/original actor/
-checkout under a fresh lease/GET while preserving old timestamps/spent ledgers.
-No activation, completed payment/refund/signed fulfillment, account membership
-or production release is inferred. [Latest scoped evidence](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
+`CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE`. Its then-proposed old-checkout reuse
+is superseded by the closed continuation and single-use contract above.
+No completed payment/refund/signed fulfillment, account membership or production
+release is inferred. [Historical scoped evidence](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
 
 ## Oct20 current-source Auth passes and published TEST setup
 
@@ -107,19 +140,23 @@ live authority. The older30d848a controller-repair/same-profile-continuation
 result stays distinct. [Exact Auth evidence](cloud-auth-mail.md).
 
 Latest published source
-[`d025e05e18576710e99fa3077324746c261e2254`](https://github.com/nospotfer/jazz/commit/d025e05e18576710e99fa3077324746c261e2254)
+[`d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f`](https://github.com/nospotfer/jazz/commit/d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f)
 has five successful exact-head workflow runs: Quality
-[pull request39405773324](https://github.com/nospotfer/jazz/actions/runs/39405773324)/
-[push39405767014](https://github.com/nospotfer/jazz/actions/runs/39405767014),
+[pull request39413379424](https://github.com/nospotfer/jazz/actions/runs/39413379424)/
+[push39413374034](https://github.com/nospotfer/jazz/actions/runs/39413374034),
 Secret Scan
-[pull request39405773319](https://github.com/nospotfer/jazz/actions/runs/39405773319)/
-[push39405767019](https://github.com/nospotfer/jazz/actions/runs/39405767019),
-and one [dynamic CodeQL run39405769905](https://github.com/nospotfer/jazz/actions/runs/39405769905).
+[pull request39413379345](https://github.com/nospotfer/jazz/actions/runs/39413379345)/
+[push39413373977](https://github.com/nospotfer/jazz/actions/runs/39413373977),
+and one [dynamic CodeQL run39413376244](https://github.com/nospotfer/jazz/actions/runs/39413376244).
 An exact-head Actions API readback confirms these five runs; CodeQL's actions
 and JavaScript/TypeScript Analyze jobs both succeed. No separate CodeQL push run
 is listed. Downloaded Quality logs verify2,628 normal
 passes/80 intentional skips,80 persisted passes/one skip, types/webpack/
-static31-of-31 and lint0errors/22warnings; fresh head-ref CodeQL alerts0.
+static31-of-31 and lint0errors/22warnings; actual `refs/pull/46/head` CodeQL
+alerts0. Both analyses match the exact commit; maintenance/PR heads are equal
+and stable before/after the read. No maintenance-branch analysis ref is inferred.
+Finite downloaded-log/API evidence is at
+`/tmp/jazz-maintenance/fresh-auth-publication-20261020/d2a9bee-publication-ci-summary.json`.
 The earlierba105 TEST-profile feature's exact Quality PR39400258917/
 push39400254159 and Secret Scan PR39400258966/push39400254060 remain historical.
 CI does not extend hosted proof beyond its actual artifact or release production.

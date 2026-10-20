@@ -1,12 +1,72 @@
 # Dodo product, webhook and sandbox audit
 
-Updated2026-10-20. Latest follow-up is **CLOSED; UNPAID TEST PAYMENT / CARD AND
-FULFILLMENT INCOMPLETE**. Its pending provider record/quote is not a completed
-charge or entitlement. The owner has continuing authorization for fresh bounded isolated
+Updated2026-10-20. Latest continuation is
+**CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME**. The earlier unpaid TEST record
+remains incomplete; neither a completed charge nor an entitlement is verified.
+The owner has continuing authorization for fresh bounded isolated
 work under the [root contract](../../../AGENTS.md); closed action budgets are
 not renewed. Zero-cost hosting and unreleased production limits remain.
 
+## Oct20 continuation: reused checkout links are rejected
+
+Run `jazz-dodo-baseline-continuation-20261020` uses actualba105/45,831 with the
+fixed11:24:16.375–11:54:16.375 UTC lease and closes early around11:34. It creates
+zero actors, checkouts or payments and submits no billing, card or refund action.
+The original before-state and all six effect ledgers remain exact. The existing
+payment still reads `requires_payment_method` at11:28:52.499, preserving its
+original10:39:39.286317 creation time. Fresh runtime19/private-SSH11/negative401
+and public DNS3/TLS/absent-origin502 are bounded setup checks only.
+
+Both fresh browsers actually redirect to the same TEST origin's
+`/status/[opaque]/link-expired` shape. Neither resumes an actually observed
+redirect query, and no raw session query is reconstructed; the bare API link
+is navigated without an observed session query. The first closes with normal
+logout and profile deletion. The second's normal UI logout fails before any Auth POST;
+its exact retained profile is used only for live Auth-user GET and one global
+logout204, without password login. Independent sessions0 proof precedes matching
+profile deletion. The cause beyond the observed provider rejection is unproven;
+these are neither an uninterrupted payment journey nor a general provider-health
+verdict.
+
+This supersedes the earlier proposal to resume the old checkout/unpaid payment.
+The current primary [checkout-session contract](https://docs.dodopayments.com/developer-resources/checkout-session)
+and [integration guide](https://docs.dodopayments.com/developer-resources/integration-guide) specify
+that `checkout_url` is single-use and each payment attempt needs a new checkout
+session. They give no equivalent resume promise for bare `payment.payment_link`
+or reconstructed opaque query values. An API record/link is not browser-resume
+proof. Preserve the old receipts and their timestamps; do not replay either old
+link as a new checkout attempt.
+
+Independent closure passes11:32:28.530: three read-only checks preserve25 public
+tables/29 original fingerprints, all nine prior accounts/23 sessions/refresh
+tokens/ledger; current10 Auth+10app accounts/1,515 public rows and the same
+confirmedUSER/identity1/sessions0/purchases0. Its receipt SHA256 is
+`d1ab93a392ea628f478e7a5d8d64f265671e5b3ca165c9fbe7037255779ac6df`.
+All five services finish terminal0, profile/socket are absent and owned
+Cloudflare group members0. Independent exact endpoint GET404 passes11:34:19.664;
+the full45,831-file source seal passes11:34:24.291. Finite evidence is under
+`/tmp/jazz-maintenance/dodo-baseline-continuation-20261020`.
+
+Selected retention passes51 files/249,223 bytes, exact rehash and zero
+actual-used secret/private provider URL matches at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-continuation-ba105-20261020`,
+manifest `4d3f3ce80e696aabdc2e134fadabe2dd6be48d2b2b915232a7ae7e38820aacf7`.
+It excludes raw provider/DB/mail data, browser state, enabled inputs, credentials
+and private recovery files. Retention is local/unencrypted, with no off-site claim.
+
+The separate `/tmp/jazz-maintenance/dodo-fresh-session-20261020` scope is
+**preparation only**: reuse only the existing confirmed USER, create one new
+normal application checkout, allow one TEST card attempt and one full TEST
+refund, with zero new actors/coupons. Stay in the same protected browser profile,
+bind the actual observed redirect to the actual provider receipt and carry its
+opaque query verbatim. No bare API-link replay is permitted. No fresh scope is
+activated at this checkpoint; completed payment/refund, positive signed
+fulfillment and production release remain open.
+
 ## Oct20 follow-up: existing checkout creates an unpaid TEST payment
+
+This earlier closed checkpoint retains its evidence below; its proposed reuse
+continuation is superseded by the single-use finding above.
 
 Run `jazz-dodo-baseline-followup-20261020` uses actualba105/45,831 with the
 fixed10:31:06.315–11:01:06.315 UTC lease and closes early around10:59. Three fresh
@@ -68,10 +128,9 @@ from review evidence and grants no automatic loading, role, session or activatio
 authority. The separate controlled-USER credential fixture remains preserved.
 
 Finite working evidence is under
-`/tmp/jazz-maintenance/dodo-baseline-followup-20261020`. Next continuation is
-preparation only: reuse the already-existing unpaid payment and original actor/
-checkout with a fresh lease/exact GET, retaining original creation times and spent
-ledgers. It is not activated. Dashboard email hint remains unverified account
+`/tmp/jazz-maintenance/dodo-baseline-followup-20261020`. The then-proposed reuse
+of the already-existing unpaid payment/original checkout is historical and
+superseded by the closed continuation above. Dashboard email hint remains unverified account
 membership/settings, not an approval block. Completed card/payment, positive
 signed fulfillment, return/reconciliation/refund and stable production hosting
 remain open. The first baseline below remains a separate historical result.
@@ -129,20 +188,21 @@ rehash and actual-used credential/private-checkout-URL scans with zero matches:
 `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-baseline-ba105-20261020`,
 manifest `cc1038f103d451e1f27cdfbd0d39f980f3ee03477ad13215ee1576699b7ddc59`.
 It excludes raw provider/database/mail/browser data and enabled inputs; retention
-is local/unencrypted, with no off-site claim. Preparation for a fresh window may reuse
-only the original controlled actor and same checkout with new explicit budgets;
-no follow-up is activated at this checkpoint. The owner identified a likely
+is local/unencrypted, with no off-site claim. The then-proposed fresh window reused
+the original controlled actor and same checkout; later evidence above supersedes
+that checkout-resume proposal. The owner identified a likely
 account email, but membership/login, dashboard notifications, ownership/MFA/KYC/
 payout/currency/tax settings remain unverified; this is information needed for
 account review, not another approval question.
 
 Published documentation source
-`d025e05e18576710e99fa3077324746c261e2254` has five successful exact-head
+`d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f` has five successful exact-head
 workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run;
 [run IDs and events](review-status.md). Downloaded Quality logs verify
 2,628 normal passes/80 intentional skips,80 persisted passes/
-one skip, types/webpack/static31-of-31 and lint0errors/22warnings; fresh head-ref
-CodeQL alerts0. CI does not extend the actual artifact's payment result or the
+one skip, types/webpack/static31-of-31 and lint0errors/22warnings; actual PR-head
+CodeQL alerts0, with both exact-commit analyses bound to `refs/pull/46/head`.
+CI does not extend the actual artifact's payment result or the
 separate sealed3e5 registration/recovery proofs. No production deployment,
 charge/refund-health or complete-integration claim follows.
 
