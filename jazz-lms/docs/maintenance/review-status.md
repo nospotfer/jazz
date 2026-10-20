@@ -1,6 +1,48 @@
 # Maintenance review checkpoints
 
-## Oct20 replacement Auth and schema rehearsals
+## Oct20 current lockfile and publication
+
+Published checkpoint `8e6b7c2` has five successful exact-head workflows: Quality
+[PR](https://github.com/nospotfer/jazz/actions/runs/39487728459)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39487723014), Secret Scan
+[PR](https://github.com/nospotfer/jazz/actions/runs/39487728301)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39487723020), and
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/39487724852).
+All four Quality jobs pass; two matching CodeQL analyses have zero results/errors
+and the actual PR-head open alert count is zero. Full Quality logs were not
+reparsed for this checkpoint, so earlier suite totals are not reassigned to it.
+PR46 remains open/draft with independently matching head and description.
+
+A separate fresh Node24.21.0/npm11.19.0 lockfile audit reports production0 and
+full5 high entries, all in the existing development lint dependency chain from
+Next ESLint through fast-glob/micromatch/braces. They share one advisory,
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm).
+No patched braces version is available at this check; npm's suggested major
+lint downgrade is not applied. Development scope does not make the possible
+process-terminating stack exhaustion harmless. Static locked-source/config
+inspection finds the affected Next callsite requires an explicit rootDir glob,
+which maintained configuration does not supply; this is not deployed-reachability
+proof. DEP-01 stays open. The push warning's168 default-branch findings were not
+independently inventoried and cannot be closed or called stale by this audit.
+
+Finite publication and dependency summaries are retained separately under
+`review-checkpoint-publication-8e6b7c2` and
+`review-checkpoint-dependency-refresh-8e6b7c2` in the maintenance backup root,
+with exact-copy hashes and0600/0700. Local unencrypted retention is not off-site
+recovery. No application/lockfile/dependency, deployment or provider change
+follows from those checks.
+
+## Oct20 whole local executor and hosted review
+
+The real local PG17/psycopg whole-sequence rehearsal now passes one COMMIT and
+a separate forced final rejection/ROLLBACK, with effective rights and managed
+metadata preserved. R2 passes28 closed controls. Provider/TLS/verifier inputs
+remain synthetic; this is not hosted bootstrap or customer-data recovery.
+Actual hosted SQL separately verifies client TLS/PG17 identity and partial
+metadata, but subsequent inspection failures leave complete provenance open.
+[Current evidence and limits](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
+
+## Earlier Oct20 replacement Auth and schema rehearsals
 
 One new Free replacement is verified as the sole inventory addition. Minimal
 Auth PATCH200 matches all49 desired values and preserves unrelated settings.

@@ -17,6 +17,49 @@ and rollback are ready; do not repeat the same approval question. Use fresh
 plans/ledgers and the [root operating contract](../../../AGENTS.md). Historical
 checkpoints retain their original dates and narrower results.
 
+## Oct20 review of retained browser error counters
+
+Offline inspection binds the two durable manifests,12 working/durable subset
+files and27 unique inputs without changing those closed scopes. The original
+listeners retained counts rather than console messages, locations or individual
+request denials. Registration's latest failure is `APP_REQUEST_BLOCKED`;
+recovery's is `PREVIEW_READ_OUT_OF_SCOPE`. These final reasons cannot classify
+every one of their7/9 blocked requests or7/11 console errors.
+
+Recovery's durable stages are more precise: form/password update/automatic204
+logout have0 blocks/0 console errors; the deliberate old-password400 stage has
+0/1, the new-password dashboard6/8, and final home9/11. Page errors and command
+failures remain zero. The residual counters therefore begin after the password
+update. Exact NET/CSP/font/proxy codes and individual endpoints remain unknown.
+Current-source automatic reconciliation, promo loading and prefetch routes are
+candidates only; no additional customer-facing defect is established and private
+transport evidence is not public HTTPS proof.
+
+Future controllers need bounded, finite per-denial and console categories before
+another relevant browser scope. Preserve old counts and do not widen payment/
+write permissions or replay email actions to diagnose them. Normalized evidence
+is retained privately under `auth-browser-error-classification-20261020`, with
+receipt SHA256 `5af5c2569d8664c5b4a2de38593e10c04331bec6eae650e1534ac8f2ee0629a2`.
+No credential/session-state read, provider call, email or application change is
+part of this classification.
+
+A separate source-only diagnostic adapter is now prepared for both controllers.
+It preserves their policy decisions, counters and aborts while recording at most
+64 finite events: stage, method, resource type, error/status, denial reason and
+origin/route categories. It retains no raw messages, URLs, headers, bodies,
+storage, codes or hashes of messages/URLs. All18 closed tests pass, including
+actual extracted listener/denial wiring; four new modules and both derived
+controllers pass syntax checks. These are synthetic tests, with no browser,
+provider, email or new session activation. Old counters remain unclassified.
+
+The classification and selected diagnostic sources/outcomes are retained as15
+files/105,620 bytes in `review-checkpoint-auth-browser-diagnostics-20261020`
+under the maintenance backup root. Exact-copy hashes and0600/0700 pass; manifest
+SHA256 `0c1f3ff3090ceba3bd976b77da3a132ca7d92496fbe21e22062e6b3df7ffa2f5`.
+Raw provider/database/mail/browser state, credentials and enabled inputs are
+excluded. This is local unencrypted review evidence, without off-site recovery
+or activation authority.
+
 ## Oct20 uninterrupted recovery on sealed source 3e5b2c1
 
 The `recovery-current-source-proof-20261020` scope uses exact source

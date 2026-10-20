@@ -1,5 +1,14 @@
 # Service inventory
 
+## Oct20 replacement database connection
+
+Actual shared-pooler client TLS/hostname, PostgreSQL17 and postgres role checks
+pass; its upstream database TLS observation is false. Thirty role records and
+six event definitions are captured privately, but metadata row limits stop the
+full review. A later reader exits without a report, leaving its cause and SQL
+count unknown. Both scopes finish paused with observed original settings equal;
+no hosted schema or customer import follows. [Current evidence](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
 ## Oct20 Free replacement preparation
 
 New `klaiiikojgdfclzhqfgt` / `Jazz-LMS-Empty-Replacement-20261020` / eu-west-1

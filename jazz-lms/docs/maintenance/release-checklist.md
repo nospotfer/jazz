@@ -1,5 +1,16 @@
 # Production review and rollback checklist
 
+- [x] Verify the whole empty-schema preparation with real local PG17/psycopg:
+  one successful COMMIT and a separate final-rejection ROLLBACK, with managed
+  metadata preserved. External proofs remain synthetic; hosted checks stay open.
+  [Actual local results](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
+- [x] Verify an actual replacement client connection with provider CA/hostname,
+  PG17 and expected postgres role. Upstream SQL TLS is separately observed false.
+- [ ] Complete default ACL/membership/namespace/Auth-helper/override/empty-state
+  provenance and final session checks. Partial metadata and source-only helper
+  tests do not establish hosted bootstrap or API containment.
+  [Current failures and limits](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
 - [x] Create one verified Free replacement; minimal Auth PATCH200 matches all49
   intended values. Final19:47:59 confirms it paused and observed original state/
   settings preserved. Earlier failures remain recorded.

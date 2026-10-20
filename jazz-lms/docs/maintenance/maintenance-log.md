@@ -1,5 +1,69 @@
 # Maintenance log
 
+## Oct20 whole local execution and current coupon preflight
+
+The real local PG17/psycopg rehearsal reproduces the original final comparison
+failure and rollback, then verifies R2's full225→227 success with one COMMIT.
+A separate forced final rejection restores zero public structure with one
+ROLLBACK/no COMMIT. The narrow repair accepts only the intentional final
+session `search_path=pg_catalog`; persistent settings remain exact. Managed
+metadata and effective privilege checks pass; all local resources close.
+External provider/TLS/verifier fixtures remain synthetic. Selected25 files are
+retained with exact hashes; hosted DDL and customer import have not occurred.
+[Scope and evidence](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
+
+Two actual TEST-only Dodo GETs at21:26 UTC verify current product/discount
+linkage. The historical10% discount is expired and cannot be used; one fresh
+replacement request is prepared offline with five closed controls and has not
+been sent. There is no new payment, discount write or refund.
+[Coupon facts and remaining activation checks](dodo.md#coupon-follow-up-preparation).
+
+## Oct20 read-only recovery diagnostics and browser evidence
+
+The first four closed replacement-diagnostic scopes consume48/43/74/62 management calls,
+respectively. The first health query fails on an optional timeout parameter and
+its pause is rejected during a platform backup. The active-only continuation
+fails before authentication because default Node roots omit the provider CA;
+its pause succeeds. The provider-CA scope reaches healthy state, then stops on
+v2 management401 before SQL. Independent20:53:56 reads confirm replacement and
+production INACTIVE, preview healthy and observed original settings unchanged.
+The next scope also stops before SQL: project-level healthy status disagrees
+with detailed service health, so its strict precondition exits early. All49 Auth
+values/disabled schema settings match; terminal21:07:37 verifies paused state
+and original observed settings. No hosted SQL, customer import or old-project
+mutation occurs in these scopes.
+The official provider CA separately passes an actual credential-free TLS1.3
+chain/hostname handshake, without proving tenant DB identity or API readiness.
+[Exact evidence and limits](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
+The next scope actually verifies client TLS/PG17/postgres role and captures
+30 roles/six event definitions before the flat default-ACL metadata exceeds256
+rows. Seven SQL attempts are counted; final identity/empty/remaining permission
+checks are incomplete. It rolls back/closes/pauses, with66 management calls and
+original observed settings preserved. Actual upstream SQL TLS is false, distinct
+from verified frontend TLS. A source-only empty-purpose compiler revision records
+that distinction, without serving/import authority.
+
+The later metadata derivative allows4096 rows only for that fixed query, but
+its child exits1 without a report. The original error body was not retained;
+cause and SQL count are unknown. Its64 management calls close with verified
+pause and matching observed original settings. Finite process-error reporting
+and complete aggregate metadata are the next checks. Six event definitions have
+an independent partial review; other managed provenance remains open.
+
+Retained registration/recovery counters are classified only as far as original
+evidence permits. Recovery's residual errors begin after password update; exact
+endpoints/console causes remain unknown. A source-only finite recorder and
+concrete controller adapters pass18 closed checks without widening policy or
+replaying browser/mail actions. Selected15-file evidence is retained locally
+with exact hashes and0600/0700; credentials/raw runtime bodies are excluded.
+[Classification and future diagnostics](cloud-auth-mail.md#oct20-review-of-retained-browser-error-counters).
+
+Published8e6b7c2 has five exact-head successful workflows; current lockfile audit
+is production0/full5 high development entries sharing one unpatched advisory.
+No dependency downgrade is applied; branch checks do not close default-branch
+findings or establish a production release. [Publication and audit](review-status.md#oct20-current-lockfile-and-publication).
+
 ## Oct20 current production checkpoint
 
 Exact Jazz Vercel protection and pause are applied. Two independent read-only

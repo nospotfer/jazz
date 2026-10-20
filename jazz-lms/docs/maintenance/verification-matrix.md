@@ -1,5 +1,27 @@
 # Goal verification matrix
 
+## Oct20 whole executor: local SQL success and rollback
+
+Actual local PG17/real psycopg execution reaches strict227 with one COMMIT and
+verified effective rights. A separate forced final rejection rolls back to zero
+public structure without changing managed metadata. R2 passes28 closed controls;
+the25-file source/finite-result package is retained with exact hashes. Provider,
+TLS and verifier fixtures are synthetic, so hosted preparation, customer import
+and production readiness remain unverified.
+[Actual scope and custody](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
+
+## Oct20 actual replacement connection; metadata review incomplete
+
+Actual client verify-full TLS, PG17 and non-super/BYPASSRLS postgres identity
+pass. Seven counted SQL attempts retain six results, including30 roles and six
+event definitions; default-ACL rows exceed256 and the remaining checks stop.
+Upstream SQL TLS is observed false, separately from the client connection.
+Partial event-source review is complete; managed emptiness, complete permission
+provenance, final session continuity and hosted bootstrap remain unverified.
+The following metadata reader exits without a report; cause/SQL count are
+unknown. Both scopes verify pause and observed original settings preservation.
+[Exact scope and failures](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
 ## Oct20 replacement backend preparation
 
 Actual Free create201/unique ownership and minimal Auth PATCH200/all49 desired

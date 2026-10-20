@@ -75,8 +75,24 @@ identity, zero sessions and zero purchases. The course remains published at80;
 there are no local10% voucher mappings. This reads no password and creates no
 actor/session/payment. Historical provider10% discount metadata is expired and
 its15-character code exceeds the UI's12-character local-code limit; a short
-local alias can retain a separate provider code. Actual current provider
-validity still needs a fresh readback.
+local alias can retain a separate provider code.
+
+Two current TEST-only GET200s at21:26:21 UTC verify exact product/business/backend
+linkage and one-time EUR8000 tax-exclusive product configuration. The response
+provides no explicit eligibility/archived flag; GET200 is not checkout proof,
+and configured price is not a final charged currency/tax promise. The historical
+10% discount matches this product/business, has zero uses and one global/per-user
+use, but expired on October14. It is unusable despite being unused. The two reads
+create no discount, checkout, card attempt or refund. Raw provider bodies stay
+private and outside review custody.
+
+One short-code replacement TEST discount request is prepared offline with five
+closed controls and has not been sent. Activation still needs fresh controlled
+actor/course/data/recipient/source/origin bindings, current expiry/collision
+checks, parent/IPC startup and closure evidence. Runtime must deny hidden
+discount writes and a second checkout; an invalid-code branch can otherwise
+attempt writes. These two preflight GETs are separate from the inclusive37-call
+runtime ceiling. No refund is included in that future coupon scope.
 
 The separate source-only coupon plan and concrete outbound fetch guard/durable
 journal pass61 closed tests and five syntax checks. They limit one checkout/card,

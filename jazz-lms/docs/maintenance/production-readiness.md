@@ -6,6 +6,145 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Read-only connection attempts and the provider CA
+
+The first bounded diagnostic resumes only the new replacement. Its health GET
+returns400 because the optional timeout parameter is rejected as a string;
+no SQL client starts. The sole pause returns400 while a platform backup is in
+progress. The48 management calls and original failure are preserved. Independent
+reads verify the replacement is active; omitting that optional parameter gives
+health200 with db/db_postgres_user healthy and rest/pooler unhealthy. Empty
+backup metadata does not prove that the provider's backup has finished.
+Separate actual settings reads still match all49 Auth values, desired empty
+schemas and the effective sentinel.
+
+A new active-only continuation performs no restore. It reaches the actual shared
+pooler using an explicitly documented derivation from its returned transaction
+entry to session5432, preserving the original metadata. The default Node CA
+bundle fails with `SELF_SIGNED_CERT_IN_CHAIN`, before authentication/SQL. The
+connection closes, a fresh pause returns200, and independent20:38:31 UTC reads
+confirm the replacement/production INACTIVE, preview healthy and identical
+observed original settings. This stage uses43 management calls, zero public
+probes and zero SQL; its spent scope/pause markers remain unchanged.
+
+[Supabase's SSL guide](https://supabase.com/docs/guides/platform/ssl-enforcement)
+requires its database CA for full certificate verification. The official
+[dashboard configuration](https://github.com/supabase/supabase/blob/master/apps/studio/hooks/custom-content/custom-content.json)
+publishes the certificate distribution template. The production certificate's
+PEM SHA256 is `700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7`;
+its DER fingerprint is `807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa`.
+Its CA flag, self-signature and2021–2031 validity pass. Actual20:36:52 TLS1.3
+negotiation verifies chain and hostname on the same actual shared host and
+documented session port, sends no database authentication/startup or SQL payload,
+and closes both sockets. This proves that handshake only. It does not establish
+tenant database identity, read-only SQL, managed emptiness or API containment.
+Existing successful configurations are not replayed and TLS verification stays
+enabled. A separately reviewed provider-CA diagnostic retains those remaining
+actual gates.
+
+That provider-CA scope reaches ACTIVE_HEALTHY, then the v2 configuration GET
+returns401 while the v1 Auth/PostgREST reads remain available. It stops before
+starting the SQL inspector. Its74 management calls include one restore and one
+accepted pause; the original short observation ends at PAUSING. Independent
+20:53:56 UTC reads subsequently confirm replacement/production INACTIVE, preview
+healthy and original observed states/settings equal. The original stopped
+summary remains unchanged; a separate closure receipt has SHA256
+`75a85540748af11dab7c5db86b0703972c1ba246d63bf776bacc325ae158259c`.
+No SQL, public probe, successful configuration replay or customer import occurs.
+
+The next read-only derivative records allowed non200 effective-configuration
+reads as explicitly UNAVAILABLE, with no known schema value or containment claim.
+It also distinguishes mandatory verified client-to-pooler TLS from the boolean
+SQL observation of the pooler-to-database leg. Both observations remain bound
+to one actual session. Its18 lifecycle and34 inspector closed tests are
+synthetic; actual metadata still needs independent review before any DDL.
+
+That observation scope also closes before SQL, with62 management calls and
+no public probe. Project metadata is ACTIVE_HEALTHY at21:05:52, but the detailed
+health read at21:05:56 reports db/db_postgres_user/rest/pooler UNHEALTHY,
+Auth healthy and Storage COMING_UP. All49 Auth values, desired empty schema,
+effective200 sentinel and original transaction-pooler metadata match. The
+diagnostic's `DATABASE_HEALTH_REQUIRED` prerequisite stops it before generating
+SQL-inspector inputs. One pause succeeds; terminal21:07:37 summary verifies
+INACTIVE and matching original observed settings. Source summary SHA256 is
+`9d218b4dd41a1533b66073be389b46db96ea0d5859ecd8cbbf3df974ec8f6ed7`.
+The cause of the differing health observations is not established. A read-only
+SQL diagnostic must record them honestly and establish connectivity through its
+actual verified connection, rather than require their prior agreement.
+
+The subsequent SQL-observation scope establishes actual client-to-pooler
+verify-full TLS, PostgreSQL17 and the expected non-superuser/BYPASSRLS postgres
+identity. It counts seven SQL attempts; six result receipts retain identity,
+30 role records and six managed event-trigger definitions privately. The flat
+default-ACL projection exceeds the256-row limit, so inspection stops before
+membership/schema/empty-data/override collection and the final identity recheck.
+Cleanup rolls back and closes the client; one accepted pause and terminal
+21:17:30 summary verify INACTIVE and original observed settings unchanged.
+This scope uses66 management calls and no public probe. Its summary SHA256 is
+`50fd4ad8fc6098e19feb2d9561d26501198548e7c9d56511d188fa9f0e2d76ad`.
+
+The actual `pg_stat_ssl` observation is false for the pooler-to-database leg;
+it is separate from the verified client TLS connection. No end-to-end TLS
+claim follows. The later empty-only compiler revision preserves this boolean
+and still requires actual client CA/hostname verification; it grants no serving,
+import or cutover authority.
+
+Independent private source analysis verifies all six captured function hashes.
+Four handlers have extension-only tags and can otherwise change grants/default
+ACLs/roles/functions; CREATE/DROP EXTENSION stays outside this bootstrap. The
+two untagged PostgREST watchers contain catalog reads/control flow and a fixed
+schema-reload notification, with no detected data DML, grants, dynamic EXECUTE
+or direct HTTP. Notifications take effect after commit. Two bodies match pinned
+official source bytes; four are not claimed byte-identical. The finite review
+SHA256 is `0745def02491334dc9a47d4a2242f02f6d2d4a5e2b9ed175b6ce7b5e0f680e3f`.
+This is a partial review; it does not approve missing default ACLs, memberships,
+schema CREATE, Auth-helper provenance, overrides or empty-state facts.
+
+A separate metadata-limit derivative allows4096 rows only for the fixed default
+ACL query, with an overflow sentinel; other query limits remain256. Its20/39
+closed checks pass. Actual execution nevertheless closes with a child exit1,
+zero stdout bytes and2,414 stderr bytes; only the error hash was retained and no
+child report exists. Its cause and actual SQL count are unknown. The parent's
+64 management calls include one restore/pause; terminal21:28:39 verifies
+INACTIVE and original observed settings unchanged. Source contains read-only
+queries only; no DDL/import or public probe is performed. The original unknown
+failure remains preserved. Next repair finite child/error reporting and collect
+complete, source-bound aggregate metadata before any hosted schema operation.
+
+## Whole atomic executor: actual local success and rollback
+
+The frozen R2 executor passes28 closed controls and a separate actual local
+PostgreSQL17 rehearsal using the real psycopg driver. The original executor's
+failure is reproduced after strict227 verification: only the intentional
+current-session `search_path` change differs. It performs no COMMIT and rolls
+back to zero public relations/functions/types/columns. R2 permits only that
+exact final session value, `pg_catalog`; persistent role/database settings and
+all other protected metadata must still match.
+
+R2 then executes the whole225→227 sequence with one BEGIN/one COMMIT and39
+actual queries, producing26 tables/four functions/62 types/227 columns. Effective
+browser table/column, schema CREATE and gated-RPC denial and trusted privileges
+pass. A separate forced final-verifier rejection, after strict227, performs one
+BEGIN/one ROLLBACK/no COMMIT and restores zero public structure. Managed metadata
+is preserved and clients/container/socket are closed in both cases.
+
+These are real local SQL results. Managed fixtures, provider/TLS evidence and
+the rehearsal verifier are synthetic; they do not establish hosted safety or
+authorize importing data. A real verifier and freshly captured hosted facts
+remain prerequisites. The executor SHA256 is
+`40e80da06c300a71735119465f2c3ebf204bda58d7bf5f56b5eff29a275c805b`.
+Selected25 files/177,951 bytes are retained in
+`review-checkpoint-empty-atomic-local-20261020` under the maintenance backup root,
+manifest `d5f6beef610cfce965b807f61adddeabc5c1920f6ec83647419fd00732fbe1b5`.
+No credentials or raw query rows are copied; local unencrypted custody is not
+off-site recovery or activation authority.
+
+The separate read-only recovery checkpoint retains13 finite reports/35,156
+bytes, manifest
+`0c25b1d01d6f7231ef36f28bdc2f2be9f2ef644f111c14d64189376df8f50e6c`.
+It excludes raw provider/Auth/DB/function bodies, credentials and active plans;
+it is not complete operational-source custody.
+
 ## Free replacement: Auth verified; API readiness unresolved
 
 One Free project is created: `klaiiikojgdfclzhqfgt`,
@@ -37,7 +176,8 @@ preview ACTIVE_HEALTHY and identical observed original Auth/PostgREST settings
 and states. Paused production's unavailable endpoints prevent an underlying
 settings-equality claim. All actual operation handles are terminal.
 
-Cumulative hosted-preparation usage is135 management calls and one public probe:
+Cumulative hosted-preparation usage through the19:47 checkpoint is135 management
+calls and one public probe:
 one create, one schema PATCH, three Auth attempts, two restores, three pause
 attempts and read-only management calls. No application SQL, customer import,
 payment, key creation/rotation, paid upgrade or cutover occurs. Password/ownership
