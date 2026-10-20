@@ -2417,3 +2417,31 @@ The maintenance goal remains active and incomplete.
   needed. The financial-test loop stays stopped after its spent UI attempt;
   publication and independent offline maintenance continue. The goal remains
   incomplete.
+
+## 2026-10-20 — Bounded offline browser transport evidence
+
+- Published checkpoint `6812536` has five successful exact-head runs: both Quality
+  and Secret Scan events plus dynamic CodeQL. Both downloaded Quality logs verify
+  2,628 normal passes/80 skips, 80 persisted passes/one skip, types/webpack 31 and
+  lint 0 errors/22 existing warnings; actual PR-head CodeQL open alerts 0. PR #46
+  body/head/draft readback passes. A failed `gh pr edit` is resolved through an
+  idempotent REST body update and readback; its initial failure cause is unknown.
+- Root reviews and integrates a pure browser transport recorder plus 13 focused
+  regressions from a two-file isolated worktree. Per-phase samples and pending
+  correlations are bounded; counts continue beyond sample caps. Denial,
+  admission, failures after admission/headers, late responses, correlation loss
+  and detached privacy-preserving snapshots are checked. No URL, payload,
+  credential, provider prose or request identifier is retained. No adapter is
+  wired and no browser/provider call occurs.
+- Focused 13/13, strict checkJs/TypeScript in the project's ESNext/bundler mode,
+  touched-file ESLint 0, Node syntax and whitespace checks pass. An initial
+  standalone NodeNext typecheck rejects the test's existing CommonJS/ESM
+  combination; correcting that check to the repository's bundler mode passes
+  without changing package/module behavior. Vite's existing config-loader
+  compatibility warning is retained. [Lifecycle and limits](dodo.md#offline-browser-transport-diagnostics).
+- The actual goal tracker is active. Stale current-state handoff aliases and
+  next actions are replaced with the verified source bindings and publication;
+  their previous values and all closed-scope evidence remain preserved.
+  Completed Auth journeys are not repeated. The financial-test loop remains
+  stopped, its UI card action stays spent and payment acceptance remains
+  unverified. Production is unchanged; the full maintenance goal is incomplete.

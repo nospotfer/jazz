@@ -68,6 +68,43 @@ denial, failure and response counts plus SDK-readiness review. No new financial
 scope is activated; payment acceptance, signed fulfillment, refund, production
 release and the full maintenance goal remain incomplete.
 
+## Offline browser transport diagnostics
+
+The reusable [in-memory recorder](../../scripts/native/browser-transport-diagnostics.mjs)
+addresses the global-sample exhaustion found above. It has separate `startup`,
+`fill`, `continue`, `init`, `card` and `logout` buckets. Each has a bounded sample
+list and counters that continue after that list fills. Bounded request tracking
+also reports overflow and unmatched events rather than claiming complete
+correlation. Snapshots retain owned enums, booleans, bounded elapsed timestamps
+and HTTP status numbers; raw URLs, queries, bodies, credentials, card values,
+provider prose and request handles are excluded. It reads no ambient inputs and
+performs no I/O.
+
+A future browser adapter must record an attempt before its guard, record a
+denial only when that guard rejects it, and record admission immediately before
+transport. Report transport failures after admission separately; a rejected
+guard's browser abort must not become another transport failure. Use the opaque
+in-memory handle for response, request-finished and request-failed events. A
+response belongs to its original admission phase even after the UI moves on;
+close each policy window explicitly so late events remain distinguishable.
+Release completed/failed tracking entries and inspect overflow/unmatched counts
+before interpreting an empty response list. The helper's inline example and
+[regressions](../../tests/security/native-browser-transport-diagnostics.test.ts)
+document this lifecycle.
+
+This recorder does not change a request allowlist, arm a policy window, launch a
+browser or authorize another checkout/card action. It is not yet wired into a
+live test adapter and cannot reconstruct the missing historical card trace.
+SDK readiness still needs provider-specific evidence from the same document and
+browser: rendering fields or clicking Pay alone is insufficient. Preserve the
+closed scope, first reservation, final marker and qualified closure receipt.
+The financial-test loop remains stopped.
+
+All 13 focused regressions pass after root review, along with strict checkJs/
+TypeScript using the project's ESNext/bundler module mode, touched-file lint and
+Node syntax checking. These are synthetic recorder checks, not a new browser or
+provider journey. The Vite configuration-loader compatibility warning remains.
+
 ## Oct20 SPA scope: transient observation does not establish a card journey
 
 This earlier closed scope remains separate from the settled-document result above.
