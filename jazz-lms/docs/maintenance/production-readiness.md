@@ -6,6 +6,99 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Complete capability review and transaction rehearsal
+
+The complete actual capture below passes independent review of all 300 default
+ACL entries, 24 memberships, 60 schema-role privileges, 30 roles, five extensions,
+six event bodies and three Auth helpers. Browser roles have no privileged
+membership path or schema CREATE. Existing public default grants still require
+the explicit revocation and final effective-rights barrier in one transaction.
+Managed capabilities are preserved; this review does not certify the whole
+provider platform or authorize customer import/serving. The finite review hash is
+`c658072a1a5ff7fca929419c843bae173fa33b4c2d45c40e420ebaeb04eb6076`.
+
+Separate transaction-only compiler/executor derivatives now preserve the original
+advertised6543 route and begin before all SQL metadata. Their 44/35 closed tests
+pass. Actual local PG17/psycopg execution verifies durable intent before the first
+SQL/sole BEGIN, 12 same-positive-PID/XID samples, 42 SQL calls, one COMMIT,
+26 tables/227 columns and all four effective-rights predicates. A separate final
+verifier rejection has 40 guarded calls plus one cleanup ROLLBACK, 11 stable
+identity samples and zero public structure afterward. Managed metadata matches
+in both cases; actual multi-result queries are drained (up to318 result sets).
+The owned network-none/no-port container and socket are removed. Provider/TLS/
+verifier inputs in this rehearsal are synthetic; no hosted DDL follows.
+
+An actual static-baseline preflight catches a verifier integration defect before
+any provider/SQL call: its blanket256-row receipt bound rejects the captured
+300-row default ACL query. The frozen failed source and finite failure are
+preserved. The separate R2 accepts up to4096 rows only for that exact baseline
+query; runtime/other-query bounds remain256. Its27 verifier/20 driver closed
+controls pass. Root independently verifies all54 actual receipts/300 ACL rows,
+actual Auth definition aliases/hashes, canonical payloads and source lineage
+without truncation, provider calls or copying raw inputs. Acceptance receipt:
+`5afdeabdf6c324e26b22a923a2dd9c1b53e8c5b766f33dbd8ec1b51c923b8698`.
+
+Actual local PG17 integration also passes with the real R2 source builder/plain
+verifier and unchanged transaction compiler/executor:42 SQL/one COMMIT/final227/
+all rights/12 stable identity samples. An incorrect final225 claim is rejected
+as `FINAL_RECEIPT_CHANGED`;41 calls including the sole ROLLBACK leave zero public
+structure, preserve managed metadata and retain11 stable samples. Five actual
+multi-result calls per case drain up to318 sets. Clients/container/socket close.
+Provider/process/static-review/frontend-TLS fixtures remain synthetic; the
+public hosted attestor is not bypassed for an actual provider connection.
+
+Actual R2 process inspection observes71 same-user processes,11 containers and39
+container PIDs, with eight conservative candidates. Project-directory Codex
+tools/idle shells need source-bound classification; the owned local Supabase
+Kong gateway is subsequently closed as recorded below. No zero-application
+claim, arbitrary PID exclusion or live schema execution follows until a fresh
+reviewed classifier passes. Local observations do not establish remote
+reachability or cover other machines.
+
+Selected sources and finite outcomes are retained as105 files/919,825 bytes,
+manifest `1344877be3717b633ffd0ed8e5aea0d41ad2d5c4fb4e01ab0b301ce9ef06c1ac`.
+Raw hosted definitions/provider inputs, credentials and enabled plans are
+excluded. Owner-only local unencrypted retention is not off-site recovery.
+
+A second selected70-file/545,969-byte package retains the repaired verifier/
+driver, real-verifier local rehearsal, root actual-baseline retest and qualified
+local gateway closure. Its manifest is
+`d958ac7a375c4c367db045fa3b07032ad3a76bae3312f6be7c38c841ff801b7a`.
+Raw synthetic HTTP/baseline fixtures are excluded; the runner regenerates them.
+The exact-ID local gateway rollback input is retained separately from review
+evidence. A source-only lifecycle candidate passes22 closed groups (16 synthetic
+management/process/driver cases plus six real local subprocess/IPC cases).
+Its original7-response capture/READY/one-activation/mandatory-pause contract is
+not actual hosted startup proof. The reviewed classifier/source graph and fresh
+actual evidence are still required; no enabled operation plan is retained here.
+
+## Unused local test gateway stopped
+
+The separately identified Oct12 local Supabase Kong gateway has two non-loopback
+published bindings and two RW binds to the same owned test configuration. Exact
+Docker labels match its adjacent local project ID. Five namespace siblings are
+separate services; this is a real gateway, not a log collector or coding tool.
+Root confirms no current team test uses that old gateway and rechecks zero
+established connections, exact init PID/start identity, created/image/name,
+labels and owned mount/config identity before the one permitted stop.
+
+At22:58:31 UTC, the sole stop command exits0. Immediate and independent readback
+verify the same container stopped/PID0, no runtime published ports/host listener,
+and all five sibling identities/states unchanged. The same-ID start rollback is
+prepared; restart policy remains `unless-stopped`. No database, volume, mounted
+file, sibling or provider operation is requested. External future consumers were
+not exhaustively proven absent; closure is reversible.
+
+The original result retains `STOP_OUTCOME_UNKNOWN`: its target aggregate-config
+hash comparison is false and raw stdout was not retained to explain the exact-ID
+output mismatch. The before hashes were not saved, so do not claim whole-config
+equality or invent that cause. A separate readback proves stopped state and exact
+core image/name/creation/labels/owned mount shape; it does not rewrite the original
+result. Its hash is
+`89adcc0024a195fb709c8eb0273e180c3768b0a972db3d2c1f095f8d40f85ff9`.
+Earlier strict preflight failures precede the intent/stop and remain preserved.
+No second stop, automatic restart or zero-application claim follows.
+
 ## Advertised transaction connection: complete metadata captured
 
 The actual provider-returned PRIMARY transaction endpoint passes one
@@ -31,13 +124,13 @@ The exact 326,887-byte private evidence hash is
 `fa43bd9c71be3b8075b283da15ca4b2c60c4e944301d32f88ec00d6665b31a8d`;
 it is excluded from review custody because it contains raw function definitions.
 
-Collection success is not approval of every captured capability. Independent
-review of defaults/memberships/helpers/events/overrides and faithful bootstrap
-lineage remains required before DDL. Existing atomic sources require a session
-endpoint and cannot be port-flipped: reviewed transaction derivatives must begin
-before initial metadata, preserve same PID/XID through all checks and execute
-one guarded bootstrap/hardening/currency/strict227 sequence before the sole
-COMMIT. The probe's closed PID/XID never represents that future operation.
+Collection success alone is not approval of every captured capability. The
+subsequent independent review and transaction rehearsal are recorded above.
+Earlier session-only atomic sources cannot be port-flipped. Actual execution
+still requires fresh original provider/process evidence, the reviewed real
+verifier/driver and one guarded bootstrap/hardening/currency/strict227 sequence
+before the sole COMMIT. The probe's closed PID/XID never represents that future
+operation.
 No hosted DDL, customer import, serving or cutover occurs in this scope.
 
 ## Read-only connection attempts and the provider CA

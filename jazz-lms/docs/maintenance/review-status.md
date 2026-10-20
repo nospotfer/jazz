@@ -1,5 +1,30 @@
 # Maintenance review checkpoints
 
+## Oct20 complete capability review and transaction rehearsal
+
+Full actual metadata review passes for conditional customer-free atomic setup.
+The transaction-specific compiler/executor pass44/35 closed tests and actual local
+BEGIN-first success/forced rollback with stable PID/XID, final227/effective rights
+and managed preservation. External proofs remain synthetic. Root actual-baseline
+preflight exposes a300-vs256 parser bound before provider/SQL calls; the narrow R2
+fix passes root actual retest and27/20 closed controls. Real-verifier/local-SQL
+success/final-claim rejection rollback pass too. The exact local Kong gateway is
+stopped with sibling/core-identity preservation; aggregate config equality remains
+unproven. Fresh tooling classification and hosted execution remain open.
+[Evidence and custody](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
+
+## Oct20 publication c72c269
+
+All five exact-head workflows pass: Quality PR39508992208/push39508986794 (all four
+jobs), Secret Scan PR39508992396/push39508986899 and CodeQL39508988830. Both matching
+CodeQL analyses1992470141/1992467422 have zero results/errors; PR-head open alerts
+are zero. Local required push checks pass secrets/lint0errors22existingwarnings/
+753integration29skips, without assigning those totals to remote logs. PR46 is
+independently verified open/draft with exact head and updated description.
+Two-file finite publication custody manifest:
+`dd3738bbc47e54ea95c51bbd7348e0e9422417268e7c2fc1d0473c56c16597f9`.
+No application deployment or later browser proof follows.
+
 ## Oct20 complete hosted metadata capture
 
 The exact advertised transaction endpoint passes actual TLS/PG17/postgres role,

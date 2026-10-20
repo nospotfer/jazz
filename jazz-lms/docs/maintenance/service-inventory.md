@@ -1,12 +1,28 @@
 # Service inventory
 
+## Oct20 complete review and local test ingress closure
+
+Complete actual metadata capability review passes for conditional empty atomic
+preparation. Transaction-specific real local PG17 setup and the real verifier
+pass success/final-rejection rollback; root's actual baseline parser retest passes.
+Hosted DDL, fresh process classification and provider evidence remain open.
+
+The exact unused Oct12 local Supabase Kong test gateway is stopped once at22:58:31
+UTC after zero-current-connection/identity checks. Independent readback verifies
+same ID/image/name/creation/labels/owned mount shape, stopped/PID0/no runtime
+published ports and all five namespace siblings preserved. Aggregate target
+config equality is unproven; the original conservative result is not rewritten.
+Same-ID restart rollback is prepared; `unless-stopped` policy remains. This does
+not change the paused production site or establish global absence of applications.
+[Actual scope and limitations](production-readiness.md#unused-local-test-gateway-stopped).
+
 ## Oct20 advertised transaction endpoint verified
 
 Actual PRIMARY transaction-pooler connection passes provider CA/hostname,
 PG17/postgres identity and 54 queries in one READ ONLY transaction with stable
 positive XID/PID. Full private permissions/helper/override/empty-state capture,
 ROLLBACK/end and terminal22:26:35 pause/original observed-settings preservation
-pass. Complete review and hosted schema preparation remain separate gates.
+pass. Complete review subsequently passes; hosted schema preparation remains open.
 [Actual connection and scope](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
 
 ## Oct20 replacement database connection

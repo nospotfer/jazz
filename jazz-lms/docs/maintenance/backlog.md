@@ -4,10 +4,16 @@
 
 - The actual advertised PRIMARY transaction connection now passes 54 READ ONLY
   queries with stable positive XID/PID, complete metadata/empty-state capture,
-  ROLLBACK/end and final pause/original observed-settings preservation. Review
-  all actual capabilities, then execute only separately reviewed transaction
-  atomic derivatives; existing session-only sources cannot be port-flipped.
-  [Current evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+  ROLLBACK/end and final pause/original observed-settings preservation. Complete
+  independent capability review and actual transaction-specific local SQL
+  success/rollback now pass. The actual-baseline verifier's300-vs256 receipt bound
+  is repaired narrowly, actual baseline retest and real-verifier/local-SQL checks
+  pass, and the exact unused local Kong gateway is stopped. Resolve remaining
+  tooling candidates with a source-bound fresh classifier before original provider
+  evidence and hosted atomic execution. Do not infer whole-config preservation
+  from the gateway stop's aggregate mismatch; preserve its qualified readback.
+  Existing session-only sources cannot be port-flipped.
+  [Current evidence](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
 - Preserve the existing Free replacement and its successful 49-field Auth
   configuration. Earlier row-limit, missing-child-report, session-routing and
   management-reader identity failures remain recorded separately. Do not

@@ -3,20 +3,31 @@
 - [x] Collect complete bounded hosted metadata and emptiness through the exact
   advertised transaction endpoint: actual TLS/PG17/role, one READ ONLY
   transaction, stable positive XID/PID, 54 queries, ROLLBACK/end and final pause.
-- [ ] Independently review all captured managed capabilities and prepare the
-  transaction-specific sole-COMMIT execution before any hosted DDL. The closed
-  probe provides no future PID/XID, import or serving authority.
+- [x] Independently review all captured managed capabilities for the conditional
+  empty atomic scope. The closed probe provides no future PID/XID, import or
+  serving authority.
   [Actual collection and limits](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+- [x] Verify the transaction-specific BEGIN-first compiler/executor locally with
+  real PG17/psycopg success and forced-final rollback, stable PID/XID, final227/
+  effective rights and managed preservation. External proofs remain synthetic.
+- [x] Repair the actual300-row static-baseline verifier bound without enlarging
+  other/runtime bounds; root's actual baseline retest and real-verifier/local-SQL
+  success/final-rejection rollback pass. Provider/process/TLS fixtures stay synthetic.
+- [ ] Resolve conservative local tooling candidates with a reviewed fresh
+  classifier and prepare original provider evidence/closure before hosted DDL.
+  The exact unused local Kong gateway is stopped with siblings preserved;
+  aggregate target-config equality remains unproven.
+  [Actual review, rehearsal and failures](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
 - [x] Verify the whole empty-schema preparation with real local PG17/psycopg:
   one successful COMMIT and a separate final-rejection ROLLBACK, with managed
   metadata preserved. External proofs remain synthetic; hosted checks stay open.
   [Actual local results](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
 - [x] Verify an actual replacement client connection with provider CA/hostname,
   PG17 and expected postgres role. Upstream SQL TLS is separately observed false.
-- [ ] Complete default ACL/membership/namespace/Auth-helper/override/empty-state
-  provenance and final session checks. Partial metadata and source-only helper
-  tests do not establish hosted bootstrap or API containment.
-  [Current failures and limits](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+- [x] Complete actual default ACL/membership/namespace/Auth-helper/override and
+  empty-state collection/review. Fresh same-transaction final checks remain
+  mandatory for execution; collection does not establish API containment.
+  [Current evidence and limits](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
 
 - [x] Create one verified Free replacement; minimal Auth PATCH200 matches all49
   intended values. Final19:47:59 confirms it paused and observed original state/

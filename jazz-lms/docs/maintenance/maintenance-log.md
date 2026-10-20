@@ -1,5 +1,31 @@
 # Maintenance log
 
+## Oct20 complete capability review and BEGIN-first local rehearsal
+
+Independent review passes all actual default ACLs/memberships/schema rights,
+roles/extensions and full event/Auth-helper definitions for conditional empty
+atomic preparation. New transaction-only compiler/executor pass44/35 closed
+tests and actual local PG17 success/forced-final-rollback. BEGIN is the first
+SQL after durable intent; positive PID/XID, final227/effective rights and managed
+preservation pass. External provider/TLS/verifier proofs remain synthetic.
+
+Root's actual-baseline verifier preflight then rejects the300-row default ACL
+receipt under an inherited256-row bound, before provider/SQL activity. The failure
+is preserved; a narrow R2 derivative passes27/20 closed controls and root's actual
+baseline retest without truncation. Real-verifier/local-PG integration separately
+passes one COMMIT and final-claim rejection/ROLLBACK. External proofs stay synthetic.
+Selected source/finite custody retains105 files with no raw definitions or
+credentials. [Evidence and next gates](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
+
+R2 host inspection finds eight conservative candidates, including coding tools/
+idle shells and an actual owned local Kong gateway. Root subsequently stops only
+that gateway once after exact identity/zero-connection rechecks. Independent
+readback verifies stopped/PID0/no runtime ports, exact core identity and all five
+siblings preserved. Aggregate target-config equality remains unproven; the
+original conservative result and earlier preflight failures stay unchanged.
+Fresh reviewed process classification and hosted DDL remain open.
+[Actual closure and limitations](production-readiness.md#unused-local-test-gateway-stopped).
+
 ## Oct20 advertised transaction endpoint passes full inspection
 
 One actual advertised PRIMARY connection, provider CA/hostname and single READ
@@ -12,8 +38,9 @@ sources remain private. Client TLS passes; upstream SQL SSL remains separately
 observed false. ROLLBACK/end and the 67-call restore/pause lifecycle finish at
 22:26:35 UTC with original observed states/settings preserved.
 
-Next: actual complete provenance review and reviewed transaction-specific atomic
-execution. No DDL/customer import or production release is claimed.
+The subsequent complete provenance review passes; reviewed transaction-specific
+hosted execution remains open. No DDL/customer import or production release is
+claimed.
 [Exact scope and evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
 
 ## Oct20 management read-only identity observed

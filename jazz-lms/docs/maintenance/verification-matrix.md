@@ -1,13 +1,28 @@
 # Goal verification matrix
 
+## Oct20 complete review; transaction integration gates
+
+All actual300 defaults/24 memberships/60 schema rights/30 roles/five extensions/
+six event bodies/three Auth helpers pass independent capability review for the
+empty atomic scope. Transaction-specific compiler/executor pass44/35 closed
+controls and actual local PG17 success/forced rollback: BEGIN first after durable
+intent, positive PID/XID, final227/all rights and managed preservation. External
+proofs remain synthetic. The original300-vs256 baseline rejection is preserved;
+the narrow R2 parser passes root's actual baseline retest and27/20 closed tests.
+Real-verifier/local-SQL success and final-claim rejection/rollback also pass.
+An exact owned local Kong gateway is separately stopped with siblings preserved;
+aggregate config equality is unproven and fresh process classification remains
+open. Hosted DDL/import/serving remain unverified.
+[Scope and custody](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
+
 ## Oct20 complete hosted read-only metadata capture
 
 The exact advertised transaction endpoint passes actual verify-full TLS,
 PG17/postgres role, 54 SQL queries in one READ ONLY transaction with stable
 positive XID/PID, full bounded metadata and empty-state checks, ROLLBACK/end and
 same-target pause/original observed-settings preservation. Complete capability
-review and hosted atomic preparation remain open; collection does not establish
-serving/import authority or API containment.
+review subsequently passes as above; hosted atomic preparation remains open.
+Collection does not establish serving/import authority or API containment.
 [Actual evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
 
 ## Oct20 whole executor: local SQL success and rollback
