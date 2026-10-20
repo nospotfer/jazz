@@ -14,6 +14,50 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 Dodo follow-up closes with an unpaid TEST payment
+
+The10:31:06.315–11:01:06.315 UTC follow-up on actualba105/45,831 closes early
+around10:59. It reuses the original confirmed USER and exact checkout created
+10:03:12.238626 UTC, with no recreation/new checkout. Five own-host POST200s
+cover two initial fills/two manual fills/Continue5; the four older reservations
+remain spent. Continue5 creates a TEST payment10:39:39.286317 with status
+`requires_payment_method`, canonical EUR9680 total minor units/tax1680/base€80.
+Exact GET200 binds checkout/cart/actor/business/brand and observed payment path.
+This is an unpaid quote/record, not a completed charge, settlement or fulfillment.
+Card marker remains absent, refunds0 and app purchases0.
+
+Five fresh browsers do not form an uninterrupted/error-free journey. They expose
+manual/path/SDK guard restrictions; the final own-first-party top-navigation
+block's cause remains unclassified, not an established provider failure. One
+normal UI logout fails: cleanup-only live Auth GET verifies the exact actor,
+then one global logout204 without password login and independent sessions0/
+original23-session preservation precede matching profile deletion. The fifth
+reports normal logout/profile removal without card use. Runtime19/private-SSH11/
+invalid-signature401/public-host DNS3/TLS/actual-path502 are bounded setup checks;
+58 synthetic SDK checks are preparation only.
+
+Independent closure PASS11:00:27.663 preserves25 public tables/29 original
+fingerprints/all nine original accounts/23 sessions/refresh tokens/ledger;
+current10 Auth+10app accounts/1,515 rows, confirmedUSER/identity1/sessions0/
+purchases0 and owner SUPER_ADMIN. Three read-only SELECT201s verify the read-only
+role/transaction; receipt SHA256
+`773ed0fa2bb3a1095f42e242623931358c2ed69b3a0a025b941281f4320f0442`.
+Services are confirmed terminal0; independent endpoint GET40411:00:29 follows
+DELETE/disable. Final owned browser/cleanup process count is0, profile/socket
+are absent, Card/Continue6 markers are absent and the full45,831-file post-seal
+passes11:02:03.581. Current v2 retention passes51 files/387,062 bytes, exact rehash
+and zero actual-used credential/private checkout/payment/document URL matches:
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-followup-ba105-20261020-v2`,
+manifest `e2450f3d3b9302c33c407bd12e4717683b8223a0267477c1d3285869bbba0466`.
+The selection includes the actual closure checker and excludes raw provider/DB/
+mail data, browser state, enabled inputs and the separate private recovery file;
+it is local and unencrypted, not off-site. Comprehensive status remains
+`CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE`. Next continuation is
+preparation only, reusing the already-existing unpaid payment/original actor/
+checkout under a fresh lease/GET while preserving old timestamps/spent ledgers.
+No activation, completed payment/refund/signed fulfillment, account membership
+or production release is inferred. [Latest scoped evidence](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
+
 ## Oct20 current-source Auth passes and published TEST setup
 
 Exact sealed `3e5b2c180316997d732ac96e64e7937bf41d8341`/45,831 now passes
@@ -62,16 +106,23 @@ stale-readiness setup is unverified. Historical ledgers and fixtures grant no
 live authority. The older30d848a controller-repair/same-profile-continuation
 result stays distinct. [Exact Auth evidence](cloud-auth-mail.md).
 
-Published native TEST-profile source `ba105` has exact
-[Quality PR39400258917](https://github.com/nospotfer/jazz/actions/runs/39400258917)/
-[push39400254159](https://github.com/nospotfer/jazz/actions/runs/39400254159) and
-[Secret Scan PR39400258966](https://github.com/nospotfer/jazz/actions/runs/39400258966)/
-[push39400254060](https://github.com/nospotfer/jazz/actions/runs/39400254060) PASS.
-Downloaded Quality logs verify2,628 normal passes/80 intentional skips,
-80 persisted passes/one skip, types/webpack/static31-of-31 and lint0errors/
-22 warnings. All CodeQL checks succeed and the actual09:38 UTC head-ref read has
-zero open alerts. This explicit leased TEST profile has no actual payment pass
-and inherits no3e5 Auth journey proof; no production deployment follows.
+Latest published source
+[`d025e05e18576710e99fa3077324746c261e2254`](https://github.com/nospotfer/jazz/commit/d025e05e18576710e99fa3077324746c261e2254)
+has five successful exact-head workflow runs: Quality
+[pull request39405773324](https://github.com/nospotfer/jazz/actions/runs/39405773324)/
+[push39405767014](https://github.com/nospotfer/jazz/actions/runs/39405767014),
+Secret Scan
+[pull request39405773319](https://github.com/nospotfer/jazz/actions/runs/39405773319)/
+[push39405767019](https://github.com/nospotfer/jazz/actions/runs/39405767019),
+and one [dynamic CodeQL run39405769905](https://github.com/nospotfer/jazz/actions/runs/39405769905).
+An exact-head Actions API readback confirms these five runs; CodeQL's actions
+and JavaScript/TypeScript Analyze jobs both succeed. No separate CodeQL push run
+is listed. Downloaded Quality logs verify2,628 normal
+passes/80 intentional skips,80 persisted passes/one skip, types/webpack/
+static31-of-31 and lint0errors/22warnings; fresh head-ref CodeQL alerts0.
+The earlierba105 TEST-profile feature's exact Quality PR39400258917/
+push39400254159 and Secret Scan PR39400258966/push39400254060 remain historical.
+CI does not extend hosted proof beyond its actual artifact or release production.
 
 Fresh QuickTunnel capability now passes DNS on the system/1.1.1.1/8.8.8.8
 resolvers and verified HTTPS to the deliberately absent origin's expected502;
@@ -80,20 +131,42 @@ current general DNS blocker. Each actual hostname still requires a fresh check;
 the dedicated Dodo host passes its own public DNS/TLS checks. Stable free hosting
 and production migration remain separate.
 
-The current Dodo baseline root is
-`/tmp/jazz-maintenance/dodo-baseline-actual-20261020`. Verified setup comprises a
-fresh TEST product GET200, one enabled owned TEST endpoint, a confirmed new
-controlled USER with29 original table fingerprints preserved, actual native19/
-private-SSH11 and actual native invalid-signature401. The first headless browser
-logs in with SQL roleUSER/purchases0, then fails a selector before checkout click;
-normal204 logout and its profile removal pass. No checkout/card action occurs in
-that first attempt.
-At this checkpoint the corrected-wait fresh browser phase is active only through
-10:22 UTC. Valid signed provider delivery, checkout/return/reconciliation/reversal
-and account-owner/payout/currency/tax evidence remain unverified. The owner
-question concerns account information, not another approval. An enabled endpoint,
-invalid-signature rejection and login establish no charge/refund or provider
-health claim. Maintenance, full integration and production release remain open.
+The following first-baseline checkpoint and its then-proposed follow-up remain
+historical; the latest closed follow-up is recorded above.
+
+The Dodo baseline window closes10:22:08 UTC on actualba105/45,831, with product
+GET200/dedicated public DNS/TLS/native19/private-SSH11/invalid-signature401 and
+full post-closure seal PASS. One actual app TEST checkout is opened/reopened as
+the same checkout. Four billing-Continue reservations are recorded, but the card
+attempt marker is absent and no actual completed payment/refund/signed
+fulfillment is verified. Browser1 fails a selector before click; browser2 has
+readonly-email/manual-address controller bugs; both close normally. Browser3
+denies its delayed own-host billing POST after immediately revoking its arm, a
+controller bug rather than an application/provider failure. Its `LEASE_GUARD`
+closure logs out/removes the profile; remote processes0/socket identity removal
+and native/SSH/listener/Cloudflare terminal0 follow. Endpoint DELETE/disable is
+accepted at10:21:09. Negative401 is not positive signed-delivery evidence.
+
+Independent final closure PASS10:26:40.651 UTC preserves29 original table fingerprints, nine
+original accounts/23 sessions/refresh tokens/ledger, with current10 accounts/
+1,515 public rows and confirmedUSER/identity1/sessions0/purchases0. The initial
+checker FAIL is retained separately: one additional read-only SELECT classifies
+the managed principal as `supabase_read_only_user` on `postgres` with
+transaction_read_only=on. The three original data reads are not repeated; all
+four responses are201 and writes0. This corrects an unnecessary helper assumption,
+not a provider/application failure. Data/resource closure passes while the
+payment scope remains CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE. Finite receipts stay under
+`/tmp/jazz-maintenance/dodo-baseline-actual-20261020`.
+Selected local/unencrypted retention is29 files/192,091 bytes at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-baseline-ba105-20261020`,
+manifest `cc1038f103d451e1f27cdfbd0d39f980f3ee03477ad13215ee1576699b7ddc59`.
+Exact rehash and actual-used credential/private-checkout-URL scans pass with zero
+matches; raw provider/DB/mail/browser data and enabled inputs are excluded.
+Follow-up preparation reuses the original actor/same checkout only under a fresh
+unactivated window and explicit budgets. The owner supplied a likely login email,
+without verified membership/login/dashboard settings; no further approval question
+is needed. Payment/return/reconciliation/reversal, account settings, stable free
+hosting, full integration and production release remain open. [Current Dodo closure](dodo.md#oct20-actual-test-checkout-and-closed-window).
 
 ## Oct20 actual hosted recovery and continuing authorization
 

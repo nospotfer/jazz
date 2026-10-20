@@ -86,6 +86,18 @@ fresh-registration scope remains a closed setup failure with a separate pending
 actor; never overwrite it or reset its spent ledger. Private browser transport
 does not prove public HTTPS; seven blocks/seven console errors are unclassified.
 
+The controlled Dodo TEST USER has separate credentials in the owner-only
+`native-preview-configuration/dodo-test-auth-fixture-20261020-private.json`
+under the same maintenance backup root. Its latest closed scope verifies USER,
+zero sessions and no purchases. The separate owner-only
+`dodo-unpaid-test-checkout-20261020-private.json` in that directory preserves the
+original checkout, unpaid TEST payment, private provider links and all five spent
+billing reservations. It contains no provider key or account password. Keep both
+files outside retained review evidence; neither permits automatic loading,
+role/session restoration or activation. Any continuation needs fresh independent
+actor/provider checks and a new source/origin/gate plan. Preserve original
+timestamps and spent actions; do not recreate the account or checkout to resume.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

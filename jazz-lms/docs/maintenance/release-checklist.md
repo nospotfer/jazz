@@ -35,6 +35,12 @@ technical work; authorization does not imply a completed deployment.
 
 ## Review gates
 
+- [x] Published documentation checkpointd025e05 has five successful exact-head
+  workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run
+  ([run IDs/events](review-status.md)). Downloaded Quality verifies2,628 normal/80 intentional skips,
+  80 persisted/one skip, types/webpack/static31-of-31 and lint0errors/22warnings;
+  fresh head-ref CodeQL alerts0. Actual Auth remains sealed3e5 and actual Dodo
+  remainsba105/45,831; publication extends neither journey nor production release.
 - [x] Repair reset-page diagnostic privacy and localization: eight new component
   regressions fail before repair and pass after; 47 focused checks, types and
   scoped lint pass. No identity/PKCE/session/update/logout logic changes and no
@@ -238,8 +244,44 @@ technical work; authorization does not imply a completed deployment.
 - [x] Verify supplied Dodo TEST key and matching business; create exactly one
   dedicated synthetic product. Verified test-only price alignment to EUR80 and
   two coupon API acceptances preserve live resources and app fixture rows.
+- [x] Close actualba105/45,831 TEST window at10:22:08 UTC: product GET200,
+  dedicated DNS/TLS/native19/private-SSH11/invalid-signature401; one actual app
+  checkout opened/reopened as the same checkout, four billing reservations and
+  absent card-attempt marker. Preserve three browsers' selector/manual-billing/
+  immediate-arm-revoke controller failures, not application/provider failures.
+  Endpoint DELETE/disable accepted10:21:09; loggedOut/profile gone, remote
+  process0/socket removal and native/SSH/listener/Cloudflare terminal0/full seal
+  pass. Independent closure PASS10:26:40 preserves29 fingerprints/nine original
+  accounts/23 sessions/refresh tokens/ledger; current10 accounts/1,515 public rows,
+  confirmedUSER/identity1/sessions0/purchases0. Initial expected-postgres-role
+  checker FAIL is retained; one read-only role SELECT classifies the managed
+  principal without data rereads/writes. [Closed incomplete scope](dodo.md#oct20-actual-test-checkout-and-closed-window).
+- [x] Record the separately closed10:31–11:01 UTC follow-up on the same artifact:
+  original actor/checkout reused, no recreation/new checkout; five own-host
+  POST200s culminate in Continue5 creating unpaid TEST requires_payment_method,
+  EUR9680 total minor units/tax1680/base€80. Exact GET binds original checkout/
+  cart/actor/business/brand/path; four older reservations remain spent. Card
+  marker absent/refunds0/purchases0. Preserve five interrupted browsers and the
+  failed normal logout resolved only by exact-actor live GET/global204 without
+  password login, independent sessions0 and matching profile deletion.
+- [x] Independent follow-up data closure11:00:27 PASS: three read-only SELECT201s,
+  exact25 public tables/29 fingerprints/nine original accounts/23 sessions/
+  refresh tokens/ledger, current10 accounts/1,515 rows/confirmedUSER/identity1/
+  sessions0/purchases0, owner SUPER_ADMIN and read-only role/transaction.
+  Services terminal0; exact owned endpoint GET40411:00:29 follows disable.
+  Owned browser/cleanup processes0, profile/socket absent and Card/Continue6
+  markers absent; full45,831 post-seal passes11:02:03.581. V2 retention51 files/
+  387,062 bytes passes exact rehash/zero actual-used private-value/URL matches,
+  including the actual closure checker. [Latest scope and manifest](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
 - [ ] Review customer/team/webhook-alert recipients, dashboard/currency/tax
-  decisions and actual isolated checkout, delivery, reconciliation/coupon/reversal.
+  decisions and complete actual isolated payment, positive signed delivery,
+  return/reconciliation/coupon/reversal. First baseline remains
+  CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE; latest follow-up has only an unpaid
+  record/quote, not a completed charge/settlement/refund/fulfillment. The owner
+  supplied a likely account email; membership/login/settings remain unverified.
+  Next preparation reuses already-existing unpaid payment/original actor/checkout
+  only under a fresh lease/exact GET, preserving creation times/spent ledgers;
+  it is not activated at this checkpoint and needs no repeated approval question.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity

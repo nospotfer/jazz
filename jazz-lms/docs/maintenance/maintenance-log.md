@@ -2148,3 +2148,104 @@ The maintenance goal remains active and incomplete.
   dashboard ownership/payout/currency/tax, stable zero-cost hosting and production
   readiness remain separate work. No charge/refund, provider-health or full
   integration pass is claimed, and no production deployment occurs.
+
+## 2026-10-20 — Dodo TEST checkout window closed; payment proof incomplete
+
+- The preceding active setup checkpoint is superseded by
+  CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE at10:22:08 UTC. Actual artifact
+  remainsba105/45,831. One app TEST checkout is opened/reopened as the same;
+  four billing-Continue reservations are consumed, but the card-attempt marker
+  is absent. No completed payment/refund/positive signed fulfillment, return,
+  reconciliation or reversal is verified. Native19/private-SSH11/invalid-
+  signature401 are negative/setup proof, not valid signed delivery.
+- Preserve the first browser selector failure before click and normal204/
+  profile removal; the second readonly-email/manual-address controller bugs and
+  normal close; and the third delayed own-host billing POST denial after its
+  immediate one-shot-arm revoke. The latter is a controller timing bug, not an
+  application/provider failure. Third closure is LEASE_GUARD/loggedOut=true/
+  profile gone. Owned remote processes0 and identified socket removal pass.
+- The endpoint guardian's DELETE/disable is accepted10:21:09 UTC. Native/SSH/
+  listener/Cloudflare expire/close terminal0, with full45,831-file post-closure
+  inspection PASS10:24:06. No inactive window is reused as live authority.
+- Independent preservation uses three read-only data SELECTs at10:24:51:
+  25 public tables/29 original fingerprints, nine original accounts/23 sessions/
+  refresh tokens/ledger unchanged. Current10 Auth+10app accounts/1,515 public
+  rows; confirmedUSER/identity1/sessions0/purchases0, existing owner SUPER_ADMIN.
+  Retain the initial helper's unnecessary expected-postgres-role FAIL. One
+  extra read-only SELECT10:25:51 confirms supabase_read_only_user/databasepostgres/
+  transaction_read_onlyon, with no data rereads. All four responses201; writes0.
+  Final independent closure PASS10:26:40.651, receipt SHA256
+  `bf5c6930a08791b38096c052682cd5e6de6abc4d4e9dee42de2968ac28e7ac45`.
+  Durable fixture session metadata updates; actor ID/password remain preserved.
+- Retain29 selected files/192,091 bytes owner-only/local/unencrypted under
+  `review-checkpoint-dodo-baseline-ba105-20261020`, manifest
+  `cc1038f103d451e1f27cdfbd0d39f980f3ee03477ad13215ee1576699b7ddc59`.
+  Exact rehash and actual-used credential/private-checkout-URL scans pass with
+  zero matches. Raw provider/DB/mail/browser data and enabled inputs are excluded;
+  no off-site claim. [Finite closed incomplete scope](dodo.md#oct20-actual-test-checkout-and-closed-window).
+- Publishedd025e05e18576710e99fa3077324746c261e2254 has five successful exact-head
+  workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run
+  ([run IDs/events](review-status.md)); downloaded Quality2,628 normal/80 skips,80 persisted/one skip,
+  types/webpack/static31-of-31/lint0errors22warnings and fresh head-ref CodeQL
+  alerts0. Publication extends neither the actualba105 payment evidence nor
+  the separate3e5 registration/uninterrupted-recovery scopes.
+- A fresh follow-up is prepared, not activated, using the original actor and
+  same checkout with explicit new action bounds. The owner supplied a likely
+  account email, without verified membership/login/dashboard settings; no
+  approval renewal is needed. Payment/positive delivery/return/reconciliation/
+  reversal/account evidence, stable zero-cost hosting and production release
+  remain open. No provider-health, charge/refund or goal-completion claim.
+
+## 2026-10-20 — Follow-up creates an unpaid TEST payment and closes
+
+- Run jazz-dodo-baseline-followup-20261020 uses actualba105/45,831 and fixed
+  10:31:06.315–11:01:06.315 UTC lease, closing early around10:59. Three fresh
+  read-only SQL checks verify the existing confirmed USER; no actor recreation.
+  Exact checkout GET preserves original10:03:12.238626 creation; no new checkout.
+  Runtime19/private-SSH11/invalid401/public-webhook DNS3/TLS/actual-path502 pass;
+  58 synthetic SDK checks remain preparation only.
+- Async correction allows five actual own-host POST200s: two initial billing
+  fills/two manual fills/Continue5. Preserve the four prior spent reservations;
+  only Continue5 is newly reserved. It creates TEST payment10:39:39.286317,
+  status requires_payment_method, canonicalEUR9680 total minor units/tax1680/
+  base€80. Exact GET200 binds original checkout/cart/actor/business/brand and
+  payment-link path seen in the provider document. This is an unpaid record/quote,
+  not a completed charge/settlement/fulfillment. Card marker absent/refunds0/
+  app purchases0; private controller needed legitimate payment-path support.
+- Five fresh browsers retain the interrupted journey: manual inspection closes;
+  manual-fill/Continue5 hits a new-path guard and closes; login-only source
+  coordination closes; SDK GET denial precedes failed normal UI logout; final
+  SDK initialization hits an own-first-party top-navigation block with cause
+  unclassified. These do not establish provider/application defects or an
+  error-free uninterrupted flow. Fourth owned profile is preserved until
+  cleanup-only live Auth GET verifies exact actor, one global logout204 without
+  password login and independent sessions0/original23 preservation, then matching
+  profile deletion. Fifth normal logout reports true within15s/profile gone.
+- Independent11:00:27.663 closure passes three read-only SELECT201s:25 public
+  tables/29 original fingerprints/all nine prior accounts/23 sessions/refresh
+  tokens/ledger unchanged; current10Auth10app accounts/1,515 public rows,
+  confirmedUSER/identity1/sessions0/purchases0 and owner SUPER_ADMIN, verified
+  read-only role/transaction. Receipt SHA256
+  `773ed0fa2bb3a1095f42e242623931358c2ed69b3a0a025b941281f4320f0442`.
+  Fixture session metadata only updates; credentials/actor ID preserved.
+- All services are confirmed terminal0; exact owned endpoint GET40411:00:29
+  follows accepted DELETE/disable. Final owned browser/cleanup processes0,
+  profile/socket absent and Card/Continue6 markers absent; full45,831-file
+  post-seal passes11:02:03.581. Comprehensive status remains
+  CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE.
+- Current selected retention v2 passes51 files/387,062 bytes with actual final
+  closure checker, exact rehash and zero actual-used credential/private checkout/
+  payment/document URL matches. Destination
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-followup-ba105-20261020-v2`,
+  manifest `e2450f3d3b9302c33c407bd12e4717683b8223a0267477c1d3285869bbba0466`.
+  No raw provider/DB/mail data, browser state or enabled inputs are retained;
+  local unencrypted selection is not off-site. Separate0600 unpaid-checkout
+  recovery receipts/spent markers are excluded from evidence and grant no
+  automatic loading/role/session/activation authority; controlled-USER credentials
+  remain separate and preserved. [Current finite scope](dodo.md#oct20-follow-up-existing-checkout-creates-an-unpaid-test-payment).
+- Next continuation is preparation only for the existing unpaid payment plus
+  original actor/checkout under a fresh lease/exact GET, retaining original times
+  and spent ledgers. No activation yet. Dashboard email hint is unverified
+  membership/settings, not an approval block. Earlier baseline, d025 exact CI and
+  sealed3e5 Auth evidence remain separately bound. Completed payment/refund/signed
+  fulfillment, stable zero-cost hosting and production release remain open.

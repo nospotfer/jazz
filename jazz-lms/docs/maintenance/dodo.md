@@ -1,5 +1,153 @@
 # Dodo product, webhook and sandbox audit
 
+Updated2026-10-20. Latest follow-up is **CLOSED; UNPAID TEST PAYMENT / CARD AND
+FULFILLMENT INCOMPLETE**. Its pending provider record/quote is not a completed
+charge or entitlement. The owner has continuing authorization for fresh bounded isolated
+work under the [root contract](../../../AGENTS.md); closed action budgets are
+not renewed. Zero-cost hosting and unreleased production limits remain.
+
+## Oct20 follow-up: existing checkout creates an unpaid TEST payment
+
+Run `jazz-dodo-baseline-followup-20261020` uses actualba105/45,831 with the
+fixed10:31:06.315–11:01:06.315 UTC lease and closes early around10:59. Three fresh
+read-only SQL checks verify the existing confirmed USER; no actor is recreated.
+The exact owned checkout GET preserves its original10:03:12.238626 UTC creation
+time; no new checkout is made. Runtime19/private-SSH11/invalid-signature401 and
+the dedicated public webhook host's three-resolver DNS/TLS/actual-path502 checks
+pass. The58 synthetic SDK checks are preparation evidence only.
+
+The asynchronous controller correction now allows five actual own-host POST200s:
+two initial billing fills, two manual fills and Continue5. Four older spent
+Continue reservations remain preserved; only the new Continue5 is reserved.
+At10:39:39.286317 UTC this creates a TEST payment with status
+`requires_payment_method`: canonical EUR9680 total minor units (€96.80), tax1680
+(€16.80), base€80.00. Exact GET200 matches the original checkout, cart, controlled
+actor, business/brand and the payment-link path observed in the provider document.
+This is an unpaid record/quote, not a completed charge, revenue, settlement or
+signed fulfillment. The card marker remains absent, refunds0 and app purchases0.
+Legitimate payment-path support was needed in the private controller.
+
+The flow is interrupted across five fresh browsers: manual UI inspection closes
+normally; manual-fill/Continue5 reaches a newly denied payment path and closes;
+a login-only attempt closes for source coordination; an SDK GET is denied and
+normal UI logout fails; the fifth attempt's own-first-party top navigation is
+blocked during SDK initialization, with cause unclassified. Do not label these
+application/provider failures or an error-free/uninterrupted payment journey.
+For the fourth attempt, the owned profile is preserved until cleanup-only live
+Auth GET verifies the exact actor and one global logout204 succeeds, without a
+password login. Independent SQL confirms sessions0 and all23 original session
+rows unchanged before the matching profile is deleted. The fifth reports normal
+logout within15 seconds and profile removal, without a card action.
+
+Independent11:00:27.663 UTC closure passes three read-only SELECT201s: exact25
+public tables/29 original fingerprints, all nine original accounts/23 sessions/
+refresh tokens/ledger preserved; current10 Auth+10app accounts/1,515 public rows,
+confirmedUSER/identity1/sessions0/purchases0, existing owner SUPER_ADMIN and the
+verified read-only database role/transaction. Receipt SHA256:
+`773ed0fa2bb3a1095f42e242623931358c2ed69b3a0a025b941281f4320f0442`.
+Only durable fixture session metadata changes; actor credentials/ID are preserved.
+All services are confirmed terminal0. Exact owned endpoint GET404 at11:00:29
+independently follows accepted DELETE/disable. Final resource checks find zero
+owned browser/cleanup processes, no profile or SSH socket, and confirm removal
+of the identified socket. Card and Continue6 markers are absent. The complete
+45,831-file post-closure source seal passes at11:02:03.581 UTC. The comprehensive
+receipt retains status `CLOSED_INCOMPLETE_TEST_CONTROLLER_FAILURE`.
+
+Selected retention passes exact rehash and an actual-used credential/private
+checkout, payment and document URL scan with zero matches:51 files/387,062 bytes
+at `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-followup-ba105-20261020-v2`,
+manifest SHA256
+`e2450f3d3b9302c33c407bd12e4717683b8223a0267477c1d3285869bbba0466`.
+It includes the actual final closure checker, with no raw provider/DB/mail data,
+browser state or enabled inputs. This local, unencrypted selection is not an
+off-site backup. The separate0600
+`native-preview-configuration/dodo-unpaid-test-checkout-20261020-private.json`
+under the same backup root preserves the original checkout, unpaid payment/link
+receipts and five spent UI markers. It contains no API key/password, is excluded
+from review evidence and grants no automatic loading, role, session or activation
+authority. The separate controlled-USER credential fixture remains preserved.
+
+Finite working evidence is under
+`/tmp/jazz-maintenance/dodo-baseline-followup-20261020`. Next continuation is
+preparation only: reuse the already-existing unpaid payment and original actor/
+checkout with a fresh lease/exact GET, retaining original creation times and spent
+ledgers. It is not activated. Dashboard email hint remains unverified account
+membership/settings, not an approval block. Completed card/payment, positive
+signed fulfillment, return/reconciliation/refund and stable production hosting
+remain open. The first baseline below remains a separate historical result.
+
+## Oct20 actual TEST checkout and closed window
+
+The actual artifact is source
+`ba105bb7fddbfec1848d9ffadcd8e6b51f12bb9b`/45,831 sealed files. Fresh TEST
+product GET200, dedicated-host DNS across system/1.1.1.1/8.8.8.8 and verified TLS,
+native19/private-SSH11 and actual native invalid-signature401 pass. One owned
+TEST endpoint is enabled for the bounded window; its DELETE/disable command is
+accepted by the guardian at10:21:09 UTC. The window expires at10:22:08 UTC.
+Endpoint enablement and negative401 do not establish valid signed delivery.
+
+Exactly one actual application TEST checkout is opened and later reopened as
+the same checkout. Four billing-Continue reservations are recorded. They are
+controller reservations, not four completed billing submissions or payments;
+the card-attempt marker is absent. No actual completed payment, refund, signed
+fulfillment, return/reconciliation or coupon/reversal journey is verified.
+
+The first browser's selector fails before checkout click, then normal204 logout
+and profile removal pass. The second browser encounters readonly-email/manual-
+address controller bugs and closes normally. The third browser denies a delayed
+own-checkout-host billing POST after immediately revoking its one-shot arm. That
+is a controller timing bug, not an established application/provider failure.
+It closes under `LEASE_GUARD` with loggedOut=true and its profile gone. Owned
+remote process count is zero and the identified transport socket is removed.
+Native/SSH/listener/Cloudflare resources expire/close with terminal0; complete
+45,831-file post-closure source inspection passes. Browser diagnostics remain
+scoped controller evidence, not a general provider-health result.
+
+Independent final row/session checks preserve29 original table fingerprints,
+all nine original accounts/23 sessions/refresh tokens and the webhook ledger;
+current totals are10 Auth/app accounts and1,515 public rows. The new controlled
+actor is confirmed USER with one identity, zero sessions and zero purchases.
+Independent closure passes at10:26:40.651 UTC. Preserve the initial helper FAIL:
+it unnecessarily expected database role `postgres`. One additional read-only
+classification SELECT confirms `supabase_read_only_user`, database `postgres`
+and transaction_read_only=on. The three original read-only data SELECTs are not
+repeated; all four responses are201, with zero app/database writes. The helper
+assumption is not a provider/application failure. The final receipt SHA256 is
+`bf5c6930a08791b38096c052682cd5e6de6abc4d4e9dee42de2968ac28e7ac45`.
+Durable fixture closure metadata is updated; the same actor ID/password are
+preserved for any separately bounded follow-up.
+
+Finite evidence is under
+`/tmp/jazz-maintenance/dodo-baseline-actual-20261020`, including
+`independent-closure-readback-summary.json`,
+`post-closure-full-source-seal-summary.json` and the scoped browser/endpoint
+closure summaries. Private credentials, raw responses, checkout URLs and browser
+state stay outside published evidence. The comprehensive `closed-test-summary.json`
+retains the incomplete controller-failure status. Selected retention passes exact
+rehash and actual-used credential/private-checkout-URL scans with zero matches:
+29 files/192,091 bytes at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-baseline-ba105-20261020`,
+manifest `cc1038f103d451e1f27cdfbd0d39f980f3ee03477ad13215ee1576699b7ddc59`.
+It excludes raw provider/database/mail/browser data and enabled inputs; retention
+is local/unencrypted, with no off-site claim. Preparation for a fresh window may reuse
+only the original controlled actor and same checkout with new explicit budgets;
+no follow-up is activated at this checkpoint. The owner identified a likely
+account email, but membership/login, dashboard notifications, ownership/MFA/KYC/
+payout/currency/tax settings remain unverified; this is information needed for
+account review, not another approval question.
+
+Published documentation source
+`d025e05e18576710e99fa3077324746c261e2254` has five successful exact-head
+workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run;
+[run IDs and events](review-status.md). Downloaded Quality logs verify
+2,628 normal passes/80 intentional skips,80 persisted passes/
+one skip, types/webpack/static31-of-31 and lint0errors/22warnings; fresh head-ref
+CodeQL alerts0. CI does not extend the actual artifact's payment result or the
+separate sealed3e5 registration/recovery proofs. No production deployment,
+charge/refund-health or complete-integration claim follows.
+
+## Historical Oct13 audit and TEST resource preparation
+
 Observed 2026-10-13 using credentials recovered from authorized Vercel environment
 reads. The initial live audit made eight documented GETs only. A subsequently
 supplied TEST key is verified; one dedicated product and two coupons were
