@@ -1,5 +1,21 @@
 # Production review and rollback checklist
 
+- [x] Create one verified Free replacement; minimal Auth PATCH200 matches all49
+  intended values. Final19:47:59 confirms it paused and observed original state/
+  settings preserved. Earlier failures remain recorded.
+- [ ] Verify replacement runtime API containment, SQL/TLS/roles, managed emptiness
+  and schema bootstrap. Disabled schema settings plus503/PGRST002 are insufficient;
+  no customer import or cutover yet.
+  [Actual evidence](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+
+- [ ] Complete TEST refund/access reversal. The later same-payment request
+  captures409 `INSUFFICIENT_WALLET_FUNDS`; no refund exists and the purchase stays.
+  Original data, settings and resource/source closure pass. The earlier discarded
+  409 body remains unknown. Preserve both spent reservations. A separate meaningful
+  coupon journey may contribute TEST balance under a fresh bounded scope;
+  registered-email support is optional. No real funding or financial replay.
+  [Actual result and next scope](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial).
+
 - [ ] Establish a verified containment method for production recovery. The
   isolated inactive-schema PATCH returned404; its successful restore and full
   preservation do not establish a production pre-exposure control. The preview

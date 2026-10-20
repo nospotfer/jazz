@@ -1,5 +1,19 @@
 # Prioritized maintenance backlog
 
+## Current recovery and coupon work
+
+- Existing Free replacement: all49 Auth settings pass; final state is paused
+  after public503/PGRST002. Diagnose actual runtime API configuration/readiness,
+  then hosted TLS/roles/managed emptiness and bootstrap. Do not recreate it or
+  replay successful Auth changes. Import/cutover retains the separate recovery-
+  point/current-data and portability gates.
+- Coupon worker/controller sources are concrete and closed-tested. Fresh actual
+  actor/provider/coupon/alias/recipient/runtime proofs and the bounded journey
+  remain. Original TEST refund still lacks merchant balance; no spent financial
+  reservation is reusable.
+
+[Actual hosted checkpoint](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+
 ## Oct20 current production checkpoint
 
 Exact Jazz Vercel protection and pause are applied. Two independent read-only

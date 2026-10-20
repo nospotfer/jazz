@@ -2651,3 +2651,37 @@ The maintenance goal remains active and incomplete.
   credential/raw body/customer/Auth/browser state/active input/financial marker
   selection; no TEST-key load for scanning. Local unencrypted, no off-site or
   activation claim. Production remains paused; no production operation occurs.
+
+## 2026-10-20 — Free replacement Auth verified; API response assumption corrected
+
+- Actual preflight verifies Free/sole-owner/global capacity and region. One create
+  returns201; exact returned ref/name/org/region, preinventory absence and sole
+  addition independently bind `klaiiikojgdfclzhqfgt`. Server-created time predates
+  the request; preserve that unexplained timestamp and the original guard stop.
+- One stored API disable PATCH returns200. Auth49/47 attempts return402/400 for
+  paid-hook and OAuth-pair constraints, with bounded pause closure. A fixed3-field
+  PATCH returns200; independent actual readback matches all49 intended settings
+  and every unrelated setting, plus unchanged null OAuth companion/zero external
+  integrations/no custom SMTP. No Auth-user/send or application operation.
+- Live zero-row profile probe503/PGRST002 fails the controller's406 assumption.
+  Final independent19:47:59 reads verify new target/production INACTIVE, preview
+  ACTIVE_HEALTHY and original observed settings/states unchanged. All actual
+  operation handles terminal;135 management calls/one public request, no SQL/
+  customer import/payment/paid upgrade/cutover. Raw failures and all spent markers
+  remain immutable. Unavailable paused production settings stay unproven.
+- Canonical Supabase documentation plus upstream cache-before-profile ordering
+  invalidate universal406. Actual503 cause remains unestablished. Next use actual
+  runtime role/database configuration and browser-rights evidence; do not replay
+  Auth writes, accept503 alone or apply a workaround just to pass the old check.
+- Local PG17 bootstrap/hardening225→227 rehearsals pass15/17 checks, each422
+  zero-row permission operations; managed helpers and external receipts synthetic.
+  Empty-only20/session-pooler24 focused controls remain preparation-only proof.
+- Actual coupon inventory verifies two eligible existing controlled USERs and no
+  local10% mapping. Guard/worker/controller sources pass61/26/29 overlapping closed
+  suites; independent network-denied controller rerun29/29 passes. No new coupon,
+  checkout/card/browser activation. Official extra TEST-payment workaround can
+  align with this meaningful next journey; support is optional, not the sole path.
+- Retain145 selected files/1,337,499 bytes, manifest1a99e7c1 and receiptfcc16003,
+  rehash/permissions/used-project-secret exclusion pass; Dodo TEST key not read.
+  No raw provider/Auth/DB/browser/credential/enabled input/financial marker custody.
+  Local unencrypted, no off-site or activation claim. Full goal/release incomplete.

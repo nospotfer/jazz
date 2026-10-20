@@ -182,10 +182,30 @@ under the same backup root. It grants no autoload, retry or activation authority
 A separate one-GET TEST balance-ledger read verifies this payment's historical
 credit8997 and fee535, leaving8462 at that event; it is not a current account-total
 check. Investigate a free merchant-sandbox balance remedy before another financial
-scope. Customer-wallet credits, another checkout/card attempt and real funding
-are not established remedies. See `jazz-lms/docs/maintenance/dodo.md`.
+scope. Customer-wallet credits and real funding are not established remedies.
+Dodo documents additional TEST payments as a sandbox balance workaround. The
+separate unfinished coupon journey may use a fresh bounded checkout/card plan
+under the owner's continuing authorization; it cannot reuse this closed scope,
+reset spent reservations or replay payments merely to debug a controller.
+Registered-email support is an optional fallback, not the sole documented path.
+See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
+
+The Oct20 Free replacement is `klaiiikojgdfclzhqfgt`, named
+`Jazz-LMS-Empty-Replacement-20261020`. Final state is INACTIVE. A minimal
+three-field Auth PATCH passes actual readback of all49 intended values with
+unrelated settings unchanged. Stored/effective API schemas are disabled, but the
+sole live probe returns503/PGRST002; that alone is not containment proof. Do not
+repeat successful Auth changes or recreate the project. Investigate actual
+service/runtime schema configuration read-only. No application DDL/import or
+cutover occurred; preserve every spent create/configuration/restore/pause marker.
+Its server-created timestamp predates the accepted create request, unexplained;
+exact201/preinventory absence/current ownership are independently verified.
+Separate owner-only `empty-hosted-target-20261020-database-password-private.json`
+and `empty-hosted-target-20261020-owned-target-private.json` recovery files live
+under the existing native-preview-configuration backup directory. They grant no
+automatic loading/import/cutover authority. See production-readiness.md.
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix
 and release checklist current. Record actual checks and failures, distinguish

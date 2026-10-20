@@ -6,6 +6,69 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Free replacement: Auth verified; API readiness unresolved
+
+One Free project is created: `klaiiikojgdfclzhqfgt`,
+`Jazz-LMS-Empty-Replacement-20261020`, in the existing organization/eu-west-1.
+Fresh preflight verifies Free/sole-owner membership, one active/one paused project
+and an available region. The sole create returns201. Its server-created timestamp
+predates that request by about67 minutes; the original timestamp-guard failure
+remains preserved and unexplained. Independent reads verify the exact returned
+ref/name/organization/region, preinventory absence and sole inventory addition.
+No create is retried.
+
+The new empty-schema PATCH returns200. Desired configuration is empty; effective
+configuration contains `pg_pgrst_no_exposed_schemas`. Two Auth attempts expose
+provider constraints:49 fields return402 for already-disabled paid hooks;47
+return400 because OAuth enable/path fields must be paired. Both stop and pause
+the exact new target. The first pause capture fails; independent INACTIVE reads
+prove its effect without retry. Historical failed receipts stay unchanged.
+
+A corrected fixed PATCH changes only email login, signup and site URL. It returns
+200. Independent actual capture review verifies all49 intended Auth values,
+every unrelated setting unchanged, the unchanged null OAuth companion, zero
+third-party/SSO providers and no custom SMTP credentials. No Auth-user/send
+operation or application launch occurs.
+
+The first live zero-row public-profile request returns503/PGRST002, failing the
+controller's expected406 profile rejection. The scope stops and pauses this same
+project. Independent19:47:59 UTC reads confirm replacement/production INACTIVE,
+preview ACTIVE_HEALTHY and identical observed original Auth/PostgREST settings
+and states. Paused production's unavailable endpoints prevent an underlying
+settings-equality claim. All actual operation handles are terminal.
+
+Cumulative hosted-preparation usage is135 management calls and one public probe:
+one create, one schema PATCH, three Auth attempts, two restores, three pause
+attempts and read-only management calls. No application SQL, customer import,
+payment, key creation/rotation, paid upgrade or cutover occurs. Password/ownership
+recovery inputs remain separately owner-only.
+
+Hosted SQL/TLS/roles, managed emptiness, schema bootstrap and customer restore
+remain unverified. PGRST002 describes schema-cache database connectivity;
+503 alone proves neither the actual cause nor runtime schema containment.
+Investigate readiness and role/database configuration before further recovery;
+do not replay successful Auth writes or assume a typed406 is guaranteed by the
+sentinel setting. [PostgREST definitions](https://docs.postgrest.org/en/stable/references/errors.html).
+
+The [official Supabase troubleshooting article](https://supabase.com/docs/guides/troubleshooting/schema-pg_pgrst_no_exposed_schemas-does-not-exist)
+confirms that disabling DataAPI leaves PostgREST running with the sentinel and
+can produce missing-schema errors. Upstream v14.1 checks cache availability
+before parsing the requested profile. Mandatory406 was therefore an overly
+strict controller assumption; it is not a universal provider contract. This
+does not identify the actual cause of this503 or turn it into containment proof.
+Next collect actual role/database schema overrides, callback configuration and
+browser-rights evidence through bounded read-only inspection. No extra schema or
+role workaround is applied merely to satisfy the old response-code check.
+
+Selected source and finite outcome custody is retained locally in
+`review-checkpoint-empty-auth-coupon-20261020` under the maintenance backup root:
+145 files/1,337,499 bytes, exact source/copy hashes and0600/0700 verified.
+Manifest SHA256 is `1a99e7c1c93ca01bd7832d938d03648efe52af6c752bd085abe921ae34c75998`.
+Credential/raw provider/Auth/DB/browser bodies, enabled inputs and financial
+reservations are excluded. The Dodo TEST key is not loaded for custody scanning.
+This is local unencrypted review evidence, without off-site recovery or activation
+authority; the separate new-project credential recovery files are not included.
+
 ## Actual Vercel changes and verification
 
 The exact Neurofactory `jazz-lms` project
@@ -86,6 +149,33 @@ Stored configuration alone also does not exclude a role-level override.
 [API contract](https://supabase.com/docs/reference/api/v1-update-postgrest-service-config),
 [official encoder](https://github.com/supabase/cli/blob/8803a3e90dd18ca14c857026da20f7a073bc6b22/apps/cli/src/commands/config/push/push.encoders.ts#L392),
 [effective-config limits](https://supabase.com/docs/reference/api/v2-get-project-config).
+
+### Customer-free recovery schema rehearsals
+
+Two separate real local PG17 rehearsals now execute the reviewed public-only225
+bootstrap, permission hardening, additive currency columns and strict227
+verification. The first passes15 checks; the separate empty-only compiler
+revision passes17, including wrong-purpose/import-authority and actual nonempty
+Auth-row rejection. Each runs422 zero-row permission operations: browser roles
+are denied and trusted roles retain their intended operations. Final structure
+is26 tables/227 columns/93 indexes/74 policies/50 constraints/four functions.
+Both network-isolated containers/tmpfs are removed. These overlapping runs are
+local proofs, with synthetic managed Auth/Storage helpers and external receipts.
+
+The separate empty-only compiler passes20 focused controls. It requires a strict
+empty-schema purpose with imports/cutover/customer-row authority false and
+actually rehashes public-schema lineage. It removes the inappropriate RPO
+prerequisite only for empty preparation; customer import/cutover still needs an
+accepted recovery point/current-data preservation decision. The frozen original
+compiler and its later-data gate remain unchanged.
+
+Neither Monster nor Behemoth has a default IPv6 route in the actual local
+inspection. A separate session-pooler derivative passes24 focused synthetic
+controls and retains every non-transport guard. It requires the actual returned
+new-target pooler entry, verified CA/hostname and real same-session postgres
+identity; metadata alone and SQL custom GUCs do not prove transport. No paid IPv4
+add-on is proposed. These preparation results do not establish hosted restore,
+customer-data compatibility or release readiness.
 
 ### Actual isolated control result
 

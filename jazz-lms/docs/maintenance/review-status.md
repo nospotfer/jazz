@@ -1,5 +1,22 @@
 # Maintenance review checkpoints
 
+## Oct20 replacement Auth and schema rehearsals
+
+One new Free replacement is verified as the sole inventory addition. Minimal
+Auth PATCH200 matches all49 desired values and preserves unrelated settings.
+Stored/effective disabled API schemas pass, but public503/PGRST002 leaves runtime
+containment unproven; the bounded scope pauses the replacement. Independent
+19:47:59 reads confirm replacement/production INACTIVE, preview healthy and
+observed original settings unchanged. No hosted SQL/TLS/empty-data/bootstrap
+proof or customer import follows.
+
+Separate real local PG17 rehearsals pass15/17 checks and422 zero-row permission
+operations per run with exact225→227 structure and synthetic managed helpers.
+Coupon runtime/controller sources pass26/29 closed checks, separate from the
+original61 guard/plan checks; no actual coupon journey is activated.
+[Hosted evidence and next step](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved),
+[coupon scope](dodo.md#coupon-follow-up-preparation).
+
 ## Oct20 refund recovery identifies a sandbox wallet denial
 
 Actual bounded same-payment execution captures409 `INSUFFICIENT_WALLET_FUNDS`;

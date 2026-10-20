@@ -1,5 +1,16 @@
 # Goal verification matrix
 
+## Oct20 replacement backend preparation
+
+Actual Free create201/unique ownership and minimal Auth PATCH200/all49 desired
+values pass. Desired/effective disabled API schemas pass; public503/PGRST002 is
+not a typed profile-denial proof. Final19:47:59 reads confirm replacement and
+production INACTIVE, preview healthy and observed original settings preserved.
+All operation handles are terminal; hosted SQL/TLS/managed-empty/bootstrap and
+customer import remain unproven. Real local15/17 checks and422 permission
+operations per run use synthetic managed helpers.
+[Full scope](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+
 ## Oct20 inactive-schema control is negative; preservation passes
 
 The isolated preview completes one pause/restore and is healthy at17:19 UTC.

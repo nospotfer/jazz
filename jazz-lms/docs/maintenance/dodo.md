@@ -38,10 +38,13 @@ balance or a free funding remedy. The
 [refund guide](https://docs.dodopayments.com/features/transactions/refunds)
 confirms the same balance requirement in TEST and recommends additional test
 payments as its self-service workaround. That is outside this closed recovery
-scope. Its registered-email support path is the next option: request a free
-TEST-only Dodo credit/manual adjustment sufficient for this original refund and
-any refund fee, or a documented same-payment remedy. A private concrete draft is
-prepared and unsent; free credit is not guaranteed. No merchant funding write is
+scope. The unfinished coupon journey is a separate useful integration test that
+can also contribute TEST merchant balance under a fresh bounded plan; it is not
+a replay allowance from the closed refund scope. Registered-email support is an
+optional fallback: request a free TEST-only Dodo credit/manual adjustment
+sufficient for this original refund and any refund fee, or a documented
+same-payment remedy. A private concrete draft is prepared and unsent; free credit
+is not guaranteed. No merchant funding write is
 found in the bounded official API-index/SDK review, and waiting for settlement
 is not documented to reverse the payment fee. Customer-wallet credits
 are a separate API and are not proven to fund merchant refunds. No real funding,
@@ -63,6 +66,36 @@ Raw provider/DB/Auth/browser bodies, credential files, actual enabled inputs,
 spent financial reservations and the populated private support draft are
 excluded. The TEST key is not loaded for retention scanning. This is local
 unencrypted review custody, without off-site or activation authority.
+
+### Coupon follow-up preparation
+
+One actual read-only isolated database inventory at18:56 UTC verifies two
+existing controlled USER candidates, both confirmed/app-verified with one
+identity, zero sessions and zero purchases. The course remains published at80;
+there are no local10% voucher mappings. This reads no password and creates no
+actor/session/payment. Historical provider10% discount metadata is expired and
+its15-character code exceeds the UI's12-character local-code limit; a short
+local alias can retain a separate provider code. Actual current provider
+validity still needs a fresh readback.
+
+The separate source-only coupon plan and concrete outbound fetch guard/durable
+journal pass61 closed tests and five syntax checks. They limit one checkout/card,
+deny hidden discount writes/checkout retries, capture provider failures privately
+and preserve spent reservations across restarts. The maximum inclusive REST
+budget is37 with every allowed application read enabled, not24. Actual private
+worker/Next integration, fresh source/origin/actor/provider/recipient/preservation
+bindings and full runtime closure remain prerequisites. No coupon/checkout/card
+is created by these preparations, and no refund is part of the coupon scope.
+
+The concrete private worker binding subsequently passes26 closed controls,
+including the installed compiled Next AppRoute fetch wrapper, real durable
+reservation files, stale-evidence denial and original45,831-file artifact
+rehash. The concrete copied browser/controller passes29 closed cases, including
+Apply/80-8-72 quote/one4-field checkout intent and inherited SDK/card/logout
+controls. Initial fixture failures remain retained. Independent controller review
+reruns29 cases with network transports denied. These overlapping suites prove
+preparation behavior; full parent/IPC startup, fresh provider bindings, actual
+coupon/payment/fulfillment and runtime closure are still required.
 
 ## Earlier Oct20 checkpoint: payment verified; first refund409 unresolved
 

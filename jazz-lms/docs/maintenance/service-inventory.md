@@ -1,5 +1,15 @@
 # Service inventory
 
+## Oct20 Free replacement preparation
+
+New `klaiiikojgdfclzhqfgt` / `Jazz-LMS-Empty-Replacement-20261020` / eu-west-1
+is INACTIVE at19:47:59 UTC; production is INACTIVE and preview ACTIVE_HEALTHY.
+Actual minimal Auth configuration passes all49 intended settings. Stored/effective
+API schemas are disabled, but public503/PGRST002 leaves runtime containment
+unproven. No application DDL/import, paid upgrade or cutover occurs. Separate
+owner-only recovery inputs retain its password and ownership metadata.
+[Actual scopes and limits](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+
 ## Oct20 current production checkpoint
 
 Exact Jazz Vercel protection and pause are applied. Two independent read-only

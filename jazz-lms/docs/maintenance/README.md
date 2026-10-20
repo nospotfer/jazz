@@ -1,5 +1,11 @@
 # Initial maintenance and stabilization
 
+Latest Oct20 recovery checkpoint: one Free replacement exists and actual Auth
+readback passes all49 intended settings. It is paused after public503/PGRST002;
+runtime API containment and hosted SQL/bootstrap remain unproven. Production
+stays paused. No customer data is imported or paid upgrade requested.
+[Actual result and next action](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+
 Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-20.
 [Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
 changes. **The goal is incomplete and the changes are unreleased in production.** The owner
