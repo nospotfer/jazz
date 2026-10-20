@@ -2445,3 +2445,40 @@ The maintenance goal remains active and incomplete.
   Completed Auth journeys are not repeated. The financial-test loop remains
   stopped, its UI card action stays spent and payment acceptance remains
   unverified. Production is unchanged; the full maintenance goal is incomplete.
+
+## 2026-10-20 — Offline controller instrumentation preserves its guards
+
+- Checkpoint `1d345d2` publishes the recorder with all five exact-head checks
+  successful. Both actual Quality logs verify 2,641 normal passes/80 skips,
+  80 persisted passes/one skip, types/webpack 31 and lint 0 errors/22 warnings;
+  exact PR-head CodeQL alerts/results/errors are zero. PR #46 body/head/draft
+  readback passes. Local finite retention contains eight selected files/42,620
+  bytes, manifest `7ea0c29168a0d9f52019e5e7bd944b95911482b77b77f34f4d805786ff98de76`;
+  files0600/root0700, exact rehash, no private inputs/raw CI logs or off-site claim.
+- A bounded adapter adds explicit admission, response/finish/failure correlation
+  and returned-Promise rejection observation while preserving original results,
+  native Promise identity and errors. Fifteen adapter/thirteen recorder checks
+  pass. Root's added phase-transition regression fails before repair with
+  lateResponse0: an allowed read admitted after an earlier window close is now
+  closed again at descriptive phase exit. The latest-close timestamp expectation
+  is updated and both close moments are checked; historical samples keep their
+  original late flags. Independent read-only source review finds no material
+  issue in this repair. Clock faults/correlation loss stay explicit gaps.
+- A new code-only private controller copy wires these hooks. Ten synthetic tests
+  execute its actual handlers and native-forwarding wrapper: guards and
+  reservation/condition order remain unchanged; pre-admission socket/body rejects
+  are denials, admitted/returned-Promise failures are separate, headers retain
+  correlation through later failure, and deliberate aborts are not double-counted.
+  All CLI forms remain preparation-only with network/browser/process entrypoints
+  blocked. Closed source bytes/ledgers stay intact; no private inputs, activation
+  plan, browser/provider/SSH call or fresh financial allowance is used.
+- The application uses hosted checkout redirects. Dodo's [overlay SDK readiness
+  event](https://docs.dodopayments.com/developer-resources/overlay-checkout)
+  is not an established signal for this flow, and [requires_payment_method
+  is not a verified decline](https://docs.dodopayments.com/developer-resources/handle-payment-failures).
+  Public primary documentation review establishes no
+  complete vendor allowlist or historical bootstrap-denial cause. No allowlist or
+  action guard is widened; [scope and limitations](dodo.md#preparation-only-controller-adapter).
+  The goal remains active and incomplete; production and payment acceptance are
+  unchanged. Next is review of the hosted SDK evidence and a concrete future test
+  plan, without replaying a closed checkout or silently renewing its card action.

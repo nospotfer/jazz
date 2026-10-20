@@ -105,6 +105,37 @@ TypeScript using the project's ESNext/bundler module mode, touched-file lint and
 Node syntax checking. These are synthetic recorder checks, not a new browser or
 provider journey. The Vite configuration-loader compatibility warning remains.
 
+### Preparation-only controller adapter
+
+The [adapter](../../scripts/native/browser-transport-adapter.mjs) connects browser
+request objects to that recorder through a private WeakMap and an explicitly
+injected elapsed clock. It preserves synchronous results, native Promise
+identity and the original error while observing returned Promise rejections.
+Admission remains an explicit call after policy checks. Deliberate guard aborts,
+duplicate terminal callbacks, clock faults and lost correlations remain
+separate finite counters; no request data or error prose enters the snapshot.
+
+A new private copy of the actual closed controller now uses these hooks at its
+route, native-forwarding, response, failure, finish and phase boundaries. The
+native admission hook follows the existing socket/body guards. Its command line
+is unconditionally preparation-only, including `--activate`; no browser or
+service can be started through it. Original controller/common/core bytes and
+spent ledgers are unchanged. The copy is under
+`/tmp/jazz-maintenance/dodo-transport-diagnostics-preparation-20261020` and has
+no private inputs or activation plan.
+
+Fifteen adapter plus thirteen recorder regressions pass. A root review regression
+first reproduces a missed late response for a read admitted after a policy-window
+close and before logout; phase exit now records a final close. `closedAtMs` is
+the latest close, while earlier samples retain the late flags observed at their
+own timestamps. Ten separate fake-transport tests exercise the copied actual
+handlers, unchanged guard/reservation order, internal native guards, asynchronous
+rejection handling and blocked command-line activation. Strict types, touched-file
+lint and syntax also pass. These tests establish instrumentation behavior only;
+they do not recover the historical trace or prove SDK readiness, accepted payment,
+signed fulfillment or public HTTPS. No live adapter window is activated and the
+financial-test loop remains stopped.
+
 ## Oct20 SPA scope: transient observation does not establish a card journey
 
 This earlier closed scope remains separate from the settled-document result above.
