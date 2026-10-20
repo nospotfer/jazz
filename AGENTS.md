@@ -113,6 +113,40 @@ owner's continuing authorization covers this bounded isolated test; another
 routine approval is not required. The provider rejection alone does not prove
 whether expiry, consumption or missing browser context caused it.
 
+Two subsequent fresh TEST scopes also close without a card attempt. Their
+separate owner-only recovery records are
+`dodo-unpaid-fresh-session-20261020-private.json` and
+`dodo-unpaid-fresh-spa-20261020-private.json` in the same private recovery
+directory. Preserve their unpaid payments, observations and spent ledgers;
+neither record authorizes automatic loading or checkout replay. The first scope
+missed an SPA URL change; the second captured a transient `from` URL before the
+page changed to a `session` query. Its exact provider payment/path readback
+passes, but its controller cannot bind the later URL. These are test-controller
+failures, not proof of a provider or application defect. Both scopes verify
+normal logout, original-data preservation, zero actor sessions/purchases,
+endpoint deletion, stopped services and the full source seal.
+
+Prepare and test controller changes offline before another bounded scope. Capture
+the settled current payment document in the same browser, retain immutable
+observations if it changes again, and bind each selected observation to an exact
+provider readback before card submission. Binding alone must not navigate back
+to an earlier URL. Preserve the original financial reservations even when a UI
+operation fails; do not create repeated checkout attempts to debug the controller.
+
+The final settled-document scope records one spent UI card attempt, with no
+verified provider acceptance: the last exact GET remains
+`requires_payment_method`, no positive signed delivery or purchase is proven,
+and no refund is requested. Stable observation/adoption and normal logout pass;
+independent data/session, resource, endpoint and full source closure pass. Its
+separate owner-only record is
+`dodo-unpaid-settled-document-20261020-private.json`. The raw closure helper's
+`STRICT_NO_CARD` label is qualified by a separate interpretation receipt: it
+proves unchanged data, not absence of this UI attempt. Preserve both receipts
+and the spent marker. The automatic financial-test loop is stopped; first improve
+offline phase-specific diagnostics and verify SDK readiness. Visible inputs and
+a Pay click do not establish accepted transport, and an empty response list does
+not prove that no request occurred. Do not silently grant a second card attempt.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

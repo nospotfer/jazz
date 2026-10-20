@@ -35,7 +35,7 @@ technical work; authorization does not imply a completed deployment.
 
 ## Review gates
 
-- [x] Published documentation checkpointd2a9bee has five successful exact-head
+- [x] Published documentation checkpoint81eef3f has five successful exact-head
   workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run
   ([run IDs/events](review-status.md)). Downloaded Quality verifies2,628 normal/80 intentional skips,
   80 persisted/one skip, types/webpack/static31-of-31 and lint0errors/22warnings;
@@ -283,21 +283,50 @@ technical work; authorization does not imply a completed deployment.
   verifies live user and one global204 without password login, then independent
   sessions0 proof precedes deletion. All five services terminal0/profile/socket
   absent/endpoint GET40411:34:19/full45,831 seal11:34:24/retention51 files249,223
-  bytes pass. [Latest scope and manifest](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
+  bytes pass. [Earlier scope and manifest](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
 - [x] Correct the prior checkout-resume proposal: the documented checkout_url is
   single-use and needs a new session per attempt. Bare API payment links and
   reconstructed opaque queries have no equivalent documented resume guarantee;
   cause beyond the observed rejection remains unproven.
+- [x] Close the separate fresh-session scope as
+  CLOSED_INCOMPLETE_SPA_OBSERVATION_CONTROLLER_FAILURE: one new checkout/unpaid
+  TEST payment EUR9680/tax1680, one checkout/Continue reservation each spent,
+  same profile/two manual-fill POST200s/one Continue POST200, no actor/card/refund.
+  SPA URL change has no HTTP document navigation/raw observed receipt; producer
+  fails before GET/reservation. Normal logout/profile deletion, independent
+  closure11:56:41, five terminal0 services/endpoint404/full seal and retention56
+  files376,422 bytes pass. [Earlier fresh-session scope](dodo.md#oct20-fresh-session-unpaid-payment-and-spa-observation-limit).
+- [x] Close the later SPA scope as
+  CLOSED_INCOMPLETE_TRANSIENT_SPA_OBSERVATION_CONTROLLER_FAILURE: same USER/
+  profile/one password-token attempt, one new checkout/unpaid payment, no card/
+  refund. Retain first actual from-only observation, one exact root document
+  GET matching checkout/payment/path, no later-current-URL receipt; one first-URL
+  initialization fails after another query change. Normal logout/profile removal,
+  independent closure12:05:05 preserving29 fingerprints/nine prior accounts/
+  23 sessions/current10 accounts1,515 rows/USERidentity1sessions0purchases0, five
+  terminal0 services/socket absent/endpoint404/full seal and retention59 files/
+  389,335 bytes pass.106 blocks/107 console errors/three command failures/one
+  observation failure remain incompletely attributed. Keep the malformed400
+  probe separate from corrected401. [Earlier scope and manifest](dodo.md#oct20-spa-scope-transient-observation-does-not-establish-a-card-journey).
+- [x] Close settled-document scope as CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED:
+  same-browser login/checkout/billing/Continue, stable revision1/exact GET/ADOPT
+  without navigation reach actual card fields. One UI card action is spent
+  RESERVED-before-typing→UI_CLICKED; no retry. Empty write-response receipts do
+  not establish zero actual requests/acceptance. Last provider GET unpaid,
+  no positive journal/purchase/refund. Normal logout/independent preservation/
+  zero sessions+purchases/five service closures/endpoint404/full seal/retention64
+  files412,746 bytes pass. Qualify misleading STRICT_NO_CARD helper label while
+  preserving the valid three data queries. [Final scope and manifest](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified).
 - [ ] Review customer/team/webhook-alert recipients, dashboard/currency/tax
   decisions and complete actual isolated payment, positive signed delivery,
   return/reconciliation/coupon/reversal. Earlier windows retain their historical
-  controller-failure/unpaid-record evidence; the latest continuation cannot resume
+  controller-failure/unpaid-record evidence; the earlier continuation cannot resume
   its old links. No completed charge/settlement/refund/fulfillment is verified. The owner
   supplied a likely account email; membership/login/settings remain unverified.
-  Separate fresh-session preparation uses only the existing USER, one new normal
-  app checkout/one TEST card/one full TEST refund, zero actors/coupons, same
-  protected browser and actual observed/provider-bound redirect query verbatim;
-  it is not activated and needs no repeated approval question.
+  Automated financial-test loop is stopped after the spent UI card action.
+  Review existing evidence offline with per-phase admission/denial/failure/
+  response counts and SDK readiness before preparing any further financial
+  scope. No second-card authority or new activated test phase follows.
 - [x] Read stored Google/SMTP/Auth/storage/network settings; missing production
   PKCE reset callback and global preview Auth allowances documented.
 - [ ] Review exact production Auth redirects, Google client/customer continuity

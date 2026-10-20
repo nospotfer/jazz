@@ -1,13 +1,180 @@
 # Dodo product, webhook and sandbox audit
 
-Updated2026-10-20. Latest continuation is
-**CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME**. The earlier unpaid TEST record
-remains incomplete; neither a completed charge nor an entitlement is verified.
+Updated2026-10-20. The latest scope is
+**CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED**. One UI card action is spent;
+provider transport/acceptance remains unverified and the TEST payment is unpaid.
+The automated financial-test loop is stopped; no refund, positive fulfillment or
+entitlement is verified.
 The owner has continuing authorization for fresh bounded isolated
 work under the [root contract](../../../AGENTS.md); closed action budgets are
 not renewed. Zero-cost hosting and unreleased production limits remain.
 
+## Oct20 settled document: UI card action spent, transport unverified
+
+Run `jazz-dodo-settled-document-20261020` uses actualba105/45,831 under the fixed
+12:24:22.078–12:54:22.078 UTC lease and closes early. Login, one new normal app
+checkout, two manual billing-fill POST200s and one Continue POST200 use the same
+browser/profile and one password-token attempt. One new TEST payment remains
+`requires_payment_method`. Stable session-query revision1 is observed; the exact
+root document GET passes12:27:42.318, then ADOPT binds it without navigation.
+Three actual card fields in a provider iframe render and Pay is disabled before typing.
+No document initialization/reload is used.
+
+One UI card marker is `RESERVED` before typing12:27:55.275, then `UI_CLICKED`
+12:28:10.275 after its15-second window. The exact GET is12.957 seconds old at
+reservation. This action is spent and is not retried. `cardTransportReceipts: []`
+means no guard-admitted write response was observed; it does **not** prove zero
+actual requests or zero provider acceptance. The last exact provider GET after
+all services close still reads `requires_payment_method` at12:30:47.215. No
+positive signed journal/app purchase/refund is verified. Pre-card SDK bootstrap
+POST denials may affect readiness, but the cause is unproven; the first16 global
+denials cannot establish what happened during the card phase.
+
+Browser92 blocks/93 console errors remain incompletely attributed, despite zero
+command/observation failures. Normal UI logout/profile removal/browser terminal0
+pass12:29:09.607. Independent three read-only SELECT201s pass12:30:07.133,
+preserving25 public tables/29 original fingerprints/nine prior accounts/23
+sessions/refresh tokens/ledger; current10 Auth+10app accounts/1,515 rows and
+confirmedUSER/identity1/sessions0/purchases0. Preserve the raw helper label
+`STRICT_NO_CARD`: it is misleading for this run. The root interpretation receipt
+qualifies it as strict unchanged-data preservation with an unpaid provider
+snapshot; it cannot establish absence of the spent UI card action. The three
+data queries remain valid preservation evidence.
+
+All five service sessions finish terminal0, socket absent/Cloudflare group0.
+Exact endpoint GET404 passes12:31:10.343 and full45,831-file seal passes
+12:31:15.403. Finite evidence is under
+`/tmp/jazz-maintenance/dodo-settled-document-20261020`. Selected retention passes
+64 files/412,746 bytes, exact source/copy rehash and zero actual-used secret/
+private provider URL/query matches at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-settled-document-ba105-20261020`,
+manifest `fd0c1aff61d0871010d8016c1f40f14aa6316734f5580ace807139da5213d337`.
+Files0600/root0700; raw provider/DB/mail/browser state, enabled inputs,
+credentials and private recovery excluded. Local/unencrypted, not off-site.
+
+The selected package retains both the agent-original handoff helper and actual
+corrected helper, the original frozen manifest and the root final review. The
+agent manifest `6a142b30…` binds the old helper; the actual corrected helper is
+`d4f8504b…`, explicitly recorded separately. Browser/document/sync hashes match
+the reviewed code. The71 synthetic tests/five transfer checks/24 syntax checks/
+16 barriers/two embedded-syntax checks are offline preparation evidence only.
+Separate0600 `native-preview-configuration/dodo-unpaid-settled-document-20261020-private.json`
+under the backup root preserves observation/provider receipts/three spent
+markers and the first reserved snapshot, without API key/password or automatic
+loading/activation/second-card authority. Older records remain preserved.
+
+The financial-test loop is **stopped**. Next work is offline per-phase admission,
+denial, failure and response counts plus SDK-readiness review. No new financial
+scope is activated; payment acceptance, signed fulfillment, refund, production
+release and the full maintenance goal remain incomplete.
+
+## Oct20 SPA scope: transient observation does not establish a card journey
+
+This earlier closed scope remains separate from the settled-document result above.
+
+Run `jazz-dodo-fresh-spa-20261020` uses actualba105/45,831 under the fixed
+11:59:34.199–12:29:34.199 UTC lease and closes early. The same existing USER/
+browser profile makes one password-token attempt, one new normal app checkout
+and one new unpaid TEST payment (`requires_payment_method`). The first dashboard
+wait times out after identity verification; the retained browser subsequently
+creates checkout12:01:42.138820. Two manual-fill POST200s and one Continue
+POST200 response at12:02:49.944 are observed; payment creation is12:02:49.653517.
+One checkout/Continue
+reservation each is spent. No new actor, card attempt or refund occurs.
+
+The observer retains the first actual SPA URL at12:02:50.630, containing only
+the initial `from` query. A later URL change triggers `CURRENT_OBSERVATION_CHANGED`;
+no later-current-URL receipt is captured. One root exact provider-document GET
+passes12:03:07.266 and matches the original observed opaque path, checkout,
+payment and API facts. This proves that document read, not a stable later browser
+binding. One same-profile initialization at12:03:46.925 uses the first observed
+URL verbatim; another SPA query change leads to `DODO_OPEN_OWN_PAYMENT_DOCUMENT`.
+The first raw observation remains private and unchanged. No provider/application
+defect or completed financial journey is established.
+
+Browser diagnostics are106 blocked requests/107 console errors/three command
+failures/one observation failure, with attribution incomplete. Normal logout,
+profile deletion and browser terminal0 pass12:04:39.397. The initial negative
+probe returns400 after omitting the required forwarding header; retain it
+separately from the corrected actual401. Runtime19/private-SSH11/public DNS3/
+TLS/absent-origin502 remain bounded setup checks, not positive signed delivery.
+
+Independent closure PASS12:05:05.166 uses three read-only SELECT201s and
+preserves25 public tables/29 original fingerprints, nine prior accounts/23
+sessions/refresh tokens/ledger; current10 Auth+10app accounts/1,515 public rows
+and confirmedUSER/identity1/sessions0/purchases0. All five service sessions
+finish terminal0, socket absent/owned Cloudflare group0. Exact endpoint GET404
+passes12:05:44.413 and full45,831-file seal passes12:05:49.555. Finite evidence
+is under `/tmp/jazz-maintenance/dodo-fresh-spa-20261020`.
+
+Selected retention passes59 files/389,335 bytes, exact source/copy rehash and
+zero actual-used secret/private provider URL/query matches at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-fresh-spa-ba105-20261020`,
+manifest `f1212ae03b2015a2be97a1984fb4b7e49ff3f91ee46d02f4b9b1564171fd450c`.
+Files0600/root0700; raw provider/DB/mail data, browser state, enabled inputs,
+credentials and recovery files excluded. Retention is local/unencrypted, not
+off-site. Four finite source summaries are tightened to0600 before selection,
+without byte changes. Separate0600
+`native-preview-configuration/dodo-unpaid-fresh-spa-20261020-private.json` under
+the backup root preserves captures/receipts/three spent markers without API key/
+password or autoload/role/session/activation authority. Older unpaid records stay
+preserved.
+
+The then-prepared settled-document scope subsequently runs and closes above.
+Its UI card action is spent; earlier closed ledgers and raw observations remain
+preserved. No live financial success or authority to repeat that action follows.
+
+## Oct20 fresh session: unpaid payment and SPA observation limit
+
+This earlier closed scope remains separate from the subsequent SPA scope above.
+
+Run `jazz-dodo-fresh-session-20261020` uses actualba105/45,831 under the fixed
+11:42:53.694–12:12:53.694 UTC lease and closes early. It creates one new normal
+application checkout and one new unpaid TEST payment, `requires_payment_method`,
+canonical EUR9680 total minor units (€96.80), tax1680 (€16.80). One checkout and
+one billing-Continue reservation are spent; two manual billing-fill POST200s
+and one Continue POST200 are observed. No new actor, card attempt or refund
+occurs; older unpaid records and spent ledgers are preserved.
+
+The same browser profile covers checkout, billing and Continue. Its URL moves
+within the same TEST origin to one opaque path with a session query through SPA
+state, without an HTTP document navigation. No observed document raw receipt is
+created. The document producer fails before its provider GET or attempt
+reservation, so it makes zero GET attempts. This establishes a controller
+observation failure; it does not establish an application/provider defect or a
+completed payment. Browser diagnostics record158 blocked requests/162 console
+errors/zero command failures, with attribution incomplete. Normal logout and
+profile removal pass at11:51:57.832 UTC.
+
+Independent closure PASS11:56:41.195 preserves25 public tables/29 original
+fingerprints, nine prior accounts/23 sessions/refresh tokens/ledger; current10
+Auth+10app accounts/1,515 public rows and confirmedUSER/identity1/sessions0/
+purchases0. All five service sessions and the browser finish terminal0; profile/
+socket are absent and owned Cloudflare group members0. Exact endpoint GET404
+passes11:57:36.728 and the full45,831-file seal passes11:57:55.530. Evidence is
+under `/tmp/jazz-maintenance/dodo-fresh-session-20261020`.
+
+Selected retention passes56 files/376,422 bytes, exact source/copy rehash and
+zero actual-used secret/private provider URL matches at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-fresh-session-ba105-20261020`,
+manifest `57e3140682cdc0aca9d7e00009c6d30a4984e9574fa2f3fc3fc37964fff04c56`.
+All retained files are0600 under0700; raw provider/DB/mail data, browser state,
+enabled inputs, credentials and recovery files are excluded. Retention is local/
+unencrypted, with no off-site claim. Two finite source-summary permission fixes
+leave their bytes unchanged; the adjacent diagnostic is outside this package.
+The separate0600 `native-preview-configuration/dodo-unpaid-fresh-session-20261020-private.json`
+under the maintenance backup root preserves the plan/capture/receipt/two spent
+ledgers and closure without API keys/passwords. It grants no automatic loading,
+role, session or activation authority; older records and credentials remain separate.
+
+The subsequent SPA controller's67 synthetic checks/22 syntax checks/16 barriers
+remain preparation-only evidence; its later actual closed result is recorded
+above. Closed ledgers stay spent; do not replay old checkout/payment links.
+
 ## Oct20 continuation: reused checkout links are rejected
+
+This earlier closed continuation and its then-proposed next scope remain
+historical; the completed fresh-session result is recorded above.
 
 Run `jazz-dodo-baseline-continuation-20261020` uses actualba105/45,831 with the
 fixed11:24:16.375–11:54:16.375 UTC lease and closes early around11:34. It creates
@@ -54,14 +221,11 @@ manifest `4d3f3ce80e696aabdc2e134fadabe2dd6be48d2b2b915232a7ae7e38820aacf7`.
 It excludes raw provider/DB/mail data, browser state, enabled inputs, credentials
 and private recovery files. Retention is local/unencrypted, with no off-site claim.
 
-The separate `/tmp/jazz-maintenance/dodo-fresh-session-20261020` scope is
-**preparation only**: reuse only the existing confirmed USER, create one new
-normal application checkout, allow one TEST card attempt and one full TEST
-refund, with zero new actors/coupons. Stay in the same protected browser profile,
-bind the actual observed redirect to the actual provider receipt and carry its
-opaque query verbatim. No bare API-link replay is permitted. No fresh scope is
-activated at this checkpoint; completed payment/refund, positive signed
-fulfillment and production release remain open.
+The then-prepared `/tmp/jazz-maintenance/dodo-fresh-session-20261020` scope
+subsequently runs and closes as recorded above. Its single-use, same-profile and
+actual-observed-query constraints remain; no bare API-link replay is permitted.
+Completed payment/refund, positive signed fulfillment and production release
+remain open.
 
 ## Oct20 follow-up: existing checkout creates an unpaid TEST payment
 
@@ -196,7 +360,7 @@ payout/currency/tax settings remain unverified; this is information needed for
 account review, not another approval question.
 
 Published documentation source
-`d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f` has five successful exact-head
+`81eef3fe5efe378b54646d8612533f0f2bac7d91` has five successful exact-head
 workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run;
 [run IDs and events](review-status.md). Downloaded Quality logs verify
 2,628 normal passes/80 intentional skips,80 persisted passes/

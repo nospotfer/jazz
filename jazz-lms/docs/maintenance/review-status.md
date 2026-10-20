@@ -14,9 +14,103 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
-## Oct20 Dodo continuation closes after link-expired redirects
+## Oct20 Dodo UI card action is spent; transport remains unverified
 
-The latest actualba105/45,831 scope is
+Latest actualba105/45,831 scope is `CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED`,
+under fixed12:24:22.078–12:54:22.078 UTC lease. Same browser/login/new checkout/
+two manual-fill POST200s/one Continue POST200; stable session-query revision1,
+actual document GET12:27:42.318 and ADOPT without navigation expose three card
+fields in a provider iframe. One UI action moves RESERVED-before-typing12:27:55.275→
+UI_CLICKED12:28:10.275; GET age12.957s, no initialization/reload/retry. The empty
+card-response list proves no observed guard-admitted write response, not zero
+actual requests or acceptance. Last exact provider GET after closure remains
+requires_payment_method12:30:47.215; no positive journal/purchase/refund verified.
+Cause is unknown; first16 global denials cannot attribute the card phase.
+
+Browser92 blocks/93 console errors remain incompletely attributed; command and
+observation failures0. Normal UI logout/profile deletion/browser terminal0 pass
+12:29:09.607. Independent three read-only SELECT201s pass12:30:07.133, preserving
+29 original fingerprints/nine prior accounts/23 sessions/current10 accounts/
+1,515 rows/confirmedUSERidentity1sessions0purchases0. Raw `STRICT_NO_CARD` helper
+label is preserved and explicitly qualified: it describes valid unchanged-data
+queries, not absence of the spent UI card action. Five services terminal0/socket
+absent/Cloudflare group0, endpoint40412:31:10.343/full seal12:31:15.403 pass.
+
+Retention64 files/412,746 bytes passes exact source/copy rehash and zero actual-
+used secret/private provider URL/query matches, manifest
+`fd0c1aff61d0871010d8016c1f40f14aa6316734f5580ace807139da5213d337`.
+Raw provider/DB/mail/browser state/enabled inputs/credentials/recovery excluded;
+local/unencrypted, no off-site claim. Actual corrected handoff helper and agent
+original/frozen manifest are retained separately; offline71/5/24/16/2 preparation
+checks are not live proof. Separate0600 private recovery grants no second-card
+authority. Financial-test loop stopped; next is offline per-phase counts/SDK
+readiness, no new activated scope. [Latest scope and custody](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified).
+
+## Earlier Oct20 Dodo SPA scope closes after a transient observation
+
+This earlier completed actualba105/45,831 scope is
+`CLOSED_INCOMPLETE_TRANSIENT_SPA_OBSERVATION_CONTROLLER_FAILURE`, under the fixed
+11:59:34.199–12:29:34.199 UTC lease. Same existing USER/profile, one password-token
+attempt, one new app checkout and one new unpaid TEST requires_payment_method;
+two manual-fill POST200s/one Continue POST200, no new actor/card/refund. The first
+dashboard wait times out after verified identity. The observer freezes the first
+actual from-only SPA URL12:02:50.630. A later URL change rejects current binding;
+no later-current-URL receipt is captured. One root exact document GET passes
+12:03:07.266 against the first observed opaque path/checkout/payment/API facts.
+One same-profile initialization uses that first URL verbatim12:03:46.925 and
+another SPA query change fails the document guard. Provider/app defect unproven.
+
+Browser106 blocks/107 console errors/three command failures/one observation
+failure remain incompletely attributed. Normal logout/profile removal/browser
+terminal0 pass12:04:39.397. Initial malformed negative probe400 stays separate
+from corrected actual401; setup19/private-SSH11/DNS3/TLS502 proves no positive
+fulfillment. Independent closure12:05:05.166 preserves29 original fingerprints/
+nine prior accounts/23 sessions/refresh tokens/ledger, current10 accounts/1,515
+rows/confirmedUSER/identity1/sessions0/purchases0. All five services terminal0,
+socket/Cloudflare group0, endpoint40412:05:44.413/full seal12:05:49.555 pass.
+
+Retention59 files/389,335 bytes passes exact rehash and zero actual-used secret/
+private provider URL/query matches, manifest
+`f1212ae03b2015a2be97a1984fb4b7e49ff3f91ee46d02f4b9b1564171fd450c`.
+It excludes raw provider/DB/mail/browser state/enabled inputs/credentials/recovery;
+local/unencrypted, not off-site. The separate0600 SPA unpaid-record recovery file
+grants no autoload/role/session/activation authority. The then-prepared settled-
+document scope subsequently runs and closes above; no financial success follows.
+[Earlier scope, custody and guards](dodo.md#oct20-spa-scope-transient-observation-does-not-establish-a-card-journey).
+
+## Earlier Oct20 Dodo fresh session closes at an SPA observation limit
+
+This earlier completed actualba105/45,831 scope is
+`CLOSED_INCOMPLETE_SPA_OBSERVATION_CONTROLLER_FAILURE`, under the fixed
+11:42:53.694–12:12:53.694 UTC lease. One new normal app checkout and one new
+unpaid TEST payment (`requires_payment_method`, EUR9680 total/tax1680) are
+verified; one checkout/Continue reservation each is spent. No new actor/card/
+refund action occurs. In the same browser, two manual-fill POST200s and one
+Continue POST200 precede an SPA URL change to one opaque path/session query
+without HTTP document navigation. No observed raw document receipt is created;
+its producer fails before GET/attempt reservation. No provider/app defect follows.
+Browser158 blocks/162 console errors/zero command failures remain incompletely
+attributed; normal logout/profile deletion pass11:51:57.832.
+
+Independent11:56:41.195 closure preserves29 original fingerprints/nine prior
+accounts/23 sessions/refresh tokens/ledger, with current10 Auth/app accounts/
+1,515 rows and confirmedUSER/identity1/sessions0/purchases0. All five services
+and browser finish terminal0; profile/socket are absent, exact endpoint404
+passes11:57:36.728 and full45,831 seal passes11:57:55.530. Retention56 files/
+376,422 bytes passes exact rehash/zero actual-used secret/private provider URL
+matches, manifest `57e3140682cdc0aca9d7e00009c6d30a4984e9574fa2f3fc3fc37964fff04c56`.
+The local/unencrypted package excludes raw provider/DB/mail/browser state,
+enabled inputs/credentials/recovery; no off-site claim. The separate0600 fresh
+unpaid-session recovery file grants no loading/role/session/activation authority.
+[Earlier scope, destination and limits](dodo.md#oct20-fresh-session-unpaid-payment-and-spa-observation-limit).
+
+The subsequent SPA controller's67 synthetic/22 syntax/16 barrier checks remain
+preparation-only evidence; its actual closed result is separately recorded above.
+Financial proof and the full goal/production release remain incomplete.
+
+## Earlier Oct20 Dodo continuation closes after link-expired redirects
+
+This earlier actualba105/45,831 scope is
 `CLOSED_INCOMPLETE_UNSUPPORTED_CHECKOUT_RESUME`: the fixed11:24:16.375–11:54:16.375
 UTC lease closes early around11:34. Two fresh browsers redirect to the same TEST
 origin's `/status/[opaque]/link-expired` shape. No new actor/checkout/payment,
@@ -37,14 +131,13 @@ private provider URL matches; local/unencrypted, no off-site claim. Its director
 is `review-checkpoint-dodo-continuation-ba105-20261020` under the maintenance
 backup root, manifest
 `4d3f3ce80e696aabdc2e134fadabe2dd6be48d2b2b915232a7ae7e38820aacf7`.
-[Latest finite scope and exclusions](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
+[Earlier finite scope and exclusions](dodo.md#oct20-continuation-reused-checkout-links-are-rejected).
 
 The documented single-use `checkout_url` contract supersedes the earlier reuse
 proposal; neither a bare API payment link nor a reconstructed opaque query has
-a documented resume guarantee. A separate fresh-session scope is preparation
-only: existing USER, one new normal app checkout, one TEST card attempt and one
-full TEST refund, zero actors/coupons, same browser profile and the actual
-observed/provider-bound redirect query preserved verbatim. It is not activated.
+a documented resume guarantee. The then-prepared fresh-session scope executes
+and closes separately above, retaining the same USER/profile and single-use
+constraints.
 No payment/refund/positive fulfillment, account membership or production-release
 proof follows.
 
@@ -140,14 +233,14 @@ live authority. The older30d848a controller-repair/same-profile-continuation
 result stays distinct. [Exact Auth evidence](cloud-auth-mail.md).
 
 Latest published source
-[`d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f`](https://github.com/nospotfer/jazz/commit/d2a9bee610ba7a23e2df8ccb24f3fe3b9ca71a4f)
+[`81eef3fe5efe378b54646d8612533f0f2bac7d91`](https://github.com/nospotfer/jazz/commit/81eef3fe5efe378b54646d8612533f0f2bac7d91)
 has five successful exact-head workflow runs: Quality
-[pull request39413379424](https://github.com/nospotfer/jazz/actions/runs/39413379424)/
-[push39413374034](https://github.com/nospotfer/jazz/actions/runs/39413374034),
+[pull request39416735300](https://github.com/nospotfer/jazz/actions/runs/39416735300)/
+[push39416729197](https://github.com/nospotfer/jazz/actions/runs/39416729197),
 Secret Scan
-[pull request39413379345](https://github.com/nospotfer/jazz/actions/runs/39413379345)/
-[push39413373977](https://github.com/nospotfer/jazz/actions/runs/39413373977),
-and one [dynamic CodeQL run39413376244](https://github.com/nospotfer/jazz/actions/runs/39413376244).
+[pull request39416735438](https://github.com/nospotfer/jazz/actions/runs/39416735438)/
+[push39416728981](https://github.com/nospotfer/jazz/actions/runs/39416728981),
+and one [dynamic CodeQL run39416732263](https://github.com/nospotfer/jazz/actions/runs/39416732263).
 An exact-head Actions API readback confirms these five runs; CodeQL's actions
 and JavaScript/TypeScript Analyze jobs both succeed. No separate CodeQL push run
 is listed. Downloaded Quality logs verify2,628 normal
@@ -156,7 +249,7 @@ static31-of-31 and lint0errors/22warnings; actual `refs/pull/46/head` CodeQL
 alerts0. Both analyses match the exact commit; maintenance/PR heads are equal
 and stable before/after the read. No maintenance-branch analysis ref is inferred.
 Finite downloaded-log/API evidence is at
-`/tmp/jazz-maintenance/fresh-auth-publication-20261020/d2a9bee-publication-ci-summary.json`.
+`/tmp/jazz-maintenance/fresh-auth-publication-20261020/81eef3f-publication-ci-summary.json`.
 The earlierba105 TEST-profile feature's exact Quality PR39400258917/
 push39400254159 and Secret Scan PR39400258966/push39400254060 remain historical.
 CI does not extend hosted proof beyond its actual artifact or release production.

@@ -2292,3 +2292,128 @@ The maintenance goal remains active and incomplete.
   maintenance-branch analysis is inferred. Earlierba105 runtime and3e5 Auth
   proofs remain separate. Full goal, completed financial integration and
   production release remain incomplete.
+
+## 2026-10-20 — Fresh checkout closes at an SPA observation controller limit
+
+- Run jazz-dodo-fresh-session-20261020 uses actualba105/45,831 and fixed
+  11:42:53.694–12:12:53.694 UTC lease, closing early as
+  CLOSED_INCOMPLETE_SPA_OBSERVATION_CONTROLLER_FAILURE. One new normal app
+  checkout/one new unpaid TEST requires_payment_method record are verified,
+  canonicalEUR9680 total minor units/tax1680. One checkout and one Continue
+  reservation each are spent; two manual-fill POST200s and one Continue POST200
+  occur in the same browser. No new actor/card/refund action occurs.
+- The URL changes through SPA state to one opaque path/session query without
+  an HTTP document navigation. No observed raw document receipt is created;
+  document producer fails before its GET/attempt reservation, zero GET attempts.
+  This is a controller observation failure, not proof of provider/app defect.
+  Browser158 blocks/162 console errors/zero command failures retain incomplete
+  attribution; normal logout/profile deletion passes11:51:57.832.
+- Independent closure11:56:41.195 preserves25 public tables/29 original
+  fingerprints/nine prior accounts/23 sessions/refresh tokens/ledger; current10
+  Auth/app accounts/1,515 rows/confirmedUSER/identity1/sessions0/purchases0.
+  All five services plus browser terminal0/profile/socket absent/Cloudflare group0;
+  endpoint GET40411:57:36.728 and full45,831 seal11:57:55.530 pass.
+- Retention56 files/376,422 bytes passes exact source/copy rehash and zero
+  actual-used secret/private provider URL matches at
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-fresh-session-ba105-20261020`,
+  manifest `57e3140682cdc0aca9d7e00009c6d30a4984e9574fa2f3fc3fc37964fff04c56`.
+  All retained files0600/root0700; raw provider/DB/mail/browser state, enabled
+  inputs, credentials and recovery excluded; local/unencrypted, not off-site.
+  Initial strict source-mode check stops before copy on two finite summaries;
+  selection permits only their owner-owned bytes within the0700 source root,
+  then both source files are tightened to0600 without byte changes. The adjacent
+  permissions diagnostic and canonical56-file package are preserved separately.
+- Separate0600 dodo-unpaid-fresh-session-20261020-private.json under the native
+  preview configuration backup root retains plan/capture/receipt/two spent ledgers/
+  closure without key/password; no autoload/role/session/activation authority.
+  Older unpaid records and controlled credentials remain preserved. Private
+  handoff updates only this scope and verified81eef3f publication metadata using
+  a fresh-read SHA guard; the separate SPA field and all other history stay exact.
+- Published81eef3f passes five exact runs and both downloaded Quality logs:
+  2,628 normal/80 skips,80 persisted/one skip, types/webpack31/lint0errors22warnings;
+  exact PR-head CodeQL analyses and open alerts0. Actual Auth remains sealed3e5,
+  Dodo application remainsba105 and production is unreleased/paused. The separate
+  SPA controller's67 synthetic/22 syntax/16 barrier checks are preparation only;
+  later live scope results require separate closure evidence.
+
+## 2026-10-20 — SPA scope closes after its first observation becomes stale
+
+- Run jazz-dodo-fresh-spa-20261020 uses actualba105/45,831 under fixed
+  11:59:34.199–12:29:34.199 UTC lease and closes early as
+  CLOSED_INCOMPLETE_TRANSIENT_SPA_OBSERVATION_CONTROLLER_FAILURE. Same existing
+  USER/profile/one password-token attempt; first dashboard wait times out after
+  identity verification. One normal new app checkout12:01:42.138820 and one new
+  unpaid TEST requires_payment_method12:02:49.653517; two manual-fill POST200s/
+  one Continue POST200, one checkout/Continue reservation each spent. No new
+  actor/card/refund or completed financial fulfillment.
+- First actual from-only SPA URL12:02:50.630 remains privately preserved.
+  Later current query changes trigger CURRENT_OBSERVATION_CHANGED; no actual
+  later-current-URL receipt is captured. One root exact document GET passes
+  12:03:07.266 and matches the first opaque path/checkout/payment/API facts.
+  One same-profile initialization12:03:46.925 uses the first observed URL verbatim;
+  another SPA query change leads to DODO_OPEN_OWN_PAYMENT_DOCUMENT. No provider/
+  app defect is established.106 blocked requests/107 console errors/three command
+  failures/one observation failure retain incomplete attribution.
+- Normal logout/profile removal/browser terminal0 passes12:04:39.397.
+  Independent three read-only SELECT201 closure12:05:05.166 preserves25 public
+  tables/29 original fingerprints/nine prior accounts/23 sessions/refresh tokens/
+  ledger; current10 Auth/app accounts1,515 rows/confirmedUSERidentity1sessions0/
+  purchases0. Five services terminal0/socket absent/Cloudflare group0, exact
+  endpoint40412:05:44.413/full45,831 seal12:05:49.555 pass. Initial malformed
+  negative probe400 remains separate from corrected actual401;19/11/DNS3/TLS502
+  stays setup evidence only.
+- Retention59 files/389,335 bytes passes exact source/copy rehash and zero
+  actual-used secret/private provider URL/query matches at
+  `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-dodo-fresh-spa-ba105-20261020`,
+  manifest `f1212ae03b2015a2be97a1984fb4b7e49ff3f91ee46d02f4b9b1564171fd450c`.
+  Files0600/root0700; raw provider/DB/mail/browser state/enabled inputs/
+  credentials/recovery excluded; local/unencrypted, not off-site. Four explicit
+  finite source summaries tighten to0600 before selection without byte changes.
+- Separate0600 dodo-unpaid-fresh-spa-20261020-private.json preserves captures/
+  receipts/three spent markers without API key/password or automatic loading/
+  role/session/activation authority. Older unpaid records remain preserved.
+  Fresh SHA-guarded private handoff replacement changes only activeDodoFreshSpa,
+  preserving dp23/latestPublication/all other fields and an owner-only beforecopy.
+- Separate settled-document preparation is under review: stable after-Continue
+  URL, immutable revisioned observations, first binding without navigation,
+  optional current-URL initialization, exact fresh GET/rebind after an actual
+  rotation before card. Bounds one new checkout/TEST card/full TEST refund;
+  no readiness/live proof claim. Published81eef3f CI and sealed3e5 Auth evidence
+  remain source-bound. Full goal/payment integration/production release remain
+  incomplete. [Latest finite scope](dodo.md#oct20-spa-scope-transient-observation-does-not-establish-a-card-journey).
+
+## 2026-10-20 — UI card action spent; financial-test loop stopped
+
+- Actualba105/45,831 settled-document scope closes as
+  CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED. Same-browser login/new checkout/
+  billing/Continue, stable revision1/exact GET12:27:42.318/ADOPT without navigation
+  reach three card fields in a provider iframe. One UI action is reserved before typing
+  12:27:55.275 and marked UI_CLICKED12:28:10.275; no retry. Empty write-response
+  receipts do not prove zero actual requests/acceptance. Last provider GET still
+  requires_payment_method12:30:47.215; no positive journal/purchase/refund.
+- Normal logout/profile removal12:29:09.607, independent three read-only201
+  preservation12:30:07.133 of29 fingerprints/nine prior accounts/23 sessions/
+  current10 accounts1,515 rows/USERidentity1sessions0purchases0, five terminal0
+  services/endpoint40412:31:10.343/full seal12:31:15.403 pass. Raw STRICT_NO_CARD
+  label is preserved and qualified as unchanged-data evidence, not no UI card.
+  92 blocks/93 console errors remain incompletely attributed; command/observation
+  failures0 and first16 global denials establish no card-phase cause.
+- Retention64 files/412,746 bytes passes source/copy rehash/permissions and zero
+  actual-used secret/private provider URL/query matches; manifest
+  `fd0c1aff61d0871010d8016c1f40f14aa6316734f5580ace807139da5213d337`.
+  Actual corrected helper and agent-original/frozen manifest are retained
+  separately. Raw inputs/recovery excluded; local/unencrypted, not off-site.
+  Separate0600 unpaid-settled-document recovery grants no second-card authority.
+  Handoff replacement changes only activeDodoSettledDocument with SHA guard;
+  all other fields/history preserved. Financial loop stopped; next work offline
+  per-phase counts/SDK-readiness review, no new activated scope or goal/production
+  completion. [Final detail and custody](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified).
+
+## 2026-10-20 — Owner resumes automatic maintenance
+
+- The owner resumes the saved goal; an actual tracker read at12:39:58 UTC
+  confirms status active. Earlier blocked-state notes above remain historical.
+  Existing maintenance authorization continues; no further routine approval is
+  needed. The financial-test loop stays stopped after its spent UI attempt;
+  publication and independent offline maintenance continue. The goal remains
+  incomplete.
