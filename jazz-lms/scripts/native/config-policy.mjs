@@ -58,13 +58,25 @@ function checkDatabase(value, ref, caPath) {
 /** Pure routing/environment validation, not account, CA file, code/build or
  * approval proof. The I/O entrypoint must check those before starting a process.
  * @param {unknown} value
- * @returns {{mode:'production'|'preview',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},env:Record<string,string>}}
+ * @returns {{mode:'production'|'preview',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},testPayments?:{provider:'dodo',scopeId:string,expiresAt:string},env:Record<string,string>}}
  */
 export function validateNativeConfig(value) {
   requireCondition(record(value), 'NATIVE_CONFIG_SHAPE');
   requireCondition(value.version === 1 && ['production', 'preview'].includes(value.mode), 'NATIVE_CONFIG_MODE');
   requireCondition(typeof value.sourceCommit === 'string' && /^[a-f0-9]{40}$/.test(value.sourceCommit), 'NATIVE_CONFIG_SOURCE');
   const production = value.mode === 'production';
+  let testPayments;
+  if (Object.hasOwn(value, 'testPayments')) {
+    const optIn = value.testPayments;
+    requireCondition(!production && record(optIn) && Object.keys(optIn).length === 3 &&
+      ['provider', 'scopeId', 'expiresAt'].every(name => Object.hasOwn(optIn, name)) &&
+      optIn.provider === 'dodo' && typeof optIn.scopeId === 'string' &&
+      /^[a-z0-9][a-z0-9-]{2,79}$/.test(optIn.scopeId) && typeof optIn.expiresAt === 'string', 'NATIVE_CONFIG_TEST_PAYMENTS');
+    const deadline = Date.parse(optIn.expiresAt), now = Date.now();
+    requireCondition(Number.isFinite(deadline) && new Date(deadline).toISOString() === optIn.expiresAt &&
+      deadline > now && deadline <= now + 1_800_000, 'NATIVE_CONFIG_TEST_PAYMENTS');
+    testPayments = { provider: 'dodo', scopeId: optIn.scopeId, expiresAt: optIn.expiresAt };
+  }
   const ref = production ? PRODUCTION_PROJECT_REF : PREVIEW_PROJECT_REF;
   requireCondition(value.projectRef === ref, 'NATIVE_CONFIG_PROJECT');
   requireCondition(record(value.ca) && typeof value.ca.path === 'string' && isAbsolute(value.ca.path) &&
@@ -101,9 +113,18 @@ export function validateNativeConfig(value) {
     requireCondition(Boolean(env.RESEND_API_KEY) === Boolean(env.RESEND_FROM_EMAIL) &&
       Boolean(env.RESEND_WEBHOOK_SECRET) === Boolean(env.MESSAGES_REPLY_TO_EMAIL), 'NATIVE_CONFIG_MAIL');
   } else {
-    requireCondition(['CRON_SECRET', 'DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_SECRET', 'DODO_BUSINESS_ID', 'DODO_PRODUCT_ID', 'RESEND_API_KEY', 'RESEND_FROM_EMAIL', 'RESEND_WEBHOOK_SECRET', 'MESSAGES_REPLY_TO_EMAIL', 'INBOUND_EMAIL_WEBHOOK_SECRET'].every(name => !env[name]), 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
-    requireCondition(!env.DODO_ENVIRONMENT || env.DODO_ENVIRONMENT === 'test_mode', 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
-    requireCondition(!env.DODO_API_BASE_URL || env.DODO_API_BASE_URL === 'https://test.dodopayments.com', 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
+    requireCondition(['CRON_SECRET', 'RESEND_API_KEY', 'RESEND_FROM_EMAIL', 'RESEND_WEBHOOK_SECRET', 'MESSAGES_REPLY_TO_EMAIL', 'INBOUND_EMAIL_WEBHOOK_SECRET'].every(name => !env[name]), 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
+    const dodoFields = ['DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_SECRET', 'DODO_BUSINESS_ID', 'DODO_PRODUCT_ID'];
+    if (testPayments) {
+      // An explicit leased TEST integration is server-only. Routing acceptance
+      // does not authenticate its key, business, product or webhook signer.
+      requireCondition(env.DODO_ENVIRONMENT === 'test_mode' && env.DODO_API_BASE_URL === 'https://test.dodopayments.com' &&
+        dodoFields.every(name => Boolean(env[name]?.trim())), 'NATIVE_CONFIG_TEST_PAYMENTS');
+    } else {
+      requireCondition(dodoFields.every(name => !env[name]), 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
+      requireCondition(!env.DODO_ENVIRONMENT || env.DODO_ENVIRONMENT === 'test_mode', 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
+      requireCondition(!env.DODO_API_BASE_URL || env.DODO_API_BASE_URL === 'https://test.dodopayments.com', 'NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS');
+    }
   }
   // Deliberately construct a clean child environment. No ambient provider keys,
   // NODE_OPTIONS, home config, tracing, local mutators or platform flags survive.
@@ -113,5 +134,6 @@ export function validateNativeConfig(value) {
     NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY: '', NEXT_PUBLIC_GA_MEASUREMENT_ID: '',
     ENABLE_LOCAL_TEST_CHECKOUT: '0', ENABLE_LOCAL_TEST_RESETS: '0', ENABLE_LOCAL_LEGACY_MUTATIONS: '0',
   });
-  return { mode: value.mode, sourceCommit: value.sourceCommit, projectRef: ref, origin, ca: { path: value.ca.path, sha256: value.ca.sha256 }, env };
+  return { mode: value.mode, sourceCommit: value.sourceCommit, projectRef: ref, origin, ca: { path: value.ca.path, sha256: value.ca.sha256 },
+    ...(testPayments ? { testPayments } : {}), env };
 }

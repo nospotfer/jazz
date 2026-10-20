@@ -39,8 +39,10 @@ separately reviewed tunnel boundary may supply trusted edge headers.
 `config-policy.mjs` constructs a clean environment from owner-only JSON, with
 exact production/preview backend and origin routing, distinct Supabase key kinds,
 strict session/direct PostgreSQL TLS parameters and a valid RSA media signer.
-Preview payment, cron and mail credentials are disabled. Tracking and legacy
-mutators are disabled in both modes. An explicit
+Preview payment, cron and mail credentials are disabled by default. An explicit
+leased Dodo TEST profile is described below; cron and application mail remain
+disabled in that profile. Tracking and legacy mutators are disabled in both
+modes. An explicit
 `APP_DEPLOYMENT_ENVIRONMENT` controls indexing ahead of legacy `VERCEL_ENV`;
 native preview/unknown values fail closed. Pure validation proves routing and
 key shape, not authentication of opaque keys, ownership or provider health.
@@ -128,6 +130,37 @@ Next's custom-server API with the public hostname/logical port 443, then binds
 only `app.sock`; the parent binds only `edge.sock`. Both sockets are mode 600
 inside the new mode 700 directory; the worker runs with umask 077. No application
 TCP port, tunnel, service or DNS record is created by the launcher.
+
+### Explicit Dodo TEST profile
+
+The private native configuration may opt in with
+`testPayments: { provider: "dodo", scopeId: "bounded-test-run", expiresAt: "canonical ISO UTC deadline" }`.
+This is accepted only for the pinned isolated preview project, with all four
+explicit Dodo server inputs, `DODO_ENVIRONMENT=test_mode`, and exactly
+`DODO_API_BASE_URL=https://test.dodopayments.com`. Default previews still reject
+payment credentials. Production rejects the opt-in.
+
+The deadline must be current, at most30 minutes ahead and exactly equal to the
+launcher's Basic-gate deadline. The validated profile is retained in the
+inspection/startup summary. Existing process cleanup closes the child and ingress
+at that deadline. An expired profile cannot be reused; keep the payment-disabled
+base configuration for post-expiry artifact inspection. Neither profile metadata
+nor routing validation verifies a provider credential or authorizes a payment.
+
+Before activation, verify the TEST business/product/endpoint and synthetic USER,
+prepare bounded checkout/refund and message consequences, and bind the dedicated
+signer and real delivery path. The owner has continuing maintenance authorization;
+these are technical checks, not another permission question. Preserve original
+rows and roles, use controlled customer data and retain exact owned receipts.
+No credential reaches locked installation/static generation. Cron, application
+mail, tracking and legacy local mutators remain disabled. The native child must
+receive the validated TEST configuration directly; validating a disabled config
+and injecting credentials afterward would invalidate the configuration proof.
+
+The profile checks produce35 failures against the preceding implementation;
+271 policy/launcher and98 related inspection/preparation checks pass after the
+change. The Unix-child case uses synthetic inputs and no provider traffic. This
+is source/runtime-policy evidence, not a successful Dodo payment or refund.
 
 An owned IPC nonce/PID and a bounded real `robots.txt` probe precede ingress
 readiness. The Basic credential stays in the parent, never the worker's argv or

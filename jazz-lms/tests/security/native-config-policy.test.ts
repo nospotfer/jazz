@@ -7,6 +7,8 @@ import {
   PRODUCTION_PROJECT_REF,
   validateNativeConfig,
 } from "../../scripts/native/config-policy.mjs";
+import { nativeBuildEnvironment } from "../../scripts/native/prepare-release.mjs";
+import { publicBuildFingerprint } from "../../scripts/native/release-inspect.mjs";
 
 // Generated only in this test process. No stored key, provider or CA-file input
 // participates in these pure policy tests; accepted routing is not authentication.
@@ -27,6 +29,7 @@ type Config = {
   projectRef: string;
   origin: string;
   ca: { path: string; sha256: string };
+  testPayments?: { provider: "dodo"; scopeId: string; expiresAt: string };
   env: Record<string, string>;
 };
 
@@ -102,6 +105,104 @@ function legacyKey(role: string, ref: string, extra: Record<string, unknown> = {
 beforeEach(() => {
   fetchMock.mockClear();
   vi.stubGlobal("fetch", fetchMock);
+});
+
+function withTestPayments(input = config()): Config {
+  input.testPayments = { provider: "dodo", scopeId: "jazz-dodo-synthetic-baseline",
+    expiresAt: new Date(Date.now() + 600_000).toISOString() };
+  Object.assign(input.env, {
+    DODO_ENVIRONMENT: "test_mode", DODO_API_BASE_URL: "https://test.dodopayments.com",
+    DODO_PAYMENTS_API_KEY: "synthetic-test-api-key", DODO_PAYMENTS_WEBHOOK_SECRET: "synthetic-test-signing-secret",
+    DODO_BUSINESS_ID: "bus_synthetic", DODO_PRODUCT_ID: "pdt_synthetic",
+  });
+  return input;
+}
+
+describe("native explicit Dodo TEST payments configuration", () => {
+  test("retains the explicit opt-in and credentials only in the server environment, with unchanged public build binding", () => {
+    const base = config();
+    const disabled = validateNativeConfig(base);
+    const input = withTestPayments(base);
+    const result = validateNativeConfig(input);
+    expect(result.testPayments).toEqual(input.testPayments);
+    expect(result.testPayments).not.toBe(input.testPayments);
+    expect(result.env).toMatchObject({ DODO_ENVIRONMENT: "test_mode", DODO_API_BASE_URL: "https://test.dodopayments.com",
+      DODO_PAYMENTS_API_KEY: "synthetic-test-api-key", DODO_PAYMENTS_WEBHOOK_SECRET: "synthetic-test-signing-secret",
+      DODO_BUSINESS_ID: "bus_synthetic", DODO_PRODUCT_ID: "pdt_synthetic", ENABLE_LOCAL_TEST_CHECKOUT: "0",
+      ENABLE_LOCAL_TEST_RESETS: "0", ENABLE_LOCAL_LEGACY_MUTATIONS: "0", NEXT_PUBLIC_OPENREPLAY_ENABLED: "false" });
+    expect(publicBuildFingerprint(result.env)).toBe(publicBuildFingerprint(disabled.env));
+    const build = nativeBuildEnvironment(result, "/synthetic/tmp", "/synthetic/cache");
+    for (const name of Object.keys(input.env).filter(name => name.startsWith("DODO_"))) expect(build).not.toHaveProperty(name);
+    expect(JSON.stringify(build)).not.toContain("synthetic-test-api-key");
+    expect(JSON.stringify(build)).not.toContain("synthetic-test-signing-secret");
+  });
+
+  test("the same explicit TEST fields remain denied when the opt-in is missing", () => {
+    const input = withTestPayments();
+    delete input.testPayments;
+    expectDenied(input, "NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS");
+  });
+
+  test.each([null, undefined, [], false, {},
+    { provider: "stripe", scopeId: "jazz-dodo-test", expiresAt: new Date(Date.now() + 60_000).toISOString() },
+    { provider: "dodo", scopeId: "", expiresAt: new Date(Date.now() + 60_000).toISOString() },
+    { provider: "dodo", scopeId: "jazz-dodo-test", expiresAt: new Date(Date.now() + 60_000).toISOString(), unreviewed: true },
+  ])("rejects a missing, malformed or unknown TEST opt-in field", testPayments => {
+    expectDenied({ ...withTestPayments(), testPayments }, "NATIVE_CONFIG_TEST_PAYMENTS");
+  });
+
+  test.each(["scope with whitespace", "scope/with/path", "a".repeat(81), "UPPERCASE", ""])("rejects unsafe run scope %j", scopeId => {
+    const input = withTestPayments();
+    input.testPayments!.scopeId = scopeId;
+    expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+  });
+
+  test.each(["DODO_PAYMENTS_API_KEY", "DODO_PAYMENTS_WEBHOOK_SECRET", "DODO_BUSINESS_ID", "DODO_PRODUCT_ID"])(
+    "requires explicit nonempty %s under TEST opt-in", name => {
+      const input = withTestPayments();
+      delete input.env[name];
+      expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+      input.env[name] = "   ";
+      expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+    });
+
+  test.each([
+    ["DODO_ENVIRONMENT", undefined], ["DODO_ENVIRONMENT", "live_mode"],
+    ["DODO_API_BASE_URL", undefined], ["DODO_API_BASE_URL", "https://live.dodopayments.com"],
+    ["DODO_API_BASE_URL", "https://test.dodopayments.com/"],
+    ["DODO_API_BASE_URL", "https://test.dodopayments.com.evil.example.invalid"],
+  ])("requires explicit TEST routing for %s", (name, value) => {
+    const input = withTestPayments();
+    if (value === undefined) delete input.env[name]; else input.env[name] = value;
+    expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+  });
+
+  test.each(["expired", "over30minutes", "noncanonical", "invalid"])("rejects %s TEST lease", kind => {
+    const input = withTestPayments();
+    input.testPayments!.expiresAt = kind === "expired" ? new Date(Date.now() - 1).toISOString() :
+      kind === "over30minutes" ? new Date(Date.now() + 1_900_000).toISOString() :
+        kind === "noncanonical" ? new Date(Date.now() + 60_000).toUTCString() : "not-a-date";
+    expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+  });
+
+  test("production rejects the TEST opt-in even with otherwise valid live settings", () => {
+    const input = config("production");
+    input.testPayments = withTestPayments().testPayments;
+    expectDenied(input, "NATIVE_CONFIG_TEST_PAYMENTS");
+  });
+
+  test("the opt-in never permits another project", () => {
+    const input = withTestPayments();
+    input.projectRef = PRODUCTION_PROJECT_REF;
+    expectDenied(input, "NATIVE_CONFIG_PROJECT");
+  });
+
+  test.each(["CRON_SECRET", "RESEND_API_KEY", "RESEND_FROM_EMAIL", "RESEND_WEBHOOK_SECRET",
+    "MESSAGES_REPLY_TO_EMAIL", "INBOUND_EMAIL_WEBHOOK_SECRET"])("TEST payments leave %s disabled", name => {
+    const input = withTestPayments();
+    input.env[name] = "synthetic-unrelated-side-effect";
+    expectDenied(input, "NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS");
+  });
 });
 afterEach(() => {
   expect(fetchMock).not.toHaveBeenCalled();

@@ -43,6 +43,10 @@ export async function inspectNativePreview(launchFile) {
   catch (error) { if (error.code !== 'ENOENT') throw error; }
   const inspected = await inspectNativeRelease({ configFile: plan.configFile, appRoot: plan.appRoot, manifestFile: plan.manifestFile });
   requireCondition(inspected.config.mode === 'preview', 'NATIVE_PRODUCTION_START_DENIED');
+  if (inspected.config.testPayments) {
+    requireCondition(inspected.config.testPayments.expiresAt === access.expiresAt && expiresAt > Date.now() &&
+      expiresAt <= Date.now() + 1_800_000, 'NATIVE_TEST_PAYMENTS_LEASE');
+  }
   const outside = path => {
     const local = relative(plan.appRoot, path);
     return local === '..' || local.startsWith('../') || isAbsolute(local);
@@ -55,6 +59,7 @@ export async function inspectNativePreview(launchFile) {
   requireCondition(Date.now() < expiresAt, 'NATIVE_LAUNCH_EXPIRY');
   return { plan, config: inspected.config, expiresAt, workerPath,
     summary: { ...inspected.summary, privateUnixTransport: true, previewGateRequired: true,
+      ...(inspected.config.testPayments ? { testPayments: { ...inspected.config.testPayments } } : {}),
       previewWorkerTransportAllowed: true, expiresAt: access.expiresAt, inspectedOnly: true } };
 }
 

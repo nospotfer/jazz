@@ -148,6 +148,10 @@ process.on('message', async incoming => {
       basicInArgv: process.argv.some(value => value.includes(previewPassword) || value === previewUsername),
       ambientInEnv: process.env.NODE_OPTIONS !== undefined || process.env.OPENREPLAY_API_KEY !== undefined,
       mode: process.env.APP_DEPLOYMENT_ENVIRONMENT, nodeEnv: process.env.NODE_ENV,
+      dodoTestOnly: process.env.DODO_ENVIRONMENT === 'test_mode' && process.env.DODO_API_BASE_URL === 'https://test.dodopayments.com',
+      dodoServerFieldsPresent: ['DODO_PAYMENTS_API_KEY','DODO_PAYMENTS_WEBHOOK_SECRET','DODO_BUSINESS_ID','DODO_PRODUCT_ID'].every(name => Boolean(process.env[name])),
+      otherSideEffectsDisabled: ['CRON_SECRET','RESEND_API_KEY','RESEND_FROM_EMAIL','RESEND_WEBHOOK_SECRET','MESSAGES_REPLY_TO_EMAIL','INBOUND_EMAIL_WEBHOOK_SECRET'].every(name => !process.env[name]) &&
+        ['ENABLE_LOCAL_TEST_CHECKOUT','ENABLE_LOCAL_TEST_RESETS','ENABLE_LOCAL_LEGACY_MUTATIONS'].every(name => process.env[name] === '0'),
       forwardedFor: req.headers['x-forwarded-for'], host: req.headers.host,
       umask: process.umask(), grandchildPid: grandchild?.pid ?? null }));
   });
@@ -343,6 +347,16 @@ function runCli(value: Fixture) {
   return { child, exited, ready, output: () => output };
 }
 
+function enableTestPayments(value: Fixture) {
+  const raw = JSON.parse(readFileSync(value.configFile, "utf8"));
+  raw.testPayments = { provider: "dodo", scopeId: "jazz-dodo-synthetic-baseline", expiresAt: value.plan.previewAccess.expiresAt };
+  Object.assign(raw.env, { DODO_ENVIRONMENT: "test_mode", DODO_API_BASE_URL: "https://test.dodopayments.com",
+    DODO_PAYMENTS_API_KEY: runtimeMarker, DODO_PAYMENTS_WEBHOOK_SECRET: runtimeMarker,
+    DODO_BUSINESS_ID: "bus_synthetic", DODO_PRODUCT_ID: "pdt_synthetic" });
+  privateJson(value.configFile, raw);
+  return raw;
+}
+
 beforeAll(() => {
   certificateDirectory = mkdtempSync(join(tmpdir(), "jazz-native-launch-ca-"));
   chmodSync(certificateDirectory, 0o700);
@@ -446,6 +460,63 @@ describe("native launcher inspected preview boundary", () => {
     const value = fixture();
     value.plan.runDirectory = join(value.cache, "new-run"); privateJson(value.launchFile, value.plan);
     await expectDenied(inspectNativePreview(value.launchFile), "NATIVE_RUN_IN_RELEASE");
+  });
+});
+
+describe("native explicit Dodo TEST payments launch lease", () => {
+  test("inspection preserves the TEST profile and still reports credentials unverified", async () => {
+    const value = fixture();
+    const raw = enableTestPayments(value);
+    const result = await inspectNativePreview(value.launchFile);
+    expect(result.config.testPayments).toEqual(raw.testPayments);
+    expect(result.summary).toMatchObject({ testPayments: raw.testPayments,
+      providerCredentialsVerified: false, inspectedOnly: true, productionApproved: false });
+    expect(existsSync(value.recordPath)).toBe(false);
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
+  });
+
+  test("the exact leased preview passes explicit TEST server fields to its isolated child", async () => {
+    const value = fixture();
+    const raw = enableTestPayments(value);
+    const controller = await start(value);
+    expect(controller.summary).toMatchObject({ testPayments: raw.testPayments, providerCredentialsVerified: false });
+    expect(JSON.parse((await request(controller.socketPaths.edge)).body)).toMatchObject({
+      dodoTestOnly: true, dodoServerFieldsPresent: true, otherSideEffectsDisabled: true, mode: "preview",
+      basicInEnv: false, basicInArgv: false, ambientInEnv: false,
+    });
+    expect((await controller.close())).toMatchObject({ clean: true, stopped: true });
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
+    expectRecordedProcessesStopped(value);
+  });
+
+  test.each([-1000, 1000])("a TEST deadline offset from the Basic gate by %ims fails before spawn", async offset => {
+    const value = fixture();
+    const raw = enableTestPayments(value);
+    raw.testPayments.expiresAt = new Date(Date.parse(raw.testPayments.expiresAt) + offset).toISOString();
+    privateJson(value.configFile, raw);
+    await expectDenied(startNativePreview(value.launchFile), "NATIVE_TEST_PAYMENTS_LEASE");
+    expect(existsSync(value.recordPath)).toBe(false);
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
+  });
+
+  test.each(["expired", "over30minutes"])("%s TEST deadline fails before spawn", async kind => {
+    const value = fixture();
+    const raw = enableTestPayments(value);
+    raw.testPayments.expiresAt = new Date(Date.now() + (kind === "expired" ? -1 : 1_900_000)).toISOString();
+    privateJson(value.configFile, raw);
+    await expectDenied(startNativePreview(value.launchFile), "NATIVE_CONFIG_TEST_PAYMENTS");
+    expect(existsSync(value.recordPath)).toBe(false);
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
+  });
+
+  test("Dodo fields without the explicit TEST profile remain denied before spawn", async () => {
+    const value = fixture();
+    const raw = enableTestPayments(value);
+    delete raw.testPayments;
+    privateJson(value.configFile, raw);
+    await expectDenied(startNativePreview(value.launchFile), "NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS");
+    expect(existsSync(value.recordPath)).toBe(false);
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
   });
 });
 

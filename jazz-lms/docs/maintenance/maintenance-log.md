@@ -2053,3 +2053,21 @@ The maintenance goal remains active and incomplete.
   checks. Dodo, stable zero-cost hosting, production compatibility/hardening/
   release and the full maintenance completion criteria remain separate work.
   [Closed recovery evidence](cloud-auth-mail.md#oct20-hosted-recovery-with-controller-repair).
+
+## 2026-10-20 — Explicit leased native Dodo TEST configuration
+
+- Native previews previously rejected every payment credential, preventing the
+  authorized actual TEST integration checks. Add an explicit isolated
+  `testPayments` opt-in with a retained provider/scope/deadline, all four Dodo
+  server inputs, exact TEST mode/URL and a maximum30-minute expiry matching the
+  Basic gate. Default preview rejection and production startup denial remain;
+  cron, application mail, tracking and local mutators stay disabled.
+- Validate the actual child configuration directly. No private launcher validates
+  a payment-disabled base and then injects credentials. Provider ownership,
+  credential validity and concrete bounded payment/message consequences still
+  require actual technical evidence under the owner's continuing authorization.
+- The added checks produce35 failures against the preceding source. After repair,
+  271 policy/launcher and98 release-inspection/preparation checks pass; touched
+  lint and full types pass. The actual Unix-child fixture carries synthetic TEST
+  fields without any provider traffic. No real checkout, webhook, refund or
+  production deployment is established by these checks.
