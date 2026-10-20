@@ -1,5 +1,31 @@
 # Maintenance review checkpoints
 
+## Oct20 complete hosted metadata capture
+
+The exact advertised transaction endpoint passes actual TLS/PG17/postgres role,
+54 SQL queries in one READ ONLY transaction, stable positive XID/PID and complete
+bounded metadata/empty-state checks. ROLLBACK/end and final22:26:35 pause preserve
+original observed settings. Complete capability review, hosted atomic schema
+preparation, data recovery and release remain open; this is not a deployment.
+[Current evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+
+## Oct20 publication aa92423
+
+Documentation checkpoint `aa92423` has five successful exact-head workflows:
+Quality [PR](https://github.com/nospotfer/jazz/actions/runs/39503736855)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39503730800), Secret Scan
+[PR](https://github.com/nospotfer/jazz/actions/runs/39503736844)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39503730719), and
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/39503733086).
+All four Quality jobs and both analysis jobs pass. The two exact-head analyses
+have zero results/errors and PR-head open CodeQL alerts are zero. Local mandatory
+push checks pass secret scanning, lint 0 errors/22 existing warnings and
+753 integration tests/29 skips; full remote logs are not reparsed and those local
+totals are not assigned to CI. PR46 remains open/draft with matching head.
+Finite publication custody is retained separately with manifest
+`c05e2419dd90b398453d360db9228fc1147a91227006c29ab092884add681903`.
+Application browser proofs retain their earlier sources; no release occurs.
+
 ## Oct20 current lockfile and publication
 
 Published checkpoint `8e6b7c2` has five successful exact-head workflows: Quality

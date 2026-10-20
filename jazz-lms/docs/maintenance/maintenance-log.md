@@ -1,5 +1,46 @@
 # Maintenance log
 
+## Oct20 advertised transaction endpoint passes full inspection
+
+One actual advertised PRIMARY connection, provider CA/hostname and single READ
+ONLY transaction pass 54 SQL queries with stable positive XID/backend PID.
+Complete private catalog/managed metadata, 300 default ACLs, 24 memberships,
+60 schema rights, six event definitions and three Auth helper definitions are
+captured. Public structure and all 34 inspected managed/application relations
+are empty; jobs/HTTP queue are zero and override flags are empty. Raw function
+sources remain private. Client TLS passes; upstream SQL SSL remains separately
+observed false. ROLLBACK/end and the 67-call restore/pause lifecycle finish at
+22:26:35 UTC with original observed states/settings preserved.
+
+Next: actual complete provenance review and reviewed transaction-specific atomic
+execution. No DDL/customer import or production release is claimed.
+[Exact scope and evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+
+## Oct20 management read-only identity observed
+
+The bounded management SQL path returns HTTP201 under
+`supabase_read_only_user`, with PG170011/non-super/BYPASS/login/read-only and
+SQL SSL observed. The reader expected postgres and stops after one retained
+query response; no complete metadata or schema operation is claimed. Its
+71 management calls finish with the replacement INACTIVE and original observed
+settings unchanged at 22:17:32 UTC. This is a concrete identity-contract mismatch;
+restricted metadata access can be supported without granting or impersonating
+postgres. The next native probe uses the exact advertised transaction endpoint
+and a single READ ONLY transaction.
+[Actual scope and limits](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
+## Oct20 complete reader stops at pooler routing
+
+The repaired reader passes 73 closed controls, then actual connection stops at
+SQLSTATE XX000 before any SQL. It now retains a finite child report and closes
+the client; the earlier unknown child failure is not reclassified. One restore/
+pause and 67 management calls finish with INACTIVE and matching observed original
+settings at 21:54:01 UTC. Two later read-only GETs confirm pause and observe one
+tenant-not-found pooler log event in the three-minute window. This correlation
+does not prove the exact original error message. Complete metadata will use the
+authenticated management API's explicit read-only query path; no DDL/import or
+credential change occurs. [Actual evidence](production-readiness.md#read-only-connection-attempts-and-the-provider-ca).
+
 ## Oct20 whole local execution and current coupon preflight
 
 The real local PG17/psycopg rehearsal reproduces the original final comparison

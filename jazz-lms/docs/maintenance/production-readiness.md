@@ -6,6 +6,40 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Advertised transaction connection: complete metadata captured
+
+The actual provider-returned PRIMARY transaction endpoint passes one
+CA/hostname-verified connection. A single READ ONLY transaction keeps the same
+positive XID/backend PID across 54 SQL queries and final checks. PostgreSQL17,
+postgres identity, non-superuser/BYPASSRLS/login, all 49 Auth values and disabled
+API settings pass. Client TLS is verified; the separately observed
+pooler-to-database SQL SSL boolean is false. No end-to-end TLS claim follows.
+
+Complete private capture now includes the exact source-bound catalog/managed
+aggregates, 300 default-ACL rows, 24 memberships, 60 schema-privilege records,
+six event-trigger definitions and three Auth helper definitions. Public schema
+is structurally empty; all 34 inspected Auth/Storage/Vault/business relations
+have no rows, active jobs and pending HTTP requests are zero, and the bounded
+override inspection has no review flags. Full function sources stay private.
+
+The sole ROLLBACK and client closure pass. The lifecycle uses 67 management
+calls, one restore and one pause; terminal 22:26:35 UTC verifies replacement and
+production INACTIVE, preview healthy and original observed settings unchanged.
+Parent summary SHA256:
+`ce6266ecc842b09d7cdbd59b7f16335ff14af6394142ec70e2e6d9d08a929202`.
+The exact 326,887-byte private evidence hash is
+`fa43bd9c71be3b8075b283da15ca4b2c60c4e944301d32f88ec00d6665b31a8d`;
+it is excluded from review custody because it contains raw function definitions.
+
+Collection success is not approval of every captured capability. Independent
+review of defaults/memberships/helpers/events/overrides and faithful bootstrap
+lineage remains required before DDL. Existing atomic sources require a session
+endpoint and cannot be port-flipped: reviewed transaction derivatives must begin
+before initial metadata, preserve same PID/XID through all checks and execute
+one guarded bootstrap/hardening/currency/strict227 sequence before the sole
+COMMIT. The probe's closed PID/XID never represents that future operation.
+No hosted DDL, customer import, serving or cutover occurs in this scope.
+
 ## Read-only connection attempts and the provider CA
 
 The first bounded diagnostic resumes only the new replacement. Its health GET
@@ -111,6 +145,40 @@ queries only; no DDL/import or public probe is performed. The original unknown
 failure remains preserved. Next repair finite child/error reporting and collect
 complete, source-bound aggregate metadata before any hosted schema operation.
 
+The repaired complete-metadata reader passes 73 closed controls. Its actual run
+now retains a valid finite child report: connection stops with SQLSTATE `XX000`,
+zero SQL attempts, zero error events and a closed client. The project and database
+health observations are healthy; REST/pooler remain unhealthy. No aggregate
+metadata is collected. The 67 management calls include one restore and one pause;
+the terminal 21:54:01 UTC report confirms INACTIVE and matching original observed
+settings. Its SHA256 is
+`ef372a9d4b5d3d37ca0e47c7e82a2d13a2d6c42e5938aca63f51b40b71123fea`.
+
+Two separate GETs confirm the target is paused and query only aggregate pooler
+logs for 21:51–21:54 UTC. Logs HTTP200 returns one event matching the finite
+tenant-not-found category, with zero password-failure/connection-limit/timeout
+matches. This is correlated evidence, not the discarded original client message
+or proof of that request's precise cause. The next metadata transport is the
+authenticated management SQL endpoint with explicit `read_only: true`; no
+password reset, further pooler retry or DDL follows from the log observation.
+
+The management transport then returns HTTP201 for its first actual read-only
+identity query. With `read_only: true`, the observed user and session are both
+`supabase_read_only_user`, on PG170011/postgres database, non-superuser with
+BYPASSRLS/login and read-only enabled. Its SQL SSL observation is true. The
+metadata reader expected postgres and stops after this one retained result;
+it does not relabel the restricted account or collect complete provenance.
+The 71 management calls include one restore/pause and one query request.
+Terminal 22:17:32 UTC verifies INACTIVE and original observed settings unchanged;
+summary SHA256 is
+`c40b49aed607fc2a5d100a8a3f210181baa902a05928f41872184ed87ae394b9`.
+This is a reader identity-contract mismatch, not evidence of unavailable SQL.
+A metadata-only revision may accept the observed restricted account while
+preserving its identity and all read-only/provenance constraints. The separate
+next native probe uses the provider's actual transaction-pooler entry, rather
+than the derived session port, with all SQL inside one READ ONLY transaction.
+No DDL, import or customer operation occurs in the management scope.
+
 ## Whole atomic executor: actual local success and rollback
 
 The frozen R2 executor passes28 closed controls and a separate actual local
@@ -138,6 +206,18 @@ Selected25 files/177,951 bytes are retained in
 manifest `d5f6beef610cfce965b807f61adddeabc5c1920f6ec83647419fd00732fbe1b5`.
 No credentials or raw query rows are copied; local unencrypted custody is not
 off-site recovery or activation authority.
+
+Selected operational sources and finite outcomes are separately retained as
+78 files/1,026,363 bytes in `review-checkpoint-hosted-execution-sources-20261021`,
+manifest `ae1e97465c4558cc43c55ea3bce1194031567f10f239bec059f71a2853d148e1`.
+This excludes the later management execution's actual raw outcomes and enabled
+inputs. A separate runtime-dependency selection retains 21 files plus recorded
+Python/package versions, including exact compiler/envelope/customer-free SQL
+inputs; manifest
+`6a0c55888b94f26a3daaca9d15095317adf2e3535b005ea026b8b423b6502d73`.
+Neither packet establishes a complete restored test environment or off-site
+recovery. Actual managed function definitions and customer archives stay private
+and outside these review selections.
 
 The separate read-only recovery checkpoint retains13 finite reports/35,156
 bytes, manifest

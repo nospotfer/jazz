@@ -2,13 +2,17 @@
 
 ## Current recovery and coupon work
 
-- Existing Free replacement: all49 Auth settings and an actual verified client
-  TLS/PG17/postgres-role connection pass. Partial metadata stops on a row limit;
-  the following child exits without a report, leaving its cause/SQL count unknown.
-  Both scopes finish paused. Complete managed metadata/error capture, then
-  emptiness and atomic bootstrap. Do not recreate it or
-  replay successful Auth changes. Import/cutover retains the separate recovery-
-  point/current-data and portability gates.
+- The actual advertised PRIMARY transaction connection now passes 54 READ ONLY
+  queries with stable positive XID/PID, complete metadata/empty-state capture,
+  ROLLBACK/end and final pause/original observed-settings preservation. Review
+  all actual capabilities, then execute only separately reviewed transaction
+  atomic derivatives; existing session-only sources cannot be port-flipped.
+  [Current evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+- Preserve the existing Free replacement and its successful 49-field Auth
+  configuration. Earlier row-limit, missing-child-report, session-routing and
+  management-reader identity failures remain recorded separately. Do not
+  recreate the target or replay successful settings. Customer import/cutover
+  retains the separate current-recovery-point and portability gates.
 - Coupon worker/controller sources are concrete and closed-tested. Fresh actual
   actor/provider/coupon/alias/recipient/runtime proofs and the bounded journey
   remain. Original TEST refund still lacks merchant balance; no spent financial

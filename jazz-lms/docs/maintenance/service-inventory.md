@@ -1,6 +1,21 @@
 # Service inventory
 
+## Oct20 advertised transaction endpoint verified
+
+Actual PRIMARY transaction-pooler connection passes provider CA/hostname,
+PG17/postgres identity and 54 queries in one READ ONLY transaction with stable
+positive XID/PID. Full private permissions/helper/override/empty-state capture,
+ROLLBACK/end and terminal22:26:35 pause/original observed-settings preservation
+pass. Complete review and hosted schema preparation remain separate gates.
+[Actual connection and scope](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+
 ## Oct20 replacement database connection
+
+Management SQL is reachable with explicit read-only requests: one actual201
+identity response uses `supabase_read_only_user` on PG170011. The reader's
+postgres-only expectation stops collection after that response. Final22:17:32
+verifies pause/original observed settings preservation. Complete metadata and
+the exact advertised transaction connection still need verification.
 
 Actual shared-pooler client TLS/hostname, PostgreSQL17 and postgres role checks
 pass; its upstream database TLS observation is false. Thirty role records and

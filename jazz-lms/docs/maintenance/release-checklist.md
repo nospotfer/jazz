@@ -1,5 +1,12 @@
 # Production review and rollback checklist
 
+- [x] Collect complete bounded hosted metadata and emptiness through the exact
+  advertised transaction endpoint: actual TLS/PG17/role, one READ ONLY
+  transaction, stable positive XID/PID, 54 queries, ROLLBACK/end and final pause.
+- [ ] Independently review all captured managed capabilities and prepare the
+  transaction-specific sole-COMMIT execution before any hosted DDL. The closed
+  probe provides no future PID/XID, import or serving authority.
+  [Actual collection and limits](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
 - [x] Verify the whole empty-schema preparation with real local PG17/psycopg:
   one successful COMMIT and a separate final-rejection ROLLBACK, with managed
   metadata preserved. External proofs remain synthetic; hosted checks stay open.

@@ -1,5 +1,15 @@
 # Goal verification matrix
 
+## Oct20 complete hosted read-only metadata capture
+
+The exact advertised transaction endpoint passes actual verify-full TLS,
+PG17/postgres role, 54 SQL queries in one READ ONLY transaction with stable
+positive XID/PID, full bounded metadata and empty-state checks, ROLLBACK/end and
+same-target pause/original observed-settings preservation. Complete capability
+review and hosted atomic preparation remain open; collection does not establish
+serving/import authority or API containment.
+[Actual evidence](production-readiness.md#advertised-transaction-connection-complete-metadata-captured).
+
 ## Oct20 whole executor: local SQL success and rollback
 
 Actual local PG17/real psycopg execution reaches strict227 with one COMMIT and
@@ -11,6 +21,14 @@ and production readiness remain unverified.
 [Actual scope and custody](production-readiness.md#whole-atomic-executor-actual-local-success-and-rollback).
 
 ## Oct20 actual replacement connection; metadata review incomplete
+
+The separate management read-only query returns HTTP201 under the actual
+`supabase_read_only_user` role, PG170011, non-super/BYPASS/login/read-only and
+SQL SSL observed. The postgres-only reader stops after one retained result;
+complete provenance remains unverified. Final 22:17:32 confirms the replacement
+paused and original observed settings unchanged. The next native inspection
+uses the exact advertised transaction endpoint and begins READ ONLY before
+collecting metadata. This does not prove hosted DDL or recovery.
 
 Actual client verify-full TLS, PG17 and non-super/BYPASSRLS postgres identity
 pass. Seven counted SQL attempts retain six results, including30 roles and six
