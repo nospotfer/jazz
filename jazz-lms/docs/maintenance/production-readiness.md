@@ -203,7 +203,26 @@ rejection and ambiguous-write stopping. Its CLI remains inert. Genuine current
 containment evidence and reviewed executor/receipt-validator implementations are
 still required; this package does not make production execution ready.
 
+A distinct empty-replacement compiler now passes14 independently repeated offline
+controls and parses all three generated SQL/PLpgSQL stages. It rejects the
+production/preview refs and nonempty targets, preserves the logical225→227 guards
+and requires six fresh provenance-verified receipts. This is source preparation:
+there is no real target, faithful secret-free bootstrap rehearsal, executor or
+hosted restore. Its currency derivative preserves the exact migration interior
+inside added guards; it is not the literal migration file. The current-data/RPO,
+managed Auth/Storage and hosting/cutover gates remain. No project is created.
+
 ## Hosting and refund work
+
+The later18:32–18:36 UTC same-payment TEST recovery now captures the actual409
+code `INSUFFICIENT_WALLET_FUNDS`; no refund is created, full8997 remains refundable
+and the purchase is preserved. All29 original fingerprints/23 prior sessions,
+four services/endpoint and full45,831-file seal/formal closure pass. A separate
+one-GET ledger verifies the payment's historical credit8997/fee535/after8462,
+not current account totals. A free merchant-sandbox balance remedy remains open;
+no real funding or checkout/card replay. Historical409 cause remains unknown.
+[Latest evidence](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial).
+The preparation checkpoints below predate this actual execution.
 
 Fresh DNS/RDAP still identify Squarespace registration, Google Domains
 nameservers and Vercel apex/`www` routing. No project-scoped registrar,

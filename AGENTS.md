@@ -168,6 +168,23 @@ spent markers or replay checkout/card to diagnose this409. Establish bounded
 private failure capture and a concrete provider recovery plan before any further
 request; continuing maintenance authorization remains in force.
 
+The later Oct20 same-payment recovery scope is closed with a captured409 code
+`INSUFFICIENT_WALLET_FUNDS`. Its sole additional TEST refund request creates no
+refund; final reads retain fullUSD8997 refundable and the canonical purchase.
+All29 original fingerprints/23 prior sessions remain unchanged, actor sessions0,
+all four actual services exit0, endpoint404 and the full45,831-file seal pass.
+The original409's discarded body remains unknown; this new diagnosis does not
+rewrite that evidence. Keep both spent markers, including
+`/home/gabriel/.config/culturadeljazz-maintenance/refund-recovery-jazz-refund-recovery-oct20-reservation.json`.
+The separate owner-only recovery file is
+`native-preview-configuration/dodo-paid-test-refund-wallet-denial-20261020-private.json`
+under the same backup root. It grants no autoload, retry or activation authority.
+A separate one-GET TEST balance-ledger read verifies this payment's historical
+credit8997 and fee535, leaving8462 at that event; it is not a current account-total
+check. Investigate a free merchant-sandbox balance remedy before another financial
+scope. Customer-wallet credits, another checkout/card attempt and real funding
+are not established remedies. See `jazz-lms/docs/maintenance/dodo.md`.
+
 ## Evidence
 
 Keep the maintenance log, inventory, prioritized backlog, verification matrix

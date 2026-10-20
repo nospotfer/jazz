@@ -1,6 +1,70 @@
 # Dodo product, webhook and sandbox audit
 
-## Latest Oct20 checkpoint: payment verified; refund409 unresolved
+## Latest Oct20 checkpoint: captured sandbox wallet denial
+
+The separate fixed18:32:19.896–19:02:19.896 UTC recovery runs on the unchanged
+sealedba105 artifact and existing succeeded TEST payment. It creates no actor,
+checkout or card attempt. Two canonical payment/line-item pairs pass at the
+required spacing, with fresh actual native/endpoint/data proofs. Its sole
+additional full-refund POST returns409 with a complete privately retained77-byte
+error body: `INSUFFICIENT_WALLET_FUNDS`. There is no SDK or financial retry.
+The [official error reference](https://docs.dodopayments.com/api-reference/error-codes)
+defines this code as wallet balance below the requested debit. This diagnoses
+the new request; the earlier409 body was discarded and its cause stays unknown.
+
+Final exact payment/line-item GETs still show succeeded, no refunds and full
+USD8997 refundable. The canonical purchase remains. Four fresh three-query
+read-only stages preserve all29 original fingerprints/nine prior accounts/23
+prior sessions and actor sessions0. All four actual service handles exit0,
+owned groups/sockets are absent, exact endpoint deletion404 passes, and full
+45,831-file hashing passes18:36:42 UTC. Formal closure passes before lease expiry;
+refund/access reversal remains unverified. Actual usage is16 Dodo calls:
+six payment GETs/one refund POST and endpoint five GETs/one POST/two PATCHes/one
+DELETE. Runtime SQL is12 read-only queries; the separate pre-runtime check is3.
+Original and new durable spent reservations remain unchanged and unreusable.
+
+The public robots GET returns200 with managed robot-policy content and is
+insufficient origin proof. A separately captured unsigned POST to the exact
+webhook route returns401 without creating a journal event. One diagnostic
+capture stem is rejected before network access; it is not an HTTP request.
+These negative checks establish reachability/denial, not signed refund delivery.
+
+A distinct one-GET, zero-write TEST scope reads the
+[balance ledger](https://docs.dodopayments.com/api-reference/balance-ledger/list-ledger-entries),
+filtered and verified against this exact payment/business/USD. Its two historical
+entries record credit8997 from0 to8997 and fee535 from8997 to8462. This explains
+the payment's net contribution; it does not establish today's whole-account
+balance or a free funding remedy. The
+[refund guide](https://docs.dodopayments.com/features/transactions/refunds)
+confirms the same balance requirement in TEST and recommends additional test
+payments as its self-service workaround. That is outside this closed recovery
+scope. Its registered-email support path is the next option: request a free
+TEST-only Dodo credit/manual adjustment sufficient for this original refund and
+any refund fee, or a documented same-payment remedy. A private concrete draft is
+prepared and unsent; free credit is not guaranteed. No merchant funding write is
+found in the bounded official API-index/SDK review, and waiting for settlement
+is not documented to reverse the payment fee. Customer-wallet credits
+are a separate API and are not proven to fund merchant refunds. No real funding,
+new checkout/card, provider support message or production operation occurs.
+
+Root evidence is `dodo-refund-recovery-execution-20261020/root-independent-final-summary.json`
+under the private maintenance temporary root. Credentials/raw captures/active
+inputs and the separate owner-only recovery record are excluded from published
+review evidence. The old phase's `preparationOnlyTool:true` summary field is a
+static library label; actual live actions above are established by real captures
+and independent closure, not by that label.
+
+The selected source/finite closure evidence, empty-target preparation and14
+public wallet-contract sources are retained in
+`review-checkpoint-refund-wallet-denial-20261020` under the maintenance backup
+root:52 files/436,194 bytes, exact copy hashes and private permissions verified.
+Manifest SHA256 is `7a154ccab2aea7ecf9b5942d2eb165f708ea7ecef56711e407f16e80a0e2ad92`.
+Raw provider/DB/Auth/browser bodies, credential files, actual enabled inputs,
+spent financial reservations and the populated private support draft are
+excluded. The TEST key is not loaded for retention scanning. This is local
+unencrypted review custody, without off-site or activation authority.
+
+## Earlier Oct20 checkpoint: payment verified; first refund409 unresolved
 
 The sealedba105 TEST payment and signed native fulfillment now pass fresh
 independent readback: canonical USD89.97/tax0, one exact purchase/processed event,

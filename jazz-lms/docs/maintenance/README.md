@@ -8,6 +8,14 @@ preserving its jazz identity. The hosting budget is zero incremental spend.
 
 ## Current verified checkpoint
 
+The latest same-payment TEST refund recovery closes with a captured409
+`INSUFFICIENT_WALLET_FUNDS`. No refund is created and the purchase remains;
+all29 original fingerprints/23 prior sessions, four service exits0, endpoint404
+and full45,831-file seal pass. A separate read-only ledger verifies the payment's
+historical8997 credit minus535 fee, not a current account-total balance. A free
+merchant-sandbox balance remedy remains open; no checkout/card replay or real
+funding occurs. [Actual result and limits](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial).
+
 Production Vercel is now protected and paused; public roots return503 after
 verified propagation, including the existing bypass. Supabase remains INACTIVE.
 [Current security/hosting/recovery checkpoint](production-readiness.md) separates

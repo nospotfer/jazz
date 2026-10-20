@@ -1,5 +1,16 @@
 # Maintenance review checkpoints
 
+## Oct20 refund recovery identifies a sandbox wallet denial
+
+Actual bounded same-payment execution captures409 `INSUFFICIENT_WALLET_FUNDS`;
+final canonical reads find no refund/full8997 refundable and retain the purchase.
+All29 original fingerprints/23 prior sessions/actor sessions0, four actual service
+exits0/endpoint404/full45,831-file seal and formal closure pass. No actor/checkout/
+card or financial retry. Separate one-GET ledger evidence verifies historical
+credit8997/fee535/after8462, not current account totals. Merchant-sandbox funding
+or settlement remains unresolved. The earlier discarded409 body stays unknown.
+[Actual scope, costs and limits](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial).
+
 ## Oct20 legacy-key restoration and free recovery capacity
 
 The separate isolated legacy-key control verifies gateway denial and restoration

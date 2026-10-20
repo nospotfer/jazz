@@ -2613,3 +2613,41 @@ The maintenance goal remains active and incomplete.
   zero matches for the two selected current control credentials. Actual inputs,
   raw responses and financial reservations are excluded; no TEST key is loaded
   for scanning. Local unencrypted custody, no off-site/activation claim.
+
+## 2026-10-20 — Actual same-payment refund denied by sandbox wallet
+
+- Fresh pre-runtime three-query read-only check and full45,831-file seal pass.
+  Independent coordinator/listener review passes before fixed18:32–19:02 UTC
+  activation. Existing sealedba105 source/payment/USER are reused; no account,
+  checkout, card, Continue or bootstrap action. New Basic gate, dedicated TEST
+  endpoint/signer, actual native HTTP/socket readiness and public unsigned
+  exact-route401 are verified. Robots200 is insufficient; a malformed diagnostic
+  capture stem is rejected before network access and remains a separate failure.
+- Two canonical payment/line-item pairs at required spacing and three independent
+  live data/native checks pass. A separate durable reservation references and
+  preserves the original spent marker. The sole additional refund POST returns
+  complete409 `INSUFFICIENT_WALLET_FUNDS`; original77-byte body stays private.
+  There is no automatic or SDK retry. Earlier discarded409 body remains unknown.
+- Final canonical GETs show no refunds/fullUSD8997 refundable and purchase retained.
+  All29 original fingerprints/nine prior accounts/23 sessions and actor sessions0
+  pass. Owned endpoint disable/delete/final404, all four real tool handles exit0,
+  group/socket absence, complete45,831 seal18:36:42 and formal closure pass before
+  expiry. Actual16 Dodo calls/12 runtime read-only SQL; pre-runtime3 SQL separate.
+  Neither spent marker is reset; no signed refund or access reversal is claimed.
+- Separate one-GET TEST own-payment balance ledger verifies credit8997 from0 to8997
+  then fee535 to8462. These historical entries are not today's account balance.
+  Public official refund documentation confirms the same TEST reserve rule and
+  non-reversed payment fees. Its extra-test-payment workaround is outside this
+  recovery scope; merchant Dodo Credit/manual-adjustment support is the next
+  request, without a free-credit guarantee. Customer-wallet credit is not a refund
+  remedy. A concrete registered-sender support draft is saved privately, unsent.
+- Separate empty-target hardening compiler passes14 independently repeated offline
+  cases and all three synthetic SQL/PLpgSQL parses. Exact225→227 structure remains
+  guarded; originals unchanged. No actual new target, faithful empty bootstrap/
+  PostgreSQL rehearsal, provenance executor or import exists. Data currency/RPO,
+  managed portability and stable zero-cost production hosting remain unfinished.
+- Retained52 selected source/finite-evidence/public-contract files total436,194
+  bytes with exact hashes and0600/0700. Manifest7a154cca, receipt ee7f026a. No
+  credential/raw body/customer/Auth/browser state/active input/financial marker
+  selection; no TEST-key load for scanning. Local unencrypted, no off-site or
+  activation claim. Production remains paused; no production operation occurs.
