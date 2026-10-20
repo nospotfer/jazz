@@ -14,6 +14,23 @@ later voucher presentation checked separately. Remote checks and earlier
 accounting, editor, language, learning and media evidence retain their exact
 source bindings below.
 
+## Oct20 hosted SDK and controller follow-up
+
+Verified publication4eab0b5 has five successful exact-head checks; both Quality
+logs show2,656 normal/80 skips and80 persisted/one skip, with types/webpack31/
+lint0errors22warnings and exact PR-head CodeQL alerts0. Later offline work
+identifies a real deployed-SDK client-secret request shape rejected by the test
+controller. A separate preparation copy repairs that comparison and adds passive
+readiness/capture evidence; original sources/ledgers stay preserved. Actual SDK
+initialization, payment acceptance and production release remain unverified.
+[Exact scope and tests](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
+
+Exact4eab0b5 runs: Quality [PR](https://github.com/nospotfer/jazz/actions/runs/39429704843)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39429696433), Secret Scan
+[PR](https://github.com/nospotfer/jazz/actions/runs/39429704748)/
+[push](https://github.com/nospotfer/jazz/actions/runs/39429697049), and
+[CodeQL](https://github.com/nospotfer/jazz/actions/runs/39429701009).
+
 ## Oct20 Dodo UI card action is spent; transport remains unverified
 
 Latest actualba105/45,831 scope is `CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED`,

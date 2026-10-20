@@ -20,9 +20,16 @@ errors and recovery9 blocks/11 console errors are incompletely attributed;
 both record0 page errors. Private SSH and this source binding do not prove
 public HTTPS, production health or a later-ba105 Auth journey. [Current recovery](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1).
 
-Published documentation81eef3f has five successful exact-head runs: Quality
+Oct20 hosted-SDK follow-up confirms a test-controller incompatibility with own
+payment-prefixed client secrets. A separate preparation copy repairs it, with
+foreign-ID and existing host/frame/document/phase checks retained. Passive
+readiness reporting and offline tests are implemented; actual SDK/API health
+and payment acceptance remain unverified. No fresh financial scope is active.
+[Source contract and verification](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
+
+Verified publication4eab0b5 has five successful exact-head runs: Quality
 PR/push, Secret Scan PR/push and dynamic CodeQL ([IDs/events](review-status.md)).
-Both downloaded Quality logs verify2,628 normal/80 skips,80 persisted/one skip,
+Both downloaded Quality logs verify2,656 normal/80 skips,80 persisted/one skip,
 types/webpack31/lint0errors22warnings; actual PR-head CodeQL alerts0. Actualba105
 settled-document scope spends one UI card action but leaves transport/acceptance
 unverified; last provider GET requires_payment_method. Empty observed responses

@@ -29,9 +29,16 @@ Seven closed scopes consume nine actions/seven observed Resend emails; earlier
 built-in delivery remains unverified. Sealed30d848a recovery retains its
 historical repair/continuation qualification. [Current recovery](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1).
 
-Latest published checkpoint81eef3f has five successful exact-head workflow runs:
+Oct20 hosted-SDK follow-up confirms a test-controller incompatibility with own
+payment-prefixed client secrets. A separate preparation copy repairs it, with
+foreign-ID and existing host/frame/document/phase checks retained. Passive
+readiness reporting and offline tests are implemented; actual SDK/API health
+and payment acceptance remain unverified. No fresh financial scope is active.
+[Source contract and verification](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
+
+Verified publication checkpoint4eab0b5 has five successful exact-head workflow runs:
 Quality PR/push, Secret Scan PR/push and dynamic CodeQL ([IDs/events](review-status.md)).
-Both downloaded Quality logs show2,628 normal/80 skips,80 persisted/one skip,
+Both downloaded Quality logs show2,656 normal/80 skips,80 persisted/one skip,
 types/webpack31/lint0errors22warnings; actual PR-head alerts0 and both analyses
 match the commit. Actualba105 settled-document scope spends one UI card action;
 transport/acceptance remain unverified and last provider GET is unpaid. Empty

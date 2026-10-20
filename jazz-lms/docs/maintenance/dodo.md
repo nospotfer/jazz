@@ -136,6 +136,77 @@ they do not recover the historical trace or prove SDK readiness, accepted paymen
 signed fulfillment or public HTTPS. No live adapter window is activated and the
 financial-test loop remains stopped.
 
+### Deployed hosted SDK contract and scoped-secret repair
+
+Ten anonymous public GETs on Oct20 follow the checkout layout's actual SDK URL
+and its static dependencies, without cookies, account credentials, checkout
+session URLs, redirects or script execution. The deployed TEST wrapper is
+[SDK1.1.0](https://sdk-v2.custom.hs.dodopayments.com/1.1.0/sdk.js), SHA256
+`38b7d0e8690a93298add587a351dfb5454ed939241fc4e33740bf534e74273f1`.
+Its [normal child application](https://sdk-v2.custom.hs.dodopayments.com/1.1.0/assets/app-DZzLfsx-.js)
+has SHA256 `2c8f36f941d00978b02add25ec4db6cd92108dcf393c4c431366b569ead71e09`.
+These are current public source observations, not a reconstruction of the closed
+checkout's requests or proof that its iframe used this exact version.
+
+The wrapper checks message origin, iframe window, the
+`__dodo_payments_msg__` marker, and string nonce/type. `READY` connects the bridge
+and releases queued messages. Its15-second timeout discards an unconnected
+queue without emitting a load error in that timer. `ELEMENT_READY` becomes the
+element's public `ready` event; `ERROR` becomes `loaderror`. The child registers
+its `INIT` handler before sending bridge `READY`, then initializes payment
+methods. It catches some API failures, can fall back to a card choice and still
+send `ELEMENT_READY`. No explicit `ERROR` sender is identified in that normal
+child asset. Neither readiness nor absence of a load error establishes healthy
+initialization, payment acceptance or signed fulfillment.
+
+The deployed child constructs both `POST /payments/session_tokens` and
+`POST /payments/{paymentId}/confirm` with `client_secret`. Its secret format is a
+payment ID followed by `_secret_` and a nonempty alphanumeric suffix. A synthetic
+regression against the actual closed guard reproduces a defect: scanning that
+entire secret as a `pay_` identifier rejects the bound payment's own secret.
+This affects a real request shape but does not establish the historical failure
+cause.
+
+A new code-only preparation copy under
+`/tmp/jazz-maintenance/dodo-sdk-compatibility-preparation-20261020` repairs the
+comparison. Only a complete `client_secret` field/query value can receive the
+exact bound payment's suffix exception. Other IDs, foreign/malformed secrets,
+decoded foreign IDs and bounded-input failures remain rejected. Independent
+review finds and repairs a long-secret blind spot inherited from the old
+124-character scan limit. Host, root-frame, document and armed-phase checks
+remain in force. Closed/frozen sources and all spent ledgers are preserved;
+the copied CLI remains unconditionally preparation-only.
+
+The [passive init function](../../scripts/native/hosted-sdk-readiness.mjs) observes
+only these three protocol signals from the exact TEST origin and a current
+direct iframe window. It retains bounded counts/relative-time samples and drops
+message payloads, nonce, URLs and error prose. It changes no SDK event, request,
+storage or DOM. Counts describe document-wide history; they do not bind a later
+current iframe. A future controller needs a pre-initialization baseline and
+independent iframe/document continuity. Eighteen serialized-jsdom event checks
+pass; combined with the recorder/adapter, 46 focused tests pass. Full types and
+touched-file lint pass. These synthetic events are not an actual SDK journey.
+
+The new private copy installs that observer before navigation and captures only
+validated finite snapshots on status and before leaving the provider page.
+Capture has a500ms deadline, rejects a document change while awaiting evaluation
+and clears its current flag before navigation/closure while preserving history.
+An independent review catches the initially stale post-logout flag; the actual
+logout/close handlers and navigation race are covered by regressions. Twenty-three offline checks pass:
+10 copied-handler, seven identifier-scope and six capture cases. Four of the
+initial five scope tests fail against the unmodified guard, including the own
+secret case. Independent read-only review covers the repaired scope; the
+closed controller/frozen instrumentation copy remain unchanged.
+
+The separate preparation plan grants no lease or action allowance. A future
+scope must use one fresh checkout and the existing controlled USER, with a new
+fixed source/origin/gate and ledger. Before reserving its single card action,
+verify the actual current document/provider binding, source assets, both
+readiness stages and separate successful initialization responses/transport
+results. Stop on unresolved initialization failures. Never replay a closed
+checkout or reset its spent action. Public source inspection and offline tests
+do not satisfy these actual-runtime prerequisites.
+
 ## Oct20 SPA scope: transient observation does not establish a card journey
 
 This earlier closed scope remains separate from the settled-document result above.

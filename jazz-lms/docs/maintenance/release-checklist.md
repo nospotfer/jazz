@@ -35,9 +35,9 @@ technical work; authorization does not imply a completed deployment.
 
 ## Review gates
 
-- [x] Published documentation checkpoint81eef3f has five successful exact-head
+- [x] Verified publication checkpoint4eab0b5 has five successful exact-head
   workflow runs: Quality PR/push, Secret Scan PR/push and one dynamic CodeQL run
-  ([run IDs/events](review-status.md)). Downloaded Quality verifies2,628 normal/80 intentional skips,
+  ([run IDs/events](review-status.md)). Downloaded Quality verifies2,656 normal/80 intentional skips,
   80 persisted/one skip, types/webpack/static31-of-31 and lint0errors/22warnings;
   actual PR-head CodeQL alerts0 with both analyses on the exact commit. Actual
   Auth remains sealed3e5 and actual Dodo
@@ -317,6 +317,12 @@ technical work; authorization does not imply a completed deployment.
   zero sessions+purchases/five service closures/endpoint404/full seal/retention64
   files412,746 bytes pass. Qualify misleading STRICT_NO_CARD helper label while
   preserving the valid three data queries. [Final scope and manifest](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified).
+- [x] Review actual public hosted-SDK1.1.0 source; reproduce and repair the
+  own-client-secret controller rejection in a separate preparation copy. Add
+  passive bounded readiness observation and finite capture. Synthetic checks
+  preserve foreign-ID/host/frame/document/phase gates; readiness can follow API
+  fallback and is not acceptance. No fresh scope/card allowance activated.
+  [SDK source, checks and remaining runtime prerequisites](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
 - [ ] Review customer/team/webhook-alert recipients, dashboard/currency/tax
   decisions and complete actual isolated payment, positive signed delivery,
   return/reconciliation/coupon/reversal. Earlier windows retain their historical

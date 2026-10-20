@@ -2482,3 +2482,36 @@ The maintenance goal remains active and incomplete.
   The goal remains active and incomplete; production and payment acceptance are
   unchanged. Next is review of the hosted SDK evidence and a concrete future test
   plan, without replaying a closed checkout or silently renewing its card action.
+
+## 2026-10-20 — Actual hosted SDK source exposes a test-controller defect
+
+- Ten anonymous public GETs follow the deployed checkout's actual SDK/static
+  import chain. SDK1.1.0 and the normal child app are hashed and statically
+  reviewed; no credentials, cookies, session URL, redirects or vendor-code
+  execution. Bridge READY releases queued INIT; ELEMENT_READY can follow caught
+  API failure/card fallback. Neither signal nor absence of ERROR establishes
+  healthy initialization. [Exact source and limits](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
+- Actual child session-token and confirmation POST constructions carry
+  client_secret. The closed guard rejects a synthetic own-payment secret by
+  greedily comparing its full value to the bare payment ID. Four initial scope
+  tests fail against that guard. A separate preparation copy accepts only a
+  complete bound-payment client_secret, retains host/frame/document/phase gates
+  and rejects decoded foreign IDs. Independent review finds and repairs an
+  inherited124-character long-secret blind spot; malformed/long foreign cases
+  are covered. This proves a controller incompatibility, not the historical
+  failed card action's cause or an application/provider defect.
+- A serialized passive observer retains only bounded bridge/element/error
+  counts and relative-time samples. Eighteen actual jsdom MessageEvent checks
+  pass; all46 observer/transport focused checks, full types and scoped lint pass.
+  Document-wide historical counts need a separate current-frame continuity
+  check. Private controller capture is finite-validated, bounded to500ms and
+  clears its current flag before navigation/closure, including an independently
+  found stale-flag repair and evaluation/navigation race; all23 handler/scope/capture
+  checks pass. CLI remains permanently preparation-only, with network/browser/
+  process entrypoints blocked in its CLI tests.
+- A fresh-scope preparation plan specifies prerequisites and maximum effects,
+  without creating a lease or allowance. No account/provider transaction,
+  browser, SSH, new checkout/card/refund/mail or production operation occurs.
+  Closed/frozen sources, all four unpaid payments and every spent action remain
+  preserved. Actual readiness/API health, signed fulfillment and refund gates
+  remain open; goal active/incomplete and the financial-test loop stopped.
