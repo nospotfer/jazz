@@ -1,5 +1,17 @@
 # Goal verification matrix
 
+## Oct21 reproduced closed-worker failure
+
+| Check | Result and limit |
+| --- | --- |
+| Actual28370 | Terminalexit1/13:03:21; one native connect fails after1,990ms, OperationalError/no SQLSTATE/unclassified. SQL0/Storage HTTP0/new POST0; no current preservation/adoption/rollback. |
+| Independent14382 | Terminalexit0/13:04:33; sevenGET0SQL0mutation, exact target paused, old states/settings equal. |
+| Caller comparison | Same route/credential-file/CA/factory bindings; inherited parent versus closed child environment. Current library-byte probes match; historical cause remains unknown. |
+| Prepared admin access | 25 Python/11 JS source-only checks and root adapter review; no hosted login, actual artifact or runtime. |
+| Next | Reviewed connection-only private-sanitized diagnostic, then current customer/file checks before any new upload. |
+
+[Evidence and custody](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+
 ## Oct21 session route and subsequent Storage connection stop
 
 | Check | Actual result and limit |

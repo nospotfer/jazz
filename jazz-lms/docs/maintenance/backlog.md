@@ -1,5 +1,16 @@
 # Prioritized maintenance backlog
 
+## Current next action — Oct21 13:04 UTC
+
+Review/run one connection-only diagnostic in the exact closed Storage worker,
+zero SQL/Storage, with a bounded sanitized message kept privately. The latest
+one-connect attempt reproduces an unclassified1,990ms failure; independent paused
+closure passes. Equal route/credential-file/CA bindings do not establish equal
+caller environments or a cause. Preserve spent scopes; defer uploads until the
+connection is understood, then recheck all customer/file prerequisites. Admin
+access/build/HTTPS and the full release scope remain open.
+[Evidence](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+
 ## Current checkpoint — Oct21 12:47 UTC
 
 1. Repair missing finite diagnostics at the actual Storage connect boundary:

@@ -112,6 +112,12 @@ customer import. No route remedy/full-lifecycle/end-to-end TLS claim follows
 from the short diagnostic. The offline admin password match is not hosted login
 or role/session/autoload authority. See `docs/maintenance/production-readiness.md`
 for exact evidence and limits; native build/Auth adapters remain preparation only.
+The subsequent root28370 Storage scope also closes with zero SQL/Storage/new
+uploads:1,990ms unclassified native connect failure, independent13:04:33 paused/
+settings closure. Equal route/credential-file/CA bindings leave caller context
+and remote cause unresolved. Next use a reviewed connection-only diagnostic in
+the same closed worker, with sanitized text private and outside review evidence;
+defer further upload attempts until that diagnosis is complete.
 
 ## File Patterns
 

@@ -1,5 +1,53 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 closed worker connect failure reproduced
+
+The new one-attempt Storage scope is terminal: actual root **28370exit1** at
+**13:03:21.302 UTC**. Fresh admission and TLS-only checks pass, then the unchanged
+native factory fails after **1,990ms** with OperationalError/no SQLSTATE. Its
+finite category is `CONNECTION_OPERATIONAL_UNCLASSIFIED`. No original or sanitized
+error message was retained. **SQL0, Storage HTTP0, new POST0 and COMMIT0**;
+current customer/protected/file verification and transaction rollback are not
+performed. The child is terminal with client-close acknowledgement. The parent
+performs65 Management calls (44 work/21 closure), one resume/pause and no
+configuration change. Original conservative outcome flags and spent markers stay
+unchanged.
+
+Independent **13:04:33.448062 UTC** closure (actual14382exit0) performs seven GETs
+and no SQL/Storage/mutation. It confirms the exact replacement INACTIVE, original
+production INACTIVE, isolated preview healthy and old observed settings equal.
+Finite custody retains17 files, manifest
+`628ec0889cbeb43c1bc99aead6ef9337da8f7e8de91526375ab92d0d929e2cd6`;
+credentials, active plans, raw provider/customer values and file bodies are
+excluded. Retention remains owner-only/local/unencrypted, without off-site proof.
+
+| Receipt | SHA-256 |
+| --- | --- |
+| Actual parent | `3847299bde7d5152def6935c275373a22de71f787f8bde8bb3c0daa3d6894955` |
+| Actual driver | `9b7ba0cb47df7ec76bd51b5998fe2f43890aa3b6c90ee968a37e279ef202d403` |
+| Independent closure | `18e5eadda13e103b2d3ce1d48879f4a50293548e7779949ded8e10983ca0e9f1` |
+| Root finite review | `16b48d5009c3686930ae2ae45dd772654d44b3e163ace9b12e912ea2bee7a4d1` |
+
+The successful5432 diagnostic and both failed Storage calls have equal structured
+routes, password-file references/hash bindings, public CA bytes, factory and
+12-second waiter. Their caller environments differ: the successful diagnostic
+runs in its inherited parent environment; Storage uses a child launched with
+only PATH/PYTHONDONTWRITEBYTECODE. Historical full environment equality is not
+established. Current no-network probes find matching relevant library bytes and
+versions in those two contexts; this does not establish the historical cause.
+
+Next prepare/review one **connection-only** diagnostic in the same closed child,
+with zero SQL/Storage and bounded sanitized error text in a separate private
+owner-only file. Sanitization and IPC/private-file boundaries must pass review
+before a real credential is used. Do not make another upload attempt to debug
+the connection. All prior data/file-adoption prerequisites remain required.
+Restored-admin adapters have25 Python/11 JavaScript source-only checks and root
+source review, with no hosted login; actual file/baseline/artifact/Auth-version
+receipts, lifecycle and scoped cleanup are still pending. Native build/tunnel
+and application runtime remain unstarted. c75da00's five successful workflow
+statuses and draft PR46 head readback are verified as metadata; no new test-log
+counts or deployment are claimed. Earlier dated evidence remains intact.
+
 ## Oct21 session route passes once; Storage continuation stops at connect
 
 Application checkpoint **31ad6ba** is published in draft PR46. All five exact-head

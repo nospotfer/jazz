@@ -1,5 +1,17 @@
 # Production review and rollback checklist
 
+## Oct21 current connection gate
+
+- [x] Preserve actual28370exit1,1,990ms unclassified native failure/zero SQL and
+  uploads; independent13:04:33 paused/settings closure and17-file finite custody.
+- [x] Compare route/credential-file/CA/factory bindings and distinguish actual
+  parent/worker context; current matching libraries do not prove historical cause.
+- [ ] Complete reviewed connection-only private-sanitized diagnostic before
+  further uploads; retain all existing typed/file/preservation prerequisites.
+- [ ] Complete actual restored admin/build/HTTPS and remaining release scope.
+
+[Evidence](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+
 ## Oct21 session route and current Storage stop
 
 - [x] Verify31ad6ba exact-head CI/publication/independent draft PR46 readback.

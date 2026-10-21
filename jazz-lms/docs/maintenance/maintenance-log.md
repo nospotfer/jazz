@@ -1,5 +1,18 @@
 # Maintenance log
 
+## Oct21 worker connection failure reproduced and closed
+
+Actual28370exit1 at13:03:21 stops at the unchanged native factory after1,990ms;
+OperationalError/no SQLSTATE remains unclassified. SQL/Storage HTTP/new POST0;
+no current preservation/adoption/rollback. Independent14382exit0 at13:04:33
+verifies the exact replacement paused and old states/settings equal. The
+successful diagnostic and failed calls use equal route/credential-file/CA
+bindings, with different parent/closed-worker environments; no cause is proven.
+Finite custody retains17 files. Next is a connection-only diagnostic with
+reviewed private sanitization; uploads stay deferred. Admin adapters are reviewed
+source only, not hosted login/runtime proof.
+[Evidence and limits](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+
 ## Oct21 session diagnostic and closed zero-upload connection failure
 
 31ad6ba exact-head publication/CI and independent draft PR46 readback pass;

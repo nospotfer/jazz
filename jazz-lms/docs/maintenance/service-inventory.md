@@ -1,5 +1,15 @@
 # Service inventory
 
+## Current replacement state — Oct21 13:04:33 UTC
+
+Exact replacement/production INACTIVE, isolated preview healthy and old
+observed settings equal in independent seven-GET closure. The new Storage
+scope again stops before SQL/Storage requests at native connect;1,990ms,
+OperationalError/no SQLSTATE, cause unknown. No current customer/file acceptance
+or application runtime follows. Next: one connection-only diagnostic in the
+same closed worker with reviewed private sanitization. Public Vercel stays paused.
+[Evidence](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+
 ## Current replacement state — Oct21 12:47:25 UTC
 
 Independent seven-GET closure confirms the exact replacement and original
