@@ -1,5 +1,20 @@
 # Maintenance log
 
+## Oct21 22:30 UTC — Usable day preview, real student video, hosting proposal
+
+- Sourceace0804 extends only isolated payment-disabled previews to24h; TEST and
+  recovery stay30min.405+1 focused checks/types/lint and clean build/inspection
+  pass. Protected public401/200, private/no-store and HTML noindex are verified.
+- Preview stays live until Oct22 22:17UTC; Behemoth review browser opens with an
+  unsubmitted synthetic login. No real server inputs transfer to Behemoth.
+- Student login, real signed Mux decode and certificate denial2/15 pass; PDF200
+  delivery passes but native rendering probe fails. No learning writes; local
+  logout204/closure and six business hashes/prior sessions/hierarchy preserve.
+- Guest desktop/mobile/light/dark checks have no overflow; public promo loads.
+  Hosting proposal now specifies runtime/backend gaps, DNS/callback cutover and
+  rollback. Production/DNS unchanged, public503; no further payment test.
+  [Actual scope, initial admission/HTTP201 corrections and next work](production-readiness.md#day-preview--oct21-2230-utc).
+
 ## Oct21 22:03 UTC — Coupon billing progresses; SDK check stops; scope closes
 
 - Actual checkout and six nonempty fields reach a provider payment in

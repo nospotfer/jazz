@@ -1,14 +1,19 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 22:03 UTC
+## Current priorities — October21 22:30 UTC
 
-1. Converge on a usable preview and concrete zero-cost public-site restoration
-   and release/rollback plan. The site is503/paused and UI changes are unreleased;
-   continued testing alone does not deliver the owner's usable-site objective.
-2. Verify broader recovered student/content/media continuity and qualify the
+1. Preserve the live protected day preview and diagnose exact-browser mobile PDF
+   rendering: actual signed Mux/login/certificate denial pass, PDF bytes200 pass,
+   render probe fails. Behemoth review browser is open. Do not stop the preview
+   at turn end; fixed expiry is Oct22 22:17UTC/Oct23 00:17 Madrid.
+   [Current preview and limits](production-readiness.md#day-preview--oct21-2230-utc).
+2. Complete recovered student/content/media continuity and qualify the
    recovery point. R14 admin login/dashboard/admin/logout and the accepted
    database/PDF recovery are complete; do not repeat them or their cleanup.
-3. Defer further coupon test launches while reviewing the retained SDK wrapper
+3. Prepare production target/runner and release/cutover assets from the concrete
+   [free-hosting proposal](hosting.md). Domain/selected-account control and
+   production approval remain prerequisites; the public site is still503.
+4. Defer further coupon test launches while reviewing the retained SDK wrapper
    denial. The latest scope reaches an actual unpaid payment after all six
    billing fields and one Continue; SDK initialization is NO_GO, card/refund0.
    Normal logout/data preservation/endpoint404 and resource closure pass with
@@ -16,8 +21,9 @@
    marker. Paid coupon/currency/fulfillment and refund/access reversal remain
    incomplete. [Current result](production-readiness.md#coupon-billing--oct21-2203-utc).
 
-Application `4b320b1` remains undeployed. Published checkpoint `bf203b7` passes
-all10 remote checks; this is source verification, not production readiness.
+Application/native `ace0804` is live only in the isolated protected preview.
+Published checkpoint `1a6294d` passes all10 remote checks; the newer publication
+checks remain separate. Production is unchanged and the full goal incomplete.
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

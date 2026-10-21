@@ -1,8 +1,16 @@
 # Maintenance review checkpoints
 
-## Current status — Oct21 22:03 UTC
+## Current status — Oct21 22:30 UTC
 
 - Production is paused/503; application and UI improvements are unreleased.
+- Protected synthetic-data review preview is live on source `ace0804`, until
+  Oct22 22:17UTC/Oct23 00:17 Madrid. Behemoth's separate review browser is open;
+  its second tab has an unsubmitted synthetic student login prepared.
+- Actual student login, signed Mux decode and incomplete-course certificate
+  denial pass. PDF delivery200 passes, native rendering remains unverified.
+  Current-session logout/browser closure and selected preservation pass.
+- Current guest desktop/mobile and actual light/dark toggle checks pass without
+  overflow. The temporary preview is payment/mail/cron disabled, not production.
 - Recovered database/PDF import and R14 admin login/dashboard/admin/logout are
   complete. Do not repeat them or their accepted corrections/cleanup.
 - Current-source coupon Apply80/8/72, checkout creation, six filled billing fields
@@ -12,11 +20,12 @@
 - Normal logout/final preservation pass, sessions/purchases0, endpoint404 and
   resource closure verified. SSH255 and separately removed exact stale socket,
   105 blocked requests/120 console errors remain disclosed. No blanket health claim.
-- Next prioritize a usable preview, student/media continuity and concrete free
-  hosting/restoration and release/rollback plans. Avoid further tooling loops;
-  accepted recovery/admin checks and closed payment scopes must not be repeated.
+- Next diagnose PDF rendering, recovered student/media and recovery currency;
+  implement the reviewed production runner/target and finish release/cutover
+  preparation. The concrete free-hosting proposal is written; no DNS or
+  production change is made. Avoid further tooling loops and recovery replay.
 
-[Latest authoritative outcome](production-readiness.md#coupon-billing--oct21-2203-utc).
+[Live preview, launcher and exact limits](production-readiness.md#day-preview--oct21-2230-utc).
 Everything below is dated history and may contain superseded pending actions.
 
 ## Oct21 R5 verifies both existing files; continuation remains stopped

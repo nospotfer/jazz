@@ -1,110 +1,263 @@
-# Zero-cost production hosting review
+# Zero-cost production hosting proposal
 
-**Oct21 policy refresh:** the currently published Netlify Free plan includes300
-monthly credits. Exhaustion pauses every project on that team; Free cannot buy
-add-on credits. This remains a conditional alternative requiring its own account,
-quota and native-runtime acceptance, with no upgrade or recharge authorized.
-[Current pricing](https://www.netlify.com/pricing/),
-[billing FAQ](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/billing-faq-for-credit-based-plans/).
-Supabase still documents low-activity Free-project pausing over a7-day period;
-changing the frontend does not resolve that operational limit.
-[Current pausing policy](https://supabase.com/docs/guides/platform/free-project-pausing).
-No hosting account, billing setting, DNS or production service changes follow
-from this read-only policy refresh.
+Updated 2026-10-22. **Prepared proposal; no hosting or domain cutover has occurred.**
+Use a dedicated Node 24 service on Monster behind a named Cloudflare Tunnel if
+the account, DNS and file-delivery conditions below can be met without payment.
+This reuses the native Next runtime instead of first changing deployment
+adapters. Netlify Free is the alternative if continuous operation of Monster is
+unacceptable or the Cloudflare conditions cannot be met.
 
-**Oct20 access refresh:** registrar/DNS/Cloudflare/Netlify authority remains
-unestablished locally; the owner has been asked to check the exact domain in
-Squarespace. Vercel protection/pause is now applied and verified on production;
-explicit cron disable and broader historical/bypass coverage remain incomplete.
-[Fresh facts, actual effects and next prerequisites](production-readiness.md).
+The owner's continuing maintenance authorization covers the previously reviewed
+bounded operations. This new production host/domain move still requires review
+of the concrete configuration, acceptance evidence and rollback before execution.
+No paid Vercel upgrade, card/recharge, credential rotation or unrelated
+Neurofactory service change is proposed. A protected Quick Tunnel is review
+infrastructure; extending a preview lease does not make it production hosting.
 
-Prepared 2026-10-13. **Proposal only.** The owner selected zero new hosting spend.
-The protected [native temporary HTTPS preview](preview.md#protected-native-preview-and-contrast)
-now verifies exact application source `e32a370`, with fresh sealed build,
-four-role/media/PDF/layout/contrast proof and retained initial observations.
-Earlier source 27's 45-check report remains historical. Temporary app/tunnel and
-private lifecycle probes closed cleanly. No stable hosting service, account,
-DNS change or production release has been provisioned.
+## Facts that determine the choice
 
-The proposed closed maintenance page now has a real [standalone fallback and
-serving contract](maintenance-fallback.md). Its actual loopback browser/header
-checks pass138/138, with a separate4/4 local-file scope. This is an additional
-reviewable rollback asset, not a selected host, public-domain verification or
-production activation. The latest Next history/browser proof remains separate
-on a207; earlier e32 media/runtime checks above retain their original scope.
+The [current recovery checkpoint](production-readiness.md) records restored
+customer tables and all 68 private PDFs in the paused replacement backend, plus
+the successful R14 recovered-admin login/admin/logout journey. Customer/student
+media continuity and recovery-point currency remain release prerequisites. The
+accepted table import, PDF uploads and Auth compatibility corrections must not
+be repeated to prepare hosting. Original production remains paused with unsafe
+browser permissions; the synthetic preview is not a production target.
 
-## Preferred conditional option
+The Oct22 read-only host check found Monster has 16 logical CPUs, 62.7 GiB RAM,
+about 1,170 GiB free on the workspace filesystem and 43.3 days of uptime. Systemd
+255 is present and the current user's linger setting is enabled. No TCP 80/443
+listener was found. However, the system manager reports `starting` and the user
+manager `degraded`; their causes and Jazz boot recovery were not inspected. These
+are capacity observations, not proof of continuous availability, spare capacity
+under load or unattended recovery. Do not repair shared services as part of this
+proposal.
 
-Run the reviewed Node 24 / Next production build on the existing Monster machine
-behind a named Cloudflare Tunnel. Retain managed Supabase/Auth/Storage, Mux,
-Dodo and Resend. This preserves the verified native runtime and avoids a
-serverless adapter migration. Cloudflare offers a Free plan; published Tunnel
-setup requires an account, a domain on Cloudflare and an internet-connected
-server. [Free plan](https://www.cloudflare.com/plans/),
-[named Tunnel availability](https://blog.cloudflare.com/tunnel-for-everyone/),
-[setup prerequisites](https://developers.cloudflare.com/tunnel/get-started/).
+Public DNS still resolves the apex to `76.76.21.21`, `www` to
+`cname.vercel-dns.com`, and authoritative nameservers to the four
+`ns-cloud-d*.googledomains.com` servers. The [service inventory](service-inventory.md)
+identifies Squarespace as registrar. No usable registrar/DNS, Cloudflare or
+Netlify account control is established in the retained inventory. DNS answers
+do not prove account ownership. A bounded Oct22 follow-up inspected provider
+labels from the owner-only CSV and the selected local gcloud project's metadata,
+without emitting credentials or attempting a login. Neither established domain
+authority; the selected project was not linked to Jazz by the inspected metadata.
+No unrelated projects were enumerated. A full zone export and DNSSEC state check
+are still required.
 
-This choice depends on continuous machine availability, legitimate account/DNS
-control and an operational owner. None is inferred from the observed uptime.
-Cloudflare and registrar sessions are not established here. The registrar is
-Squarespace; authoritative nameservers remain Google Domains. Export the full
-zone privately before preparing delegation, including mail/shared subdomains.
-Free named custom-domain routing needs full DNS delegation; partial CNAME setup
-is a Business/Enterprise feature. Registration need not transfer.
-[Partial setup limits](https://developers.cloudflare.com/dns/zone-setups/partial-setup/).
+If an existing project is explicitly linked to Jazz, the documented read-only
+probe is `gcloud dns managed-zones list --project=<verified-jazz-project>` with
+`--filter='dnsName=culturadeljazz.com.'` and output restricted to zone name, DNS
+name, nameservers and visibility. Capture privately. A matching zone and
+nameserver set can establish readable Cloud DNS configuration; it does not prove
+DNS-write or registrar/nameserver-change authority. Google Domains nameservers
+alone do not identify the owning Cloud project. Try this scoped existing-access
+path before asking the owner to supply access; no such API probe ran here.
+[Managed-zone read command](https://docs.cloud.google.com/sdk/gcloud/reference/dns/managed-zones/list).
 
-Use dedicated Jazz services and private immutable releases/configuration; pin
-Node 24 without changing the machine's shared default. Bind Next/proxy only to
-owner-only Unix sockets and metrics to loopback; keep the future named-tunnel
-token in a private file. The bounded daily runner is prepared with an execution-
-disabled CLI; no timer is installed or enabled. Actual preview startup, cache,
-restart, worker-exit cleanup and separate-UID denial pass. Production resource
-limits, durable configuration, named-tunnel identity and recovery remain to
-verify. No shared Docker/SSH/proxy changes are proposed.
-[Native runtime and exact preview limits](native-runtime.md).
+| Option | Concrete fit | Remaining condition and cost boundary |
+| --- | --- | --- |
+| Monster + Cloudflare Free named Tunnel | Native Node/Next/Prisma/RSA runtime; no inbound port forwarding or serverless adapter required | Existing-machine power, internet and operator; Cloudflare account and domain control; full DNS delegation; acceptable PDF delivery terms. No production service or named tunnel is provisioned. |
+| Netlify Free | Managed Next hosting with an OpenNext adapter; external authoritative DNS can remain | Account control and an exact application preview. Current allowance is 300 monthly credits, shared across the team; exhaustion pauses its projects and Free cannot buy add-on credits. No account, deployment or adapter proof exists. |
+| Current Vercel Hobby | Existing protected, paused outage destination | Commercial Hobby mismatch remains. No low-revenue exemption or paid upgrade is assumed; the unsafe June deployment is not a repaired rollback. |
 
-The trusted edge must replace caller-supplied forwarding headers with a validated
-client IP; current rate limiting reads the first X-Forwarded-For entry. Preserve
-webhook bytes, secure cookies and private PDF headers. Keep video directly on
-Mux; avoid caching private/authenticated responses. Package a durable reviewed
-Supabase CA path with strict Prisma URLs. Native engine chain/hostname checks
-pass [nine isolated cases](local-verification.md#separate-native-prisma-tls-verification),
-but the eventual production artifact/runtime remains unverified.
+Cloudflare's documented setup requires an account, a domain on Cloudflare and an
+internet-connected server; restricted networks need outbound port 7844.
+[Setup prerequisites](https://developers.cloudflare.com/tunnel/get-started/),
+[Free plan](https://www.cloudflare.com/plans/free/).
+Free does not support the partial CNAME setup that keeps another authoritative
+DNS provider. The proposed free route therefore requires full zone delegation,
+without transferring the domain registration.
+[Partial setup availability](https://developers.cloudflare.com/dns/zone-setups/partial-setup/).
 
-## Mandatory release and rollback boundaries
+Keep video directly on Mux. Cloudflare's public-hostname Tunnel documentation
+also restricts video and other large-file delivery under its service-specific
+terms. Confirm that this application's private PDF proxy and expected traffic
+are acceptable before selecting this route; do not infer an exemption from the
+current archive's small total size or promise unlimited file bandwidth. If it
+requires a paid service, reject this option under the zero-cost budget.
+[Tunnel file-delivery restrictions](https://developers.cloudflare.com/cloudflare-one/faq/cloudflare-tunnels-faq/#large-file-and-streaming-traffic-through-tunnel).
 
-DNS changes do not retire old servers with immutable production credentials.
-Prepare exact-project cron disable, paused active production and **All Deployments
-Vercel Authentication**. Current policy permits that method/scope on all plans
-without a paid add-on. Verify every generated/custom/historical URL and any
-bypass/share/team access; the separate Gabriel-scoped history is unresolved.
-Authentication does not revoke credentials or stop cron by itself. No quarantine
-action occurred during this original proposal; the Oct20 update above supersedes
-that state. [Protection scope](https://vercel.com/docs/deployment-protection),
-[pause scope](https://vercel.com/docs/rest-api/projects/pause-a-project).
+Netlify explicitly describes Free as allowing commercial projects without a
+credit card; its old announcement's quotas are superseded by current pricing.
+Actual account onboarding has not been tested. Keep Jazz out of a shared
+Neurofactory quota unless that impact is reviewed; do not enable recharge or
+upgrade when the allowance is exhausted.
+[Commercial/no-card statement](https://www.netlify.com/blog/introducing-netlify-free-plan/),
+[current pricing](https://www.netlify.com/pricing/),
+[shared credits and pausing](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/billing-faq-for-credit-based-plans/).
 
-Rebuild with canonical www origins, review exact Auth callbacks and durable TLS,
-and obtain the production approval in the [release checklist](release-checklist.md)
-before hardening, deployment or another customer-backend resume. Keep apex
-provider webhooks routed directly; do not rely on POST redirects. The preferred
-rollback is a previous reviewed secure release or a closed maintenance page;
-the unsafe June deployment is not a repaired rollback.
+## Proposed Monster service, with explicit implementation gaps
 
-Supabase Free can pause after low activity; changing frontend hosting does not
-remove that limitation. No artificial keepalive or paid upgrade is proposed.
-Verified local backups do not establish encrypted off-site retention. Existing
-domain, power, media and transaction costs remain; no free-service SLA is claimed.
-[Pause policy](https://supabase.com/docs/guides/platform/free-project-pausing).
+Retain managed Supabase Auth/DB/Storage, Mux, Dodo and Resend. Prefer the already
+recovered replacement as the candidate customer backend, subject to the recovery
+and continuity decision above. Do not silently point production at the isolated
+synthetic project or resume the original unsafe backend. Record one approved
+backend, recovery point, source commit and public origin in the release plan.
 
-If Monster cannot be operated continuously, Netlify's commercial-compatible
-Free offer is a candidate fallback. It needs account access and an exact
-Next/Prisma/CA preview; a hard usage quota can pause the site. No signup,
-card/recharge or adapter migration has occurred.
-[Free commercial use](https://www.netlify.com/blog/introducing-netlify-free-plan/).
+**The current launcher cannot be used as a production service.** It deliberately
+rejects production; the worker admits preview mode only, and the production
+configuration policy still pins the original backend. Serving the replacement
+requires a reviewed production target/profile and production supervisor/worker,
+not deletion of the preview expiry or reuse of `recoveryAccess`. The separate
+payment-disabled longer preview remains isolated testing. See
+[native runtime](native-runtime.md) for the current profile limits and proofs.
 
-## Private review package
+Use these proposed dedicated paths and unit names; none is created by this plan:
 
-Revision 2 is under `/tmp/jazz-maintenance/zero-cost-hosting-review/`: architecture
-decision, cutover/quarantine/rollback runbook, safe summary and integrity manifest.
-Original policy research is preserved separately; revised account/plan evidence
-supersedes it. Access secrets, zone exports and customer data remain outside Git.
+| Item | Proposed location or contract |
+| --- | --- |
+| Immutable release and pointer | `/home/gabriel/.local/share/culturadeljazz-production/releases/<commit>/app` and sibling `current`; inspect hashes before each start |
+| Private configuration | `/home/gabriel/.config/culturadeljazz-production/`, parent 0700, config/CA/tunnel credential files 0600; explicit inputs, no ambient `.env` |
+| Application and ingress sockets | `/run/user/1000/culturadeljazz-production/{app.sock,edge.sock}`, run directory 0700, sockets 0600, umask 077 |
+| User services | `jazz-production.service` for the owned app/ingress process group and `jazz-production-tunnel.service` for the named tunnel; restart limits, finite logs and owned cleanup |
+| Reconciliation | A separate `jazz-payments-sweep.service`/timer at 03:15 UTC, only after the runner's production execution path and old-cron retirement are reviewed |
+
+Pin Node 24 and the reviewed cloudflared binary per service. Leave the shared
+Node default, Docker services, SSH, firewall and reverse proxies unchanged.
+Propose initial app limits of 2 GiB memory, two CPUs and 256 tasks, then accept or
+adjust them from an isolated soak before production. Verify only the new units'
+autostart/restart and absence of public app ports; existing uptime and linger do
+not establish those properties. A named tunnel can route both hostnames to the
+private ingress socket, with an unmatched-host 404.
+[Tunnel configuration](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/configuration-file/).
+
+Preserve the existing ingress's validated client-IP/forwarding-header
+normalization, exact host/HTTPS checks, raw signed webhook body, secure cookies
+and private `no-store` PDF responses with the reviewed framing exception. The
+temporary Quick Tunnel Worker exception must stay preview-only. Keep Mux media
+off the application proxy and package the durable published CA with strict
+Prisma URL/hostname checks. Existing isolated engine TLS tests establish engine
+behavior; they do not establish future production credentials or service health.
+
+The app/ingress supervisor must offer the reviewed standalone
+[maintenance fallback](maintenance-fallback.md) on GET/HEAD when the worker is
+unavailable. API/webhook POSTs must fail with 503 without fake success or a new
+queue. Host or tunnel loss still makes that local fallback unreachable; a safe
+DNS rollback below is an outage response, not a second healthy application.
+
+## Cutover order and stop conditions
+
+This is the execution order for the later reviewed release, not an activation
+command list. Local preparation can proceed now. Production configuration,
+backend activation, DNS delegation and deployment require approval of their
+exact package before the first such change; step 6 is the final web-cutover
+decision, not permission to perform earlier production changes unreviewed.
+
+1. **Choose the backend and operational owner.** Resolve recovery-point currency
+   and a bounded recovered-student/media continuity check without repeating
+   import or uploads. Record whether the service can be kept powered and online,
+   who responds to outages, and the accepted zero-cost interruption risk. Prepare
+   a fresh private backup and configuration/zone rollback bundle; existing local
+   retention does not establish encrypted off-site recovery.
+2. **Implement and rehearse the dedicated production path locally.** Review the
+   target pin, clean environment, supervisor, Unix permissions, failure fallback,
+   logs, resource limits and restart behavior using isolated data. Never learn
+   this by starting an unreviewed launcher against customer data. Produce a clean
+   exact-source release with canonical `https://www.culturadeljazz.com` origins,
+   the selected backend's public configuration and server credentials supplied
+   only at runtime. A backend change requires a fresh public-bound build.
+3. **Prepare domain control without moving web traffic yet.** Obtain legitimate
+   registrar/DNS and Cloudflare access, export every record privately, and compare
+   mail, TXT, CAA and unrelated subdomains. Review DNSSEC before changing
+   nameservers. Replicate the zone on Free and initially retain the old Vercel web
+   records; delegate only after review. Wait for the zone, certificates and
+   authoritative answers to settle before changing the web destinations. Leave
+   unrelated records unchanged and DNS-only where appropriate.
+   [Full-zone/DNSSEC procedure](https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/).
+4. **Prepare exact public identity and integrations.** Review Supabase Site URL
+   and `/auth/callback` plus `/auth/reset-password/callback` and its allowed reset
+   destination. A replacement-project switch also needs the exact Google OAuth
+   provider callback and verified SMTP configuration. Old project cookies do not
+   become sessions on the replacement: expect normal customer sign-in, never
+   fabricate sessions. Verify LIVE product/key/webhook ownership separately;
+   never promote the TEST key or infer LIVE readiness from a TEST purchase. The
+   production implementation must support keeping purchase initiation disabled
+   until that review is complete; existing paid customer access must not depend
+   on accepting a new payment.
+5. **Retire old trusted execution.** Preserve and reverify Vercel's already
+   applied All Deployments Authentication and paused active production. Disable
+   the exact project's old cron before enabling a replacement schedule. Check
+   generated/custom/historical URLs and bypass/team/share access. Gabriel-scoped
+   history remains unreconciled; changing DNS neither revokes its credentials nor
+   proves isolation. No automatic deletion, credential rotation or paid plan is
+   part of this plan.
+   [All Deployments protection](https://vercel.com/docs/deployment-protection).
+6. **Review the complete release, then approve this specific cutover.** Bind the
+   exact source/artifact, backend, account/zone, new units, rollback bundle and
+   bounded acceptance actions in the [release checklist](release-checklist.md).
+   Continuing authorization for earlier maintenance is not evidence that this
+   newly proposed host/DNS move has already been reviewed. Missing access is
+   requested only after these concrete prerequisites are ready.
+7. **Switch the two web routes, then verify.** Point apex and `www` to the owned
+   named tunnel's `<UUID>.cfargotunnel.com` target. Keep canonical GET navigation
+   on `www`, but route the exact supported apex webhook POST paths directly
+   instead of redirecting them. Verify HTTPS/certificate, host/IP normalization,
+   cookies/callbacks, authorization, native PDF, real Mux playback, SEO and the
+   failure fallback from outside the host. On a failed essential check, execute
+   the bounded rollback; do not keep accepting purchases during diagnosis.
+   [Named-tunnel DNS target](https://developers.cloudflare.com/cloudflare-one/faq/cloudflare-tunnels-faq/#what-records-are-created-for-routing-to-a-named-tunnels-hostname).
+8. **Enable only the reviewed local schedule and operations.** The source cron
+   is 03:15 UTC daily; the current native runner CLI is preparation-only, so no
+   executable timer is ready yet. Keep one executor, singleflight/deadline bounds
+   and finite logs; verify an approved first run before unattended activation.
+   Check alerts, backups and Jazz-only service recovery without restarting other
+   workloads. No synthetic traffic is scheduled to prevent backend pausing.
+
+## Rollback with customer data preserved
+
+| Failure point | Bounded response |
+| --- | --- |
+| Before web DNS cutover | Stop only the new Jazz units/tunnel and reverse only their reviewed configuration changes. Keep the existing Vercel protected 503 destination. |
+| New app fails while Monster is available | Stop purchase initiation and the new timer; select a previously reviewed secure, schema-compatible release or serve the standalone maintenance 503. Preserve webhook ledger, new sessions, purchases and learning data; no database rewind or unsafe permission inverse. |
+| Monster, connectivity or named tunnel fails | Restore the recorded apex A and `www` CNAME, after rechecking the Vercel destination remains protected/paused. This restores a safe 503, not the repaired application. A healthy independent fallback host has not been provisioned. |
+| Zone/DNSSEC mistake | Use the private record/NS/DS rollback bundle and registrar procedure. Prefer a web-record rollback within a verified zone over simultaneous DNS delegation changes; propagation and cached answers prevent an instant-recovery promise. |
+| Integration failure | Keep affected writes disabled and webhook failures retryable; never acknowledge an unprocessed event. Restore only reviewed settings. Do not replay checkout/refund actions or discard newer customer/provider facts. |
+
+The old June Vercel deployment is not a secure release rollback. Do not unpause
+it just to obtain a green page. Keep the existing maintenance fallback's
+no-credentials/no-backend serving contract and finite evidence.
+
+## Alternative if Monster cannot be operated continuously
+
+Netlify's current Next integration uses an OpenNext adapter, so native-preview
+proof does not establish Netlify compatibility. Before selecting it, build the
+exact Next 16/Node 24/Prisma 5.17 source on Free and verify native-engine/CA
+packaging, RSA/Mux signing, streaming private PDFs, cookie-backed authorization,
+cache isolation and raw webhook bodies. Test both apex/webhook behavior and the
+scheduled reconciliation replacement; do not assume Netlify's automatic
+canonical redirects preserve signed POSTs.
+[Next integration](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/),
+[Node 24 support](https://www.netlify.com/changelog/2026-07-07-nodejs-24-default-new-sites/).
+
+External DNS can remain: use the actual selected site's Netlify CNAME and the
+documented apex record shown for that site. This avoids the Cloudflare full-zone
+delegation but still requires domain control, an account and reviewed cutover.
+The same customer-backend, callback, quarantine and data-preserving rollback
+requirements apply. Do not deploy into an unrelated shared team or promise
+continuous service when its Free credit pool is exhausted.
+[External DNS procedure](https://docs.netlify.com/manage/domains/configure-domains/configure-external-dns/).
+
+## Unavoidable owner input and sustainable operation
+
+The remaining owner input is specific: establish or delegate control of the
+domain's registrar/DNS and a selected free hosting account only if the scoped
+existing-access checks cannot establish it; accept full DNS delegation if
+Cloudflare is selected; choose the production backend/recovery point and the
+person responsible for machine availability and outage response; then review the
+completed host/cutover package. Existing credential files need not be resent.
+Account MFA or domain recovery must be completed by the owner if existing
+authorized sessions cannot provide that access. No account is created here.
+
+Neither frontend option prevents Supabase Free low-activity pausing after a
+seven-day period. Maintain an honest owner resume/recovery procedure and backups;
+do not create artificial keepalive traffic or a paid upgrade. Existing domain,
+power, media and transaction costs remain. No always-on guarantee, recovery SLA
+or off-site backup is established by this proposal.
+[Current Free pause policy](https://supabase.com/docs/guides/platform/free-project-pausing).
+
+This proposal supersedes the operational recommendation in the historical private
+`/tmp/jazz-maintenance/zero-cost-hosting-review/` revision 2. That packet and its
+original policy observations remain unchanged. Current recovery, payment and
+source outcomes stay in their own dated evidence; none is extended into a new
+production claim by this document.

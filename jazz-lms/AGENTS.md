@@ -117,9 +117,9 @@ offline password matches are not proof of a hosted login. Load private recovery
 inputs explicitly, verify current roles, and use a fresh source/origin/lease.
 Real customer data is not an isolated test environment.
 
-Application changes remain unreleased. Public Vercel is paused; the recovered
-admin/customer/media journeys, recovery point, stable free hosting and release
-review remain open. Use the current summaries in
+Application changes remain unreleased in production. Public Vercel is paused;
+R14 recovered administrator access is verified. Broader student/media journeys,
+recovery point, stable free hosting and release review remain open. Use the current summaries in
 `docs/maintenance/backlog.md` and `docs/maintenance/production-readiness.md`.
 Dated diagnostic sections are historical evidence, not instructions to repeat
 completed recovery or old failed attempts.

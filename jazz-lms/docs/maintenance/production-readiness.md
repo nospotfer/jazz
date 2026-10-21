@@ -1,8 +1,71 @@
 # Production recovery checkpoint — 2026-10-21
 
+<a id="day-preview--oct21-2230-utc"></a>
+
+## Current checkpoint — protected review preview available; student media partial
+
+Application/native source `ace08049acec97f7f363c85160c961a5514fcff2` is running at
+https://handled-performance-pregnancy-minority.trycloudflare.com behind its
+private Basic gate, with fixed expiry **2026-10-22 22:17:23 UTC** (Oct23 00:17
+Madrid). It uses only isolated synthetic `tvm` data. Payment/application-mail/
+cron credentials are absent; current Auth inspection also confirms public
+signup disabled and Google disabled. Use its prepared password login, not
+historical email/OAuth links. This temporary preview is not production hosting.
+
+The separate review browser is open on Behemoth: homepage first, synthetic
+student login prefilled in the second tab, not submitted. Reopen from Behemoth
+with `/home/gabriel/.local/share/culturadeljazz-maintenance/review-20261022/open-preview.sh`.
+Its private gate/actor input is owner-only; server credentials stay on Monster.
+No password or session token belongs in Git, chat or review evidence.
+
+The existing launcher/worker/Basic gate now permit a fixed <=24h lease only for
+payment-disabled isolated previews. TEST payments and recovered-customer access
+retain their exact <=30min deadlines and production startup remains denied.
+405 focused checks plus one added ingress-bound case, types and targeted lint
+pass. A fresh clean locked build and separate45,846-file release inspection pass;
+real server credentials are not supplied to installation/static-generation
+children. Actual public requests verify401 without Basic and200 with it;
+responses are private/no-store and HTML has noindex/nofollow.
+
+Actual current-source student login, certificate ineligibility2/15 and signed
+Mux decode/time advancement pass (52.18333s sample). The mobile PDF returns200
+with cookies/Basic, inline PDF and private/no-store, but the native renderer
+probe fails; its blank crop is not accepted as render proof. No learning,
+payment, refund or mail action is submitted. Current-session local logout204
+and browser closure pass. Final read-only comparison preserves six global
+business-table hashes, hierarchy and prior users' sessions, with selected actor
+sessions0/completed lessons2. This is not full-database/customer-recovery proof.
+Four SQL reads include an initial result discarded by an incorrect HTTP200
+assertion; the corrected read accepts the provider's201. A separate browser
+admission failure makes zero provider requests; its report is retained.
+
+Guest desktop1440 and mobile390 capture/ordinary theme-toggle checks pass with
+no horizontal overflow; both light/dark are actually exercised. Initial full-page
+captures labeled light still used the site's default dark theme and are kept
+qualified. The public promo separately reaches readyState4/error0. These are
+current preview checks, not production or every locale/device acceptance.
+
+The [zero-cost hosting proposal](hosting.md) now gives a Monster/named-Tunnel
+candidate, conditional Netlify fallback, production-runner/backend work, staged
+DNS/callback cutover and data-preserving rollback. Domain/account control remains
+unestablished rather than absent; no production/DNS change or new approval
+request occurred. Next diagnose exact-browser PDF rendering, complete recovered
+student/media and recovery-point checks, and prepare the production runner/target
+and concrete release package. Further coupon launches remain deferred.
+
+Finite outcome SHA:
+`47106edb7cf66a04c7c0019d1a8193c0dd2602c13efd07eb50c7be3510532ac2`.
+The eleven-file credential-free review is retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-student-preview-20261022/`,
+manifest `79b9ad02bc7a45d56ecd616caf1e1976d3066182db0a94cfd7a0e7c0628444f7`.
+Copies are local/unencrypted; off-site recovery is not established.
+Production remains paused/503. Keep the default preview alive until its fixed
+expiry; do not close it merely to end a goal turn, repeat accepted recovery/admin
+work, or replay closed financial plans. The full goal remains incomplete.
+
 <a id="coupon-billing--oct21-2203-utc"></a>
 
-## Current checkpoint — billing reaches payment; sandbox SDK check fails
+## Earlier checkpoint — billing reaches payment; sandbox SDK check fails
 
 The subsequent isolated TEST scope on application `4b320b1` verifies native
 Apply80/8/72, one actual provider checkout, all six nonempty billing fields,

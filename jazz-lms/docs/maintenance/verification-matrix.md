@@ -1,5 +1,19 @@
 # Goal verification matrix
 
+## Current verification — Oct21 22:30 UTC
+
+| Requirement | Actual result | Status |
+| --- | --- | --- |
+| Usable protected preview | Sourceace0804, public401/authorized200, fixed Oct22 22:17UTC expiry; Behemoth review browser open | Available; isolated synthetic data only |
+| Lifetime boundaries | Plain isolated <=24h; TEST/recovery <=30min;405+1 focused checks, types/lint, fresh build/inspection | Passed; no production startup |
+| Student/video | Actual login, signed Mux decode/time advance, certificate denial2/15 | Passed in this scope |
+| Mobile PDF | Authorized/private PDF200; native render probe fails | Delivery passed; rendering unverified |
+| Student preservation | Local logout204, sessions0, six business hashes/prior sessions/hierarchy exact | Passed; not full database/customer proof |
+| Current public UI |1440/390, actual light/dark toggle, no overflow; public promo readyState4/error0 | Passed for these views; not all locale/device coverage |
+| Hosting/release | Concrete free-hosting/cutover/rollback proposal; production runner/target and access still open | No production/DNS changes; public503 |
+
+[Preview and evidence](production-readiness.md#day-preview--oct21-2230-utc).
+
 ## Current verification — Oct21 22:03 UTC
 
 | Requirement | Actual result | Status |

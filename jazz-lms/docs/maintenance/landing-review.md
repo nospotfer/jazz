@@ -1,5 +1,19 @@
 # Public landing before/after review
 
+## Current-source protected preview — Oct21
+
+Actual sourceace0804 guest captures are at
+`/tmp/jazz-maintenance/student-preview-handoff-20261022/landing-current/`.
+The `hero-390-light.png`, `hero-390-dark.png` and `hero-1440-light.png` images use
+ordinary theme-toggle clicks; selected mobile/desktop images are visually
+inspected. All three widths/themes have no horizontal overflow and HTML
+noindex/nofollow; the public promo separately reaches readyState4/error0.
+These do not extend coverage to every locale/device. Earlier full-page files
+labeled light actually retain default dark and are explicitly qualified.
+[Live review access](production-readiness.md#day-preview--oct21-2230-utc).
+
+## Historical before/after
+
 The owner-only standalone review is
 `/home/gabriel/backups/culturadeljazz-maintenance/public-landing-review-20261021/index.html`.
 Open that file with its eight PNGs kept beside it. The desktop and390px hero,

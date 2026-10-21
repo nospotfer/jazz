@@ -1,5 +1,20 @@
 # Production review and rollback checklist
 
+## Current gate — Oct21 22:30 UTC
+
+- [x] Deliver protected day preview and Behemoth review launcher, default payments/
+      mail/cron disabled; preserve TEST/recovery30min limits.
+- [x] Verify current student login, signed Mux, certificate denial, local logout
+      and selected data/session preservation; current public themes/widths pass.
+- [x] Write concrete zero-cost hosting/cutover/rollback proposal with actual
+      production-runner/target/access prerequisites, without production changes.
+- [ ] Resolve mobile PDF rendering verification; complete recovered student/media,
+      recovery currency and remaining paid coupon/refund gates.
+- [ ] Implement/rehearse production path and prepare exact cutover for review.
+      Public production remains503; the preview is not the hosting replacement.
+
+[Actual live preview and limits](production-readiness.md#day-preview--oct21-2230-utc).
+
 ## Current gate — Oct21 22:03 UTC
 
 - [x] Verify six filled billing fields and exact actual unpaid payment/document.
