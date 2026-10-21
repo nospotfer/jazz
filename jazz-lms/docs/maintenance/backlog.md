@@ -1,21 +1,22 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 19:00 UTC
+## Current priorities — October21 19:28 UTC
 
-1. Complete recovered admin access and normal logout. R9 password/user/sync and
-   partial dashboard pass; its exact session cleanup and fresh complete customer
-   readback now pass separately. Adopt the two known historical sign-in stamps
-   before another fresh access scope; do not reset them or repeat cleanup.
-2. Diagnose the first blocked browser request and keep database preservation
-   across explicit pre/post-browser connections. Finish remaining customer/media
-   and isolated coupon/refund journeys; actual source-only preparation is not
-   journey proof. Earlier57P01 cause remains unknown.
-3. Finish recovery currency, zero-cost hosting and release/rollback review. The
-   narrow LIVE payment window is empty, not full purchase reconciliation.
-   Production remains paused and application/UI unreleased.
+1. Finish recovered administrator/dashboard/logout. R11 verifies both explicit
+   database phases and full final data preservation, but stops before browser
+   startup because the three-observation Auth enable wait does not converge.
+   Prepare a longer bounded exact-state wait without repeating the PATCH.
+2. Run the browser with finite first-denial diagnostics and final post-closure
+   unexpected-denial checks. Then finish customer/media and isolated coupon/
+   refund journeys. Prior R9 authentication/partial dashboard remains separate.
+3. Finish recovery currency, stable zero-cost hosting and release/rollback.
+   The narrow LIVE payment window is empty, not full purchase reconciliation.
+   Production is paused; application/UI changes remain unreleased.
 
-All R9 browser/native/tunnel/cleanup resources are closed; no test session remains
-in the verified19:00 state. [Evidence](production-readiness.md#current-checkpoint--oct21-1900-utc).
+R11 final customer/prior/protected state and zero owned sessions are verified;
+Auth restored, both frontends closed, replacement independently paused. The
+bounded R6 tunnel holder remains live at the checkpoint; no app/browser runs.
+[Evidence](production-readiness.md#current-checkpoint--oct21-1928-utc).
 
 ## Earlier priorities — October21 18:41 UTC
 

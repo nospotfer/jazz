@@ -1,19 +1,21 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 19:00 UTC
+## Current access gate — Oct21 19:28 UTC
 
-- [x] Freshly verify and clean exactly the R9-owned session/refresh/AMR rows with
-      one confirmed COMMIT and persisted zero-row readback; preserve audit rows.
-- [x] Verify all1,621 customer rows/14,270cells with only two expected sign-in
-      stamps changed; fresh other/protected state exact.
-- [x] Keep Auth/desired unchanged, close frontend, pause replacement and verify
-      independent fullAuth/old-settings/pause; retain desired404 qualification.
-- [ ] Adopt historical sign-in stamps and explicit pre/post-browser connections
-      for the next scope; do not replay spent cleanup or reset the stamps.
-- [ ] Resolve first browser denial and complete admin/logout, remaining customer/
-      media/payment journeys, recovery currency, free hosting and release review.
+- [x] Preserve completed R9 exact cleanup and two authenticated historical stamps.
+- [x] Verify current persisted admin and zero transient baseline; adopt full RAM
+      snapshot across explicit pre/post-browser database connections.
+- [x] Complete actual two-phase no-browser lifecycle with109 SQL calls, full final
+      customer/prior/protected preservation and both frontend closes.
+- [x] Restore Auth/desired, pause replacement and independently verify old settings
+      and fullAuth; qualify paused desired404 with active-parent equality.
+- [x] Retain failed R11 Auth propagation result; no hosted journey is claimed.
+- [ ] Extend the bounded exact-state wait without another PATCH in the same scope;
+      use a fresh scope to finish administrator/dashboard/logout.
+- [ ] Finish customer/media/isolated payments, recovery currency, free hosting and
+      release/rollback review. Application/UI changes remain unreleased.
 
-[Actual outcome](production-readiness.md#current-checkpoint--oct21-1900-utc).
+[Actual outcome](production-readiness.md#current-checkpoint--oct21-1928-utc).
 
 ## Current access gate — Oct21 18:41 UTC
 

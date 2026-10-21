@@ -1,5 +1,23 @@
 # Maintenance log
 
+## Oct21 — Two database phases preserve data; Auth propagation wait stops access
+
+- Actual39036exit1/19:28:43 closes before browser startup with
+  `EMAIL_ENABLE_CONVERGENCE_UNVERIFIED`: one enable PATCH200, three readbacks
+  still baseline, one rollback PATCH and full Auth restoration verified.
+- Historical timestamp adoption/persisted admin/zero current transients pass.
+  First read-only frontend rolls back/closes after47 SQL calls; fresh second
+  phase rechecks readiness/TLS/route and preserves the RAM baseline. All109 SQL
+  calls complete; full final customer/prior/protected preservation passes.
+- Replacement pause, both frontend closes, old settings and independent nineGET
+  closure pass. No login/session/write occurs. R6 tunnel holder remains bounded
+  and live; no application/browser runs. No production/UI release.
+- R10 never activates after final review finds inherited late-denial success
+  reporting; R11 includes six focused controls and final proof after closure.
+- Next extend only the bounded full-state readback wait, preserving one PATCH
+  per direction and immediate denial of unrelated changes, then admin/logout.
+  [Current evidence](production-readiness.md#current-checkpoint--oct21-1928-utc).
+
 ## Oct21 — Exact session cleanup committed, persisted and independently closed
 
 - Actual20239exit0/19:00:35 uses one fresh connection/105 SQL calls. Exact75163

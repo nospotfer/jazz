@@ -6,7 +6,41 @@
 
 <a id="current-checkpoint--oct21-1841-utc"></a>
 
-## Current checkpoint — Oct21 19:00 UTC
+## Current checkpoint — Oct21 19:28 UTC
+
+R11 stops before browser startup at `EMAIL_ENABLE_CONVERGENCE_UNVERIFIED`.
+Its one enable PATCH returns200, but all three full-state GETs within the short
+readback window still match the disabled baseline. The one rollback PATCH and
+full-state restoration pass. This does not establish that the enable would
+never propagate. No password/login, browser, application or cleanup write runs.
+
+The explicit two database phases now pass an actual complete lifecycle: the
+initial compatible customer baseline verifies1,621 rows/14,270 cells with only
+two authenticated historical R9 sign-in timestamps; current transient rows are
+zero and the persisted admin identity passes. The first connection rolls back
+and closes after47 SQL calls. After Auth restoration, a fresh readiness/TLS/
+route check admits the second connection. Full final customer/prior/protected
+preservation passes across109 cumulative SQL calls. This proves this no-browser
+window, not connection reliability after a completed browser journey.
+
+Both frontends close, replacement pauses, old settings remain equal and the
+independent nine-GET closure passes at19:28:43. Paused desired404 is qualified
+by separate active-parent equality. The R6 build/tunnel holder is still running
+at this checkpoint; no application/browser service runs. R10 was prepared but
+never activated after review found a late-denial reporting edge; R11 includes
+its six-control fix and retains final unexpected-denial checks after closure.
+
+Next use a bounded longer full-state propagation wait, preserving the single
+owned enable/rollback PATCHes and failing immediately on unrelated changes.
+Then run full administrator/dashboard/logout; no repeated import, upload,
+56-cell correction, old cleanup or timestamp reset is authorized by this scope.
+Customer/media/isolated payment, recovery currency, free hosting and release
+review remain open. Public production is paused and UI improvements unreleased.
+
+Actual39036exit1: `/tmp/jazz-maintenance/a11/journal/access-outcome.json`, SHA
+`444ac1646bb952033f2dfeb90435028f9991e75b9221ff292855029c827aa4f0`.
+
+## Earlier checkpoint — Oct21 19:00 UTC
 
 The R9-owned session is now cleaned up and independently closed. Actual20239
 exits0: one new verified connection,105 SQL calls, one cleanup transaction and

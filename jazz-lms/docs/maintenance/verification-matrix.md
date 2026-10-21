@@ -1,17 +1,17 @@
 # Goal verification matrix
 
-## Current recovery check — Oct21 19:00 UTC
+## Current recovery check — Oct21 19:28 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
-| R9 exact session cleanup |20239exit0; one COMMIT, one session/refresh/AMR each deleted; audit unchanged | Committed, persisted and closed; no replay |
-| Fresh complete customer preservation |1,621rows/14,270cells, only two expected R9 sign-in stamps differ; persisted owned rows0 | Verified in fresh cleanup window |
-| Other/protected state | Fresh pre/post rows exact and metadata matched | Fresh-window proof; old uncaptured interval not reconstructed |
-| Settings/resources | No Auth/login/runtime; Auth/desired unchanged, frontendclosed, paused, independent nineGET matches | Passed with paused desired404 qualification |
-| Admin continuity | Prior R9 password/user/sync and partial dashboard pass; denied request/admin/logout open | Incomplete; next initial baseline must admit known historical stamps |
+| Initial restored state |1,621 rows/14,270 cells; two historical R9 stamps only, persisted admin verified, current transients0 | Passed |
+| Explicit database phases | Initial47 SQL/rollback/close; fresh readiness/TLS/route and second frontend;109 total SQL, full final customer/prior/protected preservation | Actual no-browser lifecycle passes; browser lifecycle still open |
+| Temporary Auth enable | One PATCH200; three short full-state reads stay baseline | Failed convergence; no browser/login starts |
+| Settings and resource closure | One rollback PATCH, fullAuth/desired/old settings equal, both frontend closes, pause and independent nineGET pass | Passed; desired404 qualified; R6 tunnel holder remains live |
+| Browser success reporting | R11 includes final proof after context/browser/native stop and rejects unexpected blocks/denials; six controls | Source-only fix; full hosted admin/logout open |
 | Release/full goal | Customer/media/payment, recovery currency, free hosting and review open | Incomplete; production/UI unreleased |
 
-[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1900-utc).
+[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1928-utc).
 
 ## Current recovery check — Oct21 18:41 UTC
 

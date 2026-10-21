@@ -1,19 +1,18 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 19:00 UTC
+## Latest verified replacement state — Oct21 19:28 UTC
 
-Replacement is independently paused, full Auth/old project settings match and
-active desired settings were unchanged. Actual20239exit0 cleans the one R9
-session plus its refresh token/AMR with one confirmed COMMIT; persisted rows0.
-All1,621rows/14,270cells match the compatible archive apart from two expected
-R9 sign-in stamps. Audit/fresh other rows and protected metadata remain exact.
-No Auth change, login or serving resource is used; frontend is closed.
+R11 independently closes with replacement paused, full Auth restored, desired
+settings unchanged and original project settings equal. Both explicit database
+frontends close. Initial and final complete customer/prior/protected readbacks
+pass with109 SQL calls and zero current transient/session rows. Only the two
+known historical R9 sign-in stamps differ from the compatible archive.
 
-R9 hosted authentication/partial dashboard remains verified. Full admin/logout
-is still open; next scope must admit the known historical stamps and explicitly
-separate pre/post-browser connections. Cleanup is spent and must not be replayed.
-Public production stays paused and application/UI unreleased.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1900-utc).
+Access stops at the short Auth enable propagation wait; no new login, browser,
+application or cleanup write starts. The fixed-expiry R6 tunnel holder is still
+running at this checkpoint. Admin/logout, customer/media continuity and stable
+free hosting remain open. Public Vercel is paused; application/UI unreleased.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1928-utc).
 
 ## Latest verified replacement state — Oct21 18:41 UTC
 
