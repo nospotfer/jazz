@@ -1,5 +1,19 @@
 # Goal verification matrix
 
+## Current verification — Oct21 22:03 UTC
+
+| Requirement | Actual result | Status |
+| --- | --- | --- |
+| Coupon/billing/payment creation | Quote80/8/72; one actual checkout; six nonempty fields; one Continue; exact unpaid payment/document | Passed through payment creation |
+| SDK/card/fulfillment | One initialization NO_GO, wrapper GET denied; card/refund0 | Incomplete; further launches deferred |
+| Data and logout | Normal global logout, sessions/purchases0, original fingerprints/core preserved | Passed |
+| Resource closure | Endpoint404; native/browser/listener/tunnels/builder closed;45,846 recorded hashes match | SSH255 and exact stale-socket cleanup disclosed |
+| Diagnostics |105 blocked requests/120 console errors | Unclassified; no blanket health claim |
+| Usable public release | Production503, UI unreleased, no stable preview | Open; preview/restoration plan now prioritized |
+
+[Authoritative result](production-readiness.md#coupon-billing--oct21-2203-utc).
+The matrix below describes the earlier closed attempt.
+
 ## Current verification — Oct21 coupon attempt
 
 | Requirement | Authoritative result | Status |

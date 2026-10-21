@@ -1,5 +1,19 @@
 # Production review and rollback checklist
 
+## Current gate — Oct21 22:03 UTC
+
+- [x] Verify six filled billing fields and exact actual unpaid payment/document.
+- [x] Preserve SDK initialization NO_GO, card/refund0 and all spent markers.
+- [x] Close the scope: normal logout/preservation, endpoint404, owned resources
+      and recorded artifact hashes; retain SSH255/stale-socket qualification.
+- [ ] Deliver a usable preview and concrete free-hosting restoration/release
+      plan; public production remains503 and UI changes are unreleased.
+- [ ] Complete student/media/recovery-point and outstanding payment/refund gates.
+      Further coupon test launches are deferred pending retained-denial review.
+
+[Current outcome](production-readiness.md#coupon-billing--oct21-2203-utc).
+Earlier gates below retain their original results and then-pending actions.
+
 ## Current coupon gate — Oct21
 
 - [x] Verify actual current-source coupon quote80/8/72 and one TEST checkout.

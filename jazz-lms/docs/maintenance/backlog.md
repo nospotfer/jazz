@@ -1,24 +1,23 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 coupon attempt closed
+## Current priorities — October21 22:03 UTC
 
-1. Finish the coupon payment with the corrected six-field synthetic billing
-   fixture, verified explicit Behemoth Node path and working YAML Unix webhook
-   tunnel prepared before the next financial window. The closed attempt passes
-   native Apply80/8/72 and one real checkout, but empty billing fields prevent
-   payment creation; SDK/card/refund0. Preserve its coupon, alias, unpaid checkout
-   and spent markers. Do not replay the old plan. Final sessions/purchases0 and
-   original fingerprints pass; exact owned endpoint404/resources close.
-   [Actual outcome and fixture correction](production-readiness.md#coupon-test--oct21-2125-utc).
-2. Verify broader recovered student/content/media continuity, complete charged
-   currency and the separate refund/access-reversal requirement. R14 already
-   passes admin login/dashboard/admin/global logout; do not repeat that recovery,
-   accepted imports/uploads, correction or old cleanup. The prior refund wallet
-   denial remains a failed refund, with its reservations preserved.
-3. Finish recovery-point currency, stable zero-cost hosting and production
-   release/rollback review. Application `4b320b1` is verified in the closed R14
-   preview; last published checkpoint `e79a0bc` passes all10 remote checks. No production
-   deployment occurred, no preview remains, and the public site is503/paused.
+1. Converge on a usable preview and concrete zero-cost public-site restoration
+   and release/rollback plan. The site is503/paused and UI changes are unreleased;
+   continued testing alone does not deliver the owner's usable-site objective.
+2. Verify broader recovered student/content/media continuity and qualify the
+   recovery point. R14 admin login/dashboard/admin/logout and the accepted
+   database/PDF recovery are complete; do not repeat them or their cleanup.
+3. Defer further coupon test launches while reviewing the retained SDK wrapper
+   denial. The latest scope reaches an actual unpaid payment after all six
+   billing fields and one Continue; SDK initialization is NO_GO, card/refund0.
+   Normal logout/data preservation/endpoint404 and resource closure pass with
+   SSH255/stale-socket cleanup disclosed. Preserve every closed scope and spent
+   marker. Paid coupon/currency/fulfillment and refund/access reversal remain
+   incomplete. [Current result](production-readiness.md#coupon-billing--oct21-2203-utc).
+
+Application `4b320b1` remains undeployed. Published checkpoint `bf203b7` passes
+all10 remote checks; this is source verification, not production readiness.
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

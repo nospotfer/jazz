@@ -1,8 +1,55 @@
 # Production recovery checkpoint — 2026-10-21
 
+<a id="coupon-billing--oct21-2203-utc"></a>
+
+## Current checkpoint — billing reaches payment; sandbox SDK check fails
+
+The subsequent isolated TEST scope on application `4b320b1` verifies native
+Apply80/8/72, one actual provider checkout, all six nonempty billing fields,
+one Continue, an actual payment in `requires_payment_method`, and its exact
+observed payment document. Selecting Spain exposes address autocomplete; the
+ordinary “Enter address manually” control allows the synthetic address to be
+filled. A root binder also needed a local correction to preserve the browser
+capture separately from the provider capture; its validation rules are unchanged.
+
+One SDK initialization produces NO_GO: its sole wrapper GET is denied, source,
+frame and readiness proofs are absent, and card submission remains disabled.
+No card or refund is submitted. This is a test-browser failure, not proof of a
+product payment failure or a successful discounted payment. One earlier client
+attempt in this scope was rejected before any provider transport because its
+ownership proof aged past120s; its markers remain alongside the one actual
+provider checkout. No further financial scope is launched.
+
+Normal global logout and final read-only checks verify sessions0, purchases0
+and original fingerprints/account core preserved. Actual SQL is12 read-only
+calls plus one owned alias INSERT. Merchant calls total18: provider holder16,
+one separately bounded customer GET and one application checkout. The coupon,
+alias, checkout and unpaid payment remain retained. The exact owned webhook is
+disabled/deleted and GET404 verified. Browser holder exits0; SSH transport
+exits255 with its process terminal, and the stale socket is separately removed
+only after its exact device/inode/mode and refused connection match. Native,
+listener, both tunnels and builder close. All45,846 recorded artifact hashes
+match; unrecorded files are not enumerated. Browser diagnostics retain105
+blocked requests/120 console errors, unclassified.
+
+Finite outcome SHA:
+`5cba3164b88f800185f610edc431de3194a15b61e5a994ae362299bde9bbd053`.
+The three-file credential-free review is retained locally under
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-coupon-billing-20261021/`,
+manifest `f41d7be2fd915dcd7cc236c20d7a44276ba2a1f7760ba1bcb79e03a27a650330`.
+Retention is unencrypted; off-site recovery is not established.
+
+The owner has asked for clarity after excessive runtime. Further payment test
+launches are deferred while the retained SDK denial is reviewed. Next prioritize
+a usable preview, recovered student/media continuity and a concrete zero-cost
+hosting/restoration and release/rollback plan. Do not repeat accepted recovery,
+R14 admin verification or closed financial scopes. Public production still
+returns503; application/UI improvements remain unreleased. Full maintenance and
+paid coupon/refund verification remain incomplete.
+
 <a id="coupon-test--oct21-2125-utc"></a>
 
-## Current checkpoint — coupon checkout verified; payment incomplete
+## Earlier checkpoint — coupon checkout verified; payment incomplete
 
 The current-source isolated TEST attempt on application `4b320b1` verifies
 existing USER login, actual one-use 10% provider coupon readback, native Apply

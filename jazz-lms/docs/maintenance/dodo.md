@@ -1,5 +1,15 @@
 # Dodo product, webhook and sandbox audit
 
+## Latest Oct21 22:03 UTC — Billing reaches unpaid payment; SDK denied
+
+The subsequent bounded scope verifies six nonempty billing fields and one
+Continue, then exact actual payment/document readback. One SDK initialization
+is NO_GO after its wrapper GET is denied; card/refund0. Normal logout,
+sessions/purchases0, prior-data preservation, endpoint404 and resource closure
+pass with SSH255/stale-socket cleanup disclosed. Further financial scopes are
+deferred while the retained denial is reviewed and usable preview/restoration
+work takes priority. [Current complete result](production-readiness.md#coupon-billing--oct21-2203-utc).
+
 ## Oct21 actual coupon quote and checkout; payment still incomplete
 
 Application4b320b1 verifies actual one-use 10% coupon identity/limits, native

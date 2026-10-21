@@ -1,21 +1,22 @@
 # Maintenance review checkpoints
 
-## Current status — Oct21 coupon checkout partial
+## Current status — Oct21 22:03 UTC
 
 - Production is paused/503; application and UI improvements are unreleased.
 - Recovered database/PDF import and R14 admin login/dashboard/admin/logout are
   complete. Do not repeat them or their accepted corrections/cleanup.
-- Current-source coupon Apply80/8/72 and real TEST checkout creation pass.
-  Payment is incomplete because the browser fixture leaves billing fields empty;
-  SDK/card/refund attempts0. The six-field fixture is now fixed locally.
-- Normal logout/final data checks pass, endpoint deletion404 and independent
-  resource closure pass. Holder255,33 blocked requests and44 console errors
-  remain disclosed. This is not a complete checkout or blanket health result.
-- Next verify a complete bounded coupon payment with the corrected fixture,
-  broader student/media continuity, recovery currency and stable free hosting,
-  then prepare the production release/rollback review.
+- Current-source coupon Apply80/8/72, checkout creation, six filled billing fields
+  and an actual unpaid payment pass. SDK initialization is NO_GO because the
+  test browser denies its wrapper request; card/refund0. Paid fulfillment is
+  incomplete and further coupon launches are deferred.
+- Normal logout/final preservation pass, sessions/purchases0, endpoint404 and
+  resource closure verified. SSH255 and separately removed exact stale socket,
+  105 blocked requests/120 console errors remain disclosed. No blanket health claim.
+- Next prioritize a usable preview, student/media continuity and concrete free
+  hosting/restoration and release/rollback plans. Avoid further tooling loops;
+  accepted recovery/admin checks and closed payment scopes must not be repeated.
 
-[Latest authoritative outcome](production-readiness.md#coupon-test--oct21-2125-utc).
+[Latest authoritative outcome](production-readiness.md#coupon-billing--oct21-2203-utc).
 Everything below is dated history and may contain superseded pending actions.
 
 ## Oct21 R5 verifies both existing files; continuation remains stopped

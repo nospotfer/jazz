@@ -1,5 +1,20 @@
 # Maintenance log
 
+## Oct21 22:03 UTC — Coupon billing progresses; SDK check stops; scope closes
+
+- Actual checkout and six nonempty fields reach a provider payment in
+  `requires_payment_method`; manual address entry resolves autocomplete.
+- One SDK initialization is NO_GO after its wrapper GET is denied. Card/refund0;
+  preserve the failed test-browser result without inferring a product failure.
+- Normal global logout, sessions/purchases0 and original fingerprints/core pass;
+  owned endpoint404, native/browser/listener/tunnels/builder close and45,846
+  recorded hashes match. SSH255/stale-socket removal and105 blocked requests/
+  120 console errors remain qualified.
+- Owner asks why work is taking so long. Defer additional coupon scopes and
+  prioritize a usable preview and concrete public-site restoration/release plan.
+  Production is still503 and UI unreleased.
+  [Actual counts, outcome and custody](production-readiness.md#coupon-billing--oct21-2203-utc).
+
 ## Oct21 — Actual coupon checkout passes; empty billing fixture stops payment
 
 - Application `4b320b1` verifies controlled USER login, native coupon80/8/72,
