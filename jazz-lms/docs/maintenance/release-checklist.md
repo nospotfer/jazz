@@ -1,5 +1,21 @@
 # Production review and rollback checklist
 
+## Current access gate — Oct21 15:39 UTC
+
+- [x] Current application31ad6ba builds with locked install and final inspection.
+- [x] Recovered access scope closes with customer/protected preservation, Auth
+      unchanged, frontend closed and independent paused/original-settings proof.
+- [x] Owned builder/tunnel is stopped and its real handle exits0.
+- [x] Reproduce and prepare native UUID boundary correction;98 closed controls.
+- [ ] Verify hosted admin login/dashboard/admin/logout on a fresh corrected preview.
+- [ ] Complete remaining customer/media/payment journeys, recovery-point and
+      zero-cost hosting decisions, then production release/rollback review.
+
+The failed scope never enables Auth or starts a browser/app; do not count it as
+preview/login proof or replay its spent plan. Paused PostgREST404 remains an
+independent desired-comparison limit. [Evidence](production-readiness.md#oct21-admin-check-closes-before-login).
+All68 PDFs/import remain accepted; production is paused and UI unreleased.
+
 ## Current release gates — Oct21 14:48 UTC
 
 - [x] Restore and verify the October13 database and all68 PDFs/6,423,774 bytes.

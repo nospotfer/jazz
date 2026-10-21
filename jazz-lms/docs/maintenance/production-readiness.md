@@ -1,5 +1,49 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 admin check closes before login
+
+The first recovered-admin access scope ends at15:39:30 UTC with a generic
+validation failure before Auth enablement, native startup or login. Actual tool
+handle32570 exits1. This is not a successful preview or hosted-login result.
+
+- All six services become healthy; two process scans admit only the exact owned
+  builder/tunnel pair and pass the unchanged validator. One verified session
+  connection is used.115 read-only SQL calls preserve all original typed cells,
+  prior rows and protected metadata; the frontend closes.
+- There is one resume and one pause,87 management calls and zero Auth PATCHes.
+  The independent nine-GET closure confirms target inactive/Auth unchanged and
+  original project states/settings unchanged. Paused PostgREST404 leaves the
+  independent desired-settings comparison unavailable; active equality before
+  pause is separately verified.
+- The application/browser never starts, there are no new observed sessions and
+  no cleanup transaction is required. The owned build/tunnel handle2300 is then
+  stopped after identity checks and reaches exit0. No serving resources remain.
+- A separate offline reproduction uses the real psycopg UUIDLoader2950: native
+  UUID IDs fail the adapter's string-based actor policy despite representing
+  the same identity. Copies with canonical IDs pass while raw snapshots remain
+  unchanged. The actual historical exception code was discarded, so this is a
+  proven adapter defect, not retrospective proof of that run's exact cause.
+- R4 fixes this copied policy boundary and retains finite failure phase/known
+  denial codes.98 closed controls pass, including actual adapter start with a
+  synthetic transport and native UUIDLoader values. This is preparation only;
+  the policy, permissions, runtime template and customer-cell rules stay intact.
+
+The last build is application31ad6ba with synthetic unused private build inputs;
+it did not start a service. A root prelaunch assertion used the wrong source
+review status label; the receipt's exact hash and actual PASS/zero findings were
+subsequently verified. Keep that failed assertion and the access outcome; do not
+replay the spent scope. The next action is a fresh protected preview after the
+adapter correction, followed by the remaining customer/media/payment journeys.
+
+Nineteen selected source/closed-outcome files are retained privately at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-admin-access-stop-20261021/`,
+manifest `f6315b9f5af6ca4fd19616ef08e9024f63871e98399c23ba9e28a452b6c7c127`.
+Credentials, enabled plans/gates, raw SQL/customer/Auth rows, PDFs, browser state,
+process environments and spent ledgers are excluded. Custody is local and
+unencrypted; no off-site recovery claim follows. All68 accepted PDFs and the
+committed customer import remain complete and must not be replayed. Production
+is paused and the UI improvements remain unreleased.
+
 ## Oct21 all68 files accepted and replacement paused
 
 **Current checkpoint, 14:48 UTC:** the recovered database and all68 archived PDFs

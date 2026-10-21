@@ -83,57 +83,36 @@ controlled USER/recipients, source and delivery separately, with bounded actions
 under the owner's continuing authorization. Cron/mail/tracking/local mutators
 stay disabled; production startup remains denied.
 
-Current recovery checkpoint (Oct21 14:48 UTC): the October13 database and all68
-PDFs/6,423,774 bytes are restored and accepted in replacement klaiiikojgdfclzhqfgt.
-Actual89467exit0 freshly adopts both existing PDFs read-only and uploads only66;
-initial/final1,621 rows/14,270 typed cells, protected metadata, explicit rollback,
-frontend/worker closure and pause pass. Independent nine-GET closure preserves
-target Auth and original states/settings. Its paused PostgREST settings404 is an
-explicit independent-comparison limit; active desired equality before pause is
-separately verified. Never repeat the committed import, recreate the bucket or
-replay completed file uploads. Current application31ad6ba still needs a fresh
-protected HTTPS recovery preview and actual restored login. Authv2.197.0 source
-compatibility is prepared; direct health and cleanup dependency proof remain
-required. Public Vercel is paused, UI changes unreleased, recovery-point currency
-and the remaining goal/release gates open. See the current top checkpoint in
-docs/maintenance/production-readiness.md. The following dated connection/file
-diagnostics retain historical limits and do not schedule additional uploads.
+## Recovery and current work
 
-Access commits bbec8b1/748a50c are integrated in this maintenance checkpoint.
-No recovery artifact runtime or deployment has occurred.
-Commit bbec8b1 requires verified Auth ID/email and a matching existing
-application row's persisted role for page/API guards;
-permission lookup no longer creates/promotes accounts or fabricates authority
-on a database error. Registration/OTP/OAuth provisioning remains separate. Its41
-regressions and76 related checks pass. Commit748a50c prepares a replacement-only
-`recoveryAccess` profile with a <=30-minute lease tied to Basic gate/worker,
-strict read-route/session-sync allowlist and skipped Auth/dashboard side effects.
-939 native cases and753 integration/29skip pass; this is not actual restored
-login or public HTTPS proof. Production startup stays denied. Build a fresh artifact from the published
-maintenance checkpoint; coordinate actual access after file acceptance and the
-pinned Storage scope closes. Real customer data is not isolated test data; provider/session/data-preservation evidence stays
-required. The Oct21 documented5432 session-route diagnostic passes seven metadata
-SQL calls/30.030s same SQL session/rollback/close, followed by independent12:17:21
-paused/settings closure. The subsequent remaining66 scope stops at its single
-native connection with OperationalError/no SQLSTATE: zero SQL/Storage HTTP/new
-uploads, no current preservation/adoption/rollback. Actual root29019 exits1;
-independent12:47:25 closure verifies the replacement paused and old states/
-settings equal. The connection cause remains unknown; add the existing finite
-connect classifier and timing receipt before a new reviewed scope. Do not replay
-spent plans. Earlier R5 verifies both existing PDFs/171,746 bytes and initial
-1,621 rows/14,270 cells before57P01, with final preservation/rollback unverified.
-Fresh typed/protected checks and both read-only adoptions remain required before
-any new upload. Never re-POST/overwrite either file, recreate the bucket or repeat
-customer import. No route remedy/full-lifecycle/end-to-end TLS claim follows
-from the short diagnostic. The offline admin password match is not hosted login
-or role/session/autoload authority. See `docs/maintenance/production-readiness.md`
-for exact evidence and limits; native build/Auth adapters remain preparation only.
-The subsequent root28370 Storage scope also closes with zero SQL/Storage/new
-uploads:1,990ms unclassified native connect failure, independent13:04:33 paused/
-settings closure. Equal route/credential-file/CA bindings leave caller context
-and remote cause unresolved. Next use a reviewed connection-only diagnostic in
-the same closed worker, with sanitized text private and outside review evidence;
-defer further upload attempts until that diagnosis is complete.
+The October13 archive has been restored into the replacement backend:26 tables,
+1,621 rows/14,270 typed cells and all68 PDFs/6,423,774 bytes. The accepted import
+and file uploads are complete. Never repeat them, recreate the bucket or overwrite
+restored objects. Archive recovery does not establish recovery-point currency.
+
+The original production backend remains paused because its browser permissions
+are unsafe. The replacement has the reviewed strict permission structure; keep
+its public database API closed. Its latest access check closes at Oct21 15:39 UTC
+with customer/protected-state preservation, Auth restoration, client closure,
+independent paused/settings closure and unchanged original projects. The preview
+and login were not reached. A real psycopg UUID/string boundary defect is
+reproduced offline; fix the adapter before the next fresh access scope. Its
+historical generic failure did not retain the exact cause.
+
+Admin authorization requires verified Supabase identity and the matching existing
+application row's persisted role. Permission lookup must not create/promote an
+account or invent authority after a database failure. The native `recoveryAccess`
+profile permits a <=30-minute protected read-only access check; source tests and
+offline password matches are not proof of a hosted login. Load private recovery
+inputs explicitly, verify current roles, and use a fresh source/origin/lease.
+Real customer data is not an isolated test environment.
+
+Application31ad6ba builds successfully but remains unreleased. Public Vercel is
+paused; the recovered admin/customer/media journeys, recovery point, stable free
+hosting and release review remain open. Use the current summaries in
+`docs/maintenance/backlog.md` and `docs/maintenance/production-readiness.md`.
+Dated diagnostic sections are historical evidence, not instructions to repeat
+completed recovery or old failed attempts.
 
 ## File Patterns
 

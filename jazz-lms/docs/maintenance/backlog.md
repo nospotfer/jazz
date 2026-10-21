@@ -1,379 +1,38 @@
 # Prioritized maintenance backlog
 
-## Current next action — Oct21 14:48 UTC
+## Current priorities — October21
 
-1. Build current application31ad6ba and start the protected HTTPS preview with
-   the recovered backend under a fresh bounded access plan. Verify direct Auth
-   version, existing admin role/identity, normal login/dashboard/admin/logout,
-   owned-session cleanup and customer/protected-state preservation.
-2. Verify remaining customer/media/PDF and coupon/refund journeys at their actual
-   source/origin/backend; finish the recovery-point, zero-cost hosting and release
-   decisions. Production remains paused; UI improvements are not live.
+1. Repair the reproduced native UUID/string boundary in the recovery adapter,
+   then verify existing admin login, dashboard, admin overview and normal logout
+   on a fresh protected HTTPS preview. The latest application builds, but the
+   actual access check stopped before Auth enablement or browser startup.
+2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
+   actual source/origin/backend. Keep customer writes and payment tests isolated.
+3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
+   and the release/rollback package. The public site remains paused and the UI
+   improvements are unreleased.
 
-**Database/file restoration is complete for the October13 archive:**26 tables,
-1,621 rows/14,270 typed cells and all68 PDFs/6,423,774 bytes pass. The replacement
-is paused, Auth and original settings are preserved. Independent paused
-PostgREST settings404 is an explicit limit, not a configuration-drift claim.
-Do not reimport customer data, recreate the bucket or run another restoration
-upload. Dated checkpoints below preserve historical evidence; their upload and
-connection-diagnosis next actions are superseded by this checkpoint.
-[Current evidence](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+## Accepted recovery and latest access result
 
-## Current next action — Oct21 13:04 UTC
+The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
+26 tables,1,621 rows/14,270 typed cells. Do not repeat the committed import,
+recreate the bucket or replay file uploads. This does not prove data currency
+after the archive's recovery point.
 
-Review/run one connection-only diagnostic in the exact closed Storage worker,
-zero SQL/Storage, with a bounded sanitized message kept privately. The latest
-one-connect attempt reproduces an unclassified1,990ms failure; independent paused
-closure passes. Equal route/credential-file/CA bindings do not establish equal
-caller environments or a cause. Preserve spent scopes; defer uploads until the
-connection is understood, then recheck all customer/file prerequisites. Admin
-access/build/HTTPS and the full release scope remain open.
-[Evidence](production-readiness.md#oct21-closed-worker-connect-failure-reproduced).
+The Oct21 access scope closes at15:39 UTC with115 read-only SQL calls, complete
+customer/prior-row/protected-state preservation, Auth unchanged, frontend closed,
+replacement independently paused and original states/settings unchanged. All six
+services became healthy and both process checks passed. No Auth PATCH, login,
+browser or application runtime occurred. Its exact failure code was discarded;
+a real psycopg UUID-versus-string policy-boundary defect is independently
+reproduced offline and must be fixed before another scope. Independent paused
+PostgREST settings404 remains a qualified comparison limit; active equality was
+verified before pause.
 
-## Current checkpoint — Oct21 12:47 UTC
-
-1. Repair missing finite diagnostics at the actual Storage connect boundary:
-   latest one-connect scope stops before SQL/HTTP/uploads, cause unknown. Preserve
-   its spent plan and terminal failure; independent paused/settings closure passes.
-   Do not loosen timeouts or repeat an operational attempt to debug a controller.
-2. In a fresh reviewed scope, verify current typed/protected customer state and
-   adopt both existing PDFs read-only before any remaining66 upload. Do not
-   reimport, recreate the bucket, overwrite or re-POST either prior object.
-   Earlier5432 seven-SQL/30.030s success is not full lifecycle stability proof.
-3. Complete restored admin/file continuity and current-source native preview,
-   remaining coupon/refund, recovery point, zero-cost hosting and release work.
-   31ad6ba CI/publication passes; no deployment or full recovery is established.
-
-[Current evidence and limits](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect). Earlier checkpoints remain historical.
-
-## Latest diagnostic checkpoint — Oct21 11:40 UTC
-
-The dedicated R2 read-only connection diagnostic passes seven metadata SQL calls,
-30.012s same-SQL-session idle, rollback and close on the original verified-TLS
-6543 transaction route. Statement timeout is120000ms; queried idle/transaction
-settings are0, with no applicable scoped override rows. R1 stopped at an
-identifier guard with zero SQL; its original identifier value/type stays unknown.
-R2 protocol identifiers are observations, not SQL PID authority. Independent
-sevenGET closure confirms paused replacement/production, healthy preview and
-unchanged old settings.
-
-1. Preserve original R1/R2 outcomes and all R4/R5 spent ledgers. The short current
-   observation establishes no earlier shutdown cause/remedy or full upload-run
-   stability and rereads no customer values; R5 final preservation/rollback is
-   still unverified.
-2. Prepare a fresh bounded adopt2/upload66 scope with current typed customer/
-   protected-state checks before writes, or separately derive and verify documented
-   5432 session routing using the current provider host for native preview.
-   Never re-POST/overwrite either existing
-   PDF, recreate the bucket or repeat customer import. Continuing maintenance
-   authorization applies; a fresh technical plan/once ledger remains required.
-3. Complete all file acceptance and restored Auth/admin/native-preview continuity,
-   native coupon binding/retained TEST refund, recovery-point currency, zero-cost
-   hosting and release gates. a30bc17 publication is not deployment/full recovery.
-
-[Current diagnostic evidence and limits](production-readiness.md#oct21-read-only-connection-diagnostic-completes). The earlier Storage sections preserve historical results.
-
-## Latest Storage stop — Oct21 10:41 UTC
-
-R5 freshly verifies/adopts both existing PDFs read-only, 171,746 bytes total,
-without a new upload. Initial 1,621 rows/14,270 typed cells match, then
-source-derived second stability request048 fails AdminShutdown57P01. Closed/UNKNOWN connection and explicit
-CONNECTION_CLOSED cleanup skips leave final preservation/rollback unverified.
-Frontend/worker close; independent sevenGET closure confirms the paused backend
-and unchanged old states/settings. Next:
-
-1. Preserve completed R5 outcome/log custody 17+9 files. Their projected events
-   do not match the retained frontend or establish a shutdown cause. Observed
-   port 6543/transaction-pooler routing does not establish a remedy.
-2. Prepare fresh read-only settings/identity/persistence diagnostics and establish
-   current customer/protected-state and cleanup prerequisites before more writes. Never re-POST/overwrite either verified object or recreate
-   the bucket; preserve all spent scopes.
-3. Finish the remaining 66 file acceptance, controlled restored-account access,
-   recovery-point/zero-cost hosting and release gates. 8ac31bd documentation
-   publication/CI/custody passes; app source 105f8b9 remains undeployed.
-
-No further upload loop or proven operational remedy is proposed here. [R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown).
-
-## Latest Storage stop — Oct21 10:01 UTC
-
-R4 freshly verifies/adopts the original first object and uploads one new PDF with
-source-bound byte readback, then stops at SQL014 AdminShutdown57P01. Only one
-object is fully verified. Initial customer values match; new-object SQL metadata,
-final customer/protected preservation and explicit rollback remain unverified.
-Frontend/worker close; independent closure confirms paused replacement/production,
-healthy preview and old settings equal. Next:
-
-1. Review the retained finite SQL failure without assuming a platform cause.
-2. Verify both current existing objects and customer/protected state in a fresh
-   bounded read-only scope before further uploads. Never re-POST/overwrite either
-   object or recreate the bucket; do not yet accept a remaining count of66.
-3. Finish all68 files, controlled restored-account access and recovery-point/
-   zero-cost hosting/release gates. Exact105f8b9 publication/CI passes; UI remains
-   unreleased and the full goal unfinished.
-
-[R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown).
-
-## Latest source security checkpoint — Oct21
-
-- Session synchronization now rejects foreign/missing Origin and non-JSON forms
-  before token processing. Closed real-SDK evidence confirms the original login
-  CSRF defect;67 integrated cases/typecheck and exact105f8b9 publication/CI pass.
-  Actual protected login remains to verify; the fix is not deployed.
-- The scoped Storage metadata representation review is accepted. R4 must still
-  check fresh actual policy dependencies and adopt the first object read-only
-  before uploading. The later R4 partial result and fresh-read-only prerequisite
-  above supersede this pre-execution checkpoint.
-
-[Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
-
-## Latest file acceptance work — Oct21 09:19 UTC
-
-R3 stores and downloads the first PDF with matching source bytes, but the frozen
-contract accepts0 objects because actual user_metadata{} differs from archived
-SQLNULL. Customer data remains intact and independent closure confirms pause.
-Next:
-
-1. Review the prepared explicit absence mapping and capture/check actual Storage
-   policy dependencies on a fresh same frontend; earlier finite captures lack
-   pg_policies rows. Adopt the existing first object through fresh read-only hash/
-   ID/version/path checks, or prepare a remedy. Never POST/overwrite it again or
-   recreate the bucket. A new bounded scope may upload only the remaining67 files;
-   use the later R4 current-object checks above.
-2. Use retained R3 finite evidence. After file acceptance, build a fresh protected
-   artifact from the published maintenance checkpoint and verify controlled
-   existing customer/admin login/logout. The offline admin candidate match is not hosted Auth proof; avoid a reset merely
-   to repeat this source check and load its private reference explicitly
-   only in a fresh bounded scope.
-3. Qualify the recovery point, stable free hosting, remaining journeys and
-   release/rollback. Application changes remain unreleased.
-
-[Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
-
-## Latest Storage continuation — Oct21 08:56 UTC
-
-R2 has created the bucket once and uploaded zero PDFs;1,621 rows/14,270 cells
-remain preserved. Independent final readback confirms paused replacement and
-unchanged originals, while both earlier closure failures stay retained. Next:
-
-1. Finish and review a fresh existing-bucket continuation with genuinely fresh
-   destination observations,68 PDF byte/ownership/default/bijection checks and
-   customer-data preservation. Do not recreate the bucket or replay R1/R2.
-2. Use the now-locally-integrated bbec8b1/748a50c access changes after the pinned
-   Storage scope closes; build a fresh protected artifact and verify controlled
-   existing customer/admin login and normal logout. Source tests are not GoTrue
-   proof; real customer data is not an isolated test environment.
-3. Resolve recovery-point currency, stable free hosting, remaining journeys and
-   release/rollback. UI changes remain unreleased; last public check503.
-
-This dated R1/R2 section precedes the R3 result above. [Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
-
-## Latest customer recovery — Oct21 07:39 UTC
-
-Hosted customer import now passes:1,621 rows/14,270 typed cells, one confirmed
-COMMIT and fresh persisted readback with protected metadata preserved. Native-RI
-review is resolved; exact replacement is independently paused and originals
-unchanged. Preserve that result and all spent ledgers; do not repeat import or
-empty-only postchecks. Next:
-
-1. Restore68 PDFs with actual no-overwrite upload, byte readback, destination
-   ownership/defaults and exact path bijection; preserve populated customer data.
-   Client16 closed controls pass; transport/lifecycle preparation is in progress.
-2. Verify original customer/admin Auth and course/file access on the replacement.
-3. Qualify the October13 recovery point and prepare stable zero-cost hosting,
-   remaining journeys and release/rollback. Public site503 and unreleased UI
-   remain current. No owner input is needed for present preparation.
-
-Earlier dated sections retain their original scope results.
-[Evidence and custody](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
-
-## Latest import inspection — Oct21 07:00 UTC
-
-Import-specific metadata capture/18+11 READ ONLY calls/both rollbacks/client
-closure pass; independently paused replacement and preserved originals verified.
-Resolve the captured native-RI trigger signature review before customer import.
-The exact68-object Storage upload-plan validator is prepared and independently
-reviewed; actual uploads/defaults/ownership/bytes remain open. Continue mapped
-data-aware hosted restore, Auth/file continuity, recovery-point qualification,
-stable free hosting and release. [Evidence](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
-
-## Latest selected API verification — Oct21 06:20 UTC
-
-Selected four-kind/24-GET REST matrix and both18-request READ ONLY/rollback checks
-now pass. Independent closure confirms the replacement paused and original
-states/settings preserved. Next prepare fresh import-specific managed metadata
-and exact Storage upload bijection, then hosted customer/account/file recovery.
-User-token/GraphQL coverage, current recovery point, stable free hosting and
-release remain open. Earlier failures below are historical, not current matrix
-results. [Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
-
-## Latest hosted verification — Oct21 05:58 UTC
-
-First18-request READ ONLY/rollback passes, but the fresh scope stops at second
-BEGIN setup before any API probe. Its cleanup rollback is unconfirmed; client
-closure, guarded setting rollback, pause and independent original-state readback
-pass. Next fix the verified SQL diagnostic gap, then run a fresh bounded check.
-Do not retry this spent scope or count publicGET0 as containment proof. Before
-customer import, capture/review actual current table triggers and managed
-permissions in addition to the verified source/native constraints.
-[Evidence and open gates](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
-
-## Current recovery and coupon work
-
-- Native local PG17 recovery passes 1,621 rows/14,270 cells, constraint rollback and
-  independent cleanup. All 68 PDFs/source privacy/NULL ownership checks pass.
-  Hosted customer/Auth/Storage restore, actual destination defaults/ownership/
-  file bijection and current recovery point remain open.
-- Existing locked empty API namespace is committed/reverified with protected 227/
-  effective rights/managed preservation. First 24 GETs expose root 401 verifier
-  mismatch, fixed narrowly in R3; latest 18 + 18 READ ONLY scope stops at third GET5 s
-  deadline/no HTTP. Both rollback/pause/independent closures pass, latest 05:30:48.
-  Next: finite transport diagnostics/fresh bounded verification, preserving stopped
-  scopes. No customer import/release yet. [Current checkpoint](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
-- Fresh actual persisted227/read-only verification now passes: effective rights/
-  empty guards, original managed state, both rollbacks/closes and independent
-  04:09:08 paused/original-settings closure. Selected4relations/26constraints/
-  25sourceindexes/one enum match; four extra nonunique platform indexes are
-  reviewed and retained. Offline14accounts/16identities/seven purchases have
-  consistent checked links; preserve two confirmation disagreements and roles.
-  Static current Prisma model coverage passes. Next: mapped restoration with
-  value/postcondition checks and bounded rollback, then actual Auth/Storage
-  continuity. Customer import, serving, recovery-point qualification and release
-  remain open. [Current checkpoint](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
-- Actual R8 isolated empty-schema setup now passes42 SQL/strict227/effective
-  rights/managed preservation and sole confirmed COMMIT. Parent/child0, pause
-  and independent seven-GET original-state closure pass. Fresh persisted227 and
-  managed-constraint checks now pass as recorded above; restoration remains.
-  No customer import, serving or production release has occurred.
-  [Current checkpoint](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
-- Fresh hosted TLS-only/unchanged D6 psycopg/Node comparison now passes both
-  read-only clients, rollback/closure and344 managed column capture. Parent0 and
-  independent seven-GET closure confirm the replacement paused/original settings
-  preserved. Earlier R6 cause remains unknown; no parameter change follows.
-  Actual atomic227 subsequently passes as recorded above; imports/serving remain
-  unverified.
-  [Actual comparison](production-readiness.md#oct21-hosted-client-comparison-passes).
-- Explicit offline mapping accounts for65tables/2,239records:1,690candidates
-  including four historical Prisma rows,549transient/managed exclusions; both
-  sequences stay destination-owned. All68 relative Attachment paths match the
-  retained source objects/IDs/versions/byte metadata; owner/owner_id are SQL NULL.
-  Source consistency is now verified; destination upload reconciliation, current
-  managed compatibility/Auth continuity and recovery-point currency remain.
-  [Mapping and limits](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
-- Existing Vercel OAuth login refreshes through its CLI without owner action;
-  same exact project/deployment remains paused/protected, cron configured enabled.
-  Do not reuse an expired access-token override. [Access and actual readback](vercel.md).
-- The following R5/R6 failure details are historical and remain preserved:
-- Actual R6 passes both current process scans, real child startup, seven fresh
-  provider captures and source construction, then fails at one real psycopg
-  connection before executor entry. Its cause is unknown. The exact unchanged
-  function now passes actual local PG17 TLS/close-before-SQL and rejects an
-  untrusted CA, with fixture removal. D6 finite diagnostics now pass 37 closed
-  controls; next prepare a separate hosted connection probe without guessing
-  parameter changes. The sole pause 200 eventually reaches independently verified
-  INACTIVE at 01:49:47 UTC; observed original settings match. Preserve original
-  closure-unconfirmed receipts/spent markers and do not replay R6.
-  [Latest scope](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
-- The October 13 export is the latest verified retained archive, not a proven
-  latest source. An unverified roughly eight-minute dump-to-pause interval and
-  non-atomic DB/Storage/roles remain. Prepare explicit data-only/Auth/blob mapping
-  after hosted schema setup; authoritative cutover needs newer preservation or
-  an explicitly accepted recovery point plus continuity proof.
-  [Recovery-point evidence](production-readiness.md#customer-recovery-point-and-restoration-rehearsal).
-- The actual advertised PRIMARY transaction connection now passes 54 READ ONLY
-  queries with stable positive XID/PID, complete metadata/empty-state capture,
-  ROLLBACK/end and final pause/original observed-settings preservation. Complete
-  independent capability review and actual transaction-specific local SQL
-  success/rollback now pass. The actual-baseline verifier's300-vs256 receipt bound
-  is repaired narrowly, actual baseline retest and real-verifier/local-SQL checks
-  pass, and the exact unused local Kong gateway is stopped. R4 classification now
-  passes actual fresh hosted-window scans; R5 child-environment and URI-template
-  integration defects are repaired. Later hosted connection/atomic/persisted
-  checks pass as recorded above. Do not infer whole-config preservation
-  from the gateway stop's aggregate mismatch; preserve its qualified readback.
-  Existing session-only sources cannot be port-flipped.
-  [Current evidence](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
-- The five old October12 local test siblings are now stopped with independent
-  same-object/listener/static-metadata/unrelated-state verification. Private
-  restart inputs remain separate; original stdout-match uncertainty and the
-  earlier Kong whole-config limitation remain. No volume removal, rollback or
-  global consumer-absence claim follows.
-  [Actual cleanup](production-readiness.md#oct21-old-local-test-stack-closed).
-- Preserve the existing Free replacement and its successful 49-field Auth
-  configuration. Earlier row-limit, missing-child-report, session-routing and
-  management-reader identity failures remain recorded separately. Do not
-  recreate the target or replay successful settings. Customer import/cutover
-  retains the separate current-recovery-point and portability gates.
-- Coupon worker/controller sources are concrete and closed-tested; four actual
-  parent/worker IPC cases pass with synthetic Next/runtime boundaries. Fresh actual
-  actor/provider/coupon/alias/recipient/runtime proofs and the bounded journey
-  remain. Original TEST refund still lacks merchant balance; no spent financial
-  reservation is reusable.
-
-[Actual hosted checkpoint](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
-
-## Oct20 current production checkpoint
-
-Exact Jazz Vercel protection and pause are applied. Two independent read-only
-checks confirm503 on production even with the retained bypass; Supabase stays
-INACTIVE. Cron disable, direct Data API containment and stable free hosting
-remain incomplete. [Actual effects, limits and rollback](production-readiness.md).
-
-## Earlier Oct20 checkpoint: payment verified; refund409 unresolved
-
-The sealedba105 TEST payment and signed native fulfillment now pass fresh
-independent readback: canonical USD89.97/tax0, one exact purchase/processed event,
-all29 original fingerprints/nine prior accounts/23 sessions preserved, actor
-sessions0. Both closed scopes pass complete45,831-file artifact hashing.
-
-A separate refund-only scope creates no actor/checkout/card. Its sole full-refund
-POST returns409/no refund ID; subsequent GETs show zero refunds and USD8997 still
-refundable. The error body was discarded by the helper, so the cause is unknown.
-All four temporary services finish0, endpoint404/socket absence pass, and the
-purchase remains. Refund/access reversal is unverified; spent local/global
-reservations are preserved. No retry or production change occurs. Next: bounded
-failure diagnostics/provider recovery, plus independent production-hardening,
-hosting and release work. [Scope and limits](dodo.md#oct20-sdk-verified-scope-details).
-Earlier unpaid-only/preparation-only checkpoint statements below are historical.
-
-Updated 2026-10-20. Source fixes are on the maintenance branch;
-**none has been deployed to production**. Evidence distinguishes mocked tests,
-persisted local journeys and actual provider inspection.
-
-The owner's Oct20 continuing authorization covers bounded controlled tests and
-reviewed project operations once technical prerequisites and rollback are ready.
-Historical approval questions are not current blockers; use fresh plans/ledgers
-and the [root contract](../../../AGENTS.md). Closed scopes stay closed.
-
-Fresh registration and separate uninterrupted recovery now pass on sealed
-3e5b2c1/45,831, with independent preservation/restoration/resource closure.
-Recovery retains all nine accounts/1,514 public rows/23 original sessions and
-all other eight actors' rows exactly; the controlled confirmed USER has one
-identity/sessions0, with only password/last-sign-in/updated-at Auth changes.
-Seven closed mail scopes consume nine actions/seven observed Resend emails;
-earlier built-in delivery remains unverified. Registration7 blocks/7 console
-errors and recovery9 blocks/11 console errors are incompletely attributed;
-both record0 page errors. Private SSH and this source binding do not prove
-public HTTPS, production health or a later-ba105 Auth journey. [Current recovery](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1).
-
-Oct20 hosted-SDK follow-up confirms a test-controller incompatibility with own
-payment-prefixed client secrets. A separate preparation copy repairs it, with
-foreign-ID and existing host/frame/document/phase checks retained. Passive
-readiness reporting and offline tests are implemented; actual SDK/API health
-and payment acceptance remain unverified. No fresh financial scope is active.
-[Source contract and verification](dodo.md#deployed-hosted-sdk-contract-and-scoped-secret-repair).
-
-Verified publication4eab0b5 has five successful exact-head runs: Quality
-PR/push, Secret Scan PR/push and dynamic CodeQL ([IDs/events](review-status.md)).
-Both downloaded Quality logs verify2,656 normal/80 skips,80 persisted/one skip,
-types/webpack31/lint0errors22warnings; actual PR-head CodeQL alerts0. Actualba105
-settled-document scope spends one UI card action but leaves transport/acceptance
-unverified; last provider GET requires_payment_method. Empty observed responses
-do not prove zero requests/acceptance. Normal logout/independent preservation/
-five service closures/endpoint404/full seal and retention64 files412,746 bytes
-pass. Raw STRICT_NO_CARD helper label is explicitly qualified; no positive
-journal/purchase/refund. Financial-test loop stopped; offline per-phase counts/
-SDK-readiness review next, no new activated scope or second-card authority.
-[Latest incomplete scope](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified).
+Current evidence: [production readiness](production-readiness.md),
+[maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).
+Detailed earlier attempts remain in those records and Git history; they are not
+additional current tasks.
 
 ## Confirmed defects addressed locally
 
@@ -388,7 +47,7 @@ SDK-readiness review next, no new activated scope or second-card authority.
 | SEC-04 | High | Unhydrated credential forms sent passwords through GET; now explicit POST. | No-JavaScript browser regression with no password query. |
 | SEC-05 | High | Empty owner/user email could authorize media; publication/access hierarchy inconsistent. | Role/owner/publication regressions and real free/buyer/legacy/admin matrix. |
 | SEC-06 | High | Client quiz verdict/membership influenced awards; now locked server grading and immutable stored verdicts. | PostgreSQL concurrency/ownership/options tests; 15 actual buyer quiz completions. Historical forged awards require separate evidence. |
-| SEC-07 | Critical | Browser roles exposed fresh LMS tables; actual production inspection confirms grants on all 26 public tables, RLS disabled on the payment ledger and both messaging tables, and self-role escalation. Scoped SQL removes browser grants and enables RLS in fixtures only. | Local/cloud fixtures deny all 25 application tables and preserve owner CRUD. Production zero-row ledger HEAD returned 200; no exploit write. Approved rollback re-paused production; exact hardening requires separate review. [Database review](database.md). |
+| SEC-07 | Critical | Browser roles exposed fresh LMS tables; actual production inspection confirms grants on all 26 public tables, RLS disabled on the payment ledger and both messaging tables, and self-role escalation. Reviewed hardening also has actual hosted replacement evidence; original production grants remain unchanged and contained by pause. | Local/cloud fixtures deny all 25 application tables and preserve owner CRUD. Production zero-row ledger HEAD returned 200; no exploit write. Approved rollback re-paused production; exact hardening requires separate review. [Database review](database.md). |
 | SEC-08 | High | Optional replay attempted recording on auth without consent; now homepage-only, opt-in, privacy-signal aware and scrubbed. | 72 focused tests plus public consent/withdrawal browser checks; provider settings remain gates. |
 | SEC-09 | Medium | Auth cookies omitted Secure in production; arbitrary provider errors could enter logs. | Nine actual SDK cookie tests and 11 controlled integration-diagnostic regressions. |
 | SEC-10 | High | Destructive voucher test APIs were production-callable with broad/default-write scope; synthetic checkout could write to an ambient production DB in development. | Explicit separate opt-ins, strict loopback/disposable DB guard, production disabled, dry-run defaults and explicit course/user filters; 137 focused mocked tests. Separate CLI quarantine is OPS-02. |
@@ -496,9 +155,9 @@ physical menu/modal access pass on414.
 
 | ID | Priority | Gate | Exact next action |
 | --- | --- | --- | --- |
-| LIVE-01 | Critical availability/security | Approved recovery exported customer DB and 68 Storage files, verified offline data restore, then re-paused the exact project for confirmed unsafe browser permissions. Legacy wmuj absent from account. | Review atomic hardening, code/config release and rollback before another production resume. Preserve the verified private archive; no replacement/reset. [Recovery outcome](supabase.md). |
+| LIVE-01 | Critical availability/security | Original production stays paused for unsafe browser permissions. The hardened replacement contains the accepted October13 database and all68 PDFs; current-source hosted admin/customer continuity is unfinished. | Complete protected access and recovery-point verification, then prepare exact replacement cutover/configuration and rollback for production review. Preserve both the original paused project and accepted recovery. [Current outcome](production-readiness.md). |
 | LIVE-02 | High | Legacy Vercel preview shares production resources; exact old Jazz project is now protected/paused with active public+bypass503 proof. Distinct isolated backend passes Auth/payment journeys at their recorded sources. | Complete explicit cron disable, historical/bypass retirement assessment, direct Supabase containment and stable free hosting. No paid upgrade. [Current evidence](production-readiness.md). |
-| LIVE-03 | Critical | Production unsafe public grants remain unchanged while backend is INACTIVE. The isolated inactive-schema PATCH returns404; one pause/restore closes with all29 fingerprints/settings preserved. Authoritative V4→currency→strict227 rehearsals pass offline. | Establish an alternative verified containment method, fresh target/TLS/runtime/executor/catalog/ACL compatibility and preservation before exact atomic repair. The new21-case source-only operator still lacks real executor/evidence validators. Legacy-key control alone cannot cover new keys; no production schema PATCH, resume or SQL apply. Preserve new columns/facts/safe grants on rollback. [Current result/order](production-readiness.md#actual-isolated-control-result). |
+| LIVE-03 | Critical | Original unsafe grants remain contained by pause. The replacement strict227 structure, selected REST denials and customer/file recovery have actual hosted evidence; a production cutover is not complete. | Verify remaining authenticated native access and customer journeys against the replacement. Keep its database API closed and the original paused. Prepare production cutover and rollback; repair of the original is required only if that project is selected for reuse. [Current evidence and historical limits](production-readiness.md). |
 | LIVE-04 | High | Actual TEST payment/fulfillment verified. Latest separate same-payment recovery captures409 INSUFFICIENT_WALLET_FUNDS; no refund/full8997 refundable/purchase retained, original29/23 sessions preserved, services/endpoint/full seal/formal closure pass. Historical own-payment credit8997/fee535/after8462 is verified separately, not current account totals. Earlier409 body remains unknown. | Establish a free merchant-sandbox balance/settlement remedy and dashboard ownership before another financial scope. Preserve both spent markers; no checkout/card replay, blind refund retry, customer-wallet substitution or real funding. Refund/reversal, reconciliation, coupon/provider and account/production gates remain open. [Actual evidence](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial). |
 | LIVE-05 | High | Resend receiving/webhook disabled and MX absent. | Review DNS/receiving/signing/controlled-mail activation. [Runbook](resend.md). No unsolicited professor/student mail. |
 | LIVE-06 | High | Purchase Float values lack full currency/tax/refund financial journal. | Compare authorized provider evidence with persistence before proposing reviewed schema/data migration; preserve event ledger and entitlements. |

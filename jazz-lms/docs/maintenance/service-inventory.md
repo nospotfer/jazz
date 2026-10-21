@@ -1,5 +1,21 @@
 # Service inventory
 
+## Latest replacement state — Oct21 15:39 UTC
+
+Replacementklaiiikojgdfclzhqfgt is independently paused after a bounded access
+check. All six services became healthy; one verified session connection and115
+read-only SQL calls preserve customer/prior-row/protected state. Auth PATCH0,
+no application/browser/login. Auth and original project states/settings match.
+Paused PostgREST404 remains a qualified independent comparison limit; active
+settings equality was verified before pause. Owned builder/tunnel exits0.
+
+The accepted October13 database/all68 PDFs remain restored. The actual admin
+journey stops before login; a native UUID/string adapter defect is reproduced
+and corrected in preparation, with historical stop cause still unproven.
+Direct Auth version health is not observed in this scope. Public Vercel remains
+paused; no live UI deployment, hosting move, plan/price change, mail or payment.
+[Evidence and next action](production-readiness.md#oct21-admin-check-closes-before-login).
+
 ## Current replacement state — Oct21 14:48:17 UTC
 
 - Supabase replacement `klaiiikojgdfclzhqfgt`: INACTIVE after verified database

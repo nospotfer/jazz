@@ -1,5 +1,29 @@
 # Maintenance log
 
+## Oct21 — Recovered-admin adapter stop and clearer current instructions
+
+- Actual access run closes15:39 UTC/exit1 before Auth enablement or native/browser
+  startup. All six service health checks, both owned-process admissions and one
+  verified session connection pass.115 read-only SQL calls preserve customer,
+  prior-row and protected state; Auth is unchanged, frontend closed, replacement
+  independently paused and original states/settings unchanged. Paused desired
+  settings404 retains the same explicit independent-comparison limit.
+- The exact exception code was lost. Real psycopg UUIDLoader values independently
+  reproduce an actor ID/string boundary defect. R4 normalizes only copied policy
+  IDs, preserves native customer snapshots/password/metadata/role, and adds finite
+  phase/known-denial diagnostics.98 closed controls pass; hosted login remains
+  unverified. No Auth PATCH, login, customer write, payment or email occurs.
+- Owned builder/tunnel also closes/exit0. Retain both spent scopes and the failed
+  root source-review status-label assertion; exact receipt hash/PASS were checked
+  subsequently. No automatic replay or successful-preview claim follows.
+- Remove superseded attempt instructions from AGENTS/current backlog; detailed
+  history stays in production readiness/log/Git. Original hardening is not an
+  additional cutover prerequisite if the reviewed replacement is selected; keep
+  the unsafe original paused. Public site/UI release and full goal remain open.
+- Retain19 source/closed-outcome files, manifestf6315b9f, separately from all
+  credential/private inputs. Local unencrypted custody; no off-site claim.
+  [Evidence and next action](production-readiness.md#oct21-admin-check-closes-before-login).
+
 ## Oct21 database and all68 PDFs accepted; preview next
 
 At14:46:02 UTC actual root89467 exits0 after fresh read-only adoption of the two

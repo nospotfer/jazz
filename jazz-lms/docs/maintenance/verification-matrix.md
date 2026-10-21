@@ -1,5 +1,20 @@
 # Goal verification matrix
 
+## Current access check — Oct21 15:39 UTC
+
+| Requirement | Authoritative result | Status |
+| --- | --- | --- |
+| Current application build | Actual31ad6ba locked build and final artifact inspection pass; builder/tunnel exit0 | Build passed; no runtime |
+| Healthy backend/process boundary |30 health observations; all six healthy, two exact builder/tunnel admissions pass | Passed within closed scope |
+| Customer/protected preservation |115 read-only SQL calls; all original typed cells/prior rows/protected metadata match, frontend closed | Passed |
+| Existing admin hosted login | Adapter validation stops before Auth enablement; no runtime/browser/login | Not verified |
+| Actual failure cause | Historical outcome retains only generic code; real UUIDLoader independently reproduces native-ID mismatch | Cause unproven; adapter defect confirmed |
+| Adapter correction | R4 copied ID normalization/finite diagnostics,98 closed controls, no real inputs/operations | Preparation passed |
+| Provider rollback/closure | One resume/pause, Auth PATCH0; independent nine-GET target pause/Auth/old states/settings match | Passed with paused PostgREST404 comparison limit |
+| Public release/full goal | Vercel remains paused; UI unreleased; customer/media/payment/recovery/hosting gates remain | Incomplete |
+
+[Exact outcome, custody and next action](production-readiness.md#oct21-admin-check-closes-before-login).
+
 ## Current recovery result — Oct21 14:48 UTC
 
 | Requirement | Actual evidence | Status / limit |
