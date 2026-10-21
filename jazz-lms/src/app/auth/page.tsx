@@ -13,7 +13,11 @@ import { createClient } from "@/utils/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+
+const subscribeToHydration = () => () => {};
+const clientHydrated = () => true;
+const serverHydrated = () => false;
 
 function PasswordToggleIcon({ visible }: { visible: boolean }) {
   return visible ? (
@@ -32,6 +36,12 @@ function PasswordToggleIcon({ visible }: { visible: boolean }) {
 }
 
 export default function AuthPage() {
+  // Server HTML must not submit credentials before React owns the form.
+  const authHandlersReady = useSyncExternalStore(
+    subscribeToHydration,
+    clientHydrated,
+    serverHydrated,
+  );
   const recoveryAccess = process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true';
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
@@ -83,6 +93,7 @@ export default function AuthPage() {
       googleAuthFailed: "No se pudo iniciar con Google",
       tabLogin: "Iniciar sesión",
       tabRegister: "Registrarse",
+      javascriptRequired: "Activa JavaScript para iniciar sesión o crear una cuenta.",
       googleRedirecting: "Redirigiendo a Google...",
       googleRegister: "Registrarse con Google",
       googleLogin: "Iniciar sesión con Google",
@@ -127,6 +138,7 @@ export default function AuthPage() {
       googleAuthFailed: "Unable to sign in with Google",
       tabLogin: "Sign in",
       tabRegister: "Register",
+      javascriptRequired: "Enable JavaScript to sign in or create an account.",
       googleRedirecting: "Redirecting to Google...",
       googleRegister: "Sign up with Google",
       googleLogin: "Sign in with Google",
@@ -171,6 +183,7 @@ export default function AuthPage() {
       googleAuthFailed: "Impossible de se connecter avec Google",
       tabLogin: "Connexion",
       tabRegister: "Inscription",
+      javascriptRequired: "Activez JavaScript pour vous connecter ou créer un compte.",
       googleRedirecting: "Redirection vers Google...",
       googleRegister: "S’inscrire avec Google",
       googleLogin: "Se connecter avec Google",
@@ -215,6 +228,7 @@ export default function AuthPage() {
       googleAuthFailed: "No fue posible iniciar sesión com Google",
       tabLogin: "Entrar",
       tabRegister: "Cadastrar",
+      javascriptRequired: "Ative o JavaScript para entrar ou criar uma conta.",
       googleRedirecting: "Redirecionando para o Google...",
       googleRegister: "Cadastrar com Google",
       googleLogin: "Entrar com Google",
@@ -687,6 +701,12 @@ export default function AuthPage() {
             </p>
           )}
 
+          <noscript>
+            <p className="mb-4 text-sm text-muted-foreground">
+              {copy.javascriptRequired}
+            </p>
+          </noscript>
+
           <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border"></div>
@@ -707,6 +727,7 @@ export default function AuthPage() {
                   type="text"
                   name="fullName"
                   autoComplete="name"
+                  disabled={!authHandlersReady}
                   placeholder={copy.fullNamePlaceholder}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -724,6 +745,7 @@ export default function AuthPage() {
                   type="email"
                   name="email"
                   autoComplete="email"
+                  disabled={!authHandlersReady}
                   placeholder={copy.emailPlaceholder}
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
@@ -742,6 +764,7 @@ export default function AuthPage() {
                     type={showRegisterPassword ? "text" : "password"}
                     name="newPassword"
                     autoComplete="new-password"
+                    disabled={!authHandlersReady}
                     placeholder={copy.passwordPlaceholder}
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
@@ -778,7 +801,7 @@ export default function AuthPage() {
 
               <button
                 type="submit"
-                disabled={registerLoading}
+                disabled={!authHandlersReady || registerLoading}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {registerLoading ? copy.creatingAccount : copy.createAccount}
@@ -806,6 +829,7 @@ export default function AuthPage() {
                   type="email"
                   name="email"
                   autoComplete="email"
+                  disabled={!authHandlersReady}
                   placeholder={copy.emailPlaceholder}
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
@@ -842,6 +866,7 @@ export default function AuthPage() {
                     type={showLoginPassword ? "text" : "password"}
                     name="password"
                     autoComplete="current-password"
+                    disabled={!authHandlersReady}
                     placeholder={copy.passwordPlaceholder}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
@@ -881,7 +906,7 @@ export default function AuthPage() {
 
               <button
                 type="submit"
-                disabled={loginLoading}
+                disabled={!authHandlersReady || loginLoading}
                 className="w-full py-3 bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-bold rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loginLoading ? copy.signingIn : copy.signIn}

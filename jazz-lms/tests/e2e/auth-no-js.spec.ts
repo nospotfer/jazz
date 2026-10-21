@@ -2,24 +2,26 @@ import { expect, test } from '@playwright/test';
 
 test.use({ javaScriptEnabled: false });
 
-test('sign-in never puts credentials in the URL before client hydration', async ({ page }) => {
-  await page.goto('/auth');
-  let captured: { method: string; queryKeys: string[]; passwordInBody: boolean } | undefined;
-  await page.route('**/auth**', async (route) => {
+test('sign-in cannot send credentials before client hydration', async ({ page }) => {
+  const submissions: string[] = [];
+  await page.route('**/*', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
-    captured = {
-      method: request.method(), queryKeys: [...url.searchParams.keys()],
-      passwordInBody: new URLSearchParams(request.postData() ?? '').get('password') === 'synthetic-no-js-password',
-    };
-    await route.fulfill({ status: 200, contentType: 'text/plain', body: 'No-JavaScript form captured safely' });
+    if (request.method() === 'POST' || !['127.0.0.1', 'localhost'].includes(url.hostname)) {
+      submissions.push(request.method());
+      await route.abort();
+      return;
+    }
+    await route.continue();
   });
-  await page.locator('input[type=email]').fill('no-js@example.test');
-  await page.locator('input[name=password]').fill('synthetic-no-js-password');
-  await Promise.all([
-    page.waitForURL('**/auth'),
-    page.locator('button[type=submit]').click(),
-  ]);
-  await expect(page.getByText('No-JavaScript form captured safely')).toBeVisible();
-  expect(captured).toEqual({ method: 'POST', queryKeys: [], passwordInBody: true });
+  await page.goto('/auth');
+  await expect(page.locator('button[type=submit]')).toBeDisabled();
+  await expect(page.locator('noscript')).toContainText(/JavaScript/);
+  await expect(page.locator('input[type=email]')).toBeDisabled();
+  await expect(page.locator('input[name=password]')).toBeDisabled();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/auth$/);
+  await expect(page.locator('input[name=password]')).toHaveValue('');
+  await expect(page.locator('button[type=submit]')).toBeDisabled();
+  expect(submissions).toEqual([]);
 });
