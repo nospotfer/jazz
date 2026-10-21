@@ -1,5 +1,28 @@
 # Maintenance log
 
+## Oct21 hosted customer restore succeeds; PDFs and login next
+
+Actual sourceb11f780 recovery finishes07:37:36:26 COPY batches/1,621 rows,
+one confirmed COMMIT,14,270 typed cells matching both precommit and fresh
+persisted readback.151 native calls include18 initial READ ONLY and133 executor
+calls; both separate READ ONLY transactions roll back, write transaction commits,
+frontend closes and child exits0. Protected schema/rights/managed metadata remain
+preserved. No DDL/new migration acknowledgment/Storage/key/Auth/mail/application
+operation occurs.73 management calls48/25, one restore/pause and two clean scans.
+
+Independent07:39:29 sevenGETs confirm exact replacement/production INACTIVE,
+preview healthy and original settings equal. Publicwww still503. Offline actual
+metadata review resolves only the native-RI owner predicate, preserving original
+capture/failure. Driver/executor/event review passes with parent authorship and
+no independent customer redecoding explicitly disclosed. Source/finite packets
+have owner-protected durable copies; credentials/raw values remain separate.
+
+Storage client preparation now passes16 closed controls, but uploads0. Prepare
+genuine transport/fresh destination evidence and preserve the now-populated
+customer tables through68PDF recovery; do not rerun import/empty-only checks.
+Customer login, current recovery point, stable free hosting and release remain
+open. [Actual results, hashes, custody and limits](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 ## Oct21 import metadata captured; semantic review remains open
 
 Source5d56307 actual one-frontend18+11 READ ONLY calls, both rollbacks and final

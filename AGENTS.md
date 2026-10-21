@@ -192,21 +192,27 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Latest Oct21 independent checkpoint at07:00:02 confirms replacement/production
-INACTIVE, preview healthy and old settings unchanged. The selected four-kind REST
-matrix now passes all24 GETs/no retry with both18 READ ONLY state checks/rollbacks;
-safe desired/effective jazz_api_closed is retained. A separate actual import-
-specific capture passes18+11 READ ONLY calls/both rollbacks/frontend+worker0,
-but semantic validation requires native-RI trigger signature review. Full private
-capture is retained; review it offline before another live operation. Preserve
-earlier stopped results/unknown causes/spent markers; never recreate the namespace
-or replay a closed scope. Native local restore1,621rows/14,270typedcells/23505
-rollback and68 source PDF integrity checks remain verified within their limits.
-Exact68-object Storage upload-plan source is independently reviewed; no hosted
-customer import/upload/GoTrue continuity or release has occurred. Continue actual
-metadata review and mapped data-aware restoration; empty-state assertions are
-pre-import guards, not post-import value proofs. Recovery-point/hosting/release
-gates remain. See current production-readiness.md and separate custody packets.
+Latest Oct21 actual customer restore finishes07:37:36 with one confirmed COMMIT:
+26 COPY batches/1,621rows (1,617data+four historical migration rows), all14,270
+typed cells match before commit and in fresh persisted readback. Both separate
+READ ONLY transactions roll back, frontend/worker exit0; the write transaction
+commits rather than rolls back. Protected metadata/rights/managed definitions
+are preserved. Independent07:39:29 seven-GET closure confirms replacement and
+production INACTIVE, preview healthy and old settings unchanged. No API-schema
+PATCH/key/Auth/mail/Storage operation or serving occurs. Original import-specific
+metadata review is now resolved offline: only the native internal-RI owner
+predicate admits actual supabase_admin alongside postgres; other signature and
+constraint checks stay fixed. Original stopped receipts remain unchanged.
+
+Driver/executor/event evidence review passes with parent authorship disclosed;
+it does not independently decode customer values. Source/finite actual custody
+and review are retained separately from credentials and raw values. Storage
+client preparation has16 closed controls but no hosted uploads yet. Next restore
+68 PDFs with actual byte/ownership/default/bijection checks and preserve the
+populated customer tables. Do not reuse the old empty-only verifier after import,
+replay spent scopes or repeat the confirmed customer import. Login/GoTrue,
+recovery-point currency, stable zero-cost hosting and release remain open. Public
+www still returns503. See production-readiness.md and separate custody packets.
 
 The Oct20 Free replacement is `klaiiikojgdfclzhqfgt`, named
 `Jazz-LMS-Empty-Replacement-20261020`. Final state is INACTIVE. A minimal
@@ -221,8 +227,9 @@ both client rollbacks/closes and parent/child0. Final04:08:57 pause and independ
 04:09:08 seven-GET closure preserve original observed states/settings. Four extra
 nonunique auth.users indexes are separately reviewed and retained; original
 selected constraints/indexes/types match. No customer import/serving/cutover has
-occurred; preserve every spent create/configuration/restore/pause marker.
-Continue mapped restoration and actual Auth/Storage continuity with a fresh
+occurred in that earlier schema-only scope; customer import now passes above.
+Preserve every spent create/configuration/restore/pause marker.
+Continue actual Auth/Storage continuity with a fresh
 bounded plan. Offline14accounts/16identities/seven purchases have consistent
 checked links; preserve original roles and two confirmation disagreements.
 The source admin matches an explicitly controlled project address, but actual

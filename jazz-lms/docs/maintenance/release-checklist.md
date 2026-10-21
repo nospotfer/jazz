@@ -1,24 +1,43 @@
 # Production review and rollback checklist
 
+- [x] Resolve actual native-RI metadata review against the original private
+  capture, with only the exact owner predicate changed and18 offline controls.
+- [x] Execute one actual hosted customer import:26 COPY/1,621 rows/one confirmed
+  COMMIT; verify14,270 typed cells before commit and in fresh persisted readback,
+  protected metadata and both separate READ ONLY rollbacks/client closure.
+- [x] Independently verify07:39:29 exact replacement/production INACTIVE, healthy
+  preview and original settings; retain actual source/finite evidence/review with
+  authorship and value-proof limits explicit.
+- [x] Prepare bounded Storage upload client with16 closed controls and protected
+  source custody. Actual uploads remain0.
+- [ ] Complete real Storage transport/fresh state/data-preserving lifecycle, then
+  upload68 PDFs and verify destination bytes/ownership/defaults/path bijection.
+- [ ] Verify customer/admin Auth and application/file continuity. Resolve current
+  recovery point, stable zero-cost hosting and remaining release gates. Keep
+  publicwww paused/503 until a concrete verified release is ready.
+  [Current evidence and rollback limits](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 - [x] Capture actual current import-related metadata on source5d56307:18 empty-state
   plus11 metadata READ ONLY calls, both ROLLBACKs, frontend/worker0 and one pause.
 - [x] Independently verify07:00:02 exact replacement/production INACTIVE, healthy
   preview and original observed states/settings; retain source/finite evidence.
-- [ ] Resolve captured native-RI trigger signature and complete semantic review;
-  capture success does not establish import readiness.
+- [x] Resolve captured native-RI signature through the separate offline review
+  above; original capture success alone did not establish import readiness.
 - [x] Prepare and independently review exact68-object upload-plan bijection/
   literal paths/NULL ownership validation;16 closed source controls pass.
-- [ ] Execute mapped data-aware hosted recovery and actual Storage/Auth/file
-  continuity; recovery-point/hosting/release gates remain. [Evidence](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+- [x] Execute mapped data-aware hosted customer recovery as recorded above.
+- [ ] Complete actual Storage/Auth/file continuity; recovery-point/hosting/release
+  gates remain. [Evidence](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
 
 - [x] Verify the fresh selected REST API matrix: four existing credential kinds,
   24 complete GETs/no retry, both18 READ ONLY checks/ROLLBACKs and frontend closure.
 - [x] Confirm parent/worker/Node0, retained safe schema/one pause and independent
   06:20:22 exact paused replacement/original-state/settings closure.
-- [ ] Complete actual import-specific managed triggers/functions/constraints,
-  collations/permissions and exact68-file destination/source bijection checks,
-  then hosted recovery/account/file continuity. User JWT/GraphQL/whole health and
-  recovery-point/hosting/release remain open. [Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+- [x] Complete selected actual import metadata/permissions review and mapped
+  hosted customer recovery; whole-locale equivalence is not claimed.
+- [ ] Complete exact68-file destination/source bijection and account/file
+  continuity. User JWT/GraphQL/whole health and recovery-point/hosting/release
+  remain open. [Evidence and limits](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
 
 - [x] Preserve the latest STOPPED scope honestly: pre-PATCH18 READ ONLY/rollback
   passes, second BEGIN/cleanup rollback unconfirmed, frontend closes, publicGET0.
@@ -28,9 +47,9 @@
   unknown original cause; retain bounded provider-log observations separately.
 - [x] Verify a separate fresh hosted API matrix with phase-specific diagnostics
   at06:20. The historical stopped scope itself supplies no public API proof.
-- [ ] Capture and review current selected-table triggers/functions/permissions
-  before hosted customer import; archived explicit-trigger counts do not prove
-  current platform behavior. [Evidence](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+- [x] Capture and review current selected-table triggers/functions/permissions
+  before actual import, through the separate completed review above. Archived
+  explicit-trigger counts alone did not prove current platform behavior.
 
 - [x] Rehearse real mapped Auth/public data with local PG17 COPY/14,270 typed
   cells/native constraints, separate historical ledger,23505 rollback and root
@@ -54,9 +73,10 @@
 - [x] Check offline14account/16identity/seven-purchase linkage and current Prisma
   model coverage. Preserve roles/two confirmation disagreements; a controlled
   project-address admin match does not prove restored access.
-- [ ] Execute mapped restoration with checked values, exact postconditions and
-  rollback, then verify actual Auth/Storage continuity and qualify the recovery
-  point. [Current evidence](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
+- [x] Execute mapped restoration with typed precommit/persisted checks and one
+  confirmed COMMIT. Cleanup preserves committed data and pauses the replacement.
+- [ ] Verify actual Auth/Storage continuity and qualify the recovery point.
+  [Current evidence](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
 - [x] Prepare the isolated replacement schema through actual guarded225→227
   execution, strict schema/effective-rights/managed checks, sole confirmed COMMIT
   and client/child closure. Final pause and independent original-state readback

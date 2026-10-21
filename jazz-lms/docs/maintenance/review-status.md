@@ -1,5 +1,21 @@
 # Maintenance review checkpoints
 
+## Oct21 hosted customer restore passes
+
+Actual sourceb11f780 commits1,621 rows in26 COPY batches and verifies all14,270
+typed cells before COMMIT and in fresh persisted readback. Protected metadata
+and rights remain; both separate READ ONLY rollbacks and frontend/child closure
+pass. One restore/pause and independent07:39:29 sevenGETs confirm replacement
+and production INACTIVE, preview healthy and original settings equal. Native-RI
+review is resolved offline without rewriting its earlier stopped result.
+
+Actual driver/executor/event review passes; its parent authorship and lack of
+independent customer redecoding are disclosed. Source/finite custody is retained
+without credentials/raw values. Storage client16 closed controls pass, with no
+actual upload yet. Next68PDF destination recovery and customer Auth/application
+continuity; recovery-point/zero-cost hosting/release remain open. Publicwww503;
+UI changes remain unreleased. [Evidence and limits](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 ## Oct21 import metadata capture passes with explicit semantic review
 
 Actual source5d56307 inspection captures current selected managed metadata and

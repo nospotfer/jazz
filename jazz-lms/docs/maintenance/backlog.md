@@ -1,5 +1,24 @@
 # Prioritized maintenance backlog
 
+## Latest customer recovery — Oct21 07:39 UTC
+
+Hosted customer import now passes:1,621 rows/14,270 typed cells, one confirmed
+COMMIT and fresh persisted readback with protected metadata preserved. Native-RI
+review is resolved; exact replacement is independently paused and originals
+unchanged. Preserve that result and all spent ledgers; do not repeat import or
+empty-only postchecks. Next:
+
+1. Restore68 PDFs with actual no-overwrite upload, byte readback, destination
+   ownership/defaults and exact path bijection; preserve populated customer data.
+   Client16 closed controls pass; transport/lifecycle preparation is in progress.
+2. Verify original customer/admin Auth and course/file access on the replacement.
+3. Qualify the October13 recovery point and prepare stable zero-cost hosting,
+   remaining journeys and release/rollback. Public site503 and unreleased UI
+   remain current. No owner input is needed for present preparation.
+
+Earlier dated sections retain their original scope results.
+[Evidence and custody](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 ## Latest import inspection — Oct21 07:00 UTC
 
 Import-specific metadata capture/18+11 READ ONLY calls/both rollbacks/client

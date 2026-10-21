@@ -1,5 +1,24 @@
 # Supabase manager audit, recovery and rollback
 
+## Latest customer restore — Oct21 07:39:29 UTC
+
+One actual customer import on the existing Free replacement commits26 COPY
+batches/1,621 rows (1,617data+four historical migration rows).14,270 typed cells
+match before commit and in fresh persisted READ ONLY readback.151 native calls,
+both separate READ ONLY rollbacks, protected metadata/rights/managed checks,
+frontend/worker closure pass. No new DDL/migration acknowledgments, Storage,
+Auth API, key, SMTP, configuration PATCH or serving operation occurs.
+
+Actual metadata review resolves only the exact native-RI owner predicate against
+the original capture. One resume/pause and independent07:39:29 sevenGETs confirm
+replacement/production INACTIVE, preview healthy and old settings equal; paused
+target API-config independent readback remains unestablished. All49 disabled Auth
+values/noSMTP and desired/effective jazz_api_closed were checked while active.
+Do not repeat import or call the old empty-only verifier on populated data.
+Next68PDF upload/readback and actual customer Auth continuity. Current recovery
+point, broader API coverage, stable hosting and release remain open.
+[Original results, review and retained custody](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 ## Latest import inspection — Oct21 07:00:02 UTC
 
 The current selected relations/constraints/indexes/types/columns/triggers/

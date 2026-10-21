@@ -1,5 +1,19 @@
 # Goal verification matrix
 
+## Oct21 actual hosted customer restore
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| Customer values |26 COPY batches/1,621 rows, one confirmed COMMIT. All14,270 typed cells match precommit and fresh persisted READ ONLY readback:14,130stable/126documented token resets/14newNULL. Historical four-row migration ledger preserved. |
+| Native integrity |151 calls18precheck+133executor. Protected schema/rights/managed definitions preserved; no DDL/new migration acknowledgment/retry/reconnect. Initial and postcommit READ ONLY rollbacks pass; write phase commits. Frontend closes/child0. |
+| Actual evidence review |136 durable events,104 independently source-derived SQL hashes and26 COPY hashes/order/counts match. Three live-inventory hashes qualified. Parent authorship disclosed; customer values/raw COMMIT acknowledgment are not independently decoded/retained by the review. |
+| Resource closure |One restore/pause; independent07:39:29 sevenGETs verify exact replacement/production INACTIVE, preview healthy, old settings unchanged. Safe desired/effective schema and49 disabled Auth values/noSMTP checked while active. |
+| Semantic metadata |Original private capture replay resolves narrow internal-RI owner predicate; selected signatures/constraints/columns/277INSERT rights pass.18 offline controls. No whole-locale equivalence or fresh GoTrue claim. |
+| Files and release |Storage client16 closed controls/three syntax/three inert checks, actualuploads0.68PDF byte/metadata/bijection and customer login still needed. Publicwww503; UI/source unreleased. Recovery-point currency/stable free hosting/release open. |
+
+[Original evidence, custody and limits](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+Earlier dated tables below describe their historical scopes.
+
 ## Oct21 import metadata capture and qualified review
 
 | Requirement | Actual evidence and remaining limit |

@@ -1,5 +1,103 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 customer data restored and replacement paused
+
+Actual recovery on application source `b11f780` finishes at **07:37:36 UTC** with
+`CUSTOMER_DATA_RESTORED_AND_CLOSED`. The existing owned Free replacement
+`klaiiikojgdfclzhqfgt` receives **26 COPY batches/1,621 rows**:1,617 data rows and
+four unchanged historical migration records. A single write transaction has one
+confirmed COMMIT. All **14,270 typed cells** match both before COMMIT and in a
+fresh persisted READ ONLY readback:14,130 stable values,126 documented old Auth
+token resets and14 new payment cells explicitly NULL. Source IDs, roles,
+password hashes, purchases and historical migration checksums are preserved;
+no new migration acknowledgment, DDL or Storage COPY occurs.
+
+One verified-TLS frontend performs151 native calls:18 unchanged pre-import
+READ ONLY checks and133 executor SQL/COPY calls. The first READ ONLY transaction
+and the separate post-COMMIT READ ONLY transaction confirm ROLLBACK. The write
+transaction's `rollbackConfirmed:false` is expected because COMMIT succeeds.
+Protected schema/rights/ACLs/policies/routines, managed definitions and sequence
+definitions remain checked. Frontend closes, child exits0 without terminate or
+kill. No retry, reconnect, key operation, Auth API, SMTP, payment, public probe,
+API-schema PATCH, application startup or deployment occurs.
+
+Parent management calls73 (48 normal/25 closure), one restore/one pause and two
+zero-candidate process scans pass. Fresh active settings retain desired/effective
+`jazz_api_closed`, all49 disabled Auth settings and no SMTP. Independent
+**07:39:29 UTC** seven-GET/zero-POST/zero-SQL closure confirms the exact owned
+replacement and original production INACTIVE, isolated preview ACTIVE_HEALTHY
+and original observed settings unchanged. Independent API-config readback on
+the paused replacement is still unestablished. Public `www` returns503 on the
+new Oct21 check; improved application source remains unreleased.
+
+The preceding native-RI review is resolved offline against the original private
+capture, without overwriting its `REQUIRES_REVIEW` result. Its only predicate
+change accepts `supabase_admin` alongside `postgres` as owner of the exact native
+internal-RI functions; all known signatures, sources, language, non-definer,
+configuration and FK-binding checks remain. Actual126 native FK triggers/seven
+native functions,28 relations/74 constraints/114 indexes/five types,277 INSERT
+rights and managed column shapes pass selected comparisons. Seven Storage
+trigger definitions/five function bodies match the archive; they perform no
+data writes.18 offline metadata replay/mutation controls pass. Source runtime
+collation-version equivalence and whole-locale value behavior remain unproven.
+
+The driver/executor/actual-event review rehashes all136 durable events,104
+source-derived SQL hashes and26 COPY hashes/order/counts. Three SQL hashes depend
+on a bounded live relation inventory whose raw snapshot was not retained; they
+are qualified, not independently reconstructed. COMMIT intent/attempt/confirmed
+events89/90/91 match source requiring command tag COMMIT and idle transaction
+state before confirmation. Raw server acknowledgment/result values are not in
+finite custody. The reviewer authored the parent, so this is not an independent
+author review of that parent; root reviewed it separately. Typed-cell evidence
+comes from the actual pinned verifier and persisted readback, not reviewer
+redecoding or a second SQL execution.
+
+| Original result | SHA-256 |
+| --- | --- |
+| Actual parent | `93c03e957d3ef6281d01ea807ed50db5c4d7bbad70047825a4a4bed618ee1ffe` |
+| Driver | `6d5257d4aa805a467a553432a1031b08d90b33ec220cf84d463fd403fb06ff32` |
+| Native executor | `ed38b79dec33c0d4c2f91ddd8fc36695aff47f9b7046382027fe9102ed804f5e` |
+| Independent closure | `3a9b40136ec3c2aa0f106c69300564820eb8ba8a3691f09519aa527b4a80b756` |
+| Actual execution review | `a48fa90bff2194f8c69dc8a79c9638734b58a2114dc4c7740523a03264cfbcaf` |
+| Semantic metadata review | `fe051d0f49921a960d23dcb8980edbf75bd9f59ed58c2fc2e06a6fd797e93497` |
+
+Protected durable packets under the maintenance backup root:
+
+- `review-checkpoint-customer-data-restore-source-20261021`, manifest
+  `84f6a5ca488f8bc75fb2bcbffa81fc4a01183b09fc093bfa46a615733203521f`.
+- `review-checkpoint-customer-data-restore-executor-source-20261021`, manifest
+  `3d005e8da90b24c68c327dbaa94a81cdba9444163cc8c65e287038f16a09da35`.
+- `review-checkpoint-customer-data-restored-20261021`:152 source/finite files,
+  61,069 member bytes, manifest
+  `7a655c640203e4425dcc5819175387f7211bc9b40e6a7a0b7a3f1fa02e2f4b24`.
+- `review-checkpoint-customer-data-restored-review-20261021`:eight files,
+  53,074 member bytes, manifest
+  `221259b7a19321e52fb802d9b9857c31b17f01b599b9d39f63b2611c0ca3ffa8`.
+- `review-checkpoint-customer-import-metadata-review-20261021`, manifest
+  `44f887f0e5a35d58509ddd9709489e70b14d95ea293787373073f6575ba83f72`.
+
+These packets exclude customer values, SQL definitions, provider raw bodies,
+credentials and enabled plans. Local unencrypted custody is not off-site recovery.
+Original receipts, failures and spent reservations remain unchanged. Do not
+repeat the successful import or use the old empty-only verifier on populated
+customer tables. Cleanup after confirmed COMMIT preserves data and pauses;
+there is no destructive rollback of this committed recovery.
+
+Next is actual recovery of **68 PDFs/6,423,774 bytes** with destination byte,
+ownership/default and exact path-bijection checks, followed by customer Auth and
+application continuity. The frozen Storage upload client now has16 closed
+controls/three syntax/three inert checks, bounded no-overwrite/no-retry operations,
+but has made **zero actual uploads**. Its17-member source manifest is
+`68beccedef9ded021c54ea8c19201c0e8709d43591bacbf80437ad351649d80a`;
+durable18-file/164,893-byte source packet manifest
+`6d6ceb8d0ba02719c90e38c2d7d5a7cbe7fe56aee2082292aa2e86914376ebd2`.
+The real transport, fresh destination observations and data-preserving lifecycle
+are being prepared separately. No GoTrue/login, Storage continuity, current
+production recovery point, stable hosting, serving or cutover is proven by the
+database restore. October13 export-to-pause/DB–Storage non-atomicity, broader API
+coverage, remaining journeys and release gates remain open. Earlier dated
+sections below describe those historical scopes, not the present import state.
+
 ## Oct21 import metadata captured and replacement paused
 
 The source5d56307 import-specific inspection finishes at06:58:36 UTC with

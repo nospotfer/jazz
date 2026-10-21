@@ -1,5 +1,19 @@
 # Service inventory
 
+## Latest hosted customer recovery — Oct21 07:39:29 UTC
+
+The existing Free replacement now retains1,621 imported rows/26tables, including
+four original migration records; all14,270 checked typed cells match precommit
+and fresh persisted readback. Native permissions/managed definitions remain
+preserved, Auth disabled/noSMTP and desired/effective jazz_api_closed retained
+before pause. Independent sevenGETs confirm replacement/production INACTIVE,
+preview ACTIVE_HEALTHY and original settings equal. No application deployment
+or serving occurs; publicwww503.68 PDFs and customer login are not yet restored
+through the replacement APIs. Storage client preparation16 controls pass with
+uploads0; actual lifecycle/transport is next. October13 recovery-point currency,
+stable free hosting and release remain open. Earlier sections are historical.
+[Evidence and custody](production-readiness.md#oct21-customer-data-restored-and-replacement-paused).
+
 ## Latest import inspection — Oct21 07:00:02 UTC
 
 Independent sevenGETs confirm exact replacement/production INACTIVE, isolated
