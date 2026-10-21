@@ -1,5 +1,17 @@
 # Zero-cost production hosting review
 
+**Oct21 policy refresh:** the currently published Netlify Free plan includes300
+monthly credits. Exhaustion pauses every project on that team; Free cannot buy
+add-on credits. This remains a conditional alternative requiring its own account,
+quota and native-runtime acceptance, with no upgrade or recharge authorized.
+[Current pricing](https://www.netlify.com/pricing/),
+[billing FAQ](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/billing-faq-for-credit-based-plans/).
+Supabase still documents low-activity Free-project pausing over a7-day period;
+changing the frontend does not resolve that operational limit.
+[Current pausing policy](https://supabase.com/docs/guides/platform/free-project-pausing).
+No hosting account, billing setting, DNS or production service changes follow
+from this read-only policy refresh.
+
 **Oct20 access refresh:** registrar/DNS/Cloudflare/Netlify authority remains
 unestablished locally; the owner has been asked to check the exact domain in
 Squarespace. Vercel protection/pause is now applied and verified on production;

@@ -2,10 +2,10 @@
 
 ## Current priorities — October21
 
-1. Verify existing admin login, dashboard, admin overview and normal logout on
-   a fresh protected HTTPS preview. The real public login page now passes200/
-   visible fields on31ad6ba. UUID adaptation and browser reservation/path defects
-   are fixed; hosted login against the recovered backend is still unverified.
+1. Correct the confirmed Auth-flow encoding defect:56 declared reset cells need
+   empty strings in place ofNULL. Prepare exact readback/commit/rollback controls,
+   then verify admin login/dashboard/admin/logout on a fresh protected preview.
+   The public login page passes; the first real password request returns500.
 2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
    actual source/origin/backend. Keep customer writes and payment tests isolated.
 3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
@@ -25,8 +25,10 @@ pause and unchanged original project states/settings. Direct Auth healthv2.197.0
 and actual native startup pass. Chromium launches but a reservation-label defect
 blocks the first document before any password grant. R5 fixes that interface;
 a separate16:29 real protected HTTPS smoke passes the public login page with
-synthetic private inputs and the backend still paused. Hosted login remains
-pending. Paused PostgREST404 retains the qualified independent comparison limit.
+synthetic private inputs and the backend still paused. The later first password request returns500; logs identify a NULL flow-token
+encoding defect. No session is observed and the target closes paused with all
+original data preserved; independent Auth equality passes despite the parent
+rollback verification remaining false. Paused PostgREST404 retains the qualified independent comparison limit.
 Current evidence: [production readiness](production-readiness.md),
 [maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).
 Detailed earlier attempts remain in those records and Git history; they are not

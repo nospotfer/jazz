@@ -1,6 +1,6 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 16:19 UTC
+## Latest verified replacement state — Oct21 16:42 UTC
 
 Replacementklaiiikojgdfclzhqfgt is independently paused after two fresh access
 windows. Actual direct Auth healthv2.197.0, native startup and customer/protected
@@ -8,12 +8,19 @@ preservation pass; both temporary EMAIL configuration changes are restored.
 Original project states/settings match. Paused PostgREST404 retains the qualified
 independent comparison limit. Neither window submits a password.
 
+The later R4 window submits one password request500 with no observed session.
+All original rows/cells/protected state are preserved, frontend/native/browser
+close and independent target pause/Auth/original-settings equality pass. Both
+PATCHes200; the parent's rollback/full-Auth verification remains false. A single
+logs GET whilepaused identifies NULL confirmation_token. Four restoration-default
+flow fields need a56-cell compatibility correction; no repair is applied yet.
+
 At16:29 a real protected HTTPS login-page smoke passes200/visible fields with
 synthetic unused server inputs and the backend still paused. Its app/browser
 close cleanly. The current tunnel expires16:30:38 and cannot be extended; a new
 origin/lease is required for hosted login. Public Vercel remains paused, UI
 unreleased; no production deployment, hosting move, price change, payment or mail.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1629-utc).
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1643-utc).
 
 ## Current replacement state — Oct21 14:48:17 UTC
 

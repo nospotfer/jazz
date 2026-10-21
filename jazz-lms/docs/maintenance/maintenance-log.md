@@ -1,5 +1,23 @@
 # Maintenance log
 
+## Oct21 — First hosted password request identifies Auth reset encoding defect
+
+- Root35165 exits1/16:42:45 after one password500/no observed session.117 READ
+  ONLY SQL preserves all original rows/cells/prior/protected state. Browser,
+  native and frontend close; independent target pause/Auth/original settings pass.
+  Both PATCHes200; parent rollback/full-Auth equality remains false, preserved
+  separately from the later independent match and paused desired404 limit.
+- One bounded logs GET whilepaused identifies16:40:30 NULL-to-string failure in
+  confirmation_token. Original encoder/model audit confirms14×4=56 declared
+  reset cells used NULL database defaults incompatible with plain Go strings.
+  Prepare exact empty-string correction with full preservation/commit/rollback;
+  no password/role/identity/content change, repair or second password request yet.
+- Retain34 finite/source files privately in review-checkpoint-admin-browser-interface-20261021,
+  manifest9a48adc64cdc76514aae1b95af5306eae41a4a7cbe51ad6dd2f53a151b7af6a9.
+  Enabled plans/credentials/process tuples/raw customer/provider values excluded;
+  local unencrypted custody only. PR46's stale missing66-files report is replaced
+  with accepted recovery, actual page proof and remaining release gates.
+
 ## Oct21 — Actual protected login page passes; hosted login remains pending
 
 - R2 and R3 close16:06/16:19 UTC with actual native startup/direct Authv2.197.0,

@@ -1,6 +1,40 @@
 # Production recovery checkpoint — 2026-10-21
 
-## Current checkpoint — Oct21 16:29 UTC
+## Current checkpoint — Oct21 16:43 UTC
+
+The first actual password request reaches hosted Auth and returns500 at16:40:30.
+Root35165 exits1 at16:42:45 with no observed session, all original rows/cells and
+protected metadata preserved, browser/native clean and frontend closed.117 SQL
+calls are READ ONLY. Replacement and original project states are independently
+paused/unchanged. Both EMAIL PATCHes return200. The parent rollback/full-Auth
+verification remains false with a retained failure; the later independent nine
+GETs confirm exact Auth equality. Do not erase that distinction. Paused desired
+settings404 keeps the same qualified independent-comparison limit.
+
+A separate bounded logs GET succeeds while the backend stays paused. Within the
+explicit16:39–16:42 UTC range, the password500 event records NULL-to-string failure
+for `confirmation_token`. Only finite categories/hashes are retained. Offline
+inspection of the original prepared archive and pinned Authv2.197 model confirms
+four plain-string flow fields were reset toNULL using database defaults:
+`confirmation_token`, `recovery_token`, `email_change_token_new`, `email_change`.
+This is a recovery-encoding defect affecting56 already-declared reset cells
+(14 users × four fields), not a demonstrated password failure. The14,130 stable
+source cells and14 new moneyNULLs are separate and must remain unchanged.
+
+Prepare an explicit correction of those56 cells to empty strings, with exact IDs,
+full typed/other/protected readback before a reserved commit and reviewed rollback.
+No correction is applied yet. Do not retry the spent password scope, reset a
+password, recreate users, repeat imports/uploads or widen browser permissions.
+The public HTTPS page check below passes; hosted login/customer continuity does
+not. Production remains paused and application/UI changes unreleased.
+
+[Supabase's documented NULL/string failure](https://supabase.com/docs/guides/troubleshooting/auth-error-500-database-error-querying-schema-eb6b44)
+and [current logs query contract](https://supabase.com/docs/reference/api/v1-get-project-logs).
+The legacy logs.all endpoint is retired; this diagnostic uses the current logs
+endpoint and bounded ClickHouse query. No resume, Postgres SQL or second password
+request is used to diagnose the error.
+
+## Oct21 protected login page passes at16:29 UTC
 
 The actual protected HTTPS `/auth` page passes on application31ad6ba: HTTP200,
 visible email/password fields and19 admitted application reads through the real

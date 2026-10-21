@@ -1,6 +1,6 @@
 # Goal verification matrix
 
-## Current preview check — Oct21 16:29 UTC
+## Current preview check — Oct21 16:43 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -9,11 +9,12 @@
 | Native browser interfaces | Real short-TMP Chromium render; actual policy/reservation factory;22 R5 controls and peer review | Passed; first failed smoke retained |
 | Customer/protected preservation | R2/R3 each117 READ ONLY SQL, all original rows/cells/prior/protected state match | Passed in closed windows |
 | Hosted Auth/prerequisites | Actual direct healthv2.197.0; fresh two-FK/no-active-trigger cleanup catalog | Passed for observed windows |
-| Existing admin login/dashboard/logout | Three closed scopes never submit a password; public-page smoke does not log in | Not verified |
-| Provider closure | R2/R3 Auth enable/restore200, frontend closed, independent pause/Auth/original-state equality | Passed with paused PostgREST404 desired-comparison limit |
+| Existing admin login/dashboard/logout | R4 one password request500; no observed session, clean native/browser,117 READ ONLY SQL and full original preservation | Not verified |
+| Auth-flow compatibility | Actual500 log identifies NULL confirmation_token; model/archive audit finds56 declared reset cells using incompatibleNULL defaults | Defect confirmed; correction preparation only |
+| Provider closure | R4 both PATCH200, frontend/native closed and independent pause/Auth/original equality; parent Auth rollback verification false is retained | Independent closure passes; parent verification failed, desired404 remains qualified |
 | Public release/full goal | Vercel paused/UI unreleased; remaining journeys, recovery currency, free hosting/release review open | Incomplete |
 
-[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1629-utc).
+[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1643-utc).
 
 ## Current recovery result — Oct21 14:48 UTC
 
