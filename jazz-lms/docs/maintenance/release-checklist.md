@@ -1,5 +1,20 @@
 # Production review and rollback checklist
 
+## Current access gate — Oct21 19:00 UTC
+
+- [x] Freshly verify and clean exactly the R9-owned session/refresh/AMR rows with
+      one confirmed COMMIT and persisted zero-row readback; preserve audit rows.
+- [x] Verify all1,621 customer rows/14,270cells with only two expected sign-in
+      stamps changed; fresh other/protected state exact.
+- [x] Keep Auth/desired unchanged, close frontend, pause replacement and verify
+      independent fullAuth/old-settings/pause; retain desired404 qualification.
+- [ ] Adopt historical sign-in stamps and explicit pre/post-browser connections
+      for the next scope; do not replay spent cleanup or reset the stamps.
+- [ ] Resolve first browser denial and complete admin/logout, remaining customer/
+      media/payment journeys, recovery currency, free hosting and release review.
+
+[Actual outcome](production-readiness.md#current-checkpoint--oct21-1900-utc).
+
 ## Current access gate — Oct21 18:41 UTC
 
 - [x] Verify hosted password/user/session-sync success on the recovered backend.

@@ -1,6 +1,23 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 18:41 UTC
+## Current priorities — October21 19:00 UTC
+
+1. Complete recovered admin access and normal logout. R9 password/user/sync and
+   partial dashboard pass; its exact session cleanup and fresh complete customer
+   readback now pass separately. Adopt the two known historical sign-in stamps
+   before another fresh access scope; do not reset them or repeat cleanup.
+2. Diagnose the first blocked browser request and keep database preservation
+   across explicit pre/post-browser connections. Finish remaining customer/media
+   and isolated coupon/refund journeys; actual source-only preparation is not
+   journey proof. Earlier57P01 cause remains unknown.
+3. Finish recovery currency, zero-cost hosting and release/rollback review. The
+   narrow LIVE payment window is empty, not full purchase reconciliation.
+   Production remains paused and application/UI unreleased.
+
+All R9 browser/native/tunnel/cleanup resources are closed; no test session remains
+in the verified19:00 state. [Evidence](production-readiness.md#current-checkpoint--oct21-1900-utc).
+
+## Earlier priorities — October21 18:41 UTC
 
 1. Freshly verify and clean up the single R9-owned session before another login.
    Password/user/session-sync succeed and partial dashboard DOM is observed;

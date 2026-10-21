@@ -4,7 +4,43 @@
 
 <a id="current-checkpoint--oct21-1815-utc"></a>
 
-## Current checkpoint — Oct21 18:41 UTC
+<a id="current-checkpoint--oct21-1841-utc"></a>
+
+## Current checkpoint — Oct21 19:00 UTC
+
+The R9-owned session is now cleaned up and independently closed. Actual20239
+exits0: one new verified connection,105 SQL calls, one cleanup transaction and
+one confirmed COMMIT delete exactly one session, one refresh token and one AMR
+claim. Fresh persisted readback verifies zero remaining owned rows, all1,621
+customer rows/14,270 cells against the compatible archive except the two expected
+R9 sign-in timestamps, unchanged audit rows, fresh other-row preservation and
+protected metadata. This closes the pending cleanup/current-customer readback
+gap; it does not rewrite R9's failed final-preservation receipt or prove its
+uncaptured other-relation state between the two windows.
+
+No login, Auth PATCH, runtime or tunnel is used in this cleanup. Full Auth and
+active desired settings remain unchanged; frontend closes and replacement pauses.
+Independent nine-GET closure at19:00:35 confirms pause/fullAuth/original settings.
+Paused desired404 remains qualified by separate active-parent equality.
+
+Next access must adopt the two verified historical sign-in timestamps as its
+initial state, never reset them or replay the spent cleanup. Separate the
+pre-browser and post-browser database connections while preserving the complete
+private baseline across phases; the earlier57P01 cause remains unknown. Then
+diagnose the first denied browser request and complete admin access/logout.
+Source-only preparation for this is not another hosted journey.
+
+Successful hosted password/user/session-sync and partial dashboard rendering
+remain established by R9. Complete admin/customer/media/payment journeys,
+recovery currency and stable free hosting remain open; the site is paused and
+UI unreleased. The narrower LIVE payment-window result is recorded below.
+
+Exact cleanup outcome:
+`/tmp/jazz-maintenance/restored-admin-r9-owned-session-cleanup-actual-20261021/summary.json`.
+One confirmed cleanup is spent. Keep the private ownership record separate from
+review evidence and use only a fresh source/origin/window for further access.
+
+## Earlier checkpoint — Oct21 18:41 UTC
 
 **Hosted password authentication now works on the recovered backend.** R9 records
 one password 200, verified-user 200 and session-sync 200 for the existing admin.

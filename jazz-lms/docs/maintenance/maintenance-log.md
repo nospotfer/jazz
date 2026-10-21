@@ -1,5 +1,21 @@
 # Maintenance log
 
+## Oct21 — Exact session cleanup committed, persisted and independently closed
+
+- Actual20239exit0/19:00:35 uses one fresh connection/105 SQL calls. Exact75163
+  cleanup commits once, deleting one session, one refresh token and one AMR.
+  No login/AuthPATCH/runtime/tunnel; audit rows remain exact.
+- Both fresh customer comparisons verify1,621rows/14,270cells with only two
+  allowed R9 sign-in timestamp changes. Persisted owned rows0, fresh other rows
+  exact and protected metadata match. The older R9 final-readback failure stays
+  unchanged; no retrospective uncaptured other-relation proof is claimed.
+- FullAuth/active desired unchanged, frontendclosed, replacementpaused and
+  independent nineGET fullAuth/old-settings/pause pass; pauseddesired404 qualified.
+  All actual handles terminal. Cleanup is spent; do not repeat it or reset stamps.
+- Next: historical-stamp baseline adoption and explicit pre/post-browser
+  connections, first-denial diagnostics, then admin/logout. No release yet.
+  [Current outcome](production-readiness.md#current-checkpoint--oct21-1900-utc).
+
 ## Oct21 — Hosted login and partial dashboard pass; exact session cleanup next
 
 - R9 records password200/user200/session-sync200 and reaches dashboard URL plus

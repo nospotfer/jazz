@@ -1,5 +1,18 @@
 # Goal verification matrix
 
+## Current recovery check — Oct21 19:00 UTC
+
+| Requirement | Authoritative result | Status |
+| --- | --- | --- |
+| R9 exact session cleanup |20239exit0; one COMMIT, one session/refresh/AMR each deleted; audit unchanged | Committed, persisted and closed; no replay |
+| Fresh complete customer preservation |1,621rows/14,270cells, only two expected R9 sign-in stamps differ; persisted owned rows0 | Verified in fresh cleanup window |
+| Other/protected state | Fresh pre/post rows exact and metadata matched | Fresh-window proof; old uncaptured interval not reconstructed |
+| Settings/resources | No Auth/login/runtime; Auth/desired unchanged, frontendclosed, paused, independent nineGET matches | Passed with paused desired404 qualification |
+| Admin continuity | Prior R9 password/user/sync and partial dashboard pass; denied request/admin/logout open | Incomplete; next initial baseline must admit known historical stamps |
+| Release/full goal | Customer/media/payment, recovery currency, free hosting and review open | Incomplete; production/UI unreleased |
+
+[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1900-utc).
+
 ## Current recovery check — Oct21 18:41 UTC
 
 | Requirement | Authoritative result | Status |
