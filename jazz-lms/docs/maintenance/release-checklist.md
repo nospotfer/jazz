@@ -1,5 +1,12 @@
 # Production review and rollback checklist
 
+- [x] Prepare the isolated replacement schema through actual guarded225→227
+  execution, strict schema/effective-rights/managed checks, sole confirmed COMMIT
+  and client/child closure. Final pause and independent original-state readback
+  pass. This does not release the application.
+- [ ] Verify persisted227 and managed constraints in a fresh read-only session,
+  then complete mapped restoration, account/Storage continuity and recovery-point
+  qualification. [Current evidence](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 - [x] Verify both actual database clients in a separate read-only scope: TLS-only
   CA/hostname, unchanged D6/Python3SQL and Node4SQL, identity/rollback/client close,
   344 managed columns, parent/child0 and independent paused/settings closure.

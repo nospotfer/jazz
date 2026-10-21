@@ -1,5 +1,16 @@
 # Goal verification matrix
 
+## Oct21 hosted schema checkpoint
+
+| Requirement | Evidence and current limit |
+| --- | --- |
+| Actual isolated schema preparation | R8 commits after42 SQL calls, strict227/effective rights/managed preservation and stable positive PID/XID; sole COMMIT confirmed/client closed. Customer import/serving/cutover remain false. |
+| Resource and original-state closure | Parent/child0;65 management calls, one restore/pause, two clean process scans. Final03:31:00 pause plus independent03:31:59 seven-GET exact identity/settings readback pass. |
+| Recovery-helper correction | Actual local same-connection old-reject/new-pass and wrong-CA rejection; E2/V6/D7 controls40/39/37, R8 controls59 pass. This does not recover earlier uncaptured failure details. |
+| Persisted schema and import compatibility | Fresh post-commit227 and managed constraints capture remain open. Four fixed SELECTs/source26constraints25indexes/four relations/one enum and18 controls are preparation only. |
+
+[Evidence and custody](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+
 ## Oct21 actual hosted comparison and explicit recovery mapping
 
 | Requirement | Evidence and current limit |

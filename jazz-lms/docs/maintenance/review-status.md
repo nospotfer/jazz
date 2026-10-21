@@ -1,5 +1,21 @@
 # Maintenance review checkpoints
 
+## Oct21 hosted empty schema setup succeeds
+
+The isolated Free replacement now has the guarded application schema: R8 performs
+42 SQL calls, strict227/effective-rights and managed-preservation checks, then one
+confirmed COMMIT with stable positive PID/XID and client closure. Parent/child0,
+final03:31:00 pause and independent03:31:59 seven-GET identity/settings closure
+pass. Production remains INACTIVE and the improved application is unreleased.
+
+The earlier R7 route-check stop executes no SQL; its original conservative flag
+and receipts remain unchanged. Actual local same-client TLS reproduction proves
+the guard rejected psycopg's internally generated address. The narrow repair
+preserves route/TLS and pinned-driver input checks; E/V/D40/39/37 and parent59
+closed controls pass. Next is a fresh persisted227/managed-constraint read-only
+check, then restoration and continuity testing. No customer import or cutover
+has occurred. [Actual evidence, custody and remaining work](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+
 ## Oct21 hosted clients pass and backup mapping advances
 
 Fresh source-e3 read-only comparison passes TLS1.3/CA/hostname, unchanged D6

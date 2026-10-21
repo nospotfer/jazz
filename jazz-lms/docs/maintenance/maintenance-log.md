@@ -1,5 +1,23 @@
 # Maintenance log
 
+## Oct21 actual empty227 setup and independent closure
+
+R8 on source22cc57c commits the isolated replacement schema after42 SQL calls,
+strict227/effective-rights/managed checks and same positive PID/XID. Sole COMMIT
+confirmed, client closed, parent/child0.65 management calls43normal22closure;
+one restore/pause, two clean process scans, final03:31:00 pause and independent
+03:31:59 seven-GET exact identity/original-settings closure pass. Customer import,
+serving, cutover and production deployment remain false.
+
+R7's real no-query route-check stop is retained. Local exact-driver TLS proof
+reproduces its internally generated hostaddr rejection; the narrow repaired
+attestor and pin-only V/D derivatives pass40/39/37 controls, R8 passes59. Root's
+first independent readback stops after one GET on a private-record field-name
+mismatch; that failure stays beside the separate successful seven-GET closure.
+No original receipt, conservative flag or spent action is rewritten.
+Source/finite packets and next persisted-schema/managed-constraint verification
+are recorded in [production readiness](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+
 ## Oct21 actual hosted connection comparison and source recovery mapping
 
 The separate read-only comparison passes both actual clients with unchanged

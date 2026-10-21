@@ -1,5 +1,14 @@
 # Service inventory
 
+## Oct21 current replacement schema state
+
+The existing Free replacement now has the application schema, with no customer
+import or serving. Actual R8 strict227/effective-rights/managed checks and sole
+COMMIT pass; parent/child0 and final03:31:00 pause are independently checked at
+03:31:59. Exact replacement/production are INACTIVE; preview ACTIVE_HEALTHY and
+original settings unchanged. Fresh persisted227/managed-constraint capture and
+data/account/Storage restoration remain open. [Evidence](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+
 ## Oct21 current read-only connection and access checkpoint
 
 Both actual psycopg and Node clients now pass provider-selected PRIMARY6543,

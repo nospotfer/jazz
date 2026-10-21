@@ -1,5 +1,13 @@
 # Supabase manager audit, recovery and rollback
 
+Current Oct21 replacement checkpoint: actual R8 empty-schema225→227 preparation
+commits after strict schema/effective-rights/managed-preservation checks; its
+client/child close and the project is paused. Independent03:31:59 readback
+confirms original production INACTIVE, preview ACTIVE_HEALTHY and original
+settings unchanged. No customer import/cutover/serving occurs. Persisted227 and
+managed constraints need a fresh read-only check before restoration.
+[Full evidence and retained source packets](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+
 Observed 2026-10-13 after native CLI login on the remote machine. The owner
 explicitly approved same-project resume, immediate private DB/Storage backup and
 bounded re-pause rollback. Both operations have been executed once: production

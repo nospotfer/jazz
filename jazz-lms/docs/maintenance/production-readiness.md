@@ -6,6 +6,60 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Oct21 empty replacement schema committed and paused
+
+R8 on application source `22cc57c` now completes actual hosted schema setup on
+the existing isolated Free replacement. Its 42 SQL calls perform the guarded
+225-column bootstrap, permissions hardening, additive currency migration and
+strict 227-column/effective-rights checks in one transaction. The positive
+backend PID/transaction ID stays stable; the sole COMMIT is confirmed, the final
+verifier completes and the client closes. No customer rows, imports, serving or
+cutover are authorized or performed. This is not a production deployment or a
+separate post-commit persistence check.
+
+Parent and child exit0. The parent uses65 management calls (43normal/22closure),
+one restore/pause and two zero-candidate process scans. Final03:31:00.821 UTC
+confirms the replacement INACTIVE and original observed settings unchanged.
+Independent03:31:59 seven-GET readback confirms its exact identity/paused state,
+production INACTIVE, preview ACTIVE_HEALTHY and the original settings equal.
+No second write or SQL replay is used for that readback.
+
+The preceding R7 stop remains immutable: it connected but the route attestor
+rejected the client before SQL (queries/commit/rollback0, NOT_ATTEMPTED, closed).
+Its conservative parent `ddlMayHaveRun:true` is preserved separately from those
+facts. Independent closure passes. Exact local D6/psycopg3.3.6/libpq180006 testing
+then reproduces the original guard rejecting psycopg's internally resolved
+`hostaddr`; the repaired guard accepts the same TLS connection and still rejects
+an untrusted CA. Only that peer-fact predicate changes; exact hostname, port,
+user, database, options, CA/TLS and pinned-driver input provenance remain checked.
+E2/V6/D7 pass40/39/37 closed controls; R8 passes59. Neither the local proof nor R8
+success recovers R7's uncaptured parameters or the earlier R6 exception.
+
+Original R8 parent/result/independent-closure SHA256s:
+
+- `e970023649464a739f68070b9db6819b1f385ff0bcf13dd4a1687e3f2ba190a3`
+- `479dc65ea5c6a0b616943263378d8b7430d76e9f0242a9af33bb82255aa36bb9`
+- `5c2a12f226680b4552499f314ab853b578c264612205cc8bd2165bea9b8c8e66`
+
+Owner-only local source/finite custody under the maintenance backup root:
+
+| Package | Files including manifest; member bytes | Manifest SHA256 |
+| --- | --- | --- |
+| `review-checkpoint-route-attestation-repair-r7-closure-20261021` |61;458,395 |`22507ded07c6b4a878287fc7b330d17d782832dd6c56a1bfa7393f972ca80b2e` |
+| `review-checkpoint-hosted-empty227-20261021` |55;447,596 |`9eddf590547f752a61782b6f827736e08e21a054ad26039870f6564429ebc52d` |
+
+Raw provider/Auth responses, credentials, executable plans, customer rows and
+raw SQL function bodies stay outside these packets. Retention remains local and
+unencrypted, without established off-site recovery.
+
+Next: independently verify persisted227 and managed constraints in a fresh
+read-only session before restoration. A separate offline package prepares four
+bounded catalog SELECTs and source expectations (26constraints/25indexes/four
+relations/one enum), with18 closed controls. It has no hosted capture yet.
+Customer restoration, account/password and Storage continuity, recovery-point
+currency, API containment, stable free hosting and remaining preview journeys
+still require verification. The improved application remains unreleased.
+
 ## Oct21 hosted client comparison passes
 
 A fresh, separate read-only scope on application source `e3f5796` now verifies
@@ -127,9 +181,10 @@ private configuration remain separate. [Recovery-point limits](#customer-recover
 
 ## Oct21 hosted attempts and independent closure
 
-The replacement remains empty and INACTIVE; hosted schema preparation has not
-succeeded. The original customer backend remains INACTIVE and the preview was
-observed ACTIVE_HEALTHY. No customer import, cutover or application release occurs.
+Before the successful R8 checkpoint above, the replacement was empty and
+INACTIVE and hosted schema preparation had not succeeded. The original customer
+backend was INACTIVE and the preview ACTIVE_HEALTHY. No customer import, cutover
+or application release occurred in these earlier scopes.
 The 02:09 UTC public HEAD checks still return503 `DEPLOYMENT_PAUSED` on both apex
 and `www`. These are timestamped observations, not continuous monitoring.
 

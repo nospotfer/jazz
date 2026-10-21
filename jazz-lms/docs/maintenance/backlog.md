@@ -2,11 +2,18 @@
 
 ## Current recovery and coupon work
 
+- Actual R8 isolated empty-schema setup now passes42 SQL/strict227/effective
+  rights/managed preservation and sole confirmed COMMIT. Parent/child0, pause
+  and independent seven-GET original-state closure pass. Next verify persisted227
+  and managed constraints read-only, then restoration/account/Storage continuity.
+  No customer import, serving or production release has occurred.
+  [Current checkpoint](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 - Fresh hosted TLS-only/unchanged D6 psycopg/Node comparison now passes both
   read-only clients, rollback/closure and344 managed column capture. Parent0 and
   independent seven-GET closure confirm the replacement paused/original settings
   preserved. Earlier R6 cause remains unknown; no parameter change follows.
-  Next establish actual atomic227 setup; imports/serving remain unverified.
+  Actual atomic227 subsequently passes as recorded above; imports/serving remain
+  unverified.
   [Actual comparison](production-readiness.md#oct21-hosted-client-comparison-passes).
 - Explicit offline mapping accounts for65tables/2,239records:1,690candidates
   including four historical Prisma rows,549transient/managed exclusions; both
