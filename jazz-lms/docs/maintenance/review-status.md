@@ -1,5 +1,15 @@
 # Maintenance review checkpoints
 
+## Oct21 selected REST API matrix passes
+
+Fresh source213e041 actual scope passes both18-request READ ONLY checks/rollbacks,
+all24 GETs across four existing credential kinds/no retry, frontend/worker/Node0,
+one pause and retained safe desired schema. Independent06:20:22 confirms exact
+replacement/production INACTIVE, preview healthy and original settings equal.
+Earlier failures stay unchanged. Next: import-specific managed metadata and
+Storage bijection, then actual hosted recovery. No customer import or release.
+[Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Oct21 transport scope closes before API probes
 
 The fresh source6c3ec31 run passes its first18-request READ ONLY check and rollback,

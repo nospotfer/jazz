@@ -1,5 +1,48 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 selected REST API scope verified and paused
+
+A fresh scope on source213e041 now passes `REPLACEMENT_API_CONTINUATION_BOUNDARY_VERIFIED`
+at06:19:32 UTC. Both18-request READ ONLY transactions verify current namespace,
+strict227/effective rights/empty state, original managed metadata and no schema
+overrides. Both ROLLBACK acknowledgments pass; the same frontend is retained only
+between phases and then closes. No new DDL/COMMIT/customer import occurs.
+
+All24 public GETs complete, one per cell/no retry, across the exact four existing
+credential kinds: LEGACY_ANON, LEGACY_SERVICE_ROLE, PUBLISHABLE and SECRET. Both
+elevated roots return canonical introspection-only200; non-elevated root401s are
+recognized observations, not authority evidence. Four default User404/PGRST205
+and16 excluded-profile406/PGRST106 checks pass. Legacy flag remains TRUE. The
+selected-credential matrix passes; all-key/authenticated-user-token/GraphQL/write,
+pre-exposure enforcement and whole-service health remain unproven.
+
+Parent/worker/Node exit0; both process scans find zero candidates. Management
+calls84 (62 normal/22 closure), one restore/schema PATCH/pause, zero configuration
+rollbacks. Fresh active readback supports retaining desired/effective
+`jazz_api_closed`. Independent06:20:22 seven-GET closure verifies exact replacement
+INACTIVE, production INACTIVE, preview ACTIVE_HEALTHY and original observed
+settings unchanged. Independent paused target API-config readback remains
+unestablished. Prior stopped scopes and their unknown causes are unchanged;
+later success does not diagnose the discarded SQL exception or earlier timeout.
+
+Parent `2b473aa337ce6b3e4df24bad2d156514ae9d29139f5d7299ce49460682531b2b`;
+API result `91fc6abd93c573fcdd0f80f3fc133e1b8f0a25f32b20d9651615ad41f067593a`;
+independent closure `139b4e106a44d1259f8859f1450c1ece61328ac987d16ebbb4d674febe3a08b3`.
+49 source/finite files/550,246 member bytes are retained under
+`review-checkpoint-api-selected-boundary-20261021`, manifest
+`e087fa9c37f06245ae4b7f2f4a80edb861b3d42cbf0b82a404e97eb5f5a55e89`.
+Credentials/enabled plans/raw provider and SQL captures/derived guards/CA stay
+separate. The pure diagnostic helper has17 closed controls; composition has24,
+20 syntax/seven inert checks and independent review. Its actual error branches
+are not exercised by this successful run. Local retention is not off-site recovery.
+
+Next: fresh import-specific managed triggers/functions/native constraints,
+collations/permissions, then mapped hosted customer/Storage restoration and actual
+account/file continuity. Source-only upload preparation must enforce exact68-file
+bijection, no overwrite, actual bucket defaults/ownership and NULL metadata.
+Recovery-point currency, stable free hosting, remaining journeys and production
+release remain open. No customer restore, serving or deployment is claimed.
+
 ## Oct21 second transaction stops; independent closure verified
 
 A new bounded transport scope on source `6c3ec31` finishes at 05:57:45 UTC with

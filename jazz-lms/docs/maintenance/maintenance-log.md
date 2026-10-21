@@ -1,5 +1,18 @@
 # Maintenance log
 
+## Oct21 selected API boundary verified; customer restoration next
+
+Fresh source213e041 actual parent/worker/Node0: both18 READ ONLY/strict227/namespace/
+rights/managed/empty/overrides checks and ROLLBACKs pass. All24 GETs/four credential
+kinds complete without retry. Two elevated canonical200, two non-elevated root401
+observations, four default404 and16 profile406 results meet the narrow contract.
+One schema PATCH retains jazz_api_closed; one pause and independent06:20:22 seven
+GETs confirm exact replacement/production INACTIVE, preview healthy and old
+settings equal. No new DDL/COMMIT/import/serving.49finite/source files550,246bytes
+are durably retained; credentials and raw captures stay separate. Earlier causes
+remain unknown. Prepare actual import metadata/Storage bijection next.
+[Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Oct21 second transaction failure retained and independently closed
 
 - New source6c3ec31 actual scope finishes05:57:45 STOPPED. First18 READ ONLY queries,

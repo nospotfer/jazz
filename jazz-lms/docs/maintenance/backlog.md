@@ -1,5 +1,15 @@
 # Prioritized maintenance backlog
 
+## Latest selected API verification — Oct21 06:20 UTC
+
+Selected four-kind/24-GET REST matrix and both18-request READ ONLY/rollback checks
+now pass. Independent closure confirms the replacement paused and original
+states/settings preserved. Next prepare fresh import-specific managed metadata
+and exact Storage upload bijection, then hosted customer/account/file recovery.
+User-token/GraphQL coverage, current recovery point, stable free hosting and
+release remain open. Earlier failures below are historical, not current matrix
+results. [Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Latest hosted verification — Oct21 05:58 UTC
 
 First18-request READ ONLY/rollback passes, but the fresh scope stops at second

@@ -1,5 +1,16 @@
 # Goal verification matrix
 
+## Oct21 selected REST API scope passes
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| Database state | Both18-request READ ONLY/strict227/namespace/managed/rights/empty/override checks pass; both ROLLBACKs/frontend close, no new DDL/COMMIT. |
+| Selected API matrix | Four existing key kinds×six cells=24 complete GETs/no retry. Elevated canonical200/default404/profile406 pass; non-elevated root401 remains only expected observation. User JWT/GraphQL/all-key/write/full health unproven. |
+| Closure | Parent/worker/Node0; retained safe API schema/one pause; independent06:20:22 sevenGETs verify exact replacement/production INACTIVE, preview healthy and old settings equal. |
+| Recovery | Local/source recovery evidence remains valid within its limits. Hosted managed triggers/permissions/collations, exact file import/account continuity/current recovery point and release remain open. |
+
+[Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Oct21 second transaction failure and closure
 
 | Requirement | Evidence and limit |

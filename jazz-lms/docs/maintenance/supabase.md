@@ -1,5 +1,16 @@
 # Supabase manager audit, recovery and rollback
 
+## Latest selected API checkpoint — Oct21 06:20:22 UTC
+
+Fresh actual selected REST matrix passes all24 GETs/four existing credential
+kinds/no retry and both18 READ ONLY state checks/ROLLBACKs. Parent/worker/Node0,
+frontend closed, safe desired/effective jazz_api_closed retained before one pause.
+Independent sevenGETs confirm exact replacement/production INACTIVE, preview
+healthy and old observed settings equal. Paused API-config readback remains
+unestablished. Import-specific managed triggers/permissions/collations, hosted
+customer/Storage continuity and remaining broader API coverage stay open.
+[Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Latest Oct21 closure — 05:58:38 UTC
 
 Exact replacement/production INACTIVE, synthetic preview ACTIVE_HEALTHY and old

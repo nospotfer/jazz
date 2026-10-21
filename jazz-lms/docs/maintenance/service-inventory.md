@@ -1,5 +1,14 @@
 # Service inventory
 
+## Latest selected API checkpoint — Oct21 06:20:22 UTC
+
+Replacement/production INACTIVE, preview ACTIVE_HEALTHY and old observed settings
+match independently. Selected four-kind/24-GET REST matrix and both18 READ ONLY
+checks/rollbacks pass; safe jazz_api_closed retained, parent/worker/Node0. No new
+DDL/COMMIT/customer import/serving. Import-specific managed metadata and Storage
+bijection are next; actual account/file recovery and production release remain
+open. [Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 ## Latest Oct21 replacement closure — 05:58:38 UTC
 
 Replacement and original production are independently INACTIVE; the synthetic

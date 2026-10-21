@@ -1,5 +1,14 @@
 # Production review and rollback checklist
 
+- [x] Verify the fresh selected REST API matrix: four existing credential kinds,
+  24 complete GETs/no retry, both18 READ ONLY checks/ROLLBACKs and frontend closure.
+- [x] Confirm parent/worker/Node0, retained safe schema/one pause and independent
+  06:20:22 exact paused replacement/original-state/settings closure.
+- [ ] Complete actual import-specific managed triggers/functions/constraints,
+  collations/permissions and exact68-file destination/source bijection checks,
+  then hosted recovery/account/file continuity. User JWT/GraphQL/whole health and
+  recovery-point/hosting/release remain open. [Evidence and limits](production-readiness.md#oct21-selected-rest-api-scope-verified-and-paused).
+
 - [x] Preserve the latest STOPPED scope honestly: pre-PATCH18 READ ONLY/rollback
   passes, second BEGIN/cleanup rollback unconfirmed, frontend closes, publicGET0.
 - [x] Independently verify05:58:38 exact replacement/production INACTIVE, healthy
