@@ -1,5 +1,30 @@
 # Maintenance log
 
+## Oct21 20:33 UTC — R14 admin recovery journey verified and closed
+
+- Actual10396 exits0 with `RESTORED_ADMIN_ACCESS_VERIFIED_AND_CLOSED` on app
+  `4b320b1`/checkpoint `3ecf93` (all10 remote checks pass): public HTTPS auth200,
+  password/dashboard/admin panel, normal global logout204 and subsequent admin
+  denial→auth all pass. Password2001/user2003/sync2001;172 app reads/0 blocked/
+  0 unexpected denials. This satisfies the exact-source admin recovery flow.
+- Thirteen optional prefetches receive local403/no-store without forwarding.
+  Disabled promo0 remains source-only; other28 is unclassified, with page/DNS/
+  TLS/connection errors0. No all-customer, all-integration or security claim.
+- Two database phases/151 SQL verify1,621rows/14,270cells except two new sign-in
+  timestamps, prior rows/protected metadata exact. Normal global logout leaves
+  no new session/refresh/AMR/audit rows; cleanupCOMMIT0.
+- Full Auth/active desired/original settings match; frontends/browser/native
+  close, replacement pause and independent9GET closure pass. Paused desired404
+  remains qualified by separate active-parent equality. Builder50097 exits0 at
+  20:33:58 UTC and its owned tunnel is terminal; no preview remains.
+- Public503/paused, no production deployment and UI unreleased. Next broader
+  customer/content/media, current coupon TEST/refund/currency, recovery currency,
+  free hosting and release review; no admin recovery/import/upload/correction/
+  cleanup replay. [Exact receipts and limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
+
+Earlier entries below record the state at their date; superseded pending items
+are historical, not new instructions to repeat accepted work.
+
 ## Oct21 — Credential startup fix verified locally
 
 - Application `4b320b1` disables five inputs and both submit controls until

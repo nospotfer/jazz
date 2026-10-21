@@ -1,30 +1,34 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 19:57 UTC
+## Latest verified replacement state — Oct21 20:33 UTC
 
-Application `4b320b1` fixes form startup readiness with local tests/UI fixtures.
-It is not deployed or tested against hosted authentication yet; a new source
-binding/build is required. Replacement settings/data below remain unchanged.
+Replacement is independently paused with full Auth restored and original project
+states/settings unchanged. Active desired settings match; paused PostgREST404
+limits the independent desired comparison, with separate active-parent equality
+retained. Both database frontends, browser/native and R8 builder/tunnel are
+closed. No preview is currently available.
 
-R13 independently closes with replacement paused, full Auth restored and active
-desired/original settings equal. Native, browser and both database frontends
-are closed. The R7 builder/tunnel subsequently exits 0 around 20:00 UTC; no
-recovery runtime resources remain. Paused desired-settings 404 retains its
-qualification by the separate active-parent equality check.
+R14 verifies public HTTPS login200, password/user/session-sync, dashboard,
+administrative panel, normal global logout204 and post-logout admin→auth on
+application `4b320b1`. Runtime172 application reads/0 blocked/0 unexpected denials;
+13 optional prefetches are locally refused403 without forwarding. Diagnostic
+other28 is unclassified; page/DNS/TLS/connection errors0. Disabled promotional
+media0 is still source-only evidence.
 
-Both database phases pass 109 SQL calls. All 1,621 rows/14,270 typed cells match
-the adopted latest R12 baseline; prior rows and protected metadata match. R13
-creates no session and needs no cleanup COMMIT. R12's hosted login, partial
-dashboard and completed exact cleanup remain separate historical evidence.
+Two DB phases/151 SQL verify all1,621rows/14,270cells with only two new sign-in
+timestamps, exact prior rows/protected metadata, and no new session/refresh/AMR
+or audit rows after normal logout. No cleanup COMMIT is required. Accepted data,
+68 PDFs and the committed56-cell correction must not be repeated.
 
-The latest attempt reaches the protected HTTPS login page, then its native
-`POST /auth` is denied before any provider login. Credential-form hydration
-readiness is the next product fix; full admin/logout remains unverified. Scoped
-prefetch handling is source-only and unexercised by R13. All 10 remote checks on
-`4ccd90f` pass, but public Vercel remains paused and application/UI unreleased.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1957-utc).
+Checkpoint `3ecf93` passes all10 remote checks. This closes the exact-source admin
+recovery flow, not all customer/content/media/payment or security checks. Public
+Vercel remains503/paused and application/UI unreleased. Broader journeys, current
+coupon TEST/refund/currency, recovery-point currency, stable free hosting and
+release/rollback review remain open.
+[R14 evidence and qualifications](production-readiness.md#current-checkpoint--oct21-2033-utc).
+Earlier dated inventory snapshots below describe their original state only.
 
-## Latest verified replacement state — Oct21 18:41 UTC
+## Earlier verified replacement state — Oct21 18:41 UTC
 
 Replacement is independently paused with full Auth restored and original
 project settings unchanged. R9 authenticates the existing admin and syncs its
@@ -41,7 +45,7 @@ Application31ad6ba/UI remain unreleased;68f5233 remote10checks pass. Accepted
 imports/PDFs and the committed56-cell correction must not be repeated.
 [Current evidence](production-readiness.md#current-checkpoint--oct21-1841-utc).
 
-## Latest verified replacement state — Oct21 18:15 UTC
+## Earlier verified replacement state — Oct21 18:15 UTC
 
 The replacement is independently paused with full Auth baseline equality and
 original project states/settings preserved after separate email-settings

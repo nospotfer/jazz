@@ -6,7 +6,71 @@
 
 <a id="current-checkpoint--oct21-1841-utc"></a>
 
-## Source update — Oct21 20:10 UTC
+## Current checkpoint — Oct21 20:33 UTC
+
+R14 verifies the recovered administrator journey on application
+`4b320b1a4598d23d837515994f8ea0e412778738`: public HTTPS login page200,
+password login, dashboard, administrative panel, normal global logout204 and
+post-logout admin→auth denial all pass. Actual10396 exits0 at20:33:36 UTC with
+`RESTORED_ADMIN_ACCESS_VERIFIED_AND_CLOSED`. Documentation/source checkpoint
+`3ecf93` passes all10 remote checks. This closes the exact-source admin recovery
+flow requirement; it does not verify every customer journey or resolve all
+security/release gates.
+
+The runtime records one password200, three user200 and one session-sync200,
+172 admitted application reads, zero blocked requests and zero unexpected
+denials. Thirteen optional nested prefetches receive local403/no-store with no
+forwarding; these are separate from application/provider traffic. Disabled
+promotional media runs zero times and remains source-only. Diagnostic `other:28`
+is unclassified; page errors, DNS, TLS and connection counters are zero.
+
+Two explicit database phases complete151 SQL calls. Final readback verifies all
+1,621 rows/14,270 typed cells against the adopted compatible baseline, allowing
+only two new sign-in timestamps; prior rows and protected metadata remain exact.
+Normal global logout leaves no new session/refresh/AMR rows or audit rows. No
+cleanup COMMIT is needed or attempted. Full Auth is restored, active desired
+settings and original project settings match, both frontends/native/browser
+close, and replacement pause plus independent nine-GET closure pass. Paused
+PostgREST404 still limits independent desired comparison; the active parent's
+separate desired-equality proof is retained.
+
+R8 builder50097 exits0 at20:33:58 UTC and its owned tunnel is terminal. No preview
+is available. Public production remains503/paused and the application/UI is
+unreleased; this bounded preview is not a production deployment. Next verify
+broader customer/content/media continuity and current-source coupon TEST/refund
+and currency behavior, then recovery-point currency, stable free hosting and
+release/rollback readiness. Do not rerun the verified admin recovery flow,
+accepted import/uploads, committed56-cell correction or completed cleanup.
+
+Raw outcome, retained separately from the finite review:
+`/tmp/jazz-maintenance/a14/journal/access-outcome.json`, SHA
+`6df0175520d6d906df2a5eb25fc5dd1362fea4865ec31e7a22ab96a9a9a980d7`.
+Finite review summary:
+`/tmp/jazz-maintenance/restored-admin-r14-finite-review-20261021/summary.json`,
+SHA `7016c99a6da5da826ac8e569f50ec5b32794a1d5b7e3caac24740b43e538d842`.
+Closed source review:
+`/tmp/jazz-maintenance/restored-admin-r14-sources-preparation-20261021/root-source-review.json`,
+SHA `77f86d2c65f7c60319456fdcd3cbdbf154bfc4b9975ac14f627b43a265671817`.
+Private credentials/ownership/plan inputs remain outside review evidence.
+R14's closed plan/outcome and explicit history descriptor have owner-only durable
+copies in `native-preview-configuration/`. A post-run pure history check accepts
+its three verified user lookups and authenticated global logout, changing only
+the historical timestamp window; future current-state readback remains mandatory.
+Its finite proof is
+`/tmp/jazz-maintenance/restored-admin-r14-finite-review-20261021/history-adoption-proof.json`,
+SHA `48b39287cd2c9d2ca7763b8650fef7a9ad7317fd64aa4edb5f32402a898d75c9`.
+The separately retained R4 helper passes 62 synthetic controls and is not part
+of R14's already-closed runtime. The eleven-file finite review checkpoint is
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-r14-complete-admin-20261021/`,
+manifest SHA `34316b9e9fb445b7ea8e2141573ec996e9b918e4a3e61b4d82a35ea3e029268d`;
+it excludes credentials, session ownership IDs and private plans. Retention is
+local and unencrypted; off-site recovery is not established.
+Earlier dated sections below preserve their original outcomes and pending items
+at that time; superseded work is not a new recovery task.
+
+<a id="source-update--oct21-2010-utc"></a>
+
+## Earlier source update — Oct21 20:10 UTC
 
 Application `4b320b1a4598d23d837515994f8ea0e412778738` fixes the startup
 race: five credential/name inputs and both submit buttons stay disabled until
@@ -21,12 +85,10 @@ fixture uses copied auth modules, a minimal layout and the missing-configuration
 SDK stub with no provider inputs; it proves UI behavior, not hosted login or the
 full-application E2E spec. Its browser and server close, with no listener left.
 
-Next build a fresh preview of this application commit, explicitly admitting the
-reviewed application delta rather than reusing the old documentation-only gate.
-Rebind current builder/coordinator/lifecycle/runtime/browser source identifiers
-and hashes while retaining the original R9/R12 data history and Auth correction
-receipts. Then finish administrator/dashboard/logout and the remaining full goal.
-No new provider operation or production deployment follows from this source fix.
+At this checkpoint the fresh application-delta admission/build and hosted admin
+journey were pending; R14 above subsequently verifies them. Original R9/R12
+history and Auth correction receipts remain unchanged. The local source fix
+alone did not authorize or establish production deployment.
 
 Verification summary:
 `/tmp/jazz-maintenance/auth-submit-hydration-verification-20261021/verification-summary.json`,
@@ -35,7 +97,9 @@ Narrow application-delta review:
 `/tmp/jazz-maintenance/auth-hydration-application-delta-preparation-20261021/application-delta-review.json`,
 SHA `1d87544bef2a9f6b49cf48e4e91e4182ff96b57888a7fa7e72b8b8abd24da77f`.
 
-## Current checkpoint — Oct21 19:57 UTC
+<a id="current-checkpoint--oct21-1957-utc"></a>
+
+## Earlier checkpoint — Oct21 19:57 UTC
 
 R13 reaches the protected HTTPS login page (200), then stops before provider
 login. Its first denied request is a native `POST /auth`, resource type
@@ -315,7 +379,7 @@ excluded. Retention is local and unencrypted; off-site recovery is not establish
 
 ## Oct21 17:09 — Correction attempt stops before write admission
 
-The reviewed56-cell correction remains unapplied. Fresh root65091 exits1 at
+At this earlier checkpoint, the reviewed56-cell correction was unapplied. Fresh root65091 exits1 at
 17:09:46 UTC before UPDATE/COMMIT, Auth enablement, native startup or password
 submission.73 initial READ ONLY calls establish the complete original baseline;
 query74 is the attempted serializable write BEGIN. It fails in2ms with

@@ -1,22 +1,23 @@
 # Goal verification matrix
 
-## Current verification — Oct21 20:10 UTC
+## Current verification — Oct21 20:33 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
-| Credential-form readiness | `4b320b1`: 36 focused tests, typecheck, no-JS/delayed-script Chromium pass; no provider dispatch | Fixed locally; new-source hosted journey unverified |
-| Public login page | R13 protected HTTPS 200 | Passed; no provider login in this attempt |
-| Credential submission | First denial: native `POST /auth`, document, `REQUEST_JSON_REQUIRED` at `ONE_PASSWORD_SUBMIT`; password/user/sync requests 0, owned sessions 0 | Native fallback recorded; local fix passes, new hosted journey pending |
-| Prior hosted access | R12 password/user/sync 200 and partial dashboard; exact owned cleanup committed and persisted | Retained historical success; full admin/logout still open |
-| Current preservation | R13 authenticates latest R12 baseline; two phases, 109 SQL calls, all typed/prior/protected comparisons pass | Passed; no cleanup COMMIT needed or attempted |
-| Settings and resources | Full Auth/active desired/original equality; native/browser/frontends closed, pause and independent nine-GET closure pass; R7 builder/tunnel exits 0 | Closed; paused desired 404 remains qualified |
-| Scoped prefetch handling | Reviewed source fix; R13 stops before login | Not exercised by R13; no historical denial relabelled |
-| Source and visual review | `4ccd90f`: all 10 remote checks pass; public landing review ready | No deployment or current-rendering claim |
-| Complete goal | Admin/logout/customer/media/payment, recovery currency, free hosting and release review remain open | Incomplete; public production paused |
+| Recovered admin access | R14/application `4b320b1`: public HTTPS auth200→password200→dashboard→admin panel→normal global logout204→admin redirects to auth | Verified for this exact source and scope |
+| Native session flow | Password2001/user2003/sync2001/logout2041;172 application reads,0 blocked,0 unexpected denials | Passed; broader customer/role journeys remain open |
+| Credential startup and optional prefetch | Hydration fix exercised;13/13 canonical optional prefetches locally403/no-store, no forwarding | Passed within this journey; disabled promo0 remains source-only |
+| Current preservation | Two DB phases/151 SQL;1,621rows/14,270cells with only2 new sign-in timestamps, prior/protected exact | Passed; global logout leaves session/refresh/AMR/audit0, cleanupCOMMIT0 |
+| Auth/config/resource closure | Full Auth restored, active desired/original equal; both frontends/native/browser closed, independent9GET paused closure; builder/tunnel terminal | Closed; paused desired404 qualified by separate active-parent equality |
+| Diagnostics | Page errors/DNS/TLS/connection0;other28 | Other counter unclassified; no blanket runtime-health claim |
+| Source publication | `3ecf93`: all10 remote checks pass; app `4b320b1` | Source/closed-preview proof, no production deployment or live preview |
+| Remaining goal | Broader customer/content/media, current coupon TEST/refund/currency, recovery currency, free hosting and release/rollback | Incomplete; public503/paused, UI unreleased |
 
-[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1957-utc).
+[R14 exact outcome and limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
+Earlier dated matrices retain historical results, not instructions to rerun
+accepted recovery, correction, uploads or completed cleanup.
 
-## Current recovery check — Oct21 18:41 UTC
+## Earlier recovery check — Oct21 18:41 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -32,7 +33,7 @@
 
 [Exact evidence and limitations](production-readiness.md#current-checkpoint--oct21-1841-utc).
 
-## Current recovery check — Oct21 18:15 UTC
+## Earlier recovery check — Oct21 18:15 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -522,7 +523,7 @@ with synthetic read mocks, separately from the authenticated5f native journey.
 | Notes / progress / quizzes | Local persistence/locales/mobile and PostgreSQL concurrency/ownership tests pass. Cloud learning26/26:15 completed lessons,16 attempts/192 answers/15 PLATINUM summaries. Cache leak fixed; final notes pointer/privacy/recovery19/19 includes real manual-save200 after labeled intercepted500. Separate9bd actual native UI adds fresh-actor2notes/2completedlessons/2attempts24answers2summaries100PLATINUM/92GOLD, independently verified; original-four preserved. | Latest57 mobile drawer320/390 geometry/hit/keyboard/route entry passes. FB scoped hydrated editor text/styles pass at both widths; BC35/35 browser checks include12 real language clicks at1440/320/390.16auth/seven label cases are distinct. Earlier interrupted11 logic checks remain distinct; quiz contention has real local PG proof with no repeated cloud quiz mutation after patch. [Cloud evidence](preview.md#learning-and-note-recovery-follow-up). |
 | Medals / certificates | 1–15 numbering, 15/15 SUPREME and full-course eligibility; legacy 1/15 gets no whole-course certificate. Local vector PDF/Unicode proof; exact-source HTTPS normal button click downloads valid 862,196-byte A4 vector certificate. | Four-theme/viewport private layout and medal contrast checks pass. Historical forged awards cannot be assumed repaired. |
 | Messaging | Persisted route/role tests and native signature/trusted-authentication/deduplication checks. Student-owned threads, cross-student denial and authorized local professor reply tested with outbound disabled. Bounded HTML parser and actual inbox text-encoding regressions pass; CodeQL marks alerts 14/15 fixed. | Live receiving/webhook disabled, MX absent; real delivery/notification/inbound reply require approved activation and controlled mail. |
-| Administration | Local users/vouchers render; ordinary roles denied; staff notes reviewed. API permission/validated owner identity covered. HTTP resets and CLI voucher reset require explicit isolated targets and default to plans. All 15 legacy mutators are quarantined locally. | Unsupported course create/edit links and inert delete button removed; course preview retained. Course authoring is not implemented. Remaining legacy tools retain their documented local write behavior; broader admin/account and recovery evidence are unverified. |
+| Administration | Local users/vouchers render; ordinary roles denied; staff notes reviewed. API permission/validated owner identity covered. HTTP resets and CLI voucher reset require explicit isolated targets and default to plans. All 15 legacy mutators are quarantined locally. | Unsupported course create/edit links and inert delete button removed; course preview retained. Course authoring is not implemented. Remaining legacy tools retain their documented local write behavior. R14 verifies the exact-source restored admin panel/login/logout flow; broader administration/account changes remain unverified. |
 | Vercel / DNS / accounts | Vercel OWNER/live target/config/Hobby; Supabase sole Owner (MFA false), approved recovery/export/rollback; Dodo/Mux/Resend inventories; GitHub ADMIN, DNS/RDAP. Owner selected zero-cost hosting; free protected HTTPS preview verified. [Vercel](vercel.md), [Supabase](supabase.md), [Dodo](dodo.md). | Stable free production hosting, old credential-bearing deployment quarantine, usage/logs/recovery, separate GitHub scope, registrar controls and Dodo dashboard ownership/payout. No paid upgrade authorized. |
 | Dodo provider — current | Sealedba105 payment/signed fulfillment/canonical USD8997 purchase verified. Latest same-payment recovery captures409 INSUFFICIENT_WALLET_FUNDS; final no refunds/full8997 refundable/purchase retained. Original29 fingerprints/nine prior accounts/23 sessions preserved, actor sessions0, all four services/endpoint/full45,831 seal/formal closure pass. Separate own-payment ledger records historical credit8997/fee535/after8462. | Refund/access reversal and free merchant-sandbox balance remedy remain open. Historical ledger is not current account balance; earlier409 body remains unknown. Preserve both spent reservations; no financial retry, customer-wallet substitution or checkout/card replay. [Current evidence](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial). |
 | Dodo provider — earlier settled-document scope | Earlierba105/45,831 settled-document scope is CLOSED_INCOMPLETE_CARD_TRANSPORT_UNVERIFIED: same browser/login/new checkout/billing/Continue, revision1/exact GET/ADOPT without navigation, three card fields in a provider iframe. One UI action spent RESERVED→UI_CLICKED; no retry/refund/positive journal/purchase, last provider GET requires_payment_method. Normal logout/independent29 fingerprints/nine prior accounts/23 sessions/current10 accounts1,515 rows/USERidentity1sessions0purchases0, five terminal0 services/endpoint404/full seal and retention64 files412,746 bytes pass. | An empty list of observed card-write responses proves neither zero requests nor acceptance.92 blocks/93 console errors remain incompletely attributed. Preserve the qualified STRICT_NO_CARD label and original spent action. This historical attempt is distinct from the later successful SDK-verified scope above. [Earlier scope](dodo.md#oct20-settled-document-ui-card-action-spent-transport-unverified). |

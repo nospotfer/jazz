@@ -1,26 +1,33 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October 21, 20:10 UTC
+## Current priorities — October21 20:33 UTC
 
-1. Build and verify the locally fixed credential-form readiness change on a
-   fresh reviewed artifact, then complete administrator/dashboard/logout. R13
-   reaches the HTTPS login page but native `POST /auth` is denied before any
-   provider login. Source `4b320b1` passes 36 local checks and isolated UI
-   browser tests; hosted verification remains open. Keep the strict controller;
-   scoped prefetch handling remains source-only and unexercised in R13.
-2. Preserve the latest authenticated R12 baseline. R13 verifies both database
-   phases and final typed/prior/protected state with zero new sessions and no
-   cleanup COMMIT. R12's successful hosted login, partial dashboard and exact
-   cleanup are retained; do not replay cleanup, import, uploads or correction.
-   Complete the remaining customer/media and isolated coupon/refund journeys.
-3. Finish recovery currency, stable zero-cost hosting and release/rollback
-   review. All 10 remote checks on `4ccd90f` pass, but public production remains
-   paused and the application/UI unreleased.
+1. Verify broader recovered customer/content/media continuity on the next
+   reviewed source and scope. R14 already passes the exact-source public HTTPS
+   administrator/dashboard/global-logout/post-logout-denial journey. Do not
+   repeat admin recovery, accepted imports/uploads, correction or old cleanup.
+2. Complete current-source coupon TEST, refund/access reversal and currency
+   checks with the documented financial limits and spent reservations preserved.
+   The earlier sandbox wallet denial is not a successful refund or a new retry.
+   The prepared next scope uses an existing confirmed controlled USER without
+   a course purchase: the earlier paid Dodo fixture is ineligible. It permits
+   one coupon checkout/card in TEST mode, preserving the old purchase and spent
+   reservations; no financial action has run. See
+   `/tmp/jazz-maintenance/current-coupon-next-step-preparation-20261021/next-test-scope.json`.
+3. Finish recovery-point currency, stable zero-cost hosting and production
+   release/rollback review. Application `4b320b1` is verified in the closed R14
+   preview; checkpoint `3ecf93` passes all10 remote checks. No production
+   deployment occurred, no preview remains, and the public site is503/paused.
 
-All recovery browser, application, database frontend and R7 build/tunnel
-resources are closed. The [landing before/after review](landing-review.md) is
-ready; its historical screenshots are not current-rendering proof.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1957-utc).
+R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
+prior rows and protected metadata. Normal logout leaves no new transient/audit
+rows and needs no cleanup COMMIT. Full Auth/settings, both database frontends,
+browser/native, builder/tunnel and independent pause closure are verified.
+Diagnostic `other:28` remains unclassified; disabled promotional-media handling
+is unexercised. This is not blanket customer, integration or security acceptance.
+The [landing review](landing-review.md) remains historical visual evidence.
+[R14 outcome and remaining limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
+Earlier dated priorities below are historical and may be superseded.
 
 ## Earlier priorities — October21 18:41 UTC
 
@@ -63,13 +70,12 @@ The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
 recreate the bucket or replay file uploads. This does not prove data currency
 after the archive's recovery point.
 
-The latest metadata-only scope closes successfully at17:41 UTC; independent
-17:42 checks confirm replacement paused/full Auth equality and original projects
-unchanged. Its six SQL calls verify the read-only-to-write transaction transition
-without changing data. This does not reverify customer rows or resolve the earlier
-57P01's cause. The56-cell correction remains prepared and unapplied. Protected
-HTTPS login-page proof passes, but hosted admin/customer access remains open.
-Paused desired404 retains its qualified comparison limit.
+The56-cell compatibility correction is committed and readback verified; it is
+not an unapplied task. R14 subsequently verifies hosted admin access, normal
+logout and complete final preservation from that corrected/adopted baseline.
+The earlier17:41 metadata-only check, failed access attempts and completed
+cleanups remain historical evidence. None calls for another repair or import.
+Paused desired404 retains its independent-comparison qualification.
 
 Current evidence: [production readiness](production-readiness.md),
 [maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).
@@ -86,7 +92,7 @@ additional current tasks.
 | SEC-01 | High | Server identity trusted cookie session data; now validates `auth.getUser()` and fails closed. | Forged/unverified identity regressions; persisted customer-role negatives. |
 | SEC-02 | High | Cron accepted spoofable Vercel header; now requires configured bearer `CRON_SECRET`. | Missing/wrong/spoof tests pass. Vercel project and live deployment env names lack the secret; approved release configuration required. Live sweep not invoked. |
 | SEC-03 | High | Pending registration password/profile overwritten before ownership proof. | Existing-identity/proof regressions and real emailed-OTP onboarding. |
-| SEC-04 | High | Unhydrated credential forms sent passwords through GET; now explicit POST. | No-JavaScript browser regression with no password query. |
+| SEC-04 | High | Explicit POST prevents password query leakage; `4b320b1` also disables credential entry and submit until hydration attaches handlers. |36 focused checks and no-JS/held-script UI checks pass; R14 then verifies the exact-source hosted password/dashboard/admin/logout journey. No production deployment. |
 | SEC-05 | High | Empty owner/user email could authorize media; publication/access hierarchy inconsistent. | Role/owner/publication regressions and real free/buyer/legacy/admin matrix. |
 | SEC-06 | High | Client quiz verdict/membership influenced awards; now locked server grading and immutable stored verdicts. | PostgreSQL concurrency/ownership/options tests; 15 actual buyer quiz completions. Historical forged awards require separate evidence. |
 | SEC-07 | Critical | Browser roles exposed fresh LMS tables; actual production inspection confirms grants on all 26 public tables, RLS disabled on the payment ledger and both messaging tables, and self-role escalation. Reviewed hardening also has actual hosted replacement evidence; original production grants remain unchanged and contained by pause. | Local/cloud fixtures deny all 25 application tables and preserve owner CRUD. Production zero-row ledger HEAD returned 200; no exploit write. Approved rollback re-paused production; exact hardening requires separate review. [Database review](database.md). |

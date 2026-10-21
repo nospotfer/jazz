@@ -1,31 +1,32 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 20:10 UTC
+## Current access gate — Oct21 20:33 UTC
 
-- [x] Implement credential readiness and verify 36 focused checks, typecheck and
-      isolated no-JavaScript/delayed-script UI behavior on `4b320b1`.
-- [ ] Explicitly admit the narrow application delta and build a fresh preview;
-      complete actual recovered administrator/dashboard/logout.
+- [x] Admit/build application `4b320b1` and verify R14 public HTTPS login,
+      dashboard, administrative panel, normal global logout and post-logout
+      admin→auth denial. The exact-source admin recovery flow is complete.
+- [x] Exercise hydration readiness and13 local optional-prefetch refusals;
+      preserve strict native policy,172 application reads/0 blocked/0 denials.
+- [x] Verify151 SQL across two DB phases, all1,621rows/14,270cells with only two
+      new sign-in timestamps and exact prior/protected state. Global logout
+      leaves no new session/refresh/AMR/audit rows; cleanupCOMMIT0.
+- [x] Restore full Auth/active desired/original settings, close frontends/native/
+      browser, pause the replacement and independently verify nine-GET closure;
+      qualify desired404 by active-parent
+      equality. R8 builder50097 exits0 and owned tunnel is terminal.
+- [x] Record checkpoint `3ecf93`, all10 remote checks successful, and the closed
+      exact-source result. No production deployment or preview remains.
+- [ ] Verify broader customer/content/media and current-source coupon TEST,
+      refund/access reversal and currency behavior under their scoped limits.
+- [ ] Finish recovery currency, stable free hosting and release/rollback review.
+      Public production remains503/paused; application/UI is unreleased.
 
-- [x] Retain R12's hosted login/partial dashboard and completed exact cleanup;
-      authenticate its latest baseline in R13 without replaying spent writes.
-- [x] Verify R13 HTTPS login-page 200 and identify the pre-hydration native
-      `POST /auth` denial before any provider password/user/sync request.
-- [x] Verify both database phases and full final typed/prior/protected state
-      across 109 SQL calls, with zero new sessions and no cleanup COMMIT.
-- [x] Restore Auth/active desired/original settings, close native/browser/both
-      frontends, pause replacement and independently verify nine-GET closure;
-      keep paused desired 404 qualified. Close the R7 builder/tunnel as well.
-- [ ] Verify the still-unexercised scoped prefetch handling during the full
-      hosted administrator/dashboard/logout journey.
-- [ ] Finish customer/media/isolated payment, recovery currency, stable free
-      hosting and release/rollback review. `4ccd90f` passes 10 remote checks;
-      application/UI deployment is still pending.
+Diagnostic other28 is unclassified; disabled promotional media0 remains
+source-only. Do not repeat accepted data/files,56-cell correction, admin recovery
+or completed cleanup. Earlier dated lists retain their then-pending tasks as
+history. [R14 outcome and limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
 
-The [landing review](landing-review.md) is ready and remains historical visual
-fixture evidence. [Current outcome](production-readiness.md#current-checkpoint--oct21-1957-utc).
-
-## Current access gate — Oct21 18:41 UTC
+## Earlier access gate — Oct21 18:41 UTC
 
 - [x] Verify hosted password/user/session-sync success on the recovered backend.
 - [x] Record partial dashboard URL/search visibility and preserve the failed
@@ -42,7 +43,7 @@ fixture evidence. [Current outcome](production-readiness.md#current-checkpoint--
 
 [Actual result and limits](production-readiness.md#current-checkpoint--oct21-1841-utc).
 
-## Current access gate — Oct21 18:15 UTC
+## Earlier access gate — Oct21 18:15 UTC
 
 - [x] Commit and verify the exact 56-cell Auth v2.197.0 compatibility correction;
       preserve stable cells, other resets, money NULLs and the original archive.
