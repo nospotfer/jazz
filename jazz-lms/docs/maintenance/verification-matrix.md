@@ -1,5 +1,17 @@
 # Goal verification matrix
 
+## Oct21 import metadata capture and qualified review
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| Import-specific metadata | One frontend/18 empty-state plus11 metadata READ ONLY calls, nine retained SELECTs, both ROLLBACKs and final client/worker closure pass. Full private capture precedes validation. |
+| Semantic readiness | Native-RI signature review required; no validation-report success or import approval. Existing empty-state proof cannot replace data-aware post-import checks. |
+| Resource closure | Parent/worker0, one pause; independent07:00:02 sevenGETs confirm exact replacement/production INACTIVE, preview healthy, old settings equal. No configuration changes/public probes/import. |
+| Storage preparation | Exact68-object bijection/NULL ownership/path validator,16 closed controls and independent source review. No upload or destination bytes/defaults/ownership proof. |
+| Remaining recovery | Resolve actual managed metadata; mapped hosted restore and Auth/file continuity, recovery point, stable free hosting and release remain open. |
+
+[Evidence and custody](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Oct21 selected REST API scope passes
 
 | Requirement | Actual evidence and remaining limit |

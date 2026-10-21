@@ -192,17 +192,21 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Latest Oct 21 checkpoint at 05:30:48 confirms replacement/production INACTIVE, preview
-healthy and old settings unchanged. Native local PG17 restores 1,621 rows/14,270
-typed cells and verifies 23505 rollback; 68 PDFs/private bucket/NULL ownership checks
-pass. Hosted customer/GoTrue/Storage continuity remains open. One locked empty API
-schema COMMIT is confirmed; fresh later 18 + 18 READ ONLY checks pass. First 24 GETs stop
-on root 401 contract expectations; R3 fixes that observation but actual third GET
-then stops at 5 s deadline/no HTTP. Both scopes roll config back/pause with independent
-closure. Preserve stopped outcomes/spent actions; never recreate this schema.
-Continue bounded transport diagnostics/fresh verification, mapped recovery and
-continuity. Source recovery-point/hosting/release gates remain. See the latest
-production-readiness.md sections and separate source/finite custody packets.
+Latest Oct21 independent checkpoint at07:00:02 confirms replacement/production
+INACTIVE, preview healthy and old settings unchanged. The selected four-kind REST
+matrix now passes all24 GETs/no retry with both18 READ ONLY state checks/rollbacks;
+safe desired/effective jazz_api_closed is retained. A separate actual import-
+specific capture passes18+11 READ ONLY calls/both rollbacks/frontend+worker0,
+but semantic validation requires native-RI trigger signature review. Full private
+capture is retained; review it offline before another live operation. Preserve
+earlier stopped results/unknown causes/spent markers; never recreate the namespace
+or replay a closed scope. Native local restore1,621rows/14,270typedcells/23505
+rollback and68 source PDF integrity checks remain verified within their limits.
+Exact68-object Storage upload-plan source is independently reviewed; no hosted
+customer import/upload/GoTrue continuity or release has occurred. Continue actual
+metadata review and mapped data-aware restoration; empty-state assertions are
+pre-import guards, not post-import value proofs. Recovery-point/hosting/release
+gates remain. See current production-readiness.md and separate custody packets.
 
 The Oct20 Free replacement is `klaiiikojgdfclzhqfgt`, named
 `Jazz-LMS-Empty-Replacement-20261020`. Final state is INACTIVE. A minimal

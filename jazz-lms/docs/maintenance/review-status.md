@@ -1,5 +1,15 @@
 # Maintenance review checkpoints
 
+## Oct21 import metadata capture passes with explicit semantic review
+
+Actual source5d56307 inspection captures current selected managed metadata and
+passes18+11 READ ONLY calls, both rollbacks, frontend/worker closure and one pause.
+Independent07:00:02 confirms replacement/production INACTIVE, preview healthy and
+original settings equal. Metadata validation requires native-RI signature review;
+no import GO is claimed. The exact68-object Storage plan has16 closed controls
+and independent source review, without uploads. Next resolve actual metadata and
+perform mapped data-aware recovery. [Evidence and limits](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Oct21 selected REST API matrix passes
 
 Fresh source213e041 actual scope passes both18-request READ ONLY checks/rollbacks,

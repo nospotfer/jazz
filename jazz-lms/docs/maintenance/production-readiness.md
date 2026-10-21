@@ -1,5 +1,55 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 import metadata captured and replacement paused
+
+The source5d56307 import-specific inspection finishes at06:58:36 UTC with
+`CUSTOMER_IMPORT_READONLY_CAPTURED_AND_CLOSED`. One verified TLS1.3 frontend
+executes the unchanged18-call strict227/namespace/empty/rights/managed proof,
+then a separate11-call READ ONLY metadata transaction (BEGIN, nine SELECTs,
+ROLLBACK). Both rollbacks and final frontend/worker closure pass. The metadata
+capture includes current selected relations, constraints, indexes, types,
+columns, triggers/functions and collations. No SQL writes, schema PATCH, API
+probes, customer import, mail or account operations occur.
+
+Capture success is separate from semantic approval. Validation stops with
+`NATIVE_RI_TRIGGER_SIGNATURE_REQUIRES_REVIEW`; no successful validation-report
+hash or import permission is invented. The complete private capture is retained
+before validation, so the review can use those original observations without a
+new provider operation. The metadata review and data-aware hosted restore remain
+open. The old empty-state verifier is a prerequisite before import; its empty
+assertions cannot serve as post-import customer-data checks.
+
+Parent/worker exit0 without terminate/kill; both process scans find zero
+candidates. Management calls76 (50 normal/26 closure), one restore/one pause,
+zero configuration changes. Fresh active readbacks retain `jazz_api_closed` and
+all49 disabled Auth settings/no SMTP. Independent07:00:02 seven-GET closure
+confirms the exact replacement INACTIVE, production INACTIVE, preview
+ACTIVE_HEALTHY and original observed settings unchanged. Independent API-config
+readback on the paused target remains unestablished.
+
+Parent summary `49e6c49a32cec8919a0fe426c0906e3016b270b436da11e03db3bb4b7544b734`;
+inspector `5a456c892ab3c5c5e192cabf91a8e0cc87449bbc6e483926afe655868efbdbed`;
+private metadata capture `610644dd350fba9fa32d005dfbf74e4faecb6bd541b93388bb3f872bab04ed1d`;
+independent closure `82198871c0c0c9c8cc927627de07e82767ed03d7a1dd20d554231b59fbe4576e`.
+The actual source has25 closed controls/15 syntax/five inert checks and an
+independent source review. These source tests do not supply hosted behavior.
+Actual finite custody retains15files/43,028member bytes under
+`review-checkpoint-customer-import-readonly-actual-20261021`, manifest
+`51333663e0ebcf7a701d4d7ab3f519977860511755e5c6822724380eea1ab22b`.
+Separate source/peer manifests are `f50f7c8a…`/`7e8e2722…`. Credentials, enabled
+inputs, CA, raw SQL definitions and provider bodies stay outside these packets;
+retention remains local/unencrypted, without established off-site recovery.
+
+The source-only Storage upload plan now checks an exact68-object source/destination
+bijection, literal paths and source NULL ownership/custom metadata, with16 closed
+controls and independent review. It has no upload client or network/SQL authority;
+actual destination defaults, ownership and byte readback remain required.
+Source/peer retention manifests `f5f39108…`/`7ce73f46…` are separate from blobs and
+credentials. Next: resolve the captured managed-metadata differences, then one
+mapped customer restore with native constraints and typed pre/postcommit checks,
+separate Storage uploads and actual Auth/file continuity. Recovery-point currency,
+stable free hosting, remaining journeys and production release remain open.
+
 ## Oct21 selected REST API scope verified and paused
 
 A fresh scope on source213e041 now passes `REPLACEMENT_API_CONTINUATION_BOUNDARY_VERIFIED`

@@ -1,5 +1,15 @@
 # Prioritized maintenance backlog
 
+## Latest import inspection — Oct21 07:00 UTC
+
+Import-specific metadata capture/18+11 READ ONLY calls/both rollbacks/client
+closure pass; independently paused replacement and preserved originals verified.
+Resolve the captured native-RI trigger signature review before customer import.
+The exact68-object Storage upload-plan validator is prepared and independently
+reviewed; actual uploads/defaults/ownership/bytes remain open. Continue mapped
+data-aware hosted restore, Auth/file continuity, recovery-point qualification,
+stable free hosting and release. [Evidence](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Latest selected API verification — Oct21 06:20 UTC
 
 Selected four-kind/24-GET REST matrix and both18-request READ ONLY/rollback checks

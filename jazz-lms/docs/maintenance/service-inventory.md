@@ -1,5 +1,14 @@
 # Service inventory
 
+## Latest import inspection — Oct21 07:00:02 UTC
+
+Independent sevenGETs confirm exact replacement/production INACTIVE, isolated
+preview ACTIVE_HEALTHY and old observed settings equal. Replacement current
+import-related metadata is captured with18+11 READ ONLY calls/both rollbacks/
+frontend and worker closure; retained safe API/Auth configuration is unchanged.
+Native-RI semantic review and actual customer/account/file restore remain open;
+no import, upload or production release. [Evidence](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Latest selected API checkpoint — Oct21 06:20:22 UTC
 
 Replacement/production INACTIVE, preview ACTIVE_HEALTHY and old observed settings

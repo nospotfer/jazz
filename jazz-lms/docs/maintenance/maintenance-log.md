@@ -1,5 +1,17 @@
 # Maintenance log
 
+## Oct21 import metadata captured; semantic review remains open
+
+Source5d56307 actual one-frontend18+11 READ ONLY calls, both rollbacks and final
+client/worker closure pass; full private metadata is preserved. Validation stops
+on `NATIVE_RI_TRIGGER_SIGNATURE_REQUIRES_REVIEW`, so capture is not import
+approval. No writes/configuration changes/public probes/customer import occur.
+One pause and independent07:00:02 sevenGETs confirm replacement/production
+INACTIVE, preview healthy and original observed settings equal. Exact68-file
+upload-plan source/16 controls and independent review are retained separately;
+no upload follows. Next resolve actual metadata differences and execute mapped
+data-aware recovery. [Evidence and custody](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Oct21 selected API boundary verified; customer restoration next
 
 Fresh source213e041 actual parent/worker/Node0: both18 READ ONLY/strict227/namespace/

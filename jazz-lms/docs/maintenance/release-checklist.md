@@ -1,5 +1,16 @@
 # Production review and rollback checklist
 
+- [x] Capture actual current import-related metadata on source5d56307:18 empty-state
+  plus11 metadata READ ONLY calls, both ROLLBACKs, frontend/worker0 and one pause.
+- [x] Independently verify07:00:02 exact replacement/production INACTIVE, healthy
+  preview and original observed states/settings; retain source/finite evidence.
+- [ ] Resolve captured native-RI trigger signature and complete semantic review;
+  capture success does not establish import readiness.
+- [x] Prepare and independently review exact68-object upload-plan bijection/
+  literal paths/NULL ownership validation;16 closed source controls pass.
+- [ ] Execute mapped data-aware hosted recovery and actual Storage/Auth/file
+  continuity; recovery-point/hosting/release gates remain. [Evidence](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 - [x] Verify the fresh selected REST API matrix: four existing credential kinds,
   24 complete GETs/no retry, both18 READ ONLY checks/ROLLBACKs and frontend closure.
 - [x] Confirm parent/worker/Node0, retained safe schema/one pause and independent
@@ -15,8 +26,8 @@
   preview and original observed settings after guarded rollback/pause.
 - [x] Reproduce the SQLSTATE diagnostic-subclass gap offline without claiming the
   unknown original cause; retain bounded provider-log observations separately.
-- [ ] Verify a fresh hosted API matrix with phase-specific failure/cleanup
-  diagnostics. Current stopped scope supplies no public API proof.
+- [x] Verify a separate fresh hosted API matrix with phase-specific diagnostics
+  at06:20. The historical stopped scope itself supplies no public API proof.
 - [ ] Capture and review current selected-table triggers/functions/permissions
   before hosted customer import; archived explicit-trigger counts do not prove
   current platform behavior. [Evidence](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
@@ -28,9 +39,9 @@
   metadata, qualifying original API empty-string owner separately.
 - [x] Commit locked empty API namespace once; retain both incomplete API results,
   guarded rollback/pause and latest 05:30:48 independent old-state closure.
-- [ ] Complete fresh hosted API matrix after finite transport diagnostics; then
-  actual account/file recovery, exact destination defaults/ownership/bytes/path
-  bijection and recovery-point qualification. Third GET timeout is not success.
+- [x] Complete the separate fresh hosted API matrix at06:20 after finite transport
+  diagnostics. Historical third-GET timeout remains a failure; actual account/file
+  recovery/defaults/ownership/bytes/bijection/recovery-point gates above stay open.
   [Evidence](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
 
 - [x] Verify persisted227 in a fresh actual READ ONLY transaction: strict schema,

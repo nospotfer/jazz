@@ -1,5 +1,16 @@
 # Supabase manager audit, recovery and rollback
 
+## Latest import inspection — Oct21 07:00:02 UTC
+
+The current selected relations/constraints/indexes/types/columns/triggers/
+functions/collations are captured privately with one frontend,18 empty-state
+plus11 metadata READ ONLY calls, both rollbacks and confirmed client/worker close.
+Semantic validation stops on native-RI signature review; it grants no import
+authority. No configuration writes/API probes/customer import. Independent
+sevenGETs confirm replacement/production INACTIVE, preview healthy and original
+settings equal. Paused target API-config independent readback is unestablished.
+[Evidence, custody and next recovery scope](production-readiness.md#oct21-import-metadata-captured-and-replacement-paused).
+
 ## Latest selected API checkpoint — Oct21 06:20:22 UTC
 
 Fresh actual selected REST matrix passes all24 GETs/four existing credential
