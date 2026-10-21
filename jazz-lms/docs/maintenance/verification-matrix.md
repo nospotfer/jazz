@@ -1,5 +1,18 @@
 # Goal verification matrix
 
+## Oct21 fresh persisted schema and offline continuity
+
+| Area | Actual result and limits |
+| --- | --- |
+| Persisted replacement | Fresh READ ONLY Python18/Node8 requests; strict26 tables/four RPCs/227 columns, effective rights/empty guards and authenticated managed baseline pass. Both rollback/close; parent/child0. No DDL/COMMIT/customer import. |
+| Independent closure | Final04:08:57 pause; separate04:09:08 seven GETs confirm target/production INACTIVE, preview healthy and old settings equal. No POST/SQL replay; API containment remains open. |
+| Selected managed definitions | Actual4relations/26constraints/25sourceindexes/one enum match. Four extra nonunique auth.users indexes pass separate exact key/predicate/flag review and remain untouched; original four-difference result retained. Values, login and storage upload remain unverified. |
+| Catalog tooling | Actual local PG17 query/read-only write rejection/rollback/cleanup verifies one-line noInherit projector fix; six mutation controls. Verifier25Python/18Node closed checks and source review remain distinct. |
+| Archive continuity | Memory-only185-row check:14accounts/16identities/seven purchases and checked references/collision sets consistent. Preserve13USER/oneSUPER_ADMIN and two confirmation disagreements. Controlled project-address admin match is source evidence. Nine controls pass. |
+| Current ORM | Static23models/202scalarcols/five ordered enums/23FK endpoints match expected227; five controls/independent review. Generated28model-enum blocks match; generator.output differs. No precision/default/index/check/FK-action/live-data equivalence claim. |
+
+[Original results and remaining work](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
+
 ## Oct21 hosted schema checkpoint
 
 | Requirement | Evidence and current limit |
@@ -7,7 +20,7 @@
 | Actual isolated schema preparation | R8 commits after42 SQL calls, strict227/effective rights/managed preservation and stable positive PID/XID; sole COMMIT confirmed/client closed. Customer import/serving/cutover remain false. |
 | Resource and original-state closure | Parent/child0;65 management calls, one restore/pause, two clean process scans. Final03:31:00 pause plus independent03:31:59 seven-GET exact identity/settings readback pass. |
 | Recovery-helper correction | Actual local same-connection old-reject/new-pass and wrong-CA rejection; E2/V6/D7 controls40/39/37, R8 controls59 pass. This does not recover earlier uncaptured failure details. |
-| Persisted schema and import compatibility | Fresh post-commit227 and managed constraints capture remain open. Four fixed SELECTs/source26constraints25indexes/four relations/one enum and18 controls are preparation only. |
+| Persisted schema and import compatibility | Fresh post-commit227 and selected managed-definition checks now pass as recorded above. Data-value/import/Auth/Storage continuity remain open; earlier18 preparation controls are not the hosted proof. |
 
 [Evidence and custody](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 

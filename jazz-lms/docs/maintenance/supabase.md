@@ -4,9 +4,14 @@ Current Oct21 replacement checkpoint: actual R8 empty-schema225→227 preparatio
 commits after strict schema/effective-rights/managed-preservation checks; its
 client/child close and the project is paused. Independent03:31:59 readback
 confirms original production INACTIVE, preview ACTIVE_HEALTHY and original
-settings unchanged. No customer import/cutover/serving occurs. Persisted227 and
-managed constraints need a fresh read-only check before restoration.
-[Full evidence and retained source packets](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+settings unchanged. Fresh18Python/8Node read-only verification now passes
+persisted227/effective rights/empty guards/original managed baseline; both clients
+rollback/close and parent/child0. Final04:08:57 pause and independent04:09:08
+closure preserve old states/settings. Selected4relations/26constraints/25source
+indexes/one enum match; four nonunique platform indexes are reviewed unchanged.
+Offline account/model continuity passes within documented limits. No customer
+import/cutover/serving occurs; mapped restore and actual Auth/Storage remain next.
+[Full evidence and retained source packets](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
 
 Observed 2026-10-13 after native CLI login on the remote machine. The owner
 explicitly approved same-project resume, immediate private DB/Storage backup and

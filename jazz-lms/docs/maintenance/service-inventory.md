@@ -1,13 +1,26 @@
 # Service inventory
 
+## Oct21 persisted replacement and source continuity
+
+Fresh actual18Python/8Node read-only requests verify persisted227, effective
+rights/empty guards and original managed baseline; both rollback/close and
+parent/child0. Final04:08:57 pause and independent04:09:08 seven-GET closure confirm
+replacement/production INACTIVE, preview healthy and old settings unchanged.
+Actual4relations/26constraints/25sourceindexes/one enum match; four additional
+nonunique platform indexes pass separate exact-AST review and remain untouched.
+Offline14accounts/16identities/seven purchases have consistent checked links;
+preserve roles/two confirmation disagreements. Static current Prisma coverage
+passes. No customer restoration, serving or production release yet.
+[Actual evidence and next work](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
+
 ## Oct21 current replacement schema state
 
 The existing Free replacement now has the application schema, with no customer
 import or serving. Actual R8 strict227/effective-rights/managed checks and sole
 COMMIT pass; parent/child0 and final03:31:00 pause are independently checked at
 03:31:59. Exact replacement/production are INACTIVE; preview ACTIVE_HEALTHY and
-original settings unchanged. Fresh persisted227/managed-constraint capture and
-data/account/Storage restoration remain open. [Evidence](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
+original settings unchanged. Fresh persisted227/managed capture now passes as
+recorded above; data/account/Storage restoration remains open. [Evidence](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 
 ## Oct21 current read-only connection and access checkpoint
 
@@ -20,9 +33,10 @@ occurs. Historical R6's discarded cause remains unknown. [Actual scope](producti
 
 Offline mapping accounts for65tables/2,239records/two sequences/68blobs. Exact
 source Attachment/Storage references and NULL ownership now match. All344
-destination managed column shapes match the original; constraints/enum labels,
-destination file metadata, Auth continuity and recovery-point currency remain
-gates. [Source/compatibility limits](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
+destination managed column shapes match the original; selected constraint/enum/
+index comparison now passes as recorded above. Destination file metadata,
+actual Auth continuity and recovery-point currency remain gates.
+[Source/compatibility limits](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
 
 The saved Vercel OAuth CLI login refreshes without another owner login. Three
 exact-target GETs confirm the same paused/protected production deployment and

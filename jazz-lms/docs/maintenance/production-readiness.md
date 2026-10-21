@@ -6,6 +6,102 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Oct21 persisted schema and managed catalog verified
+
+Fresh source `0769a01` read-only verification passes after a new replacement
+resume. Python performs18 query requests in one REPEATABLE READ READ ONLY
+transaction: actual identity, strict26 tables/four RPCs/227 columns, effective
+rights/empty-data guards and managed-state preservation against the authenticated
+original baseline. The strict verifier uses the real current catalog and pinned
+original SQL; no discarded R8 catalog is reconstructed. Final identity/metadata,
+ROLLBACK and client-close checks pass. The independent Node session performs
+eight requests, captures344 managed columns and four bounded catalog queries,
+then rolls back and closes. The two sessions have separate backend identities.
+
+Both clients use the unchanged reviewed route/credential and verify the frontend
+CA/hostname. Upstream SQL TLS remains separately observed false. Neither executes
+DDL, COMMIT, customer import, Auth operations or mail. Parent/child exit0, with77
+management calls (50normal/27closure), one resume/pause and two zero-candidate
+process scans. Final04:08:57.603 UTC confirms replacement INACTIVE and original
+observed settings equal. Independent04:09:08.445 seven-GET closure confirms the
+exact paused target, production INACTIVE, preview ACTIVE_HEALTHY and unchanged
+old settings, with no POST/SQL/replay. API containment/cache health remain open.
+
+Offline comparison of that actual catalog finds four relations,26 constraints,
+all25 source indexes and one enum exactly equal within the selected projection.
+Four additional destination `auth.users` indexes are separately reviewed:
+`idx_users_created_at_desc`, `idx_users_email`, `idx_users_last_sign_in_at_desc`
+and `idx_users_name`. All are nonunique platform-owned btree indexes; the last
+uses the JSON name text expression with an IS NOT NULL predicate. Exact key/
+predicate ASTs and catalog flags match the explicit reviewed forms. They add no
+primary/unique/exclusion rule and remain untouched. The original four-difference
+result is preserved beside that acceptance. This proves selected definitions,
+not successful insertion, login, storage upload or whole-platform equivalence.
+
+Actual local PG17 testing exposes the old projector's non-CHECK `noInherit`
+expectation. A one-line derivative fixes that projection while preserving all
+four query bytes; actual catalog capture/read-only write rejection/rollback and
+owned-fixture cleanup pass, with six mutation controls. The hosted verification
+package's25 Python/18 Node closed checks and independent source review are
+distinct from the hosted results above.
+
+| Original finite receipt | SHA256 |
+| --- | --- |
+| Parent terminal result |`baeea48705e2e56c65d4fb4a1e3a079ea4fd065460b0ec220f7008e78d2ba30c` |
+| Both-client result |`e9a907863b2bc5619de6b106e0da514c88a25cd6d923fd471ec8c724012e0f96` |
+| Independent paused closure |`884123ed8fdb53943c3b3da72ed394c639b62408d3c0c442079ebbae61810ae0` |
+| Original managed comparison |`2cc1e9ab0e93b3747dc049e2707236267b850b808a06ce5d9478ca6c096fd53c` |
+| Separate four-index acceptance |`2f1df950c9900e963da97e212046d74c95f0c04c8371514ca8ad33e3d14f5b6d` |
+
+Independent actual-evidence review finds no material issue, rehashes all17
+private Python receipts and verifies the original result/closure/catalog links.
+Its finite receipt is `a09352c482ce8bba3a1a55b9c5aee09d298ba167ca9b5a9e6511eb3544f07c73`.
+Owner-only durable packet `review-checkpoint-persisted227-managed-20261021`
+contains61 files including its manifest,463,811 member bytes; manifest
+`e0f3b36f3a5092db7365bebd9c5e20684df21683772411101caf36a08cfaa4c7`.
+It is source/finite evidence, with original private captures and executable plans
+excluded; it is not a complete execution/recovery bundle or off-site backup.
+
+Next: mapped customer restoration and actual Auth/Storage continuity, with
+recovery-point qualification, hosting and serving gates still open. Original
+private metadata/derived SQL, credentials and active plans stay outside retained
+source/finite review packets. No customer import or production cutover occurred.
+
+## Oct21 source accounts and application model continuity
+
+An offline memory-only selected export checks185 rows from eight archive tables.
+All14 Auth/public users have matching original UUID/email linkage;16 identities
+and seven purchases have no missing user/course/voucher references or detected
+key collisions. Eight email/eight Google identities match their associations.
+Roles remain13 USER/one SUPER_ADMIN. Auth confirmation exists for12 accounts
+while all14 public records have emailVerified: preserve the two disagreements
+for review. Nine password fields classify as bcrypt and five as empty/null;
+destination password/Google login remains unverified.
+
+The personal owner address has no source match. A separate public.User-only
+follow-up finds the original SUPER_ADMIN matches a second explicitly controlled
+project address. It exports no further Auth rows and grants no role/session or
+recovery authority. Destination identity/access still need verification. Raw
+customer values/hashes, addresses, password hashes and provider JSON are not
+retained in these reports. Nine offline controls pass; the initial incorrect
+enum-role assumption remains beside the corrected TEXT role contract.
+
+Independent static comparison covers all23 current Prisma models,202 scalar
+columns, five ordered enums and23 FK endpoint relations against expected227.
+Five mutation controls pass. The generated schema differs only in
+generator.output outside its28 exact model/enum blocks; the initial whole-file
+equality failure is retained. This is static model coverage, not live ORM,
+precision/default/index/check/FK-action or data-value equivalence. Extra tables
+and columns remain preserved.
+
+Owner-only durable source/finite packets under the maintenance backup root:
+`review-checkpoint-source-customer-continuity-20261021` (manifest `a745f366…`),
+`review-checkpoint-controlled-address-continuity-20261021` (`80ad395e…`),
+`review-checkpoint-current-prisma-restoration-20261021` (`14233d3c…`) and
+`review-checkpoint-current-prisma-peer-review-20261021` (peer receipt `3e3c343e…`).
+Local unencrypted retention does not establish off-site recovery. The October13
+recovery-point qualification and actual import/Auth/Storage gates remain.
+
 ## Oct21 empty replacement schema committed and paused
 
 R8 on application source `22cc57c` now completes actual hosted schema setup on
@@ -52,10 +148,9 @@ Raw provider/Auth responses, credentials, executable plans, customer rows and
 raw SQL function bodies stay outside these packets. Retention remains local and
 unencrypted, without established off-site recovery.
 
-Next: independently verify persisted227 and managed constraints in a fresh
-read-only session before restoration. A separate offline package prepares four
-bounded catalog SELECTs and source expectations (26constraints/25indexes/four
-relations/one enum), with18 closed controls. It has no hosted capture yet.
+The fresh persisted227/managed-catalog verification now passes as recorded
+above. This R8 checkpoint itself contains no post-commit query or managed-catalog
+capture; its original result and spent actions remain unchanged.
 Customer restoration, account/password and Storage continuity, recovery-point
 currency, API containment, stable free hosting and remaining preview journeys
 still require verification. The improved application remains unreleased.

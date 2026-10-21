@@ -1,5 +1,22 @@
 # Maintenance review checkpoints
 
+## Oct21 persisted schema and selected compatibility pass
+
+Fresh source0769 actual read-only verification passes strict227/effective rights/
+empty-state and original managed baseline,18 Python/eight Node requests,
+both rollback/close and terminal parent/child0. Final04:08:57 pause and independent
+04:09:08 seven-GET exact identity/original-state/settings closure pass. Actual
+catalog comparison matches4relations/26constraints/25sourceindexes/one enum;
+four nonunique platform indexes pass separate exact key/predicate/flag review.
+
+Offline14accounts/16identities/seven purchases have consistent checked links;
+preserve original roles and two confirmation disagreements. Source admin matches
+an explicitly controlled project address, without proving destination access.
+Static current Prisma23models/202columns/5enums/23FK endpoints and five controls
+pass with independent review. Next: actual mapped restore and Auth/Storage
+continuity; recovery-point, hosting, containment and remaining journeys stay open.
+[Actual evidence and retention limits](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
+
 ## Oct21 hosted empty schema setup succeeds
 
 The isolated Free replacement now has the guarded application schema: R8 performs

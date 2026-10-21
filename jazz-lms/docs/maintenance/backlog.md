@@ -2,10 +2,20 @@
 
 ## Current recovery and coupon work
 
+- Fresh actual persisted227/read-only verification now passes: effective rights/
+  empty guards, original managed state, both rollbacks/closes and independent
+  04:09:08 paused/original-settings closure. Selected4relations/26constraints/
+  25sourceindexes/one enum match; four extra nonunique platform indexes are
+  reviewed and retained. Offline14accounts/16identities/seven purchases have
+  consistent checked links; preserve two confirmation disagreements and roles.
+  Static current Prisma model coverage passes. Next: mapped restoration with
+  value/postcondition checks and bounded rollback, then actual Auth/Storage
+  continuity. Customer import, serving, recovery-point qualification and release
+  remain open. [Current checkpoint](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
 - Actual R8 isolated empty-schema setup now passes42 SQL/strict227/effective
   rights/managed preservation and sole confirmed COMMIT. Parent/child0, pause
-  and independent seven-GET original-state closure pass. Next verify persisted227
-  and managed constraints read-only, then restoration/account/Storage continuity.
+  and independent seven-GET original-state closure pass. Fresh persisted227 and
+  managed-constraint checks now pass as recorded above; restoration remains.
   No customer import, serving or production release has occurred.
   [Current checkpoint](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 - Fresh hosted TLS-only/unchanged D6 psycopg/Node comparison now passes both
@@ -50,8 +60,8 @@
   is repaired narrowly, actual baseline retest and real-verifier/local-SQL checks
   pass, and the exact unused local Kong gateway is stopped. R4 classification now
   passes actual fresh hosted-window scans; R5 child-environment and URI-template
-  integration defects are repaired. Hosted connection/atomic execution remains
-  open as recorded above. Do not infer whole-config preservation
+  integration defects are repaired. Later hosted connection/atomic/persisted
+  checks pass as recorded above. Do not infer whole-config preservation
   from the gateway stop's aggregate mismatch; preserve its qualified readback.
   Existing session-only sources cannot be port-flipped.
   [Current evidence](production-readiness.md#complete-capability-review-and-transaction-rehearsal).

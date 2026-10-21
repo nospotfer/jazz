@@ -197,9 +197,21 @@ The Oct20 Free replacement is `klaiiikojgdfclzhqfgt`, named
 three-field Auth PATCH passes actual readback of all49 intended values with
 unrelated settings unchanged. Stored/effective API schemas are disabled, but the
 sole live probe returns503/PGRST002; that alone is not containment proof. Do not
-repeat successful Auth changes or recreate the project. Investigate actual
-service/runtime schema configuration read-only. No application DDL/import or
-cutover occurred; preserve every spent create/configuration/restore/pause marker.
+repeat successful Auth changes or recreate the project. Oct21 R8 now commits the
+guarded empty application225→227 schema with strict rights/managed-preservation
+checks and one confirmed COMMIT. Fresh source0769 read-only verification then
+passes persisted227/effective rights/empty guards/original managed baseline,
+both client rollbacks/closes and parent/child0. Final04:08:57 pause and independent
+04:09:08 seven-GET closure preserve original observed states/settings. Four extra
+nonunique auth.users indexes are separately reviewed and retained; original
+selected constraints/indexes/types match. No customer import/serving/cutover has
+occurred; preserve every spent create/configuration/restore/pause marker.
+Continue mapped restoration and actual Auth/Storage continuity with a fresh
+bounded plan. Offline14accounts/16identities/seven purchases have consistent
+checked links; preserve original roles and two confirmation disagreements.
+The source admin matches an explicitly controlled project address, but actual
+restored access remains unverified. See the current production-readiness.md
+checkpoint rather than replaying closed preparation/verification scopes.
 Its server-created timestamp predates the accepted create request, unexplained;
 exact201/preinventory absence/current ownership are independently verified.
 Separate owner-only `empty-hosted-target-20261020-database-password-private.json`

@@ -1,5 +1,25 @@
 # Maintenance log
 
+## Oct21 persisted227, managed definitions and account continuity
+
+Fresh source0769 read-only verification passes18 Python/eight Node requests,
+strict227/effective-right/empty-state checks, original managed baseline,
+both ROLLBACK/client closes and terminal parent/child0.77 management calls,
+one resume/pause and two zero-candidate scans; final04:08:57 pause and independent
+04:09:08 seven-GET original-state/settings closure pass. No DDL/COMMIT/import or
+release. Actual managed comparison matches4relations/26constraints/25source
+indexes/one enum; four nonunique auth.users additions pass separate exact-AST
+review and stay unchanged. The original comparison remains intact.
+
+Offline185-row checks prove14linked accounts/16identities/seven purchases and
+consistent checked references. Preserve13USER/oneSUPER_ADMIN and two confirmation
+disagreements. The original admin matches a controlled project address; actual
+destination access is open. Static current Prisma23models/202columns/5enums/
+23FKs and five controls pass with independent review. Source/finite packets have
+durable exact copies without raw customer/credential material. Next: mapped
+restore, Auth/Storage continuity and recovery-point qualification.
+[Evidence and limits](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
+
 ## Oct21 actual empty227 setup and independent closure
 
 R8 on source22cc57c commits the isolated replacement schema after42 SQL calls,

@@ -1,12 +1,22 @@
 # Production review and rollback checklist
 
+- [x] Verify persisted227 in a fresh actual READ ONLY transaction: strict schema,
+  effective rights, empty guards and authenticated managed-state preservation;
+  both clients rollback/close and parent/child0. Final04:08:57 pause and
+  independent04:09:08 original-state/settings closure pass.
+- [x] Compare selected actual managed definitions:4relations/26constraints/
+  25sourceindexes/one enum match; four nonunique platform additions pass separate
+  exact-AST review. Preserve provider objects and original comparison.
+- [x] Check offline14account/16identity/seven-purchase linkage and current Prisma
+  model coverage. Preserve roles/two confirmation disagreements; a controlled
+  project-address admin match does not prove restored access.
+- [ ] Execute mapped restoration with checked values, exact postconditions and
+  rollback, then verify actual Auth/Storage continuity and qualify the recovery
+  point. [Current evidence](production-readiness.md#oct21-persisted-schema-and-managed-catalog-verified).
 - [x] Prepare the isolated replacement schema through actual guarded225→227
   execution, strict schema/effective-rights/managed checks, sole confirmed COMMIT
   and client/child closure. Final pause and independent original-state readback
   pass. This does not release the application.
-- [ ] Verify persisted227 and managed constraints in a fresh read-only session,
-  then complete mapped restoration, account/Storage continuity and recovery-point
-  qualification. [Current evidence](production-readiness.md#oct21-empty-replacement-schema-committed-and-paused).
 - [x] Verify both actual database clients in a separate read-only scope: TLS-only
   CA/hostname, unchanged D6/Python3SQL and Node4SQL, identity/rollback/client close,
   344 managed columns, parent/child0 and independent paused/settings closure.
@@ -52,9 +62,9 @@
   This proves neither the hosted cause nor hosted success.
 - [x] Prepare D6 finite connection-stage diagnostics with 37 closed controls,
   no raw message/DSN retention and unchanged connection factory/parameters.
-- [ ] Establish hosted executor/strict227/sole-COMMIT proof in a fresh reviewed
-  scope. The new read-only comparison proves both connections; R6's original
-  discarded failure remains unknown. No hosted schema preparation is claimed.
+- [x] Establish hosted executor/strict227/sole-COMMIT proof in the separate R8
+  scope, followed by fresh persisted-schema verification above. R6's discarded
+  failure remains unknown; its original receipt is preserved.
 - [x] Stop the five unused local test siblings once after fresh identity/client
   checks; independently verify stopped namespace/former listeners absent and
   unrelated inventory preserved. Keep objects/volumes/private restart plan and
@@ -77,9 +87,9 @@
 - [x] Create one verified Free replacement; minimal Auth PATCH200 matches all49
   intended values. Final19:47:59 confirms it paused and observed original state/
   settings preserved. Earlier failures remain recorded.
-- [ ] Verify replacement runtime API containment, SQL/TLS/roles, managed emptiness
-  and schema bootstrap. Disabled schema settings plus503/PGRST002 are insufficient;
-  no customer import or cutover yet.
+- [ ] Verify replacement runtime API containment. SQL/TLS/roles, managed empty
+  state, bootstrap and fresh persisted227 now pass; disabled API settings plus
+  503/PGRST002 remain insufficient for containment. No customer import/cutover yet.
   [Actual evidence](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
 
 - [ ] Complete TEST refund/access reversal. The later same-payment request
