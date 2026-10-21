@@ -1,21 +1,21 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 19:28 UTC
+## Current access gate — Oct21 19:39 UTC
 
-- [x] Preserve completed R9 exact cleanup and two authenticated historical stamps.
-- [x] Verify current persisted admin and zero transient baseline; adopt full RAM
-      snapshot across explicit pre/post-browser database connections.
-- [x] Complete actual two-phase no-browser lifecycle with109 SQL calls, full final
-      customer/prior/protected preservation and both frontend closes.
-- [x] Restore Auth/desired, pause replacement and independently verify old settings
-      and fullAuth; qualify paused desired404 with active-parent equality.
-- [x] Retain failed R11 Auth propagation result; no hosted journey is claimed.
-- [ ] Extend the bounded exact-state wait without another PATCH in the same scope;
-      use a fresh scope to finish administrator/dashboard/logout.
-- [ ] Finish customer/media/isolated payments, recovery currency, free hosting and
-      release/rollback review. Application/UI changes remain unreleased.
+- [x] Pass bounded Auth convergence and hosted password/user/session-sync200.
+- [x] Observe dashboard search and retain exact first denied optional prefetch;
+      do not label later cascades or old unrecorded requests harmless.
+- [x] Verify full post-browser two-phase data preservation across165 SQL calls;
+      one exact owned cleanup COMMIT, persisted owned rows0, prior/protected exact.
+- [x] Restore fullAuth/desired/old settings, close browser/native/both frontends,
+      pause replacement and independently verify closure; qualify desired404.
+- [x] Close R6 builder/tunnel; preserve all spent actions and new sign-in stamps.
+- [ ] Authenticate/adopt latest closed R12 baseline and verify scoped optional
+      prefetch handling in a fresh full administrator/dashboard/logout journey.
+- [ ] Finish customer/media/isolated payment, recovery currency, stable free
+      hosting and release/rollback. Public UI/code deployment remains pending.
 
-[Actual outcome](production-readiness.md#current-checkpoint--oct21-1928-utc).
+[Actual outcome](production-readiness.md#current-checkpoint--oct21-1939-utc).
 
 ## Current access gate — Oct21 18:41 UTC
 

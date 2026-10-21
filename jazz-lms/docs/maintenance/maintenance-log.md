@@ -1,5 +1,25 @@
 # Maintenance log
 
+## Oct21 — Browser prefetch cause identified; post-browser preservation/cleanup pass
+
+- Actual19715exit1/19:39:33 passes Auth convergence, password/user/sync200 and
+  dashboard visibility, then the restricted controller refuses optional RSC
+  prefetch `/dashboard/courses`. Seven later stops are cascades. Admin/logout
+  remain unverified; historical R9's missing first-request identity stays missing.
+- Explicit pre/post-browser frontends pass165 SQL calls. Exact owned cleanup
+  commits once, removing one session/refresh/AMR each; auditDeletes0, persisted
+  owned rows0, all1,621rows/14,270cells except two new sign-in stamps exact, prior/
+  protected state match. No57P01 occurs here; its earlier cause stays unknown.
+- FullAuth/desired/old settings restored, browser/native/both frontends closed,
+  replacement paused and independent nineGET closure passes; desired404 qualified.
+  R6 builder/tunnel exits0; a fresh R7 artifact/tunnel build is running.
+- Next adopt authenticated latest closed R12 history and refuse optional nested
+  prefetches locally without dispatching them. Do not replay cleanup or reset
+  timestamps. Application31ad6ba remains unreleased; public site paused.
+- Created an eight-image owner-only [landing review](landing-review.md) from
+  verified public historical screenshots; no current rendering claim.
+  [Current evidence](production-readiness.md#current-checkpoint--oct21-1939-utc).
+
 ## Oct21 — Two database phases preserve data; Auth propagation wait stops access
 
 - Actual39036exit1/19:28:43 closes before browser startup with

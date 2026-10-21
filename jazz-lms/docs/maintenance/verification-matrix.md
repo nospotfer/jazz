@@ -1,17 +1,18 @@
 # Goal verification matrix
 
-## Current recovery check — Oct21 19:28 UTC
+## Current recovery check — Oct21 19:39 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
-| Initial restored state |1,621 rows/14,270 cells; two historical R9 stamps only, persisted admin verified, current transients0 | Passed |
-| Explicit database phases | Initial47 SQL/rollback/close; fresh readiness/TLS/route and second frontend;109 total SQL, full final customer/prior/protected preservation | Actual no-browser lifecycle passes; browser lifecycle still open |
-| Temporary Auth enable | One PATCH200; three short full-state reads stay baseline | Failed convergence; no browser/login starts |
-| Settings and resource closure | One rollback PATCH, fullAuth/desired/old settings equal, both frontend closes, pause and independent nineGET pass | Passed; desired404 qualified; R6 tunnel holder remains live |
-| Browser success reporting | R11 includes final proof after context/browser/native stop and rejects unexpected blocks/denials; six controls | Source-only fix; full hosted admin/logout open |
-| Release/full goal | Customer/media/payment, recovery currency, free hosting and review open | Incomplete; production/UI unreleased |
+| Auth propagation and login | Longer bounded wait; password/user/sync200, same persisted actor, visible dashboard search | Passed; complete journey still open |
+| First denied request | GET/fetch RSC Next-prefetch `/dashboard/courses`; later seven denials after stop | Actual controller boundary identified; old R9 remains unclassified |
+| Full post-browser preservation | Two frontends/165 SQL; all1,621rows/14,270cells except two sign-in stamps, prior/protected match | Passed in actual R12 window |
+| Exact owned cleanup | One confirmed COMMIT deletes1session/1refresh/1AMR, auditDeletes0, persisted rows0 | Passed/spent; no replay |
+| Settings/resources | FullAuth/desired/old equality; native/browser/frontend close, pause and independent nineGET pass; R6 tunnel exits0 | Passed; desired404 qualified; fresh R7 build underway |
+| Public landing review | Eight manifest-verified historical public images, unchanged copied bytes, source/provenance limits recorded | Review artifact ready; not current rendering/deployment proof |
+| Release/full goal | Admin/logout/customer/media/payment, recovery currency, free hosting and review open | Incomplete; production/UI unreleased |
 
-[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1928-utc).
+[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1939-utc).
 
 ## Current recovery check — Oct21 18:41 UTC
 

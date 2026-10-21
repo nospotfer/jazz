@@ -1,18 +1,18 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 19:28 UTC
+## Latest verified replacement state — Oct21 19:39 UTC
 
-R11 independently closes with replacement paused, full Auth restored, desired
-settings unchanged and original project settings equal. Both explicit database
-frontends close. Initial and final complete customer/prior/protected readbacks
-pass with109 SQL calls and zero current transient/session rows. Only the two
-known historical R9 sign-in stamps differ from the compatible archive.
+R12 independently closes with replacement paused, full Auth restored, desired/
+original settings equal and both frontends closed. Browser/native close cleanly.
+Exact cleanup commits once for one session/refresh/AMR, with persisted owned rows0.
+All1,621rows/14,270cells except two new sign-in stamps, prior/protected state match
+across165 SQL calls. The old disconnected-connection failure does not recur here.
 
-Access stops at the short Auth enable propagation wait; no new login, browser,
-application or cleanup write starts. The fixed-expiry R6 tunnel holder is still
-running at this checkpoint. Admin/logout, customer/media continuity and stable
-free hosting remain open. Public Vercel is paused; application/UI unreleased.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1928-utc).
+Hosted password/user/sync and partial dashboard pass; optional RSC prefetch is
+now the identified restricted-controller blocker before admin/logout. The longer
+Auth convergence wait passes. R6 builder/tunnel is closed; a fresh bounded R7
+artifact/tunnel build is running. Public Vercel remains paused; UI unreleased.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1939-utc).
 
 ## Latest verified replacement state — Oct21 18:41 UTC
 

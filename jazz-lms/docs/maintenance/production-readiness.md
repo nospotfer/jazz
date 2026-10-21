@@ -6,7 +6,47 @@
 
 <a id="current-checkpoint--oct21-1841-utc"></a>
 
-## Current checkpoint — Oct21 19:28 UTC
+## Current checkpoint — Oct21 19:39 UTC
+
+R12 passes the longer Auth readback wait, hosted password/user/session-sync200
+and visible dashboard search, then stops before admin/logout. The newly retained
+first denial is a GET/fetch RSC Next-prefetch for `/dashboard/courses` during
+`PASSWORD_DASHBOARD`. Seven later denials are cascades after the controller
+stops; they are not independently classified as harmless. The prior settings-only
+local403 branch runs zero times. This is a restricted test-controller boundary,
+not proof that the live courses route fails. A scoped local refusal of optional
+nested dashboard/admin prefetches is being prepared; ordinary navigation and
+actual native/application permissions remain unchanged.
+
+The complete post-browser two-phase verification now passes:165 SQL calls,
+one confirmed cleanup COMMIT deleting exactly one owned session/refresh/AMR,
+auditDeletes0, persisted owned rows0. All1,621 customer rows/14,270 cells match
+the adopted baseline apart from two allowed new sign-in timestamps; prior rows
+and protected metadata match. The database does not disconnect in this window;
+the old57P01 cause remains unknown. Cleanup is spent and must not be replayed.
+
+Auth is fully restored, active desired/old settings match, both frontends and
+browser/native close cleanly, and replacement pause plus independent nineGET
+closure pass at19:39:33. Paused desired404 remains qualified by active-parent
+equality. R6 builder/tunnel subsequently exits0. R7 starts a fresh fixed-expiry
+artifact/tunnel build, with no backend/application activation at this checkpoint.
+
+Next authenticate the latest closed R12 history before adopting its two sign-in
+timestamps; keep all archive/other cells and fresh zero-transient/admin checks.
+Then run complete administrator/dashboard/logout using the corrected optional
+prefetch handling. Customer/media/isolated payments, recovery currency, stable
+free hosting and release review remain open. Public Vercel stays paused and UI
+unreleased. The [landing before/after review](landing-review.md) is available;
+its historical fixture captures do not replace current hosted verification.
+
+Actual19715exit1: `/tmp/jazz-maintenance/a12/journal/access-outcome.json`, SHA
+`971cec4c1f0e5d574049641e4dc9b68348e06a48e95c6f2b96c8c4625f138bdc`.
+The redacted review summary is
+`/tmp/jazz-maintenance/restored-admin-r12-finite-review-20261021/summary.json`, SHA
+`dd0bd6860fa6450f7c75408237589b548ac830e743805269e01ae35f028abbb4`.
+Raw ownership/outcome/closed-plan recovery inputs remain private and separate.
+
+## Earlier checkpoint — Oct21 19:28 UTC
 
 R11 stops before browser startup at `EMAIL_ENABLE_CONVERGENCE_UNVERIFIED`.
 Its one enable PATCH returns200, but all three full-state GETs within the short

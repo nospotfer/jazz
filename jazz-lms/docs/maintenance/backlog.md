@@ -1,22 +1,23 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 19:28 UTC
+## Current priorities — October21 19:39 UTC
 
-1. Finish recovered administrator/dashboard/logout. R11 verifies both explicit
-   database phases and full final data preservation, but stops before browser
-   startup because the three-observation Auth enable wait does not converge.
-   Prepare a longer bounded exact-state wait without repeating the PATCH.
-2. Run the browser with finite first-denial diagnostics and final post-closure
-   unexpected-denial checks. Then finish customer/media and isolated coupon/
-   refund journeys. Prior R9 authentication/partial dashboard remains separate.
+1. Complete recovered administrator/dashboard/logout. R12 Auth/login and partial
+   dashboard pass; the first blocker is optional courses-route RSC prefetch in
+   the restricted controller. Prepare scoped local403 handling while preserving
+   actual navigation/native policy and final unexpected-denial checks.
+2. Authenticate latest closed R12 timestamp history, then freshly verify/adopt
+   complete customer/prior/admin/zero-transient state. Both post-browser database
+   phases, exact cleanup COMMIT and persisted full final preservation now pass;
+   do not repeat cleanup. Finish customer/media and isolated coupon/refund flows.
 3. Finish recovery currency, stable zero-cost hosting and release/rollback.
    The narrow LIVE payment window is empty, not full purchase reconciliation.
-   Production is paused; application/UI changes remain unreleased.
+   Public production remains paused and application/UI changes unreleased.
 
-R11 final customer/prior/protected state and zero owned sessions are verified;
-Auth restored, both frontends closed, replacement independently paused. The
-bounded R6 tunnel holder remains live at the checkpoint; no app/browser runs.
-[Evidence](production-readiness.md#current-checkpoint--oct21-1928-utc).
+R12 has no remaining owned session or serving resource. R6 tunnel closed; a fresh
+bounded R7 artifact/tunnel build is running. The historical public
+[landing before/after review](landing-review.md) is ready for inspection.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1939-utc).
 
 ## Earlier priorities — October21 18:41 UTC
 
