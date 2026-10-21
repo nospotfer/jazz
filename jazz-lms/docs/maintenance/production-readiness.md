@@ -1,10 +1,191 @@
-# Production recovery checkpoint — 2026-10-20
+# Production recovery checkpoint — 2026-10-21
 
 The old Vercel application is now protected and paused. Production Supabase
 remains INACTIVE; no production SQL, production backend resume or production
 application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
+
+## Oct21 hosted attempts and independent closure
+
+The replacement remains empty and INACTIVE; hosted schema preparation has not
+succeeded. The original customer backend remains INACTIVE and the preview was
+observed ACTIVE_HEALTHY. No customer import, cutover or application release occurs.
+The 02:09 UTC public HEAD checks still return503 `DEPLOYMENT_PAUSED` on both apex
+and `www`. These are timestamped observations, not continuous monitoring.
+
+The R3 process classifier initially rejects seven actual maintenance processes.
+Root traces this to short reads of Linux procfs network tables: a plausible
+4,049-byte prefix omits sockets present in the complete 58 KB table. R4 reads both
+process fields and classifier tables through EOF or cap+1, without exempting
+unknown processes. Its 57 closed cases pass; the same pre-fix cases retain seven
+failures. Root's actual 01:08 scan finds zero unresolved candidates across 69
+same-user processes/10 running containers/37 container PIDs, with four verified
+tools and one verified waiting shell. This is a local point-in-time observation,
+not an all-users/all-machines or future-lease claim.
+
+Root then catches an integration contradiction before activation: the child
+injects two PG environment variables which the real driver prohibits. R5 removes
+only those entries. Actual subprocess tests with the unchanged real driver
+reproduce the old rejection and pass that guard after repair; they deliberately
+stop at a synthetic invalid CA before credentials/network/SQL. The 39 closed
+parent controls are not a live database proof.
+
+The actual R5 lifecycle reaches two healthy observations, passes both fresh
+process scans and verifies child READY. All seven original provider responses
+arrive, but Python rejects the provider's literal `[YOUR-PASSWORD]` URI template
+before child activation. The scope uses 65 management calls (43 normal/22 closure),
+one restore/pause and zero public probes. The child closes without activation;
+no driver config/journal or SQL executor starts. Final 01:29:50 verifies pause and
+equal original observed settings. The finite parent summary has SHA256
+`335510c69fb2f894d987ef870f76390e8fc53e0b1202e11fc72d237c85c08a9c`.
+
+The separate R6 parent and V5/D5 derivatives encode only that exact password
+placeholder in a parsing view. Original response bytes, aliases, target/PRIMARY/
+transaction6543/user/database checks and structured connection arguments stay
+unchanged. This matches the documented [Supabase pooler template](https://supabase.com/docs/guides/database/connecting-to-postgres).
+Their 45 parent/39 verifier/24 driver controls pass. Historical replay of the
+seven actual R5 receipt/body pairs passes both the parent handoff and the real
+verifier builder, preserving original hashes/timestamps. The parent replay uses
+synthetic process/review fixtures; the verifier replay uses the original process
+capture and static review. Both use an explicitly historical clock and provide
+no current lease or hosted SQL proof.
+
+Actual R6 subsequently passes two fresh process scans, child READY, seven fresh
+provider captures and real source-evidence construction. Its one real psycopg
+connection attempt fails before executor entry. The finite result records
+`CONNECT_ATTEMPTED`/`FINITE_DRIVER_FAILURE`, no returned client, no executor entry
+and `NOT_ATTEMPTED` commit. The error body/type/SQLSTATE were not retained, so its
+cause remains unknown. The earlier successful hosted inspector used Node `pg`;
+the local psycopg executor rehearsal did not prove this actual TLS connection
+function. Do not infer a password, certificate or provider defect from the
+generic failure or replay the connection to diagnose it.
+
+R6 uses 82 management calls (57 normal/25 closure), one restore/pause, one child
+and zero public probes. The child exits1 without termination; observed original
+settings match. The pause POST returns200, but the 18-poll observation ends at
+PAUSING, so the original parent retains
+`ATOMIC_CLOSURE_REQUIRES_INDEPENDENT_READBACK` and its conservative
+`ddlMayHaveRun` flag. The actual source-bound driver never enters the SQL
+executor; that flag is not evidence of DDL. Independent seven-GET readback at
+01:48:08 again verifies original settings/states and PAUSING. One subsequent
+GET at 01:49:47.598 confirms the exact owned replacement INACTIVE, without another
+POST, driver invocation or SQL. The original result is unchanged; final pause
+receipt SHA256:
+`86d40faff1e885115654df9a9b12d895cbce732fb87e3cd2fc09f1c2648fd05a`.
+
+The exact unchanged D5 connection function subsequently passes a real local
+PG17 TLS test with psycopg 3.3.6/libpq 180006, generated localhost certificate/CA,
+verify-full, dict-row/autocommit/initial-IDLE and matching structured route.
+The client closes without any SQL after connection. The same function rejects
+an untrusted CA with OperationalError; no raw error is retained. The owned
+read-only/tmpfs container, loopback listener, setup socket and generated keys are
+removed. A first staging failure is retained separately and proves no driver
+defect. This verifies the local API/parameters, not the hosted failure's cause.
+
+A separate D6 derivative now adds finite connection-stage type/SQLSTATE/errno
+and bounded known-phrase categories. Its 37 closed controls pass, including
+secret/DSN omission and unknown/oversize/custom input rejection. Root independently
+checks that the connection function and every other original function except
+the diagnostic caller remain byte-identical to D5. No parameter, retry or TLS
+change is made. The earlier type-only candidate and 32-case result are retained.
+Final D6 source SHA256:
+`6c68c221e07519cc3b8ec8b3f1a12688b7498c20f67f1e537bd17ea72946ec40`.
+
+Next prepare a separately bounded read-only hosted connection diagnostic with
+fresh process/provider/readiness evidence and mandatory pause. The old discarded
+error cannot be reconstructed. Do not substitute local success for hosted proof,
+relax TLS verification, guess parameter changes or reuse spent scope markers.
+
+Selected source/finite custody excludes credentials, raw provider/process/SQL
+inputs and enabled plans. All files rehash with 0700/0600 permissions:
+
+- Process/R4/coupon IPC package: 93 files/637,360 bytes, manifest
+  `bdefa00252b5e4a714382255b7510318d368fc8c9dbb4357a9a4feba984ce45f`.
+- Closed R5/recovery-point package: 31 files/196,748 bytes, manifest
+  `95490efdcd78be4f65018e3644baf56839773d1ca1d53d7755bbd049769c9df0`.
+- Closed R6/V5/D5 package: 69 files/426,033 bytes, manifest
+  `db461af6d4053d371e45ccece33410ce9d92dd223483e1d13513bba833bf148b`.
+
+These are owner-only local unencrypted review copies, not off-site recovery.
+The four-case coupon parent/worker IPC rehearsal also passes with synthetic
+Next/runtime boundaries; it proves neither a live server nor a coupon checkout.
+The subsequent local stack closure and exact-driver TLS/D6 proof are recorded
+below; they do not establish production availability or complete machine-wide
+ingress closure.
+
+## Oct21 old local test stack closed
+
+Fresh Docker metadata identifies the five October12 siblings as Storage,
+PostgREST, GoTrue, Mailpit and PostgreSQL17.11. The exact six-member namespace
+includes the already-stopped Kong gateway. Both project/workdir labels, owned
+project ID/config hash, creation/image/start/PID and named-volume identities
+match. Observed established connections are stack-internal only. Root and all
+three current agents confirm no test dependency. Immediately before stopping,
+root rechecks 67 same-user processes: no argument/client references, unreadable
+processes or cwd references to this package, and no host established connection
+on the published ports. These checks do not exhaust Unix-socket, other-user or
+future consumers. Mailpit and Postgres each have two non-loopback published
+bindings before closure.
+
+At 02:03:39 UTC root records one durable intent, then issues one exact-ID batch
+stop for five containers. It exits 0. Immediate and independent readbacks verify all five
+objects stopped/PID0, runtime ports empty, original port listeners zero, declared
+static metadata/owned project config hash preserved, Kong still stopped and
+unrelated container inventory states unchanged. Volumes/container objects are
+retained; no remove/recreate/prune, SQL, provider or requested configuration
+operation occurs. PostgreSQL shutdown may write its volume; no volume-byte or
+whole-configuration equality is claimed. Restart is prepared only for these
+acknowledged stopped objects, database first, and was not executed.
+
+The original operator conservatively retains `STOP_OUTCOME_UNKNOWN` because its
+stdout exact-ID-set comparison is false and raw stdout was not retained. Do not
+invent an output-format cause or replay the stop. Independent stopped-state
+receipt SHA256:
+`115f90df0801689a9b51fabaf65e716a0443b47681e06caed6d155e0ccfe40cb`.
+An earlier helper basename shadowed Python's standard `operator` module before
+project input/service calls; original bytes and finite failure are retained,
+and the corrected filename passes inert startup before the sole actual stop.
+The earlier Kong aggregate-config qualification remains unchanged.
+
+Exact-ID restart inputs are retained separately in owner-only native recovery
+configuration. Selected local TLS/D6/cleanup source and finite receipts rehash as
+36 files/219,706 bytes, manifest
+`0e07e7c147bbe4e1d0208ee5702f03fa799eee6d86f442fd7f4fb9bd035567cb`.
+The package excludes generated keys, raw provider/config/process bodies and
+private rollback/activation inputs. Retention remains local and unencrypted.
+
+## Customer recovery point and restoration rehearsal
+
+Independent review and root rehash establish the October 13 archive as the latest
+verified retained export, not a proven latest customer recovery point. Its TOC
+header is 13:54:45 UTC; the pause request starts 14:02:44.801629, about 7 minutes 59.802 seconds
+later at the header's one-second precision. The file mtime gives a separate
+7 minutes 48.277 seconds interval. Neither is the exact database snapshot or pause-completion
+instant. No quiescence barrier or final source comparison covers that gap.
+Database/Storage exports are explicitly non-atomic and roles are separate.
+No later intentional production resume/mutation is documented, but the available
+observations are not complete mutation telemetry. October 20 encrypted copies
+preserve the October 13 bytes; they are not a newer recovery point. Existing
+paused-backup metadata supplies no usable current downloadable export.
+
+After empty hosted schema preparation succeeds, a restoration rehearsal can use
+that immutable archive with explicit accounting for all 65 COPY tables/2,239
+records/two sequences and 68 blobs/6,423,774 bytes. Map old public 225 columns
+explicitly and leave the two new canonical payment fields NULL. Preserve UUIDs,
+timestamps, learning/entitlement/message/payment/webhook/voucher facts; reconcile
+migration history without replaying migrations. Compare managed Auth columns,
+preserve user UUID/password hashes/identity associations, account for transient
+session exclusions and require re-login under destination keys. Preserve
+destination managed roles/extensions/migrations/hardened rights instead of
+restoring old roles/ACLs. Verify every private bucket/path/blob hash and account
+for destination object IDs/timestamps; database metadata alone restores no bytes.
+
+That rehearsal does not establish authoritative customer cutover. Cutover still
+requires a newer preserved source or an explicitly accepted October 13 recovery
+point, plus hosted Auth/Storage and preservation/continuity checks. Finite
+recovery-point review SHA256:
+`ecef1489d52aa616dd0ed7fe82a61c5c67d583a69150912d98118f9c1f271709`.
 
 ## Complete capability review and transaction rehearsal
 

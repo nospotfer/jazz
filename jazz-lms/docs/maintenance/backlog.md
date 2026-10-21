@@ -2,24 +2,48 @@
 
 ## Current recovery and coupon work
 
+- Actual R6 passes both current process scans, real child startup, seven fresh
+  provider captures and source construction, then fails at one real psycopg
+  connection before executor entry. Its cause is unknown. The exact unchanged
+  function now passes actual local PG17 TLS/close-before-SQL and rejects an
+  untrusted CA, with fixture removal. D6 finite diagnostics now pass 37 closed
+  controls; next prepare a separate hosted connection probe without guessing
+  parameter changes. The sole pause 200 eventually reaches independently verified
+  INACTIVE at 01:49:47 UTC; observed original settings match. Preserve original
+  closure-unconfirmed receipts/spent markers and do not replay R6.
+  [Latest scope](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
+- The October 13 export is the latest verified retained archive, not a proven
+  latest source. An unverified roughly eight-minute dump-to-pause interval and
+  non-atomic DB/Storage/roles remain. Prepare explicit data-only/Auth/blob mapping
+  after hosted schema setup; authoritative cutover needs newer preservation or
+  an explicitly accepted recovery point plus continuity proof.
+  [Recovery-point evidence](production-readiness.md#customer-recovery-point-and-restoration-rehearsal).
 - The actual advertised PRIMARY transaction connection now passes 54 READ ONLY
   queries with stable positive XID/PID, complete metadata/empty-state capture,
   ROLLBACK/end and final pause/original observed-settings preservation. Complete
   independent capability review and actual transaction-specific local SQL
   success/rollback now pass. The actual-baseline verifier's300-vs256 receipt bound
   is repaired narrowly, actual baseline retest and real-verifier/local-SQL checks
-  pass, and the exact unused local Kong gateway is stopped. Resolve remaining
-  tooling candidates with a source-bound fresh classifier before original provider
-  evidence and hosted atomic execution. Do not infer whole-config preservation
+  pass, and the exact unused local Kong gateway is stopped. R4 classification now
+  passes actual fresh hosted-window scans; R5 child-environment and URI-template
+  integration defects are repaired. Hosted connection/atomic execution remains
+  open as recorded above. Do not infer whole-config preservation
   from the gateway stop's aggregate mismatch; preserve its qualified readback.
   Existing session-only sources cannot be port-flipped.
   [Current evidence](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
+- The five old October12 local test siblings are now stopped with independent
+  same-object/listener/static-metadata/unrelated-state verification. Private
+  restart inputs remain separate; original stdout-match uncertainty and the
+  earlier Kong whole-config limitation remain. No volume removal, rollback or
+  global consumer-absence claim follows.
+  [Actual cleanup](production-readiness.md#oct21-old-local-test-stack-closed).
 - Preserve the existing Free replacement and its successful 49-field Auth
   configuration. Earlier row-limit, missing-child-report, session-routing and
   management-reader identity failures remain recorded separately. Do not
   recreate the target or replay successful settings. Customer import/cutover
   retains the separate current-recovery-point and portability gates.
-- Coupon worker/controller sources are concrete and closed-tested. Fresh actual
+- Coupon worker/controller sources are concrete and closed-tested; four actual
+  parent/worker IPC cases pass with synthetic Next/runtime boundaries. Fresh actual
   actor/provider/coupon/alias/recipient/runtime proofs and the bounded journey
   remain. Original TEST refund still lacks merchant balance; no spent financial
   reservation is reusable.

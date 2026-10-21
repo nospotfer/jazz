@@ -1,5 +1,29 @@
 # Service inventory
 
+## Oct21 replacement connection and closure
+
+The exact Free replacement is independently INACTIVE at 01:49:47 UTC after R6's
+accepted pause outlasts its initial observation. Production was observed INACTIVE
+and preview ACTIVE_HEALTHY with unchanged original settings. R6 verifies fresh
+process/provider evidence and child startup, but its one real psycopg connection
+fails before SQL executor entry; hosted schema/import/serving remain open. The
+successful earlier hosted54-query inspector uses Node `pg`, not this connection
+function. The exact unchanged psycopg function now passes a separate actual
+local PG17 TLS/verify-full/close-before-SQL test and rejects an untrusted CA;
+the owned fixture is removed. D6 finite diagnostics pass 37 closed controls,
+without changing connection parameters; hosted cause remains unknown.
+
+The URI-template and child-environment integration failures are separately
+reproduced/fixed; closed historical replay is not fresh provider authority.
+The five old owned test-stack siblings are subsequently stopped once; independent
+readback verifies all six namespace members stopped and former listeners gone,
+with objects/volumes retained and unrelated states unchanged. Original stdout
+comparison uncertainty remains explicit; private restart inputs are retained.
+[Local cleanup and limits](production-readiness.md#oct21-old-local-test-stack-closed).
+Customer exports remain October 13 bytes with
+an unverified export-to-pause interval, despite October 20 encrypted preservation.
+[Evidence and limits](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
+
 ## Oct20 complete review and local test ingress closure
 
 Complete actual metadata capability review passes for conditional empty atomic

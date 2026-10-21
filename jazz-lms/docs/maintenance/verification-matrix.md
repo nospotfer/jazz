@@ -1,5 +1,22 @@
 # Goal verification matrix
 
+## Oct21 actual source handoff; hosted connection incomplete
+
+| Requirement | Evidence and current limit |
+| --- | --- |
+| Source-bound local process classification | R4 full-read 57 controls and actual root scan pass; both actual R5/R6 preflight/current scans have zero unresolved candidates. Local snapshots do not cover all users/machines or a future window. |
+| Real child environment and original provider URI | Actual child/unchanged-driver controls reproduce/remove the PG-variable conflict. Both original URI aliases are preserved and validated through parsing-only placeholder encoding; parent 45/verifier 39/driver 24 closed controls pass. |
+| Original provider capture integration | Qualified historical seven-pair parent/verifier replays pass without changing raw bytes/timestamps. Actual R6 independently reacquires seven sources and reaches real source construction. |
+| Actual hosted schema | NOT VERIFIED: one psycopg connection attempt fails before executor entry/commit; generic diagnostics do not identify its cause. Prior Node `pg` success and local Unix-client SQL rehearsal do not prove this TLS function. |
+| Exact psycopg connection API | Actual local PG17 TLS passes with unchanged D5 function, verify-full/dict-row/autocommit/IDLE, then closes before SQL. Untrusted CA rejects; owned fixture is removed. This is not hosted success or a hosted failure diagnosis. |
+| Connection diagnostics | D6 adds only finite type/SQLSTATE/errno/bounded phrase categories; 37 closed controls pass and root verifies unchanged connection factory. Not yet used for a hosted diagnosis. |
+| Closure/preservation | R6 child exits1 without termination; observed original settings match. Pause200 remains PAUSING at the original bound; independent01:49:47 confirms the exact target INACTIVE with no further POST. Original stopped/closure receipts stay unchanged. |
+| Customer recovery point | Latest retained October 13 export has an unverified roughly eight-minute gap before pause request; DB/Storage/roles are not atomic. Mapped rehearsal is possible after hosted setup; current-source cutover proof remains missing. |
+| Coupon runtime | Four actual parent/worker IPC cases pass with synthetic Next/runtime observations; no live server/browser/coupon/payment is proven by this rehearsal. |
+| Old local test services | One exact-ID stop of five siblings; independent readback confirms all six namespace members stopped/former listeners gone, retained objects/volumes and unrelated states preserved. Original stdout mismatch remains unknown; no whole-config/volume-byte/global-consumer claim. |
+
+[Exact outcomes, source bindings and custody](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
+
 ## Oct20 complete review; transaction integration gates
 
 All actual300 defaults/24 memberships/60 schema rights/30 roles/five extensions/

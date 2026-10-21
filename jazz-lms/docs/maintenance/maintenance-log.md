@@ -1,5 +1,46 @@
 # Maintenance log
 
+## Oct21 real handoff fixes and closed hosted connection failure
+
+The corrected full-read process classifier passes actual local inspection and
+both fresh scans in each R5/R6 hosted attempt. Root fixes the child-environment
+contradiction before activation, then reproduces and repairs the provider's
+literal password-template parser rejection. Original failures remain immutable.
+R6/V5/D5 pass 45/39/24 closed controls and qualified historical actual-capture
+replays; all mutable observations are reacquired for actual R6.
+
+R5 stops before driver activation and re-pauses with original observed settings
+equal. R6 reaches source evidence and one psycopg connection attempt, but fails
+before SQL executor entry; cause is unknown because the error diagnostics were
+discarded. Its sole pause 200 finishes after the original observation bound.
+Independent01:49:47 UTC readback confirms the exact replacement INACTIVE, with
+no second POST, SQL or replay. Original observed states/settings remain equal;
+no hosted schema, import or release succeeds. The exact unchanged D5 connection
+function then passes actual local PG17 TLS/verify-full/close-before-SQL and
+rejects an untrusted CA; owned container/listener/socket/keys are removed.
+Hosted cause remains unknown; a separately bounded hosted connection diagnostic
+is next, with parameters unchanged.
+
+D6 diagnostics now pass 37 closed controls with fixed type/SQLSTATE/errno/phrase
+categories and no raw messages/DSNs; root verifies the connection factory is
+unchanged. No hosted retry follows. The exact five old local test siblings are
+then stopped once after fresh identity/current-client checks. Independent
+readback verifies all six namespace members stopped, former listeners gone,
+declared static metadata/config preserved and unrelated states unchanged.
+Container objects/volumes and private restart inputs remain; raw stdout mismatch
+keeps the original conservative result unchanged. No stop replay, volume-byte
+equality or global consumer-absence claim follows.
+[Cleanup scope and custody](production-readiness.md#oct21-old-local-test-stack-closed).
+
+Independent backup chronology exposes an unverified eight-minute export-to-pause
+interval. The October 13 archive can support a mapped restoration rehearsal,
+not an unqualified current customer recovery-point claim. Selected 93/31/69-file
+source/finite packages are retained owner-only outside temporary storage;
+credentials/raw provider inputs/enabled plans are excluded. A separate 36-file
+package retains exact local TLS/D6/cleanup proof. Coupon IPC passes only
+synthetic-runtime controls.
+[Actual outcomes, custody and next actions](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
+
 ## Oct20 complete capability review and BEGIN-first local rehearsal
 
 Independent review passes all actual default ACLs/memberships/schema rights,

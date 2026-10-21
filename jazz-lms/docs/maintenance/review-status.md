@@ -1,5 +1,49 @@
 # Maintenance review checkpoints
 
+## Oct21 actual hosted handoff and independent pause closure
+
+R4 process full-read repair passes 57 closed controls and actual source-bound
+inspection; both R5/R6 current/preflight scans pass. Root catches the PG-variable
+handoff conflict before activation; actual R5 then exposes the original provider
+URI placeholder rejection before activating its child. Both failures are retained.
+The separate R6/V5/D5 repair passes 45/39/24 closed controls plus qualified
+historical actual-capture replays, without weakening target or connection checks.
+
+Actual R6 verifies fresh sources and attempts one real psycopg connection, which
+fails before SQL executor entry/commit with discarded diagnostics. Hosted schema,
+import and release remain unverified. Its child closes; observed original
+settings match. Pause200 outlasts the initial observation, then independent
+01:49:47 UTC confirms the exact replacement INACTIVE without another POST/SQL.
+The original result is not rewritten. The exact unchanged D5 function then
+passes actual local PG17 TLS/verify-full/close-before-SQL and rejects an untrusted
+CA, with owned fixture removal. D6 finite diagnostics now pass 37 closed controls
+with unchanged connection factory; hosted cause remains open. No connection-
+parameter change follows from the generic error. Backup chronology identifies the
+October 13 archive's unverified export-to-pause interval; mapped rehearsal and
+authoritative customer recovery are distinct.
+[Actual evidence, limitations and retained manifests](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
+
+Five old local test-stack siblings are then stopped once after fresh identity/
+connection/dependency checks. Independent readback confirms all six namespace
+members stopped, former listeners absent, declared static metadata/config and
+unrelated inventory states preserved. Objects/volumes/private restart inputs
+remain; original stdout-set uncertainty is not rewritten or retried. Exact
+TLS/D6/cleanup custody:36 files/219,706 bytes, manifest
+`0e07e7c147bbe4e1d0208ee5702f03fa799eee6d86f442fd7f4fb9bd035567cb`.
+[Actual cleanup and scope](production-readiness.md#oct21-old-local-test-stack-closed).
+
+## Oct21 publication 73620f9 verification
+
+All five exact-head runs pass: Quality PR 39512762422/push 39512756307, Secret Scan
+PR 39512762418/push 39512756299 and CodeQL 39512757969. CodeQL analyses 1992630368/
+1992628008 have zero results/errors; PR-head open alerts are zero. The required
+local push hook passes its quiet secret scan, lint 0 errors/22existingwarnings and
+753 integration/29 skips; these local counts are not assigned to remote logs.
+PR 46 remains open/draft with independently read-back matching head/body. Finite
+publication custody manifest:
+`457c62f79a9850a486393428e375b078f7025fcbf2e5797f7b4a213c168e32d2`.
+No deployment or later browser journey follows from these checks.
+
 ## Oct20 complete capability review and transaction rehearsal
 
 Full actual metadata review passes for conditional customer-free atomic setup.

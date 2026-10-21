@@ -10,14 +10,34 @@
 - [x] Verify the transaction-specific BEGIN-first compiler/executor locally with
   real PG17/psycopg success and forced-final rollback, stable PID/XID, final227/
   effective rights and managed preservation. External proofs remain synthetic.
-- [x] Repair the actual300-row static-baseline verifier bound without enlarging
+- [x] Repair the actual 300-row static-baseline verifier bound without enlarging
   other/runtime bounds; root's actual baseline retest and real-verifier/local-SQL
   success/final-rejection rollback pass. Provider/process/TLS fixtures stay synthetic.
-- [ ] Resolve conservative local tooling candidates with a reviewed fresh
-  classifier and prepare original provider evidence/closure before hosted DDL.
-  The exact unused local Kong gateway is stopped with siblings preserved;
-  aggregate target-config equality remains unproven.
-  [Actual review, rehearsal and failures](production-readiness.md#complete-capability-review-and-transaction-rehearsal).
+- [x] Resolve process-reader short reads without process/policy exemptions;
+  actual R5/R6 preflight/current captures pass the reviewed classifier. Closed
+  snapshots are not future leases. Exact Kong gateway and the five siblings
+  are stopped; the earlier Kong aggregate-config equality is still unproven.
+- [x] Repair actual child-environment/provider-template handoffs and verify the
+  qualified historical source replays. Actual R6 reaches real source construction.
+- [x] Independently close actual R6: one pause 200 is eventually observed INACTIVE
+  at 01:49:47 UTC; original observed settings match and child is terminal. Preserve
+  the original closure-unconfirmed receipt and all spent actions.
+- [x] Verify exact unchanged psycopg connection function against actual local
+  PG17 TLS/verify-full/close-before-SQL, untrusted-CA rejection and fixture removal.
+  This proves neither the hosted cause nor hosted success.
+- [x] Prepare D6 finite connection-stage diagnostics with 37 closed controls,
+  no raw message/DSN retention and unchanged connection factory/parameters.
+- [ ] Diagnose the actual hosted connection in a fresh bounded read-only scope,
+  then establish executor/strict227/sole-COMMIT proof in its reviewed scope.
+  R6 fails at its sole connection attempt before executor entry; cause is unknown.
+- [x] Stop the five unused local test siblings once after fresh identity/client
+  checks; independently verify stopped namespace/former listeners absent and
+  unrelated inventory preserved. Keep objects/volumes/private restart plan and
+  original stdout-match uncertainty; do not replay the stop or claim byte equality.
+- [ ] Account for the October 13 archive's export-to-pause gap, Auth/Storage
+  portability and all original rows/blobs. An isolated restoration rehearsal is
+  not authoritative customer cutover or proof of the latest recovery point.
+  [Actual failures, independent closure and next actions](production-readiness.md#oct21-hosted-attempts-and-independent-closure).
 - [x] Verify the whole empty-schema preparation with real local PG17/psycopg:
   one successful COMMIT and a separate final-rejection ROLLBACK, with managed
   metadata preserved. External proofs remain synthetic; hosted checks stay open.
