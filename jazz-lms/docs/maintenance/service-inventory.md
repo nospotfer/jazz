@@ -1,5 +1,25 @@
 # Service inventory
 
+## Oct21 current read-only connection and access checkpoint
+
+Both actual psycopg and Node clients now pass provider-selected PRIMARY6543,
+CA/hostname, PG17/read-only identity, rollback and client closure with the original
+credential. Node privately captures344 Auth/Storage columns. Parent/child exit0;
+final02:45:17 and independent readback confirm replacement/production INACTIVE,
+preview healthy and observed old settings equal. No hosted DDL/import or serving
+occurs. Historical R6's discarded cause remains unknown. [Actual scope](production-readiness.md#oct21-hosted-client-comparison-passes).
+
+Offline mapping accounts for65tables/2,239records/two sequences/68blobs. Exact
+source Attachment/Storage references and NULL ownership now match. All344
+destination managed column shapes match the original; constraints/enum labels,
+destination file metadata, Auth continuity and recovery-point currency remain
+gates. [Source/compatibility limits](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
+
+The saved Vercel OAuth CLI login refreshes without another owner login. Three
+exact-target GETs confirm the same paused/protected production deployment and
+configured-enabled cron. No provider plan/domain/project write follows.
+[Access and current state](vercel.md).
+
 ## Oct21 replacement connection and closure
 
 The exact Free replacement is independently INACTIVE at 01:49:47 UTC after R6's

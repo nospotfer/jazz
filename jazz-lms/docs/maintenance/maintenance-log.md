@@ -1,5 +1,38 @@
 # Maintenance log
 
+## Oct21 actual hosted connection comparison and source recovery mapping
+
+The separate read-only comparison passes both actual clients with unchanged
+parameters/credential: TLS-only1.3/CA/hostname before password, then D6 psycopg3SQL
+and Node4SQL identity/rollback/close. Node captures344 Auth/Storage column
+definitions privately. Parent/child0 and final02:45:17 pause/settings preservation
+pass; independent seven-GET closure confirms exact replacement and production
+INACTIVE, preview healthy and all old observed settings equal.79parent calls,
+one restore/pause and two zero-candidate process scans; no customer rows, DDL or
+COMMIT. Earlier R6's discarded cause remains unknown. Root catches the false
+predecessor-paused assumption before use; actual original/separate receipts are
+validated without rewriting them.18Python/12Node closed controls are distinct
+from the real hosted results. [Evidence and custody](production-readiness.md#oct21-hosted-client-comparison-passes).
+
+Offline mapping accounts for all65tables/2,239records:1,690candidates including
+four historical Prisma rows,549transient/managed exclusions and no restoration
+of the two transient sequences. Root independently reproduces the metadata map
+and rehashes both retained archive copies. A narrow memory-only six-table export
+checks167rows without Auth tables: all68 relative Attachment paths resolve to68
+distinct retained source objects/IDs/versions/byte metadata, both owners SQL NULL.
+The first unsupported pg_restore flag and NULL/empty report remain preserved.
+The export tool is recovered from the stopped owned container without startup or
+exec; an explicit existing host loader runs its Nix binary.13parser/extractor and
+five owner controls pass. Destination upload/managed compatibility/Auth/current
+recovery-point gates remain. [Mapping and source scope](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
+
+Existing Vercel OAuth CLI access refreshes successfully without another owner
+login; token material/backup remain private. Three exact-target GETs verify the
+same production deployment/paused/protected state and configured-enabled cron.
+An initial per-definition deployment-field interpretation is explicitly corrected
+using the parent cron field; no project drift/write is inferred. [Access and
+finite retention](vercel.md). No application or production deployment occurs.
+
 ## Oct21 real handoff fixes and closed hosted connection failure
 
 The corrected full-read process classifier passes actual local inspection and

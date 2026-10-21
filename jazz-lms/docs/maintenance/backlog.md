@@ -2,6 +2,23 @@
 
 ## Current recovery and coupon work
 
+- Fresh hosted TLS-only/unchanged D6 psycopg/Node comparison now passes both
+  read-only clients, rollback/closure and344 managed column capture. Parent0 and
+  independent seven-GET closure confirm the replacement paused/original settings
+  preserved. Earlier R6 cause remains unknown; no parameter change follows.
+  Next establish actual atomic227 setup; imports/serving remain unverified.
+  [Actual comparison](production-readiness.md#oct21-hosted-client-comparison-passes).
+- Explicit offline mapping accounts for65tables/2,239records:1,690candidates
+  including four historical Prisma rows,549transient/managed exclusions; both
+  sequences stay destination-owned. All68 relative Attachment paths match the
+  retained source objects/IDs/versions/byte metadata; owner/owner_id are SQL NULL.
+  Source consistency is now verified; destination upload reconciliation, current
+  managed compatibility/Auth continuity and recovery-point currency remain.
+  [Mapping and limits](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency).
+- Existing Vercel OAuth login refreshes through its CLI without owner action;
+  same exact project/deployment remains paused/protected, cron configured enabled.
+  Do not reuse an expired access-token override. [Access and actual readback](vercel.md).
+- The following R5/R6 failure details are historical and remain preserved:
 - Actual R6 passes both current process scans, real child startup, seven fresh
   provider captures and source construction, then fails at one real psycopg
   connection before executor entry. Its cause is unknown. The exact unchanged

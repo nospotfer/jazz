@@ -1,5 +1,21 @@
 # Goal verification matrix
 
+## Oct21 actual hosted comparison and explicit recovery mapping
+
+| Requirement | Evidence and current limit |
+| --- | --- |
+| Actual psycopg/Node connectivity | Same original credential/current PRIMARY6543/CA; TLS-only verification then unchanged D6/Python3SQL and Node4SQL pass PG17/read-only identity, rollback and close. Historical R6 cause remains unknown; upstream SQL SSL is false. |
+| Managed column evidence | Node captures344 Auth/Storage catalog columns privately. Offline comparison finds all344 source/destination type/null/generated/identity shapes equal,343 exact expression ASTs/one equivalent omitted-sequence reference; three generated columns excluded and nine old-flow resets explicit. Constraints/enum labels and actual Auth/import continuity remain unverified. |
+| Scope closure | Parent0/child0,79management calls, one restore/pause, two zero-candidate scans; final02:45:17 replacement paused/settings equal. Separate seven-GET readback confirms exact target INACTIVE, production INACTIVE and preview healthy/settings equal. No DDL/import/COMMIT. |
+| Offline source mapping |65tables/2,239records;1,690candidates incl historical4 Prisma,549transient/managed exclusions; two transient sequences omitted. Root reproduces mapping and verifies both archive hashes; actual import remains unproven. |
+| Attachment/Storage source consistency | Six exact TABLE DATA entries/167rows exported in memory without Auth rows. All68 relative paths uniquely cover68 retained objects with matching IDs/versions/byte metadata; both owner fields NULL. Destination reconciliation/rich-text references/current recovery point remain separate. |
+| Vercel access | Installed CLI refreshes saved OAuth login; three GETs verify same project/deployment, paused/protected, configured cron enabled. No project write/cron invocation or production release. |
+
+[Actual comparison](production-readiness.md#oct21-hosted-client-comparison-passes),
+[mapping and source boundaries](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency),
+[Vercel refresh](vercel.md). Earlier checkpoint statements below retain their
+original scope and timestamps.
+
 ## Oct21 actual source handoff; hosted connection incomplete
 
 | Requirement | Evidence and current limit |

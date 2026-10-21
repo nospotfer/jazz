@@ -1,5 +1,23 @@
 # Production review and rollback checklist
 
+- [x] Verify both actual database clients in a separate read-only scope: TLS-only
+  CA/hostname, unchanged D6/Python3SQL and Node4SQL, identity/rollback/client close,
+  344 managed columns, parent/child0 and independent paused/settings closure.
+  The earlier R6 cause stays unknown; upstream SQL TLS is separately false.
+- [x] Account for65archive tables/2,239records and two transient sequences with
+  explicit actions; independently reproduce mapping and verify retained archive
+  hashes. Keep1,690candidates/historical ledger and549exclusions distinct.
+- [x] Check source Attachment/Storage consistency:68unique relative references,
+  source IDs/versions/byte metadata match and both owner fields SQL NULL. This
+  does not prove destination upload/metadata or account continuity.
+- [x] Compare all344 actual managed columns against source types/null/generated/
+  identity/default shapes; map three generated exclusions and nine old-flow
+  resets explicitly. Constraints/enum labels and actual restoration stay open.
+- [x] Recover Vercel access through its saved OAuth CLI refresh and inspect the
+  exact project/team/deployment. Production stays paused/protected; explicit cron
+  disable and zero-cost hosting remain open.
+  [Actual comparison and remaining gates](production-readiness.md#oct21-hosted-client-comparison-passes).
+
 - [x] Collect complete bounded hosted metadata and emptiness through the exact
   advertised transaction endpoint: actual TLS/PG17/role, one READ ONLY
   transaction, stable positive XID/PID, 54 queries, ROLLBACK/end and final pause.
@@ -27,9 +45,9 @@
   This proves neither the hosted cause nor hosted success.
 - [x] Prepare D6 finite connection-stage diagnostics with 37 closed controls,
   no raw message/DSN retention and unchanged connection factory/parameters.
-- [ ] Diagnose the actual hosted connection in a fresh bounded read-only scope,
-  then establish executor/strict227/sole-COMMIT proof in its reviewed scope.
-  R6 fails at its sole connection attempt before executor entry; cause is unknown.
+- [ ] Establish hosted executor/strict227/sole-COMMIT proof in a fresh reviewed
+  scope. The new read-only comparison proves both connections; R6's original
+  discarded failure remains unknown. No hosted schema preparation is claimed.
 - [x] Stop the five unused local test siblings once after fresh identity/client
   checks; independently verify stopped namespace/former listeners absent and
   unrelated inventory preserved. Keep objects/volumes/private restart plan and

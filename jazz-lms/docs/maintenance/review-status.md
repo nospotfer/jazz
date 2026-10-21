@@ -1,5 +1,27 @@
 # Maintenance review checkpoints
 
+## Oct21 hosted clients pass and backup mapping advances
+
+Fresh source-e3 read-only comparison passes TLS1.3/CA/hostname, unchanged D6
+psycopg and Node `pg`8.23.1 using the same current PRIMARY6543/CA/original password.
+Both identity/rollback/client-close checks pass; Node adds344 actual Auth/Storage
+column definitions. Earlier R6's discarded exception stays unknown. Parent/child
+exit0; one pause is confirmed at02:45:17 and independent seven-GET closure
+confirms replacement/production INACTIVE, preview healthy and old settings equal.
+No hosted DDL/import/serving/release follows.44-file source/finite custody manifest:
+`759163b65f28a374e91b819aaf13ec6feb69718535c5fa6b4f70ef1985b1f996`.
+[Actual comparison and limits](production-readiness.md#oct21-hosted-client-comparison-passes).
+
+Offline mapping now accounts for all65tables/2,239records/two sequences/68blobs;
+root reproduces it and checks both archive artifact hashes. A separate selected
+six-table/167-row memory-only export verifies all68 relative Attachment paths,
+source object IDs/versions/byte metadata and SQL-NULL owners. Destination uploads,
+managed compatibility/Auth continuity, rich-text references and the October13
+recovery-point qualification remain open. Vercel CLI login refresh also succeeds
+without another owner login; exact production stays paused/protected and cron
+configured enabled. [Mapping/source scope](production-readiness.md#oct21-explicit-archive-mapping-and-source-file-consistency),
+[Vercel access](vercel.md).
+
 ## Oct21 actual hosted handoff and independent pause closure
 
 R4 process full-read repair passes 57 closed controls and actual source-bound

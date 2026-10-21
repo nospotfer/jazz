@@ -1,5 +1,26 @@
 # Vercel account and deployment audit
 
+**Oct21 access update:** the installed63.1.2 CLI refreshes the existing expired
+OAuth session successfully through `whoami --non-interactive`, without another
+owner login. The expected identity and previous user match, the saved token is
+unexpired and the Auth file remains0600. A separate owner-only pre-refresh
+credential copy is outside review evidence. For this saved OAuth login, invoke
+the CLI without `--token` or `VERCEL_TOKEN` so its built-in refresh path can run;
+copying an expired access token into an API helper does not refresh it.
+
+Three exact-project/team read-only GETs at02:28 UTC confirm the same production
+deployment, paused/protection-all state and all four domain entries. Cron is
+still configured enabled and its parent `crons.deploymentId` matches production;
+definitions contain no per-job deployment ID. An initial finite summary read
+that missing field as false; its separate correction preserves the original and
+establishes no deployment drift. Invocation behavior remains unverified. No
+project/environment/deployment/domain/plan change or cron execution occurs.
+Finite local custody retains four files/3,051bytes under
+`review-checkpoint-vercel-session-refresh-20261021`, manifest
+`6cd4f161bc365093fd871ae47bb4390648a43c23715885d95ad67fe645834347`.
+Raw provider bodies and credential/CLI output files are excluded; retention is
+local and unencrypted. Cron disable and stable zero-cost hosting remain open.
+
 **Oct20 update:** exact Jazz project All Deployments Authentication and pause
 both return200. Independent readbacks confirm paused/protected state; after an
 initial propagation failure, two actual checks prove503 on `www` and the active

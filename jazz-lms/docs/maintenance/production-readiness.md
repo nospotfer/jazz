@@ -6,6 +6,125 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Oct21 hosted client comparison passes
+
+A fresh, separate read-only scope on application source `e3f5796` now verifies
+both database clients against the existing replacement. The TLS-only probe sends
+one eight-byte PostgreSQL SSLRequest, verifies the CA/hostname with TLS1.3 and
+closes before Startup/authentication. The exact unchanged D6 psycopg connection
+factory then passes BEGIN READ ONLY, one identity query, ROLLBACK and close.
+Node `pg`8.23.1 uses the same provider-selected PRIMARY6543 route, CA and original
+credential; its four statements add a fixed Auth/Storage column-catalog query.
+Both clients verify PG17/postgres/non-superuser/BYPASSRLS/read-only identity and
+frontend TLS. Upstream SQL SSL is separately observed false; end-to-end TLS is
+not established. No customer rows, function bodies, DDL or COMMIT are requested.
+
+The Node capture contains344 column definitions, retained only in its original
+private file. This supplies actual type/default/null/generated/identity metadata,
+not constraints, enum labels, managed import compatibility or customer continuity.
+The earlier R6 exception was discarded and its cause remains unknown. Today's
+success requires no connection-parameter change or credential rotation; it does
+not retrospectively diagnose that failure.
+
+The parent uses79 management calls (45normal/34closure), one restore, one pause,
+two zero-candidate process scans and one child. Both clients confirm rollback and
+closure; the child and parent exit0 without termination. Final02:45:17 UTC
+confirms replacement INACTIVE and original observed states/settings unchanged.
+A separate seven-GET root readback independently confirms the exact paused
+replacement, original production INACTIVE, preview ACTIVE_HEALTHY and all old
+observed settings equal. No extra POST/SQL or closed-window replay occurs.
+Hosted schema preparation, customer import, serving and production release remain
+unverified. Next: the reviewed atomic227 setup using fresh transaction evidence.
+
+Original finite receipts:
+
+| Receipt | SHA256 |
+| --- | --- |
+| Parent terminal result |`030850bf4e03b305356028ed702235bdca752132615cc6f21cebea2b3c9baa1d` |
+| Both-client result |`d8e4015640cee0c5bc9a65880ebbada7356e2bea342e46e53fc51c3e1c5f1368` |
+| Independent closure |`c339077122b989dea43ba338d00f446876d3476326daf0d672be9440c071b727` |
+
+The comparison source passes18 Python/12 Node closed controls, including actual
+local IPC and unmodified original R6/separate closure receipt integration.
+Provider/TLS/client fixtures in those tests are synthetic; the actual hosted
+results above are separate. Root catches the initial mistaken `paused:true`
+predecessor assumption before activation. Original R6 remains `paused:false`;
+its independent closure receipts are composed without rewriting it. An inherited
+read-helper/hash argument failure is also preserved and repaired before use.
+The two inert templates remain inert; original enabled inputs and spent markers
+are not reusable.
+
+Owner-only local source/finite custody retains44 files/293,167bytes under
+`review-checkpoint-hosted-connection-comparison-20261021`, manifest
+`759163b65f28a374e91b819aaf13ec6feb69718535c5fa6b4f70ef1985b1f996`.
+Raw provider/Auth/process/column inputs, credentials and enabled plans are
+excluded. This is local unencrypted retention, not off-site recovery.
+
+## Oct21 explicit archive mapping and source file consistency
+
+The offline mapping accounts for all65 COPY tables/2,239records. Candidate
+source accounting is1,690:1,587public business rows,30stable Auth user/identity
+rows,69Storage bucket/object rows and four historical Prisma ledger rows handled
+separately. Exclusions total549:319transient Auth rows and230managed migration
+rows. The two archived sequences belong to omitted transient tables; keep the
+destination sequence state. Three separately rehearsed official Prisma
+acknowledgements are not part of the archived1,690 and require their individual
+postconditions. The original225 public columns map unchanged to planned227;
+the two new payment fields remain explicitly NULL.64 COPY column lists are
+corroborated; empty extension-owned `vault.secrets` has unknown source columns
+and is excluded. Root independently reproduces the complete mapping and rehashes
+both631,584-byte archive copies against the original expected artifact hash.
+
+A separate memory-only export selects six exact TABLE DATA entries/167records,
+with no Auth tables. All68 Attachment references resolve through the current
+TypeScript path extractor to68 distinct retained objects, with no missing,
+ambiguous or unreferenced objects and no name fallback. All68 archived object
+IDs, versions, paths and byte metadata match the Storage export. Both owner
+fields are SQL NULL on every object; preserve NULL without substituting an actor.
+No project-host rewrite is indicated by these relative Attachment references.
+One Course image is an external HTTP URL;15 lesson video references are opaque.
+These classifications do not establish external-image or Mux health. Rich text
+and fields outside the selected explicit references remain unreviewed.
+
+This checks source consistency; blob bytes are not reread in that review.
+Destination upload-generated IDs/versions/timestamps/owners, managed constraints,
+Auth continuity and actual restoration remain gates. The October13 non-atomic
+recovery-point/export-to-pause qualification below is unchanged. The first export
+attempt's unsupported pg_restore flag and the first owner report's NULL/empty
+grouping remain preserved beside the corrected reports.13 parser/exact-extractor
+controls and five owner controls pass; no database or provider call occurs.
+
+The subsequent offline comparison of the actual344 destination columns against
+the original schema finds all344 types/nullability/generated/identity shapes
+equal across35 Auth/Storage tables, with no missing or added columns. Default/
+generated-expression comparisons are exact for343 columns; the remaining difference is
+equivalent quoting of the omitted refresh-token sequence reference. No type
+casts or added-column transforms are indicated. Exclude the three generated
+columns (`auth.users.confirmed_at`, `auth.identities.email`,
+`storage.objects.path_tokens`) from inserts. Nine declared old-flow resets map
+to four empty-string, four NULL and one zero value. This is a column/default
+compatibility result, not an account/password restoration or login proof.
+Fifteen columns in two non-imported tables have physical attribute-number gaps;
+explicit name projections avoid equating those numbers with dense dump positions.
+All four imported focus tables' column ordinals match. Six offline mutation
+controls pass; they are not hosted restoration tests.
+Destination constraints and labels of the ten source enum types are not
+captured; those checks and actual hosted schema/import remain open. Raw column
+metadata stays private; no customer row or credential is read by this comparison.
+
+Owner-only local review custody:
+
+| Package | Files/bytes | Manifest SHA256 |
+| --- | --- | --- |
+| `review-checkpoint-customer-data-mapping-20261021` |8/664,651 |`4dfa5697774c0dba9c81501fdac750ad1d8138bc8fca1fd454d0792d03ee4261` |
+| `review-checkpoint-customer-storage-references-20261021` |18/117,548 |`02b1578e869ee6d138a794752aac544526828b5fe71ff901bf2694ac60e5427e` |
+| `review-checkpoint-managed-column-compatibility-20261021` |14/72,708 |`6a6b8ecb73894aac963dab6e96b9c08617e0362f13bdfc7eeb62894c29fafe7a` |
+
+These packets contain source/metadata/finite descriptors, not customer rows,
+raw URLs/UUIDs/owners, blobs, password values/hashes or credentials. Local
+unencrypted retention does not establish off-site recovery. Source archives and
+private configuration remain separate. [Recovery-point limits](#customer-recovery-point-and-restoration-rehearsal).
+
 ## Oct21 hosted attempts and independent closure
 
 The replacement remains empty and INACTIVE; hosted schema preparation has not
