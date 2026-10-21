@@ -1,5 +1,20 @@
 # Production review and rollback checklist
 
+## Oct21 session boundary and Storage representation
+
+- [x] Confirm login-CSRF source defect with closed synthetic-provider/real-SDK
+  evidence; integrate exact Origin and JSON checks before parsing/token work.
+- [x] Pass67 integrated regressions/five files and typecheck; retain source/finite
+  evidence separately from credentials. No deployed exploit is claimed.
+- [ ] Publish this exact source checkpoint and verify its CI; build a fresh
+  protected artifact and test actual login with the configured public origin.
+- [x] Review the scoped original-NULL to actual-empty metadata representation.
+- [ ] Verify fresh same-frontend Storage policies, adopt first-object bytes/ID/
+  version/path read-only and complete only the remaining67 no-overwrite uploads.
+  No R4 operation is established; all original receipts/ledgers remain unchanged.
+
+[Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
+
 ## Oct21 first object and local access source
 
 - [x] Record R3's99 READ ONLY SQL/sixHTTP, one PDF POST/download/info200 and matching

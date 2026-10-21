@@ -1,5 +1,23 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 origin boundary and metadata review
+
+Session synchronization now requires the configured exact Origin and JSON
+before request parsing/token work. The original login-CSRF defect is confirmed
+with a synthetic provider and real SDK, without a deployed browser attack.
+Integrated67 cases/typecheck pass; publication/CI and actual login are pending.
+Wrong application-origin configuration will reject synchronization, so verify
+the fresh protected artifact's exact public origin before actual access.
+
+Root accepts the explicit source-NULL to exact actual-empty custom metadata
+representation, with both original and destination values kept distinct. This
+does not establish current hosted Storage policies or fresh first-object
+identity/bytes. R4 still requires those same-frontend checks before any POST and
+must stop on nonempty unreviewed policies. No first-object overwrite/re-POST,
+bucket recreation or Storage SQL metadata rewrite is permitted. Only67 remaining
+uploads may be prepared; no R4 execution occurs here. Separate source/finite
+custody and limits are in the [maintenance log](maintenance-log.md#oct21-session-synchronization-origin-fix).
+
 ## Oct21 first PDF stored; metadata acceptance still open
 
 R3 on application source `c6bb210` performs99 READ ONLY SQL calls (89 driver/

@@ -30,6 +30,7 @@ Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platfor
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.
 - **Theme**: Dark and light themes with jazz gold accents. Verify contrast and mobile layouts in both; do not use dark-only text colors on shared surfaces.
 - **Server identity**: Verify cookie-backed identity through `supabase.auth.getUser()` before authorization. `getSession().user` is not trusted server-side identity.
+- **Session synchronization**: `/api/auth/session` requires the exact origin resolved by the existing application-origin helper and `application/json` before parsing or Supabase work. Keep browser-equivalent Origin in route fixtures; do not add forwarded-host trust or a missing-Origin bypass. The configured native public origin must match. Source regressions do not prove deployed login.
 
 ## Commands
 

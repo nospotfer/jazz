@@ -1,5 +1,18 @@
 # Maintenance review checkpoints
 
+## Oct21 session synchronization source fix
+
+The integrated session endpoint now checks configured exact Origin and JSON
+content type before parsing or Supabase work. Closed synthetic-provider/real-SDK
+review confirms the original login-CSRF defect;67 integrated cases and typecheck
+pass. Source/finite custody is retained. The fix is unreleased; publication/CI
+and actual restored-account login remain pending.
+
+Root also accepts the narrow Storage metadata representation mapping. Fresh
+actual policy checks and read-only first-object adoption remain prerequisites
+for only67 remaining uploads. No R4 operation occurs. The public site remains
+paused/503. [Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
+
 ## Oct21 first file stored; source changes integrated locally
 
 R3's first PDF POST/download/info each return200 and source bytes match. Frozen

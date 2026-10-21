@@ -1,5 +1,33 @@
 # Maintenance log
 
+## Oct21 session synchronization origin fix
+
+Closed source review confirms that `/api/auth/session` accepted a foreign
+`text/plain` form containing attacker-owned tokens. A real SDK with a synthetic
+provider writes session cookies without a prior victim session. No hosted
+browser exploit or victim-account compromise is demonstrated. The integrated
+fix requires the configured exact Origin and `application/json` before body
+parsing or Supabase work. It reuses the existing origin helper and adds no trust
+in forwarded headers. Hosted/native HTTPS and local development controls pass.
+
+The same30 regressions have22 failures/eight controls before the fix; the
+isolated proposal has32 passes, including two real-SDK controls. Integrated
+boundary, cookie, origin, password-navigation and recovery side-effect checks
+pass67 cases/five files; typecheck passes. Source/finite custody:
+`review-checkpoint-auth-session-origin-fix-20261021`, manifest
+`30ecf39db7bdd93c1c31024bfb732688c46ad5c28fda1623574c9d48b82923c3`.
+The fix is unreleased; exact-head publication/CI and hosted login remain pending.
+
+The Storage metadata review now accepts only the explicit source-NULL to actual
+empty-object representation mapping, with fresh same-frontend policy checks and
+read-only first-object adoption still required before67 new uploads. No R4
+operation occurs. Semantic source/finite custody:
+`review-checkpoint-storage-metadata-representation-review-20261021`, manifest
+`159bbc8973f4c2a1117b0aecb912c52d88f7ca847cecbe91f3244d736ba75680`.
+Original R3 receipts remain unchanged. Both packets are local, unencrypted and
+exclude credentials, raw customer values and enabled plans; off-site recovery
+is not established. The public site remains paused/503.
+
 ## Oct21 first PDF POST and byte readback; metadata mapping pending
 
 R3 records99 READ ONLY SQL/sixHTTP and one PDF POST/download/info200. Source-bound

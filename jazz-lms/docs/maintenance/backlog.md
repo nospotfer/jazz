@@ -1,5 +1,17 @@
 # Prioritized maintenance backlog
 
+## Latest source security checkpoint — Oct21
+
+- Session synchronization now rejects foreign/missing Origin and non-JSON forms
+  before token processing. Closed real-SDK evidence confirms the original login
+  CSRF defect;67 integrated cases/typecheck pass. Publish and verify exact-head
+  checks, then test actual protected login. The fix is not deployed.
+- The scoped Storage metadata representation review is accepted. R4 must still
+  check fresh actual policy dependencies and adopt the first object read-only
+  before uploading only the remaining67 files. No R4 outcome is established.
+
+[Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
+
 ## Latest file acceptance work — Oct21 09:19 UTC
 
 R3 stores and downloads the first PDF with matching source bytes, but the frozen

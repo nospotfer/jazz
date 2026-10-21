@@ -1,5 +1,16 @@
 # Goal verification matrix
 
+## Oct21 session synchronization and metadata review
+
+| Requirement | Evidence and remaining limit |
+| --- | --- |
+| Login CSRF | Original foreign text/plain form reaches real SDK cookie writes with a synthetic provider and no prior session. Same30 regressions:22 fail/eight controls pass before the fix; isolated proposal32 pass. No hosted exploit demonstrated. |
+| Origin boundary | Configured exact Origin plus application/json checked before body/SDK; forwarded headers grant no authority. Integrated67 cases/five files and typecheck pass. Fix is unreleased; actual protected login remains unverified. |
+| Storage metadata | Root accepts only original SQLNULL to exact actual empty-object representation, preserving original/actual distinction. Fresh policy check and first-object read-only adoption remain required; remaining67 uploads pending. |
+| Custody | Separate source/finite packets retained with hashes/private permissions; credentials/raw customer values/enabled plans excluded. Local unencrypted retention, no established off-site recovery. |
+
+[Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
+
 ## Oct21 first PDF and offline admin source
 
 | Requirement | Actual evidence and remaining limit |

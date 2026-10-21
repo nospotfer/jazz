@@ -97,14 +97,35 @@ describe("Supabase auth cookie transport through the real SDK", () => {
 
   test("session synchronization route uses secure SDK cookie writes in production", async () => {
     vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_URL", "https://app.example.invalid");
     const { POST } = await import("@/app/api/auth/session/route");
     const response = await POST(new Request("https://app.example.invalid/api/auth/session", {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json", Origin: "https://app.example.invalid" },
       body: JSON.stringify({ accessToken, refreshToken }),
     }));
     expect(response.status).toBe(200);
     expect(state.writes.filter(cookie => cookie.value).length).toBeGreaterThan(1);
     expect(state.writes.every(cookie => cookie.secure === true && cookie.httpOnly === false)).toBe(true);
+  });
+
+  test("foreign text/plain session form cannot reach the SDK or write cookies", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_URL", "https://app.example.invalid");
+    const { POST } = await import("@/app/api/auth/session/route");
+    // A browser form's name=value encoding can still be valid JSON. No victim
+    // session is needed to inject an attacker-owned session into an empty jar.
+    const name = `{"accessToken":"${accessToken}","refreshToken":"${refreshToken}","padding":"`;
+    const body = `${name}="}\r\n`;
+    expect(JSON.parse(body).accessToken).toBe(accessToken);
+    const request = new Request("https://app.example.invalid/api/auth/session", {
+      method: "POST", headers: { Origin: "https://attacker.example.invalid", "Content-Type": "text/plain" }, body,
+    });
+    vi.spyOn(request, "json");
+    expect((await POST(request)).status).toBe(403);
+    expect(request.json).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(state.jar.size).toBe(0);
+    expect(state.writes).toEqual([]);
   });
 
   test.each([
