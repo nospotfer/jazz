@@ -1,5 +1,47 @@
 # Maintenance log
 
+## Oct21 — Credential startup fix verified locally
+
+- Application `4b320b1` disables five inputs and both submit controls until
+  handlers are attached, preserving POST/autocomplete and adding four-language
+  no-JavaScript guidance. The early native POST seen in R13 stays a failed run.
+- All 36 focused tests and typecheck pass; targeted lint has zero errors and two
+  existing warnings. Isolated Chromium checks no-JavaScript, held scripts and
+  post-hydration login/registration controls and handler behavior, with no provider
+  dispatch. Browser/server close; the full-application E2E spec was not executed.
+- Root verifies that only the Auth page changes at runtime; native, identity/API,
+  payment, media, schema and archived data profiles remain unchanged. The next
+  preview must explicitly review/admit the application delta and build it anew;
+  old historical source identities must not be relabeled.
+- Public site still returns 503 at the 20:08 check. No deployment or new provider
+  operation; recovered admin/logout and the full maintenance goal remain open.
+  [Current source evidence](production-readiness.md#source-update--oct21-2010-utc).
+
+## Oct21 — R13 stops at native form submission; data and settings preserved
+
+- Actual R13 (`86246`, exit 1) closes at 19:57:43 UTC. The protected public
+  login page returns HTTPS 200, but the first denied request is
+  `POST /auth` with resource type `document` at `ONE_PASSWORD_SUBMIT`.
+  `REQUEST_JSON_REQUIRED` identifies native form fallback; password, user and
+  session-sync provider requests are all zero, with no owned session.
+- The SSR forms use `method="post"`, while their submit buttons are disabled
+  only during loading. Submission before the handler is ready can therefore
+  send a native POST. A hydration-readiness product fix and SSR regressions
+  are in progress. Runtime failure is `RESTORED_ADMIN_BROWSER_JOURNEY_FAILED`.
+- R13 authenticates the latest closed R12 baseline. Both database phases pass
+  109 SQL calls and final typed, prior-row and protected-metadata preservation;
+  no cleanup COMMIT is needed or attempted. Full Auth, active desired settings
+  and original project settings match. Native, browser and frontends close;
+  replacement pause and independent nine-GET closure pass. Paused desired 404
+  retains its separate active-parent equality qualification.
+- The R7 builder/tunnel subsequently exits 0 around 20:00 UTC. No recovery
+  runtime resources remain. Full admin access and normal logout are still open;
+  R12's hosted login, partial dashboard and exact cleanup remain valid history.
+  The scoped prefetch fix is source-only and is not exercised by R13.
+- All 10 remote checks on `4ccd90f` pass; this is not a deployment. The
+  [landing review](landing-review.md) is ready. [Current evidence and next
+  action](production-readiness.md#current-checkpoint--oct21-1957-utc).
+
 ## Oct21 — Browser prefetch cause identified; post-browser preservation/cleanup pass
 
 - Actual19715exit1/19:39:33 passes Auth convergence, password/user/sync200 and

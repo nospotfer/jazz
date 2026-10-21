@@ -6,7 +6,78 @@
 
 <a id="current-checkpoint--oct21-1841-utc"></a>
 
-## Current checkpoint — Oct21 19:39 UTC
+## Source update — Oct21 20:10 UTC
+
+Application `4b320b1a4598d23d837515994f8ea0e412778738` fixes the startup
+race: five credential/name inputs and both submit buttons stay disabled until
+hydration attaches the handlers. POST methods and autocomplete are preserved;
+no-JavaScript guidance is available in all four languages. Only the Auth page
+changes at runtime; endpoints, permissions, database and native scripts remain
+unchanged from `31ad6ba`.
+
+All 36 focused checks, typecheck and isolated Chromium no-JavaScript/delayed-script
+cases pass. Targeted lint has zero errors and two existing warnings. The browser
+fixture uses copied auth modules, a minimal layout and the missing-configuration
+SDK stub with no provider inputs; it proves UI behavior, not hosted login or the
+full-application E2E spec. Its browser and server close, with no listener left.
+
+Next build a fresh preview of this application commit, explicitly admitting the
+reviewed application delta rather than reusing the old documentation-only gate.
+Rebind current builder/coordinator/lifecycle/runtime/browser source identifiers
+and hashes while retaining the original R9/R12 data history and Auth correction
+receipts. Then finish administrator/dashboard/logout and the remaining full goal.
+No new provider operation or production deployment follows from this source fix.
+
+Verification summary:
+`/tmp/jazz-maintenance/auth-submit-hydration-verification-20261021/verification-summary.json`,
+SHA `f61d34dfcb6c0d17b05f80f9c1adb57efbae488badff3169146e7248d7d8a1a3`.
+Narrow application-delta review:
+`/tmp/jazz-maintenance/auth-hydration-application-delta-preparation-20261021/application-delta-review.json`,
+SHA `1d87544bef2a9f6b49cf48e4e91e4182ff96b57888a7fa7e72b8b8abd24da77f`.
+
+## Current checkpoint — Oct21 19:57 UTC
+
+R13 reaches the protected HTTPS login page (200), then stops before provider
+login. Its first denied request is a native `POST /auth`, resource type
+`document`, at `ONE_PASSWORD_SUBMIT`, with `REQUEST_JSON_REQUIRED`. Password,
+user and session-sync provider requests are all zero; owned sessions are zero.
+The runtime returns `RESTORED_ADMIN_BROWSER_JOURNEY_FAILED`.
+
+The source has enabled SSR credential forms with `method="post"`; login and
+registration submit buttons are disabled only while loading. Before the client
+handler is ready, submission can fall back to a native POST. The next product
+change is an explicit hydration-readiness guard with SSR regressions, followed
+by the full administrator/dashboard/logout journey on a fresh reviewed artifact.
+The scoped prefetch fix remains source-only: R13 stops before it is exercised.
+R12's hosted login, partial dashboard and exact cleanup below remain valid
+historical results; they are not rewritten by this earlier R13 stop.
+
+R13 authenticates the latest closed R12 baseline. Both database phases complete
+109 SQL calls; final `allOriginalTypedCellsExact`, `allPriorRowsExact` and
+`protectedMetadataMatched` are true, with `ownedSessionCount: 0`. This is an
+exact comparison against the adopted baseline, not a reset of historical sign-in
+timestamps. No cleanup COMMIT is needed or attempted. Full Auth, active desired
+settings and original project settings match; native, browser and both frontends
+close. Replacement pause and independent nine-GET closure pass. Paused desired
+404 remains qualified by the separate active-parent equality check.
+
+Actual R13 (`86246`, exit 1) closes at 19:57:43 UTC. The R7 builder/tunnel
+subsequently exits 0 around 20:00 UTC, leaving no recovery runtime resources.
+All 10 remote checks on `4ccd90f` pass, but this is source verification, not a
+deployment. Public Vercel remains paused and the application/UI unreleased.
+Customer/media/isolated payments, recovery currency, stable free hosting and
+release/rollback review remain open. The [landing review](landing-review.md) is
+ready; its historical fixture screenshots do not replace current rendering or
+hosted continuity checks.
+
+Finite outcome: `/tmp/jazz-maintenance/a13/journal/access-outcome.json`, SHA
+`f4e23adc92560c13c6c645ab49a2441b14ae6b028c69007c48847712a3b4126b`.
+Private ownership and closed-plan inputs remain separate. Do not repeat the
+accepted import, PDF recovery, 56-cell correction or completed session cleanups.
+
+<a id="current-checkpoint--oct21-1939-utc"></a>
+
+## Earlier checkpoint — Oct21 19:39 UTC
 
 R12 passes the longer Auth readback wait, hosted password/user/session-sync200
 and visible dashboard search, then stops before admin/logout. The newly retained

@@ -1,23 +1,26 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 19:39 UTC
+## Current priorities — October 21, 20:10 UTC
 
-1. Complete recovered administrator/dashboard/logout. R12 Auth/login and partial
-   dashboard pass; the first blocker is optional courses-route RSC prefetch in
-   the restricted controller. Prepare scoped local403 handling while preserving
-   actual navigation/native policy and final unexpected-denial checks.
-2. Authenticate latest closed R12 timestamp history, then freshly verify/adopt
-   complete customer/prior/admin/zero-transient state. Both post-browser database
-   phases, exact cleanup COMMIT and persisted full final preservation now pass;
-   do not repeat cleanup. Finish customer/media and isolated coupon/refund flows.
-3. Finish recovery currency, stable zero-cost hosting and release/rollback.
-   The narrow LIVE payment window is empty, not full purchase reconciliation.
-   Public production remains paused and application/UI changes unreleased.
+1. Build and verify the locally fixed credential-form readiness change on a
+   fresh reviewed artifact, then complete administrator/dashboard/logout. R13
+   reaches the HTTPS login page but native `POST /auth` is denied before any
+   provider login. Source `4b320b1` passes 36 local checks and isolated UI
+   browser tests; hosted verification remains open. Keep the strict controller;
+   scoped prefetch handling remains source-only and unexercised in R13.
+2. Preserve the latest authenticated R12 baseline. R13 verifies both database
+   phases and final typed/prior/protected state with zero new sessions and no
+   cleanup COMMIT. R12's successful hosted login, partial dashboard and exact
+   cleanup are retained; do not replay cleanup, import, uploads or correction.
+   Complete the remaining customer/media and isolated coupon/refund journeys.
+3. Finish recovery currency, stable zero-cost hosting and release/rollback
+   review. All 10 remote checks on `4ccd90f` pass, but public production remains
+   paused and the application/UI unreleased.
 
-R12 has no remaining owned session or serving resource. R6 tunnel closed; a fresh
-bounded R7 artifact/tunnel build is running. The historical public
-[landing before/after review](landing-review.md) is ready for inspection.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1939-utc).
+All recovery browser, application, database frontend and R7 build/tunnel
+resources are closed. The [landing before/after review](landing-review.md) is
+ready; its historical screenshots are not current-rendering proof.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1957-utc).
 
 ## Earlier priorities — October21 18:41 UTC
 

@@ -1,18 +1,28 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 19:39 UTC
+## Latest verified replacement state — Oct21 19:57 UTC
 
-R12 independently closes with replacement paused, full Auth restored, desired/
-original settings equal and both frontends closed. Browser/native close cleanly.
-Exact cleanup commits once for one session/refresh/AMR, with persisted owned rows0.
-All1,621rows/14,270cells except two new sign-in stamps, prior/protected state match
-across165 SQL calls. The old disconnected-connection failure does not recur here.
+Application `4b320b1` fixes form startup readiness with local tests/UI fixtures.
+It is not deployed or tested against hosted authentication yet; a new source
+binding/build is required. Replacement settings/data below remain unchanged.
 
-Hosted password/user/sync and partial dashboard pass; optional RSC prefetch is
-now the identified restricted-controller blocker before admin/logout. The longer
-Auth convergence wait passes. R6 builder/tunnel is closed; a fresh bounded R7
-artifact/tunnel build is running. Public Vercel remains paused; UI unreleased.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1939-utc).
+R13 independently closes with replacement paused, full Auth restored and active
+desired/original settings equal. Native, browser and both database frontends
+are closed. The R7 builder/tunnel subsequently exits 0 around 20:00 UTC; no
+recovery runtime resources remain. Paused desired-settings 404 retains its
+qualification by the separate active-parent equality check.
+
+Both database phases pass 109 SQL calls. All 1,621 rows/14,270 typed cells match
+the adopted latest R12 baseline; prior rows and protected metadata match. R13
+creates no session and needs no cleanup COMMIT. R12's hosted login, partial
+dashboard and completed exact cleanup remain separate historical evidence.
+
+The latest attempt reaches the protected HTTPS login page, then its native
+`POST /auth` is denied before any provider login. Credential-form hydration
+readiness is the next product fix; full admin/logout remains unverified. Scoped
+prefetch handling is source-only and unexercised by R13. All 10 remote checks on
+`4ccd90f` pass, but public Vercel remains paused and application/UI unreleased.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1957-utc).
 
 ## Latest verified replacement state — Oct21 18:41 UTC
 

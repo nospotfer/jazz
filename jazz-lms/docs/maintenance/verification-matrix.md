@@ -1,18 +1,20 @@
 # Goal verification matrix
 
-## Current recovery check — Oct21 19:39 UTC
+## Current verification — Oct21 20:10 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
-| Auth propagation and login | Longer bounded wait; password/user/sync200, same persisted actor, visible dashboard search | Passed; complete journey still open |
-| First denied request | GET/fetch RSC Next-prefetch `/dashboard/courses`; later seven denials after stop | Actual controller boundary identified; old R9 remains unclassified |
-| Full post-browser preservation | Two frontends/165 SQL; all1,621rows/14,270cells except two sign-in stamps, prior/protected match | Passed in actual R12 window |
-| Exact owned cleanup | One confirmed COMMIT deletes1session/1refresh/1AMR, auditDeletes0, persisted rows0 | Passed/spent; no replay |
-| Settings/resources | FullAuth/desired/old equality; native/browser/frontend close, pause and independent nineGET pass; R6 tunnel exits0 | Passed; desired404 qualified; fresh R7 build underway |
-| Public landing review | Eight manifest-verified historical public images, unchanged copied bytes, source/provenance limits recorded | Review artifact ready; not current rendering/deployment proof |
-| Release/full goal | Admin/logout/customer/media/payment, recovery currency, free hosting and review open | Incomplete; production/UI unreleased |
+| Credential-form readiness | `4b320b1`: 36 focused tests, typecheck, no-JS/delayed-script Chromium pass; no provider dispatch | Fixed locally; new-source hosted journey unverified |
+| Public login page | R13 protected HTTPS 200 | Passed; no provider login in this attempt |
+| Credential submission | First denial: native `POST /auth`, document, `REQUEST_JSON_REQUIRED` at `ONE_PASSWORD_SUBMIT`; password/user/sync requests 0, owned sessions 0 | Native fallback recorded; local fix passes, new hosted journey pending |
+| Prior hosted access | R12 password/user/sync 200 and partial dashboard; exact owned cleanup committed and persisted | Retained historical success; full admin/logout still open |
+| Current preservation | R13 authenticates latest R12 baseline; two phases, 109 SQL calls, all typed/prior/protected comparisons pass | Passed; no cleanup COMMIT needed or attempted |
+| Settings and resources | Full Auth/active desired/original equality; native/browser/frontends closed, pause and independent nine-GET closure pass; R7 builder/tunnel exits 0 | Closed; paused desired 404 remains qualified |
+| Scoped prefetch handling | Reviewed source fix; R13 stops before login | Not exercised by R13; no historical denial relabelled |
+| Source and visual review | `4ccd90f`: all 10 remote checks pass; public landing review ready | No deployment or current-rendering claim |
+| Complete goal | Admin/logout/customer/media/payment, recovery currency, free hosting and release review remain open | Incomplete; public production paused |
 
-[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1939-utc).
+[Exact outcome and limits](production-readiness.md#current-checkpoint--oct21-1957-utc).
 
 ## Current recovery check — Oct21 18:41 UTC
 

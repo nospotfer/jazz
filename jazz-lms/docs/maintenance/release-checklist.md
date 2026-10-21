@@ -1,21 +1,29 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 19:39 UTC
+## Current access gate — Oct21 20:10 UTC
 
-- [x] Pass bounded Auth convergence and hosted password/user/session-sync200.
-- [x] Observe dashboard search and retain exact first denied optional prefetch;
-      do not label later cascades or old unrecorded requests harmless.
-- [x] Verify full post-browser two-phase data preservation across165 SQL calls;
-      one exact owned cleanup COMMIT, persisted owned rows0, prior/protected exact.
-- [x] Restore fullAuth/desired/old settings, close browser/native/both frontends,
-      pause replacement and independently verify closure; qualify desired404.
-- [x] Close R6 builder/tunnel; preserve all spent actions and new sign-in stamps.
-- [ ] Authenticate/adopt latest closed R12 baseline and verify scoped optional
-      prefetch handling in a fresh full administrator/dashboard/logout journey.
+- [x] Implement credential readiness and verify 36 focused checks, typecheck and
+      isolated no-JavaScript/delayed-script UI behavior on `4b320b1`.
+- [ ] Explicitly admit the narrow application delta and build a fresh preview;
+      complete actual recovered administrator/dashboard/logout.
+
+- [x] Retain R12's hosted login/partial dashboard and completed exact cleanup;
+      authenticate its latest baseline in R13 without replaying spent writes.
+- [x] Verify R13 HTTPS login-page 200 and identify the pre-hydration native
+      `POST /auth` denial before any provider password/user/sync request.
+- [x] Verify both database phases and full final typed/prior/protected state
+      across 109 SQL calls, with zero new sessions and no cleanup COMMIT.
+- [x] Restore Auth/active desired/original settings, close native/browser/both
+      frontends, pause replacement and independently verify nine-GET closure;
+      keep paused desired 404 qualified. Close the R7 builder/tunnel as well.
+- [ ] Verify the still-unexercised scoped prefetch handling during the full
+      hosted administrator/dashboard/logout journey.
 - [ ] Finish customer/media/isolated payment, recovery currency, stable free
-      hosting and release/rollback. Public UI/code deployment remains pending.
+      hosting and release/rollback review. `4ccd90f` passes 10 remote checks;
+      application/UI deployment is still pending.
 
-[Actual outcome](production-readiness.md#current-checkpoint--oct21-1939-utc).
+The [landing review](landing-review.md) is ready and remains historical visual
+fixture evidence. [Current outcome](production-readiness.md#current-checkpoint--oct21-1957-utc).
 
 ## Current access gate — Oct21 18:41 UTC
 

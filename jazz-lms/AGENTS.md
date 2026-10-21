@@ -31,6 +31,7 @@ Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platfor
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.
 - **Theme**: Dark and light themes with jazz gold accents. Verify contrast and mobile layouts in both; do not use dark-only text colors on shared surfaces.
 - **Server identity**: Verify cookie-backed identity through `supabase.auth.getUser()` before authorization. `getSession().user` is not trusted server-side identity.
+- **Auth form startup**: Keep credential fields and submit controls disabled in server HTML until React owns their handlers. Preserve POST method and autocomplete, with localized no-JavaScript guidance. Verify both no-JavaScript and delayed-hydration behavior; a native form POST is not a supported sign-in fallback.
 - **Session synchronization**: `/api/auth/session` requires the exact origin resolved by the existing application-origin helper and `application/json` before parsing or Supabase work. Keep browser-equivalent Origin in route fixtures; do not add forwarded-host trust or a missing-Origin bypass. The configured native public origin must match. Source regressions do not prove deployed login.
 
 ## Commands
@@ -66,6 +67,9 @@ Native release helpers under `scripts/native/` use an explicit owner-only JSON
 configuration and Node 24. `prepare-release.mjs --inspect` is read-only;
 `--build` creates a new private artifact from an exact clean Git checkout without
 server credentials in the builder. Neither command starts services.
+A runtime application change needs a newly reviewed source binding and build; a
+documentation-only bridge cannot admit it. Keep archived scopes and data-profile
+receipts bound to their original application commits.
 `launch-preview.mjs` starts only a bounded Linux preview after release inspection,
 using owner-only Unix sockets and a fixed-expiry Basic gate. Production startup
 is denied. Its explicit Quick Tunnel Worker exception is preview-only; general
@@ -110,9 +114,9 @@ offline password matches are not proof of a hosted login. Load private recovery
 inputs explicitly, verify current roles, and use a fresh source/origin/lease.
 Real customer data is not an isolated test environment.
 
-Application31ad6ba builds successfully but remains unreleased. Public Vercel is
-paused; the recovered admin/customer/media journeys, recovery point, stable free
-hosting and release review remain open. Use the current summaries in
+Application changes remain unreleased. Public Vercel is paused; the recovered
+admin/customer/media journeys, recovery point, stable free hosting and release
+review remain open. Use the current summaries in
 `docs/maintenance/backlog.md` and `docs/maintenance/production-readiness.md`.
 Dated diagnostic sections are historical evidence, not instructions to repeat
 completed recovery or old failed attempts.
