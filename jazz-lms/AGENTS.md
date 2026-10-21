@@ -78,8 +78,11 @@ preparation-only CLI and no activation flag. A separately verified tunnel bounda
 is still required; plain `npm start` does not establish it. See
 `docs/maintenance/native-runtime.md` before startup or hosting changes.
 
-Default native previews reject payment credentials. The explicit `testPayments`
-profile permits only Dodo TEST inputs on the pinned isolated backend, with a
+Default native previews reject payment credentials. TEST payments and
+restored-customer access remain capped at 30 minutes; only a
+payment-disabled preview on the isolated project may run for up to 24 hours,
+with a fixed Basic gate and worker expiry. The explicit `testPayments` profile
+permits only Dodo TEST inputs on the pinned isolated backend, with a
 canonical deadline of at most30 minutes exactly matching the Basic gate. Keep
 the profile in the validated configuration; do not inject credentials after
 validating a payment-disabled config. Verify actual TEST provider resources,

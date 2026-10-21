@@ -129,6 +129,7 @@ describe("native explicit Dodo TEST payments configuration", () => {
     expect(result.testPayments).toEqual(input.testPayments);
     expect(result.testPayments).not.toBe(input.testPayments);
     expect(result.env).toMatchObject({ DODO_ENVIRONMENT: "test_mode", DODO_API_BASE_URL: "https://test.dodopayments.com",
+      NATIVE_PREVIEW_PROFILE: "test-payments", NATIVE_TEST_PAYMENTS_EXPIRES_AT: input.testPayments!.expiresAt,
       DODO_PAYMENTS_API_KEY: "synthetic-test-api-key", DODO_PAYMENTS_WEBHOOK_SECRET: "synthetic-test-signing-secret",
       DODO_BUSINESS_ID: "bus_synthetic", DODO_PRODUCT_ID: "pdt_synthetic", ENABLE_LOCAL_TEST_CHECKOUT: "0",
       ENABLE_LOCAL_TEST_RESETS: "0", ENABLE_LOCAL_LEGACY_MUTATIONS: "0", NEXT_PUBLIC_OPENREPLAY_ENABLED: "false" });
@@ -228,7 +229,8 @@ describe("native restored customer recovery profile", () => {
     const output = validateNativeConfig(input);
     expect(output.recoveryAccess).toEqual(input.recoveryAccess);
     expect(output.projectRef).toBe(RECOVERY_PROJECT_REF);
-    expect(output.env).toMatchObject({ NEXT_PUBLIC_RECOVERY_ACCESS: "true", NATIVE_RECOVERY_ACCESS: "true",
+    expect(output.env).toMatchObject({ NATIVE_PREVIEW_PROFILE: "recovery-access", NATIVE_TEST_PAYMENTS_EXPIRES_AT: "",
+      NEXT_PUBLIC_RECOVERY_ACCESS: "true", NATIVE_RECOVERY_ACCESS: "true",
       NATIVE_RECOVERY_EXPIRES_AT: input.recoveryAccess!.expiresAt, APP_DEPLOYMENT_ENVIRONMENT: "preview" });
     delete input.recoveryAccess;
     expectDenied(input, "NATIVE_CONFIG_PROJECT");
@@ -269,7 +271,7 @@ describe("native restored customer recovery profile", () => {
       const input = recovery(); input.env[name] = "synthetic-disabled-credential";
       expectDenied(input, "NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS");
     });
-  test.each(["NEXT_PUBLIC_RECOVERY_ACCESS", "NATIVE_RECOVERY_ACCESS", "NATIVE_RECOVERY_EXPIRES_AT", "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+  test.each(["NATIVE_PREVIEW_PROFILE", "NATIVE_TEST_PAYMENTS_EXPIRES_AT", "NEXT_PUBLIC_RECOVERY_ACCESS", "NATIVE_RECOVERY_ACCESS", "NATIVE_RECOVERY_EXPIRES_AT", "NEXT_PUBLIC_GA_MEASUREMENT_ID",
     "NEXT_PUBLIC_OPENREPLAY_ENABLED", "ENABLE_LOCAL_TEST_CHECKOUT", "ENABLE_LOCAL_LEGACY_MUTATIONS"])(
     "rejects explicit flag override %s", name => {
       const input = recovery(); input.env[name] = "true";
@@ -277,14 +279,20 @@ describe("native restored customer recovery profile", () => {
     });
   test("derives flags without inheriting ambient values and binds the browser build", () => {
     vi.stubEnv("NEXT_PUBLIC_RECOVERY_ACCESS", "true"); vi.stubEnv("NATIVE_RECOVERY_ACCESS", "true");
+    vi.stubEnv("NATIVE_PREVIEW_PROFILE", "isolated"); vi.stubEnv("NATIVE_TEST_PAYMENTS_EXPIRES_AT", "untrusted");
     const normal = validateNativeConfig(config());
     const recovered = validateNativeConfig(recovery());
     expect(normal.env.NEXT_PUBLIC_RECOVERY_ACCESS).toBe("false");
     expect(normal.env.NATIVE_RECOVERY_ACCESS).toBe("false");
+    expect(normal.env.NATIVE_PREVIEW_PROFILE).toBe("isolated");
+    expect(normal.env.NATIVE_TEST_PAYMENTS_EXPIRES_AT).toBe("");
+    expect(recovered.env.NATIVE_PREVIEW_PROFILE).toBe("recovery-access");
     const build = nativeBuildEnvironment(recovered, "/synthetic/tmp", "/synthetic/cache");
     expect(build).toHaveProperty('NEXT_PUBLIC_RECOVERY_ACCESS', 'true');
     expect(build).not.toHaveProperty("NATIVE_RECOVERY_ACCESS");
     expect(build).not.toHaveProperty("NATIVE_RECOVERY_EXPIRES_AT");
+    expect(build).not.toHaveProperty("NATIVE_PREVIEW_PROFILE");
+    expect(build).not.toHaveProperty("NATIVE_TEST_PAYMENTS_EXPIRES_AT");
     expect(publicBuildFingerprint({ ...recovered.env, NEXT_PUBLIC_RECOVERY_ACCESS: "false" })).not.toBe(publicBuildFingerprint(recovered.env));
   });
 });

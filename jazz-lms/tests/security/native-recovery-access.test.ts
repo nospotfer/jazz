@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { afterEach, describe, expect, test } from 'vitest';
 import { evaluateIngressRequest, isRecoveryRequestAllowed } from '../../scripts/native/ingress-policy.mjs';
 import { createIngressServer } from '../../scripts/native/ingress-server.mjs';
+import { PREVIEW_PROJECT_REF, RECOVERY_PROJECT_REF } from '../../scripts/native/config-policy.mjs';
 
 const readPaths = ['/', '/auth', '/dashboard', '/admin', '/robots.txt', '/favicon.ico',
   '/api/dashboard/courses-progress', '/api/dashboard/pdf-count', '/api/dashboard/quiz-medals',
@@ -66,6 +67,12 @@ describe('explicit recovery request surface', () => {
     expect(() => createIngressServer({ upstreamSocket: '/private/synthetic.sock',
       policy: { canonicalHost: 'synthetic-recovery.trycloudflare.com', recoveryAccess: true } })).toThrow('Invalid native recovery access configuration');
   });
+  test('the Basic ingress rejects a lease beyond 24 hours before binding', () => {
+    expect(() => createIngressServer({ upstreamSocket: '/private/synthetic.sock',
+      policy: { canonicalHost: 'synthetic-recovery.trycloudflare.com' },
+      previewAccess: { username: 'synthetic', password: 'x'.repeat(32),
+        expiresAt: new Date(Date.now() + 86_500_000).toISOString() } })).toThrow('Invalid native preview access configuration');
+  });
 });
 
 const children: { process: ChildProcess; closed: Promise<unknown> }[] = [];
@@ -79,9 +86,11 @@ afterEach(async () => {
   for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true });
 });
 
-async function worker(options: { wrongLease?: boolean; wrongBrowserFlag?: boolean } = {}) {
+async function worker(options: { wrongLease?: boolean; wrongBrowserFlag?: boolean;
+  profile?: 'isolated' | 'test-payments' | 'recovery-access'; lifetimeMs?: number;
+  env?: Record<string, string>; ipcProfile?: string } = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'jazz-recovery-worker-')); chmodSync(directory, 0o700); directories.push(directory);
-  for (const file of ['next-worker.mjs', 'ingress-policy.mjs']) copyFileSync(resolve('scripts/native', file), join(directory, file));
+  for (const file of ['next-worker.mjs', 'ingress-policy.mjs', 'config-policy.mjs']) copyFileSync(resolve('scripts/native', file), join(directory, file));
   mkdirSync(join(directory, 'node_modules/next'), { recursive: true, mode: 0o700 });
   writeFileSync(join(directory, 'package.json'), '{"private":true}', { mode: 0o600 });
   writeFileSync(join(directory, 'node_modules/next/index.js'), `
@@ -89,11 +98,21 @@ let requests = 0;
 module.exports = () => ({ prepare: async () => {}, close: async () => {},
   getRequestHandler: () => async (_req, res) => { res.end(JSON.stringify({ requests: ++requests })); }
 });`, { mode: 0o600 });
-  const socket = join(directory, 'app.sock'), expiresAt = Date.now() + 30_000;
+  const socket = join(directory, 'app.sock'), expiresAt = Date.now() + (options.lifetimeMs ?? 30_000);
+  const profile = options.profile ?? 'recovery-access', recovery = profile === 'recovery-access';
+  const origin = 'https://synthetic-recovery.trycloudflare.com';
+  const env: NodeJS.ProcessEnv = { NODE_ENV: 'production', APP_DEPLOYMENT_ENVIRONMENT: 'preview',
+    APP_URL: origin, NEXT_PUBLIC_APP_URL: origin,
+    NEXT_PUBLIC_SUPABASE_URL: `https://${recovery ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF}.supabase.co`,
+    NATIVE_PREVIEW_PROFILE: profile,
+    NATIVE_RECOVERY_ACCESS: String(recovery), NEXT_PUBLIC_RECOVERY_ACCESS: options.wrongBrowserFlag ? String(!recovery) : String(recovery),
+    NATIVE_RECOVERY_EXPIRES_AT: recovery ? new Date(expiresAt + (options.wrongLease ? 1000 : 0)).toISOString() : '',
+    NATIVE_TEST_PAYMENTS_EXPIRES_AT: profile === 'test-payments' ? new Date(expiresAt).toISOString() : '',
+    ...(profile === 'test-payments' ? { DODO_ENVIRONMENT: 'test_mode', DODO_API_BASE_URL: 'https://test.dodopayments.com',
+      DODO_PAYMENTS_API_KEY: 'synthetic-key', DODO_PAYMENTS_WEBHOOK_SECRET: 'synthetic-webhook',
+      DODO_BUSINESS_ID: 'synthetic-business', DODO_PRODUCT_ID: 'synthetic-product' } : {}), ...options.env };
   const child = fork(join(directory, 'next-worker.mjs'), [], { execArgv: [], cwd: directory,
-    stdio: ['ignore', 'ignore', 'ignore', 'ipc'], env: { NODE_ENV: 'production', APP_DEPLOYMENT_ENVIRONMENT: 'preview',
-      NATIVE_RECOVERY_ACCESS: 'true', NEXT_PUBLIC_RECOVERY_ACCESS: options.wrongBrowserFlag ? 'false' : 'true',
-      NATIVE_RECOVERY_EXPIRES_AT: new Date(expiresAt + (options.wrongLease ? 1000 : 0)).toISOString() } });
+    stdio: ['ignore', 'ignore', 'ignore', 'ipc'], env });
   const closed = new Promise(resolveClosed => child.once('close', code => resolveClosed(code))); children.push({ process: child, closed });
   const ready = new Promise<string>((resolveReady, reject) => {
     const timer = setTimeout(() => reject(new Error('Recovery fixture worker readiness timeout')), 3000);
@@ -103,7 +122,8 @@ module.exports = () => ({ prepare: async () => {}, close: async () => {},
     });
     child.once('error', () => { clearTimeout(timer); reject(new Error('Recovery fixture worker failed to start')); });
   });
-  child.send({ type: 'start', socketPath: socket, hostname: 'synthetic-recovery.trycloudflare.com', nonce: 'a'.repeat(64), expiresAt });
+  child.send({ type: 'start', socketPath: socket, hostname: 'synthetic-recovery.trycloudflare.com', nonce: 'a'.repeat(64), expiresAt,
+    profile: options.ipcProfile });
   return { socket, ready: await ready };
 }
 
@@ -130,4 +150,33 @@ test('the actual private worker rejects mutations and ambiguous paths before inv
 
 test.each([{ wrongLease: true }, { wrongBrowserFlag: true }])('the worker denies inconsistent recovery input %j before listening', async options => {
   expect((await worker(options)).ready).toBe('failed');
+});
+
+test('the actual worker admits a two-hour isolated profile and a short TEST profile', async () => {
+  expect((await worker({ profile: 'isolated', lifetimeMs: 7_200_000 })).ready).toBe('ready');
+  expect((await worker({ profile: 'test-payments' })).ready).toBe('ready');
+});
+
+test.each(['test-payments', 'recovery-access'] as const)('the actual %s worker cannot inherit a two-hour IPC lease', async profile => {
+  expect((await worker({ profile, lifetimeMs: 7_200_000, ipcProfile: 'isolated' })).ready).toBe('failed');
+});
+
+test('the actual isolated worker rejects more than 24 hours', async () => {
+  expect((await worker({ profile: 'isolated', lifetimeMs: 86_500_000 })).ready).toBe('failed');
+});
+
+const invalidLongLeaseEnvironments: Record<string, string>[] = [
+  { NATIVE_PREVIEW_PROFILE: '' },
+  { NATIVE_PREVIEW_PROFILE: 'production' },
+  { DODO_PAYMENTS_API_KEY: 'synthetic-key' },
+  { NATIVE_RECOVERY_ACCESS: 'true', NEXT_PUBLIC_RECOVERY_ACCESS: 'true' },
+  { NEXT_PUBLIC_SUPABASE_URL: `https://${RECOVERY_PROJECT_REF}.supabase.co` },
+  { APP_URL: 'https://other-preview.trycloudflare.com' },
+];
+test.each(invalidLongLeaseEnvironments)('a long worker lease denies inconsistent capability, target or origin %j', async env => {
+  expect((await worker({ profile: 'isolated', lifetimeMs: 7_200_000, env, ipcProfile: 'isolated' })).ready).toBe('failed');
+});
+
+test('the actual TEST worker requires its exact derived payment deadline', async () => {
+  expect((await worker({ profile: 'test-payments', env: { NATIVE_TEST_PAYMENTS_EXPIRES_AT: new Date(Date.now() + 60_000).toISOString() } })).ready).toBe('failed');
 });

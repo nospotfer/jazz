@@ -4,6 +4,8 @@ import { isAbsolute } from 'node:path';
 export const PRODUCTION_PROJECT_REF = 'feavujcllgbzlvdvkkxx';
 export const PREVIEW_PROJECT_REF = 'tvmhuacxctdgmejziaxg';
 export const RECOVERY_PROJECT_REF = 'klaiiikojgdfclzhqfgt';
+export const ISOLATED_PREVIEW_MAX_MS = 86_400_000;
+export const RESTRICTED_PREVIEW_MAX_MS = 1_800_000;
 const CANONICAL_ORIGIN = 'https://www.culturadeljazz.com';
 const ALLOWED_ENV = new Set([
   'APP_URL', 'NEXT_PUBLIC_APP_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL',
@@ -75,7 +77,7 @@ export function validateNativeConfig(value) {
       /^[a-z0-9][a-z0-9-]{2,79}$/.test(access.scopeId) && typeof access.expiresAt === 'string', 'NATIVE_CONFIG_RECOVERY_ACCESS');
     const deadline = Date.parse(access.expiresAt), now = Date.now();
     requireCondition(Number.isFinite(deadline) && new Date(deadline).toISOString() === access.expiresAt &&
-      deadline > now && deadline <= now + 1_800_000, 'NATIVE_CONFIG_RECOVERY_ACCESS');
+      deadline > now && deadline <= now + RESTRICTED_PREVIEW_MAX_MS, 'NATIVE_CONFIG_RECOVERY_ACCESS');
     recoveryAccess = { purpose: 'restored-customer-access', scopeId: access.scopeId, expiresAt: access.expiresAt };
   }
   let testPayments;
@@ -87,7 +89,7 @@ export function validateNativeConfig(value) {
       /^[a-z0-9][a-z0-9-]{2,79}$/.test(optIn.scopeId) && typeof optIn.expiresAt === 'string', 'NATIVE_CONFIG_TEST_PAYMENTS');
     const deadline = Date.parse(optIn.expiresAt), now = Date.now();
     requireCondition(Number.isFinite(deadline) && new Date(deadline).toISOString() === optIn.expiresAt &&
-      deadline > now && deadline <= now + 1_800_000, 'NATIVE_CONFIG_TEST_PAYMENTS');
+      deadline > now && deadline <= now + RESTRICTED_PREVIEW_MAX_MS, 'NATIVE_CONFIG_TEST_PAYMENTS');
     testPayments = { provider: 'dodo', scopeId: optIn.scopeId, expiresAt: optIn.expiresAt };
   }
   const ref = production ? PRODUCTION_PROJECT_REF : recoveryAccess ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF;
@@ -146,6 +148,8 @@ export function validateNativeConfig(value) {
     NEXT_TELEMETRY_DISABLED: '1', NEXT_PUBLIC_OPENREPLAY_ENABLED: 'false',
     NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY: '', NEXT_PUBLIC_GA_MEASUREMENT_ID: '',
     ENABLE_LOCAL_TEST_CHECKOUT: '0', ENABLE_LOCAL_TEST_RESETS: '0', ENABLE_LOCAL_LEGACY_MUTATIONS: '0',
+    NATIVE_PREVIEW_PROFILE: production ? 'production' : recoveryAccess ? 'recovery-access' : testPayments ? 'test-payments' : 'isolated',
+    NATIVE_TEST_PAYMENTS_EXPIRES_AT: testPayments?.expiresAt ?? '',
     NEXT_PUBLIC_RECOVERY_ACCESS: recoveryAccess ? 'true' : 'false',
     NATIVE_RECOVERY_ACCESS: recoveryAccess ? 'true' : 'false',
     NATIVE_RECOVERY_EXPIRES_AT: recoveryAccess?.expiresAt ?? '',

@@ -148,6 +148,8 @@ process.on('message', async incoming => {
       basicInArgv: process.argv.some(value => value.includes(previewPassword) || value === previewUsername),
       ambientInEnv: process.env.NODE_OPTIONS !== undefined || process.env.OPENREPLAY_API_KEY !== undefined,
       mode: process.env.APP_DEPLOYMENT_ENVIRONMENT, nodeEnv: process.env.NODE_ENV,
+      previewProfile: process.env.NATIVE_PREVIEW_PROFILE,
+      testPaymentsLeaseMatches: Date.parse(process.env.NATIVE_TEST_PAYMENTS_EXPIRES_AT ?? '') === message.expiresAt,
       recoveryAccess: process.env.NATIVE_RECOVERY_ACCESS, recoveryBrowser: process.env.NEXT_PUBLIC_RECOVERY_ACCESS,
       recoveryLeaseMatches: Date.parse(process.env.NATIVE_RECOVERY_EXPIRES_AT ?? '') === message.expiresAt,
       dodoTestOnly: process.env.DODO_ENVIRONMENT === 'test_mode' && process.env.DODO_API_BASE_URL === 'https://test.dodopayments.com',
@@ -462,10 +464,10 @@ describe("native launcher inspected preview boundary", () => {
     await expectDenied(inspectNativePreview(value.launchFile), "NATIVE_RUN_PATH");
   });
 
-  test.each(["past", "over-one-hour", "invalid", "noncanonical"])("rejects %s expiry before starting a worker", async (kind) => {
+  test.each(["past", "over-24-hours", "invalid", "noncanonical"])("rejects %s expiry before starting a worker", async (kind) => {
     const value = fixture();
     value.plan.previewAccess.expiresAt = kind === "past" ? new Date(Date.now() - 1000).toISOString() :
-      kind === "over-one-hour" ? new Date(Date.now() + 3_700_000).toISOString() :
+      kind === "over-24-hours" ? new Date(Date.now() + 86_500_000).toISOString() :
         kind === "noncanonical" ? new Date(Date.now() + 20_000).toUTCString() : "not-a-date";
     privateJson(value.launchFile, value.plan);
     await expectDenied(inspectNativePreview(value.launchFile), "NATIVE_LAUNCH_EXPIRY");
@@ -486,7 +488,7 @@ describe('native restored-customer access lease', () => {
     expect(inspected.summary).toMatchObject({ recoveryAccess: raw.recoveryAccess, providerCredentialsVerified: false, productionApproved: false });
     const controller = await start(value);
     expect(JSON.parse((await request(controller.socketPaths.edge, '/dashboard')).body)).toMatchObject({
-      recoveryAccess: 'true', recoveryBrowser: 'true', recoveryLeaseMatches: true,
+      previewProfile: 'recovery-access', recoveryAccess: 'true', recoveryBrowser: 'true', recoveryLeaseMatches: true,
       dodoServerFieldsPresent: false, otherSideEffectsDisabled: true, ordinaryRequests: 1,
     });
     for (const path of ['/api/messages', '/api/messages/thread', '/auth/callback', '/api/webhooks/dodo-jazzlms', '/dashboard/profile']) {
@@ -505,6 +507,14 @@ describe('native restored-customer access lease', () => {
     await expectDenied(startNativePreview(value.launchFile), 'NATIVE_RECOVERY_ACCESS_LEASE');
     expect(existsSync(value.recordPath)).toBe(false);
     expect(existsSync(value.plan.runDirectory)).toBe(false);
+  });
+
+  test('the longer isolated Basic lease cannot extend a recovery profile', async () => {
+    const value = fixture(); enableRecovery(value);
+    value.plan.previewAccess.expiresAt = new Date(Date.now() + 7_200_000).toISOString();
+    privateJson(value.launchFile, value.plan);
+    await expectDenied(startNativePreview(value.launchFile), 'NATIVE_RECOVERY_ACCESS_LEASE');
+    expect(existsSync(value.recordPath)).toBe(false);
   });
 });
 
@@ -527,6 +537,7 @@ describe("native explicit Dodo TEST payments launch lease", () => {
     expect(controller.summary).toMatchObject({ testPayments: raw.testPayments, providerCredentialsVerified: false });
     expect(JSON.parse((await request(controller.socketPaths.edge)).body)).toMatchObject({
       dodoTestOnly: true, dodoServerFieldsPresent: true, otherSideEffectsDisabled: true, mode: "preview",
+      previewProfile: "test-payments", testPaymentsLeaseMatches: true,
       basicInEnv: false, basicInArgv: false, ambientInEnv: false,
     });
     expect((await controller.close())).toMatchObject({ clean: true, stopped: true });
@@ -542,6 +553,14 @@ describe("native explicit Dodo TEST payments launch lease", () => {
     await expectDenied(startNativePreview(value.launchFile), "NATIVE_TEST_PAYMENTS_LEASE");
     expect(existsSync(value.recordPath)).toBe(false);
     expect(existsSync(value.plan.runDirectory)).toBe(false);
+  });
+
+  test('the longer isolated Basic lease cannot extend a TEST payment profile', async () => {
+    const value = fixture(); enableTestPayments(value);
+    value.plan.previewAccess.expiresAt = new Date(Date.now() + 7_200_000).toISOString();
+    privateJson(value.launchFile, value.plan);
+    await expectDenied(startNativePreview(value.launchFile), 'NATIVE_TEST_PAYMENTS_LEASE');
+    expect(existsSync(value.recordPath)).toBe(false);
   });
 
   test.each(["expired", "over30minutes"])("%s TEST deadline fails before spawn", async kind => {
@@ -566,6 +585,19 @@ describe("native explicit Dodo TEST payments launch lease", () => {
 });
 
 describe("native preview private Unix transport and Basic gate", () => {
+  test('admits a two-hour payment-disabled isolated preview with the same Basic gate and clean closure', async () => {
+    const value = fixture('normal', 7_200_000);
+    const controller = await start(value);
+    expect(controller.summary.expiresAt).toBe(value.plan.previewAccess.expiresAt);
+    expect((await request(controller.socketPaths.edge, '/', null)).status).toBe(401);
+    expect(JSON.parse((await request(controller.socketPaths.edge)).body)).toMatchObject({
+      previewProfile: 'isolated', recoveryAccess: 'false', dodoServerFieldsPresent: false,
+      otherSideEffectsDisabled: true, basicInEnv: false, basicInArgv: false,
+    });
+    expect((await controller.close())).toMatchObject({ clean: true, stopped: true });
+    expectRecordedProcessesStopped(value);
+  });
+
   test("binds owner-only sockets and keeps Basic credentials out of child argv/env and forwarded requests", async () => {
     const value = fixture();
     vi.stubEnv("OPENREPLAY_API_KEY", "synthetic-ambient-key");

@@ -4,7 +4,7 @@ import http from 'node:http';
 import { mkdir, lstat, realpath, rmdir, rm, readdir, readFile, unlink, chmod } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NativeConfigurationError } from './config-policy.mjs';
+import { NativeConfigurationError, ISOLATED_PREVIEW_MAX_MS, RESTRICTED_PREVIEW_MAX_MS } from './config-policy.mjs';
 import { inspectNativeRelease, readControlledFile } from './release-inspect.mjs';
 import { createIngressServer } from './ingress-server.mjs';
 
@@ -34,7 +34,7 @@ export async function inspectNativePreview(launchFile) {
     /^[A-Za-z0-9_-]{32,128}$/.test(access.password) && typeof access.expiresAt === 'string', 'NATIVE_LAUNCH_ACCESS');
   const expiresAt = Date.parse(access.expiresAt);
   requireCondition(Number.isFinite(expiresAt) && new Date(expiresAt).toISOString() === access.expiresAt &&
-    expiresAt > Date.now() && expiresAt <= Date.now() + 3_600_000, 'NATIVE_LAUNCH_EXPIRY');
+    expiresAt > Date.now() && expiresAt <= Date.now() + ISOLATED_PREVIEW_MAX_MS, 'NATIVE_LAUNCH_EXPIRY');
   requireCondition(typeof plan.runDirectory === 'string' && isAbsolute(plan.runDirectory) &&
     resolve(plan.runDirectory) === plan.runDirectory && !/[\x00-\x1f\x7f]/.test(plan.runDirectory) &&
     Buffer.byteLength(join(plan.runDirectory, 'edge.sock')) <= 100, 'NATIVE_RUN_PATH');
@@ -45,11 +45,11 @@ export async function inspectNativePreview(launchFile) {
   requireCondition(inspected.config.mode === 'preview', 'NATIVE_PRODUCTION_START_DENIED');
   if (inspected.config.testPayments) {
     requireCondition(inspected.config.testPayments.expiresAt === access.expiresAt && expiresAt > Date.now() &&
-      expiresAt <= Date.now() + 1_800_000, 'NATIVE_TEST_PAYMENTS_LEASE');
+      expiresAt <= Date.now() + RESTRICTED_PREVIEW_MAX_MS, 'NATIVE_TEST_PAYMENTS_LEASE');
   }
   if (inspected.config.recoveryAccess) {
     requireCondition(inspected.config.recoveryAccess.expiresAt === access.expiresAt && expiresAt > Date.now() &&
-      expiresAt <= Date.now() + 1_800_000, 'NATIVE_RECOVERY_ACCESS_LEASE');
+      expiresAt <= Date.now() + RESTRICTED_PREVIEW_MAX_MS, 'NATIVE_RECOVERY_ACCESS_LEASE');
   }
   const outside = path => {
     const local = relative(plan.appRoot, path);

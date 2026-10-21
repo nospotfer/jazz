@@ -114,7 +114,11 @@ failure and earlier type/scan/quiz-fixture diagnostics remain preserved.
 `launch-preview.mjs` inspects the complete release before creating a new run
 directory. Its private JSON contains `version: 1`, absolute `configFile`,
 `appRoot`, `manifestFile`, `runDirectory`, and `previewAccess` with a generated
-username/password and a canonical ISO `expiresAt` no more than one hour ahead.
+username/password and a canonical ISO `expiresAt` no more than 24 hours ahead
+for a payment-disabled preview on the isolated `tvmhuacxctdgmejziaxg` project.
+TEST payments and restored-customer access remain capped at 30 minutes, with
+exactly matching profile, Basic-gate and worker deadlines. Every expiry is fixed;
+the longer isolated-preview limit does not renew an existing run.
 Keep the JSON owner-only, outside the release, and its existing run parent
 owned with mode 700. Both socket paths must fit Linux's length limit. An existing
 run path is rejected; it is never adopted or deleted as a stale directory.
@@ -130,6 +134,14 @@ Next's custom-server API with the public hostname/logical port 443, then binds
 only `app.sock`; the parent binds only `edge.sock`. Both sockets are mode 600
 inside the new mode 700 directory; the worker runs with umask 077. No application
 TCP port, tunnel, service or DNS record is created by the launcher.
+
+Configuration validation derives the server-only `NATIVE_PREVIEW_PROFILE` and,
+for TEST payments, `NATIVE_TEST_PAYMENTS_EXPIRES_AT` in the clean child environment.
+The worker checks the profile against the exact project/origin, recovery flags
+and payment fields before applying its lifetime limit. These fields cannot be
+supplied as config overrides or selected by an IPC profile assertion; they do
+not enter the public build fingerprint. Basic authentication and owned-process
+cleanup remain required for the entire lease.
 
 ### Protected restored-customer access profile
 
@@ -198,8 +210,10 @@ explicit Dodo server inputs, `DODO_ENVIRONMENT=test_mode`, and exactly
 payment credentials. Production rejects the opt-in.
 
 The deadline must be current, at most30 minutes ahead and exactly equal to the
-launcher's Basic-gate deadline. The validated profile is retained in the
-inspection/startup summary. Existing process cleanup closes the child and ingress
+launcher's Basic-gate and private worker deadlines. The worker independently
+enforces the 30-minute cap and exact derived TEST deadline. The validated profile
+is retained in the inspection/startup summary. Existing process cleanup closes
+the child and ingress
 at that deadline. An expired profile cannot be reused; keep the payment-disabled
 base configuration for post-expiry artifact inspection. Neither profile metadata
 nor routing validation verifies a provider credential or authorizes a payment.

@@ -2,6 +2,7 @@ import http from 'node:http';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { isAbsolute, resolve } from 'node:path';
 import { evaluateIngressRequest, stripHopHeaders, WEBHOOK_PATHS } from './ingress-policy.mjs';
+import { ISOLATED_PREVIEW_MAX_MS } from './config-policy.mjs';
 
 /** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},allowPreviewWorkerTransport?:boolean,requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
 
@@ -78,7 +79,7 @@ export function createIngressServer(options) {
     previewDeadline = Date.parse(expiresAt);
     if (typeof username !== 'string' || typeof password !== 'string' || typeof expiresAt !== 'string' ||
       !/^[A-Za-z0-9._-]{1,48}$/.test(username) || !/^[A-Za-z0-9_-]{32,128}$/.test(password) ||
-      !Number.isFinite(previewDeadline) || previewDeadline <= Date.now() || previewDeadline > Date.now() + 3_600_000) {
+      !Number.isFinite(previewDeadline) || previewDeadline <= Date.now() || previewDeadline > Date.now() + ISOLATED_PREVIEW_MAX_MS) {
       throw new Error('Invalid native preview access configuration');
     }
     previewHash = createHash('sha256').update(`${username}:${password}`).digest();

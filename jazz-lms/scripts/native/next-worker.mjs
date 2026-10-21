@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { lstat, chmod } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { isRecoveryRequestAllowed } from './ingress-policy.mjs';
+import { ISOLATED_PREVIEW_MAX_MS, RESTRICTED_PREVIEW_MAX_MS, PREVIEW_PROJECT_REF, RECOVERY_PROJECT_REF } from './config-policy.mjs';
 
 // This worker is launched through an owned IPC channel, never a public port or
 // secret-bearing command line. Next must resolve from the inspected release.
@@ -63,22 +64,48 @@ process.on('message', async message => {
   started = true;
   try {
     const { socketPath, hostname, nonce, expiresAt } = message;
+    // Only the validated parent's clean environment selects the profile. An
+    // IPC assertion cannot extend a payment or recovered-data capability.
+    const profile = process.env.NATIVE_PREVIEW_PROFILE;
     const recoveryAccess = process.env.NATIVE_RECOVERY_ACCESS === 'true';
+    const testPayments = profile === 'test-payments';
+    const maximumLifetime = profile === 'isolated' ? ISOLATED_PREVIEW_MAX_MS : RESTRICTED_PREVIEW_MAX_MS;
     if (process.versions.node.split('.')[0] !== '24' || process.env.NODE_ENV !== 'production' ||
       process.env.APP_DEPLOYMENT_ENVIRONMENT !== 'preview' || !process.connected ||
+      !['isolated', 'test-payments', 'recovery-access'].includes(profile) ||
       typeof socketPath !== 'string' || !isAbsolute(socketPath) || resolve(socketPath) !== socketPath ||
       /[\x00-\x1f\x7f]/.test(socketPath) || Buffer.byteLength(socketPath) > 100 ||
       typeof hostname !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*\.trycloudflare\.com$/.test(hostname) ||
       typeof nonce !== 'string' || !/^[a-f0-9]{64}$/.test(nonce) ||
-      !Number.isFinite(expiresAt) || expiresAt <= Date.now() || expiresAt > Date.now() + 3_600_000) {
+      !Number.isFinite(expiresAt) || expiresAt <= Date.now() || expiresAt > Date.now() + maximumLifetime) {
       throw new Error('NATIVE_WORKER_INPUT');
     }
     if (!['true', 'false'].includes(process.env.NATIVE_RECOVERY_ACCESS) ||
-        process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== process.env.NATIVE_RECOVERY_ACCESS) {
+        process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== process.env.NATIVE_RECOVERY_ACCESS ||
+        recoveryAccess !== (profile === 'recovery-access')) {
       throw new Error('NATIVE_WORKER_RECOVERY_MODE');
     }
+    const origin = `https://${hostname}`;
+    const backend = `https://${recoveryAccess ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF}.supabase.co`;
+    if (process.env.APP_URL !== origin || process.env.NEXT_PUBLIC_APP_URL !== origin ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== backend || (process.env.SUPABASE_URL && process.env.SUPABASE_URL !== backend)) {
+      throw new Error('NATIVE_WORKER_ROUTING');
+    }
+    const dodoFields = ['DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_SECRET', 'DODO_BUSINESS_ID', 'DODO_PRODUCT_ID'];
+    if (testPayments ?
+        process.env.DODO_ENVIRONMENT !== 'test_mode' || process.env.DODO_API_BASE_URL !== 'https://test.dodopayments.com' ||
+          !dodoFields.every(name => Boolean(process.env[name]?.trim())) :
+        dodoFields.some(name => Boolean(process.env[name])) ||
+          (process.env.DODO_ENVIRONMENT && process.env.DODO_ENVIRONMENT !== 'test_mode') ||
+          (process.env.DODO_API_BASE_URL && process.env.DODO_API_BASE_URL !== 'https://test.dodopayments.com')) {
+      throw new Error('NATIVE_WORKER_PAYMENTS_MODE');
+    }
+    if (testPayments ? Date.parse(process.env.NATIVE_TEST_PAYMENTS_EXPIRES_AT ?? '') !== expiresAt :
+        Boolean(process.env.NATIVE_TEST_PAYMENTS_EXPIRES_AT)) {
+      throw new Error('NATIVE_WORKER_PAYMENTS_LEASE');
+    }
     if (recoveryAccess && (
-        Date.parse(process.env.NATIVE_RECOVERY_EXPIRES_AT ?? '') !== expiresAt || expiresAt > Date.now() + 1_800_000)) {
+        Date.parse(process.env.NATIVE_RECOVERY_EXPIRES_AT ?? '') !== expiresAt || expiresAt > Date.now() + RESTRICTED_PREVIEW_MAX_MS)) {
       throw new Error('NATIVE_WORKER_RECOVERY_LEASE');
     }
     process.umask(0o077);
