@@ -1,5 +1,15 @@
 # Service inventory
 
+## Latest Oct21 replacement closure — 05:58:38 UTC
+
+Replacement and original production are independently INACTIVE; the synthetic
+preview is ACTIVE_HEALTHY and original observed settings match. A new transport
+scope passes pre-PATCH18 READ ONLY/rollback but stops at second transaction setup,
+with cleanup rollback unconfirmed and frontend closed. Parent restores the prior
+API setting once and pauses once. No public API probe/customer import/release.
+SQL-phase diagnostics are the next concrete repair; hosted account/file continuity
+and current trigger review remain open. [Evidence](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 ## Oct21 native recovery and latest replacement state
 
 Free replacement also has a locked empty API namespace, with no customer/file

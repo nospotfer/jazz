@@ -1,5 +1,16 @@
 # Prioritized maintenance backlog
 
+## Latest hosted verification — Oct21 05:58 UTC
+
+First18-request READ ONLY/rollback passes, but the fresh scope stops at second
+BEGIN setup before any API probe. Its cleanup rollback is unconfirmed; client
+closure, guarded setting rollback, pause and independent original-state readback
+pass. Next fix the verified SQL diagnostic gap, then run a fresh bounded check.
+Do not retry this spent scope or count publicGET0 as containment proof. Before
+customer import, capture/review actual current table triggers and managed
+permissions in addition to the verified source/native constraints.
+[Evidence and open gates](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 ## Current recovery and coupon work
 
 - Native local PG17 recovery passes 1,621 rows/14,270 cells, constraint rollback and

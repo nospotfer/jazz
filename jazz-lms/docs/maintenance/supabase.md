@@ -1,5 +1,16 @@
 # Supabase manager audit, recovery and rollback
 
+## Latest Oct21 closure — 05:58:38 UTC
+
+Exact replacement/production INACTIVE, synthetic preview ACTIVE_HEALTHY and old
+observed settings equal are independently verified with seven GETs. The new
+transport scope passes its first18-query READ ONLY check and ROLLBACK; after the
+schema PATCH, second BEGIN and cleanup ROLLBACK have no successful receipt.
+Frontend closure is confirmed. One guarded desired-setting rollback/pause passes;
+publicGET0/newDDL/COMMIT/import0. Do not claim a confirmed second SQL rollback or
+full API matrix. A verified diagnostic subtype gap is being repaired; original
+runtime cause remains unknown. [Evidence and next scope](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 Latest Oct 21 checkpoint at 05:30:48 confirms replacement/production INACTIVE, preview
 healthy and old settings unchanged. Locked empty API schema COMMIT 28 SQL followed
 by 18 READ ONLY passes; later 18 + 18 READ ONLY also passes with no new DDL/COMMIT. First

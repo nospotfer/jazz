@@ -1,5 +1,17 @@
 # Goal verification matrix
 
+## Oct21 second transaction failure and closure
+
+| Requirement | Evidence and limit |
+| --- | --- |
+| Current pre-PATCH state | Actual18 READ ONLY requests verify namespace/strict227/managed/rights/empty/overrides and confirm ROLLBACK. Same frontend retained. |
+| Post-PATCH/API verification | Second BEGIN and cleanup ROLLBACK attempts lack successful receipts; rollback unconfirmed/client closed. No public GET; full matrix stays incomplete. |
+| Safe closure | Parent restores desired setting once/pauses once; independent05:58:38 sevenGETs confirm exact replacement/production INACTIVE, preview healthy and original settings equal. No claim of confirmed SQL rollback from provider pause. |
+| Failure diagnostics | Seven installed-psycopg synthetic cases expose dropped SQLSTATE subclasses. One bounded log GET has seven ERROR3F000 events but no causal correlation. Original runtime cause unknown. |
+| Import triggers | Parse1,329 archived statements: eight explicit triggers/zero on26 selected restore tables/seven Storage. Native constraint triggers/current hosted triggers remain separate; prepared SELECT is inert. |
+
+[Evidence and custody](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 ## Oct21 native restoration and hosted API boundary
 
 | Requirement | Actual result and limit |

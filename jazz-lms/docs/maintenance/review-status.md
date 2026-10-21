@@ -1,5 +1,20 @@
 # Maintenance review checkpoints
 
+## Oct21 transport scope closes before API probes
+
+The fresh source6c3ec31 run passes its first18-request READ ONLY check and rollback,
+then stops at second BEGIN setup after the schema PATCH. Two attempts include an
+unconfirmed cleanup rollback; frontend closure is confirmed. Public GET0/newDDL/
+COMMIT0; the API matrix remains unverified. Parent restores the prior desired
+setting once, pauses once and preserves original observed settings. Independent
+05:58:38 seven-GET closure confirms exact replacement/production INACTIVE and
+preview healthy. Seven offline installed-library cases expose a diagnostic
+SQLSTATE-subclass gap; a bounded provider log read does not identify this failure.
+
+Next: finite SQL-phase/cleanup diagnostics, a separately bounded verification,
+then hosted recovery. Archive trigger analysis also identifies the need for an
+actual current table-trigger capture before import. [Evidence and custody](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 ## Oct21 native recovery pass and qualified API results
 
 Real local PG17 COPY/native constraints and 14,270 typed cells pass for 1,621 rows;

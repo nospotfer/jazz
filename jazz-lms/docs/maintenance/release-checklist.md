@@ -1,5 +1,17 @@
 # Production review and rollback checklist
 
+- [x] Preserve the latest STOPPED scope honestly: pre-PATCH18 READ ONLY/rollback
+  passes, second BEGIN/cleanup rollback unconfirmed, frontend closes, publicGET0.
+- [x] Independently verify05:58:38 exact replacement/production INACTIVE, healthy
+  preview and original observed settings after guarded rollback/pause.
+- [x] Reproduce the SQLSTATE diagnostic-subclass gap offline without claiming the
+  unknown original cause; retain bounded provider-log observations separately.
+- [ ] Verify a fresh hosted API matrix with phase-specific failure/cleanup
+  diagnostics. Current stopped scope supplies no public API proof.
+- [ ] Capture and review current selected-table triggers/functions/permissions
+  before hosted customer import; archived explicit-trigger counts do not prove
+  current platform behavior. [Evidence](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 - [x] Rehearse real mapped Auth/public data with local PG17 COPY/14,270 typed
   cells/native constraints, separate historical ledger,23505 rollback and root
   cleanup check. Synthetic privileges/helpers and hosted limits remain explicit.

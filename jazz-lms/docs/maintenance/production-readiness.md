@@ -1,5 +1,59 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 second transaction stops; independent closure verified
+
+A new bounded transport scope on source `6c3ec31` finishes at 05:57:45 UTC with
+`REPLACEMENT_API_CONTINUATION_STOPPED`. Its first 18-request READ ONLY transaction
+verifies the existing namespace, strict227/effective rights/empty state, original
+managed metadata and no schema overrides; ROLLBACK is confirmed. The same frontend
+is retained. After the sole API-schema PATCH, the second phase stops at
+`BEGIN_READONLY`: two attempts include the failed BEGIN and cleanup ROLLBACK,
+with no successful command receipt for either. Do not describe these as two
+successful queries or claim the second rollback was confirmed. The client closes;
+no new DDL/COMMIT, public API request or customer import occurs.
+
+Parent and child exit1 without terminate/kill; frontend-close acknowledgment is
+present. One readback-bound schema rollback restores the prior desired setting,
+then the sole pause is confirmed. Management calls78 (52 normal/26 closure),
+public GETs0, two zero-candidate process scans. Independent 05:58:38 seven-GET
+readback verifies exact replacement INACTIVE, original production INACTIVE,
+preview ACTIVE_HEALTHY and original observed settings equal. It does not establish
+the second transaction's rollback or independently read paused target API config.
+
+A separate one-GET provider log query selects only time/source/severity/SQLSTATE
+for 05:56–05:57 UTC: HTTP200, no query error, seven PostgreSQL ERROR3F000 events.
+There is no identity correlation with the failed transaction, so these records
+establish no cause. The [documented logs endpoint](https://supabase.com/docs/guides/observability/advanced-log-filtering)
+is read-only and distinct from a database SQL or lifecycle replay.
+
+Independent installed-library controls confirm a diagnostic defect: D6's
+connection-only exact-type whitelist drops several psycopg SQLSTATE subclasses,
+including AdminShutdown, CrashShutdown, InvalidSchemaName and ConnectionFailure.
+Seven synthetic cases reproduce that gap; they do not recover the original
+exception. The identical stage previously completed both transactions. Keep the
+connection factory and no-retry policy; prepare stage-specific finite failure and
+cleanup diagnostics before a fresh separately bounded operation.
+
+Parent result `92915d127c3ae45ef8ccb7a4bee271f29c4a761379d191ad58d3a47eabb55033`;
+precheck `53ba3bd42f2553d32502e52b190b7e7acebb95235d49b0529e969ffbda767687`;
+second phase `3f815b677675c21403261c9a46442a71bf85d0f910f963d288335c5f70d8eb66`;
+independent closure `296f815920b64efb25d2f93cfbe9f6712dd2fd40e1ad931d723ff654a89be266`.
+Source/finite custody retains47files/401,713member bytes, manifest
+`4439784f1542006b66932e2eefa6869233486709390819a285e411d36644473b`.
+Separate diagnosis/log-source manifests are `e0f3b340…`/`b08836d2…`.
+Enabled plans, selected keys, passwords, original provider bodies, SQL row captures
+and derived guards stay outside review custody. Retention remains local/unencrypted.
+
+A separate metadata-only parser review reads1,329 archived statements: eight
+explicit CREATE TRIGGER statements, zero on the26 selected restore tables and
+seven on Storage tables. Native constraint triggers are outside this count.
+Historical captured managed metadata lacks an explicit table-trigger collection;
+current hosted trigger behavior is not established. A single inert catalog SELECT
+is prepared for the future import scope; do not disable triggers or assume current
+platform equivalence. Three-member source manifest `3c885d1a…` has a durable exact
+copy. Hosted Auth/Storage/customer restoration, API matrix, recovery-point currency,
+stable free hosting and production release remain incomplete.
+
 The old Vercel application is now protected and paused. Production Supabase
 remains INACTIVE; no production SQL, production backend resume or production
 application deployment occurred in this checkpoint. The improved application

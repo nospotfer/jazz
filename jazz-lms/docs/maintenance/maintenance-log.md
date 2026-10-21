@@ -1,5 +1,27 @@
 # Maintenance log
 
+## Oct21 second transaction failure retained and independently closed
+
+- New source6c3ec31 actual scope finishes05:57:45 STOPPED. First18 READ ONLY queries,
+  strict227/namespace/managed checks and ROLLBACK pass. After one API-schema PATCH,
+  second BEGIN and cleanup ROLLBACK attempts produce no successful receipt;
+  rollback is unconfirmed, client closes. PublicGET0/newDDL/COMMIT/import0.
+- Parent/child1/frontend-close acknowledgment; one guarded setting rollback and
+  pause pass,78management52/26. Independent05:58:38 seven-GET closure confirms
+  replacement/production INACTIVE, preview healthy and old observed settings equal.
+- A single read-only provider log query captures seven ERROR3F000 records in the
+  minute, without causal identity correlation. Seven installed-library synthetic
+  cases prove D6's exact-type diagnostic loses several SQLSTATE subclasses; the
+  original error remains unknown. Prepare phase-specific finite diagnostics;
+  keep factory/no-retry behavior and spent markers unchanged.
+- Root retains47source/finite files/401,713member bytes with exact hashes and
+  protected modes, excluding active plans/credentials/raw rows/provider bodies.
+  Separate peer diagnosis and log-source packets have durable exact copies.
+- Metadata-only archive parsing finds eight explicit triggers, zero on26 selected
+  restore tables/seven on Storage. Current destination triggers remain a required
+  import check; a single catalog SELECT is prepared, never executed.
+  [Exact result, limits and next action](production-readiness.md#oct21-second-transaction-stops-independent-closure-verified).
+
 ## Oct21 native recovery passes; hosted API transport remains open
 
 - Actual confined PG17 COPY 1,617 data+4 historical ledger rows and 14,270 typed cells
