@@ -1,22 +1,23 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 20:33 UTC
+## Current priorities — October21 coupon attempt closed
 
-1. Verify broader recovered customer/content/media continuity on the next
-   reviewed source and scope. R14 already passes the exact-source public HTTPS
-   administrator/dashboard/global-logout/post-logout-denial journey. Do not
-   repeat admin recovery, accepted imports/uploads, correction or old cleanup.
-2. Complete current-source coupon TEST, refund/access reversal and currency
-   checks with the documented financial limits and spent reservations preserved.
-   The earlier sandbox wallet denial is not a successful refund or a new retry.
-   The prepared next scope uses an existing confirmed controlled USER without
-   a course purchase: the earlier paid Dodo fixture is ineligible. It permits
-   one coupon checkout/card in TEST mode, preserving the old purchase and spent
-   reservations; no financial action has run. See
-   `/tmp/jazz-maintenance/current-coupon-next-step-preparation-20261021/next-test-scope.json`.
+1. Finish the coupon payment with the corrected six-field synthetic billing
+   fixture, verified explicit Behemoth Node path and working YAML Unix webhook
+   tunnel prepared before the next financial window. The closed attempt passes
+   native Apply80/8/72 and one real checkout, but empty billing fields prevent
+   payment creation; SDK/card/refund0. Preserve its coupon, alias, unpaid checkout
+   and spent markers. Do not replay the old plan. Final sessions/purchases0 and
+   original fingerprints pass; exact owned endpoint404/resources close.
+   [Actual outcome and fixture correction](production-readiness.md#coupon-test--oct21-2125-utc).
+2. Verify broader recovered student/content/media continuity, complete charged
+   currency and the separate refund/access-reversal requirement. R14 already
+   passes admin login/dashboard/admin/global logout; do not repeat that recovery,
+   accepted imports/uploads, correction or old cleanup. The prior refund wallet
+   denial remains a failed refund, with its reservations preserved.
 3. Finish recovery-point currency, stable zero-cost hosting and production
    release/rollback review. Application `4b320b1` is verified in the closed R14
-   preview; checkpoint `3ecf93` passes all10 remote checks. No production
+   preview; last published checkpoint `e79a0bc` passes all10 remote checks. No production
    deployment occurred, no preview remains, and the public site is503/paused.
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,

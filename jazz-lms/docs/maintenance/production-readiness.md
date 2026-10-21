@@ -1,12 +1,72 @@
 # Production recovery checkpoint — 2026-10-21
 
+<a id="coupon-test--oct21-2125-utc"></a>
+
+## Current checkpoint — coupon checkout verified; payment incomplete
+
+The current-source isolated TEST attempt on application `4b320b1` verifies
+existing USER login, actual one-use 10% provider coupon readback, native Apply
+80−8=72, one real checkout POST200 and exact provider checkout GETs200. It stops
+on the hosted billing form: the prepared browser binding contains no name or
+address values. The one Continue click produces no captured billing request or
+payment ID. SDK initialization/card submission/refund counts are zero. This
+does not prove a paid coupon, charged currency, signed coupon fulfillment or
+course access. The 114 source discount regressions remain separate evidence.
+
+The six-field synthetic billing fixture is now corrected in a distinct composer
+and assembler. Actual composer/native validation and the unchanged browser
+validator accept it; an offline required-field form rejects the old empty
+fixture and accepts the filled form. No subsequent provider attempt has run.
+Before the next bounded attempt, verify nonempty visible billing fields before
+spending Continue, an explicit working Node path on Behemoth, and the public
+Unix webhook tunnel. Do not replay this closed plan or erase spent markers.
+
+The attempt also exposes test infrastructure problems: `--url unix:...` is
+parsed as a web hostname; a YAML Unix ingress fixes actual public reachability.
+Unsigned POST503 is expected while the policy has no verified payment, rather
+than proof of signature checking. A private Node24 binary resolves the missing
+noninteractive SSH runtime. A URL-only Dodo webhook PATCH clears `filter_types`;
+strict normal cleanup stops on that drift. Separate exact-owned corrective
+disable/delete/GET404 verifies endpoint removal. Future URL changes must
+preserve the complete reviewed filter list.
+
+Normal logout and the final read-only database phase verify selected sessions0,
+purchases0, all29 original fingerprints and selected application/Auth core.
+The new coupon/alias and unpaid checkout remain retained; alias usage is0.
+Actual scope SQL is eight read-only queries and one alias INSERT, plus two
+earlier eligibility reads. Merchant API usage is19 root calls plus one guarded
+app checkout,20 total within35; browser PSP traffic has separate phase guards.
+Browser diagnostics retain33 blocked requests and44 console errors, unclassified.
+The browser holder times out after its close receipt and exits255; independent
+readback verifies no owned browser/Chrome process, removed profile and closed
+remote edge socket. Native/tunnels/listener/bridge close, builder exits0, and
+all45,846 recorded immutable hashes match; this hash pass does not enumerate
+unrecorded files. Do not label every wrapper clean or the full journey passed.
+
+Finite outcome SHA:
+`bf6adacc26b0d54d93f8cac67ac527070d56fe2aa247e0f3141f2c15ef2d86f5`.
+The three-file finite review is retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-coupon-partial-20261021/`.
+Seven private closed ownership inputs are retained separately under
+`native-preview-configuration/current-coupon-closed-20261021/`; no credentials
+or private ownership inputs enter the finite review. Copies are local and
+unencrypted; off-site recovery is not established.
+
+R14 below remains a verified administrator journey and must not be repeated.
+No production change occurred. Public production is paused/503 and the UI is
+unreleased. Remaining work includes the complete coupon payment/refund/currency
+journeys, broader student/content/media continuity, recovery-point currency,
+stable free hosting and the production release/rollback package.
+
 <a id="current-checkpoint--oct21-1742-utc"></a>
 
 <a id="current-checkpoint--oct21-1815-utc"></a>
 
 <a id="current-checkpoint--oct21-1841-utc"></a>
 
-## Current checkpoint — Oct21 20:33 UTC
+<a id="current-checkpoint--oct21-2033-utc"></a>
+
+## Earlier checkpoint — Oct21 20:33 UTC
 
 R14 verifies the recovered administrator journey on application
 `4b320b1a4598d23d837515994f8ea0e412778738`: public HTTPS login page200,

@@ -1,5 +1,28 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct21 actual coupon quote and checkout; payment still incomplete
+
+Application4b320b1 verifies actual one-use 10% coupon identity/limits, native
+Apply80/8/72, one native checkout POST200 and two exact provider checkout GETs200
+with an existing eligible controlled USER. The browser's billing fixture is
+empty: name/address remain blank after the sole Continue click, no billing
+transport receipt or payment ID appears, and SDK/card/refund counts remain0.
+No successful coupon payment, charged amount/currency or signed fulfillment is
+claimed. The distinct six-field billing composer is locally verified but has
+not been exercised against Dodo.
+
+Public webhook transport is corrected with YAML Unix ingress. An empty-payment
+policy returns503 to unsigned POST; this is reachability/denial proof, not a
+signature test. The endpoint is briefly retargeted within the unchanged lease.
+URL-only PATCH clears `filter_types`, including during restoration, so strict
+normal cleanup stops. Separate exact-owned disable with explicit filters,
+delete and GET404 proves closure. Keep the failed normal-cleanup receipt.
+
+Final read-only data verification preserves29 original fingerprints/selected
+core, sessions0 and purchases0; the new coupon/alias/unpaid checkout are retained,
+with alias usage0. Actual merchant calls20=root19+app1; no production mutation.
+[Full evidence, closure qualifications and next action](production-readiness.md#coupon-test--oct21-2125-utc).
+
 ## Oct21 checkout discount failure handling repaired locally
 
 Customer checkout repair now rejects an existing discount carrying a conflicting

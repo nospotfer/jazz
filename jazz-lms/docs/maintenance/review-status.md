@@ -1,5 +1,23 @@
 # Maintenance review checkpoints
 
+## Current status — Oct21 coupon checkout partial
+
+- Production is paused/503; application and UI improvements are unreleased.
+- Recovered database/PDF import and R14 admin login/dashboard/admin/logout are
+  complete. Do not repeat them or their accepted corrections/cleanup.
+- Current-source coupon Apply80/8/72 and real TEST checkout creation pass.
+  Payment is incomplete because the browser fixture leaves billing fields empty;
+  SDK/card/refund attempts0. The six-field fixture is now fixed locally.
+- Normal logout/final data checks pass, endpoint deletion404 and independent
+  resource closure pass. Holder255,33 blocked requests and44 console errors
+  remain disclosed. This is not a complete checkout or blanket health result.
+- Next verify a complete bounded coupon payment with the corrected fixture,
+  broader student/media continuity, recovery currency and stable free hosting,
+  then prepare the production release/rollback review.
+
+[Latest authoritative outcome](production-readiness.md#coupon-test--oct21-2125-utc).
+Everything below is dated history and may contain superseded pending actions.
+
 ## Oct21 R5 verifies both existing files; continuation remains stopped
 
 Exact 8ac31bd documentation publication/CI/PR readback and eight-file custody

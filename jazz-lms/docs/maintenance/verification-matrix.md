@@ -1,6 +1,21 @@
 # Goal verification matrix
 
-## Current verification — Oct21 20:33 UTC
+## Current verification — Oct21 coupon attempt
+
+| Requirement | Authoritative result | Status |
+| --- | --- | --- |
+| Current-source coupon quote | Application4b320b1; real provider coupon readback and native Apply80/8/72 | Passed; failure branches remain source-only |
+| Checkout creation | One native TEST POST200 and two exact provider checkout GETs200 | Passed; no payment ID/card submission |
+| Paid coupon, currency, signed fulfillment | Empty name/address fixture leaves hosted billing form after one Continue | Incomplete; SDK/card/refund attempts0 |
+| Billing correction | Six synthetic inputs pass actual validators and offline required-form validation | Source fixed; provider rerun pending |
+| Data/session preservation | Final read-only phase matches29 original fingerprints and selected account core; sessions0/purchases0 | Passed; new alias retained with usage0 |
+| Resource/endpoint closure | Independent owned endpoint404, browser/profile/socket closure; native/tunnels/bridge closed;45,846 recorded hashes match | Passed with holder255/strict-cleanup failure retained; no unrecorded-file enumeration |
+| Runtime diagnostics |33 blocked requests/44 console errors | Unclassified; not blanket runtime-health proof |
+| Broader goal/release | R14 admin remains passed; student/media, complete payment/refund, recovery currency and free hosting remain | Incomplete; production paused, UI unreleased |
+
+[Actual outcome and qualifications](production-readiness.md#coupon-test--oct21-2125-utc).
+
+## Earlier verification — Oct21 20:33 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |

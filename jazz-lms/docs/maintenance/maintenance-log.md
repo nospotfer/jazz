@@ -1,5 +1,28 @@
 # Maintenance log
 
+## Oct21 — Actual coupon checkout passes; empty billing fixture stops payment
+
+- Application `4b320b1` verifies controlled USER login, native coupon80/8/72,
+  one TEST checkout POST200 and two exact provider checkout GETs200. Empty
+  billing name/address prevent payment creation after the single Continue;
+  SDK/card/refund attempts0. No paid-coupon or charged-currency claim.
+- A distinct composer/assembler fixes all six synthetic billing inputs; actual
+  validators and an offline required-field fixture pass. It is not rerun against
+  Dodo. The original empty-source attempt and every spent marker are preserved.
+- Corrected Unix ingress passes actual public403/unsigned503 with an empty
+  payment policy; Behemoth uses a verified private Node24 binary. URL-only
+  webhook PATCH clears filters, causing strict cleanup to stop. Separate
+  exact-owned disable/delete/404 closes the endpoint, with original failure retained.
+- Normal logout/final read-only checks preserve29 fingerprints and selected
+  account core, sessions0/purchases0. Native/browser/tunnels/bridge close and
+  45,846 recorded hashes match. Holder exit255 after close and33 blocked/44
+  console diagnostics remain qualified; independent process/profile/socket
+  readback establishes resource closure.
+- Actual merchant calls20 (root19/app1); scope SQL8 reads/1alias INSERT plus
+  2 earlier eligibility reads. Retain the new coupon/alias and unpaid checkout;
+  alias usage0. No production change; public503, UI unreleased.
+  [Outcome, corrected fixture and remaining work](production-readiness.md#coupon-test--oct21-2125-utc).
+
 ## Oct21 20:33 UTC — R14 admin recovery journey verified and closed
 
 - Actual10396 exits0 with `RESTORED_ADMIN_ACCESS_VERIFIED_AND_CLOSED` on app

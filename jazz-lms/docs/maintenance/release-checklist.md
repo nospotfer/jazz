@@ -1,6 +1,23 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 20:33 UTC
+## Current coupon gate — Oct21
+
+- [x] Verify actual current-source coupon quote80/8/72 and one TEST checkout.
+- [x] Preserve the stopped billing attempt, all spent markers and retained
+      coupon/alias/unpaid checkout; record SDK/card/refund0.
+- [x] Fix the six-field billing fixture in distinct source and verify locally;
+      preserve original failed source/results. This is not a Dodo rerun.
+- [x] Verify normal logout/data/session preservation, exact owned endpoint404,
+      independent browser/profile/socket closure and recorded artifact hashes.
+- [ ] Verify complete paid coupon, canonical currency, signed fulfillment,
+      redemption/access and the separate refund requirement.
+- [ ] Complete broader student/content/media, current recovery point, stable
+      zero-cost hosting and the production release/rollback review.
+
+Production remains paused/503 and all application/UI changes are unreleased.
+[Actual results and wrapper/diagnostic limitations](production-readiness.md#coupon-test--oct21-2125-utc).
+
+## Earlier access gate — Oct21 20:33 UTC
 
 - [x] Admit/build application `4b320b1` and verify R14 public HTTPS login,
       dashboard, administrative panel, normal global logout and post-logout
