@@ -1,16 +1,21 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21
+## Current priorities — October21 18:15 UTC
 
-1. Apply the reviewed56-cell Auth-flow correction and verify admin login/logout.
-   The fresh six-call transaction-boundary check passes with the same SQL session,
-   both rollbacks and closure; the earlier57P01 cause remains unproven. Keep full
-   typed-state checks: the earlier final customer readback gap is still open.
-2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
-   actual source/origin/backend. Keep customer writes and payment tests isolated.
-3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
-   and the release/rollback package. The public site remains paused and the UI
-   improvements are unreleased.
+1. Verify the existing admin login/dashboard/logout from the already-corrected
+   Auth baseline. The 56-cell correction is committed/readback verified; do not
+   repeat repair, customer import or accepted PDF uploads. R7 never starts its
+   runtime/login because Auth readback fails. Its failures remain retained;
+   separate settings recovery and independent pause/full-Auth/old-settings
+   closure pass, with paused PostgREST 404 qualified.
+2. Complete remaining customer/media and coupon/refund journeys on their actual
+   source/origin/backend. Policy 19 and adoption 18 checks are source-only;
+   fresh hosted preservation and cleanup gates still apply.
+3. Finish recovery-point qualification, zero-cost hosting/domain and release/
+   rollback review. HEAD `9b23130` passes 10 exact-head checks, but production
+   remains paused and the UI unreleased.
+
+[Current evidence and limitations](production-readiness.md#current-checkpoint--oct21-1815-utc).
 
 ## Accepted recovery and latest access result
 

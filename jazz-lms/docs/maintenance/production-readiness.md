@@ -1,6 +1,47 @@
 # Production recovery checkpoint — 2026-10-21
 
-## Current checkpoint — Oct21 17:42 UTC
+<a id="current-checkpoint--oct21-1742-utc"></a>
+
+## Current checkpoint — Oct21 18:15 UTC
+
+The 56-cell Auth compatibility correction is committed and its readback verified
+(`AUTH_FLOW_COMPATIBILITY_COMMITTED_VERIFIED`). It changes four declared reset
+strings across 14 restored accounts for Auth v2.197.0. The original archive is
+unchanged; 14,130 stable cells, the other 70 reset cells and 14 money NULL cells
+are preserved. Do not repeat the correction, customer import or accepted
+68-PDF restoration.
+
+R7 then stops at Auth enable/readback with `FULL_AUTH_SETTINGS_CHANGED`.
+Its runtime is null: no new admin login, dashboard or logout is verified.
+Final typed/prior-row/protected checks pass, but the original R7 Auth-restoration
+and closure failures remain retained. The committed correction is independent
+of that later access failure.
+
+A separate email-settings recovery completes at 18:13:02 UTC as
+`OWNED_EMAIL_RESUMED_RESTORED_PAUSED_VERIFIED`: full Auth baseline equality,
+replacement pause and original project settings pass, with zero SQL or login
+operations. Independent nine-GET closure at 18:15:28 confirms pause, full Auth
+and old settings equality. Paused PostgREST returns 404, so independent desired
+settings equality remains unavailable; R7's active-parent equality is separate
+proof. This recovery does not undo the committed data correction or rewrite
+R7's failed raw receipts.
+
+Next verify the existing admin journey from the already-corrected baseline,
+using fresh source/origin, preservation and cleanup gates. The 19 policy checks
+and 18 baseline-adoption checks are source-only preparation. HEAD `9b23130`
+has 10 successful exact-head checks; that is not a deployment. Public Vercel
+remains paused, application/UI unreleased and the full maintenance goal open.
+
+Finite evidence: `/tmp/jazz-maintenance/a7/journal/auth-flow-compatibility-outcome.json`
+SHA `c54c190d91d7426939c87004c77357f361fa9a3aed0a0060ae1a3979ef7ce718`;
+R7 access result is the separate `access-outcome.json` in that journal.
+Settings recovery: `/tmp/jazz-maintenance/restored-auth-email-resume-rollback-20261021/summary.json`.
+Independent closure: `/tmp/jazz-maintenance/auth-compatibility-after-rollback-independent-closure-20261021/summary.json`
+SHA `8ffeafca23210f518a35b31181a8a6b41da6f88db74befaa383764eeec379567`.
+These finite results contain no credential or customer payload. Historical dated
+outcomes below retain their original limits and are not instructions to replay them.
+
+## Earlier checkpoint — Oct21 17:42 UTC
 
 The actual metadata-only connection check now passes. Root94325 exits0 at
 17:41:37 UTC: one verified5432 session completes READ ONLY BEGIN/identity/ROLLBACK,
@@ -17,7 +58,7 @@ unchanged original projects. Paused desired404 leaves independent comparison
 unavailable; parent-active equality is retained separately. No serving resource
 starts. All actual operation handles are terminal.
 
-The56-cell correction remains unapplied. The earlier write attempt's final
+At that checkpoint, the56-cell correction was still unapplied. The earlier write attempt's final
 customer-data readback gap remains unproven: this metadata check does not read
 customer rows. Next apply the reviewed correction with its full typed-state
 checks, then verify the existing admin login/dashboard/logout on a fresh protected

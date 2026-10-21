@@ -1,6 +1,28 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 17:42 UTC
+## Latest verified replacement state — Oct21 18:15 UTC
+
+The replacement is independently paused with full Auth baseline equality and
+original project states/settings preserved after separate email-settings
+recovery at 18:13:02 UTC. Independent nine-GET closure at 18:15:28 confirms this;
+paused PostgREST 404 leaves desired equality qualified by R7's separate active
+parent proof. No SQL/login operation occurs in that settings recovery.
+
+R7's 56-cell Auth compatibility correction is committed and readback verified,
+with stable/other-reset/money-NULL cells and the original archive preserved.
+Its later Auth readback fails: runtime null, no login, and the raw R7 Auth/closure
+failures remain retained. Final typed/prior/protected checks pass. Accepted data
+and all 68 PDFs stay restored; do not repeat repair/import/uploads.
+
+Next is the existing-admin journey from the corrected baseline. Policy 19 and
+adoption 18 checks are source-only. HEAD `9b23130` passes 10 exact-head checks;
+public Vercel remains paused and application/UI unreleased.
+[Exact current evidence](production-readiness.md#current-checkpoint--oct21-1815-utc).
+
+
+## Earlier verified replacement state — Oct21 17:42 UTC
+
+This dated snapshot precedes the committed correction and separate settings recovery above.
 
 Replacementklaiiikojgdfclzhqfgt is independently paused. Root94325exit0 verifies
 one5432 session across read-only rollback and serializable write BEGIN/identity/
@@ -9,10 +31,11 @@ DML/COMMIT and frontend closed. Parent63 Management/one resume-pause/Auth-desire
 original equality and independent nine-GET paused/Auth/original checks pass.
 Paused desired404 remains qualified. No application, tunnel or browser starts.
 
-The56-cell correction is still unapplied. The earlier57P01 cause and final
+At that checkpoint, the56-cell correction was still unapplied. The earlier57P01 cause and final
 customer readback gap remain unproven; this check reads no customer rows.
 All68 PDFs remain accepted. Public Vercel stays paused and UI unreleased.
 [Current evidence](production-readiness.md#current-checkpoint--oct21-1742-utc).
+
 
 ## Current replacement state — Oct21 14:48:17 UTC
 

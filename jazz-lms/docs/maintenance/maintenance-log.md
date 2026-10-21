@@ -1,6 +1,26 @@
 # Maintenance log
 
-## Oct21 — Actual transaction boundary passes; correction remains pending
+## Oct21 — Auth correction committed; separate settings recovery and pause verified
+
+- R7 commits and verifies the 56-cell Auth v2.197.0 reset-string correction.
+  The original archive stays intact; 14,130 stable cells, 70 other reset cells
+  and 14 money NULL cells remain preserved. Outcome `c54c190d…` is authoritative
+  for the committed correction; do not repeat it or the accepted data/PDF import.
+- Access remains unproven: R7 stops on stale Auth readback
+  `FULL_AUTH_SETTINGS_CHANGED`, with runtime null and no login. Its raw Auth and
+  closure failures remain unchanged. Final typed/prior/protected checks pass.
+- Separate email-settings recovery finishes at 18:13:02 UTC with full Auth
+  baseline equality, replacement pause and unchanged old project settings;
+  zero SQL/login. Independent nine-GET closure at 18:15:28 passes the same
+  checks (`8ffeafca…`). Paused PostgREST 404 still limits independent desired
+  equality; R7 active-parent equality is retained separately.
+- Next: fresh existing-admin journey on the already-corrected baseline, not
+  another correction/import. Policy 19 and adoption 18 checks are source-only.
+  HEAD `9b23130` has 10 successful exact-head checks, without deployment.
+  Backend/public Vercel remain paused; UI/release and full goal remain open.
+  [Exact receipts and limits](production-readiness.md#current-checkpoint--oct21-1815-utc).
+
+## Oct21 17:42 — Historical transaction-boundary check before correction
 
 - Root94325exit0/17:41:37 verifies one5432 session with six metadata-only SQL calls:
   READ ONLY BEGIN/identity/rollback, SERIALIZABLE READ WRITE BEGIN/identity/rollback.

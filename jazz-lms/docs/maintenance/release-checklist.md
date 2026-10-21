@@ -1,6 +1,29 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 17:42 UTC
+## Current access gate — Oct21 18:15 UTC
+
+- [x] Commit and verify the exact 56-cell Auth v2.197.0 compatibility correction;
+      preserve stable cells, other resets, money NULLs and the original archive.
+- [x] Retain R7's failed Auth readback/raw closure and null runtime honestly:
+      the correction succeeded, but no new admin login is verified.
+- [x] Complete separate email-settings recovery at 18:13:02 and independent
+      nine-GET pause/full-Auth/old-settings closure at 18:15:28. Keep paused
+      PostgREST 404 qualified; R7 active desired equality is separate proof.
+- [x] Record HEAD `9b23130` with 10 successful exact-head checks, no deployment.
+- [ ] Verify the existing admin login/dashboard/logout on the already-corrected
+      baseline with fresh source/origin, preservation and cleanup checks.
+      Policy 19 and adoption 18 checks remain source-only preparation.
+- [ ] Complete remaining customer/media/payment journeys, recovery currency,
+      zero-cost hosting and production release/rollback review.
+
+Do not repeat the correction, customer import or accepted 68-PDF restoration.
+The backend/public Vercel remain paused and the UI unreleased.
+[Evidence and qualifications](production-readiness.md#current-checkpoint--oct21-1815-utc).
+
+
+## Earlier access gate — Oct21 17:42 UTC
+
+This dated snapshot precedes the committed correction and separate settings recovery above.
 
 - [x] Build application31ad6ba and start/stop the actual native preview cleanly.
 - [x] Verify the real protected HTTPS login page200/email/password visible with
@@ -26,6 +49,7 @@ Auth verification remains false and is retained. Paused
 PostgREST404 remains an independent desired-settings comparison limit. All68
 PDFs/import remain accepted; production is paused and UI unreleased.
 [Evidence](production-readiness.md#current-checkpoint--oct21-1742-utc).
+
 
 ## Current release gates — Oct21 14:48 UTC
 

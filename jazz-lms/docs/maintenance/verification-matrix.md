@@ -1,6 +1,25 @@
 # Goal verification matrix
 
-## Current recovery check — Oct21 17:42 UTC
+## Current recovery check — Oct21 18:15 UTC
+
+| Requirement | Authoritative result | Status |
+| --- | --- | --- |
+| Auth-flow compatibility | R7 confirms COMMIT and readback for 56 declared reset cells; original archive, 14,130 stable cells, other 70 reset cells and 14 money NULLs preserved | Committed and verified; do not repeat |
+| Existing admin login/dashboard/logout | R7 stops at `FULL_AUTH_SETTINGS_CHANGED`; runtime null, no login | Unverified; next journey uses corrected baseline |
+| Current typed/prior/protected preservation | R7 final checks pass; accepted database and all 68 PDFs remain restored | Verified in the recorded window; fresh journey gates remain |
+| Original R7 Auth/closure result | Raw Auth restoration and closure remain failed | Preserved; not relabelled by later recovery |
+| Separate settings recovery | 18:13:02 `OWNED_EMAIL_RESUMED_RESTORED_PAUSED_VERIFIED`, zero SQL/login | Full Auth, pause and old settings verified |
+| Independent closure | 18:15:28 nine GETs confirm pause/full Auth/old settings; paused PostgREST 404 | Passed with desired-settings comparison qualified; R7 active equality separate |
+| Next policy/adoption helpers | 19 policy checks and 18 adoption checks | Source-only preparation |
+| Source publication | HEAD `9b23130`, 10 exact-head checks successful | Source checks; no deployment |
+| Public release/full goal | Vercel paused, UI unreleased; remaining journeys, recovery currency and free hosting open | Incomplete |
+
+[Exact finite outcomes and limits](production-readiness.md#current-checkpoint--oct21-1815-utc).
+
+
+## Earlier recovery check — Oct21 17:42 UTC
+
+This dated snapshot precedes the committed correction and separate settings recovery above.
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -17,6 +36,7 @@
 | Public release/full goal | Vercel paused/UI unreleased; remaining journeys, recovery currency, free hosting/release review open | Incomplete |
 
 [Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1742-utc).
+
 
 ## Current recovery result — Oct21 14:48 UTC
 
