@@ -83,6 +83,22 @@ controlled USER/recipients, source and delivery separately, with bounded actions
 under the owner's continuing authorization. Cron/mail/tracking/local mutators
 stay disabled; production startup remains denied.
 
+Current recovery checkpoint (Oct21 14:48 UTC): the October13 database and all68
+PDFs/6,423,774 bytes are restored and accepted in replacement klaiiikojgdfclzhqfgt.
+Actual89467exit0 freshly adopts both existing PDFs read-only and uploads only66;
+initial/final1,621 rows/14,270 typed cells, protected metadata, explicit rollback,
+frontend/worker closure and pause pass. Independent nine-GET closure preserves
+target Auth and original states/settings. Its paused PostgREST settings404 is an
+explicit independent-comparison limit; active desired equality before pause is
+separately verified. Never repeat the committed import, recreate the bucket or
+replay completed file uploads. Current application31ad6ba still needs a fresh
+protected HTTPS recovery preview and actual restored login. Authv2.197.0 source
+compatibility is prepared; direct health and cleanup dependency proof remain
+required. Public Vercel is paused, UI changes unreleased, recovery-point currency
+and the remaining goal/release gates open. See the current top checkpoint in
+docs/maintenance/production-readiness.md. The following dated connection/file
+diagnostics retain historical limits and do not schedule additional uploads.
+
 Access commits bbec8b1/748a50c are integrated in this maintenance checkpoint.
 No recovery artifact runtime or deployment has occurred.
 Commit bbec8b1 requires verified Auth ID/email and a matching existing

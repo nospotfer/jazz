@@ -1,5 +1,27 @@
 # Production review and rollback checklist
 
+## Current release gates — Oct21 14:48 UTC
+
+- [x] Restore and verify the October13 database and all68 PDFs/6,423,774 bytes.
+  Adopt both existing files read-only; upload only the missing66. No import or
+  upload replay, bucket recreation, overwrite or deletion.
+- [x] Verify initial/final1,621 rows/14,270 typed cells, protected metadata,
+  explicit READ ONLY rollback, frontend/worker closure and parent pause.
+- [x] Independently confirm paused identity, full Auth equality and original
+  states/settings. Retain the initial PostgREST404 guard stop and complete only
+  the six remaining GETs. Independent desired comparison after pause is unavailable;
+  parent active-before-pause desired equality is separately verified.
+- [x] Retain finite source/outcome custody; source-only Authv2.197 compatibility
+  is reviewed with all actual activation gates still pending.
+- [ ] Build/start the current protected HTTPS preview and verify restored-admin
+  access, direct Auth version, cleanup dependencies and preservation.
+- [ ] Complete remaining customer/payment/coupon/refund, recovery-point currency,
+  zero-cost hosting and production release/rollback gates. Public remains paused.
+
+Earlier dated checklists remain historical. Their pending connection-diagnosis
+and remaining66-upload items are resolved by this checkpoint, not instructions
+to repeat those operations. [Evidence](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+
 ## Oct21 current connection gate
 
 - [x] Preserve actual28370exit1,1,990ms unclassified native failure/zero SQL and

@@ -1,5 +1,78 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 all68 files accepted and replacement paused
+
+**Current checkpoint, 14:48 UTC:** the recovered database and all68 archived PDFs
+are accepted in replacement `klaiiikojgdfclzhqfgt`. The replacement is paused.
+The public Vercel site remains paused; no recovery application build, hosted
+login or production deployment follows from this checkpoint. The next action is
+a current-source build and protected HTTPS preview with restored-account access.
+The dated sections below preserve earlier outcomes rather than pending upload
+instructions. Never repeat the committed customer import, recreate the bucket,
+or replay any completed file-upload scope.
+
+The successful actual root89467 exits0. Its one native5432 session frontend
+performs440 READ ONLY SQL calls (159 preservation/281 client) and270 Storage
+HTTP calls (203 client/67 observer). Both existing PDFs are freshly adopted
+read-only; exactly66 new uploads complete. All68 files/6,423,774 bytes pass
+download, API/SQL metadata, ownership/default and complete-set checks. There are
+no overwrites, deletions, bucket creations, customer imports or configuration
+changes. Initial and final26-table readbacks both match1,621 rows/14,270 typed
+cells, with protected metadata unchanged. Explicit rollback, frontend close and
+worker exit0 are confirmed. Parent99 Management calls (78 work/21 closure), one
+resume/pause, two process scans and32 health captures finish14:46:02 UTC with
+target paused, active desired/Auth settings unchanged and original settings equal.
+
+Independent closure uses nine GETs total. Initial root19247 exits1 after three
+captures: exact target INACTIVE, full Auth equality, then target PostgREST
+settings404. Its guard failure and captures are preserved. Reviewed continuation
+root82673 exits0 after only the remaining six GETs, confirming the original
+projects' states/settings at14:48:17 UTC. Target desired settings are **not**
+independently compared after pause; the parent's active equality immediately
+before pause remains the separate evidence. No resumption, POST, SQL, file
+operation, repeated GET or ledger reset is used to finish this check.
+
+The earlier closed-worker connect diagnosis is also complete. Three failed
+windows had an unhealthy pooler; the successful short session diagnostic had a
+healthy one. A new exact six-service readiness gate requires two healthy
+observations at least10s apart and a fresh credential-admission capture. Actual
+root15853 exits0 with one379ms native connection and zero SQL/Storage; independent
+root26983 exits0 with paused/settings closure. This explains the new admission
+guard, not the cause of every earlier connection/shutdown failure. The complete
+file-recovery success above is stronger evidence for its own bounded window.
+
+The first unused Storage source packet is rejected before provider operations
+for an incorrect D6 hash. Corrected source passes38 focused controls and
+independent review. The observed startup also justifies an exact1,800s outer
+scope/480s closure reserve; actual file work remains at most600s with unchanged
+SQL/HTTP/action caps. These are source/admission checks, not substituted live
+proof. Restored-admin source compatibility now covers reported Authv2.197.0
+at official commit4eee58f296d9698a1c2c0ae14d7a0b379c7622d3;85 source/synthetic
+controls pass. Direct hosted Auth health, exact cleanup dependencies, artifact,
+login/logout and public HTTPS remain pending.
+
+Finite evidence and local custody:
+
+| Evidence | SHA256 |
+| --- | --- |
+| Actual Storage parent | `d54ae85a1364d184b3af2b241d08750b45b959c5d69052e3a0b390384e273f0e` |
+| Actual Storage driver | `87399f58d48cfd9dccfd7b1b54f992e1caa103d418a11f141a1e332375775504` |
+| Qualified independent closure | `a3d79514eef7973bc8428fa0bcdbe6c0b4fb75d5222dc39fe46068d8838518b3` |
+| Root finite acceptance review | `20da7f3ec7e2e7d0539b389876da55bb5cd11ce679570f127e85d0788885e797` |
+| Storage source custody manifest | `82602ffcb5ac8e0f11dcd005421d3f2ce65f8e8e8de3c15d4a6e08520cc0eda6` |
+| Fourteen-file outcome custody manifest | `a5ad6e00adfa07856b659f37a55a48de500bc0bb0e308f984acd0a3064938a71` |
+| Successful readiness outcome custody manifest | `dd6a5f226dd316e48a30176065b9fd64625d8392b4a42fd801c90ee5448c9698` |
+| Authv2.197 source custody manifest | `708bd5bbef1ff3153996845c749bc91f003bacb24526346384bf7ddc81b040ae` |
+
+Outcome custody is under owner-only
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-all68-storage-acceptance-20261021/`;
+source custody uses `review-checkpoint-storage-pooler-readiness-r2-source-20261021/`.
+Credentials, enabled plans, raw provider/SQL/customer values and PDFs are excluded.
+Retention remains local/unencrypted with no established off-site recovery.
+The application source is31ad6ba;67c02fe is its later docs-only checkpoint.
+October13 recovery-point currency, restored login, production customer continuity,
+coupon/refund, stable zero-cost hosting and the remaining release gates stay open.
+
 ## Oct21 closed worker connect failure reproduced
 
 The new one-attempt Storage scope is terminal: actual root **28370exit1** at

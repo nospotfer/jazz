@@ -1,5 +1,23 @@
 # Service inventory
 
+## Current replacement state — Oct21 14:48:17 UTC
+
+- Supabase replacement `klaiiikojgdfclzhqfgt`: INACTIVE after verified database
+  and all68-PDF recovery. Fresh initial/final1,621 rows/14,270 typed cells and
+  6,423,774 file bytes match; explicit rollback/frontend/worker closure pass.
+- Independent checks preserve full target Auth and original project states/
+  settings. Paused target PostgREST settings GET404 prevents independent desired
+  comparison; parent's active-before-pause equality remains separate evidence.
+- Original `feavujcllgbzlvdvkkxx` remains INACTIVE; isolated test backend
+  `tvmhuacxctdgmejziaxg` remains ACTIVE_HEALTHY with original settings unchanged.
+- Public Vercel remains paused. No current recovery app build/login/runtime or
+  production deployment has happened; the next milestone is protected HTTPS.
+- Reported replacement Authv2.197.0 has source compatibility review; direct
+  health/login proof is pending. No key/plan/mail/OAuth changes in file recovery.
+
+Earlier inventory snapshots are historical. No further archive import, bucket
+creation or restoration upload is pending. [Current evidence](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+
 ## Current replacement state — Oct21 13:04:33 UTC
 
 Exact replacement/production INACTIVE, isolated preview healthy and old

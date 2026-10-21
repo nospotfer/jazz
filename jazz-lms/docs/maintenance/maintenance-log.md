@@ -1,5 +1,35 @@
 # Maintenance log
 
+## Oct21 database and all68 PDFs accepted; preview next
+
+At14:46:02 UTC actual root89467 exits0 after fresh read-only adoption of the two
+existing PDFs and66 new uploads. All68 files/6,423,774 bytes pass verification.
+Both26-table customer readbacks match1,621 rows/14,270 typed cells; protected
+metadata, explicit rollback, frontend/worker closure and parent pause pass.
+Actual counts are440 READ ONLY SQL/270 Storage HTTP/99 Management requests.
+
+Independent closure finishes14:48:17 UTC: exact target INACTIVE, Auth unchanged,
+original states/settings equal. The first three-GET process stops at paused
+PostgREST settings404; its failure is retained. A separately reviewed six-GET
+continuation completes the original nine-GET budget without retry or mutation.
+Independent target desired comparison remains unavailable; parent's active
+equality before pause is separate evidence. Fourteen-file outcome custody and
+source custody pass; credentials/customer/PDF/raw provider values are excluded.
+
+Connection readiness is repaired before this run: require actual six-service
+health twice10s apart and a fresh capture before credentials. A one-connection,
+zero-SQL diagnostic succeeds in379ms and closes independently. Review also
+catches an unused packet's incorrect D6 pin and an insufficient startup window;
+corrected source has38 focused passes, exact1,800s outer/480s closure and at most
+600s actual work. Original task/action caps and spent histories remain intact.
+Authv2.197.0 source compatibility passes85 source/synthetic controls; hosted
+health/login and native runtime are not yet verified.
+
+Next: current-source build, protected HTTPS restored-admin preview, then remaining
+customer/payment/hosting/release checks. The public site remains paused and all
+UI/code improvements remain unreleased. The October13 recovery point is not a
+claim of current production data. [Evidence and limits](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+
 ## Oct21 worker connection failure reproduced and closed
 
 Actual28370exit1 at13:03:21 stops at the unchanged native factory after1,990ms;

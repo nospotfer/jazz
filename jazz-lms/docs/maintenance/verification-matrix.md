@@ -1,5 +1,21 @@
 # Goal verification matrix
 
+## Current recovery result — Oct21 14:48 UTC
+
+| Requirement | Actual evidence | Status / limit |
+| --- | --- | --- |
+| Restored customer data | Initial/final26-table readback,1,621 rows/14,270 typed cells | PASS for October13 recovery point; later currency unproven |
+| Complete course files | Adopt2/upload66; all68 downloads and metadata/6,423,774 bytes match | PASS; no overwrite/delete/bucket recreation |
+| Preservation and cleanup |440 READ ONLY SQL; protected metadata equal; rollback/frontend/worker closed | PASS in actual89467exit0 |
+| Lifecycle |99 Management, one resume/pause, target INACTIVE, original states/settings equal | PASS; independent9GET complete |
+| Independent target settings | Auth200/full equality, PostgREST404 after pause | Auth PASS; desired comparison unavailable, parent active equality retained |
+| Connection readiness | Exact six-service/two-spaced-health gate, fresh capture,379ms actual connect | PASS for one diagnostic and successful full recovery window; old causes unproven |
+| Restored Auth version | Reportedv2.197.0 reviewed against exact official source;85 source/synthetic controls | PREPARED; direct health/login still pending |
+| Current protected preview | No current recovery artifact/runtime yet | PENDING; public site paused and UI unreleased |
+
+Dated matrices below retain their original limits; their incomplete file/
+connection checks are superseded for this recovery window. [Receipts and custody](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+
 ## Oct21 reproduced closed-worker failure
 
 | Check | Result and limit |

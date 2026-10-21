@@ -1,5 +1,24 @@
 # Prioritized maintenance backlog
 
+## Current next action — Oct21 14:48 UTC
+
+1. Build current application31ad6ba and start the protected HTTPS preview with
+   the recovered backend under a fresh bounded access plan. Verify direct Auth
+   version, existing admin role/identity, normal login/dashboard/admin/logout,
+   owned-session cleanup and customer/protected-state preservation.
+2. Verify remaining customer/media/PDF and coupon/refund journeys at their actual
+   source/origin/backend; finish the recovery-point, zero-cost hosting and release
+   decisions. Production remains paused; UI improvements are not live.
+
+**Database/file restoration is complete for the October13 archive:**26 tables,
+1,621 rows/14,270 typed cells and all68 PDFs/6,423,774 bytes pass. The replacement
+is paused, Auth and original settings are preserved. Independent paused
+PostgREST settings404 is an explicit limit, not a configuration-drift claim.
+Do not reimport customer data, recreate the bucket or run another restoration
+upload. Dated checkpoints below preserve historical evidence; their upload and
+connection-diagnosis next actions are superseded by this checkpoint.
+[Current evidence](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).
+
 ## Current next action — Oct21 13:04 UTC
 
 Review/run one connection-only diagnostic in the exact closed Storage worker,
