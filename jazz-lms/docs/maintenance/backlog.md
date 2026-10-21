@@ -1,5 +1,46 @@
 # Prioritized maintenance backlog
 
+## Latest file acceptance work — Oct21 09:19 UTC
+
+R3 stores and downloads the first PDF with matching source bytes, but the frozen
+contract accepts0 objects because actual user_metadata{} differs from archived
+SQLNULL. Customer data remains intact and independent closure confirms pause.
+Next:
+
+1. Review the prepared explicit absence mapping and capture/check actual Storage
+   policy dependencies on a fresh same frontend; earlier finite captures lack
+   pg_policies rows. Adopt the existing first object through fresh read-only hash/
+   ID/version/path checks, or prepare a remedy. Never POST/overwrite it again or
+   recreate the bucket. A new bounded scope may upload only the remaining67 files;
+   no R4 outcome is established.
+2. Use retained R3 finite evidence. After file acceptance, build a fresh protected
+   artifact from the published maintenance checkpoint and verify controlled
+   existing customer/admin login/logout. The offline admin candidate match is not hosted Auth proof; avoid a reset merely
+   to repeat this source check and load its private reference explicitly
+   only in a fresh bounded scope.
+3. Qualify the recovery point, stable free hosting, remaining journeys and
+   release/rollback. Application changes remain unreleased.
+
+[Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Latest Storage continuation — Oct21 08:56 UTC
+
+R2 has created the bucket once and uploaded zero PDFs;1,621 rows/14,270 cells
+remain preserved. Independent final readback confirms paused replacement and
+unchanged originals, while both earlier closure failures stay retained. Next:
+
+1. Finish and review a fresh existing-bucket continuation with genuinely fresh
+   destination observations,68 PDF byte/ownership/default/bijection checks and
+   customer-data preservation. Do not recreate the bucket or replay R1/R2.
+2. Use the now-locally-integrated bbec8b1/748a50c access changes after the pinned
+   Storage scope closes; build a fresh protected artifact and verify controlled
+   existing customer/admin login and normal logout. Source tests are not GoTrue
+   proof; real customer data is not an isolated test environment.
+3. Resolve recovery-point currency, stable free hosting, remaining journeys and
+   release/rollback. UI changes remain unreleased; last public check503.
+
+This dated R1/R2 section precedes the R3 result above. [Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
+
 ## Latest customer recovery — Oct21 07:39 UTC
 
 Hosted customer import now passes:1,621 rows/14,270 typed cells, one confirmed

@@ -1,5 +1,149 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 first PDF stored; metadata acceptance still open
+
+R3 on application source `c6bb210` performs99 READ ONLY SQL calls (89 driver/
+10 client) and six Storage HTTP calls (four client/two observer). One PDF POST,
+its download and object-info GET each return200; downloaded bytes match the
+pinned source. The frozen verifier still records **verifiedObjects:0** because
+actual `user_metadata` is `{}` while the archived SQL value is NULL. Owner and
+archived fields remain NULL; version flags remain false. No complete first-object
+restoration or equivalence between empty metadata and NULL is claimed.
+
+Initial/final checks preserve all **1,621 restored rows/14,270 typed cells** and
+protected metadata. READ ONLY rollback/frontend closure pass; child exits1. The
+parent confirms one pause. Independent **09:19:59.842538 UTC** seven-GET closure
+verifies exact replacement/production INACTIVE, preview ACTIVE_HEALTHY and old
+settings equal. Original parent `72851c0`/driver `3429f23` and the independent
+closure are separate receipts; the closure SHA-256 is
+`0fcb72f878cea4b1e5fa298aee1f24ec28cd2c3a9aa2a2254363d491d288e392`.
+R3 source/finite custody is retained; see the central custody table below.
+
+Closure evidence needs a separate qualification. The closure reads six retained
+HTTP bodies, including the original PDF bytes, and one retained Storage SQL
+metadata row. Its original `customerValuesReadByClosure:false` flag is overbroad
+and remains unchanged. It makes no new live customer fetch or SQL request and
+decodes no Auth/Public values. The source-bound download-hash pass comes from the
+original pinned client before its metadata failure; the closure does not perform
+an independent archive-to-download comparison. Qualification receipt `0f1f4697`
+and its separate custody preserve the original report and this narrower meaning.
+
+The first object already exists: **never POST it again, overwrite it or recreate
+the bucket**. Pinned primary source explains that omitted/null upload custom
+metadata is spread into an empty object. An explicit absence mapping is prepared;
+selected core metadata matches apart from generated destination etag/time/ID/
+version. This does not establish the hosted version or complete recovery. Before
+R4, capture/check actual Storage policy dependencies on the fresh same frontend;
+prior finite captures lack actual `pg_policies` rows. Then use fresh first-object
+hash/ID/version/path read-only adoption and a new bounded plan for only the
+remaining67 uploads, or prepare a remedy. No R4 outcome is claimed.
+The committed customer import and all spent action reservations remain unchanged.
+
+Offline source review also checks44 rows across three selected tables. The
+original controlled SUPER_ADMIN has a confirmed EMAIL identity and retained
+bcrypt password hash; one of14 project-CSV password candidates matches offline.
+No online Auth attempt or password reset occurs. This establishes a usable
+candidate source, not hosted sign-in or restored customer/admin continuity.
+Finite source evidence is retained at
+`review-checkpoint-restored-admin-signin-source-20261021`, manifest
+`d5e6c21fee42238aba6fd9aaba8e7e85b5a7ea23ff95ec5a3ad2fe3752ed497c`.
+It includes no plaintext password, password hash or private reference. The
+separate owner-only source-selection reference stays in private recovery
+configuration, grants no autoload/role/session authority and requires an explicit
+fresh target/origin/gate plan before use.
+
+This maintenance checkpoint includes `bbec8b1` authorization and `748a50c`
+protected recovery-profile changes. No recovery artifact build, application
+runtime, hosted login or deployment has occurred. Verify the existing first object and remaining67 files, then actual
+controlled customer/admin login/logout and application/file continuity. Current
+recovery point, stable zero-cost hosting, broader journeys and release remain
+open. Earlier R1/R2 sections preserve their original stopped/closure outcomes.
+
+## Oct21 Storage bucket created; PDFs still pending
+
+R1 stops before any Storage POST: its only HTTP request returns400 with exact
+structured `NoSuchBucket`. Independent closure (`480b54c`) confirms safe pause.
+The spent R1 scope and conservative parent result remain unchanged.
+
+On unchanged application source `c6bb210`, R2 confirms **one bucket POST200**,
+then stops before the first PDF upload. The API omits the bucket `type` field;
+the source-bound SQL check confirms `STANDARD`. This is a response-contract
+stop, with no claim of damaged bucket metadata. Driver `cc66fc6` records93
+READ ONLY SQL calls and three Storage HTTP calls, including that sole bucket
+POST. Its initial and final checks preserve **1,621 restored rows/14,270 typed
+cells** and protected metadata; ROLLBACK and frontend closure pass, child exits1.
+There are **zero PDF uploads** and no serving or cutover.
+
+R2 parent `07b67a8` retains `paused:false` and its closure-failure result. The
+separate corrective pause (`9f26155`) remains unconfirmed. Final independent
+readback (`633a190`) at **08:56:22 UTC** uses12 management GETs, zero POSTs and no
+SQL/driver replay: the exact replacement and original production are INACTIVE,
+the isolated preview is ACTIVE_HEALTHY and old observed settings match. Current
+pause is established; the earlier operation outcomes and their causes remain
+unchanged. Do not rewrite either failure or infer a confirmed corrective POST
+from this later state observation.
+
+The existing bucket must be inspected and reused in a fresh bounded continuation;
+do not recreate it, replay spent scopes or repeat the committed customer import.
+All68 PDFs/6,423,774 bytes still need actual byte, ownership/default and exact
+path-bijection checks while preserving populated customer tables. The later R3
+result is recorded above; this section retains the R1/R2 facts. Auth/GoTrue/customer
+access, recovery-point currency, stable zero-cost hosting and release remain
+open. The last public-site check is503; UI changes remain unreleased.
+
+## Oct21 integrated but unreleased access source
+
+This maintenance checkpoint includes both reviewed access commits; neither
+change is deployed. `bbec8b1` removes
+owner-email promotion, account creation and fabricated database-error roles from
+page/API authorization. Permission lookup requires verified Auth ID/email and a
+matching existing row's persisted role; missing/mismatched rows and database
+failure deny access, retaining API401/403 semantics. Explicit registration/OTP/
+OAuth provisioning is unchanged. The corrected regression fixture has19 failures
+before the fix and41 passes afterward;76 related cases pass.
+
+`748a50c` prepares a replacement-only `recoveryAccess` profile with a maximum
+30-minute lease tied to the Basic gate and worker. Default isolated-preview
+routing and production startup denial remain. Both edge and worker reject
+unreviewed routes, ambiguous encoded/dot/duplicate paths, Next actions/internal
+routing headers and mutations other than exact session synchronization. Password
+login skips avatar changes; automatic reconciliation, message polling and payment
+entry/warming stop. The selected dashboard support reads and `/admin` overview
+were reviewed for hidden writes.939 native/security/system cases pass; full
+integration passes753/skips29, typecheck passes and targeted lint has zero errors
+with three existing warnings.
+
+No recovery artifact build or hosted access test follows from these source
+checks. The replacement contains real customer data, not an isolated test
+environment. Direct Supabase traffic and Auth session/timestamp effects need a
+fresh controlled-account/provider plan; privileged database transport is unchanged
+and database-enforced read-only operation is unproven. A fresh source-bound
+artifact and bounded access plan remain technical prerequisites after file
+acceptance and the pinned Storage scope closes. Neither code preparation nor
+mocked fixtures prove GoTrue login,
+customer/admin continuity, public HTTPS or production health.
+
+Protected custody under `/home/gabriel/backups/culturadeljazz-maintenance/`:
+
+| Packet | Retention manifest SHA-256 |
+| --- | --- |
+| `review-checkpoint-storage-preupload-stop-20261021` | `799acedbd68574fe9722fe3b6b55d36bd31ec85663dab53d1d19c7830ea1be15` |
+| `review-checkpoint-storage-bucket-created-stop-r2-20261021` | `edf8879bf5472049877caa9633c60868ea4d87f847f45e064d0042482a48197c` |
+| `review-checkpoint-storage-first-pdf-metadata-stop-r3-20261021` | `12cfcf03089fbfce5370f552830c5e975589c51381994724f186e7aca0d7d811` |
+| `review-checkpoint-storage-r3-closure-qualification-20261021` | `2160595fde6f11180cd5793e1e98d285cd9360415e3fac9fd42d65203e5e4a44` |
+| `review-checkpoint-admin-authorization-fix-20261021` | `ba766ce02b0e3e61a515e0a64ad1d26b3feb70607018dee2af818dfdd045e9bc` |
+| `review-checkpoint-customer-recovery-preview-source-20261021-reviewed-748a50c` | `ba7afbfa73de2f1b2685e059b5a519dab89d413ddb981c1d20d97fc3b30e5393` |
+
+R2 custody has138 source/finite members/112,121 bytes, including five SQL-receipt
+projections that omit raw rows. R3 custody has145 members/116,468 bytes, including
+10 SQL-receipt projections without raw rows and pinned primary route/renderer
+sources/review. API bucket-type omission is explained by those source bytes;
+this does not establish the hosted version or complete PDF/GoTrue/RPO continuity.
+The recovery-preview packet retains28 source/evidence members plus its original manifest, with source-author review disclosed.
+Credentials, raw customer/provider bodies, enabled plans and build artifacts stay
+outside these review packets. Retention is local and unencrypted; off-site
+recovery is not established. Earlier dated sections describe their own scopes.
+
 ## Oct21 customer data restored and replacement paused
 
 Actual recovery on application source `b11f780` finishes at **07:37:36 UTC** with

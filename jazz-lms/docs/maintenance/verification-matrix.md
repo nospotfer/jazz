@@ -1,5 +1,31 @@
 # Goal verification matrix
 
+## Oct21 first PDF and offline admin source
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| First object |One PDF POST/download/info200; pinned downloaded bytes match. Frozen verifiedObjects0 because actual user_metadata{} differs from archived SQLNULL. Owner/archived fields NULL, version flagsfalse; complete acceptance is unresolved. |
+| Data and resource closure |99 READ ONLY SQL/sixHTTP preserve1,621 rows/14,270 cells/protected metadata; rollback/frontend close, child1. Parent confirms pause; independent09:19:59.842538 sevenGETs verify replacement/production INACTIVE, preview healthy and old settings equal. |
+| Next file operation |Review read-only adoption or a bounded remedy for the existing object, then67 remaining uploads. Never repeat the first POST/overwrite/recreate the bucket. No R4 outcome. R3 finite custody retained. |
+| Offline admin source |44rows/three tables: original controlled SUPER_ADMIN confirmed EMAIL identity/password hash, one of14CSV candidates matches offline. Finite custody retained; private source reference stays separate. No online login/reset or restored access proof. |
+| Access source |This maintenance checkpoint includes bbec8b1/748a50c. Prior source tests remain qualified; no recovery artifact/runtime/deployment. |
+
+[Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Oct21 Storage bucket and pending access source
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| R1 stop |ZeroPOST/oneHTTP400 with exact NoSuchBucket; independent safe closure. Closed scope is not replayed. |
+| R2 Storage state |One confirmed bucket POST200, API type omitted/SQL STANDARD; stops before PDFs.93 READ ONLY SQL/three HTTP calls, rollback/frontend closure and child1. |
+| Customer preservation |Initial/final1,621 rows/14,270 typed cells and protected metadata remain checked. No repeat import or empty-only verifier. |
+| Final closure |08:56:22 independent12GET/zeroPOST/noSQL verifies exact replacement/production INACTIVE, healthy preview and old settings equal. Parent paused:false/closure failure and corrective-pause unknown result remain unchanged. |
+| Unreleased authorization |bbec8b1 requires verified identity plus matching existing persisted role;41 regressions/76 related pass. Integrated locally, not deployed or actual restored access proof. |
+| Unreleased recovery profile |748a50c fixed replacement/leased gate-worker/request surface and side-effect controls:939 native cases,753 integration/29skip, types/lint pass. No real artifact or provider/browser journey. |
+| Open gates |All68 PDF uploads/bytes/ownership/defaults/bijection, controlled customer/admin Auth, recovery-point currency, stable free hosting and release. This dated row precedes the R3 result above. |
+
+[Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending). Earlier tables retain their dated scope limits.
+
 ## Oct21 actual hosted customer restore
 
 | Requirement | Actual evidence and remaining limit |

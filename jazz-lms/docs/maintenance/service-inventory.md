@@ -1,5 +1,34 @@
 # Service inventory
 
+## Latest file state — Oct21 09:19:59 UTC
+
+The replacement contains one stored PDF whose POST/download/info200 and pinned
+byte readback pass. Frozen verifiedObjects0 reflects unresolved actual empty
+user_metadata versus archived NULL; full first-file acceptance and remaining67
+uploads are pending. R3 preserves1,621 rows/14,270 cells/protected metadata.
+Independent sevenGETs verify replacement/production INACTIVE, isolated preview
+ACTIVE_HEALTHY and old settings equal. The existing bucket/object must not be
+recreated or overwritten.
+
+The maintenance checkpoint includes bbec8b1/748a50c; no recovery runtime or
+deployment occurred. A controlled admin password candidate matches offline, with
+no online Auth attempt/reset. R3 custody is retained; actual account/file continuity,
+recovery point, stable free hosting and release remain open. [Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Latest Storage state — Oct21 08:56:22 UTC
+
+The existing replacement has1,621 restored rows and one confirmed
+Storage bucket creation, with zero PDFs uploaded. R2's API type-omission stop
+preserves14,270 cells; its original failed closure and unconfirmed corrective
+pause remain retained. Independent12GET/zeroPOST/noSQL readback verifies exact
+replacement/production INACTIVE, isolated preview ACTIVE_HEALTHY and old settings
+equal. R1 remains a closed zeroPOST NoSuchBucket observation.
+
+Locally integrated bbec8b1/748a50c access fixes are tested and retained, not
+deployed or exercised against restored customers. The next file scope must reuse
+the existing bucket; the later R3 result is recorded above. Customer files/login, recovery
+point, stable zero-cost hosting and release remain open. [Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
+
 ## Latest hosted customer recovery — Oct21 07:39:29 UTC
 
 The existing Free replacement now retains1,621 imported rows/26tables, including

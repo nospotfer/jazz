@@ -1,5 +1,42 @@
 # Maintenance log
 
+## Oct21 first PDF POST and byte readback; metadata mapping pending
+
+R3 records99 READ ONLY SQL/sixHTTP and one PDF POST/download/info200. Source-bound
+downloaded bytes match, but frozen verifiedObjects0: actual user_metadata{} versus
+archived SQLNULL remains unresolved. Owners/archivedNULL, version flagsfalse.
+Initial/final1,621 rows/14,270 cells and protected metadata remain preserved;
+rollback/frontend close pass, child1, parent confirms one pause. Independent
+09:19:59.842538 sevenGETs confirm replacement/production INACTIVE, preview healthy
+and old settings equal. Adopt the existing first object read-only under reviewed
+mapping or prepare a remedy; never POST/overwrite it or recreate the bucket.
+Remaining67 files and metadata acceptance stay open; no R4 result is claimed.
+
+This maintenance checkpoint integrates bbec8b1/748a50c; neither recovery
+runtime nor deployment has occurred. Offline44-row/three-table admin-source review finds one
+of14 CSV candidates matches the original controlled SUPER_ADMIN password hash;
+no online login/reset follows. R3 and admin source custody are
+retained, and actual Auth/hosting/recovery-point/release gates remain open.
+[Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Oct21 bucket creation stops before PDFs; final pause verified
+
+R1 sends zero POSTs; its sole HTTP400 has exact `NoSuchBucket`, then independent
+safe closure passes. R2 on sourcec6bb210 confirms one bucket POST200, then stops
+on omitted API `type` despite SQL `STANDARD`.93 READ ONLY SQL/three HTTP calls
+preserve1,621 rows/14,270 cells and protected metadata; rollback/frontend close
+pass, child1. PDF uploads0. Parent paused:false/closure failure and the separate
+unconfirmed corrective pause remain unchanged. Final08:56:22 independent12GET/
+zeroPOST/noSQL readback confirms replacement/production INACTIVE, preview healthy
+and old settings equal. Reuse the existing bucket through a fresh scope; the later R3
+result is recorded above.
+
+Separate now-locally-integrated bbec8b1 fixes fail-open admin authorization (41 regressions/
+76 related pass).748a50c prepares protected replacement access (939 native cases,
+753 integration/29skip, types/lint pass). Neither is deployed or proves
+hosted login. Customer files/Auth, recovery point, free hosting and release remain
+open. [Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
+
 ## Oct21 hosted customer restore succeeds; PDFs and login next
 
 Actual sourceb11f780 recovery finishes07:37:36:26 COPY batches/1,621 rows,

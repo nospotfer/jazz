@@ -1,5 +1,37 @@
 # Maintenance review checkpoints
 
+## Oct21 first file stored; source changes integrated locally
+
+R3's first PDF POST/download/info each return200 and source bytes match. Frozen
+verifiedObjects remains0 because actual user_metadata{} differs from archived
+SQLNULL.99 READ ONLY SQL/sixHTTP preserve1,621 rows/14,270 cells/protected metadata;
+rollback/frontend close pass, child1. Parent pause and independent09:19:59.842538
+sevenGET closure confirm paused replacement/production, healthy preview and old
+settings equal. Reuse/adopt that object read-only under reviewed semantics or
+prepare a remedy; never repeat its POST/overwrite/recreate the bucket.67 files
+remain, with no R4 plan/outcome claimed.
+
+The maintenance source includes bbec8b1/748a50c; both remain undeployed.
+Offline matching of one controlled admin password candidate is source evidence
+only; no hosted login/reset or GoTrue continuity is proven. R3 source/finite custody is
+retained. [Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Oct21 Storage bucket exists; access fixes remain unreleased
+
+R2 confirms one bucket POST200 and zero PDF uploads, then stops because the API
+omits `type` while SQL verifies STANDARD.93 READ ONLY SQL/three HTTP calls retain
+all1,621 rows/14,270 cells. Final08:56:22 independent12GET/zeroPOST/noSQL closure
+confirms replacement/production INACTIVE, preview healthy and old settings equal.
+The parent paused:false/closure failure and unconfirmed corrective pause remain
+historical facts. R1's zeroPOST/oneHTTP400 NoSuchBucket scope stays closed.
+
+Now-locally-integrated bbec8b1/748a50c prepare persisted-role authorization and a restricted
+recovery preview.41+76 authorization checks,939 native cases and753 integration/
+29skip pass; they are not deployed or hosted Auth proof. Next complete a
+fresh existing-bucket PDF scope, then controlled customer/admin access. The later R3 result is recorded above;
+GoTrue continuity, current recovery point, stable free hosting and release are
+unproven. [Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
+
 ## Oct21 hosted customer restore passes
 
 Actual sourceb11f780 commits1,621 rows in26 COPY batches and verifies all14,270

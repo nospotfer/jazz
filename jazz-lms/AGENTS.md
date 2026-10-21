@@ -81,6 +81,26 @@ controlled USER/recipients, source and delivery separately, with bounded actions
 under the owner's continuing authorization. Cron/mail/tracking/local mutators
 stay disabled; production startup remains denied.
 
+Access commits bbec8b1/748a50c are integrated in this maintenance checkpoint.
+No recovery artifact runtime or deployment has occurred.
+Commit bbec8b1 requires verified Auth ID/email and a matching existing
+application row's persisted role for page/API guards;
+permission lookup no longer creates/promotes accounts or fabricates authority
+on a database error. Registration/OTP/OAuth provisioning remains separate. Its41
+regressions and76 related checks pass. Commit748a50c prepares a replacement-only
+`recoveryAccess` profile with a <=30-minute lease tied to Basic gate/worker,
+strict read-route/session-sync allowlist and skipped Auth/dashboard side effects.
+939 native cases and753 integration/29skip pass; this is not actual restored
+login or public HTTPS proof. Production startup stays denied. Build a fresh artifact from the published
+maintenance checkpoint; coordinate actual access after file acceptance and the
+pinned Storage scope closes. Real customer data is not isolated test data; provider/session/data-preservation evidence stays
+required. See `docs/maintenance/production-readiness.md` for the current R3 file
+checkpoint: one confirmed bucket creation, one stored PDF with byte readback but
+verifiedObjects0 while empty-metadata/NULL mapping is reviewed, independently
+paused replacement and67 uploads still pending. Never re-POST/overwrite the first
+object or recreate the bucket. The offline controlled-admin password source
+match is not hosted login proof and grants no role/session/autoload authority.
+
 ## File Patterns
 
 | Pattern | Location |

@@ -192,7 +192,45 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Latest Oct21 actual customer restore finishes07:37:36 with one confirmed COMMIT:
+Latest R3 stores the first PDF: POST/download/info200 and pinned bytes match,
+but frozen verifiedObjects0 because actual user_metadata{} differs from archived
+SQLNULL. Owners/archivedNULL, version flagsfalse.99 READ ONLY SQL/sixHTTP preserve
+1,621 rows/14,270 cells/protected metadata; rollback/frontend close, child1.
+Parent pause and independent09:19:59.842538 sevenGET closure confirm replacement/
+production INACTIVE, preview healthy and old settings equal. Adopt the existing
+first object read-only under an explicitly reviewed mapping or prepare a bounded
+remedy; never POST/overwrite it again or recreate the bucket. Before R4, verify
+fresh same-frontend Storage policy dependencies, then first-object hash/ID/version/
+path adoption and a new bounded67-upload plan. Prior finite captures lack actual
+pg_policies rows. No R4 outcome is established; R3 custody/qualification retained.
+
+This maintenance checkpoint integrates bbec8b1/748a50c. No recovery artifact
+build, runtime or deployment has occurred. Offline44rows/three-table source review confirms original
+controlled SUPER_ADMIN EMAIL identity and one of14 CSV candidates matches its
+bcrypt hash. No online login/reset is proven. Finite source custody is retained;
+the owner-only native-preview-configuration/restored-admin-password-source-selection-20261021-private.json
+is an explicit source reference only, grants no autoload/role/session authority
+and stays outside retained evidence. Use only in a fresh bounded target/origin/
+gate plan. Never print or copy plaintext, hashes or reference contents into reports.
+
+Earlier Storage checkpoint: R1 sends zeroPOST/oneHTTP400 NoSuchBucket and closes
+safely. R2 confirms one bucket POST200, then stops on omitted API type while SQL
+STANDARD passes; PDF uploads remain0.93 READ ONLY SQL/threeHTTP preserve1,621 rows/
+14,270 cells. Original parent paused:false/closure failure and corrective-pause
+unknown outcome stay unchanged. Independent08:56:22 twelveGET/zeroPOST/noSQL
+readback confirms replacement/production INACTIVE, preview healthy and old
+settings equal. Reuse the existing bucket only through a fresh bounded scope;
+never recreate it, repeat customer import or replay R1/R2. The later R3 outcome
+is recorded above.
+
+Separate bbec8b1/748a50c now locally provide persisted-role authorization
+and protected replacement-only recovery access; tests/custody pass but neither
+is deployed or hosted GoTrue proof. Build a fresh artifact for a new bounded
+access scope after the pinned Storage scope closes. The recovered backend contains real customer data, not
+isolated test data; actual provider/session/data/closure evidence remains required.
+See the latest production-readiness.md Storage/source checkpoint for custody.
+
+Earlier Oct21 actual customer restore finishes07:37:36 with one confirmed COMMIT:
 26 COPY batches/1,621rows (1,617data+four historical migration rows), all14,270
 typed cells match before commit and in fresh persisted readback. Both separate
 READ ONLY transactions roll back, frontend/worker exit0; the write transaction
@@ -207,9 +245,10 @@ constraint checks stay fixed. Original stopped receipts remain unchanged.
 Driver/executor/event evidence review passes with parent authorship disclosed;
 it does not independently decode customer values. Source/finite actual custody
 and review are retained separately from credentials and raw values. Storage
-client preparation has16 closed controls but no hosted uploads yet. Next restore
-68 PDFs with actual byte/ownership/default/bijection checks and preserve the
-populated customer tables. Do not reuse the old empty-only verifier after import,
+client preparation had16 closed controls; subsequent R3 state is recorded above.
+Accept the existing first file through reviewed read-only adoption or a remedy,
+then restore the remaining67 with byte/ownership/default/bijection checks while
+preserving populated customer tables. Do not reuse the old empty-only verifier after import,
 replay spent scopes or repeat the confirmed customer import. Login/GoTrue,
 recovery-point currency, stable zero-cost hosting and release remain open. Public
 www still returns503. See production-readiness.md and separate custody packets.

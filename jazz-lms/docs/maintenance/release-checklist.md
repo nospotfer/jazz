@@ -1,5 +1,45 @@
 # Production review and rollback checklist
 
+## Oct21 first object and local access source
+
+- [x] Record R3's99 READ ONLY SQL/sixHTTP, one PDF POST/download/info200 and matching
+  source bytes, with1,621 rows/14,270 cells/protected metadata preserved.
+- [x] Preserve frozen verifiedObjects0/type-specific metadata stop, child1 and
+  successful parent pause; independently verify09:19:59.842538 sevenGET closure.
+- [x] Integrate reviewed bbec8b1/748a50c in the maintenance checkpoint; no recovery
+  build, runtime or deployment occurs. Retain offline admin candidate source evidence.
+- [ ] Review explicit absence mapping, capture/check Storage policy dependencies
+  on the fresh same frontend, and adopt first-object hash/ID/version/path read-only
+  or prepare a remedy. Never replay its POST/overwrite/recreate the bucket. A new
+  bounded scope must cover only the remaining67 uploads.
+- [x] Retain R3 finite/source custody with10 SQL-receipt projections omitting rows.
+- [ ] Build a fresh source-bound artifact and verify controlled actual customer/
+  admin login/logout/file access. Offline password matching supplies no session, role or hosted sign-in proof.
+- [ ] Finish current recovery point, stable free hosting, other journeys and
+  release/rollback; no R4 plan/outcome is claimed here.
+
+[Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
+
+## Oct21 Storage and unreleased access preparation
+
+- [x] Preserve R1 zeroPOST/oneHTTP400 NoSuchBucket stop and independent safe closure.
+- [x] Record R2's sole bucket POST200, API type omission/SQL STANDARD and zeroPDF
+  uploads; verify93 READ ONLY SQL/threeHTTP and1,621 rows/14,270 cells preserved.
+- [x] Preserve original paused:false/closure failure and corrective-pause unknown
+  outcome. Independently verify08:56:22 current pause with12GET/zeroPOST/noSQL and
+  unchanged original states/settings; retain finite/source custody.
+- [x] Prepare and test separate bbec8b1/748a50c admin/recovery-access changes;
+  41+76 authorization cases,939 native cases,753 integration/29skip and types/lint pass.
+- [ ] Complete file acceptance through a fresh reviewed existing-object/bucket
+  continuation; the later R3 result is recorded above. Never recreate the confirmed bucket or replay spent scopes.
+- [ ] Reconcile the locally integrated access source after the pinned Storage scope
+  closes, seal a fresh artifact and verify actual controlled customer/admin access/logout.
+  Keep provider/Auth session effects and customer data preservation explicit.
+- [ ] Verify all68 files, qualify the recovery point and finish stable zero-cost
+  hosting, remaining journeys and release/rollback. Source changes are unreleased.
+
+[Actual results, custody and limits](production-readiness.md#oct21-storage-bucket-created-pdfs-still-pending).
+
 - [x] Resolve actual native-RI metadata review against the original private
   capture, with only the exact owner predicate changed and18 offline controls.
 - [x] Execute one actual hosted customer import:26 COPY/1,621 rows/one confirmed
