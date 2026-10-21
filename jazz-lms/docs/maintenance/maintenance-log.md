@@ -1,5 +1,30 @@
 # Maintenance log
 
+## Oct21 — Hosted login and partial dashboard pass; exact session cleanup next
+
+- R9 records password200/user200/session-sync200 and reaches dashboard URL plus
+  visible search control. The subsequent blanket failed-request predicate rejects
+  the journey after an unclassified application-policy denial and eight total
+  blocks; admin/logout remain unverified. Cascades may explain later blocks.
+- Initial1,621rows/14,270 compatible typed cells and zero prior transients pass.
+  Post-browser cleanup observation SQL73 fails57P01/closedUNKNOWN before any
+  cleanup transaction/DELETE/COMMIT. One captured session needs fresh exact
+  cleanup; final customer/prior/protected preservation is unverified.
+- Auth enable/restore, active desired equality, frontend/native/browser closure,
+  pause and independent18:41:06 nineGET fullAuth/old-settings checks pass. Paused
+  desired404 remains qualified. Builder17597 exits0; edge socket is absent.
+- Earlier R8 stops before connection/Auth/login on9.994395s health request
+  spacing. Scheduling is reproduced/fixed with16 controls, preserving strict10s
+  checks; R9 passes. Keep R8's generic raw failure and both spent scopes.
+- Next: single-session cleanup before another login, finite request diagnostics,
+  then complete admin/logout. Current68f5233 remote10checks pass, no deployment.
+  [Evidence and exact outcome](production-readiness.md#current-checkpoint--oct21-1841-utc).
+- Separate two-GET LIVE payment check finds0 current succeeded records created
+  in the fixed Oct13–21 window for the known product. Official pagination starts
+  at0; the initial page1-only conclusion is retained/qualified and corrected by
+  page0. This is not archive reconciliation or full customer-currency proof.
+  [Scope and exact receipts](payment-recovery-point.md).
+
 ## Oct21 — Auth correction committed; separate settings recovery and pause verified
 
 - R7 commits and verifies the 56-cell Auth v2.197.0 reset-string correction.

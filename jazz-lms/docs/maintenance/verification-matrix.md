@@ -1,5 +1,21 @@
 # Goal verification matrix
 
+## Current recovery check — Oct21 18:41 UTC
+
+| Requirement | Authoritative result | Status |
+| --- | --- | --- |
+| Existing hosted password authentication | R9 password200/user200/session-sync200, same confirmed admin | Passed in the recorded scope |
+| Dashboard | Exact controller reaches dashboard URL and visible search before its failed-request predicate rejects | Partial DOM observed; complete journey failed |
+| Admin and normal logout | Controller stops at dashboard; no logout request | Unverified |
+| Initial customer state |1,621rows/14,270 typed cells match compatible profile; prior transients0 | Passed before login |
+| Cleanup/final preservation | SQL73 fails57P01 before cleanup writes; one captured session; no final readback | Fresh exact cleanup required before another login |
+| Auth/config/resource closure | Full Auth restored, active desired same, native/browser/frontend closed, paused; independent nineGET old settings/fullAuth/pause pass | Passed; paused desired404 remains qualified |
+| Owned build/tunnel |17597exit0, edge socket absent | Closed |
+| Health scheduling | R8 actual9.994395s denial reproduced;16 focused controls and R9 boundary pass after fix | Fixed; old failure retained |
+| Source publication/release |68f5233 remote10checks success; application31ad6ba/UI unreleased | Public release/full goal incomplete |
+
+[Exact evidence and limitations](production-readiness.md#current-checkpoint--oct21-1841-utc).
+
 ## Current recovery check — Oct21 18:15 UTC
 
 | Requirement | Authoritative result | Status |

@@ -1,6 +1,23 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 18:15 UTC
+## Current priorities — October21 18:41 UTC
+
+1. Freshly verify and clean up the single R9-owned session before another login.
+   Password/user/session-sync succeed and partial dashboard DOM is observed;
+   a policy denial prevents the complete journey. Cleanup observation SQL73
+   fails57P01 before any cleanup write. Final preservation remains unverified.
+2. Identify the first denied browser request without relaxing the recovery gate,
+   then verify complete dashboard/admin/logout and remaining customer/media and
+   isolated coupon/refund journeys. R9 Auth restoration and independent pause/
+   original-settings closure pass; the tunnel is closed.
+3. Finish recovery-point qualification, zero-cost hosting and release/rollback
+   review. Application31ad6ba is unreleased; all10 remote checks on documentation
+   checkpoint68f5233 pass. The original/public site remains paused.
+
+Do not repeat the accepted customer/PDF import or committed56-cell correction.
+[Current evidence and limits](production-readiness.md#current-checkpoint--oct21-1841-utc).
+
+## Earlier priorities — October21 18:15 UTC
 
 1. Verify the existing admin login/dashboard/logout from the already-corrected
    Auth baseline. The 56-cell correction is committed/readback verified; do not

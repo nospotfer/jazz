@@ -1,5 +1,22 @@
 # Production review and rollback checklist
 
+## Current access gate — Oct21 18:41 UTC
+
+- [x] Verify hosted password/user/session-sync success on the recovered backend.
+- [x] Record partial dashboard URL/search visibility and preserve the failed
+      journey; unclassified application denial/eight blocks are not dismissed.
+- [x] Verify initial compatible customer cells and zero prior transients.
+- [x] Restore full Auth, close browser/native/frontend, pause replacement and
+      independently compare Auth/old settings. Keep desired404 qualified.
+- [x] Close builder/tunnel17597 and verify edge socket absence.
+- [ ] Freshly verify and clean the single captured R9 session before another
+      login; cleanup observation57P01 prevents final preservation proof.
+- [ ] Diagnose the first denied request, then complete admin access and logout.
+- [ ] Finish customer/media/isolated payments, recovery currency, free hosting
+      and production review/rollback. No UI/code deployment has occurred.
+
+[Actual result and limits](production-readiness.md#current-checkpoint--oct21-1841-utc).
+
 ## Current access gate — Oct21 18:15 UTC
 
 - [x] Commit and verify the exact 56-cell Auth v2.197.0 compatibility correction;

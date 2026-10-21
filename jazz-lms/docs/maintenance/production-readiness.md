@@ -2,7 +2,58 @@
 
 <a id="current-checkpoint--oct21-1742-utc"></a>
 
-## Current checkpoint — Oct21 18:15 UTC
+<a id="current-checkpoint--oct21-1815-utc"></a>
+
+## Current checkpoint — Oct21 18:41 UTC
+
+**Hosted password authentication now works on the recovered backend.** R9 records
+one password 200, verified-user 200 and session-sync 200 for the existing admin.
+The browser reaches `/dashboard` and its visible course-search control before
+the strict journey predicate fails. This proves partial dashboard rendering;
+admin-page access, normal logout and full continuity remain unverified.
+
+The first application-policy denial has no retained request identity. Eight
+blocks include possible cascades after the controller stops; they do not prove
+eight distinct forbidden routes or a harmless prefetch cause. Keep the failed
+`PUBLIC_PASSWORD_DASHBOARD_UNVERIFIED` result. A diagnostic extension is being
+prepared without widening request allowances or suppressing failures.
+
+Initial R9 comparison verifies all 1,621 rows/14,270 typed cells against the
+already-corrected profile and zero prior session/refresh/AMR/audit rows. After
+the browser stops, cleanup observation SQL73 fails 57P01: the connection changes
+from INTRANS to closed/UNKNOWN. No cleanup transaction, DELETE or COMMIT starts.
+One captured owned session needs fresh readback and narrowly scoped cleanup;
+final customer/prior/protected preservation is unverified. Do not log in again
+or invent a fresh zero-session baseline before this is resolved.
+
+Full Auth restoration, active desired-settings equality, frontend/browser/native
+closure and replacement pause pass. Independent nine-GET closure at 18:41:06
+confirms pause/full Auth/original-project settings; paused PostgREST 404 retains
+the independent desired-comparison limit. Builder/tunnel17597 subsequently
+exits0 with its edge socket absent. No serving resource remains from this scope.
+
+The preceding R8 stops before connection/Auth/login: both health samples pass,
+but request spacing is 9.994395 seconds. A source scheduling defect is reproduced
+and fixed with 16 focused controls while keeping both >=10-second checks; R9
+passes that boundary. The separate Auth consistency fix also passes actual R9
+enable/restore. Historical failures and spent actions remain unchanged.
+
+Current source remains application `31ad6ba`, documentation `68f5233`; all 10
+remote checks on that checkpoint succeed. Production is paused, UI unreleased,
+and customer/media/payment, recovery currency and free hosting gates remain.
+
+A separate read-only LIVE payment check finds no currently-succeeded payments
+created between Oct13 UTC00:00 and Oct21 18:44 for the known project product.
+Both page1 and the required first page0 return empty. Earlier-created payments
+settling later, archived purchase reconciliation and other customer-data currency
+remain unverified. [Exact scope and pagination correction](payment-recovery-point.md).
+
+R9 finite outcome: `/tmp/jazz-maintenance/a9/journal/access-outcome.json`, SHA
+`9cc79a372243f58bb565ab32c2c4cdcb5f00063de32a5364202fdc307fbdc5d4`.
+The separate owner-only recovery record contains session ownership references;
+it stays outside review evidence and requires a fresh cleanup plan.
+
+## Earlier checkpoint — Oct21 18:15 UTC
 
 The 56-cell Auth compatibility correction is committed and its readback verified
 (`AUTH_FLOW_COMPATIBILITY_COMMITTED_VERIFIED`). It changes four declared reset

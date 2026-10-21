@@ -1,5 +1,22 @@
 # Service inventory
 
+## Latest verified replacement state — Oct21 18:41 UTC
+
+Replacement is independently paused with full Auth restored and original
+project settings unchanged. R9 authenticates the existing admin and syncs its
+session; partial dashboard URL/search rendering passes before an unclassified
+application-policy denial stops the journey. Admin/logout remain unverified.
+
+One captured R9 session needs fresh exact cleanup: SQL73 fails57P01 before any
+cleanup write. Initial compatible1,621rows/14,270cells match, but final
+preservation is unverified. Do not use a new login or assume zero sessions.
+All browser/native/frontend resources and builder/tunnel17597 are closed; edge
+socket absent. Auth enable/restore passes; paused desired404 remains qualified.
+
+Application31ad6ba/UI remain unreleased;68f5233 remote10checks pass. Accepted
+imports/PDFs and the committed56-cell correction must not be repeated.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1841-utc).
+
 ## Latest verified replacement state — Oct21 18:15 UTC
 
 The replacement is independently paused with full Auth baseline equality and
