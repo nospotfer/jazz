@@ -1,5 +1,22 @@
 # Production review and rollback checklist
 
+## Oct21 session route and current Storage stop
+
+- [x] Verify31ad6ba exact-head CI/publication/independent draft PR46 readback.
+- [x] Preserve the zero-provider process-admission stop and separate successful
+  documented5432 diagnostic: seven SQL/30.030s/rollback/close and paused closure.
+- [x] Preserve actual29019exit1 at CONNECT_ATTEMPTED, no SQL/Storage HTTP/new POST;
+  independent12:47:25 seven-GET paused/settings closure and finite custody pass.
+- [ ] Add finite connection-family/start/end/duration evidence before a new
+  bounded attempt. The cause of this historical connection failure stays unknown.
+- [ ] Complete fresh typed/protected checks, both read-only adoptions and all68
+  file acceptance, then restored login/current native preview/HTTPS. No import,
+  bucket recreation, prior-object re-POST or closed-plan replay.
+- [ ] Resolve recovery-point currency, coupon/refund/free-hosting and remaining
+  release gates. Public Vercel remains paused; no deployment is established.
+
+[Evidence and limits](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect).
+
 ## Oct21 checkout discount source follow-up
 
 - [x] Verify contradictory ownership denial, personal/unknown global-counter

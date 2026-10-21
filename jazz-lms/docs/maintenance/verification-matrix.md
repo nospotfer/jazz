@@ -1,5 +1,17 @@
 # Goal verification matrix
 
+## Oct21 session route and subsequent Storage connection stop
+
+| Check | Actual result and limit |
+| --- | --- |
+| Published31ad6ba | Five workflows/four Quality jobs pass; each app2,885/80skip plus lint/types/build, each PostgreSQL80/1skip; two zero-result CodeQL analyses/alerts0; independent draft PR46 readback. Not deployed. |
+| Session5432 diagnostic | Seven metadata SQL calls/30.030s same SQL session, READ ONLY rollback/close pass; independent12:17:21 paused/settings closure. Earlier local process guard stops with zero provider calls. Documented derivation, not provider-returned route or automatic fallback. |
+| Subsequent Storage scope | Actual29019exit1 at12:45:01: TLS-only passes; sole native connect fails OperationalError/no SQLSTATE, cause unknown. SQL0/Storage HTTP0/new POST0/COMMIT0. Current preservation/adoption/rollback not performed. |
+| Independent closure | Actual77990exit0 at12:47:25; sevenGET0POST0SQL, exact replacement/production INACTIVE, preview healthy, old observed settings equal. No customer/file health proof. |
+| Next | Add finite connect classification/timing before a fresh bounded scope; preserve all spent results. Remaining files, restored login/native build/HTTPS and release remain open. |
+
+[Evidence and custody](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect).
+
 ## Oct21 coupon failure decisions
 
 Seven integrated source/test files match the independently reviewed patch;

@@ -1,5 +1,77 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 session route passes once; Storage continuation stops at connect
+
+Application checkpoint **31ad6ba** is published in draft PR46. All five exact-head
+workflows/four Quality jobs pass: each application job records 2,885 passes/80
+skips, lint zero errors/22 warnings, types and the 31-page webpack build; each
+PostgreSQL job records 80 passes/one skip. Both CodeQL analyses have zero results
+and open head alerts are zero. Independent PR readback passes. These checks do
+not deploy the fixes or establish customer/provider health.
+
+The separate documented **5432 session route** diagnostic completes at
+**12:16:23.919265 UTC**, after an earlier local process-admission stop with zero
+provider/SQL calls. The unchanged scanner passes in the new scope when the
+root launcher replaces its shell wrapper. The original provider receipt still
+advertises 6543; the chosen 5432 route is an explicit documented derivation with
+the same host/user/database, authenticated from the original receipt. It is
+not a provider-returned session entry or an automatic fallback. One native
+connection, seven metadata SQL calls and 30.030 seconds in the same SQL session
+pass, including READ ONLY rollback and client close. Parent60 Management calls
+(43 work/17 closure), one resume/pause and two scans complete. Frontend TLS
+verifies; the upstream SQL TLS flag remains false. Independent **12:17:21.294640
+UTC** seven-GET closure verifies the exact replacement INACTIVE and unchanged
+original project states/settings. This short diagnostic establishes neither the
+earlier 57P01 cause nor full upload-run stability.
+
+The subsequent remaining-66-file scope on the same documented route is
+**terminal exit1 at12:45:01.190 UTC**, actual root session29019. Both process
+scans and the TLS-only probe pass. The single native connection fails at
+`CONNECT_ATTEMPTED` with `PSYCOPG_OPERATIONAL_ERROR` and no SQLSTATE. The retained
+diagnostic has no finer finite connection family or raw error, so its cause
+cannot be recovered retrospectively. **SQL0, Storage HTTP0, new POST0 and
+COMMIT0**: no customer/file readback or new upload occurs. No transaction was
+entered and no rollback was attempted. The child exits1 and acknowledges client
+closure; the parent performs66 Management calls (45 work/21 closure), one
+resume/pause and no configuration change.
+
+The parent's conservative `PARTIAL_OR_UNKNOWN`, possible-write and incomplete
+acceptance flags remain intact. Its pinned driver/counters establish zero
+dispatched Storage requests in this scope; they do not establish current file
+or customer preservation. Independent **12:47:25.824117 UTC** seven-GET closure
+(actual session77990exit0) confirms the exact replacement INACTIVE, original
+production INACTIVE, isolated preview healthy and original observed settings
+equal. It performs no SQL, file verification or mutation.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| 31ad6ba publication/CI | `a1fac4261c670ddfccf18a9194260f2f2e8e85247837108886c3a07f28aa726b` |
+| 5432 diagnostic parent | `e50f8e615406b5c2d1b826030924fe4eb7fcf46edd6d2909e65874db64ae78d1` |
+| 5432 diagnostic core | `1fd4212f40e98a43babbae4a6621cdbe09cd6272eb4821c1f5f3156e6abb134a` |
+| 5432 independent closure | `d65bfe7bca121c5b3317f93819c33d72414dfeb1836cba18deb52f880b86f423` |
+| Actual Storage parent | `26d8a9a79bc019ca0f40a160d121858a8c039f6d20ac5ab095cec25b171d4d0c` |
+| Actual Storage driver | `21e687a347c3690079c5f75c04c57438e41da04ce7f546821e2f3bb80cb07116` |
+| Storage independent closure | `3df5893dbc59ef67459291239a1a927d7118c915e4f4dba2f8e273f948b696c7` |
+| Root finite interpretation | `96dd7fb0ed5fcde69dbccee6bebba4dcb9e985797e38c5a02caf1ef7d58cd361` |
+
+Local owner-only custody retains20 diagnostic files (manifest
+`531bb355ae7ffbdeb7d8b7e8e84b7a1b525ceadd96fdb824537f00e39db524fa`)
+and14 Storage-stop files (manifest
+`828724317be5472ca319917f6170c89c7c4cc4868aa47264c13c4663bf1b9e98`).
+The packages exclude credentials, active plans, raw provider/customer values and
+PDF bodies. They remain local/unencrypted; off-site recovery is not established.
+
+Next add the existing bounded connection-error classifier to the actual Storage
+connect boundary, with its own start/end/duration receipt, before another
+separately reviewed one-attempt scope. Preserve this spent scope; do not replay
+its plan, repeat customer import, recreate the bucket or re-POST either existing
+PDF. Fresh customer/protected-state checks and read-only adoption of both files
+remain prerequisites to any new upload. No current full68-file acceptance,
+restored login, native runtime, public HTTPS or deployment follows. The public
+Vercel site remains paused. Native build/Auth adapters are preparation only;
+their activation, recovery-point currency, coupon/refund, hosting and release
+gates remain open. Earlier sections retain their dated evidence and limits.
+
 ## Oct21 read-only connection diagnostic completes
 
 Published checkpoint `a30bc172c65eebb692e3af4084967e57b43b1c73` remains the

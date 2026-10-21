@@ -1,5 +1,24 @@
 # Maintenance log
 
+## Oct21 session diagnostic and closed zero-upload connection failure
+
+31ad6ba exact-head publication/CI and independent draft PR46 readback pass;
+the application fixes remain undeployed. A separately admitted documented5432
+session-route diagnostic completes seven metadata SQL calls/30.030s same-session
+idle/READ ONLY rollback/close at12:16:23 UTC; independent12:17:21 closure passes.
+The earlier zero-provider process-admission stop remains preserved.
+
+The remaining66-file attempt then stops at its sole native connection with
+OperationalError/no SQLSTATE: SQL0, Storage HTTP0, new POST0, COMMIT0. No current
+customer/file preservation is established; the retained finite diagnostic
+cannot identify the connection cause. Actual root29019 exits1 at12:45:01 UTC;
+the parent re-pauses and independent12:47:25 seven-GET closure passes, with old
+states/settings equal. Finite custody retains20 diagnostic and14 Storage-stop
+files. Preserve all spent markers and both previously stored files. Next repair
+the missing connect-boundary classification/receipt before another bounded
+attempt; actual restored login/build/HTTPS and release remain open.
+[Current evidence and limits](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect).
+
 ## Oct21 coupon repair and limit-scope fixes
 
 Checkout repair now rejects contradictory voucher/integration tags despite a

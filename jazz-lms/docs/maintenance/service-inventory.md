@@ -1,5 +1,19 @@
 # Service inventory
 
+## Current replacement state — Oct21 12:47:25 UTC
+
+Independent seven-GET closure confirms the exact replacement and original
+production INACTIVE, isolated preview ACTIVE_HEALTHY and original observed
+settings equal. The latest remaining66 scope fails at its single native
+connection: zero SQL/Storage HTTP/new uploads, no current preservation readback.
+The earlier documented5432 session diagnostic passes seven metadata SQL calls,
+30.030s same-session idle and rollback/close; it does not explain this subsequent
+connection failure or establish long-run stability. Both outcomes are retained.
+31ad6ba publication/CI/PR46 readback passes, with no application deployment.
+Public Vercel remains paused. Native build/Auth plans remain preparation only;
+customer/files/login/HTTPS, recovery point, free hosting and release remain open.
+[Evidence and next action](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect).
+
 ## Latest replacement state — Oct21 10:41:54 UTC
 
 Independent sevenGET closure confirms exact replacement/production INACTIVE,

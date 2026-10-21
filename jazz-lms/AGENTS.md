@@ -96,22 +96,22 @@ strict read-route/session-sync allowlist and skipped Auth/dashboard side effects
 login or public HTTPS proof. Production startup stays denied. Build a fresh artifact from the published
 maintenance checkpoint; coordinate actual access after file acceptance and the
 pinned Storage scope closes. Real customer data is not isolated test data; provider/session/data-preservation evidence stays
-required. See `docs/maintenance/production-readiness.md` for the current R5 file
-checkpoint: both existing PDFs pass fresh read-only byte/metadata adoption,
-171,746 bytes; initial1,621 rows/14,270 cells match and new uploads0. The second
-stability SELECT fails57P01; closed/UNKNOWN state explicitly explains skipped
-final preservation/rollback, which remain unverified. Independent10:41:54 closure
-confirms the replacement paused. The subsequent R2 metadata diagnostic passes
-seven SQL calls,30.012s same-session idle, rollback and frontend close, with
-independent11:40:12 paused/settings closure. Its frontend protocol identifier
-observations are separate from authoritative SQL PIDs. Current queried idle and
-transaction timeouts are0; no earlier shutdown cause, route remedy or full
-upload lifecycle is established. Frontend TLS verifies; upstream SQL TLS is
-observed false. Prepare fresh typed/protected checks and adoption of both files
-before another bounded upload scope, or separately admit documented5432 session
-routing for native preview. Never re-POST/overwrite either file, recreate the bucket or repeat
-customer import. The offline controlled-admin password source
-match is not hosted login proof and grants no role/session/autoload authority.
+required. The Oct21 documented5432 session-route diagnostic passes seven metadata
+SQL calls/30.030s same SQL session/rollback/close, followed by independent12:17:21
+paused/settings closure. The subsequent remaining66 scope stops at its single
+native connection with OperationalError/no SQLSTATE: zero SQL/Storage HTTP/new
+uploads, no current preservation/adoption/rollback. Actual root29019 exits1;
+independent12:47:25 closure verifies the replacement paused and old states/
+settings equal. The connection cause remains unknown; add the existing finite
+connect classifier and timing receipt before a new reviewed scope. Do not replay
+spent plans. Earlier R5 verifies both existing PDFs/171,746 bytes and initial
+1,621 rows/14,270 cells before57P01, with final preservation/rollback unverified.
+Fresh typed/protected checks and both read-only adoptions remain required before
+any new upload. Never re-POST/overwrite either file, recreate the bucket or repeat
+customer import. No route remedy/full-lifecycle/end-to-end TLS claim follows
+from the short diagnostic. The offline admin password match is not hosted login
+or role/session/autoload authority. See `docs/maintenance/production-readiness.md`
+for exact evidence and limits; native build/Auth adapters remain preparation only.
 
 ## File Patterns
 

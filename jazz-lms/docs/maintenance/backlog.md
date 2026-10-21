@@ -1,5 +1,21 @@
 # Prioritized maintenance backlog
 
+## Current checkpoint — Oct21 12:47 UTC
+
+1. Repair missing finite diagnostics at the actual Storage connect boundary:
+   latest one-connect scope stops before SQL/HTTP/uploads, cause unknown. Preserve
+   its spent plan and terminal failure; independent paused/settings closure passes.
+   Do not loosen timeouts or repeat an operational attempt to debug a controller.
+2. In a fresh reviewed scope, verify current typed/protected customer state and
+   adopt both existing PDFs read-only before any remaining66 upload. Do not
+   reimport, recreate the bucket, overwrite or re-POST either prior object.
+   Earlier5432 seven-SQL/30.030s success is not full lifecycle stability proof.
+3. Complete restored admin/file continuity and current-source native preview,
+   remaining coupon/refund, recovery point, zero-cost hosting and release work.
+   31ad6ba CI/publication passes; no deployment or full recovery is established.
+
+[Current evidence and limits](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect). Earlier checkpoints remain historical.
+
 ## Latest diagnostic checkpoint — Oct21 11:40 UTC
 
 The dedicated R2 read-only connection diagnostic passes seven metadata SQL calls,
