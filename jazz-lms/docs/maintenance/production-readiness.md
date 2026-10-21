@@ -1,6 +1,91 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 R5 adopts both PDFs before SQL shutdown
+
+Documentation checkpoint `8ac31bd605604c35e8c567244ff59441e7382fa5` passes all five
+exact-head workflows/four Quality jobs, both CodeQL analyses with zero results/
+errors, zero open PR-head alerts and independent PR46 head/title/body readback.
+Application source remains `105f8b9`, undeployed. Publication and its eight-file
+finite/source custody are complete; this does not establish restored login.
+
+R5 freshly adopts both existing PDFs read-only: **98,661 and 73,085 bytes, totaling
+171,746**. Current ID/version/path, downloaded source bytes and required API/SQL
+metadata pass under the reviewed representation rule. Frozen **verifiedObjects2**
+records these adoptions; **new uploads0**. Neither earlier POST is replayed and
+the bucket is not recreated. Original R3 verified0 and R4 verified1 remain intact.
+
+The initial **1,621 rows/14,270 typed cells** check passes. Recorded stability
+SELECT047 returns at 10:39:36.505051 UTC. Request048 fails with
+`AdminShutdown`/SQLSTATE `57P01` about30 seconds later. Its failure receipt has
+no query hash or timestamp: attribution as the second stability request comes
+from frozen driver source and047's retained query hash. The three-observation
+sequence does not complete; no shutdown cause or proven operational remedy is
+established. The connection state is closed/UNKNOWN.
+Final customer/protected-metadata preservation and explicit READ ONLY ROLLBACK
+are **unverified**; both cleanup dispositions explicitly say `CONNECTION_CLOSED`.
+These unconfirmed flags do not establish changed customer data. No new Storage
+POST, retry or native COMMIT occurs.
+
+Frontend/worker close and parent confirms its sole pause. The owned pause
+starts at 10:40:06.557 UTC,35.590ms after driver completion with the SQL failure
+at 10:40:06.521410 UTC; it is not the initiating action. This sequence does not
+identify the remote terminating actor or cause. Independent **10:41:54 UTC**
+seven-GET closure verifies exact replacement/production INACTIVE,
+preview ACTIVE_HEALTHY and old observed settings equal, with no new Storage/SQL
+actions. This current state readback is distinct from source-bound adoption and
+customer-data evidence in the pinned driver.
+
+| Receipt | SHA-256 |
+| --- | --- |
+| 8ac31bd publication/CI | `03c0916f211a2f708d1bea2163e1a7d6b1aac5e2d0a74cb87a6d80e896e4feb2` |
+| R5 parent | `836ca7af9d3869ad984791f2623b30db3920dcd5310e7afd191e5afad3721870` |
+| R5 driver | `7d045e35e5fc98fb2fff87cd7d24aeadc5bccb0f26c4a4865208df3d0bb0c320` |
+| Independent paused closure | `c60a97d65c103801e8c3e8fea6eb58119d9f0efc3f107ca655e638c627622463` |
+| PostgreSQL finite log read | `48d8c01924d3518aa1126ce3f942a26fc0102e6713d11dee40fa8edf2f2d7025` |
+| Supavisor finite log read | `483751b1c47bf5078c4fccead990e85367b9b261f38ae42ae86e958c75f799f9` |
+| Observed R5 selected route projection | `c319b98c409212dd715d7a55efe1aed3714c8abd6d32ad86f7359857ef6c0313` |
+
+Publication custody at `review-checkpoint-publication-8ac31bd-20261021` retains
+eight files/34,192 bytes, manifest
+`d8f5027a019c63e84383f5be4c2621fe36ef2cb089e48ce46c00a2c2ea8afe27`.
+It contains only reviewed publication source/finite files, excluding raw logs,
+GitHub responses and private inputs. R5 outcome custody at
+`review-checkpoint-storage-r5-adoption-shutdown-20261021` retains 17 source/finite
+files, manifest `b21b8ee9a50659e9e947fb984d6d8ab843829b9115f3a9fa17ef40c92fb96fed`.
+The separate `review-checkpoint-storage-r5-log-read-20261021` retains 9 files,
+manifest `ec75d9371e21bfeadf7a16cc924129339477f2ec9c765eaa43d63d6513829bc8`;
+its qualified interpretation is `326d598fcd1ad283c4e9e448cf7f792cac6ff6056a977639b141cc06a5e895fb`.
+Both exclude raw provider bodies, customer/PDF values, keys and active plans.
+Retention is private/local/unencrypted; off-site recovery is not established.
+The safely projected actual R5 selected SQL route is port 6543 with pool mode
+`transaction`. This is an observed route, not a shutdown cause or proven remedy.
+
+One paused-project PostgreSQL logs GET returns200 at 10:44:12 UTC with 11 filtered
+metadata events: seven 57P01, three ready signals and one shutdown signal. All 11
+precede SELECT047 completion: latest event 10:39:17.129000 is ready; shutdown is
+at 10:39:15.122000. All projected events have PID fields, but none matches the
+retained frontend PID. A separate Boolean-only Supavisor logs GET for 10:39–10:41
+returns200 at 10:45:43 UTC with an empty result. These bounded projections do not
+identify the failing frontend or terminating actor, explain 57P01, establish
+absence of relevant events or prove complete log coverage. Neither read resumes
+the project, runs native customer SQL or writes Storage. Raw messages and
+numeric PIDs are not published. The existing [logs API reference](https://supabase.com/docs/reference/api/v1-get-project-logs)
+and [filtering semantics](https://supabase.com/docs/guides/observability/advanced-log-filtering)
+remain the API context, not evidence of a cause.
+
+Preserve all R1–R5 reports and spent ledgers. **Never re-POST or overwrite either
+existing object or recreate the bucket.** Current customer/protected-state and
+cleanup prerequisites must be established before further uploads; the remaining
+66 files and complete recovery are unverified. Next work is fresh bounded
+read-only settings/identity/persistence diagnostics, not another upload loop.
+No cause or proven remedy is established. Backend remains paused, UI undeployed and the
+last public check 503. Customer/admin Auth/file continuity, recovery-point
+currency, stable zero-cost hosting and release/full-goal completion remain open.
+
 ## Oct21 R4 adopts first object, then stops on SQL shutdown
+
+This dated R4 checkpoint is historical; R5 above freshly adopts both objects
+but still stops before further uploads or final preservation/rollback proof.
 
 Published source `105f8b996fc402b92989f8ab28781a0d2cc82e29` passes all five exact-head
 workflows and all four Quality jobs. Both CodeQL analyses have zero results or

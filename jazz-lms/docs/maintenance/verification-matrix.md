@@ -1,5 +1,18 @@
 # Goal verification matrix
 
+## Oct21 R5 two-object adoption and interrupted stability check
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| Publication | Exact 8ac31bd documentation checkpoint passes five workflows/four Quality jobs, two zero-result/error CodeQL analyses, alerts 0 and PR46 readback; eight-file custody complete. App code stays 105f8b9, undeployed. |
+| Existing objects | Both current PDFs pass read-only identity/version/path, byte and API/SQL metadata adoption: 98,661+73,085=171,746 bytes. Frozen verifiedObjects2; new uploads0, no object POST replay/bucket creation. |
+| Diagnostic stability | One recorded stability SELECT returns; source-derived second request048 fails AdminShutdown57P01. The three-observation sequence does not complete; no cause or proven remedy follows. |
+| Data and cleanup | Initial 1,621 rows/14,270 cells match. Closed/UNKNOWN connection; final customer/protected preservation and explicit rollback remain unverified, with both cleanup skips CONNECTION_CLOSED. |
+| Closure | Frontend/worker close, sole pause confirmed; independent 10:41:54 sevenGETs verify replacement/production INACTIVE, preview healthy and old settings equal. No new Storage/SQL operations in that closure. |
+| Logs and next work | Two bounded metadata-only log GETs complete: 11 PostgreSQL events all precede the first returned stability sample, no retained-frontend PID match; Supavisor result []. No cause/completeness proof. Outcome/log custody 17+9 files retained; observed R5 route port 6543/transaction pooler. Next: read-only settings/identity/persistence diagnostics. Remaining 66 files and account/hosting/release goals stay open. |
+
+[R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown). Earlier tables retain their dated results.
+
 ## Oct21 R4 partial file continuation and published source
 
 | Requirement | Actual evidence and remaining limit |

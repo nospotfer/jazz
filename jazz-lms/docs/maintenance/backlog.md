@@ -1,5 +1,26 @@
 # Prioritized maintenance backlog
 
+## Latest Storage stop — Oct21 10:41 UTC
+
+R5 freshly verifies/adopts both existing PDFs read-only, 171,746 bytes total,
+without a new upload. Initial 1,621 rows/14,270 typed cells match, then
+source-derived second stability request048 fails AdminShutdown57P01. Closed/UNKNOWN connection and explicit
+CONNECTION_CLOSED cleanup skips leave final preservation/rollback unverified.
+Frontend/worker close; independent sevenGET closure confirms the paused backend
+and unchanged old states/settings. Next:
+
+1. Preserve completed R5 outcome/log custody 17+9 files. Their projected events
+   do not match the retained frontend or establish a shutdown cause. Observed
+   port 6543/transaction-pooler routing does not establish a remedy.
+2. Prepare fresh read-only settings/identity/persistence diagnostics and establish
+   current customer/protected-state and cleanup prerequisites before more writes. Never re-POST/overwrite either verified object or recreate
+   the bucket; preserve all spent scopes.
+3. Finish the remaining 66 file acceptance, controlled restored-account access,
+   recovery-point/zero-cost hosting and release gates. 8ac31bd documentation
+   publication/CI/custody passes; app source 105f8b9 remains undeployed.
+
+No further upload loop or proven operational remedy is proposed here. [R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown).
+
 ## Latest Storage stop — Oct21 10:01 UTC
 
 R4 freshly verifies/adopts the original first object and uploads one new PDF with

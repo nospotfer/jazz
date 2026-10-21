@@ -1,5 +1,26 @@
 # Service inventory
 
+## Latest replacement state — Oct21 10:41:54 UTC
+
+Independent sevenGET closure confirms exact replacement/production INACTIVE,
+preview ACTIVE_HEALTHY and old observed settings equal. R5 freshly adopts both
+existing PDFs read-only: 98,661+73,085=171,746 bytes, verifiedObjects2/new uploads0.
+Initial 1,621 rows/14,270 typed cells match. One recorded stability SELECT
+returns; source-derived second request048 fails AdminShutdown57P01. A closed/
+UNKNOWN connection causes explicit CONNECTION_CLOSED
+cleanup skips. Final customer/protected preservation and rollback are unverified.
+Frontend/worker close and parent confirms its sole pause.
+
+Source 8ac31bd documentation/CI/PR readback and eight-file publication custody
+pass; app code stays 105f8b9, undeployed. Bounded log GETs complete without a
+retained-frontend match or cause; outcome/log custody 17+9 files is retained.
+Observed R5 route: port 6543/transaction pooler. Next:
+fresh read-only settings/identity/persistence diagnostics. No object replay/
+overwrite/bucket recreation, shutdown-cause inference,
+serving or whole-recovery claim follows. Remaining 66 files, actual account/file
+continuity, recovery point, stable free hosting and release remain open. [R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown).
+Earlier dated snapshots retain their original results and limits.
+
 ## Latest replacement state — Oct21 10:01:33 UTC
 
 Independent sevenGET closure confirms exact replacement/production INACTIVE,

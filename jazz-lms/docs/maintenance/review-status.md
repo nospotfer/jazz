@@ -1,5 +1,27 @@
 # Maintenance review checkpoints
 
+## Oct21 R5 verifies both existing files; continuation remains stopped
+
+Exact 8ac31bd documentation publication/CI/PR readback and eight-file custody
+pass; application code remains 105f8b9 and undeployed. R5 freshly verifies/adopts
+both existing PDFs read-only, 171,746 bytes total, with zero new uploads.
+Initial 1,621 rows/14,270 typed cells match, then source-derived second
+stability request048 fails AdminShutdown57P01. The connection closes; final
+customer/protected preservation
+and explicit rollback are unverified with CONNECTION_CLOSED cleanup dispositions.
+
+Frontend/worker close; sole pause and independent 10:41:54 sevenGET closure verify
+replacement/production INACTIVE, preview healthy and old settings equal.
+Bounded log GETs complete without matching the retained frontend or identifying
+a cause. R5 outcome/log custody 17+9 files is retained. The selected route is
+observed as port 6543/transaction pooler, without causal inference. Next: read-only settings/
+identity/persistence diagnostics. Preserve R4's earlier verified1
+result and all spent scopes; neither existing object may be re-POSTed/overwritten
+and the bucket must not be recreated. No cause, remedy, complete stability
+observation, serving or full recovery is established. [R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown).
+
+Earlier dated checkpoints retain their historical results and scope limits.
+
 ## Oct21 published source and R4 partial continuation
 
 Exact105f8b9 publication passes all five workflows/four Quality jobs, both zero

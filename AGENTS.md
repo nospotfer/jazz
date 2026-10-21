@@ -192,7 +192,22 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Current R4 freshly adopts the first PDF read-only and passes two actual empty
+Current R5 freshly adopts both existing PDFs read-only (171,746 bytes), with
+initial1,621 rows/14,270 typed cells matching. It uploads nothing. The second
+stability SELECT fails57P01 after one successful sample; the failed query's role
+is derived from pinned control flow, not a retained query hash. Connection state
+is closed/UNKNOWN; final preservation and explicit rollback are skipped with
+CONNECTION_CLOSED and remain unverified. Frontend/worker close; parent pause and
+independent10:41:54 sevenGET closure confirm replacement/production INACTIVE,
+preview healthy and old settings equal. Preserve R5 receipts/ledgers and both
+objects. Before another upload scope, diagnose the connection read-only using
+actual settings/identity/persistence observations; do not assume a timeout cause,
+change routes silently, re-POST/overwrite files, recreate the bucket or repeat
+customer import. Exact8ac31bd publication/CI passes without deployment. The
+filtered PostgreSQL events match no retained frontend PID; empty Supavisor logs
+do not prove absence of a pooler failure. See production-readiness.md.
+
+Earlier R4 freshly adopts the first PDF read-only and passes two actual empty
 selected-policy checks, then sends one new PDF POST/download/info200 with source-
 bound bytes. SQL014 AdminShutdown57P01 stops its metadata read. Frozen verified
 objects1; initial1,621 rows/14,270 cells match, but final customer/protected

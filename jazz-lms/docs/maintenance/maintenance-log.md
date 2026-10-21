@@ -1,5 +1,33 @@
 # Maintenance log
 
+## Oct21 R5 adopts both PDFs; second stability request stops
+
+Documentation checkpoint 8ac31bd is published: all five workflows/four Quality
+jobs pass, both CodeQL analyses have zero results/errors, open PR-head alerts 0
+and PR46 head/title/body readback passes. Application source remains 105f8b9 and
+undeployed. Publication 03c0916f and its eight-file custody are complete.
+
+R5 freshly adopts both existing PDFs read-only: 98,661 and 73,085 bytes, totaling
+171,746, with current identity/version/path, downloaded bytes and API/SQL metadata
+verified. Frozen verifiedObjects2, new uploads0; neither prior POST is repeated.
+Initial 1,621 rows/14,270 typed cells match. One recorded stability SELECT
+returns; source-derived second request048 then fails AdminShutdown57P01. The
+diagnostic observation sequence does not complete.
+
+The connection is closed/UNKNOWN. Final customer/protected preservation and
+explicit READ ONLY rollback remain unverified; both cleanup dispositions say
+CONNECTION_CLOSED. Frontend/worker close, parent confirms its sole pause, and
+independent 10:41:54 sevenGET closure verifies replacement/production INACTIVE,
+preview healthy and old settings equal. No new POST, retry or native COMMIT.
+
+Bounded PostgreSQL/Supavisor log GETs complete without a matching retained
+frontend or cause determination. Outcome custody 17 files/log custody 9 files
+are retained; the observed selected route is port 6543/transaction pooler.
+Preserve the stopped scope and all spent ledgers. Next work is fresh read-only
+settings/identity/persistence diagnostics, not another upload loop.
+Remaining 66-file acceptance, restored-account access, recovery-point currency,
+zero-cost hosting/release and the full goal remain open. [R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown).
+
 ## Oct21 R4 first-object adoption passes; new metadata read stops
 
 Source105f8b9 is pushed and exact-head publication passes: five workflows/four

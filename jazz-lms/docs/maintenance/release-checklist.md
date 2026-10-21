@@ -1,5 +1,33 @@
 # Production review and rollback checklist
 
+## Oct21 R5 stop and current release limits
+
+- [x] Verify exact 8ac31bd documentation publication: five workflows/four Quality
+  jobs, two zero-result/error CodeQL analyses, alerts 0 and independent PR46 readback;
+  retain its eight-file finite/source custody. App code remains 105f8b9.
+- [x] Freshly adopt both existing PDFs read-only with current identity/version/
+  path, bytes and API/SQL metadata: 171,746 bytes; new uploads0, no prior POST replay.
+- [x] Verify initial 1,621 rows/14,270 cells and preserve source-derived second
+  stability request048 AdminShutdown57P01 failure. Record closed/UNKNOWN
+  connection and both
+  CONNECTION_CLOSED cleanup skips without claiming final preservation/rollback.
+- [x] Confirm frontend/worker closure, sole pause and independent 10:41:54 sevenGET
+  replacement/production INACTIVE, preview healthy and old settings equality.
+- [x] Record both bounded log GETs without a retained-frontend match or cause/
+  completeness inference; preserve source-derived second-request attribution.
+- [x] Retain R5 outcome/log custody 17+9 finite/source files; record selected
+  port 6543/transaction-pooler route without a cause or remedy claim.
+- [ ] Complete fresh read-only settings/identity/persistence diagnostics; preserve
+  original outcomes/ledgers and unknown cause.
+- [ ] Establish current customer/protected-state and cleanup prerequisites before
+  further file writes; finish remaining 66 object acceptance. Never re-POST or
+  overwrite either existing object or recreate the bucket.
+- [ ] Verify restored-account/file continuity, recovery-point currency, stable
+  zero-cost hosting and remaining release/rollback gates. UI stays undeployed;
+  no serving or full-goal completion follows from source publication.
+
+[R5 evidence and limits](production-readiness.md#oct21-r5-adopts-both-pdfs-before-sql-shutdown). Earlier checklists retain their dated scope limits.
+
 ## Oct21 R4 stop and next read-only admission
 
 - [x] Verify exact105f8b9 publication: all five workflows/four Quality jobs pass,

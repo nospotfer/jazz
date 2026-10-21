@@ -95,13 +95,15 @@ strict read-route/session-sync allowlist and skipped Auth/dashboard side effects
 login or public HTTPS proof. Production startup stays denied. Build a fresh artifact from the published
 maintenance checkpoint; coordinate actual access after file acceptance and the
 pinned Storage scope closes. Real customer data is not isolated test data; provider/session/data-preservation evidence stays
-required. See `docs/maintenance/production-readiness.md` for the current R4 file
-checkpoint: first-object read-only adoption passes, then one new upload has byte
-readback but its SQL metadata check stops on57P01. Frozen verifiedObjects1;
-final customer/protected preservation and explicit rollback are unverified.
-Independent closure confirms the replacement paused. Freshly verify both existing
-objects and customer/protected state read-only before more uploads; never
-re-POST/overwrite them or recreate the bucket. The offline controlled-admin password source
+required. See `docs/maintenance/production-readiness.md` for the current R5 file
+checkpoint: both existing PDFs pass fresh read-only byte/metadata adoption,
+171,746 bytes; initial1,621 rows/14,270 cells match and new uploads0. The second
+stability SELECT fails57P01; closed/UNKNOWN state explicitly explains skipped
+final preservation/rollback, which remain unverified. Independent10:41:54 closure
+confirms the replacement paused. Diagnose actual connection settings/identity/
+persistence read-only before more uploads; no timeout cause or route remedy is
+established. Never re-POST/overwrite either file, recreate the bucket or repeat
+customer import. The offline controlled-admin password source
 match is not hosted login proof and grants no role/session/autoload authority.
 
 ## File Patterns
