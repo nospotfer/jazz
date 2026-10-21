@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
-import { lstat, mkdir, open, realpath } from 'node:fs/promises';
+import { lstat, mkdir, open, readdir, realpath } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NativeConfigurationError } from './config-policy.mjs';
 import { inspectNativeRelease, loadNativeConfiguration, readControlledFile } from './release-inspect.mjs';
 import {
-  outsideProductionPath, ProductionPreparationError, renderProductionServiceAssets,
+  outsideProductionPath, ProductionPreparationError, renderProductionContainerAssets, renderProductionServiceAssets,
   requireProductionCondition as requireCondition, validateProductionServicePlan,
 } from './production-service-plan.mjs';
 
@@ -68,9 +68,24 @@ export async function prepareProductionAssets({ planFile, outputDirectory }) {
   const parent = dirname(outputDirectory), stat = await lstat(parent);
   requireCondition(await realpath(parent) === parent && stat.isDirectory() && stat.uid === process.geteuid() &&
     (stat.mode & 0o777) === 0o700, 'PRODUCTION_OUTPUT_PARENT');
+  try { await lstat(outputDirectory); throw new ProductionPreparationError('PRODUCTION_OUTPUT_EXISTS'); }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
+  const assets = { ...renderProductionServiceAssets(inspected.plan, planFile),
+    ...renderProductionContainerAssets(inspected.plan, planFile, inspected.config.ca.path) };
+  const privateDirectory = async path => {
+    const current = await lstat(path);
+    requireCondition(await realpath(path) === path && current.isDirectory() && current.uid === process.geteuid() &&
+      (current.mode & 0o777) === 0o700, 'PRODUCTION_CONTAINER_DIRECTORY');
+  };
+  await privateDirectory(dirname(inspected.plan.runDirectory));
+  await privateDirectory(dirname(planFile));
+  const dockerConfig = join(dirname(planFile), 'docker-cli');
+  try { await mkdir(dockerConfig, { mode: 0o700 }); }
+  catch (error) { if (error.code !== 'EEXIST') throw error; }
+  await privateDirectory(dockerConfig);
+  requireCondition((await readdir(dockerConfig)).length === 0, 'PRODUCTION_DOCKER_CONFIG_NOT_EMPTY');
   // Exclusive mkdir rejects existing directories, including systemd locations.
   await mkdir(outputDirectory, { mode: 0o700 });
-  const assets = renderProductionServiceAssets(inspected.plan, planFile);
   for (const [name, content] of Object.entries({ ...assets, 'summary.json': `${JSON.stringify(inspected.summary, null, 2)}\n` })) {
     const file = await open(join(outputDirectory, name), 'wx', 0o600);
     try { await file.writeFile(content); await file.sync(); } finally { await file.close(); }

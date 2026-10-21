@@ -22,7 +22,8 @@ The plan contains exactly `version`, `sourceCommit`, `projectRef`, `origin`,
 `credentialsFile`). Paths must be absolute, canonical and free of shell/systemd
 expansion or control characters. The application/run sockets must fit100bytes.
 The run parent must already be owned0700 and the new run directory absent.
-The proposed production path is `/run/user/1000/culturadeljazz-production`;
+The proposed production path is
+`/run/user/1000/culturadeljazz-production-state/current`;
 isolated local tests use their own private runtime parent.
 
 Config, plan, CA, manifest and named-tunnel credentials stay outside the sealed
@@ -47,7 +48,10 @@ listener bind. The release inspector creates/removes its own cache-write probe.
 
 Proposal creation requires a new output directory under an owned0700 parent.
 It writes0600 proposed app, maintenance and tunnel units, two-host tunnel JSON,
-a data-preserving rollback note and summary. Existing outputs are never replaced.
+a data-preserving rollback note and summary. Container app/maintenance alternatives
+are included. Preparation validates the dedicated runtime parent and creates or
+checks an empty owner0700 `docker-cli` beside the plan. Inspection never creates
+that directory. Existing proposal outputs are never replaced.
 The preparation CLI still rejects install/start/activate operations. Proposed
 units now contain **working runtime commands**; copying/installing them is a
 production action, not another harmless preparation step.
@@ -84,13 +88,37 @@ an all-interface origin. The exact child PID file indicates first connection;
 it does not establish public domain or application health. Unexpected child loss
 fails the unit. Cleanup preserves unrelated or mismatched files.
 
-The proposed user units use restart-on-failure with limits,15s stop timeout,
-control-group cleanup, private umask/tmp, read-only home/system and explicit
-writable cache/runtime parent. App restart brings its dependent tunnel with it.
-Resource limits are2GiB/twoCPUs/256tasks; a long-running capacity/host-outage test
-is not complete. Units are not installed or enabled by these tools. The source
-launchers report inspection request counts separately from unmeasured runtime
-provider activity; zero in a preparation summary is not a live-health claim.
+### Monster container service selection
+
+Select `jazz-production-container.service.proposed` as the canonical
+`jazz-production.service`. The maintenance-container variant is an alternative
+under that same canonical name. The host tunnel unit/dependency graph stays
+separate. The direct host alternatives remain available for local diagnostics;
+**Monster's user-systemd namespace directives are ineffective**. Actual probes
+retain host network/mount namespaces and allow an owned home canary write.
+Earlier restart/stop proofs do not establish filesystem/network isolation.
+
+Container commands use the explicit local Docker socket and empty project-only
+CLI configuration, the pinned official Node image
+`node@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205`,
+and the separately inspected host Node executable mounted read-only. They run
+nonroot, read-only root, no capabilities, no new privileges and no published
+ports. Only the dedicated `culturadeljazz-production-state` parent and Next cache
+are writable host mounts; inputs/app/CA/binaries are read-only. The Docker socket
+and home directory are never mounted into the application container.
+
+Each systemd invocation names its own container using `${INVOCATION_ID}` and
+stops only that name. Resource limits are2GiB/twoCPUs/256tasks; tmpfs is256MiB.
+The fixed `culturadeljazz-production` network must be separately inspected and
+prepared in the approved release; these helpers do not create it. Production
+outbound connectivity/provider health remain untested. The host tunnel process
+still runs as the host user; it does not gain container isolation from directives.
+
+Restart-on-failure and explicit Docker stop supervise normal lifecycle. Docker
+daemon failure may leave an orphan; manually verify that exact invocation's
+container and edge state before recovery. Long-running load/host-outage/boot
+recovery remain open. No unit is installed/enabled by preparation. Inspection
+counts do not measure future runtime provider activity.
 
 ## Maintenance and rollback
 
@@ -144,3 +172,25 @@ uncreated transient unit. This verifies subsequent automatic restart/stop, not
 an installed boot-time enable/start sequence. It uses RestartSec1 and discarded
 output; the proposed units retain5s/journal. A fake PID proves local lifecycle,
 not actual Cloudflare connectivity. [Retained checkpoint](production-readiness.md#day-preview--oct21-2230-utc).
+
+### Oct22 actual build and container follow-up
+
+Published `0d45a33` passes all10 remote checks plus Vercel status and a clean
+45,856-file locked production build. Actual built Next starts in a nonroot,
+read-only, network-none Docker container, serves canonical robots metadata and
+an exact sealed JavaScript asset, then stops/removes its owned resources.
+Server inputs are synthetic; no real provider health or deployment is proven.
+The old smoke receipt's optional cookie field used a case-sensitive lookup and
+is not accepted as cookie evidence.
+
+The subsequent container-unit source passes39 focused cases/types/scoped lint.
+An actual generated-unit rehearsal with synthetic Next also passes startup,
+worker-loss restart into a new invocation/container, old-container removal,
+normal stop, exact maintenance503/HEAD/webhook behavior, container removal and
+owned runtime cleanup. Headers are normalized in this check. Deliberate test
+overrides are network=none, RestartSec1 and omitted absent production-tunnel
+dependency; the earlier separate paired host rehearsal covers its graph.
+No production network, installed/enabled unit, provider call or actual tunnel
+is created. Source pins are recorded in `/tmp/jazz-cunit-20261022/result.json`.
+The0d45 build predates the renderer change; a selected release must be rebuilt
+and inspected from its final approved source.

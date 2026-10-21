@@ -1,33 +1,28 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 23:05 UTC
+## Current priorities — Oct22 01:35 Madrid
 
-1. Build the clean actual production candidate from the implemented
-   [production runtime](production-startup.md).742 focused checks and actual
-   synthetic Monster systemd startup/restart/shutdown/maintenance503 pass.
-   This does not verify actual production credentials or hosting.
-   Preserve the live protected preview: student login/video/PDF rendering pass. The PDF failure
-   was caused by the browser guard, with causal and fresh hosted confirmation.
-   Behemoth review stays open until Oct22 22:17UTC/Oct23 00:17 Madrid.
-   [Current preview and limits](production-readiness.md#day-preview--oct21-2230-utc).
-2. Complete recovered student/content/media continuity and qualify the
-   recovery point. R14 admin login/dashboard/admin/logout and the accepted
-   database/PDF recovery are complete; do not repeat them or their cleanup.
-3. Bind actual production inputs and finish release/cutover assets from the
-   [free-hosting proposal](hosting.md). Domain/selected-account control, Auth/
-   SMTP/webhooks and the exact production approval remain prerequisites;
-   the public site is still503.
-4. Defer further coupon test launches while reviewing the retained SDK wrapper
-   denial. The latest scope reaches an actual unpaid payment after all six
-   billing fields and one Continue; SDK initialization is NO_GO, card/refund0.
-   Normal logout/data preservation/endpoint404 and resource closure pass with
-   SSH255/stale-socket cleanup disclosed. Preserve every closed scope and spent
-   marker. Paid coupon/currency/fulfillment and refund/access reversal remain
-   incomplete. [Current result](production-readiness.md#coupon-billing--oct21-2203-utc).
+1. Complete recovered student/content continuity and remaining recovery-point
+   qualification. Accepted customer/PDF recovery and recovered admin login are
+   complete; do not repeat them. The older Dodo current-paid set now matches
+   the3 archived payment references, but full RPO remains qualified.
+2. Finish account/domain/Auth/SMTP/LIVE-webhook and final release binding for the
+   [zero-cost hosting proposal](hosting.md). The clean0d45a33 build and isolated
+   actual Next startup pass. Container preparation/source checks and actual
+   generated-unit restart/stop/maintenance rehearsal pass; no activation occurs.
+   Final production selection needs the artifact rebuilt on its selected source.
+   Owner identifies personal Gmail as likely domain account; access is unverified.
+3. Preserve the owner preview until its fixed Oct22 22:17UTC expiry. Synthetic
+   student login/video/PDF, guest desktop/mobile and light/dark pass. Production
+   remains503; all UI/application changes remain unreleased.
+4. Keep further coupon launches deferred. Retained unpaid payment/SDK denial and
+   historical insufficient-wallet refund remain explicit gaps; no new financial
+   test is needed merely to repeat prior failure.
 
-Application/native `ace0804` is live only in the isolated protected preview.
-Published checkpoint `d8dd43e` has ten successful check runs; later source
-publication/checks remain separate. Production is unchanged and the full goal incomplete.
+Published0d45a33 passes all10 remote checks plus Vercel status. Subsequent
+container renderer passes39 focused tests/types/lint and actual synthetic
+lifecycle. See [plain-language checkpoint](review-status.md) and
+[current evidence](production-readiness.md#day-preview--oct21-2230-utc).
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

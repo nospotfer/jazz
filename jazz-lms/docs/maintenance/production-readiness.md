@@ -67,21 +67,36 @@ RestartSec1/null output are deliberate rehearsal overrides of proposed5s/journal
 no installed boot-time enable/start or real Cloudflare health is claimed. This
 is a runnable local implementation, not a deployed/credential-verified release.
 The [startup runbook](production-startup.md) documents explicit commands,
-proposed units and data-preserving fallback. Next build the clean actual
-production candidate, complete recovered student/media and recovery-point checks,
+proposed units and data-preserving fallback. Next bind the final release source, complete recovered student/media and recovery-point checks,
 and resolve account/domain/callback prerequisites for a concrete cutover review.
 Further coupon launches remain deferred.
 
-The clean994b1e1 production build passes locked install and45,856-file sealing
-with real recovered public settings and synthetic build-only server inputs.
-Remote application and persisted database checks pass. Initial Gitleaks flags
-three uses of the same test dummy; a narrowly anchored secret-only exception
-passes local full-history scanning and retains detection of an unrelated canary
-on the same line. Initial CodeQL flags case-sensitive script-tag extraction;
-case-insensitive matching and an uppercase regression pass30 focused cases.
-The real fallback HTML/policy is unchanged. Publish/recheck and rebuild from the
-corrected source before selecting a production artifact; the994 build and failed
-checks remain historical evidence, not a completed production review.
+The corrected0d45a33 source is published: all10 remote checks and Vercel status
+pass. Its fresh clean locked build seals45,856 files; actual built Next starts
+in nonroot/read-only/network-none Docker, serves canonical robots and a sealed
+JavaScript asset, then removes its owned container/run. Real server credentials
+are not supplied to the builder or runtime smoke. Provider health is not proven.
+The optional raw smoke cookie field is not accepted because its header lookup
+was case-sensitive. The earlier994 build/scanner failures remain retained.
+
+A subsequent actual host probe disproves user-systemd namespace isolation on
+Monster: network/mount namespaces remain shared and an owned home write succeeds.
+Earlier lifecycle tests remain valid. Container-unit alternatives now pass39
+focused tests/types/lint and an actual generated-unit startup/worker-loss restart/
+stop/maintenance503/HEAD/webhook/cleanup rehearsal with synthetic Next. It uses
+network=none, RestartSec1 and omits the absent production-tunnel dependency.
+No production network, installed/enabled service or provider action occurs.
+The final selected artifact must bind the later container-renderer source;
+0d45's successful build is not that newer artifact.
+
+Five LIVE GETs at23:29UTC verify all3 archived paid references remain succeeded
+with no refunds/disputes and no extra success in the complete older known-product
+list. Four voucher grants stay separate. Historical canonical money/status
+baseline, the newer-period refresh and nonpayment recovery currency remain open.
+[Exact payment result](dodo.md#oct21-2329-utc--archived-paid-references-match-current-older-status).
+The owner identifies `gabriel.barra@gmail.com` as likely domain/DNS account;
+CLI metadata does not establish access. No further owner action is requested
+at this checkpoint. [Plain-language handover](review-status.md).
 
 The hosted PDF confirmation closes normally with one local logout204. Root's
 22:45:12UTC final read-only comparison preserves all six business hashes, prior

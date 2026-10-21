@@ -76,7 +76,10 @@ production startup. Separate `launch-production.mjs` and
 `launch-production-tunnel.mjs` implement explicit production/maintenance and
 named-tunnel startup after full release inspection. Their default is inspection;
 real production execution still requires the approved concrete release. See
-`docs/maintenance/production-startup.md`. Its explicit Quick Tunnel Worker exception is preview-only; general
+`docs/maintenance/production-startup.md`. Monster user-systemd namespace
+directives are ineffective; select the proposed app/maintenance container units,
+not direct host units, for the release review. Preparation never creates the
+production Docker network or installs/starts units. Its explicit Quick Tunnel Worker exception is preview-only; general
 ingress continues to deny Worker browsing. `reconcile-runner.mjs` has a
 preparation-only CLI and no activation flag. A separately verified tunnel boundary
 is still required; plain `npm start` does not establish it. See

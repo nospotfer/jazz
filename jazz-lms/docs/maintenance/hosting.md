@@ -45,6 +45,12 @@ authority; the selected project was not linked to Jazz by the inspected metadata
 No unrelated projects were enumerated. A full zone export and DNSSEC state check
 are still required.
 
+The owner now identifies `gabriel.barra@gmail.com` as the likely domain/DNS
+account. That account is not recorded in the inspected Monster or Behemoth
+gcloud metadata. This does not disprove ownership; actual registrar/zone access
+remains unestablished. No token, project switch or domain configuration change
+follows from the email alone.
+
 If an existing project is explicitly linked to Jazz, the documented read-only
 probe is `gcloud dns managed-zones list --project=<verified-jazz-project>` with
 `--filter='dnsName=culturadeljazz.com.'` and output restricted to zone name, DNS
@@ -101,8 +107,9 @@ backend, runs the worker/ingress or maintenance mode, and supervises a pinned
 named tunnel without preview exceptions. Local synthetic process/HTTP and
 Monster user-systemd tests verify startup, worker-loss restart, shutdown and
 maintenance503. These do not establish real credentials, domain control,
-customer continuity or production health. A clean actual production build,
-account/backend prerequisites and the concrete release approval remain required.
+customer continuity or production health. A clean actual0d45a33 production build and isolated actual Next startup now pass.
+The later container-unit renderer needs its own final-source artifact binding;
+account/backend prerequisites and concrete release approval remain required.
 The longer payment-disabled preview remains isolated testing.
 
 Use these proposed dedicated paths and unit names; none is created by this plan:
@@ -111,10 +118,15 @@ Use these proposed dedicated paths and unit names; none is created by this plan:
 | --- | --- |
 | Immutable release and pointer | `/home/gabriel/.local/share/culturadeljazz-production/releases/<commit>/app` and sibling `current`; inspect hashes before each start |
 | Private configuration | `/home/gabriel/.config/culturadeljazz-production/`, parent 0700, config/CA/tunnel credential files 0600; explicit inputs, no ambient `.env` |
-| Application and ingress sockets | `/run/user/1000/culturadeljazz-production/{app.sock,edge.sock}`, run directory 0700, sockets 0600, umask 077 |
+| Application and ingress sockets | `/run/user/1000/culturadeljazz-production-state/current/{app.sock,edge.sock}`, run directory 0700, sockets 0600, umask 077 |
 | User services | `jazz-production.service` for the owned app/ingress process group and `jazz-production-tunnel.service` for the named tunnel; restart limits, finite logs and owned cleanup |
 | Reconciliation | A separate `jazz-payments-sweep.service`/timer at 03:15 UTC, only after the runner's production execution path and old-cron retirement are reviewed |
 
+Select the proposed container application/maintenance units on Monster: actual
+user-systemd namespace probes show its host isolation directives are ineffective.
+The app container has restricted mounts/no published ports; the named-tunnel
+launcher remains a separate host-user process. See the
+[container selection and actual lifecycle proof](production-startup.md#monster-container-service-selection).
 Pin Node 24 and the reviewed cloudflared binary per service. Leave the shared
 Node default, Docker services, SSH, firewall and reverse proxies unchanged.
 Propose initial app limits of 2 GiB memory, two CPUs and 256 tasks, then accept or

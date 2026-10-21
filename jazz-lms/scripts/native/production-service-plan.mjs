@@ -1,7 +1,8 @@
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { RECOVERY_PROJECT_REF } from './config-policy.mjs';
 
 export const PRODUCTION_ORIGIN = 'https://www.culturadeljazz.com';
+export const PRODUCTION_CONTAINER_IMAGE = 'node@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205';
 const HOSTS = ['www.culturadeljazz.com', 'culturadeljazz.com'];
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
 
@@ -74,7 +75,7 @@ export function renderProductionServiceAssets(input, planFile) {
   }, plan);
   const appEntry = join(plan.appRoot, 'scripts/native/launch-production.mjs');
   const tunnelEntry = join(plan.appRoot, 'scripts/native/launch-production-tunnel.mjs');
-  const unit = (description, entry, operation, dependency = '') => `# PROPOSED: install/start only after the owner approves this exact release.\n[Unit]\nDescription=${description}\nStartLimitIntervalSec=60\nStartLimitBurst=3\n${dependency}\n[Service]\nType=simple\nUMask=0077\nWorkingDirectory=${plan.appRoot}\nExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C ${plan.nodeExecutable} ${entry} ${operation} ${planFile}\nRestart=on-failure\nRestartSec=5\nTimeoutStopSec=15\nKillMode=control-group\nNoNewPrivileges=true\nPrivateTmp=true\nProtectSystem=strict\nProtectHome=read-only\nReadWritePaths=${dirname(plan.runDirectory)} ${join(plan.appRoot, '.next/cache')}\nStandardOutput=journal\nStandardError=journal\nMemoryMax=2G\nCPUQuota=200%\nTasksMax=256\n\n[Install]\nWantedBy=default.target\n`;
+  const unit = (description, entry, operation, dependency = '') => `# PROPOSED: install/start only after the owner approves this exact release.\n# Direct host alternative: user-systemd namespace directives do not establish isolation on Monster.\n[Unit]\nDescription=${description}\nStartLimitIntervalSec=60\nStartLimitBurst=3\n${dependency}\n[Service]\nType=simple\nUMask=0077\nWorkingDirectory=${plan.appRoot}\nExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C ${plan.nodeExecutable} ${entry} ${operation} ${planFile}\nRestart=on-failure\nRestartSec=5\nTimeoutStopSec=15\nKillMode=control-group\nNoNewPrivileges=true\nPrivateTmp=true\nProtectSystem=strict\nProtectHome=read-only\nReadWritePaths=${dirname(plan.runDirectory)} ${join(plan.appRoot, '.next/cache')}\nStandardOutput=journal\nStandardError=journal\nMemoryMax=2G\nCPUQuota=200%\nTasksMax=256\n\n[Install]\nWantedBy=default.target\n`;
   const appDependency = 'Wants=jazz-production-tunnel.service\nBefore=jazz-production-tunnel.service\n';
   return {
     'jazz-production.service.proposed': unit('Cultura del Jazz application and ingress', appEntry, '--run-production', appDependency),
@@ -88,5 +89,44 @@ export function renderProductionServiceAssets(input, planFile) {
       hostFailure: 'Restore reviewed web DNS records to the still-protected paused Vercel destination; this is a 503 outage, not a healthy application.',
       preserve: 'Keep customer rows, sessions, canonical payment facts and webhook ledgers. Never run an unsafe grant inverse or rewind the database.',
     }, null, 2)}\n`,
+  };
+}
+
+/** Alternative app units; install the selected variant as jazz-production.service.
+ * Docker is contacted only during later explicit service activation, never here.
+ * Host namespace directives are not used as evidence of container isolation.
+ */
+export function renderProductionContainerAssets(input, planFile, caPath) {
+  const plan = validateProductionServicePlan(input), runtimeParent = dirname(plan.runDirectory);
+  requireProductionCondition(basename(runtimeParent) === 'culturadeljazz-production-state' &&
+    basename(plan.runDirectory) === 'current', 'PRODUCTION_CONTAINER_RUNTIME_SCOPE');
+  requireProductionCondition(safePath(planFile) && safePath(caPath), 'PRODUCTION_CONTAINER_INPUT');
+  const readonly = [...new Set([plan.appRoot, planFile, plan.configFile, plan.manifestFile,
+    plan.nodeExecutable, caPath, plan.cloudflaredExecutable, plan.tunnel.credentialsFile])];
+  requireProductionCondition(readonly.every(path => outsideProductionPath(runtimeParent, path)) &&
+    outsideProductionPath(plan.appRoot, planFile) && outsideProductionPath(plan.appRoot, caPath), 'PRODUCTION_CONTAINER_INPUT');
+  const uid = process.geteuid(), gid = process.getegid();
+  requireProductionCondition(Number.isSafeInteger(uid) && uid > 0 && Number.isSafeInteger(gid) && gid > 0, 'PRODUCTION_CONTAINER_OWNER');
+  const dockerConfig = join(dirname(planFile), 'docker-cli');
+  requireProductionCondition(outsideProductionPath(runtimeParent, dockerConfig) &&
+    outsideProductionPath(plan.appRoot, dockerConfig), 'PRODUCTION_CONTAINER_INPUT');
+  const docker = `/usr/bin/docker --host=unix:///var/run/docker.sock --config=${dockerConfig}`;
+  // Literal systemd expansion, not a plan field or a shell substitution. A new
+  // invocation cannot adopt/stop a previous invocation's static container name.
+  const containerName = 'culturadeljazz-${INVOCATION_ID}';
+  const mounts = [...readonly.map(path => `--mount=type=bind,src=${path},dst=${path},readonly`),
+    `--mount=type=bind,src=${join(plan.appRoot, '.next/cache')},dst=${join(plan.appRoot, '.next/cache')}`,
+    `--mount=type=bind,src=${runtimeParent},dst=${runtimeParent}`];
+  const command = [docker, 'run', '--rm', '--pull=never', '--init', '--read-only', '--cap-drop=ALL',
+    '--security-opt=no-new-privileges', `--user=${uid}:${gid}`, '--memory=2g', '--cpus=2', '--pids-limit=256',
+    '--stop-timeout=15', '--network=culturadeljazz-production', `--name=${containerName}`,
+    '--label=com.culturadeljazz.project=production', `--label=com.culturadeljazz.source=${plan.sourceCommit}`,
+    '--tmpfs=/tmp:rw,nosuid,nodev,size=268435456,mode=1777', ...mounts,
+    `--workdir=${plan.appRoot}`, `--entrypoint=${plan.nodeExecutable}`, PRODUCTION_CONTAINER_IMAGE,
+    join(plan.appRoot, 'scripts/native/launch-production.mjs')];
+  const unit = (description, operation) => `# PROPOSED: install the selected variant as jazz-production.service.\n# Requires an already-reviewed culturadeljazz-production network; never creates it.\n# ExecStop may ignore an already-removed container. Daemon failure/orphan closure requires manual verification.\n[Unit]\nDescription=${description}\nStartLimitIntervalSec=60\nStartLimitBurst=3\nWants=jazz-production-tunnel.service\nBefore=jazz-production-tunnel.service\n\n[Service]\nType=simple\nUMask=0077\nWorkingDirectory=${plan.appRoot}\nExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C ${command.join(' ')} ${operation} ${planFile}\nExecStop=-${docker} stop --time=15 ${containerName}\nRestart=on-failure\nRestartSec=5\nTimeoutStopSec=30\nKillMode=control-group\nStandardOutput=journal\nStandardError=journal\n\n[Install]\nWantedBy=default.target\n`;
+  return {
+    'jazz-production-container.service.proposed': unit('Cultura del Jazz container application and ingress', '--run-production'),
+    'jazz-production-maintenance-container.service.proposed': unit('Cultura del Jazz container maintenance 503', '--run-maintenance'),
   };
 }

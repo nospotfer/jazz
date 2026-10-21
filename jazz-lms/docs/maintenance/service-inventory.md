@@ -13,6 +13,15 @@ maintenance503. They are not installed/deployed; account/domain and actual
 production release prerequisites remain. No DNS or production change occurred.
 [Current outcomes and limits](production-readiness.md#day-preview--oct21-2230-utc).
 
+Latest follow-up:0d45a33 passes all10 remote checks/Vercel status, clean locked
+production build and actual isolated Next startup/static serving/cleanup. Actual
+host namespace probes show user-systemd isolation ineffective; proposed container
+units pass focused checks and actual synthetic lifecycle. No new production
+network/service/tunnel is activated. Owner indicates personal Gmail for domain
+control; registrar/DNS access is still unverified. Five read-only LIVE Dodo GETs
+match all3 archived paid references with no current refunds/disputes; full RPO
+remains qualified. [Plain-language checkpoint](review-status.md).
+
 ## Earlier verified replacement state — Oct21 20:33 UTC
 
 Replacement is independently paused with full Auth restored and original project

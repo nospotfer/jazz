@@ -1,5 +1,39 @@
 # Maintenance log
 
+## Oct22 01:35 Madrid — Build/runtime and older-payment checkpoint
+
+Published0d45a33 has all10 successful remote checks plus Vercel status, a fresh
+45,856-file locked production build, and actual Next.js startup/static asset/
+canonical robots verification inside a nonroot, read-only, network-none Docker
+container. Stop/container removal/owned runtime cleanup pass. All server inputs
+are synthetic. The older raw smoke receipt's optional noCookie field used a
+case-sensitive header lookup and is not accepted as cookie evidence.
+
+Actual Monster namespace probes show user-systemd PrivateNetwork/PrivateTmp/
+ProtectSystem/ProtectHome do not enforce isolation here: network/mount namespaces
+remain shared and the owned home canary is writable. Earlier lifecycle results
+remain valid, but unit properties alone are not isolation proof. Container
+app/maintenance alternatives pass39 focused cases/types/lint and actual generated
+unit startup/new-invocation restart/stop/maintenance503/HEAD/webhook/cleanup.
+The rehearsal uses synthetic Next, network-none, RestartSec1 and omits the absent
+production tunnel dependency. No production network/unit is activated.
+Finite build/qualified Next/unit/payment review files are retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-production-container-20261022/`
+separately from credentials; local unencrypted/off-site recovery unestablished.
+
+Five read-only Dodo LIVE GETs at23:29UTC verify the3 archived paid references
+remain succeeded, with no refunds/disputes. A complete pre-Oct13 known-product
+page has those3 successes and3 failures, no unarchived current success. Preserve
+4 voucher grants separately. Historical transitions/canonical equality, newer
+period refresh and nonpayment recovery currency are not proved. No writes occur.
+
+The owner identifies gabriel.barra@gmail.com as the likely domain/DNS account;
+no matching account is recorded in the inspected local CLI. This is access
+unestablished, not account absence. No DNS/account change or approval request.
+User asks for a clear account of elapsed work; review-status.md now leads with
+what is delivered, what remains offline and the concrete current work.
+
+
 ## Oct21 — Production build passes; CI follow-up corrects scanner findings
 
 Commit994b1e1 builds from a clean private clone with locked install and a sealed

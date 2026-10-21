@@ -12,8 +12,14 @@
 - [x] Implement production app/maintenance/named-tunnel path and rehearse local
       synthetic startup, worker-loss restart, shutdown and maintenance503;
       separate paired-unit restart/dependent-stop cleanup also passes.
-- [ ] Build the clean actual production candidate; verify recovered student/media,
-      recovery currency and remaining paid coupon/refund gates.
+- [x] Build clean0d45a33 candidate and verify actual Next/robots/sealed static asset
+      in isolated Docker with synthetic server inputs; verify clean removal.
+- [x] Verify proposed container-unit startup/restart/stop/maintenance with synthetic
+      inputs; qualify ineffective user-systemd host isolation.
+- [x] Inspect current older LIVE paid set:3 archived refs, no refunds/disputes or
+      extra known-product successes; preserve4 voucher grants separately.
+- [ ] Bind artifact to final selected source; verify recovered student/media,
+      full recovery currency and remaining paid coupon/refund decisions.
 - [ ] Verify account/domain, callbacks/SMTP/LIVE webhooks and prepare exact cutover
       for review. Public production remains503; preview is not production hosting.
 

@@ -12,6 +12,12 @@
 | Current public UI |1440/390, actual light/dark toggle, no overflow; public promo readyState4/error0 | Passed for these views; not all locale/device coverage |
 | Production runtime |2,976 normal passes/80 skips; 742 focused native passes; app/maintenance/named-tunnel source and actual synthetic Monster systemd startup/worker-loss restart/stop/maintenance503 | Implemented locally; no production/DNS changes, public503 |
 
+| Production candidate | Clean0d45a33 locked build/45,856 sealed files; actual built Next/robots/sealed JS in nonroot read-only network-none Docker, clean stop/removal | Passed with synthetic server inputs; provider health unverified |
+| Host isolation | Actual user-systemd probes keep host namespaces and allow canary write | Ineffective; choose container proposal, preserve lifecycle proofs separately |
+| Container unit |39 focused cases/types/lint; actual generated-unit startup/new-invocation restart/stop/maintenance/cleanup | Passed synthetic Next, network-none/test overrides; no installed unit or tunnel |
+| Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra successes in complete older known-product list | Current older status passed; historical canonical baseline/full RPO unverified |
+| Domain account | Owner names gabriel.barra@gmail.com; no matching inspected CLI identity | Ownership indicated; registrar/DNS access unverified |
+
 [Preview and evidence](production-readiness.md#day-preview--oct21-2230-utc).
 
 ## Current verification — Oct21 22:03 UTC

@@ -1,5 +1,25 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct21 23:29 UTC — Archived paid references match current older status
+
+Exactly5 LIVE GETs/all200 inspect the current known Jazz product, one complete
+pre-Oct13 all-status product page and3 archived payment details. All3 paid
+references remain succeeded, with empty refunds/disputes and null refund_status.
+The list has6 records: those3 successes and3 failures; no additional current
+success. The other4 archived Purchase rows are voucher grants, not payment IDs;
+no LessonPurchase rows exist. No provider/backend/application mutation occurs.
+
+This closes current older-created payment status for this known product at
+observation, not full RPO. The archive lacks historical canonical money/status/
+refund columns; current facts cannot invent a past baseline or transition
+history. The earlier zero-result Oct13-onward observation is not refreshed.
+Actual list filtering uses created_at_lte, qualifying an earlier field name
+that incorrectly said Exclusive. All original results and spent markers remain.
+Finite review (no credentials/provider IDs/customer fields):
+`/tmp/jazz-maintenance/payment-recovery-point-older-status-20261022/finite-review.json`,
+SHA256 `e0ee101f9d254a756b933f86b5ecee3b4f1d16a016b20d16752662b048edab67`.
+
+
 ## Latest Oct21 22:03 UTC — Billing reaches unpaid payment; SDK denied
 
 The subsequent bounded scope verifies six nonempty billing fields and one

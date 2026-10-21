@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 import { PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, RECOVERY_PROJECT_REF, validateNativeConfig } from "../../scripts/native/config-policy.mjs";
 import { publicBuildFingerprint } from "../../scripts/native/release-inspect.mjs";
 import { inspectProductionPreparation, prepareProductionAssets, productionPreparationCli } from "../../scripts/native/prepare-production.mjs";
-import { renderProductionServiceAssets, validateProductionServicePlan, validateProductionTunnel } from "../../scripts/native/production-service-plan.mjs";
+import { PRODUCTION_CONTAINER_IMAGE, renderProductionContainerAssets, renderProductionServiceAssets, validateProductionServicePlan, validateProductionTunnel } from "../../scripts/native/production-service-plan.mjs";
 
 const source = "a".repeat(40);
 const origin = "https://www.culturadeljazz.com";
@@ -38,7 +38,7 @@ function configuration(ref = RECOVERY_PROJECT_REF, caPath = "/private/synthetic-
 function plan() {
   return { version: 1, sourceCommit: source, projectRef: RECOVERY_PROJECT_REF, origin,
     configFile: "/private/config.json", appRoot: "/private/release/app", manifestFile: "/private/manifest.json",
-    runDirectory: `/run/user/${process.geteuid!()}/culturadeljazz-production`, nodeExecutable: process.execPath,
+    runDirectory: `/run/user/${process.geteuid!()}/culturadeljazz-production-state/current`, nodeExecutable: process.execPath,
     cloudflaredExecutable: "/private/cloudflared", cloudflaredSha256: "c".repeat(64),
     tunnel: { id: "12345678-1234-4123-8123-123456789abc", credentialsFile: "/private/tunnel.json" } };
 }
@@ -47,6 +47,7 @@ function fixture() {
   const app = directory(root, "app"), ca = join(root, "ca.crt"); writeFileSync(ca, certificate, { mode: 0o600 });
   const config = configuration(RECOVERY_PROJECT_REF, ca); config.ca.sha256 = hash(certificate);
   const input = { ...plan(), configFile: join(root, "config.json"), appRoot: app, manifestFile: join(root, "manifest.json"),
+    runDirectory: join(directory(root, "culturadeljazz-production-state"), "current"),
     cloudflaredExecutable: join(root, "cloudflared"), tunnel: { ...plan().tunnel, credentialsFile: join(root, "tunnel.json") } };
   const binary = "synthetic executable bytes - never executed"; writeFileSync(input.cloudflaredExecutable, binary, { mode: 0o500 }); input.cloudflaredSha256 = hash(binary);
   json(input.configFile, config);
@@ -144,6 +145,40 @@ describe("production service and named-tunnel review assets", () => {
   });
 });
 
+describe("fixed production container units", () => {
+  test("binds only reviewed inputs, cache and dedicated state with invocation-scoped cleanup", () => {
+    const input = plan(), ca = "/private/ca.crt";
+    const assets = renderProductionContainerAssets(input, "/private/plan.json", ca);
+    const text = assets["jazz-production-container.service.proposed"];
+    const argv = text.split("\n").find(line => line.startsWith("ExecStart="))!.slice(10).split(" ");
+    for (const flag of ["--host=unix:///var/run/docker.sock", "--config=/private/docker-cli", "--rm", "--pull=never", "--init", "--read-only", "--cap-drop=ALL", "--security-opt=no-new-privileges", `--user=${process.geteuid!()}:${process.getegid!()}`, "--memory=2g", "--cpus=2", "--pids-limit=256", "--stop-timeout=15", "--network=culturadeljazz-production", "--name=culturadeljazz-${INVOCATION_ID}", PRODUCTION_CONTAINER_IMAGE]) expect(argv).toContain(flag);
+    const mounts = argv.filter(arg => arg.startsWith("--mount="));
+    const readonly = [input.appRoot, "/private/plan.json", input.configFile, input.manifestFile, input.nodeExecutable, ca, input.cloudflaredExecutable, input.tunnel.credentialsFile];
+    expect(mounts.filter(arg => arg.endsWith(",readonly"))).toEqual(readonly.map(path => `--mount=type=bind,src=${path},dst=${path},readonly`));
+    expect(mounts.filter(arg => !arg.endsWith(",readonly"))).toEqual([`--mount=type=bind,src=${input.appRoot}/.next/cache,dst=${input.appRoot}/.next/cache`, `--mount=type=bind,src=${dirname(input.runDirectory)},dst=${dirname(input.runDirectory)}`]);
+    expect(mounts.some(arg => arg.includes("docker.sock"))).toBe(false);
+    expect(argv.some(arg => /^--(?:publish|privileged|pid=host|network=host)/.test(arg))).toBe(false);
+    expect(text).toContain("ExecStop=-/usr/bin/docker --host=unix:///var/run/docker.sock --config=/private/docker-cli stop --time=15 culturadeljazz-${INVOCATION_ID}");
+    expect(text).toContain("Wants=jazz-production-tunnel.service\nBefore=jazz-production-tunnel.service");
+    expect(assets["jazz-production-maintenance-container.service.proposed"]).toContain("--run-maintenance /private/plan.json");
+  });
+  test.each(["/run/user/1000/current", "/private/culturadeljazz-production-state/other"])("rejects an overbroad or wrong state path %s", runDirectory => {
+    expect(() => renderProductionContainerAssets({ ...plan(), runDirectory }, "/private/plan.json", "/private/ca.crt")).toThrow("PRODUCTION_CONTAINER_RUNTIME_SCOPE");
+  });
+  test("rejects any read-only input inside the writable state parent", () => {
+    const input = plan(), parent = dirname(input.runDirectory);
+    const changes = [ { appRoot: `${parent}/release` }, { configFile: `${parent}/config.json` }, { manifestFile: `${parent}/manifest.json` }, { nodeExecutable: `${parent}/node` }, { cloudflaredExecutable: `${parent}/cloudflared` }, { tunnel: { ...input.tunnel, credentialsFile: `${parent}/tunnel.json` } } ];
+    for (const change of changes) expect(() => renderProductionContainerAssets({ ...input, ...change }, "/private/plan.json", "/private/ca.crt")).toThrow("PRODUCTION_CONTAINER_INPUT");
+    expect(() => renderProductionContainerAssets(input, `${parent}/plan.json`, "/private/ca.crt")).toThrow("PRODUCTION_CONTAINER_INPUT");
+    expect(() => renderProductionContainerAssets(input, "/private/plan.json", `${parent}/ca.crt`)).toThrow("PRODUCTION_CONTAINER_INPUT");
+  });
+  test("rejects root ownership and arbitrary image/network plan extensions", () => {
+    const uid = vi.spyOn(process, "geteuid").mockReturnValue(0);
+    try { expect(() => renderProductionContainerAssets(plan(), "/private/plan.json", "/private/ca.crt")).toThrow("PRODUCTION_CONTAINER_OWNER"); } finally { uid.mockRestore(); }
+    expect(() => renderProductionContainerAssets({ ...plan(), image: "arbitrary", network: "host" }, "/private/plan.json", "/private/ca.crt")).toThrow("PRODUCTION_PLAN_SHAPE");
+  });
+});
+
 describe("actual filesystem preparation without service or provider work", () => {
   test("fully inspects the selected sealed fixture and writes only a new private proposal bundle", async () => {
     vi.stubGlobal("fetch", () => { throw new Error("Network forbidden"); });
@@ -153,6 +188,9 @@ describe("actual filesystem preparation without service or provider work", () =>
     const out = join(f.root, "proposal"); await prepareProductionAssets({ planFile: f.planFile, outputDirectory: out });
     expect(lstatSync(out).mode & 0o777).toBe(0o700);
     for (const name of readdirSync(out)) { expect(lstatSync(join(out, name)).mode & 0o777).toBe(0o600); expect(readFileSync(join(out, name), "utf8")).not.toContain(marker); }
+    expect(existsSync(join(out, "jazz-production-container.service.proposed"))).toBe(true);
+    expect(existsSync(join(out, "jazz-production-maintenance-container.service.proposed"))).toBe(true);
+    expect(lstatSync(join(f.root, "docker-cli")).mode & 0o777).toBe(0o700); expect(readdirSync(join(f.root, "docker-cli"))).toEqual([]);
     expect(existsSync(join(f.app, ".next/cache/.native-write-probe"))).toBe(false);
     expect(existsSync(f.input.runDirectory)).toBe(false);
   });
@@ -172,6 +210,16 @@ describe("actual filesystem preparation without service or provider work", () =>
   test("mismatching tunnel credentials are rejected without printing their contents", async () => {
     const f = fixture(); json(f.input.tunnel.credentialsFile, { TunnelID: "other", AccountTag: "a".repeat(32), TunnelSecret: Buffer.alloc(32, 7).toString("base64") });
     await expect(inspectProductionPreparation(f.planFile)).rejects.toThrow("PRODUCTION_TUNNEL_CREDENTIAL_SHAPE");
+  });
+  test("nonempty Docker auth/context configuration is preserved and rejected", async () => {
+    const f = fixture(), docker = directory(f.root, "docker-cli"); writeFileSync(join(docker, "config.json"), "synthetic existing context");
+    const out = join(f.root, "proposal"); await expect(prepareProductionAssets({ planFile: f.planFile, outputDirectory: out })).rejects.toThrow("PRODUCTION_DOCKER_CONFIG_NOT_EMPTY");
+    expect(readFileSync(join(docker, "config.json"), "utf8")).toBe("synthetic existing context"); expect(existsSync(out)).toBe(false);
+  });
+  test("peer-readable runtime parent is rejected before preparing Docker configuration", async () => {
+    const f = fixture(); chmodSync(dirname(f.input.runDirectory), 0o755);
+    await expect(prepareProductionAssets({ planFile: f.planFile, outputDirectory: join(f.root, "proposal") })).rejects.toThrow("PRODUCTION_CONTAINER_DIRECTORY");
+    expect(existsSync(join(f.root, "docker-cli"))).toBe(false);
   });
   test.each(["--activate", "--activate-tunnel", "--start", "--install"])("CLI denies %s before reading private inputs", async operation => {
     await expect(productionPreparationCli([operation, "/nonexistent/must-not-read.json"])).rejects.toThrow("PRODUCTION_ACTIVATION_NOT_IMPLEMENTED");

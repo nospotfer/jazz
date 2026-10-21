@@ -1,32 +1,40 @@
 # Maintenance review checkpoints
 
-## Current status — Oct21 23:05 UTC
+## Current status — Oct22 01:35 Madrid
 
-- Production is paused/503; application and UI improvements are unreleased.
-- Protected synthetic-data review preview is live on source `ace0804`, until
-  Oct22 22:17UTC/Oct23 00:17 Madrid. Behemoth's separate review browser is open;
-  its second tab has an unsubmitted synthetic student login prepared.
-- Actual student login, signed Mux decode and incomplete-course certificate
-  denial pass. Hosted PDF rendering now passes at1440/390, light/dark, after
-  fixing the browser guard's internal-resource denial. No product PDF change.
-  Local logout/browser closure and fresh final selected preservation pass.
-- Current guest desktop/mobile and actual light/dark toggle checks pass without
-  overflow. The temporary preview is payment/mail/cron disabled, not production.
-- Recovered database/PDF import and R14 admin login/dashboard/admin/logout are
-  complete. Do not repeat them or their accepted corrections/cleanup.
-- Current-source coupon Apply80/8/72, checkout creation, six filled billing fields
-  and an actual unpaid payment pass. SDK initialization is NO_GO because the
-  test browser denies its wrapper request; card/refund0. Paid fulfillment is
-  incomplete and further coupon launches are deferred.
-- Normal logout/final preservation pass, sessions/purchases0, endpoint404 and
-  resource closure verified. SSH255 and separately removed exact stale socket,
-  105 blocked requests/120 console errors remain disclosed. No blanket health claim.
-- Production app/maintenance and named-tunnel runtime is implemented locally.
- 742 focused checks, types/lint and actual synthetic Monster user-systemd
-  startup/worker-loss restart/stop/maintenance503 pass. No real service or tunnel
-  is activated. Next build the clean actual production candidate, complete
-  recovered student/media/recovery currency and finish account/cutover review.
-  No DNS or production change is made. Avoid tooling loops and recovery replay.
+**The public website is still paused/503. All code and UI improvements remain
+unreleased. The usable review preview is separate and uses synthetic data.**
+
+- Completed: authentication/authorization/payment fixes, responsive landing and
+  student UI work, accepted database/all 68-PDF recovery, and recovered admin
+  login/dashboard/logout. Current isolated student login, signed video and PDF
+  rendering pass, including desktop/mobile and light/dark checks.
+- Published source `0d45a33` passes all 10 remote checks and Vercel status. Its clean
+  locked production build seals 45,856 files. Actual built Next.js starts inside
+  an isolated nonroot read-only Docker container, serves canonical robots and a
+  matching JavaScript asset, then closes cleanly. Server inputs are synthetic;
+  real production provider health is not proven.
+- Current work: the free Monster container-service packaging now passes its final
+  synthetic startup/restart/stop/maintenance rehearsal. An actual
+  host probe found user-systemd namespace restrictions ineffective; direct units
+  must not be described as isolated. Container alternatives pass 39 focused cases, types and lint.
+  No production service, backend resume, tunnel or DNS change has happened.
+- Latest payment inspection: five read-only LIVE requests verify all 3 archived
+  paid references remain succeeded with no refunds/disputes; the complete older
+  known-product list has no extra successes. Four voucher grants remain separate.
+  Historical amount equality and full recovery-point currency remain unverified.
+- Still required for release: recovered student/content continuity, remaining
+  integration/recovery-point decisions, domain access and exact cutover review.
+  Owner identifies `gabriel.barra@gmail.com` as likely domain/DNS account;
+  recorded CLI access does not yet establish authority. No owner action is
+  requested at this checkpoint.
+- Owner review: use Behemoth's prepared separate browser, or run
+  `/home/gabriel/.local/share/culturadeljazz-maintenance/review-20261022/open-preview.sh`.
+  It expires Oct23 00:17 Madrid; payment/application-mail/cron are disabled.
+
+The elapsed work has included too much test infrastructure. Next work should
+close the concrete release gaps above, without reopening completed recovery or
+optional financial tests.
 
 [Live preview, launcher and exact limits](production-readiness.md#day-preview--oct21-2230-utc).
 Everything below is dated history and may contain superseded pending actions.
