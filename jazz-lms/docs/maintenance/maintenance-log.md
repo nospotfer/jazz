@@ -1,5 +1,26 @@
 # Maintenance log
 
+## Oct21 — Actual transaction boundary passes; correction remains pending
+
+- Root94325exit0/17:41:37 verifies one5432 session with six metadata-only SQL calls:
+  READ ONLY BEGIN/identity/rollback, SERIALIZABLE READ WRITE BEGIN/identity/rollback.
+  Same actual SQL backend/postmaster, two confirmed rollbacks and frontend close;
+  no DML, COMMIT, customer reads, Auth change or application startup.
+- Parent63 Management/one resume-pause/Auth-desired-original equality pass.
+  Independent nine GETs at17:42:16 confirm paused target/full current-scope Auth
+  equality/original settings; desired404 stays qualified. Earlier57P01 cause and
+  that scope's final customer readback remain unproven. Apply the prepared56-cell
+  correction next with full typed-state checks, then actual admin access.
+- Earlier diagnostic attempts stop on process admission before connecting. First
+  has zero provider calls; second resumes/closes with independent nine-GET pause/
+  retained Auth/original equality. Rejected report was missing, so concurrent
+  maintenance interference is unproven. Successful invocation uses exec/serialized
+  work; unchanged process guards now retain reports before checking them.
+- One separate startup-log GET captures shutdown/readiness events, not a cause.
+  Eleven finite source/outcome files retained in review-checkpoint-auth-transaction-
+  boundary-20261021, manifest61214f96…; no credentials/enabled plans/raw values.
+  All actual handles terminal, production paused and application/UI unreleased.
+
 ## Oct21 — Correction prepared; write admission stops before mutation
 
 - Exact56-cell Auth reset correction passes30 focused controls, independent source

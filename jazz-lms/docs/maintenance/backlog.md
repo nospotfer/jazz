@@ -2,11 +2,10 @@
 
 ## Current priorities — October21
 
-1. Diagnose native connection shutdown at the read-only-to-write boundary, then
-   apply the prepared56-cell Auth-flow correction and verify admin login/logout.
-   Source review,30 controls and real-archive/model checks pass; actual query74
-   fails57P01 before UPDATE/COMMIT. Final readback remains unproven on the closed
-   connection; target/settings close safely. Keep every spent scope unchanged.
+1. Apply the reviewed56-cell Auth-flow correction and verify admin login/logout.
+   The fresh six-call transaction-boundary check passes with the same SQL session,
+   both rollbacks and closure; the earlier57P01 cause remains unproven. Keep full
+   typed-state checks: the earlier final customer readback gap is still open.
 2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
    actual source/origin/backend. Keep customer writes and payment tests isolated.
 3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
@@ -20,14 +19,13 @@ The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
 recreate the bucket or replay file uploads. This does not prove data currency
 after the archive's recovery point.
 
-The latest scope closes17:09 UTC with replacement independently paused and Auth/
-original settings unchanged. Its73 initial readonly calls match the original
-baseline, but the next write-BEGIN fails57P01 and closes the connection. No UPDATE,
-COMMIT, Auth PATCH or password attempt occurs; final data readback is unavailable.
-Service logs show earlier startup shutdowns without exact failure correlation.
-The56-cell correction is reviewed/prepared and remains unapplied. The earlier
-protected public login page passes200/visible fields; hosted login still fails
-before correction. Paused desired404 retains its qualified comparison limit.
+The latest metadata-only scope closes successfully at17:41 UTC; independent
+17:42 checks confirm replacement paused/full Auth equality and original projects
+unchanged. Its six SQL calls verify the read-only-to-write transaction transition
+without changing data. This does not reverify customer rows or resolve the earlier
+57P01's cause. The56-cell correction remains prepared and unapplied. Protected
+HTTPS login-page proof passes, but hosted admin/customer access remains open.
+Paused desired404 retains its qualified comparison limit.
 
 Current evidence: [production readiness](production-readiness.md),
 [maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).

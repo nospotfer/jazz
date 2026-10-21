@@ -1,20 +1,18 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 17:09 UTC
+## Latest verified replacement state — Oct21 17:42 UTC
 
-Replacementklaiiikojgdfclzhqfgt is independently paused. Latest scope65091exit1
-establishes original baseline with73 readonly SQL calls, then write-BEGIN74
-fails57P01/ADMIN_SHUTDOWN and closes its connection. UPDATE/COMMIT/Auth PATCH/
-password0; the56-cell compatibility correction remains unapplied. Final customer
-readback/rollback cannot be verified. Parent Auth/desired equality and independent
-Auth/pause/original-settings equality pass; paused desired404 stays qualified.
+Replacementklaiiikojgdfclzhqfgt is independently paused. Root94325exit0 verifies
+one5432 session across read-only rollback and serializable write BEGIN/identity/
+rollback: six metadata-only SQL calls, same actual SQL backend/postmaster, zero
+DML/COMMIT and frontend closed. Parent63 Management/one resume-pause/Auth-desired-
+original equality and independent nine-GET paused/Auth/original checks pass.
+Paused desired404 remains qualified. No application, tunnel or browser starts.
 
-Three startup fast-shutdown log events precede the healthy sample; no exact
-correlation establishes the failed connection's cause. The source fix is reviewed
-with30 controls and real original-archive/model checks, not actual correction
-proof. The native builder/tunnel90225 ends at fixed expiry/exit0; socket absent.
-Public Vercel remains paused/UI unreleased; no hosting, price, mail or payment
-change follows. [Current evidence](production-readiness.md#current-checkpoint--oct21-1709-utc).
+The56-cell correction is still unapplied. The earlier57P01 cause and final
+customer readback gap remain unproven; this check reads no customer rows.
+All68 PDFs remain accepted. Public Vercel stays paused and UI unreleased.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1742-utc).
 
 ## Current replacement state — Oct21 14:48:17 UTC
 

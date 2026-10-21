@@ -1,6 +1,6 @@
 # Goal verification matrix
 
-## Current recovery check — Oct21 17:09 UTC
+## Current recovery check — Oct21 17:42 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -11,12 +11,12 @@
 | Hosted Auth/prerequisites | Actual direct healthv2.197.0; fresh two-FK/no-active-trigger cleanup catalog | Passed for observed windows |
 | Existing admin login/dashboard/logout | R4 one password request500; no observed session, clean native/browser,117 READ ONLY SQL and full original preservation | Not verified |
 | Auth-flow compatibility | Real archive/model checks and30 controls/independent review pass; exact56-cell overlay only | Prepared; actual correction not applied |
-| Latest write admission | Query74 serializable BEGIN fails57P01 in2ms, connection closes; UPDATE/COMMIT/Auth PATCH/password0 | Failed; startup logs lack exact causal correlation |
+| Fresh transaction boundary | Actual94325exit0: six metadata SQL calls on one5432 session, RO rollback/RW serializable BEGIN/identity/rollback, same actual backend/postmaster | Passed in current window; no DML/COMMIT and earlier57P01 cause remains unproven |
 | Latest final preservation |73 initial readonly calls match baseline; closed connection prevents final readback/rollback proof | Unproven; preserve this gap |
-| Provider closure | R5 Auth PATCH0, parent Auth/desired equality, independent pause/Auth/original equality; builder/tunnel exit0 | Passed with paused desired404 limit |
+| Provider closure | Latest metadata scope:63 Management/one resume-pause, parent Auth/desired/original equality; independent nine GETs confirm paused/full Auth/original equality | Passed with paused desired404 limit; no serving resources started |
 | Public release/full goal | Vercel paused/UI unreleased; remaining journeys, recovery currency, free hosting/release review open | Incomplete |
 
-[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1709-utc).
+[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1742-utc).
 
 ## Current recovery result — Oct21 14:48 UTC
 

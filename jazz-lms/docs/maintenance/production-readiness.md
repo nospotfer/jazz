@@ -1,6 +1,46 @@
 # Production recovery checkpoint — 2026-10-21
 
-## Current checkpoint — Oct21 17:09 UTC
+## Current checkpoint — Oct21 17:42 UTC
+
+The actual metadata-only connection check now passes. Root94325 exits0 at
+17:41:37 UTC: one verified5432 session completes READ ONLY BEGIN/identity/ROLLBACK,
+then SERIALIZABLE READ WRITE BEGIN/identity/ROLLBACK. All six SQL calls succeed;
+both identities report the same actual SQL backend and postmaster. Two rollbacks
+and frontend closure pass. There is no customer query, DML, DDL or COMMIT.
+This verifies the transaction transition in this window; it does not establish
+the cause of the earlier57P01 or prove future connection lifetime.
+
+The parent makes63 Management calls and one resume/pause, with Auth/desired and
+original project settings unchanged. A separate nine-GET check at17:42:16 confirms
+replacement paused, full Auth equality against this scope's initial snapshot and
+unchanged original projects. Paused desired404 leaves independent comparison
+unavailable; parent-active equality is retained separately. No serving resource
+starts. All actual operation handles are terminal.
+
+The56-cell correction remains unapplied. The earlier write attempt's final
+customer-data readback gap remains unproven: this metadata check does not read
+customer rows. Next apply the reviewed correction with its full typed-state
+checks, then verify the existing admin login/dashboard/logout on a fresh protected
+preview. All68 PDFs remain accepted; public Vercel is paused and UI unreleased.
+
+Two earlier diagnostic scopes stop before connecting: the first catches its own
+launch shell before any provider call; the second fails fresh process admission
+after services become healthy. Its rejected process report was not retained,
+so overlapping maintenance commands are a possibility, not a proven cause.
+The successful run replaces its launch shell with exec, serializes local work,
+and saves process reports before enforcing the unchanged checks. Both failed
+scopes and their spent markers remain intact. A separate one-GET startup log
+capture shows repeated shutdown/readiness events without establishing cause.
+
+Eleven finite source/outcome files are retained locally under
+`review-checkpoint-auth-transaction-boundary-20261021/`, manifest
+61214f96d898b0ee824e38becb50fe14ed8f2b642d55579b23fcf456b709dddf.
+Actual outcome fabcf5c81dfb504c8835d0924e64eced18be5dc52bfdb954f20af89e406b80d0;
+independent closure64990a673e5880201776a73649e58c55ecff4829612262a773e54494c442524b.
+Credentials, enabled plans, raw provider/customer values and process tuples are
+excluded. Retention is local and unencrypted; off-site recovery is not established.
+
+## Oct21 17:09 — Correction attempt stops before write admission
 
 The reviewed56-cell correction remains unapplied. Fresh root65091 exits1 at
 17:09:46 UTC before UPDATE/COMMIT, Auth enablement, native startup or password
