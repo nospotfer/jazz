@@ -1,16 +1,36 @@
 # Maintenance review checkpoints
 
+## Oct21 published source and R4 partial continuation
+
+Exact105f8b9 publication passes all five workflows/four Quality jobs, both zero
+CodeQL results/errors and zero open PR-head alerts; PR46 head/title/body readback
+passes. Session-origin and recovery-access source changes remain undeployed.
+
+R4 passes fresh first-object read-only adoption and two empty selected-policy
+checks, then sends one new PDF POST/download/info200 with source-bound bytes.
+Client SQL014 AdminShutdown57P01 stops its metadata check: verifiedObjects1,
+new-object SQL metadata/final customer-protected preservation/explicit rollback
+unverified. Frontend/worker close; parent pauses and independent10:01:33 sevenGETs
+confirm exact replacement/production INACTIVE, preview healthy and old settings.
+Do not label two objects fully restored or infer an accepted remaining count.
+
+Review the retained failure, then freshly inspect both existing objects and
+customer/protected state read-only before more uploads. No object re-POST,
+overwrite or bucket recreation; previous reports/ledgers remain unchanged.
+Account/file continuity, recovery point, zero-cost hosting/release and full-goal
+completion remain open. [R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown).
+
 ## Oct21 session synchronization source fix
 
 The integrated session endpoint now checks configured exact Origin and JSON
 content type before parsing or Supabase work. Closed synthetic-provider/real-SDK
 review confirms the original login-CSRF defect;67 integrated cases and typecheck
-pass. Source/finite custody is retained. The fix is unreleased; publication/CI
-and actual restored-account login remain pending.
+pass. Source/finite custody is retained. Exact105f8b9 publication/CI now passes;
+the fix remains undeployed and actual restored-account login unverified.
 
 Root also accepts the narrow Storage metadata representation mapping. Fresh
 actual policy checks and read-only first-object adoption remain prerequisites
-for only67 remaining uploads. No R4 operation occurs. The public site remains
+for new uploads. The later R4 stop above is the current outcome. The public site remains
 paused/503. [Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
 
 ## Oct21 first file stored; source changes integrated locally

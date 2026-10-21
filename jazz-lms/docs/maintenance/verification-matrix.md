@@ -1,12 +1,25 @@
 # Goal verification matrix
 
+## Oct21 R4 partial file continuation and published source
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| Publication | Exact105f8b9/five workflows/four Quality jobs pass; two zero-result/error CodeQL analyses, open alerts0 and PR46 readback. Source publication is not deployment/login proof. |
+| First-object adoption | Fresh read-only bytes/ID/version/path/API+SQL acceptance and both empty selected-policy checks pass. Frozen verifiedObjects1/98,661 bytes; no first-object POST or bucket recreation. R3 verifiedObjects0 stays unchanged. |
+| New upload | One POST/download/info200 and source-bound byte verification, then SQL014 AdminShutdown57P01. New-object SQL metadata is unverified; two fully restored objects or accepted remaining66 are not established. |
+| Preservation and closure | Initial1,621 rows/14,270 cells pass; final customer/protected preservation and explicit READ ONLY rollback are unverified. Frontend closes/child1. Parent pause and independent10:01:33 sevenGET closure verify replacement/production INACTIVE, preview healthy and old settings equal. |
+| R4 custody |162 private finite members, manifest3f2e091a; no PDF/raw SQL/provider bodies/keys/enabled plans. Local unencrypted retention; off-site recovery unestablished. Original R3 receipts and qualification preserved. |
+| Next operation | Fresh read-only current checks of both existing objects and customer/protected state before further uploads; no replay/overwrite/delete/bucket creation. Runtime cause, Auth/file continuity, recovery-point/hosting/release and full goal remain open. |
+
+[R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown). Earlier tables retain their dated results.
+
 ## Oct21 session synchronization and metadata review
 
 | Requirement | Evidence and remaining limit |
 | --- | --- |
 | Login CSRF | Original foreign text/plain form reaches real SDK cookie writes with a synthetic provider and no prior session. Same30 regressions:22 fail/eight controls pass before the fix; isolated proposal32 pass. No hosted exploit demonstrated. |
 | Origin boundary | Configured exact Origin plus application/json checked before body/SDK; forwarded headers grant no authority. Integrated67 cases/five files and typecheck pass. Fix is unreleased; actual protected login remains unverified. |
-| Storage metadata | Root accepts only original SQLNULL to exact actual empty-object representation, preserving original/actual distinction. Fresh policy check and first-object read-only adoption remain required; remaining67 uploads pending. |
+| Storage metadata | Root accepts only original SQLNULL to exact actual empty-object representation, preserving original/actual distinction. The later R4 scope passes policy/adoption, then stops on the next object SQL read; current two-object/customer read-only checks are required before further uploads. |
 | Custody | Separate source/finite packets retained with hashes/private permissions; credentials/raw customer values/enabled plans excluded. Local unencrypted retention, no established off-site recovery. |
 
 [Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
@@ -17,7 +30,7 @@
 | --- | --- |
 | First object |One PDF POST/download/info200; pinned downloaded bytes match. Frozen verifiedObjects0 because actual user_metadata{} differs from archived SQLNULL. Owner/archived fields NULL, version flagsfalse; complete acceptance is unresolved. |
 | Data and resource closure |99 READ ONLY SQL/sixHTTP preserve1,621 rows/14,270 cells/protected metadata; rollback/frontend close, child1. Parent confirms pause; independent09:19:59.842538 sevenGETs verify replacement/production INACTIVE, preview healthy and old settings equal. |
-| Next file operation |Review read-only adoption or a bounded remedy for the existing object, then67 remaining uploads. Never repeat the first POST/overwrite/recreate the bucket. No R4 outcome. R3 finite custody retained. |
+| Next file operation |Review read-only adoption or a bounded remedy for the existing object, then67 remaining uploads. Never repeat the first POST/overwrite/recreate the bucket. R3 predates the R4 outcome above. R3 finite custody retained. |
 | Offline admin source |44rows/three tables: original controlled SUPER_ADMIN confirmed EMAIL identity/password hash, one of14CSV candidates matches offline. Finite custody retained; private source reference stays separate. No online login/reset or restored access proof. |
 | Access source |This maintenance checkpoint includes bbec8b1/748a50c. Prior source tests remain qualified; no recovery artifact/runtime/deployment. |
 

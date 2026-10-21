@@ -1,5 +1,21 @@
 # Service inventory
 
+## Latest replacement state — Oct21 10:01:33 UTC
+
+Independent sevenGET closure confirms exact replacement/production INACTIVE,
+preview ACTIVE_HEALTHY and old observed settings unchanged. R4 freshly adopts
+one existing PDF read-only and records one new POST/download/info200 with matching
+source bytes. Only the adopted first object is fully verified; SQL014
+AdminShutdown57P01 prevents new-object SQL metadata and final customer/protected
+preservation/explicit rollback proof. Initial1,621 rows/14,270 cells match;
+frontend closes/child exits1. No first-object replay or bucket recreation.
+
+Fresh read-only verification of both existing objects and customer/protected
+state is required before more uploads. Source105f8b9 is published with green
+exact-head CI, not deployed. Backend remains paused; actual Auth/file continuity,
+recovery-point currency, stable free hosting and release remain open.
+[R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown). Earlier snapshots retain their own scope limits.
+
 ## Latest file state — Oct21 09:19:59 UTC
 
 The replacement contains one stored PDF whose POST/download/info200 and pinned

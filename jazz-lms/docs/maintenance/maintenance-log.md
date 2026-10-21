@@ -1,5 +1,39 @@
 # Maintenance log
 
+## Oct21 R4 first-object adoption passes; new metadata read stops
+
+Source105f8b9 is pushed and exact-head publication passes: five workflows/four
+Quality jobs, both CodeQL analyses zero results/errors, zero open PR-head alerts
+and independent PR46 readback. Publication74ce7cef does not deploy the UI.
+
+R4 adopts the original first PDF read-only under reviewed metadata semantics and
+passes both fresh selected-policy checks. Frozen fully verified objects1/98,661
+bytes. One new POST/download/info200 has source-bound downloaded bytes, then
+client SQL014 fails AdminShutdown57P01.62 SQL attempts48+14/eight HTTP6+2;
+new upload1, no first-object re-POST/bucket creation/native COMMIT/retry.
+
+Initial1,621 rows/14,270 cells match; new-object SQL metadata, final typed/
+protected preservation and explicit READ ONLY rollback are unverified. Frontend
+closed/child1; parent paused. Independent10:01:33.072480 sevenGET closure confirms
+replacement/production INACTIVE, healthy preview and old observed settings equal.
+Retain the stopped result and earlier closure-attempt failure without causal
+inference. Fresh read-only checks of both existing objects and customer/protected
+state must precede further uploads; never overwrite/re-POST either object.
+Protected finite custody retains162 members at
+`review-checkpoint-storage-r4-readback-shutdown-20261021`, manifest
+`3f2e091a4746755adda1dc144b78d95385a212efdd537f46936fe18d7c7b477c`.
+It excludes PDFs/raw SQL/provider bodies/keys/enabled plans; local unencrypted
+retention does not establish off-site recovery. [R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown).
+
+Local chronology places the owned pause after the completed SQL failure. A
+single paused-project logs GET returns10 filtered metadata events (seven57P01,
+three ready signals), without raw messages or backend/session correlation. It
+does not establish the termination cause. Separate log custody manifest
+`6b71520061525fa0a027985ca6d65cfd80b5997a6d829bede8d4e49ccdd2da27`
+retains the query/finite projection/qualified interpretation; original response
+and credentials are excluded. Details and primary references are in the linked
+readiness checkpoint.
+
 ## Oct21 session synchronization origin fix
 
 Closed source review confirms that `/api/auth/session` accepted a foreign
@@ -16,12 +50,13 @@ boundary, cookie, origin, password-navigation and recovery side-effect checks
 pass67 cases/five files; typecheck passes. Source/finite custody:
 `review-checkpoint-auth-session-origin-fix-20261021`, manifest
 `30ecf39db7bdd93c1c31024bfb732688c46ad5c28fda1623574c9d48b82923c3`.
-The fix is unreleased; exact-head publication/CI and hosted login remain pending.
+The fix remains undeployed; exact105f8b9 publication/CI passes as recorded above.
+Hosted login remains unverified.
 
 The Storage metadata review now accepts only the explicit source-NULL to actual
 empty-object representation mapping, with fresh same-frontend policy checks and
-read-only first-object adoption still required before67 new uploads. No R4
-operation occurs. Semantic source/finite custody:
+read-only first-object adoption required before its new uploads. The later R4
+result above records those checks and its subsequent SQL stop. Semantic source/finite custody:
 `review-checkpoint-storage-metadata-representation-review-20261021`, manifest
 `159bbc8973f4c2a1117b0aecb912c52d88f7ca847cecbe91f3244d736ba75680`.
 Original R3 receipts remain unchanged. Both packets are local, unencrypted and
@@ -38,7 +73,7 @@ rollback/frontend close pass, child1, parent confirms one pause. Independent
 09:19:59.842538 sevenGETs confirm replacement/production INACTIVE, preview healthy
 and old settings equal. Adopt the existing first object read-only under reviewed
 mapping or prepare a remedy; never POST/overwrite it or recreate the bucket.
-Remaining67 files and metadata acceptance stay open; no R4 result is claimed.
+Remaining67 files and metadata acceptance stay open; this dated R3 section precedes the R4 result above.
 
 This maintenance checkpoint integrates bbec8b1/748a50c; neither recovery
 runtime nor deployment has occurred. Offline44-row/three-table admin-source review finds one

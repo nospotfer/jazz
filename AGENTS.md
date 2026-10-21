@@ -192,7 +192,20 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Latest R3 stores the first PDF: POST/download/info200 and pinned bytes match,
+Current R4 freshly adopts the first PDF read-only and passes two actual empty
+selected-policy checks, then sends one new PDF POST/download/info200 with source-
+bound bytes. SQL014 AdminShutdown57P01 stops its metadata read. Frozen verified
+objects1; initial1,621 rows/14,270 cells match, but final customer/protected
+preservation and explicit rollback remain unverified. Frontend/worker close;
+parent pause and independent10:01:33 sevenGET closure confirm replacement and
+production INACTIVE, preview healthy and old settings equal. Preserve all R4
+receipts/ledgers. Freshly check both existing objects and customer/protected
+state read-only before further uploads; never re-POST/overwrite either object or
+recreate the bucket. The owned pause follows the failure; its external cause
+remains unknown. Source105f8b9 publication/CI passes, without deployment.
+See production-readiness.md for actual evidence, filtered log limits and custody.
+
+Earlier R3 stores the first PDF: POST/download/info200 and pinned bytes match,
 but frozen verifiedObjects0 because actual user_metadata{} differs from archived
 SQLNULL. Owners/archivedNULL, version flagsfalse.99 READ ONLY SQL/sixHTTP preserve
 1,621 rows/14,270 cells/protected metadata; rollback/frontend close, child1.

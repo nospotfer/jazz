@@ -1,11 +1,97 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 R4 adopts first object, then stops on SQL shutdown
+
+Published source `105f8b996fc402b92989f8ab28781a0d2cc82e29` passes all five exact-head
+workflows and all four Quality jobs. Both CodeQL analyses have zero results or
+errors, with zero open PR-head alerts; PR46 head/title/body readback passes. This
+publishes source and its checks, not an application deployment or restored login.
+
+R4 freshly adopts the original first PDF read-only: ID/version/path, downloaded
+source bytes and required API/SQL metadata pass under the reviewed source-NULL to
+exact-empty-object rule. Both fresh same-frontend selected Storage policy checks
+observe an empty set. The frozen result records **one fully verified object**
+(the adopted first object, 98,661 bytes). Its original POST is not replayed and
+the bucket is not recreated; the earlier R3 verifiedObjects0 result is unchanged.
+
+One new PDF POST, download and info request each return200, and the pinned client
+verifies downloaded source bytes. The next object SQL metadata read, client
+query014, fails with `AdminShutdown`/SQLSTATE `57P01`. This identifies the retained
+failure class, not its platform cause. The outer failure remains
+`SQL_READBACK_FAILED_NO_RETRY`; no retry or new native COMMIT occurs. Counts are
+**62 SQL attempts (48 driver/14 client)** and **eight Storage HTTP attempts
+(six client/two observer)**, including exactly one new upload.
+
+The retained local chronology places the failure after info200 at09:57:41.084136
+and before driver completion09:57:41.110285 UTC. The sole owned pause starts
+at09:57:41.146 UTC, after the failure; it is not the initiating operation.
+One bounded GET to the documented logs endpoint succeeds while the project is
+paused. Its four-minute query returns10 filtered metadata events: seven57P01
+events and three ready-message signals, with the last returned ready signal
+at09:57:04.384 UTC. Raw messages and backend/session identifiers were not selected.
+Those events cannot be attributed to the failing frontend and do not establish
+the terminating actor, cause or complete log coverage. An added readiness
+observation would be a diagnostic measure, not a proven remedy.
+[Current logs API](https://supabase.com/docs/reference/api/v1-get-project-logs),
+[query semantics](https://supabase.com/docs/guides/observability/advanced-log-filtering),
+[PostgreSQL error codes](https://www.postgresql.org/docs/17/errcodes-appendix.html).
+
+The initial **1,621 rows/14,270 typed cells** check passes, but the new object's
+SQL metadata, final customer/protected-metadata preservation and explicit READ
+ONLY ROLLBACK are **unverified**. Their false/unconfirmed result flags are not
+proof that customer data changed. The frontend closes and the worker exits1
+without TERM/KILL. Parent confirms one pause. Separate **10:01:33.072480 UTC**
+seven-GET closure verifies exact replacement/production INACTIVE, preview
+ACTIVE_HEALTHY and old observed settings equal, without new Storage/SQL actions.
+An earlier closure attempt stops after one GET on an owned-metadata field-name
+check; that failed receipt remains preserved.
+
+Before more uploads, use a fresh bounded read-only scope to verify both existing
+objects and current customer/protected state, including the new object's exact
+identity/version/path, bytes and metadata. **Never re-POST or overwrite either
+object or recreate the bucket.** Two fully restored objects and an accepted
+remaining count of66 are not established. The committed customer import and all
+spent R1–R4 ledgers/reports remain unchanged. The backend remains paused and UI unreleased. Auth/file continuity, current
+recovery point, zero-cost hosting and full-goal completion remain open.
+
+| Receipt | SHA-256 |
+| --- | --- |
+| Source publication/CI | `74ce7cef45c7dd3ce5875fe31eeb87190bca9c6cd3f3fde7e69db766d6b415a7` |
+| Root finite outcome review | `37bc04d86325755a44e073a636aa7b3e2e1d9f2f68b458f7c4e7030c29eda366` |
+| R4 parent | `3e945e76459209cb29ead5b1f072ba442d1049282de9379e484e9e4029a4564b` |
+| R4 driver | `86f15c2ae70c884b86d83a93f8cd42c23a05b4fff803d6916790577281d3f9af` |
+| Independent paused closure | `460837044cf0a32a8666e2ef59eec5f8d847733430a94dfbbae984bc30824bda` |
+
+Protected finite custody is retained in
+`review-checkpoint-storage-r4-readback-shutdown-20261021`, manifest
+`3f2e091a4746755adda1dc144b78d95385a212efdd537f46936fe18d7c7b477c`:
+162 members include14 client-SQL receipt projections without rows,48 preservation
+metadata projections,73 management HTTP projections, eight closure-GET metadata
+receipts and eight complete Storage HTTP200 projections. The new-object download
+match is prior pinned-client verification, not an independent archive comparison
+by custody. PDF bytes, raw SQL/provider bodies, keys and enabled plans are excluded.
+Retention is private, local and unencrypted; off-site recovery is not established.
+Earlier R3 reports, qualification, custody and all spent ledgers remain unchanged.
+The separate filtered-log packet is
+`review-checkpoint-storage-r4-log-read-20261021`, manifest
+`6b71520061525fa0a027985ca6d65cfd80b5997a6d829bede8d4e49ccdd2da27`.
+It retains only the query, finite metadata projection and qualified interpretation;
+the original provider body, credentials and raw messages remain excluded.
+The separate local chronology review has six retained source/finite members at
+`review-checkpoint-storage-r4-local-shutdown-review-20261021`, manifest
+`3b6d9eb13cf74acf0dff420ef491e10d69a630e06c2a42c73996e82410c44193`.
+Its management inspection reads only the five-field metadata prefixes of all73
+receipts, without decoding their provider bodies or revealed keys. It confirms
+that final preservation was absent and rollback had zero attempts; the precise
+cleanup skip branch was not recorded and remains unknown.
+
 ## Oct21 origin boundary and metadata review
 
 Session synchronization now requires the configured exact Origin and JSON
 before request parsing/token work. The original login-CSRF defect is confirmed
 with a synthetic provider and real SDK, without a deployed browser attack.
-Integrated67 cases/typecheck pass; publication/CI and actual login are pending.
+Integrated67 cases/typecheck pass; exact105f8b9 publication/CI now pass as recorded
+above. Actual protected login remains unverified.
 Wrong application-origin configuration will reject synchronization, so verify
 the fresh protected artifact's exact public origin before actual access.
 
@@ -14,8 +100,8 @@ representation, with both original and destination values kept distinct. This
 does not establish current hosted Storage policies or fresh first-object
 identity/bytes. R4 still requires those same-frontend checks before any POST and
 must stop on nonempty unreviewed policies. No first-object overwrite/re-POST,
-bucket recreation or Storage SQL metadata rewrite is permitted. Only67 remaining
-uploads may be prepared; no R4 execution occurs here. Separate source/finite
+bucket recreation or Storage SQL metadata rewrite is permitted. The later R4 outcome above supersedes this pre-execution checkpoint; its partial
+result does not authorize a replay. Separate source/finite
 custody and limits are in the [maintenance log](maintenance-log.md#oct21-session-synchronization-origin-fix).
 
 ## Oct21 first PDF stored; metadata acceptance still open
@@ -149,6 +235,7 @@ Protected custody under `/home/gabriel/backups/culturadeljazz-maintenance/`:
 | `review-checkpoint-storage-bucket-created-stop-r2-20261021` | `edf8879bf5472049877caa9633c60868ea4d87f847f45e064d0042482a48197c` |
 | `review-checkpoint-storage-first-pdf-metadata-stop-r3-20261021` | `12cfcf03089fbfce5370f552830c5e975589c51381994724f186e7aca0d7d811` |
 | `review-checkpoint-storage-r3-closure-qualification-20261021` | `2160595fde6f11180cd5793e1e98d285cd9360415e3fac9fd42d65203e5e4a44` |
+| `review-checkpoint-storage-r4-readback-shutdown-20261021` | `3f2e091a4746755adda1dc144b78d95385a212efdd537f46936fe18d7c7b477c` |
 | `review-checkpoint-admin-authorization-fix-20261021` | `ba766ce02b0e3e61a515e0a64ad1d26b3feb70607018dee2af818dfdd045e9bc` |
 | `review-checkpoint-customer-recovery-preview-source-20261021-reviewed-748a50c` | `ba7afbfa73de2f1b2685e059b5a519dab89d413ddb981c1d20d97fc3b30e5393` |
 

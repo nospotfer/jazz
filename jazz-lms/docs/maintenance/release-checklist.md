@@ -1,17 +1,40 @@
 # Production review and rollback checklist
 
+## Oct21 R4 stop and next read-only admission
+
+- [x] Verify exact105f8b9 publication: all five workflows/four Quality jobs pass,
+  both CodeQL analyses zero results/errors, alerts0 and PR46 readback.
+- [x] Freshly adopt original first-object bytes/identity/metadata read-only; pass
+  both selected-policy checks. Preserve original R3 result and first POST.
+- [x] Record one new POST/download/info200 with source-bound bytes, followed by
+  SQL014 AdminShutdown57P01. Preserve verifiedObjects1 and all spent ledgers.
+- [x] Confirm frontend/worker closure and independent10:01:33 paused replacement/
+  production, healthy preview and old settings equality.
+- [x] Retain R4 finite custody162 members/manifest3f2e091a, excluding PDF/raw
+  SQL/provider bodies/keys/enabled plans. Keep local/off-site limits explicit.
+- [ ] Freshly verify both existing objects and current1,621 rows/14,270 cells/
+  protected metadata read-only before more uploads. New-object SQL metadata,
+  final preservation and explicit rollback were not verified by R4.
+- [ ] Complete all68 object acceptance and actual account/file continuity, then
+  recovery-point/hosting/release gates. Never re-POST/overwrite existing objects
+  or recreate the bucket; source publication does not deploy the UI.
+
+[R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown).
+
 ## Oct21 session boundary and Storage representation
 
 - [x] Confirm login-CSRF source defect with closed synthetic-provider/real-SDK
   evidence; integrate exact Origin and JSON checks before parsing/token work.
 - [x] Pass67 integrated regressions/five files and typecheck; retain source/finite
   evidence separately from credentials. No deployed exploit is claimed.
-- [ ] Publish this exact source checkpoint and verify its CI; build a fresh
-  protected artifact and test actual login with the configured public origin.
+- [x] Publish exact105f8b9 and verify its CI as recorded above.
+- [ ] Build a fresh protected artifact and test actual login with the configured
+  public origin.
 - [x] Review the scoped original-NULL to actual-empty metadata representation.
 - [ ] Verify fresh same-frontend Storage policies, adopt first-object bytes/ID/
   version/path read-only and complete only the remaining67 no-overwrite uploads.
-  No R4 operation is established; all original receipts/ledgers remain unchanged.
+  The later R4 result above records completed adoption and a subsequent SQL stop;
+  all original receipts/ledgers remain unchanged.
 
 [Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
 
@@ -31,7 +54,7 @@
 - [ ] Build a fresh source-bound artifact and verify controlled actual customer/
   admin login/logout/file access. Offline password matching supplies no session, role or hosted sign-in proof.
 - [ ] Finish current recovery point, stable free hosting, other journeys and
-  release/rollback; no R4 plan/outcome is claimed here.
+  release/rollback; this dated section precedes the R4 stop above.
 
 [Latest evidence and remaining limits](production-readiness.md#oct21-first-pdf-stored-metadata-acceptance-still-open).
 

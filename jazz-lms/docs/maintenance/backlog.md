@@ -1,14 +1,34 @@
 # Prioritized maintenance backlog
 
+## Latest Storage stop — Oct21 10:01 UTC
+
+R4 freshly verifies/adopts the original first object and uploads one new PDF with
+source-bound byte readback, then stops at SQL014 AdminShutdown57P01. Only one
+object is fully verified. Initial customer values match; new-object SQL metadata,
+final customer/protected preservation and explicit rollback remain unverified.
+Frontend/worker close; independent closure confirms paused replacement/production,
+healthy preview and old settings equal. Next:
+
+1. Review the retained finite SQL failure without assuming a platform cause.
+2. Verify both current existing objects and customer/protected state in a fresh
+   bounded read-only scope before further uploads. Never re-POST/overwrite either
+   object or recreate the bucket; do not yet accept a remaining count of66.
+3. Finish all68 files, controlled restored-account access and recovery-point/
+   zero-cost hosting/release gates. Exact105f8b9 publication/CI passes; UI remains
+   unreleased and the full goal unfinished.
+
+[R4 evidence and limits](production-readiness.md#oct21-r4-adopts-first-object-then-stops-on-sql-shutdown).
+
 ## Latest source security checkpoint — Oct21
 
 - Session synchronization now rejects foreign/missing Origin and non-JSON forms
   before token processing. Closed real-SDK evidence confirms the original login
-  CSRF defect;67 integrated cases/typecheck pass. Publish and verify exact-head
-  checks, then test actual protected login. The fix is not deployed.
+  CSRF defect;67 integrated cases/typecheck and exact105f8b9 publication/CI pass.
+  Actual protected login remains to verify; the fix is not deployed.
 - The scoped Storage metadata representation review is accepted. R4 must still
   check fresh actual policy dependencies and adopt the first object read-only
-  before uploading only the remaining67 files. No R4 outcome is established.
+  before uploading. The later R4 partial result and fresh-read-only prerequisite
+  above supersede this pre-execution checkpoint.
 
 [Evidence and custody](maintenance-log.md#oct21-session-synchronization-origin-fix).
 
@@ -24,7 +44,7 @@ Next:
    pg_policies rows. Adopt the existing first object through fresh read-only hash/
    ID/version/path checks, or prepare a remedy. Never POST/overwrite it again or
    recreate the bucket. A new bounded scope may upload only the remaining67 files;
-   no R4 outcome is established.
+   use the later R4 current-object checks above.
 2. Use retained R3 finite evidence. After file acceptance, build a fresh protected
    artifact from the published maintenance checkpoint and verify controlled
    existing customer/admin login/logout. The offline admin candidate match is not hosted Auth proof; avoid a reset merely
