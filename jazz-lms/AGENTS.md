@@ -92,12 +92,15 @@ restored objects. Archive recovery does not establish recovery-point currency.
 
 The original production backend remains paused because its browser permissions
 are unsafe. The replacement has the reviewed strict permission structure; keep
-its public database API closed. Its latest access check closes at Oct21 15:39 UTC
-with customer/protected-state preservation, Auth restoration, client closure,
-independent paused/settings closure and unchanged original projects. The preview
-and login were not reached. A real psycopg UUID/string boundary defect is
-reproduced offline; fix the adapter before the next fresh access scope. Its
-historical generic failure did not retain the exact cause.
+its public database API closed. Before each fresh access scope, verify current
+customer/protected state, persisted actor role, exact source/origin and cleanup
+prerequisites. Restore temporary Auth settings, close owned browser/application
+resources and independently verify pause and original project settings afterward.
+
+Current outcomes and next actions live in `docs/maintenance/production-readiness.md`.
+Closed diagnostic scopes are historical evidence; never replay spent plans or
+repeat accepted recovery operations. A public login-page check is not proof of
+a hosted login, customer continuity or production readiness.
 
 Admin authorization requires verified Supabase identity and the matching existing
 application row's persisted role. Permission lookup must not create/promote an

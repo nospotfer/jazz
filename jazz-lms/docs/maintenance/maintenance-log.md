@@ -1,5 +1,24 @@
 # Maintenance log
 
+## Oct21 — Actual protected login page passes; hosted login remains pending
+
+- R2 and R3 close16:06/16:19 UTC with actual native startup/direct Authv2.197.0,
+ 117 READ ONLY SQL each, all original/prior/protected state preserved, Auth
+ restored, frontend/native closed and independent paused/original-settings proof.
+ No password grant/new observed session occurs. Paused desired404 stays qualified.
+- Real Chromium diagnoses a too-long private Unix socket path; a short path
+ renders. Actual policy/callback reproduction then identifies `appRead` rejected
+ by a lowercase-only label guard. R5 accepts exactly eight existing labels,
+ preserves caps and retains finite diagnostics;22 controls/peer review pass.
+- Actual public smoke13885exit0 at16:29:34 UTC passesHTTPS200/email/password visible,
+ 19 real policy/factory reads/0blocks, clean browser/native and absent edge socket.
+ Backend stays paused; unused server credentials are synthetic, password0. This
+ is public-page proof, not hosted login. Preserve the preceding failed standalone
+ smoke caused by root passing a descriptor object where a path was required.
+- Replace volatile access-attempt instructions in AGENTS with stable invariants
+ and current-evidence links. Next: fresh build/origin/lease and bounded existing
+ admin login/dashboard/admin/logout; production/UI release and full goal remain open.
+
 ## Oct21 — Recovered-admin adapter stop and clearer current instructions
 
 - Actual access run closes15:39 UTC/exit1 before Auth enablement or native/browser

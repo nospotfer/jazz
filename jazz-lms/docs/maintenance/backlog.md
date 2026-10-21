@@ -2,10 +2,10 @@
 
 ## Current priorities — October21
 
-1. Repair the reproduced native UUID/string boundary in the recovery adapter,
-   then verify existing admin login, dashboard, admin overview and normal logout
-   on a fresh protected HTTPS preview. The latest application builds, but the
-   actual access check stopped before Auth enablement or browser startup.
+1. Verify existing admin login, dashboard, admin overview and normal logout on
+   a fresh protected HTTPS preview. The real public login page now passes200/
+   visible fields on31ad6ba. UUID adaptation and browser reservation/path defects
+   are fixed; hosted login against the recovered backend is still unverified.
 2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
    actual source/origin/backend. Keep customer writes and payment tests isolated.
 3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
@@ -19,16 +19,14 @@ The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
 recreate the bucket or replay file uploads. This does not prove data currency
 after the archive's recovery point.
 
-The Oct21 access scope closes at15:39 UTC with115 read-only SQL calls, complete
-customer/prior-row/protected-state preservation, Auth unchanged, frontend closed,
-replacement independently paused and original states/settings unchanged. All six
-services became healthy and both process checks passed. No Auth PATCH, login,
-browser or application runtime occurred. Its exact failure code was discarded;
-a real psycopg UUID-versus-string policy-boundary defect is independently
-reproduced offline and must be fixed before another scope. Independent paused
-PostgREST settings404 remains a qualified comparison limit; active equality was
-verified before pause.
-
+The latest backend scope closes at16:19 UTC with customer/prior/protected-state
+preservation, Auth restoration, frontend/native closure, independent replacement
+pause and unchanged original project states/settings. Direct Auth healthv2.197.0
+and actual native startup pass. Chromium launches but a reservation-label defect
+blocks the first document before any password grant. R5 fixes that interface;
+a separate16:29 real protected HTTPS smoke passes the public login page with
+synthetic private inputs and the backend still paused. Hosted login remains
+pending. Paused PostgREST404 retains the qualified independent comparison limit.
 Current evidence: [production readiness](production-readiness.md),
 [maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).
 Detailed earlier attempts remain in those records and Git history; they are not

@@ -1,19 +1,19 @@
 # Goal verification matrix
 
-## Current access check — Oct21 15:39 UTC
+## Current preview check — Oct21 16:29 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
-| Current application build | Actual31ad6ba locked build and final artifact inspection pass; builder/tunnel exit0 | Build passed; no runtime |
-| Healthy backend/process boundary |30 health observations; all six healthy, two exact builder/tunnel admissions pass | Passed within closed scope |
-| Customer/protected preservation |115 read-only SQL calls; all original typed cells/prior rows/protected metadata match, frontend closed | Passed |
-| Existing admin hosted login | Adapter validation stops before Auth enablement; no runtime/browser/login | Not verified |
-| Actual failure cause | Historical outcome retains only generic code; real UUIDLoader independently reproduces native-ID mismatch | Cause unproven; adapter defect confirmed |
-| Adapter correction | R4 copied ID normalization/finite diagnostics,98 closed controls, no real inputs/operations | Preparation passed |
-| Provider rollback/closure | One resume/pause, Auth PATCH0; independent nine-GET target pause/Auth/old states/settings match | Passed with paused PostgREST404 comparison limit |
-| Public release/full goal | Vercel remains paused; UI unreleased; customer/media/payment/recovery/hosting gates remain | Incomplete |
+| Current application build/runtime |31ad6ba locked build; actual native starts/stops, warn0/error0 | Passed within bounded preview |
+| Protected public login page | Actual13885exit0, HTTPS200, email/password visible,19 admitted reads/0 blocks | Passed; synthetic server inputs/backend paused |
+| Native browser interfaces | Real short-TMP Chromium render; actual policy/reservation factory;22 R5 controls and peer review | Passed; first failed smoke retained |
+| Customer/protected preservation | R2/R3 each117 READ ONLY SQL, all original rows/cells/prior/protected state match | Passed in closed windows |
+| Hosted Auth/prerequisites | Actual direct healthv2.197.0; fresh two-FK/no-active-trigger cleanup catalog | Passed for observed windows |
+| Existing admin login/dashboard/logout | Three closed scopes never submit a password; public-page smoke does not log in | Not verified |
+| Provider closure | R2/R3 Auth enable/restore200, frontend closed, independent pause/Auth/original-state equality | Passed with paused PostgREST404 desired-comparison limit |
+| Public release/full goal | Vercel paused/UI unreleased; remaining journeys, recovery currency, free hosting/release review open | Incomplete |
 
-[Exact outcome, custody and next action](production-readiness.md#oct21-admin-check-closes-before-login).
+[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1629-utc).
 
 ## Current recovery result — Oct21 14:48 UTC
 
@@ -25,8 +25,8 @@
 | Lifecycle |99 Management, one resume/pause, target INACTIVE, original states/settings equal | PASS; independent9GET complete |
 | Independent target settings | Auth200/full equality, PostgREST404 after pause | Auth PASS; desired comparison unavailable, parent active equality retained |
 | Connection readiness | Exact six-service/two-spaced-health gate, fresh capture,379ms actual connect | PASS for one diagnostic and successful full recovery window; old causes unproven |
-| Restored Auth version | Reportedv2.197.0 reviewed against exact official source;85 source/synthetic controls | PREPARED; direct health/login still pending |
-| Current protected preview | No current recovery artifact/runtime yet | PENDING; public site paused and UI unreleased |
+| Restored Auth version | Actual direct healthv2.197.0 in later R2/R3 windows | Direct health verified; login pending |
+| Current protected preview | Later16:29 actual HTTPS login page200/visible fields, native/browser clean | Page verified; hosted login pending and UI unreleased |
 
 Dated matrices below retain their original limits; their incomplete file/
 connection checks are superseded for this recovery window. [Receipts and custody](production-readiness.md#oct21-all68-files-accepted-and-replacement-paused).

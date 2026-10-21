@@ -1,20 +1,22 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 15:39 UTC
+## Current access gate — Oct21 16:29 UTC
 
-- [x] Current application31ad6ba builds with locked install and final inspection.
-- [x] Recovered access scope closes with customer/protected preservation, Auth
-      unchanged, frontend closed and independent paused/original-settings proof.
-- [x] Owned builder/tunnel is stopped and its real handle exits0.
-- [x] Reproduce and prepare native UUID boundary correction;98 closed controls.
-- [ ] Verify hosted admin login/dashboard/admin/logout on a fresh corrected preview.
-- [ ] Complete remaining customer/media/payment journeys, recovery-point and
-      zero-cost hosting decisions, then production release/rollback review.
+- [x] Build application31ad6ba and start/stop the actual native preview cleanly.
+- [x] Verify the real protected HTTPS login page200/email/password visible with
+      the backend paused and synthetic unused server inputs;19 reads/zero blocks.
+- [x] Verify direct Authv2.197.0, cleanup catalog, original customer/protected
+      preservation, Auth restoration and independent paused/settings closure.
+- [x] Correct UUID policy IDs, private Chromium path length and exact reservation
+      labels; actual page smoke verifies the repaired browser/reservation path.
+- [ ] Verify hosted admin login/dashboard/admin/logout with a fresh origin/lease.
+- [ ] Complete remaining customer/media/payment journeys, recovery currency,
+      zero-cost hosting and production release/rollback review.
 
-The failed scope never enables Auth or starts a browser/app; do not count it as
-preview/login proof or replay its spent plan. Paused PostgREST404 remains an
-independent desired-comparison limit. [Evidence](production-readiness.md#oct21-admin-check-closes-before-login).
-All68 PDFs/import remain accepted; production is paused and UI unreleased.
+No password is submitted in the closed windows or page smoke. Paused
+PostgREST404 remains an independent desired-settings comparison limit. All68
+PDFs/import remain accepted; production is paused and UI unreleased.
+[Evidence](production-readiness.md#current-checkpoint--oct21-1629-utc).
 
 ## Current release gates — Oct21 14:48 UTC
 

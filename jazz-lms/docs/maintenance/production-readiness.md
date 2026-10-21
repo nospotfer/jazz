@@ -1,5 +1,51 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Current checkpoint — Oct21 16:29 UTC
+
+The actual protected HTTPS `/auth` page passes on application31ad6ba: HTTP200,
+visible email/password fields and19 admitted application reads through the real
+R5 browser policy/reservation factory, with zero blocked requests. The backend
+stays paused, unused server inputs are synthetic, and no password is submitted.
+Browser and native application stop cleanly; edge socket is absent and native
+warning/error counters are zero. Actual root13885 exits0. This proves the public
+page/controller path, not hosted login or customer-data continuity.
+
+Two earlier fresh access windows close safely but do not reach login:
+
+- R2,16:06:35 UTC/root20116exit1: native UUID normalization passes against actual
+  restored rows; direct Auth health reportsv2.197.0, cleanup catalog is verified,
+  temporary EMAIL enable/restore PATCHes both200 and the native app starts/stops
+  cleanly. Chromium cannot start because its private TMPDIR makes a Unix socket
+  path too long. The real browser renders successfully with a short private path.
+- R3,16:19:03 UTC/root14368exit1: short TMPDIR permits Chromium launch, but its
+  first application read is denied before network/password submission. Actual
+  policy-to-callback reproduction identifies `appRead` rejected by a lowercase-only
+  reservation label check. R5 admits exactly the eight existing labels and retains
+  bounded denial codes/phases;22 focused controls and independent source review
+  pass. The actual public-page result above verifies that corrected interface.
+
+Each backend window uses117 READ ONLY SQL calls and preserves all1,621 original
+rows/14,270 typed cells, prior transients and protected metadata. Both restore
+Auth settings, close the frontend/native application, pause the replacement and
+independently verify target Auth and original project states/settings. Paused
+PostgREST404 still prevents an independent desired-settings comparison; parent
+active equality is separate evidence. There are zero password grants or new
+observed sessions. Do not replay these spent scopes.
+
+The first standalone page smoke also fails before browser launch because root
+passed a file-descriptor object where a path was expected. A fresh smoke fixes
+that selection and verifies both browser/module hashes; retain both outcomes.
+The held tunnel has a fixed16:30:38 expiry, so a new build/origin/lease is needed
+for the next bounded admin login/dashboard/admin/logout check. Do not extend the
+old lease or resume the backend solely to race expiry. All68 recovered files
+remain accepted. Production stays paused and the UI improvements are unreleased.
+
+Finite actual page evidence: `/tmp/jazz-maintenance/s6/outcome.json`; previous
+failed smoke: `/tmp/jazz-maintenance/s5/outcome.json`. Backend outcomes remain
+under `native-restored-admin-access-r2-20261021/actual/journal/` and
+`/tmp/jazz-maintenance/a3/journal/`. No credentials or private enabled plans are
+part of published evidence.
+
 ## Oct21 admin check closes before login
 
 The first recovered-admin access scope ends at15:39:30 UTC with a generic

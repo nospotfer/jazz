@@ -1,20 +1,19 @@
 # Service inventory
 
-## Latest replacement state — Oct21 15:39 UTC
+## Latest verified replacement state — Oct21 16:19 UTC
 
-Replacementklaiiikojgdfclzhqfgt is independently paused after a bounded access
-check. All six services became healthy; one verified session connection and115
-read-only SQL calls preserve customer/prior-row/protected state. Auth PATCH0,
-no application/browser/login. Auth and original project states/settings match.
-Paused PostgREST404 remains a qualified independent comparison limit; active
-settings equality was verified before pause. Owned builder/tunnel exits0.
+Replacementklaiiikojgdfclzhqfgt is independently paused after two fresh access
+windows. Actual direct Auth healthv2.197.0, native startup and customer/protected
+preservation pass; both temporary EMAIL configuration changes are restored.
+Original project states/settings match. Paused PostgREST404 retains the qualified
+independent comparison limit. Neither window submits a password.
 
-The accepted October13 database/all68 PDFs remain restored. The actual admin
-journey stops before login; a native UUID/string adapter defect is reproduced
-and corrected in preparation, with historical stop cause still unproven.
-Direct Auth version health is not observed in this scope. Public Vercel remains
-paused; no live UI deployment, hosting move, plan/price change, mail or payment.
-[Evidence and next action](production-readiness.md#oct21-admin-check-closes-before-login).
+At16:29 a real protected HTTPS login-page smoke passes200/visible fields with
+synthetic unused server inputs and the backend still paused. Its app/browser
+close cleanly. The current tunnel expires16:30:38 and cannot be extended; a new
+origin/lease is required for hosted login. Public Vercel remains paused, UI
+unreleased; no production deployment, hosting move, price change, payment or mail.
+[Current evidence](production-readiness.md#current-checkpoint--oct21-1629-utc).
 
 ## Current replacement state — Oct21 14:48:17 UTC
 
