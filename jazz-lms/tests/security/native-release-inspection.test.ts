@@ -552,7 +552,7 @@ describe("native release inspection actual local I/O", () => {
     const probe = join(value.cachePath, ".native-write-probe");
     const contents = "isolated-preexisting-probe-preserve";
     writeFileSync(probe, contents, { mode: 0o600 });
-    await expectFailure(inspect(value));
+    await expect(inspect(value)).resolves.toHaveProperty("summary.publicBuildBound", true);
     expect(readFileSync(probe, "utf8") === contents).toBe(true);
   });
 

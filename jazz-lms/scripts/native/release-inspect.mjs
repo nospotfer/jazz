@@ -1,6 +1,6 @@
 import { constants, createReadStream } from 'node:fs';
 import { open, lstat, realpath, readdir, readlink } from 'node:fs/promises';
-import { createHash, X509Certificate } from 'node:crypto';
+import { createHash, randomBytes, X509Certificate } from 'node:crypto';
 import { resolve, relative, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateNativeConfig, NativeConfigurationError } from './config-policy.mjs';
@@ -52,7 +52,10 @@ async function inventory(root, directory = root, output = []) {
 async function inspectCache(directory, budget = { entries: 0 }) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     requireCondition(++budget.entries <= 100_000, 'NATIVE_RELEASE_CACHE');
-    const path = join(directory, entry.name), stat = await lstat(path);
+    const path = join(directory, entry.name);
+    let stat;
+    try { stat = await lstat(path); }
+    catch (error) { if (error.code === 'ENOENT') continue; throw error; }
     requireCondition(trustedOwner(stat) && !(stat.mode & 0o022) && !stat.isSymbolicLink() &&
       (stat.isDirectory() || (stat.isFile() && stat.nlink === 1)), 'NATIVE_RELEASE_CACHE');
     if (stat.isDirectory()) await inspectCache(path, budget);
@@ -128,11 +131,14 @@ export async function inspectNativeRelease({ configFile, appRoot, manifestFile }
   requireCondition(cacheStat.isDirectory() && !cacheStat.isSymbolicLink() && trustedOwner(cacheStat) &&
     !(cacheStat.mode & 0o022), 'NATIVE_RELEASE_CACHE');
   await inspectCache(cachePath);
-  const cache = await open(join(cachePath, '.native-write-probe'), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL, 0o600);
+  // The app and tunnel units inspect the same sealed release concurrently.
+  // Their independent exclusive probes must not collide with one another.
+  const probePath = join(cachePath, `.native-write-probe-${randomBytes(16).toString('hex')}`);
+  const cache = await open(probePath, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL, 0o600);
   await cache.close();
   // Remove only this exclusively-created probe, leaving all existing cache data.
   const { unlink } = await import('node:fs/promises');
-  await unlink(join(cachePath, '.native-write-probe'));
+  await unlink(probePath);
   return { config, summary: {
     sourceCommit: config.sourceCommit, mode: config.mode, immutableFiles: files.length,
     nodeVersion: process.version, publicBuildBound: true, caFileBound: true,

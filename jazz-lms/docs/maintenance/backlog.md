@@ -1,18 +1,22 @@
 # Prioritized maintenance backlog
 
-## Current priorities — October21 22:30 UTC
+## Current priorities — October21 23:05 UTC
 
-1. Preserve the live protected day preview and diagnose exact-browser mobile PDF
-   rendering: actual signed Mux/login/certificate denial pass, PDF bytes200 pass,
-   render probe fails. Behemoth review browser is open. Do not stop the preview
-   at turn end; fixed expiry is Oct22 22:17UTC/Oct23 00:17 Madrid.
+1. Build the clean actual production candidate from the implemented
+   [production runtime](production-startup.md).742 focused checks and actual
+   synthetic Monster systemd startup/restart/shutdown/maintenance503 pass.
+   This does not verify actual production credentials or hosting.
+   Preserve the live protected preview: student login/video/PDF rendering pass. The PDF failure
+   was caused by the browser guard, with causal and fresh hosted confirmation.
+   Behemoth review stays open until Oct22 22:17UTC/Oct23 00:17 Madrid.
    [Current preview and limits](production-readiness.md#day-preview--oct21-2230-utc).
 2. Complete recovered student/content/media continuity and qualify the
    recovery point. R14 admin login/dashboard/admin/logout and the accepted
    database/PDF recovery are complete; do not repeat them or their cleanup.
-3. Prepare production target/runner and release/cutover assets from the concrete
-   [free-hosting proposal](hosting.md). Domain/selected-account control and
-   production approval remain prerequisites; the public site is still503.
+3. Bind actual production inputs and finish release/cutover assets from the
+   [free-hosting proposal](hosting.md). Domain/selected-account control, Auth/
+   SMTP/webhooks and the exact production approval remain prerequisites;
+   the public site is still503.
 4. Defer further coupon test launches while reviewing the retained SDK wrapper
    denial. The latest scope reaches an actual unpaid payment after all six
    billing fields and one Continue; SDK initialization is NO_GO, card/refund0.
@@ -22,8 +26,8 @@
    incomplete. [Current result](production-readiness.md#coupon-billing--oct21-2203-utc).
 
 Application/native `ace0804` is live only in the isolated protected preview.
-Published checkpoint `1a6294d` passes all10 remote checks; the newer publication
-checks remain separate. Production is unchanged and the full goal incomplete.
+Published checkpoint `d8dd43e` has ten successful check runs; later source
+publication/checks remain separate. Production is unchanged and the full goal incomplete.
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

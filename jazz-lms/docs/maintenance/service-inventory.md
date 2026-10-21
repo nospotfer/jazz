@@ -1,6 +1,19 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 20:33 UTC
+## Current service state — Oct21 23:05 UTC
+
+Public production is paused/503. The replacement customer backend remains paused.
+A separate protected synthetic-data preview on sourceace0804 is live until
+Oct22 22:17UTC/Oct23 00:17 Madrid, with a review browser on Behemoth. Student
+login, signed video and visible native PDF rendering pass; local logout and
+selected final state preservation pass. Payment/application-mail/cron inputs
+are absent. Production app/maintenance/named-tunnel launchers are now implemented
+and locally tested, including synthetic Monster systemd restart/stop and
+maintenance503. They are not installed/deployed; account/domain and actual
+production release prerequisites remain. No DNS or production change occurred.
+[Current outcomes and limits](production-readiness.md#day-preview--oct21-2230-utc).
+
+## Earlier verified replacement state — Oct21 20:33 UTC
 
 Replacement is independently paused with full Auth restored and original project
 states/settings unchanged. Active desired settings match; paused PostgREST404

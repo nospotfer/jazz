@@ -1,12 +1,13 @@
 # Separate Supabase preview
 
-## Current live review — Oct21 22:30 UTC
+## Current live review — Oct21 22:45 UTC
 
 Sourceace0804 is running on a protected HTTPS Quick Tunnel until Oct22 22:17UTC
 (Oct23 00:17 Madrid). Behemoth's separate review browser is open with homepage
 and an unsubmitted synthetic password login. Actual student login/signed Mux/
-partial-course certificate denial pass; PDF delivery200 passes but native render
-verification fails. The default preview has no payment, application-mail or cron
+partial-course certificate denial pass. Fresh hosted PDF rendering at1440/390
+light/dark also passes after correcting the test-browser internal-resource guard;
+normal logout and final selected preservation pass. The default preview has no payment, application-mail or cron
 credentials and does not contain recovered customer data. Keep this preview
 available through its fixed expiry. [Address, launcher and evidence](production-readiness.md#day-preview--oct21-2230-utc).
 

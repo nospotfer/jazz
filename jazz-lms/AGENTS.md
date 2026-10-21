@@ -71,8 +71,12 @@ A runtime application change needs a newly reviewed source binding and build; a
 documentation-only bridge cannot admit it. Keep archived scopes and data-profile
 receipts bound to their original application commits.
 `launch-preview.mjs` starts only a bounded Linux preview after release inspection,
-using owner-only Unix sockets and a fixed-expiry Basic gate. Production startup
-is denied. Its explicit Quick Tunnel Worker exception is preview-only; general
+using owner-only Unix sockets and a fixed-expiry Basic gate. That command denies
+production startup. Separate `launch-production.mjs` and
+`launch-production-tunnel.mjs` implement explicit production/maintenance and
+named-tunnel startup after full release inspection. Their default is inspection;
+real production execution still requires the approved concrete release. See
+`docs/maintenance/production-startup.md`. Its explicit Quick Tunnel Worker exception is preview-only; general
 ingress continues to deny Worker browsing. `reconcile-runner.mjs` has a
 preparation-only CLI and no activation flag. A separately verified tunnel boundary
 is still required; plain `npm start` does not establish it. See
@@ -88,7 +92,7 @@ the profile in the validated configuration; do not inject credentials after
 validating a payment-disabled config. Verify actual TEST provider resources,
 controlled USER/recipients, source and delivery separately, with bounded actions
 under the owner's continuing authorization. Cron/mail/tracking/local mutators
-stay disabled; production startup remains denied.
+stay disabled; preview profiles cannot start production.
 
 ## Recovery and current work
 

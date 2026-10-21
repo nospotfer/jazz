@@ -1,5 +1,41 @@
 # Maintenance log
 
+## Oct21 23:05 UTC — Runnable production startup and maintenance fallback
+
+Implemented separate production app/maintenance and named-tunnel launchers with
+full release/config binding, private Unix sockets, clean environment, readiness,
+process-group shutdown and failure/restart behavior. Proposed user units have
+bounded restart/stop/resource controls. Existing preview restrictions remain.
+The exact static fallback is integrated for maintenance-only and upstream-failure
+503, with CSP bound to its actual embedded assets and no webhook false success.
+The normal suite passes 2,976 cases / 80 skips; 742 focused cases/types/scoped lint
+pass. The old fixed-probe expectation is updated
+to preserve prior files while unique probes allow concurrent inspections. The
+final tunnel readiness check has a separate seven-case rerun. Actual synthetic
+Monster user-systemd startup/worker-loss restart/stop/maintenance503 passes;
+first and refreshed-source outcomes are retained. A separate actual synthetic
+pair rehearsal also passes app+worker+tunnel supervisor/fake-child restart and
+app-stop dependency cleanup. Both units are collected/inactive; exact source pins
+match. Eleven runtime/PDF finite files are retained separately from credentials
+with manifest `d0ae7dd82e4ae1d4163b5c52daf1f5a12508347bf5b78c1872304d29134c6445`.
+No real credential/backend, production unit, actual tunnel, domain or DNS change
+is performed.
+Next clean actual production build, recovered student/recovery currency and
+account/cutover review. [Runbook](production-startup.md).
+
+## Oct21 22:45 UTC — PDF confirmed; production preparation remains incomplete
+
+The browser guard caused the blank PDF by blocking Chrome internal resources.
+A credential-free causal comparison and fresh actual hosted1440/390 light/dark
+confirmation now pass with visible text. Normal local logout204 and fresh final
+read-only comparison preserve six business hashes, other users' sessions and
+hierarchy; selected actor sessions0/completed2. Original failures are retained.
+Local production preparation passes296 focused checks/types/lint, but actual
+worker/supervisor/install/start are still missing. Production remains503; preview
+stays available. Owner again asks for clarity after excessive runtime: prioritize
+actual restoration delivery and defer further optional payment launches.
+[Current detail](production-readiness.md#day-preview--oct21-2230-utc).
+
 ## Oct21 22:30 UTC — Usable day preview, real student video, hosting proposal
 
 - Sourceace0804 extends only isolated payment-disabled previews to24h; TEST and

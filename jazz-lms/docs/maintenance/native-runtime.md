@@ -15,6 +15,18 @@ Latest source/test totals and later runtime scopes are recorded in the
 [verification matrix](verification-matrix.md); these earlier counts are retained
 for the exact safeguard/lifecycle evidence they describe.
 
+## Production implementation checkpoint — Oct21
+
+Separate production and maintenance launchers are implemented in
+`launch-production.mjs`, with `launch-production-tunnel.mjs` for a pre-existing
+named tunnel. They inspect the complete sealed release and use the literal
+recovered backend/canonical origin, private sockets, clean worker environment,
+finite readiness, process-group shutdown and explicit runtime commands. Preview
+leases/gates remain separate. Preparation does not install or start anything.
+See [production startup](production-startup.md) for exact commands, fallback,
+proposed units, source checks and actual synthetic systemd evidence. Production
+is still paused; no real provider, DNS, migration or activation is implied.
+
 ## Trusted ingress
 
 `scripts/native/ingress-policy.mjs` validates exact Host and HTTPS metadata,

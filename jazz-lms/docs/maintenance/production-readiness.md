@@ -2,7 +2,7 @@
 
 <a id="day-preview--oct21-2230-utc"></a>
 
-## Current checkpoint — protected review preview available; student media partial
+## Current checkpoint — protected preview and student media verified; production still offline
 
 Application/native source `ace08049acec97f7f363c85160c961a5514fcff2` is running at
 https://handled-performance-pregnancy-minority.trycloudflare.com behind its
@@ -28,9 +28,13 @@ children. Actual public requests verify401 without Basic and200 with it;
 responses are private/no-store and HTML has noindex/nofollow.
 
 Actual current-source student login, certificate ineligibility2/15 and signed
-Mux decode/time advancement pass (52.18333s sample). The mobile PDF returns200
-with cookies/Basic, inline PDF and private/no-store, but the native renderer
-probe fails; its blank crop is not accepted as render proof. No learning,
+Mux decode/time advancement pass (52.18333s sample). The original PDF renderer probe fails because the test-browser guard blocks
+Chrome's internal PDF scripts. A credential-free causal comparison reproduces
+that failure and fixes it using exact internal GET exceptions. A fresh hosted
+confirmation then visibly renders the synthetic PDF at1440/390 in both light
+and dark themes, with registered viewer, visible plugin and successful load
+state. The original failed evidence is retained; no application PDF fix was
+needed. This verifies rendering, not independent lesson-number mapping. No learning,
 payment, refund or mail action is submitted. Current-session local logout204
 and browser closure pass. Final read-only comparison preserves six global
 business-table hashes, hierarchy and prior users' sessions, with selected actor
@@ -49,9 +53,40 @@ The [zero-cost hosting proposal](hosting.md) now gives a Monster/named-Tunnel
 candidate, conditional Netlify fallback, production-runner/backend work, staged
 DNS/callback cutover and data-preserving rollback. Domain/account control remains
 unestablished rather than absent; no production/DNS change or new approval
-request occurred. Next diagnose exact-browser PDF rendering, complete recovered
-student/media and recovery-point checks, and prepare the production runner/target
-and concrete release package. Further coupon launches remain deferred.
+request occurred. Separate production app/maintenance and named-tunnel launchers
+are now implemented, using the recovered target and canonical origin without
+preview exceptions. The normal suite passes 2,976 cases / 80 skips; 742 focused
+native checks, types and scoped lint pass. The final
+narrow tunnel-readiness correction has a separate seven-case rerun. Actual
+Monster user-systemd synthetic rehearsal verifies startup, worker-loss restart,
+signal cleanup and exact maintenance503/HEAD/webhook behavior. A separate
+source-bound pair rehearsal passes: worker exit restarts app and tunnel
+supervisors/children, and app stop stops its dependent tunnel and removes both
+owned runtime directories. Both transient units are collected/inactive.
+RestartSec1/null output are deliberate rehearsal overrides of proposed5s/journal;
+no installed boot-time enable/start or real Cloudflare health is claimed. This
+is a runnable local implementation, not a deployed/credential-verified release.
+The [startup runbook](production-startup.md) documents explicit commands,
+proposed units and data-preserving fallback. Next build the clean actual
+production candidate, complete recovered student/media and recovery-point checks,
+and resolve account/domain/callback prerequisites for a concrete cutover review.
+Further coupon launches remain deferred.
+
+The hosted PDF confirmation closes normally with one local logout204. Root's
+22:45:12UTC final read-only comparison preserves all six business hashes, prior
+users' sessions and hierarchy, with actor sessions0/completed lessons2.
+Its finite review is
+`/tmp/jazz-maintenance/pdf-renderer-diagnosis-20261022/hosted-confirmation/finite-review.json`
+(SHA `4121d79e4c55f8334c4af0fccbe8da342d70cc8005d9b2ca6e9a0c49ae2b5266`);
+final preservation is
+`/tmp/jazz-maintenance/student-preview-handoff-20261022/pdf-confirmation-final-preservation.json`.
+Owner review browser, application and tunnel remain available to their expiry.
+
+Eleven credential-free runtime/PDF review files are retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-production-runtime-20261022/`;
+manifest SHA256 `d0ae7dd82e4ae1d4163b5c52daf1f5a12508347bf5b78c1872304d29134c6445`.
+All source pins match. This local copy is unencrypted; off-site recovery of this
+review package is not established. Private provider inputs are separate.
 
 Finite outcome SHA:
 `47106edb7cf66a04c7c0019d1a8193c0dd2602c13efd07eb50c7be3510532ac2`.

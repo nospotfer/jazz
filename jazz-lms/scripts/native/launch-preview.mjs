@@ -11,7 +11,7 @@ import { createIngressServer } from './ingress-server.mjs';
 const requireCondition = (condition, code) => { if (!condition) throw new NativeConfigurationError(code); };
 const sleep = milliseconds => new Promise(resolveSleep => setTimeout(resolveSleep, milliseconds));
 
-async function privateParent(path) {
+export async function privateParent(path) {
   requireCondition(typeof path === 'string' && isAbsolute(path) && resolve(path) === path &&
     !/[\x00-\x1f\x7f]/.test(path) && await realpath(path) === path, 'NATIVE_RUN_PATH');
   const stat = await lstat(path);
@@ -88,7 +88,7 @@ async function livingGroupMembers(group) {
   return members;
 }
 
-async function stopOwnedChild(child, closed) {
+export async function stopOwnedChild(child, closed) {
   if (!child?.pid) return;
   if (child.connected) { try { child.send({ type: 'stop' }, () => {}); } catch { /* Already closing. */ } }
   const signal = async value => {
@@ -106,7 +106,7 @@ async function stopOwnedChild(child, closed) {
   requireCondition((await livingGroupMembers(child.pid)).length === 0, 'NATIVE_CHILD_NOT_STOPPED');
 }
 
-async function closeIngress(server) {
+export async function closeIngress(server) {
   if (!server?.listening) return;
   const force = setTimeout(() => server.closeAllConnections(), 5_000);
   await new Promise(resolveClose => server.close(() => resolveClose()));

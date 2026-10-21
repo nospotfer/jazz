@@ -1,14 +1,15 @@
 # Maintenance review checkpoints
 
-## Current status — Oct21 22:30 UTC
+## Current status — Oct21 23:05 UTC
 
 - Production is paused/503; application and UI improvements are unreleased.
 - Protected synthetic-data review preview is live on source `ace0804`, until
   Oct22 22:17UTC/Oct23 00:17 Madrid. Behemoth's separate review browser is open;
   its second tab has an unsubmitted synthetic student login prepared.
 - Actual student login, signed Mux decode and incomplete-course certificate
-  denial pass. PDF delivery200 passes, native rendering remains unverified.
-  Current-session logout/browser closure and selected preservation pass.
+  denial pass. Hosted PDF rendering now passes at1440/390, light/dark, after
+  fixing the browser guard's internal-resource denial. No product PDF change.
+  Local logout/browser closure and fresh final selected preservation pass.
 - Current guest desktop/mobile and actual light/dark toggle checks pass without
   overflow. The temporary preview is payment/mail/cron disabled, not production.
 - Recovered database/PDF import and R14 admin login/dashboard/admin/logout are
@@ -20,10 +21,12 @@
 - Normal logout/final preservation pass, sessions/purchases0, endpoint404 and
   resource closure verified. SSH255 and separately removed exact stale socket,
   105 blocked requests/120 console errors remain disclosed. No blanket health claim.
-- Next diagnose PDF rendering, recovered student/media and recovery currency;
-  implement the reviewed production runner/target and finish release/cutover
-  preparation. The concrete free-hosting proposal is written; no DNS or
-  production change is made. Avoid further tooling loops and recovery replay.
+- Production app/maintenance and named-tunnel runtime is implemented locally.
+ 742 focused checks, types/lint and actual synthetic Monster user-systemd
+  startup/worker-loss restart/stop/maintenance503 pass. No real service or tunnel
+  is activated. Next build the clean actual production candidate, complete
+  recovered student/media/recovery currency and finish account/cutover review.
+  No DNS or production change is made. Avoid tooling loops and recovery replay.
 
 [Live preview, launcher and exact limits](production-readiness.md#day-preview--oct21-2230-utc).
 Everything below is dated history and may contain superseded pending actions.

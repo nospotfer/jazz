@@ -95,13 +95,15 @@ and continuity decision above. Do not silently point production at the isolated
 synthetic project or resume the original unsafe backend. Record one approved
 backend, recovery point, source commit and public origin in the release plan.
 
-**The current launcher cannot be used as a production service.** It deliberately
-rejects production; the worker admits preview mode only, and the production
-configuration policy still pins the original backend. Serving the replacement
-requires a reviewed production target/profile and production supervisor/worker,
-not deletion of the preview expiry or reuse of `recoveryAccess`. The separate
-payment-disabled longer preview remains isolated testing. See
-[native runtime](native-runtime.md) for the current profile limits and proofs.
+The preview launcher remains preview-only. A separate
+[production runtime](production-startup.md) now selects the literal recovered
+backend, runs the worker/ingress or maintenance mode, and supervises a pinned
+named tunnel without preview exceptions. Local synthetic process/HTTP and
+Monster user-systemd tests verify startup, worker-loss restart, shutdown and
+maintenance503. These do not establish real credentials, domain control,
+customer continuity or production health. A clean actual production build,
+account/backend prerequisites and the concrete release approval remain required.
+The longer payment-disabled preview remains isolated testing.
 
 Use these proposed dedicated paths and unit names; none is created by this plan:
 

@@ -61,13 +61,18 @@ function checkDatabase(value, ref, caPath) {
 /** Pure routing/environment validation, not account, CA file, code/build or
  * approval proof. The I/O entrypoint must check those before starting a process.
  * @param {unknown} value
- * @returns {{mode:'production'|'preview',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},testPayments?:{provider:'dodo',scopeId:string,expiresAt:string},recoveryAccess?:{purpose:'restored-customer-access',scopeId:string,expiresAt:string},env:Record<string,string>}}
+ * @returns {{mode:'production'|'preview',productionTarget?:'restored-customer',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},testPayments?:{provider:'dodo',scopeId:string,expiresAt:string},recoveryAccess?:{purpose:'restored-customer-access',scopeId:string,expiresAt:string},env:Record<string,string>}}
  */
 export function validateNativeConfig(value) {
   requireCondition(record(value), 'NATIVE_CONFIG_SHAPE');
   requireCondition(value.version === 1 && ['production', 'preview'].includes(value.mode), 'NATIVE_CONFIG_MODE');
   requireCondition(typeof value.sourceCommit === 'string' && /^[a-f0-9]{40}$/.test(value.sourceCommit), 'NATIVE_CONFIG_SOURCE');
   const production = value.mode === 'production';
+  let productionTarget;
+  if (Object.hasOwn(value, 'productionTarget')) {
+    requireCondition(production && value.productionTarget === 'restored-customer', 'NATIVE_CONFIG_PRODUCTION_TARGET');
+    productionTarget = 'restored-customer';
+  }
   let recoveryAccess;
   if (Object.hasOwn(value, 'recoveryAccess')) {
     const access = value.recoveryAccess;
@@ -92,7 +97,8 @@ export function validateNativeConfig(value) {
       deadline > now && deadline <= now + RESTRICTED_PREVIEW_MAX_MS, 'NATIVE_CONFIG_TEST_PAYMENTS');
     testPayments = { provider: 'dodo', scopeId: optIn.scopeId, expiresAt: optIn.expiresAt };
   }
-  const ref = production ? PRODUCTION_PROJECT_REF : recoveryAccess ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF;
+  const ref = production ? productionTarget ? RECOVERY_PROJECT_REF : PRODUCTION_PROJECT_REF :
+    recoveryAccess ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF;
   requireCondition(value.projectRef === ref, 'NATIVE_CONFIG_PROJECT');
   requireCondition(record(value.ca) && typeof value.ca.path === 'string' && isAbsolute(value.ca.path) &&
     !/[\x00-\x1f\x7f]/.test(value.ca.path) && typeof value.ca.sha256 === 'string' && /^[a-f0-9]{64}$/.test(value.ca.sha256), 'NATIVE_CONFIG_CA');
@@ -154,6 +160,7 @@ export function validateNativeConfig(value) {
     NATIVE_RECOVERY_ACCESS: recoveryAccess ? 'true' : 'false',
     NATIVE_RECOVERY_EXPIRES_AT: recoveryAccess?.expiresAt ?? '',
   });
-  return { mode: value.mode, sourceCommit: value.sourceCommit, projectRef: ref, origin, ca: { path: value.ca.path, sha256: value.ca.sha256 },
+  return { mode: value.mode, ...(productionTarget ? { productionTarget } : {}),
+    sourceCommit: value.sourceCommit, projectRef: ref, origin, ca: { path: value.ca.path, sha256: value.ca.sha256 },
     ...(testPayments ? { testPayments } : {}), ...(recoveryAccess ? { recoveryAccess } : {}), env };
 }

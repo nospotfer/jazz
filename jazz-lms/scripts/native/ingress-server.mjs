@@ -3,8 +3,9 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { isAbsolute, resolve } from 'node:path';
 import { evaluateIngressRequest, stripHopHeaders, WEBHOOK_PATHS } from './ingress-policy.mjs';
 import { ISOLATED_PREVIEW_MAX_MS } from './config-policy.mjs';
+import { sendMaintenanceResponse } from './maintenance-response.mjs';
 
-/** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},allowPreviewWorkerTransport?:boolean,requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
+/** @typedef {{upstreamPort?:number,upstreamSocket?:string,policy:import('./ingress-policy.mjs').IngressPolicy,previewAccess?:{username:string,password:string,expiresAt:string},allowPreviewWorkerTransport?:boolean,maintenanceFallback?:{html:Buffer,headers:Record<string,string>},maintenanceOnly?:boolean,requestBodyLimitBytes?:number,webhookBodyLimitBytes?:number,requestBodyTimeoutMs?:number,upstreamTimeoutMs?:number}} IngressOptions */
 
 function bounded(value, fallback, maximum) {
   const selected = value ?? fallback;
@@ -61,6 +62,13 @@ function readBody(req, limit, timeoutMs) {
  * @returns {import('node:http').Server}
  */
 export function createIngressServer(options) {
+  if ((options.maintenanceOnly !== undefined && typeof options.maintenanceOnly !== 'boolean') ||
+    (options.maintenanceOnly && !options.maintenanceFallback) ||
+    (options.maintenanceFallback && (!Buffer.isBuffer(options.maintenanceFallback.html) ||
+      options.maintenanceFallback.html.length > 512 * 1024 || !options.maintenanceFallback.headers ||
+      options.previewAccess || options.allowPreviewWorkerTransport))) {
+    throw new Error('Invalid native maintenance configuration');
+  }
   let transport;
   if (options.upstreamSocket !== undefined) {
     const path = options.upstreamSocket;
@@ -134,6 +142,9 @@ export function createIngressServer(options) {
         res.writeHead(decision.status, { Location: decision.location, 'Cache-Control': 'no-store', Connection: 'close' });
         res.end(); return;
       }
+      if (options.maintenanceOnly) {
+        sendMaintenanceResponse(req, res, options.maintenanceFallback); return;
+      }
       let body;
       try { body = await readBody(req, WEBHOOK_PATHS.has(target.split('?')[0]) ? webhookLimit : bodyLimit, bodyTimeout); }
       catch (error) { fail(res, error?.status === 413 ? 413 : error?.status === 408 ? 408 : 400); return; }
@@ -149,7 +160,9 @@ export function createIngressServer(options) {
       const cleanup = () => { settled = true; clearTimeout(timer); };
       const abort = status => {
         if (settled) return;
-        cleanup(); upstream.destroy(); upstreamResponse?.destroy(); fail(res, status);
+        cleanup(); upstream.destroy(); upstreamResponse?.destroy();
+        if (options.maintenanceFallback) sendMaintenanceResponse(req, res, options.maintenanceFallback);
+        else fail(res, status);
       };
       const remainingLease = previewHash ? Math.max(1, previewDeadline - Date.now()) : upstreamTimeout;
       const timer = setTimeout(() => abort(previewHash && Date.now() >= previewDeadline ? 410 : 504),
