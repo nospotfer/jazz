@@ -1,5 +1,34 @@
 # Maintenance log
 
+## Oct22 — Actual API smoke catches missing container OpenSSL
+
+The cedd01f clean production build seals45,857 files; all10 remote checks and
+Vercel status pass, and pre-push integration778/29skip passes. Actual built API
+checks uncover a real container dependency failure missed by robots/static probes:
+the selected slim image has no libssl3/libcrypto3. Constructing PrismaClient
+asynchronously fails native initialization, chooses an incompatible1.1 target
+and stops the worker before any database query. Empty worker-closing503 and
+plain maintenance503 are not the intended voucher JSON response.
+
+A network-none constructor diagnostic confirms PrismaClientInitializationError
+with zero queries; a pinned full Bookworm image includes both libraries and
+resolves native engine initialization. The exact same untouched cedd01f app on
+the corrected image then passes all4 localized checkout503/no-store checks,
+direct voucher JSON503, delayed worker liveness, robots/static serving and
+clean container/runtime removal. Correcting a local container label and the
+test's initially wrong no-preference-cookie expectation required separate
+driver runs; every failure/result remains retained unchanged. No product API,
+fatal-handler or fallback relaxation is made to conceal the failure.
+
+The proposed unit image pin is corrected; a final-source rebuild follows.
+Runtime/provider health is still unproven: server inputs are synthetic, network
+is disabled, no real service/backend/tunnel/DNS changes occur. The owner confirms
+they only use the administrator; existing-student password continuity is an
+explicit unavailable verification, not a request for other customers' passwords.
+The remaining recovered-media check can use the controlled administrator, with
+isolated ordinary-student evidence kept separate.
+
+
 ## Oct22 — Staged reopening can disable new purchase initiation
 
 Added server-only runtime CHECKOUT_DISABLED. Paid/free/100%-voucher/local-test

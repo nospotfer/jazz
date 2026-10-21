@@ -110,12 +110,22 @@ Earlier restart/stop proofs do not establish filesystem/network isolation.
 
 Container commands use the explicit local Docker socket and empty project-only
 CLI configuration, the pinned official Node image
-`node@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205`,
+`node@sha256:7b559cf7f77d837192392499a850abb1a3d1f49fbc2bd0692d54b212c9e38f6d`,
 and the separately inspected host Node executable mounted read-only. They run
 nonroot, read-only root, no capabilities, no new privileges and no published
 ports. Only the dedicated `culturadeljazz-production-state` parent and Next cache
 are writable host mounts; inputs/app/CA/binaries are read-only. The Docker socket
 and home directory are never mounted into the application container.
+
+The selected full Bookworm image contains OpenSSL3 libraries. The earlier slim
+image is rejected: it serves robots/static files but lacks libssl3/libcrypto3;
+importing the database client asynchronously fails Prisma native initialization
+and stops the worker before any query. Therefore a robots-only readiness result
+is insufficient release evidence. Verify actual API/module loading plus continued
+worker liveness in the selected image, in addition to full release inspection.
+Do not suppress fatal handlers or treat a fallback503 as the application result.
+The finite engine diagnostic uses a pinned Prisma internal promise only for the
+local investigation; it is not a production API or database-health check.
 
 Each systemd invocation names its own container using `${INVOCATION_ID}` and
 stops only that name. Resource limits are2GiB/twoCPUs/256tasks; tmpfs is256MiB.

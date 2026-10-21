@@ -2,7 +2,9 @@ import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:pat
 import { RECOVERY_PROJECT_REF } from './config-policy.mjs';
 
 export const PRODUCTION_ORIGIN = 'https://www.culturadeljazz.com';
-export const PRODUCTION_CONTAINER_IMAGE = 'node@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205';
+// The full Bookworm image includes libssl3/libcrypto3. The earlier slim image
+// passed robots readiness but failed Prisma's asynchronous native engine load.
+export const PRODUCTION_CONTAINER_IMAGE = 'node@sha256:7b559cf7f77d837192392499a850abb1a3d1f49fbc2bd0692d54b212c9e38f6d';
 const HOSTS = ['www.culturadeljazz.com', 'culturadeljazz.com'];
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
 

@@ -106,9 +106,20 @@ Auth and payment fulfillment/reconciliation are unchanged.272 configuration and
 confirmation and final-source build follow; the old owner preview is unchanged.
 The archive has13 USER/1 SUPER_ADMIN; retained credentials/control metadata
 identify only that administrator. No qualifying owned student password is found.
-An owner-controlled existing student account is requested; no guesses, customer
-impersonation, backend resume or repeated admin journey is authorized by this
-inspection. Domain access remains separately unestablished.
+The owner confirms they only use the administrator. Existing-student password
+continuity remains unverified; no customer password request or role change is
+inferred. Verify remaining recovered media through the controlled administrator,
+keeping actual isolated student authorization/media evidence separate.
+
+Actual built API loading reveals that the old slim container lacks OpenSSL3:
+Prisma's asynchronous native initialization stops the worker before a query.
+Its robots/static startup proof remains valid but is insufficient for runtime
+acceptance. The same untouched cedd01f artifact on the corrected pinned full
+Bookworm image passes native engine initialization, all4 localized checkout503
+responses, direct voucher JSON503 and delayed worker liveness, with clean closure.
+No provider transport is possible. Earlier failed drivers and raw results remain
+retained. The selected-image source is being rebuilt; no production activation.
+Domain access remains separately unestablished.
 
 The hosted PDF confirmation closes normally with one local logout204. Root's
 22:45:12UTC final read-only comparison preserves all six business hashes, prior

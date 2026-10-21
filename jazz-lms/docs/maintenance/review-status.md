@@ -23,15 +23,19 @@ unreleased. The usable review preview is separate and uses synthetic data.**
   paid references remain succeeded with no refunds/disputes; the complete older
   known-product list has no extra successes. Four voucher grants remain separate.
   Historical amount equality and full recovery-point currency remain unverified.
-- New source now adds a server-only switch to stop new purchases/voucher grants
+- Source `cedd01f` adds a server-only switch to stop new purchases/voucher grants
   while retaining existing-customer access and payment fulfillment. 272 native
-  config and 126 route/UI/control cases pass, plus types/lint. It is unreleased.
+  config and 126 route/UI/control cases pass, plus types/lint. Its clean build and all 10 remote checks pass. Actual API loading exposed
+  missing OpenSSL in the initial slim container; the corrected full-image pin
+  passes the same built app's checkout/voucher responses and continued liveness.
+  The final pinned-image source is being rebuilt; production is unreleased.
 - Still required for release: recovered student/content continuity, remaining
   integration/recovery-point decisions, domain access and exact cutover review.
   Owner identifies `gabriel.barra@gmail.com` as likely domain/DNS account;
-  recorded CLI access does not yet establish authority. The saved credentials identify only the
-  administrator; an existing owner-controlled student account is now requested
-  to verify that separate journey, without guessing customer passwords.
+  recorded CLI access does not yet establish authority. The owner confirms they only use the
+  administrator. Existing-student password continuity remains unverified; the
+  remaining recovered-media check can use the controlled administrator, while
+  ordinary-student behavior keeps its separate isolated evidence.
 - Owner review: use Behemoth's prepared separate browser, or run
   `/home/gabriel/.local/share/culturadeljazz-maintenance/review-20261022/open-preview.sh`.
   It expires Oct23 00:17 Madrid; payment/application-mail/cron are disabled.
