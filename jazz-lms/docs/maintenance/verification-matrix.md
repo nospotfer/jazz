@@ -1,5 +1,18 @@
 # Goal verification matrix
 
+## Oct21 dedicated read-only connection diagnostic
+
+| Requirement | Actual evidence and remaining limit |
+| --- | --- |
+| R1 admission failure | Zero SQL, frontend closed and independent paused closure; rejected protocol identifier's original value/type remains unknown. Original records and spent markers preserved. |
+| R2 route and identity | Published a30bc17; one verified-TLS 6543 PRIMARY transaction-pooler frontend, seven metadata SQL calls, positive SQL PID/start/transaction/role continuity through30.012s idle. Protocol identifiers are separate observations, signed-negative at all three samples. Frontend TLS verification passes; upstream SQL TLS is false, with no end-to-end claim. |
+| Settings | Ten rows; statement_timeout120000ms and idle-in-transaction/idle-session/transaction settings0. Zero scoped role/database default rows for the ten queried timeout/connection settings; unrelated overrides not assessed. |
+| Cleanup | Confirmed READ ONLY rollback/client close;61 Management calls44work17closure, one resume/pause/two process captures. Independent11:40:12 sevenGET closure verifies paused replacement/production, preview healthy and unchanged original settings. |
+| Limits | No customer/PDF reread, uploads, native COMMIT, configuration writes or deployment. No prior shutdown cause/remedy or full488SQL/66PDF stability proof; R5 final preservation/rollback gap remains. |
+| Next work | Fresh bounded adopt2/upload66 with current typed/protected checks, or separately derive and verify documented5432 session routing using the current provider host for native preview. Auth/admin/file continuity, coupon/refund, recovery-point/hosting/release and full goal remain open. |
+
+[Current diagnostic evidence and limits](production-readiness.md#oct21-read-only-connection-diagnostic-completes). Earlier tables retain their dated results.
+
 ## Oct21 R5 two-object adoption and interrupted stability check
 
 | Requirement | Actual evidence and remaining limit |

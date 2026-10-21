@@ -1,5 +1,36 @@
 # Maintenance log
 
+## Oct21 dedicated read-only connection diagnostic completes
+
+The first diagnostic closes before SQL at the protocol-identifier admission
+guard; actual identifier value/type remains unknown. R2 records that identifier
+as observational while keeping actual SQL PID/identity continuity strict.
+Original R1 reports and spent markers are preserved.
+
+On published source a30bc17, R2 completes at11:39:31 UTC with one verified-TLS
+6543 PRIMARY transaction-pooler frontend, seven metadata-only SQL calls and a
+30.012-second idle in the same observed SQL session. Ten setting rows show
+statement_timeout120000ms and idle-in-transaction/idle-session/transaction
+settings0; no scoped override rows for the ten queried settings. READ ONLY
+rollback/client closure pass. All three protocol observations are signed-negative,
+not SQL backend PIDs. Frontend TLS verifies, while upstream SQL TLS is false;
+no end-to-end encryption is claimed. Root finite/source custody retains18 files,
+with the earlier8-file R1 packet preserved separately. Parent61 Management calls44work17closure, one resume/pause,
+two process captures; target Auth/desired and old project settings match.
+Independent11:40:12 sevenGET closure verifies paused replacement/production,
+healthy preview and old settings equality, with no new SQL or mutations.
+
+This diagnoses current metadata only: no customer/PDF values reread or uploads,
+no earlier shutdown cause/remedy, and no full488SQL/66PDF stability proof. R5's
+missing final preservation/rollback remains unverified. Next prepare a fresh
+bounded adopt2/upload66 scope with current typed/protected checks, or separately
+derive and verify documented5432 session routing from the current provider host
+for native preview. Preserve all spent
+scopes; no object re-POST/overwrite/bucket recreation/customer reimport. Restored
+Auth/native preview/coupon/refund and production-readiness goals remain open.
+
+[Current diagnostic evidence and limits](production-readiness.md#oct21-read-only-connection-diagnostic-completes). Earlier entries retain their dated scope limits.
+
 ## Oct21 R5 adopts both PDFs; second stability request stops
 
 Documentation checkpoint 8ac31bd is published: all five workflows/four Quality

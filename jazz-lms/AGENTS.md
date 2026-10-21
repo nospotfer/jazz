@@ -100,9 +100,15 @@ checkpoint: both existing PDFs pass fresh read-only byte/metadata adoption,
 171,746 bytes; initial1,621 rows/14,270 cells match and new uploads0. The second
 stability SELECT fails57P01; closed/UNKNOWN state explicitly explains skipped
 final preservation/rollback, which remain unverified. Independent10:41:54 closure
-confirms the replacement paused. Diagnose actual connection settings/identity/
-persistence read-only before more uploads; no timeout cause or route remedy is
-established. Never re-POST/overwrite either file, recreate the bucket or repeat
+confirms the replacement paused. The subsequent R2 metadata diagnostic passes
+seven SQL calls,30.012s same-session idle, rollback and frontend close, with
+independent11:40:12 paused/settings closure. Its frontend protocol identifier
+observations are separate from authoritative SQL PIDs. Current queried idle and
+transaction timeouts are0; no earlier shutdown cause, route remedy or full
+upload lifecycle is established. Frontend TLS verifies; upstream SQL TLS is
+observed false. Prepare fresh typed/protected checks and adoption of both files
+before another bounded upload scope, or separately admit documented5432 session
+routing for native preview. Never re-POST/overwrite either file, recreate the bucket or repeat
 customer import. The offline controlled-admin password source
 match is not hosted login proof and grants no role/session/autoload authority.
 

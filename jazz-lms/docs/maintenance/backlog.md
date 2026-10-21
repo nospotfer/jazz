@@ -1,5 +1,32 @@
 # Prioritized maintenance backlog
 
+## Latest diagnostic checkpoint — Oct21 11:40 UTC
+
+The dedicated R2 read-only connection diagnostic passes seven metadata SQL calls,
+30.012s same-SQL-session idle, rollback and close on the original verified-TLS
+6543 transaction route. Statement timeout is120000ms; queried idle/transaction
+settings are0, with no applicable scoped override rows. R1 stopped at an
+identifier guard with zero SQL; its original identifier value/type stays unknown.
+R2 protocol identifiers are observations, not SQL PID authority. Independent
+sevenGET closure confirms paused replacement/production, healthy preview and
+unchanged old settings.
+
+1. Preserve original R1/R2 outcomes and all R4/R5 spent ledgers. The short current
+   observation establishes no earlier shutdown cause/remedy or full upload-run
+   stability and rereads no customer values; R5 final preservation/rollback is
+   still unverified.
+2. Prepare a fresh bounded adopt2/upload66 scope with current typed customer/
+   protected-state checks before writes, or separately derive and verify documented
+   5432 session routing using the current provider host for native preview.
+   Never re-POST/overwrite either existing
+   PDF, recreate the bucket or repeat customer import. Continuing maintenance
+   authorization applies; a fresh technical plan/once ledger remains required.
+3. Complete all file acceptance and restored Auth/admin/native-preview continuity,
+   native coupon binding/retained TEST refund, recovery-point currency, zero-cost
+   hosting and release gates. a30bc17 publication is not deployment/full recovery.
+
+[Current diagnostic evidence and limits](production-readiness.md#oct21-read-only-connection-diagnostic-completes). The earlier Storage sections preserve historical results.
+
 ## Latest Storage stop — Oct21 10:41 UTC
 
 R5 freshly verifies/adopts both existing PDFs read-only, 171,746 bytes total,

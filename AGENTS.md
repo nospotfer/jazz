@@ -192,7 +192,20 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
-Current R5 freshly adopts both existing PDFs read-only (171,746 bytes), with
+Current Oct21 R2 connection diagnosis passes seven metadata-only SQL calls,
+30.012 seconds idle with the same actual SQL session, READ ONLY rollback and
+frontend close on the original6543 transaction route. Independent11:40:12
+sevenGET closure confirms replacement/production paused and old settings equal.
+Protocol identifiers are bounded observations, separate from positive SQL PIDs;
+the original zero-SQL diagnostic guard failure remains retained. Current scoped
+idle/transaction timeouts are0, but no earlier failure cause or full upload-run
+stability is established. Frontend TLS verifies; observed upstream SQL TLS is
+false. No customer values/PDFs were reread. Prepare a fresh adopt2/upload66 scope
+or separately documented5432 session admission for native preview; preserve all
+spent markers and the earlier final-preservation gap. See the current
+`jazz-lms/docs/maintenance/production-readiness.md` checkpoint.
+
+Earlier R5 freshly adopts both existing PDFs read-only (171,746 bytes), with
 initial1,621 rows/14,270 typed cells matching. It uploads nothing. The second
 stability SELECT fails57P01 after one successful sample; the failed query's role
 is derived from pinned control flow, not a retained query hash. Connection state
@@ -200,11 +213,12 @@ is closed/UNKNOWN; final preservation and explicit rollback are skipped with
 CONNECTION_CLOSED and remain unverified. Frontend/worker close; parent pause and
 independent10:41:54 sevenGET closure confirm replacement/production INACTIVE,
 preview healthy and old settings equal. Preserve R5 receipts/ledgers and both
-objects. Before another upload scope, diagnose the connection read-only using
-actual settings/identity/persistence observations; do not assume a timeout cause,
+objects. The dedicated connection diagnostic now passes as recorded above;
+do not assume a timeout cause,
 change routes silently, re-POST/overwrite files, recreate the bucket or repeat
 customer import. Exact8ac31bd publication/CI passes without deployment. The
-filtered PostgreSQL events match no retained frontend PID; empty Supavisor logs
+filtered PostgreSQL events match no retained SQL backend PID (the original
+receipt's frontend label is qualified separately); empty Supavisor logs
 do not prove absence of a pooler failure. See production-readiness.md.
 
 Earlier R4 freshly adopts the first PDF read-only and passes two actual empty

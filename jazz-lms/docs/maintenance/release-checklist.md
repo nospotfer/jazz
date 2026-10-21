@@ -1,5 +1,31 @@
 # Production review and rollback checklist
 
+## Oct21 dedicated connection diagnostic and remaining release gates
+
+- [x] Preserve original R1 zero-SQL identifier-guard failure/closure; its actual
+  identifier value/type remains unknown. Keep original spent markers unchanged.
+- [x] Complete R2 on published a30bc17: one verified-TLS6543 PRIMARY transaction
+  frontend, seven metadata SQL calls,30.012s same-SQL-session idle,10 setting rows,
+  scoped override rows0, confirmed READ ONLY rollback/client close.
+- [x] Record protocol identifiers as observations (three signed-negative samples),
+  with strict positive SQL PID/identity continuity and no equality assumption.
+- [x] Verify parent61 Management44work17closure/one resume-pause/two captures and
+  independent11:40:12 sevenGET paused replacement/production, healthy preview and
+  original settings equality. Target Auth/desired API settings match.
+- [ ] Establish fresh customer/protected-state and both object adoptions before
+  any remaining66 upload scope; never re-POST/overwrite prior files, recreate the
+  bucket or repeat customer import. R2 rereads no customer/PDF values and does
+  not supply the missing R5 final preservation/rollback proof.
+- [ ] Review the next bounded technical plan under continuing authorization:
+  adopt2/upload66 or separately derived documented5432 session routing using the
+  current provider host for native-preview use.
+  Current30s idle is not a prior-cause/remedy or full488SQL/66PDF stability proof.
+- [ ] Verify restored Auth/admin/files, native preview/coupon binding/retained TEST
+  refund, recovery-point currency, zero-cost hosting and remaining release gates.
+  No deployment, serving or full-goal completion is established.
+
+[Current diagnostic evidence and limits](production-readiness.md#oct21-read-only-connection-diagnostic-completes). Earlier checklists retain their dated scope limits.
+
 ## Oct21 R5 stop and current release limits
 
 - [x] Verify exact 8ac31bd documentation publication: five workflows/four Quality

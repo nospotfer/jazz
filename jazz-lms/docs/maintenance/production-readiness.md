@@ -1,5 +1,84 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Oct21 read-only connection diagnostic completes
+
+Published checkpoint `a30bc172c65eebb692e3af4084967e57b43b1c73` remains the
+source binding for this diagnostic. No application deployment or restored
+customer login follows from this result.
+
+The first dedicated connection diagnostic closes before SQL: its protocol-PID
+admission predicate rejects the frontend identifier, with **zero SQL** and the
+frontend closed. Its actual identifier value/type was not retained and remains
+unknown. R2 changes only the identifier's treatment to a bounded observational
+field; it does not equate that protocol identifier with a PostgreSQL backend PID.
+Actual positive SQL backend PID, backend/postmaster start, transaction and role
+continuity checks remain strict. Original R1 outcomes and spent markers remain
+unchanged.
+
+R2 completes at **11:39:31.456608 UTC**: one verified-TLS frontend on the original
+**6543 PRIMARY transaction-pooler** route, seven metadata-only SQL calls and a
+**30.012-second idle interval** in the same observed SQL session. Ten scoped
+setting rows are captured: `statement_timeout=120000ms`;
+`idle_in_transaction_session_timeout`, `idle_session_timeout` and
+`transaction_timeout` are zero. No role/database override rows are returned for
+the ten queried timeout/connection settings and applicable current role/database
+scope. This does not exclude unrelated overrides. All three frontend protocol
+identifier observations have the signed-negative range; their values are not
+published and are not authoritative SQL PIDs. READ ONLY ROLLBACK and frontend
+closure are confirmed; journal failures are zero.
+
+The parent completes with 61 Management calls (44 work/17 closure), one resume,
+one pause, two current process captures, one TLS-only probe and one native
+connection. Frontend CA/hostname verification passes; the observed upstream
+SQL TLS flag is **false**. No end-to-end TLS claim follows. Target Auth/desired
+API settings and original project states/settings match their baselines.
+Independent **11:40:12.312430 UTC** seven-GET closure confirms the exact replacement
+and original production INACTIVE, preview healthy and original observed settings
+equal; it performs no SQL or mutations.
+
+| Receipt | SHA-256 |
+| --- | --- |
+| a30bc17 publication/CI | `b9bd88818b04536ea4b2e50db6e06bd5fa90cbe8f9fded3a3be7133438259705` |
+| R1 diagnostic parent (zero SQL) | `40a2e11c19d471c56b5e836264c74a33fb37a17cdd876217e28bce1e2f244a7a` |
+| R1 independent closure | `9afa0b6bf94400c9aa343317313d7a21a08b540f7e5c869baed0b07b7acabbd6` |
+| R2 diagnostic parent | `796d802e7e31cf08d21ba996b70f053a0760a540b285b4c4e01706a229268ce9` |
+| R2 diagnostic core | `6fdd9263f195c6d1e22bb183bc5c88520523f01119d26d93bfcc388ed9323a83` |
+| R2 independent closure | `da2e019fac068279ba07ede78372099cc190f4a9f7ac430480a9d449959874aa` |
+| Root R2 finite review | `f4814e2463d4c9fe07c52b1204a13568fe68e1dac776ff2d72d7f579acfe82dd` |
+| R5 SQL-PID label qualification | `13165f81f1c6c9e58c400bc468e4ad739cc6aca4e57db74fb07936b6ba5f2646` |
+
+Finite/source custody `review-checkpoint-connection-diagnostic-r2-readonly-idle-20261021`
+retains18 files, manifest
+`1bbc2c0d7e6c51ed6a49e60f76c4ac03f0f5c1ea35607b9d216e2ca18b5db756`.
+Original R1 custody retains8 files, manifest
+`a31343e6d5ddd07cb248c2a98960a208f55c21d1723dacfebc49c12dff9b387b`.
+Both exclude provider bodies, keys, customer values and active plans; retention
+is owner-only/local/unencrypted and off-site recovery remains unestablished.
+The R5 log comparison's older "frontend PID" label was a misnomer: its compared
+value was SQL `pg_backend_pid()`; zero log matches and unknown cause are unchanged.
+
+This short metadata diagnostic does **not** identify the earlier R4/R5 shutdown
+cause, prove a remedy or validate a full 488-SQL/66-PDF upload run. It rereads no
+customer values or PDFs and does not repair the missing R5 final preservation/
+rollback evidence. No upload, configuration change, native COMMIT, deployment,
+login or full recovery is claimed.
+
+Next prepare a separately bounded remaining-66-PDF scope with fresh read-only
+adoption of both existing objects and current typed customer/protected-state
+checks before any new POST, or separately derive and verify the documented 5432
+session route using the current provider host for native-preview use. The provider
+capture advertises 6543; this successful observation establishes
+neither 5432 compatibility nor a route-switch authority. Use continuing maintenance
+authorization with a fresh technical plan and once ledgers; never re-POST/overwrite
+either existing PDF, recreate its bucket or repeat customer import. Restored
+Auth/admin/file continuity, native preview, coupon binding, the retained TEST
+refund, recovery-point currency, zero-cost hosting and release/full-goal gates
+remain open. The replacement stays paused.
+
+The R5 and earlier sections below retain their dated evidence and next-step
+statements; the current diagnostic supersedes the outstanding diagnostic task,
+not their incomplete preservation or file-acceptance results.
+
 ## Oct21 R5 adopts both PDFs before SQL shutdown
 
 Documentation checkpoint `8ac31bd605604c35e8c567244ff59441e7382fa5` passes all five
