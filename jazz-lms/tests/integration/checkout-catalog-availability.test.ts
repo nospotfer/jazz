@@ -2,19 +2,20 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({ getUser: vi.fn(), course: vi.fn(), purchase: vi.fn(), user: vi.fn(), upsert: vi.fn(),
-  transaction: vi.fn(), provider: vi.fn(), voucher: vi.fn(), synchronize: vi.fn(), grant: vi.fn(), fetch: vi.fn() }));
+  transaction: vi.fn(), provider: vi.fn(), voucher: vi.fn(), synchronize: vi.fn(), grant: vi.fn(), fetch: vi.fn(),
+  selectProvider: vi.fn(), localTest: vi.fn() }));
 vi.mock('@/utils/supabase/server', () => ({ createClient: () => ({ auth: { getUser: mocks.getUser } }) }));
 vi.mock('next/headers', () => ({ cookies: async () => ({ get: () => undefined }) }));
 vi.mock('@/lib/db', () => ({ db: { user: { findUnique: mocks.user }, course: { findUnique: mocks.course },
   purchase: { findUnique: mocks.purchase, upsert: mocks.upsert }, $transaction: mocks.transaction } }));
 vi.mock('@/lib/course-purchase-sync', () => ({ upsertCoursePurchaseFromProvider: mocks.grant }));
-vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: () => 'dodo', isActivePaymentProviderConfigured: () => true,
+vi.mock('@/lib/payments/provider', () => ({ getPaymentProvider: mocks.selectProvider, isActivePaymentProviderConfigured: () => true,
   createProviderCheckout: mocks.provider, getProviderVoucherReferencePrefix: () => 'dodo-voucher' }));
 vi.mock('@/lib/payments/providers/dodo', () => ({ isDodoWebhookConfigured: () => true }));
 vi.mock('@/lib/vouchers', () => ({ validateVoucherForCourse: mocks.voucher,
   lockPublishedCourseForGrant: vi.fn(async () => undefined) }));
 vi.mock('@/lib/voucher-provider-sync', () => ({ ensureVoucherDiscountSynced: mocks.synchronize }));
-vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: () => false }));
+vi.mock('@/lib/test-mode', () => ({ isLocalTestRequest: mocks.localTest }));
 
 function request(language = 'en', voucher = false) {
   return new Request('https://app.synthetic.example/api/checkout', { method: 'POST',
@@ -31,6 +32,8 @@ function observed(response: Response) {
 }
 beforeEach(() => {
   vi.resetAllMocks(); vi.stubEnv('NEXT_PUBLIC_APP_URL', 'https://app.synthetic.example');
+  vi.stubEnv('CHECKOUT_DISABLED', undefined);
+  mocks.selectProvider.mockReturnValue('dodo'); mocks.localTest.mockReturnValue(false);
   mocks.getUser.mockResolvedValue({ data: { user: { id: 'synthetic-owner', email: 'synthetic@example.test' } } });
   mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', title: 'Synthetic course', price: 80 });
   mocks.purchase.mockResolvedValue(null); mocks.user.mockResolvedValue({ role: 'USER' });
@@ -82,4 +85,43 @@ test('control unauthenticated remains401 before course lookup or price processin
   mocks.getUser.mockResolvedValue({ data: { user: null } });
   const response = await invoke(); expect(response.status).toBe(401);
   expect(mocks.course).not.toHaveBeenCalled(); expect(mocks.transaction).not.toHaveBeenCalled(); expect(mocks.provider).not.toHaveBeenCalled();
+});
+
+test.each(['paid', 'free-course', 'free-voucher', 'local-test'])('disabled checkout stops %s initiation before Auth, database or provider work', async kind => {
+  vi.stubEnv('CHECKOUT_DISABLED', 'true');
+  if (kind === 'free-course') mocks.course.mockResolvedValue({ isPublished: true, id: 'synthetic-course', price: 0 });
+  if (kind === 'free-voucher') mocks.voucher.mockResolvedValue({ valid: true, isFree: true });
+  if (kind === 'local-test') mocks.localTest.mockReturnValue(true);
+  const response = await invoke('en', kind === 'free-voucher');
+  expect(response.status).toBe(503);
+  expect(await response.text()).toBe('Payments are temporarily unavailable');
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(mocks.getUser).not.toHaveBeenCalled(); expect(mocks.user).not.toHaveBeenCalled();
+  expect(mocks.course).not.toHaveBeenCalled(); expect(mocks.purchase).not.toHaveBeenCalled();
+  expect(mocks.selectProvider).not.toHaveBeenCalled(); expect(mocks.localTest).not.toHaveBeenCalled();
+  expect(observed(response)).toEqual({ status: 503, upserts: 0, grants: 0, providerCalls: 0,
+    voucherCalls: 0, synchronizations: 0, transactions: 0 });
+});
+
+test.each([
+  ['es', 'Pagos temporalmente no disponibles'],
+  ['en', 'Payments are temporarily unavailable'],
+  ['fr', 'Les paiements sont temporairement indisponibles'],
+  ['pt', 'Pagamentos temporariamente indisponíveis'],
+])('disabled checkout preserves the existing %s UI error contract', async (language, message) => {
+  vi.stubEnv('CHECKOUT_DISABLED', 'true');
+  expect(await (await invoke(language)).text()).toBe(message);
+  expect(mocks.getUser).not.toHaveBeenCalled(); expect(mocks.provider).not.toHaveBeenCalled();
+});
+
+test.each([undefined, '', 'false'])('legacy or explicitly enabled switch %j preserves paid checkout', async value => {
+  vi.stubEnv('CHECKOUT_DISABLED', value);
+  expect((await invoke()).status).toBe(200);
+  expect(mocks.provider).toHaveBeenCalledOnce();
+});
+
+test.each(['TRUE', '0', ' false ', 'typo'])('nonempty invalid switch %j fails closed outside native config', async value => {
+  vi.stubEnv('CHECKOUT_DISABLED', value);
+  expect((await invoke()).status).toBe(503);
+  expect(mocks.getUser).not.toHaveBeenCalled(); expect(mocks.provider).not.toHaveBeenCalled();
 });

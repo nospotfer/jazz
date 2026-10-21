@@ -13,6 +13,7 @@ const ALLOWED_ENV = new Set([
   'SUPABASE_STORAGE_BUCKET', 'MUX_SIGNING_KEY_ID', 'MUX_SIGNING_PRIVATE_KEY',
   'CRON_SECRET', 'DODO_ENVIRONMENT', 'DODO_API_BASE_URL', 'DODO_PAYMENTS_API_KEY',
   'DODO_PAYMENTS_WEBHOOK_SECRET', 'DODO_BUSINESS_ID', 'DODO_PRODUCT_ID',
+  'CHECKOUT_DISABLED',
   'DODO_WEBHOOK_REPLAY_WINDOW_SECONDS', 'RESEND_API_KEY', 'RESEND_FROM_EMAIL',
   'PROFESSOR_EMAIL', 'ADMIN_OWNER_EMAIL', 'RESEND_WEBHOOK_SECRET',
   'MESSAGES_REPLY_TO_EMAIL', 'INBOUND_EMAIL_WEBHOOK_SECRET', 'NEXT_PUBLIC_SUPPORT_EMAIL',
@@ -114,6 +115,11 @@ export function validateNativeConfig(value) {
   requireCondition(record(value.env) && Object.entries(value.env).every(([name, text]) => ALLOWED_ENV.has(name) &&
     typeof text === 'string' && text.length <= 32 * 1024 && !text.includes('\0')), 'NATIVE_CONFIG_ENVIRONMENT');
   const env = { ...value.env };
+  requireCondition(!Object.hasOwn(env, 'CHECKOUT_DISABLED') ||
+    ['true', 'false'].includes(env.CHECKOUT_DISABLED), 'NATIVE_CONFIG_CHECKOUT');
+  // Server-only runtime control: no ambient flag or public build setting may
+  // decide whether this explicitly configured process accepts new purchases.
+  env.CHECKOUT_DISABLED ??= 'false';
   requireCondition(env.APP_URL === origin && env.NEXT_PUBLIC_APP_URL === origin, 'NATIVE_CONFIG_ORIGIN');
   const supabase = `https://${ref}.supabase.co`;
   requireCondition(env.NEXT_PUBLIC_SUPABASE_URL === supabase && (!env.SUPABASE_URL || env.SUPABASE_URL === supabase), 'NATIVE_CONFIG_PROJECT');

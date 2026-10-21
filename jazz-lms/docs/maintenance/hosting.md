@@ -186,8 +186,8 @@ decision, not permission to perform earlier production changes unreviewed.
    become sessions on the replacement: expect normal customer sign-in, never
    fabricate sessions. Verify LIVE product/key/webhook ownership separately;
    never promote the TEST key or infer LIVE readiness from a TEST purchase. The
-   production implementation must support keeping purchase initiation disabled
-   until that review is complete; existing paid customer access must not depend
+   production implementation now supports server-only CHECKOUT_DISABLED=true
+   to keep new checkout/voucher grants disabled until that review is complete; existing paid customer access must not depend
    on accepting a new payment.
 5. **Retire old trusted execution.** Preserve and reverify Vercel's already
    applied All Deployments Authentication and paused active production. Disable

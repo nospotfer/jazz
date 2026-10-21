@@ -1,5 +1,27 @@
 # Maintenance log
 
+## Oct22 — Staged reopening can disable new purchase initiation
+
+Added server-only runtime CHECKOUT_DISABLED. Paid/free/100%-voucher/local-test
+checkout and direct FREE_ACCESS redemption return no-store503 before Auth, DB,
+provider work or grants. Existing checkout messages and stable Service unavailable
+voucher feedback render in ES/EN/FR/PT without a UI rewrite. Undefined/empty/false
+preserve legacy enabled behavior; other nonempty values fail closed. Native
+configuration permits only exacttrue/false, defaultsfalse from explicit inputs
+and never inherits ambient values or exposes the flag to the public build.
+Existing content/Auth/webhook/reconciliation source remains untouched.
+272 native configuration cases and126 distinct route/UI/control cases pass;
+full types, scoped lint and diff checks pass. Source is not production deployed;
+select CHECKOUT_DISABLED=true in the staged release, not in the running old preview.
+
+Latest published d27be22 has10 successful remote checks and Vercel status.
+A bounded offline ownership check finds13 USER/1 SUPER_ADMIN in the archive,
+with saved credential references matching only the administrator. No owner-
+controlled existing student/password is identified and no password guesses,
+login/provider/SQL/backend actions occur. The owner has been asked only whether
+they control an existing student account; recovered-student continuity stays open.
+
+
 ## Oct22 01:35 Madrid — Build/runtime and older-payment checkpoint
 
 Published0d45a33 has all10 successful remote checks plus Vercel status, a fresh

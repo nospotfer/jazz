@@ -98,6 +98,18 @@ The owner identifies `gabriel.barra@gmail.com` as likely domain/DNS account;
 CLI metadata does not establish access. No further owner action is requested
 at this checkpoint. [Plain-language handover](review-status.md).
 
+The staged-release source now supports server-only `CHECKOUT_DISABLED=true`:
+new paid/free/voucher/local-test grants and direct voucher redemption stop with
+localized no-store503 before Auth/DB/provider work. Existing customer content,
+Auth and payment fulfillment/reconciliation are unchanged.272 configuration and
+126 distinct route/UI/control cases/types/lint pass. Actual sealed-runtime
+confirmation and final-source build follow; the old owner preview is unchanged.
+The archive has13 USER/1 SUPER_ADMIN; retained credentials/control metadata
+identify only that administrator. No qualifying owned student password is found.
+An owner-controlled existing student account is requested; no guesses, customer
+impersonation, backend resume or repeated admin journey is authorized by this
+inspection. Domain access remains separately unestablished.
+
 The hosted PDF confirmation closes normally with one local logout204. Root's
 22:45:12UTC final read-only comparison preserves all six business hashes, prior
 users' sessions and hierarchy, with actor sessions0/completed lessons2.

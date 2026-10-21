@@ -1,4 +1,5 @@
 import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { isCheckoutDisabled } from '@/lib/checkout-availability';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -20,6 +21,11 @@ class VoucherRedeemError extends Error {
 }
 
 export async function POST(req: Request) {
+  if (isCheckoutDisabled()) {
+    return NextResponse.json({ success: false, error: 'Service unavailable' }, {
+      status: 503, headers: { 'Cache-Control': 'no-store' },
+    });
+  }
   try {
     const supabase = createClient();
     const {

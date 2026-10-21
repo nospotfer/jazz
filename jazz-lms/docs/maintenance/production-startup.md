@@ -16,6 +16,16 @@ The original backend remains inspection-compatible but is denied by this
 production launcher. Preview selectors, test payments and recovery leases cannot
 become production startup inputs.
 
+For the proposed staged reopening, set server-only `CHECKOUT_DISABLED: "true"`
+in the explicit configuration. It blocks new paid/free/voucher checkout grants
+and direct voucher redemption without disabling existing-customer content,
+authentication, completed-payment webhooks or reconciliation. Customers receive
+the existing localized temporarily-unavailable message. The native config accepts
+only exact `"true"`/`"false"`; omission preserves legacy enabled behavior and
+does not inherit a shell setting. This flag is evaluated at runtime and never
+becomes a public build variable. Re-enabling initiation is a separately reviewed
+production configuration change after LIVE product/price/webhook acceptance.
+
 The plan contains exactly `version`, `sourceCommit`, `projectRef`, `origin`,
 `configFile`, `appRoot`, `manifestFile`, `runDirectory`, `nodeExecutable`,
 `cloudflaredExecutable`, `cloudflaredSha256` and `tunnel` (exactly `id` and

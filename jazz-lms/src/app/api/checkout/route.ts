@@ -1,4 +1,5 @@
 import { isSupportedPaymentMethod } from "@/lib/checkout-helpers";
+import { isCheckoutDisabled } from "@/lib/checkout-availability";
 import { upsertCoursePurchaseFromProvider } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
 import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
@@ -70,7 +71,6 @@ function isInvalidJsonBodyError(error: unknown) {
 }
 
 export async function POST(req: Request) {
-  const paymentProvider = getPaymentProvider();
   let copy = {
     unauthorized: "No autorizado",
     emailRequired: "El correo del usuario es obligatorio",
@@ -190,6 +190,13 @@ export async function POST(req: Request) {
       },
     }[selectedLanguage];
 
+    if (isCheckoutDisabled()) {
+      return new NextResponse(copy.paymentsUnavailable, {
+        status: 503, headers: { "Cache-Control": "no-store" },
+      });
+    }
+
+    const paymentProvider = getPaymentProvider();
     const configuredAppOrigin = normalizeOrigin(
       process.env.NEXT_PUBLIC_APP_URL,
     );

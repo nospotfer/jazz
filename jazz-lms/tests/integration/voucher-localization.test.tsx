@@ -45,6 +45,20 @@ async function submitCode(inputId: string) {
 
 describe('voucher feedback uses the selected language and stable API values', () => {
   test.each([
+    ['es', /no están disponibles temporalmente/i], ['en', /temporarily unavailable/i],
+    ['fr', /temporairement indisponibles/i], ['pt', /temporariamente indisponíveis/i],
+  ] as const)('the disabled redemption503 is presented in %s without granting access or navigation', async (language, expected) => {
+    mocks.post.mockRejectedValue({ isAxiosError: true, response: { status: 503,
+      data: { success: false, error: 'Service unavailable' } } });
+    renderEntry(<RedeemPage />, language);
+    await submitCode('redeem-voucher-code');
+    expect(screen.getByRole('alert').textContent).toMatch(expected);
+    expect(mocks.toastError).toHaveBeenCalledWith(screen.getByRole('alert').textContent);
+    expect(mocks.push).not.toHaveBeenCalled();
+    expect(mocks.post).toHaveBeenCalledOnce();
+  });
+
+  test.each([
     ['es', /ha caducado/i], ['en', /has expired/i], ['fr', /a expiré/i], ['pt', /expirou/i],
   ] as const)('redeem translates the same expired response in %s instead of showing backend prose', async (language, expected) => {
     const rawMessage = 'Este voucher expirou. RAW_BACKEND_SENTINEL';

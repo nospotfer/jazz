@@ -62,6 +62,7 @@ function expectNoVoucherWorkOrGrant() {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.stubEnv('CHECKOUT_DISABLED', undefined);
   course = { id: courseId, price: 80, isPublished: true };
   mocks.course.mockImplementation(async ({ where, select }: { where: { id: string }; select: Record<string, boolean> }) => {
     if (!course || where.id !== course.id) return null;
@@ -81,6 +82,16 @@ beforeEach(() => {
   mocks.rateLimit.mockReturnValue({ allowed: true, retryAfterSeconds: 0, remaining: 10, limit: 30 });
   mocks.fetch.mockImplementation(() => { throw new Error('External network is forbidden in voucher authority checks'); });
   vi.stubGlobal('fetch', mocks.fetch);
+});
+
+test.each(['true', 'TRUE', 'invalid'])('disabled switch %s stops direct free-voucher initiation before Auth or database work', async value => {
+  vi.stubEnv('CHECKOUT_DISABLED', value);
+  const response = await redeem(request('redeem'));
+  expect(response.status).toBe(503);
+  expect(await response.json()).toEqual({ success: false, error: 'Service unavailable' });
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(mocks.getUser).not.toHaveBeenCalled(); expect(mocks.course).not.toHaveBeenCalled();
+  expectNoVoucherWorkOrGrant();
 });
 
 describe('grant transaction rejects course or voucher changes after initial validation', () => {
@@ -181,7 +192,7 @@ describe('grant transaction rejects course or voucher changes after initial vali
     expect(mocks.redemptionCreate).not.toHaveBeenCalled();
   });
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe('real voucher validator requires a published course with a known catalog price', () => {
   test.each([

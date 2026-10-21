@@ -297,6 +297,27 @@ describe("native restored customer recovery profile", () => {
   });
 });
 
+describe("runtime checkout availability", () => {
+  test.each(["true", "false"])("preserves explicit %s without changing public build identity", disabled => {
+    const input = config("production");
+    input.env.CHECKOUT_DISABLED = disabled;
+    const output = validateNativeConfig(input);
+    expect(output.env.CHECKOUT_DISABLED).toBe(disabled);
+    const build = nativeBuildEnvironment(output, "/synthetic/tmp", "/synthetic/cache");
+    expect(build).not.toHaveProperty("CHECKOUT_DISABLED");
+    const other = { ...output.env, CHECKOUT_DISABLED: disabled === "true" ? "false" : "true" };
+    expect(publicBuildFingerprint(output.env)).toBe(publicBuildFingerprint(other));
+  });
+  test("does not inherit an ambient purchase switch", () => {
+    vi.stubEnv("CHECKOUT_DISABLED", "true");
+    expect(validateNativeConfig(config("production")).env.CHECKOUT_DISABLED).toBe("false");
+  });
+  test.each(["", "TRUE", "1", "off", " true "])("rejects ambiguous explicit flag %j", flag => {
+    const input = config("production"); input.env.CHECKOUT_DISABLED = flag;
+    expectDenied(input, "NATIVE_CONFIG_CHECKOUT");
+  });
+});
+
 describe("native configuration mode, source and origin routing", () => {
   test.each(["production", "preview"] as const)("accepts only the pinned %s target and returns its clean routing", (mode) => {
     const input = config(mode);
