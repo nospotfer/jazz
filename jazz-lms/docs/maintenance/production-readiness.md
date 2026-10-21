@@ -1,6 +1,54 @@
 # Production recovery checkpoint — 2026-10-21
 
-## Current checkpoint — Oct21 16:43 UTC
+## Current checkpoint — Oct21 17:09 UTC
+
+The reviewed56-cell correction remains unapplied. Fresh root65091 exits1 at
+17:09:46 UTC before UPDATE/COMMIT, Auth enablement, native startup or password
+submission.73 initial READ ONLY calls establish the complete original baseline;
+query74 is the attempted serializable write BEGIN. It fails in2ms with
+Postgres57P01/ADMIN_SHUTDOWN, closing the previously IDLE connection. No UPDATE
+reservation or COMMIT attempt follows. Final data preservation/rollback cannot
+be reverified on that closed connection and remains explicitly unproven.
+
+There are59 Management calls, one resume/pause, two process admissions and zero
+Auth PATCHes. Parent Auth/desired equality and independent nine-GET target pause/
+Auth/original-project equality pass. Paused desired404 remains unavailable for
+independent comparison; active parent equality is separate. No application or
+browser starts. The held builder/tunnel90225 also reaches actual exit0 after its
+fixed17:11:49 expiry; socket absence is checked afterward.
+
+One bounded Postgres-log GET records fast shutdowns at17:06:47,17:07:04 and
+17:07:13, preceding the17:07:28 healthy observation. It has no exact correlated
+statement/session proof for the failed17:07:53 BEGIN. Startup instability is
+observed; the specific cause of this client failure remains unproven. Do not
+retry the spent window or weaken TLS, permissions, transaction or preservation
+checks. Diagnose the transport/startup boundary before a fresh correction scope.
+
+Source preparation is complete:30 focused controls, independent review and root
+checks against the real original archive/model pass. The25-import607e checksum
+is distinct from the full26-table/ledger checksum; both are checked. The proposed
+normalization changes exactly56 declared reset cells and preserves all other
+14,214 typed cells. All ten plain-string Auth model fields are non-NULL after
+the in-memory overlay. Original prepared/archive values remain unchanged.
+One exact UPDATE and reserved COMMIT require full typed/other/protected checks;
+postcommit fresh readonly identity/56-cell readback and receipt confirmation
+precede login. These are preparation results, not a successful correction.
+
+Local owner-only finite custody (unencrypted; no off-site recovery established):
+
+- Source/real-archive checks: `review-checkpoint-auth-flow-compatibility-source-20261021/`,
+ 21 files, manifestcc22cdc471b4c2e7526b8e69effac8407cbfb59dd845c851c5f5c09c87515843.
+- Closed write-admission outcome/failure/log: `review-checkpoint-auth-flow-write-admission-stop-20261021/`,
+ five files, manifestd9f4643e597545d0b4cfc7aaa577af81ed85df54d15afce0b3692dbcee5cf180.
+- Earlier hosted password500/log/model audit: `review-checkpoint-hosted-admin-auth500-20261021/`,
+ five files, manifest820f3df936eeef5a1cf1683b781dba3dc7b83c3611687ffc9a9130ec3d92d044.
+
+Custody lives under `/home/gabriel/backups/culturadeljazz-maintenance/`; credentials,
+enabled plans, process tuples and raw provider/customer values are excluded.
+All68 PDFs remain accepted. Public HTTPS login-page proof below remains valid;
+hosted login, corrected Auth continuity and full release readiness remain open.
+
+## Oct21 first hosted password identifies the reset defect
 
 The first actual password request reaches hosted Auth and returns500 at16:40:30.
 Root35165 exits1 at16:42:45 with no observed session, all original rows/cells and

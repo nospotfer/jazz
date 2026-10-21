@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current access gate — Oct21 16:43 UTC
+## Current access gate — Oct21 17:09 UTC
 
 - [x] Build application31ad6ba and start/stop the actual native preview cleanly.
 - [x] Verify the real protected HTTPS login page200/email/password visible with
@@ -11,8 +11,11 @@
       labels; actual page smoke verifies the repaired browser/reservation path.
 - [x] Capture first actual password500 and diagnose the NULL confirmation-token
       failure through one bounded logs GET while the backend remains paused.
-- [ ] Correct exactly56 declared Auth reset cells with reviewed preservation and
-      commit/rollback controls; verify hosted admin login/dashboard/admin/logout.
+- [x] Prepare exact56-cell correction with30 controls, independent review and
+      real original-archive/model compatibility checks; source custody retained.
+- [ ] Diagnose actual57P01 write-BEGIN failure before another correction window.
+      UPDATE/COMMIT/password0; latest final readback remains unavailable.
+- [ ] Apply the reviewed correction and verify hosted admin/dashboard/logout.
 - [ ] Complete remaining customer/media/payment journeys, recovery currency,
       zero-cost hosting and production release/rollback review.
 
@@ -21,7 +24,7 @@ Both Auth PATCHes200 and independent Auth equality pass; parent rollback/full
 Auth verification remains false and is retained. Paused
 PostgREST404 remains an independent desired-settings comparison limit. All68
 PDFs/import remain accepted; production is paused and UI unreleased.
-[Evidence](production-readiness.md#current-checkpoint--oct21-1643-utc).
+[Evidence](production-readiness.md#current-checkpoint--oct21-1709-utc).
 
 ## Current release gates — Oct21 14:48 UTC
 

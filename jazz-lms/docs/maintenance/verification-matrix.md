@@ -1,6 +1,6 @@
 # Goal verification matrix
 
-## Current preview check — Oct21 16:43 UTC
+## Current recovery check — Oct21 17:09 UTC
 
 | Requirement | Authoritative result | Status |
 | --- | --- | --- |
@@ -10,11 +10,13 @@
 | Customer/protected preservation | R2/R3 each117 READ ONLY SQL, all original rows/cells/prior/protected state match | Passed in closed windows |
 | Hosted Auth/prerequisites | Actual direct healthv2.197.0; fresh two-FK/no-active-trigger cleanup catalog | Passed for observed windows |
 | Existing admin login/dashboard/logout | R4 one password request500; no observed session, clean native/browser,117 READ ONLY SQL and full original preservation | Not verified |
-| Auth-flow compatibility | Actual500 log identifies NULL confirmation_token; model/archive audit finds56 declared reset cells using incompatibleNULL defaults | Defect confirmed; correction preparation only |
-| Provider closure | R4 both PATCH200, frontend/native closed and independent pause/Auth/original equality; parent Auth rollback verification false is retained | Independent closure passes; parent verification failed, desired404 remains qualified |
+| Auth-flow compatibility | Real archive/model checks and30 controls/independent review pass; exact56-cell overlay only | Prepared; actual correction not applied |
+| Latest write admission | Query74 serializable BEGIN fails57P01 in2ms, connection closes; UPDATE/COMMIT/Auth PATCH/password0 | Failed; startup logs lack exact causal correlation |
+| Latest final preservation |73 initial readonly calls match baseline; closed connection prevents final readback/rollback proof | Unproven; preserve this gap |
+| Provider closure | R5 Auth PATCH0, parent Auth/desired equality, independent pause/Auth/original equality; builder/tunnel exit0 | Passed with paused desired404 limit |
 | Public release/full goal | Vercel paused/UI unreleased; remaining journeys, recovery currency, free hosting/release review open | Incomplete |
 
-[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1643-utc).
+[Actual outcomes and limits](production-readiness.md#current-checkpoint--oct21-1709-utc).
 
 ## Current recovery result — Oct21 14:48 UTC
 

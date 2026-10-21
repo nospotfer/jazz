@@ -1,5 +1,25 @@
 # Maintenance log
 
+## Oct21 — Correction prepared; write admission stops before mutation
+
+- Exact56-cell Auth reset correction passes30 focused controls, independent source
+  review and root real-archive/model checks.25-import607e/full26 checksum domains
+  stay distinct; readonly state is reopened after a confirmed commit before the
+  small persisted readback. Original archive stays intact. No actual correction
+  follows from preparation.21 source/review files retained, custodycc22cdc4… .
+- Fresh65091exit1/17:09:46:73 readonly calls establish original baseline; attempted
+  serializable write BEGIN74 fails57P01 in2ms and closes its previously IDLE
+  connection. UPDATE/COMMIT/Auth PATCH/password0; no native/browser starts.
+  Final readback/rollback is unproven, preserved explicitly.59 Management/one
+  resume-pause/two scans, parent Auth/desired and independent nine-GET target
+  pause/Auth/original settings pass; paused desired404 remains qualified.
+- One logs GET shows earlier startup shutdowns without exact failure correlation.
+  Inspect the transport/startup boundary before retrying with a fresh plan; keep
+  spent ledgers and the coarse failure labels. Five finite outcome/log files are
+  retained under review-checkpoint-auth-flow-write-admission-stop-20261021,
+  manifestd9f4643e… . Held build/tunnel90225 reaches actual exit0 at fixed expiry;
+  socket absent. No serving resources from this window remain.
+
 ## Oct21 — First hosted password request identifies Auth reset encoding defect
 
 - Root35165 exits1/16:42:45 after one password500/no observed session.117 READ

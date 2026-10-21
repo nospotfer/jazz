@@ -2,10 +2,11 @@
 
 ## Current priorities — October21
 
-1. Correct the confirmed Auth-flow encoding defect:56 declared reset cells need
-   empty strings in place ofNULL. Prepare exact readback/commit/rollback controls,
-   then verify admin login/dashboard/admin/logout on a fresh protected preview.
-   The public login page passes; the first real password request returns500.
+1. Diagnose native connection shutdown at the read-only-to-write boundary, then
+   apply the prepared56-cell Auth-flow correction and verify admin login/logout.
+   Source review,30 controls and real-archive/model checks pass; actual query74
+   fails57P01 before UPDATE/COMMIT. Final readback remains unproven on the closed
+   connection; target/settings close safely. Keep every spent scope unchanged.
 2. Verify the remaining customer/media/PDF and coupon/refund journeys on their
    actual source/origin/backend. Keep customer writes and payment tests isolated.
 3. Finish recovery-point qualification, a concrete zero-cost hosting/domain plan
@@ -19,16 +20,15 @@ The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
 recreate the bucket or replay file uploads. This does not prove data currency
 after the archive's recovery point.
 
-The latest backend scope closes at16:19 UTC with customer/prior/protected-state
-preservation, Auth restoration, frontend/native closure, independent replacement
-pause and unchanged original project states/settings. Direct Auth healthv2.197.0
-and actual native startup pass. Chromium launches but a reservation-label defect
-blocks the first document before any password grant. R5 fixes that interface;
-a separate16:29 real protected HTTPS smoke passes the public login page with
-synthetic private inputs and the backend still paused. The later first password request returns500; logs identify a NULL flow-token
-encoding defect. No session is observed and the target closes paused with all
-original data preserved; independent Auth equality passes despite the parent
-rollback verification remaining false. Paused PostgREST404 retains the qualified independent comparison limit.
+The latest scope closes17:09 UTC with replacement independently paused and Auth/
+original settings unchanged. Its73 initial readonly calls match the original
+baseline, but the next write-BEGIN fails57P01 and closes the connection. No UPDATE,
+COMMIT, Auth PATCH or password attempt occurs; final data readback is unavailable.
+Service logs show earlier startup shutdowns without exact failure correlation.
+The56-cell correction is reviewed/prepared and remains unapplied. The earlier
+protected public login page passes200/visible fields; hosted login still fails
+before correction. Paused desired404 retains its qualified comparison limit.
+
 Current evidence: [production readiness](production-readiness.md),
 [maintenance log](maintenance-log.md), and [verification matrix](verification-matrix.md).
 Detailed earlier attempts remain in those records and Git history; they are not

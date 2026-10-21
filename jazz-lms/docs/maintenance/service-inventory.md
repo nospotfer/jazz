@@ -1,26 +1,20 @@
 # Service inventory
 
-## Latest verified replacement state — Oct21 16:42 UTC
+## Latest verified replacement state — Oct21 17:09 UTC
 
-Replacementklaiiikojgdfclzhqfgt is independently paused after two fresh access
-windows. Actual direct Auth healthv2.197.0, native startup and customer/protected
-preservation pass; both temporary EMAIL configuration changes are restored.
-Original project states/settings match. Paused PostgREST404 retains the qualified
-independent comparison limit. Neither window submits a password.
+Replacementklaiiikojgdfclzhqfgt is independently paused. Latest scope65091exit1
+establishes original baseline with73 readonly SQL calls, then write-BEGIN74
+fails57P01/ADMIN_SHUTDOWN and closes its connection. UPDATE/COMMIT/Auth PATCH/
+password0; the56-cell compatibility correction remains unapplied. Final customer
+readback/rollback cannot be verified. Parent Auth/desired equality and independent
+Auth/pause/original-settings equality pass; paused desired404 stays qualified.
 
-The later R4 window submits one password request500 with no observed session.
-All original rows/cells/protected state are preserved, frontend/native/browser
-close and independent target pause/Auth/original-settings equality pass. Both
-PATCHes200; the parent's rollback/full-Auth verification remains false. A single
-logs GET whilepaused identifies NULL confirmation_token. Four restoration-default
-flow fields need a56-cell compatibility correction; no repair is applied yet.
-
-At16:29 a real protected HTTPS login-page smoke passes200/visible fields with
-synthetic unused server inputs and the backend still paused. Its app/browser
-close cleanly. The current tunnel expires16:30:38 and cannot be extended; a new
-origin/lease is required for hosted login. Public Vercel remains paused, UI
-unreleased; no production deployment, hosting move, price change, payment or mail.
-[Current evidence](production-readiness.md#current-checkpoint--oct21-1643-utc).
+Three startup fast-shutdown log events precede the healthy sample; no exact
+correlation establishes the failed connection's cause. The source fix is reviewed
+with30 controls and real original-archive/model checks, not actual correction
+proof. The native builder/tunnel90225 ends at fixed expiry/exit0; socket absent.
+Public Vercel remains paused/UI unreleased; no hosting, price, mail or payment
+change follows. [Current evidence](production-readiness.md#current-checkpoint--oct21-1709-utc).
 
 ## Current replacement state — Oct21 14:48:17 UTC
 
