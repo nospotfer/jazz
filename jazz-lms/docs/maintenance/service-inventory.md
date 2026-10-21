@@ -1,5 +1,17 @@
 # Service inventory
 
+## Oct21 native recovery and latest replacement state
+
+Free replacement also has a locked empty API namespace, with no customer/file
+imports. Actual COMMIT28 SQL/post-PATCH18 READ ONLY and later 18 + 18 READ ONLY verify
+protected 227/rights/managed state and close. First 24 GETs stop on root 401 contract
+mismatch; R3 then stops at third GET5 s transport deadline/no HTTP. Full API scope
+remains open. Both config rollbacks/pauses/independent closures pass; latest 05:30:48
+confirms replacement/production INACTIVE, preview healthy and old settings equal.
+Actual local 1,621-row native recovery and 68PDF/source privacy checks pass within
+local/source limits, with protected durable custody; no production release.
+[Evidence and next work](production-readiness.md#oct21-native-customer-recovery-and-file-source-checks).
+
 ## Oct21 persisted replacement and source continuity
 
 Fresh actual18Python/8Node read-only requests verify persisted227, effective

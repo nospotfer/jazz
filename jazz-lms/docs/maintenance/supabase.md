@@ -1,5 +1,15 @@
 # Supabase manager audit, recovery and rollback
 
+Latest Oct 21 checkpoint at 05:30:48 confirms replacement/production INACTIVE, preview
+healthy and old settings unchanged. Locked empty API schema COMMIT 28 SQL followed
+by 18 READ ONLY passes; later 18 + 18 READ ONLY also passes with no new DDL/COMMIT. First
+24 GETs stop on root 401 expectation; R3 corrects that observation but actual third
+GET then reaches 5 s deadline/no HTTP/body. Both rollback/pause/independent closures
+pass; no full current matrix, customer import, serving or production repair.
+Actual local 1,621-row recovery/14,270-cell readback/rollback and 68PDF source
+integrity/privacy now pass within explicit limits.
+[Evidence and recovery gaps](production-readiness.md#oct21-native-customer-recovery-and-file-source-checks).
+
 Current Oct21 replacement checkpoint: actual R8 empty-schema225→227 preparation
 commits after strict schema/effective-rights/managed-preservation checks; its
 client/child close and the project is paused. Independent03:31:59 readback

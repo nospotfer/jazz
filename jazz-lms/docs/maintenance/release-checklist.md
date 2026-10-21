@@ -1,5 +1,17 @@
 # Production review and rollback checklist
 
+- [x] Rehearse real mapped Auth/public data with local PG17 COPY/14,270 typed
+  cells/native constraints, separate historical ledger,23505 rollback and root
+  cleanup check. Synthetic privileges/helpers and hosted limits remain explicit.
+- [x] Verify all 68 PDFs and source private bucket/NULL SQL ownership/custom
+  metadata, qualifying original API empty-string owner separately.
+- [x] Commit locked empty API namespace once; retain both incomplete API results,
+  guarded rollback/pause and latest 05:30:48 independent old-state closure.
+- [ ] Complete fresh hosted API matrix after finite transport diagnostics; then
+  actual account/file recovery, exact destination defaults/ownership/bytes/path
+  bijection and recovery-point qualification. Third GET timeout is not success.
+  [Evidence](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
+
 - [x] Verify persisted227 in a fresh actual READ ONLY transaction: strict schema,
   effective rights, empty guards and authenticated managed-state preservation;
   both clients rollback/close and parent/child0. Final04:08:57 pause and

@@ -6,6 +6,107 @@ application deployment occurred in this checkpoint. The improved application
 remains unreleased. The isolated preview was separately paused and restored in
 the control experiment below.
 
+## Oct21 native customer recovery and file-source checks
+
+The real archived Auth/public data passes a confined local PostgreSQL 17 restore
+rehearsal: native COPY imports 1,617 data rows plus four separate historical ledger
+rows. All 14,270 typed cells match before and after commit: 14,130 stable cells,
+126 explicit Auth-flow reset cells and 14 new money NULLs. UUIDs, roles, password
+hashes, identity/provider links and confirmation facts are preserved; no new
+migration acknowledgments or monetary facts are invented. A separate fresh
+database rejects a deliberate duplicate with 23505; ROLLBACK and an independent
+connection verify zero committed rows.
+
+The fixture preserves 44 captured Auth columns/defaults/generated expressions,
+six constraints/19 indexes, owners/RLS flags, and 50 public constraints/93 indexes
+from immutable bootstrap/currency SQL. Execution grants/helpers are explicitly
+synthetic. This proves neither hosted permissions, GoTrue/managed triggers,
+destination collation, account login, Storage restoration nor a current recovery
+point. Earlier 42501 and owner-fidelity fixture failures remain unchanged; discarded
+error prose is not reconstructed. Actual confinement/logging is verified before
+decoding rows: network none/no ports, read-only root, nonprivileged UID, dropped
+capabilities,1 CPU/1 GiB, tmpfs/owner-protected Unix socket, empty Docker config,
+no Docker logs and panic/terse server logging. Clients close and container/socket
+are removed; root independently verifies absence.
+
+All 68 retained PDF blobs also match hashes/sizes/headers: 6,423,774 bytes. Offline
+checks bind 69 Storage SQL records to original inventory/download metadata. The
+sole bucket is private, STANDARD, unversioned, AVIF false with NULL limits/lifecycle;
+SQL owner/owner_id and all 68 user_metadata fields are NULL. The original API's
+empty-string bucket owner remains explicitly distinct from SQL NULL.
+
+Helpers prepare one-attempt, x-upsert false POSTs, exact-byte download checks and
+private bucket creation; they contain no client/activation authority. No files
+are uploaded. The configuration helper alone lacks manifest-path bijection;
+the actual pinned manifest separately passes the blob loader's unique-path/ID/
+content checks. A future upload planner must enforce exact bijection, actual
+destination defaults/ownership and explicit NULL-metadata reconciliation. Do not
+COPY managed Storage rows blindly.
+
+Actual local result: `ff7bbe138ec30e85f003bcafc74df533bc6709b5ea4a46bd63fa170a9808a0d2`.
+Separate encoder 16/blob 18/bucket 8/native-comparison 6 closed controls pass within
+their scopes. Retained native source/finite evidence: 22 files/123,470 member bytes,
+manifest `04fa3574b21b1bfe5fe9158135a3b5f5db8c77101a7c3c295debce4e26c7ea66`.
+Encoder/file preparations have separate protected custody. Review packets contain
+no raw customer values/passwords/credentials. Local unencrypted retention does
+not establish off-site recovery.
+
+## Oct21 empty API namespace committed; runtime verification incomplete
+
+Actual source `67be` creates only locked empty `jazz_api_closed`:28 SQL requests,
+strict 227/empty/effective-rights/managed preservation and one confirmed COMMIT.
+One documented schema PATCH follows. The same frontend performs 18 requests in a
+new READ ONLY transaction, verifies namespace/protected metadata/no overrides,
+rolls back and closes. Frontend CA/hostname/TLS1.3 passes; upstream SQL SSL remains
+separately false. Backend identity is stable within each transaction; equality
+across pooled transactions is not claimed. No customer users/files are imported.
+
+All 24 API GETs complete: both elevated roots return 200 with canonical root-only
+introspection; four default User requests return 404/PGRST205 and 16 excluded-profile
+requests return 406/PGRST106. Two non-elevated root 401 s fall outside R2's 403-only
+expectation, so the result remains STOPPED. Legacy flag is TRUE. One guarded
+setting rollback and pause pass; parent/child exit 1 with frontend-close acknowledgment,
+77 management calls 52/25. Independent 05:12:07 eight-GET closure confirms exact
+replacement INACTIVE and old settings unchanged. Paused target-config 404 is
+unavailable readback; the parent's active readback supports setting restoration.
+
+R2 had corrected the earlier zero-path assumption: PostgREST includes canonical
+root introspection even for an empty schema. R3 recognizes bounded non-elevated 401
+only as a root observation, retaining positive elevated 200/default/profile gates.
+Supabase documents the [non-elevated root restriction](https://github.com/orgs/supabase/discussions/42949);
+actual 401 status/body comes from this run, without identifying hosted gateway
+build or denial cause. Original outcomes and spent markers stay unchanged.
+
+A distinct source `67be` continuation reuses the namespace with no DDL/COMMIT:
+two 18-request READ ONLY transactions verify current namespace, strict 227/rights/
+empty/managed/overrides, roll back and close. R3 recognizes the first 401 and the
+default User 404 passes. Third GET receives no headers/body before its five-second
+deadline (5,015 ms); the matrix remains incomplete. The capture identifies no
+DNS/TCP/TLS/server cause and does not show whether the provider received the
+request. The generic incomplete-response label does not establish malformed or
+oversized provider JSON.
+
+This continuation remains STOPPED: 101 management calls 58/43, three public GETs,
+one guarded configuration rollback/pause, child exit 1/frontend-close acknowledgment.
+Final 05:28:05 and independent 05:30:48 seven-GET closure confirm replacement/
+production INACTIVE, preview healthy and old settings equal. No production change,
+customer import, serving or cutover. Full selected-credential API verification,
+authenticated-user/GraphQL scope, actual account/file continuity and October 13
+recovery-point qualification remain open. Next: bounded transport diagnostics
+and a separately reviewed fresh GET scope, preserving all receipts/reservations.
+
+Original parent results: `101ab7666d9f26c983e586dc77e1e890c2f670b63ed37cbbd50ec096311c8bf2`
+and `6609137e7953e21a138da411a8870ac24f0e1af33246ce98d994da90154ee7d3`.
+Latest independent closure:
+`f8eace48a84a6c196711c2948d9c726ca3b5830782784fd512a150f3365aae92`.
+Separate source/finite custody packets retain 67 files/680,734 member bytes
+(manifest `334415b5b67bbb59ab39fa46965f91f00063ab04406b4cdf063017a4c43c7971`)
+and 52 files/474,830 member bytes
+(`f097d60a3e3f4558ded8cce67bd2fca1cf7e5a40a5452a1f1f87021cbb37f080`).
+Actual enabled plans, credentials, provider bodies, SQL query results/derived
+guards and public CA stay outside these review packets. Closed checks 19 per
+lifecycle/R3's 27 and independent reviews are distinct from actual outcomes.
+
 ## Oct21 persisted schema and managed catalog verified
 
 Fresh source `0769a01` read-only verification passes after a new replacement

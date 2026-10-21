@@ -192,6 +192,18 @@ See `jazz-lms/docs/maintenance/dodo.md`.
 
 ## Evidence
 
+Latest Oct 21 checkpoint at 05:30:48 confirms replacement/production INACTIVE, preview
+healthy and old settings unchanged. Native local PG17 restores 1,621 rows/14,270
+typed cells and verifies 23505 rollback; 68 PDFs/private bucket/NULL ownership checks
+pass. Hosted customer/GoTrue/Storage continuity remains open. One locked empty API
+schema COMMIT is confirmed; fresh later 18 + 18 READ ONLY checks pass. First 24 GETs stop
+on root 401 contract expectations; R3 fixes that observation but actual third GET
+then stops at 5 s deadline/no HTTP. Both scopes roll config back/pause with independent
+closure. Preserve stopped outcomes/spent actions; never recreate this schema.
+Continue bounded transport diagnostics/fresh verification, mapped recovery and
+continuity. Source recovery-point/hosting/release gates remain. See the latest
+production-readiness.md sections and separate source/finite custody packets.
+
 The Oct20 Free replacement is `klaiiikojgdfclzhqfgt`, named
 `Jazz-LMS-Empty-Replacement-20261020`. Final state is INACTIVE. A minimal
 three-field Auth PATCH passes actual readback of all49 intended values with

@@ -2,6 +2,16 @@
 
 ## Current recovery and coupon work
 
+- Native local PG17 recovery passes 1,621 rows/14,270 cells, constraint rollback and
+  independent cleanup. All 68 PDFs/source privacy/NULL ownership checks pass.
+  Hosted customer/Auth/Storage restore, actual destination defaults/ownership/
+  file bijection and current recovery point remain open.
+- Existing locked empty API namespace is committed/reverified with protected 227/
+  effective rights/managed preservation. First 24 GETs expose root 401 verifier
+  mismatch, fixed narrowly in R3; latest 18 + 18 READ ONLY scope stops at third GET5 s
+  deadline/no HTTP. Both rollback/pause/independent closures pass, latest 05:30:48.
+  Next: finite transport diagnostics/fresh bounded verification, preserving stopped
+  scopes. No customer import/release yet. [Current checkpoint](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
 - Fresh actual persisted227/read-only verification now passes: effective rights/
   empty guards, original managed state, both rollbacks/closes and independent
   04:09:08 paused/original-settings closure. Selected4relations/26constraints/

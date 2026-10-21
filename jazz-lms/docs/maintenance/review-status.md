@@ -1,5 +1,20 @@
 # Maintenance review checkpoints
 
+## Oct21 native recovery pass and qualified API results
+
+Real local PG17 COPY/native constraints and 14,270 typed cells pass for 1,621 rows;
+deliberate 23505 rolls back to zero committed rows. Root independently verifies
+container/socket absence. All 68 PDFs pass integrity/source privacy/ownership;
+no destination upload or hosted Auth continuity follows.
+
+Actual empty API schema COMMIT/protected 227/managed checks pass. First 24 GETs stop
+on two root 401 s outside the old contract; R3 corrects that observation narrowly.
+A distinct 18 + 18 READ ONLY continuation stops at third GET deadline/no HTTP. Neither
+is a complete successful runtime proof. Both guarded rollbacks/pauses/independent
+closures pass; latest 05:30:48 confirms replacement/production INACTIVE and old
+settings equal. Customer recovery/serving remain incomplete.
+[Evidence and next scope](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
+
 ## Oct21 persisted schema and selected compatibility pass
 
 Fresh source0769 actual read-only verification passes strict227/effective rights/

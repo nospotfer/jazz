@@ -1,5 +1,29 @@
 # Maintenance log
 
+## Oct21 native recovery passes; hosted API transport remains open
+
+- Actual confined PG17 COPY 1,617 data+4 historical ledger rows and 14,270 typed cells
+  match pre/postcommit. Captured Auth/public constraints/indexes stay enforced;
+  deliberate 23505 rolls back to zero committed rows. Clients/container/socket
+  close, with independent absence check. Earlier fixture failures remain;
+  synthetic local grants/helpers do not prove hosted GoTrue/triggers/collation.
+- All 68 PDFs/6,423,774 bytes pass integrity/header/request checks.69 Storage source
+  rows bind privacy/NULL ownership/custom metadata; original API empty owner is
+  qualified separately. Helpers upload nothing; actual bijection/default/ownership
+  readback and current recovery point remain open.
+- Actual locked empty API schema COMMIT 28 SQL and post-PATCH18 READ ONLY pass.
+  All 24 GETs complete with elevated canonical 200/default 404/profile 406; two root 401 s
+  fail R2's expectation. Original STOPPED result, guarded rollback/pause and
+  independent eight-GET closure are retained; legacy flag is TRUE.
+- R3's narrow root 401 correction passes 27 closed checks/independent review. A new
+  actual 18 + 18 READ ONLY/RB/close scope then stops at third GET5,015 ms deadline/no HTTP.
+  No transport cause/full matrix is claimed.101 management/3 public, rollback/pause/
+  old-state checks pass; independent 05:30:48 seven-GET closure confirms INACTIVE.
+- Protected durable source/finite custody excludes actual plans/credentials/raw
+  data. No customer import, real payment, production deployment or serving. Next:
+  bounded transport diagnostics/fresh verification, then recovery continuity.
+  [Evidence and limits](production-readiness.md#oct21-empty-api-namespace-committed-runtime-verification-incomplete).
+
 ## Oct21 persisted227, managed definitions and account continuity
 
 Fresh source0769 read-only verification passes18 Python/eight Node requests,

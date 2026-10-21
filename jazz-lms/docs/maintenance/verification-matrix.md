@@ -1,5 +1,17 @@
 # Goal verification matrix
 
+## Oct21 native restoration and hosted API boundary
+
+| Requirement | Actual result and limit |
+| --- | --- |
+| Customer restore rehearsal | Real local PG17 COPY 1,617 data+4 historical rows; 14,270 typed cells match pre/postcommit, native Auth/public constraints enforced. Deliberate 23505/RB leaves zero committed rows; root confirms container/socket absence. No hosted import/GoTrue/collation/Storage proof. |
+| File-source preparation |68 PDFs/6,423,774 bytes match; 69 Storage records bind private bucket/paths/IDs/metadata and NULL SQL ownership/custom metadata. API empty owner is qualified. No upload; actual defaults/ownership/bytes/exact planner bijection remain. |
+| Existing safe API schema | Confirmed COMMIT28 SQL then 18 READ ONLY; later 18 + 18 READ ONLY reverify namespace/protected 227/managed/rights/empty/overrides and rollback/close. No later DDL/COMMIT/customer import. |
+| Selected API scope | First 24 GETs: elevated 200/default 404/profile 406 pass, old contract rejects root 401 s. R3 fixes that observation. Latest third GET5,015 ms deadline/no HTTP leaves matrix incomplete; no cause/full-health/user-token/GraphQL proof. |
+| Closure/custody | Both rollback/pause/independent closures pass; latest 05:30:48 sevenGETs confirm exact replacement INACTIVE/old settings equal. Source/finite custody excludes raw customer inputs/credentials/active plans; local retention is not off-site recovery. |
+
+[Evidence and remaining work](production-readiness.md#oct21-native-customer-recovery-and-file-source-checks).
+
 ## Oct21 fresh persisted schema and offline continuity
 
 | Area | Actual result and limits |
