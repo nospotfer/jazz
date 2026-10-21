@@ -40,6 +40,7 @@ export function Sidebar({ currentUserId }: { currentUserId: string }) {
   });
   const { value: unreadResult } = useOwnerScopedResource<{ count: number } | null>({
     path: "/api/messages/unread-count", initialValue: null, emptyValue: null, intervalMs: 60000, expectedUserId: currentUserId,
+    enabled: process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== 'true',
   });
   const pdfCount = typeof pdfResult?.count === "number" ? pdfResult.count : null;
   const unreadMessages = typeof unreadResult?.count === "number" ? unreadResult.count : null;

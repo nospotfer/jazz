@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-import { PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, validateNativeConfig } from "../../scripts/native/config-policy.mjs";
+import { PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, RECOVERY_PROJECT_REF, validateNativeConfig } from "../../scripts/native/config-policy.mjs";
 import { publicBuildFingerprint } from "../../scripts/native/release-inspect.mjs";
 import { inspectNativePreview, startNativePreview } from "../../scripts/native/launch-preview.mjs";
 
@@ -148,6 +148,8 @@ process.on('message', async incoming => {
       basicInArgv: process.argv.some(value => value.includes(previewPassword) || value === previewUsername),
       ambientInEnv: process.env.NODE_OPTIONS !== undefined || process.env.OPENREPLAY_API_KEY !== undefined,
       mode: process.env.APP_DEPLOYMENT_ENVIRONMENT, nodeEnv: process.env.NODE_ENV,
+      recoveryAccess: process.env.NATIVE_RECOVERY_ACCESS, recoveryBrowser: process.env.NEXT_PUBLIC_RECOVERY_ACCESS,
+      recoveryLeaseMatches: Date.parse(process.env.NATIVE_RECOVERY_EXPIRES_AT ?? '') === message.expiresAt,
       dodoTestOnly: process.env.DODO_ENVIRONMENT === 'test_mode' && process.env.DODO_API_BASE_URL === 'https://test.dodopayments.com',
       dodoServerFieldsPresent: ['DODO_PAYMENTS_API_KEY','DODO_PAYMENTS_WEBHOOK_SECRET','DODO_BUSINESS_ID','DODO_PRODUCT_ID'].every(name => Boolean(process.env[name])),
       otherSideEffectsDisabled: ['CRON_SECRET','RESEND_API_KEY','RESEND_FROM_EMAIL','RESEND_WEBHOOK_SECRET','MESSAGES_REPLY_TO_EMAIL','INBOUND_EMAIL_WEBHOOK_SECRET'].every(name => !process.env[name]) &&
@@ -357,6 +359,20 @@ function enableTestPayments(value: Fixture) {
   return raw;
 }
 
+function enableRecovery(value: Fixture) {
+  const raw = JSON.parse(readFileSync(value.configFile, 'utf8'));
+  raw.projectRef = RECOVERY_PROJECT_REF;
+  raw.env.NEXT_PUBLIC_SUPABASE_URL = `https://${RECOVERY_PROJECT_REF}.supabase.co`;
+  const database = new URL(raw.env.DATABASE_URL); database.hostname = `db.${RECOVERY_PROJECT_REF}.supabase.co`;
+  raw.env.DATABASE_URL = database.toString();
+  raw.recoveryAccess = { purpose: 'restored-customer-access', scopeId: 'jazz-recovery-launch-control', expiresAt: value.plan.previewAccess.expiresAt };
+  privateJson(value.configFile, raw);
+  const manifest = JSON.parse(readFileSync(value.manifestFile, 'utf8'));
+  manifest.publicBuildFingerprint = publicBuildFingerprint(validateNativeConfig(raw).env);
+  privateJson(value.manifestFile, manifest);
+  return raw;
+}
+
 beforeAll(() => {
   certificateDirectory = mkdtempSync(join(tmpdir(), "jazz-native-launch-ca-"));
   chmodSync(certificateDirectory, 0o700);
@@ -460,6 +476,35 @@ describe("native launcher inspected preview boundary", () => {
     const value = fixture();
     value.plan.runDirectory = join(value.cache, "new-run"); privateJson(value.launchFile, value.plan);
     await expectDenied(inspectNativePreview(value.launchFile), "NATIVE_RUN_IN_RELEASE");
+  });
+});
+
+describe('native restored-customer access lease', () => {
+  test('passes the derived recovery mode and exact lease to the child and blocks unrelated routes at the edge', async () => {
+    const value = fixture(); const raw = enableRecovery(value);
+    const inspected = await inspectNativePreview(value.launchFile);
+    expect(inspected.summary).toMatchObject({ recoveryAccess: raw.recoveryAccess, providerCredentialsVerified: false, productionApproved: false });
+    const controller = await start(value);
+    expect(JSON.parse((await request(controller.socketPaths.edge, '/dashboard')).body)).toMatchObject({
+      recoveryAccess: 'true', recoveryBrowser: 'true', recoveryLeaseMatches: true,
+      dodoServerFieldsPresent: false, otherSideEffectsDisabled: true, ordinaryRequests: 1,
+    });
+    for (const path of ['/api/messages', '/api/messages/thread', '/auth/callback', '/api/webhooks/dodo-jazzlms', '/dashboard/profile']) {
+      expect((await request(controller.socketPaths.edge, path)).status).toBe(403);
+    }
+    expect((await request(controller.socketPaths.edge, '/dashboard', basic(), 'POST')).status).toBe(403);
+    expect(JSON.parse((await request(controller.socketPaths.edge, '/admin')).body).ordinaryRequests).toBe(2);
+    expect((await controller.close())).toMatchObject({ clean: true, stopped: true });
+    expectRecordedProcessesStopped(value);
+  });
+
+  test.each([-1000, 1000])('rejects a recovery deadline %ims away from Basic gate before spawning', async offset => {
+    const value = fixture(); const raw = enableRecovery(value);
+    raw.recoveryAccess.expiresAt = new Date(Date.parse(raw.recoveryAccess.expiresAt) + offset).toISOString();
+    privateJson(value.configFile, raw);
+    await expectDenied(startNativePreview(value.launchFile), 'NATIVE_RECOVERY_ACCESS_LEASE');
+    expect(existsSync(value.recordPath)).toBe(false);
+    expect(existsSync(value.plan.runDirectory)).toBe(false);
   });
 });
 

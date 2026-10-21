@@ -102,6 +102,7 @@ export function DashboardHeader({
   // ── Notifications state ─────────────────────────────────────────
   const { value: unreadResult } = useOwnerScopedResource<{ count: number } | null>({
     path: "/api/messages/unread-count", initialValue: null, emptyValue: null, intervalMs: 180000, initialDelayMs: 900, expectedUserId: user.id,
+    enabled: process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== 'true',
   });
   const unreadMessages = typeof unreadResult?.count === "number" ? unreadResult.count : 0;
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);

@@ -5,7 +5,7 @@ const METHODS = new Set(['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIO
 const HOP_HEADERS = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 const PROTECTED_HEADERS = new Set(['host', 'authorization', 'cookie', 'origin', 'content-type', 'content-length', 'content-encoding', 'forwarded', 'x-real-ip', 'x-inbox-secret']);
 
-/** @typedef {{canonicalHost:string, apexHost?:string}} IngressPolicy */
+/** @typedef {{canonicalHost:string, apexHost?:string,recoveryAccess?:boolean}} IngressPolicy */
 /** @typedef {{action:'deny'|'redirect'|'proxy',status:number,location?:string,headers?:import('node:http').OutgoingHttpHeaders}} IngressDecision */
 
 /** Canonical addresses keep equivalent IPv6 spellings in one limiter bucket.
@@ -70,6 +70,34 @@ function decodedSafePath(target) {
   } catch { return null; }
 }
 
+const RECOVERY_READ_PATHS = new Set([
+  '/', '/auth', '/dashboard', '/admin', '/robots.txt', '/favicon.ico',
+  '/api/dashboard/courses-progress', '/api/dashboard/pdf-count',
+  '/api/dashboard/quiz-medals', '/api/dashboard/quiz-medals/profile',
+  '/api/dashboard/course-completion-recognition',
+]);
+const LOCAL_IMAGE = /^\/(?:images|avatars)\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:png|jpe?g|webp|svg)$/;
+
+/** Small recovery surface, shared by the edge and private worker. Auth sessions
+ * still change at Supabase; this only bounds application request dispatch.
+ */
+export function isRecoveryRequestAllowed({ method, target, headers }) {
+  const path = decodedSafePath(target), rawPath = target.split('?')[0];
+  if (!path || path !== rawPath || path.includes('//') ||
+      Object.keys(headers).some(name => /^(?:next-action|x-matched-path|x-now-route-matches)$|^x-(?:middleware|invoke|nextjs)-/.test(name.toLowerCase()))) return false;
+  if (method === 'POST') return path === '/api/auth/session';
+  if (!['GET', 'HEAD'].includes(method)) return false;
+  if (RECOVERY_READ_PATHS.has(path) || LOCAL_IMAGE.test(path)) return true;
+  if (/^\/_next\/static\/(?:[A-Za-z0-9_@().-]+\/)*[A-Za-z0-9_@().-]+\.(?:js|css|woff2?|ttf)$/.test(path)) return true;
+  if (path !== '/_next/image') return false;
+  const query = new URLSearchParams(target.includes('?') ? target.slice(target.indexOf('?') + 1) : '');
+  const keys = [...query.keys()];
+  return keys.length === 3 && new Set(keys).size === 3 && ['url', 'w', 'q'].every(key => query.has(key)) &&
+    LOCAL_IMAGE.test(query.get('url') ?? '') && /^\d{1,4}$/.test(query.get('w') ?? '') &&
+    Number(query.get('w')) >= 1 && Number(query.get('w')) <= 4096 && /^\d{1,3}$/.test(query.get('q') ?? '') &&
+    Number(query.get('q')) >= 1 && Number(query.get('q')) <= 100;
+}
+
 /** This policy is not proof of Cloudflare/account/private-socket control.
  * @param {{method:string,target:string,headers:import('node:http').IncomingHttpHeaders}} input
  * @param {IngressPolicy} policy
@@ -98,6 +126,7 @@ export function evaluateIngressRequest({ method, target, headers }, policy) {
       headers['cf-connecting-ipv6'] !== undefined || headers['cf-pseudo-ipv4'] !== undefined) return deny(403);
   if (connectionNames(headers).some(isProtectedHeader)) return deny();
   if (!METHODS.has(method)) return deny(405);
+  if (policy.recoveryAccess === true && !isRecoveryRequestAllowed({ method, target, headers })) return deny(403);
   if (path === '/api/cron' || path.startsWith('/api/cron/')) return deny(403);
   if (host === policy.apexHost) {
     if (method === 'GET' || method === 'HEAD') return {

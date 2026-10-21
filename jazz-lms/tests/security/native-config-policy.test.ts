@@ -5,6 +5,7 @@ import {
   NativeConfigurationError,
   PREVIEW_PROJECT_REF,
   PRODUCTION_PROJECT_REF,
+  RECOVERY_PROJECT_REF,
   validateNativeConfig,
 } from "../../scripts/native/config-policy.mjs";
 import { nativeBuildEnvironment } from "../../scripts/native/prepare-release.mjs";
@@ -30,6 +31,7 @@ type Config = {
   origin: string;
   ca: { path: string; sha256: string };
   testPayments?: { provider: "dodo"; scopeId: string; expiresAt: string };
+  recoveryAccess?: { purpose: string; scopeId: string; expiresAt: string };
   env: Record<string, string>;
 };
 
@@ -208,6 +210,83 @@ afterEach(() => {
   expect(fetchMock).not.toHaveBeenCalled();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+});
+
+describe("native restored customer recovery profile", () => {
+  function recovery(): Config {
+    const input = config();
+    input.projectRef = RECOVERY_PROJECT_REF;
+    input.env.NEXT_PUBLIC_SUPABASE_URL = `https://${RECOVERY_PROJECT_REF}.supabase.co`;
+    input.env.DATABASE_URL = databaseUrl(RECOVERY_PROJECT_REF);
+    input.recoveryAccess = { purpose: "restored-customer-access", scopeId: "jazz-recovery-source-control",
+      expiresAt: new Date(Date.now() + 60_000).toISOString() };
+    return input;
+  }
+
+  test("requires the explicit profile and preserves its fixed replacement routing", () => {
+    const input = recovery();
+    const output = validateNativeConfig(input);
+    expect(output.recoveryAccess).toEqual(input.recoveryAccess);
+    expect(output.projectRef).toBe(RECOVERY_PROJECT_REF);
+    expect(output.env).toMatchObject({ NEXT_PUBLIC_RECOVERY_ACCESS: "true", NATIVE_RECOVERY_ACCESS: "true",
+      NATIVE_RECOVERY_EXPIRES_AT: input.recoveryAccess!.expiresAt, APP_DEPLOYMENT_ENVIRONMENT: "preview" });
+    delete input.recoveryAccess;
+    expectDenied(input, "NATIVE_CONFIG_PROJECT");
+  });
+
+  test.each([null, {}, { purpose: "other" }, { purpose: "restored-customer-access", scopeId: "bad scope", expiresAt: "bad" }])(
+    "rejects malformed profile %j", recoveryAccess => {
+      expectDenied({ ...recovery(), recoveryAccess }, "NATIVE_CONFIG_RECOVERY_ACCESS");
+    });
+  test.each(["purpose", "scopeId", "expiresAt"])("rejects missing %s and unknown profile fields", field => {
+    const input = recovery();
+    const profile: Record<string, unknown> = { ...input.recoveryAccess };
+    delete profile[field];
+    expectDenied({ ...input, recoveryAccess: profile }, "NATIVE_CONFIG_RECOVERY_ACCESS");
+    expectDenied({ ...input, recoveryAccess: { ...input.recoveryAccess, projectRef: RECOVERY_PROJECT_REF } }, "NATIVE_CONFIG_RECOVERY_ACCESS");
+  });
+  test.each(["expired", "over30minutes", "noncanonical"])("rejects %s profile deadline", kind => {
+    const input = recovery();
+    input.recoveryAccess!.expiresAt = kind === "noncanonical" ? new Date(Date.now() + 60_000).toUTCString() :
+      new Date(Date.now() + (kind === "expired" ? -1 : 1_900_000)).toISOString();
+    expectDenied(input, "NATIVE_CONFIG_RECOVERY_ACCESS");
+  });
+  test("rejects production and payment profiles", () => {
+    expectDenied({ ...config("production"), recoveryAccess: recovery().recoveryAccess }, "NATIVE_CONFIG_RECOVERY_ACCESS");
+    expectDenied({ ...recovery(), testPayments: withTestPayments().testPayments }, "NATIVE_CONFIG_RECOVERY_ACCESS");
+  });
+  test.each([PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, "unknown-target"])("rejects backend %s", projectRef => {
+    expectDenied({ ...recovery(), projectRef }, "NATIVE_CONFIG_PROJECT");
+  });
+  test.each(["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_URL", "DATABASE_URL"])("rejects mixed-target %s", name => {
+    const input = recovery();
+    input.env[name] = name === "DATABASE_URL" ? databaseUrl(PREVIEW_PROJECT_REF) : `https://${PREVIEW_PROJECT_REF}.supabase.co`;
+    expectDenied(input, name === "DATABASE_URL" ? "NATIVE_CONFIG_DATABASE" : "NATIVE_CONFIG_PROJECT");
+  });
+  test.each(["CRON_SECRET", "RESEND_API_KEY", "RESEND_FROM_EMAIL", "RESEND_WEBHOOK_SECRET", "MESSAGES_REPLY_TO_EMAIL",
+    "INBOUND_EMAIL_WEBHOOK_SECRET", "DODO_PAYMENTS_API_KEY", "DODO_PAYMENTS_WEBHOOK_SECRET", "DODO_BUSINESS_ID", "DODO_PRODUCT_ID"])(
+    "rejects side-effect credential %s", name => {
+      const input = recovery(); input.env[name] = "synthetic-disabled-credential";
+      expectDenied(input, "NATIVE_CONFIG_PREVIEW_SIDE_EFFECTS");
+    });
+  test.each(["NEXT_PUBLIC_RECOVERY_ACCESS", "NATIVE_RECOVERY_ACCESS", "NATIVE_RECOVERY_EXPIRES_AT", "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+    "NEXT_PUBLIC_OPENREPLAY_ENABLED", "ENABLE_LOCAL_TEST_CHECKOUT", "ENABLE_LOCAL_LEGACY_MUTATIONS"])(
+    "rejects explicit flag override %s", name => {
+      const input = recovery(); input.env[name] = "true";
+      expectDenied(input, "NATIVE_CONFIG_ENVIRONMENT");
+    });
+  test("derives flags without inheriting ambient values and binds the browser build", () => {
+    vi.stubEnv("NEXT_PUBLIC_RECOVERY_ACCESS", "true"); vi.stubEnv("NATIVE_RECOVERY_ACCESS", "true");
+    const normal = validateNativeConfig(config());
+    const recovered = validateNativeConfig(recovery());
+    expect(normal.env.NEXT_PUBLIC_RECOVERY_ACCESS).toBe("false");
+    expect(normal.env.NATIVE_RECOVERY_ACCESS).toBe("false");
+    const build = nativeBuildEnvironment(recovered, "/synthetic/tmp", "/synthetic/cache");
+    expect(build).toHaveProperty('NEXT_PUBLIC_RECOVERY_ACCESS', 'true');
+    expect(build).not.toHaveProperty("NATIVE_RECOVERY_ACCESS");
+    expect(build).not.toHaveProperty("NATIVE_RECOVERY_EXPIRES_AT");
+    expect(publicBuildFingerprint({ ...recovered.env, NEXT_PUBLIC_RECOVERY_ACCESS: "false" })).not.toBe(publicBuildFingerprint(recovered.env));
+  });
 });
 
 describe("native configuration mode, source and origin routing", () => {

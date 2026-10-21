@@ -16,6 +16,7 @@ export function DashboardPurchaseAutoReconcile() {
   const { ready, capture, isCurrent } = useAuthOwner();
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     const token = capture();
     if (!token) return;
     if (firedRef.current) return;

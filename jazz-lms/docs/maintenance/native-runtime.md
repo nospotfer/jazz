@@ -131,6 +131,63 @@ only `app.sock`; the parent binds only `edge.sock`. Both sockets are mode 600
 inside the new mode 700 directory; the worker runs with umask 077. No application
 TCP port, tunnel, service or DNS record is created by the launcher.
 
+### Protected restored-customer access profile
+
+The initial recovery preview is a separate, restricted use of preview mode. Its
+private configuration may contain exactly
+`recoveryAccess: { purpose: "restored-customer-access", scopeId: "bounded-recovery-run", expiresAt: "canonical ISO UTC deadline" }`.
+Only the literal replacement `klaiiikojgdfclzhqfgt` accepts this profile. Default
+preview remains pinned to the isolated `tvmhuacxctdgmejziaxg` project; production
+startup remains denied. Recovery cannot be combined with `testPayments` and
+rejects payment, mail and cron credentials. Its expiry must be current, at most
+30 minutes away and exactly equal to the Basic gate and worker deadline.
+
+Validation derives `NEXT_PUBLIC_RECOVERY_ACCESS`, `NATIVE_RECOVERY_ACCESS` and
+the private worker deadline from the profile. Explicit or ambient flag overrides
+are not accepted as configuration authority. The public flag enters the normal
+build fingerprint and clean build environment; a fresh source-bound artifact
+must be built for this backend. Neither configuration validation nor profile
+metadata verifies provider ownership, current rights or customer access.
+
+Both the authenticated edge and private worker enforce a literal route
+allowlist before invoking Next. The first scope permits GET/HEAD of `/`, `/auth`,
+`/dashboard`, `/admin`, `robots.txt`, the favicon, reviewed local image/avatar
+paths and ordinary Next static JS/CSS/font assets. The only allowed API reads
+are dashboard `courses-progress`, `pdf-count`, `quiz-medals`,
+`quiz-medals/profile` and `course-completion-recognition`. The only application
+POST is exact `/api/auth/session` for password-login cookie synchronization.
+Image optimization accepts only bounded local image/avatar requests. Encoded
+paths, dot segments, duplicate slashes, Next-action/internal routing headers and all other
+mutations are denied. Registration/recovery/OAuth callbacks (including aliases),
+messages, profile edits, progress/quiz writes, lesson/media access, payments,
+vouchers, cron and webhooks are outside this initial surface. Broader student or
+admin journeys require a separately reviewed expansion.
+
+The selected `/admin` overview and dashboard support reads use persisted-role
+guards, Prisma reads/SELECT, local formatting and caches. They do not initialize
+tables or write application data. Password sign-in skips its normal avatar
+metadata update in recovery mode. Dashboard automatic purchase reconciliation,
+checkout-session query handling, message polling and payment-modal warming are
+disabled; payment entry handlers stop before submitting. Editing paths remain
+blocked at both request boundaries. Page/API role lookup requires matching
+verified Auth ID/email and an existing persisted role; it never provisions or
+promotes an account while authorizing a read.
+
+This backend contains restored customer data and is **not an isolated test
+environment**. Auth login/refresh/logout still creates/revokes sessions and
+changes provider timestamps. Direct browser-to-Supabase traffic bypasses the
+application Basic gate and needs a fresh bounded controller/provider plan for
+the exact controlled account and project. No mail, signup, Google, password
+reset or user metadata mutation is included. Database transport still uses its
+existing privileged connection policy; this patch creates no SELECT-only role
+and does not establish database-enforced read-only operation. Before live use,
+verify provider ownership/configuration/keys, source and artifact binding,
+controlled identity/role, baseline customer data and planned Auth changes. After
+use, verify original-data preservation, owned-session/resource cleanup, exact
+configuration restoration and pause. Closed source/Unix fixtures demonstrate
+request enforcement only; actual restored login, PDFs, GoTrue continuity and
+production health remain separate evidence.
+
 ### Explicit Dodo TEST profile
 
 The private native configuration may opt in with

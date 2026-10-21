@@ -32,6 +32,7 @@ function PasswordToggleIcon({ visible }: { visible: boolean }) {
 }
 
 export default function AuthPage() {
+  const recoveryAccess = process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true';
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
   const { language } = useLanguage();
@@ -248,7 +249,7 @@ export default function AuthPage() {
     const params = new URLSearchParams(window.location.search);
     const oauthCode = params.get("code");
 
-    if (oauthCode) {
+    if (oauthCode && !recoveryAccess) {
       const callbackUrl = new URL("/auth/callback", window.location.origin);
       params.forEach((value, key) => {
         callbackUrl.searchParams.append(key, value);
@@ -265,7 +266,7 @@ export default function AuthPage() {
 
     setJustRegistered(justRegisteredParam === "1");
 
-    if (tabParam === "register" || flowParam === "register") {
+    if (!recoveryAccess && (tabParam === "register" || flowParam === "register")) {
       setActiveTab("register");
     }
     const normalizedUrlEmail = urlEmail?.trim().toLowerCase();
@@ -273,7 +274,7 @@ export default function AuthPage() {
       setLoginEmail(normalizedUrlEmail);
     }
 
-    if (oauthError) {
+    if (oauthError && !recoveryAccess) {
       const targetTab: "login" | "register" =
         flowParam === "register" ? "register" : "login";
       const message = oauthError.trim() || copy.googleStartError;
@@ -286,7 +287,7 @@ export default function AuthPage() {
         setLoginError(message);
       }
     }
-  }, [copy.googleStartError, supabase]);
+  }, [copy.googleStartError, supabase, recoveryAccess]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -382,6 +383,7 @@ export default function AuthPage() {
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (recoveryAccess) return;
 
     const normalizedEmail = registerEmail.trim().toLowerCase();
 
@@ -484,7 +486,7 @@ export default function AuthPage() {
       const { data: signedInUserData } = await supabase.auth.getUser();
       if (!authPageMounted.current) return;
       const currentMetadata = signedInUserData.user?.user_metadata || {};
-      if (currentMetadata.avatar_mode !== "fixed") {
+      if (!recoveryAccess && currentMetadata.avatar_mode !== "fixed") {
         await supabase.auth.updateUser({
           data: {
             ...currentMetadata,
@@ -514,6 +516,7 @@ export default function AuthPage() {
   };
 
   const handleGoogleAuth = async () => {
+    if (recoveryAccess) return;
     setLoginError("");
     setRegisterError("");
 
@@ -600,7 +603,7 @@ export default function AuthPage() {
   const helperClasses = "text-xs text-muted-foreground mt-1.5";
 
   const clearMessagesForTab = (tab: "login" | "register") => {
-    setActiveTab(tab);
+    setActiveTab(recoveryAccess ? 'login' : tab);
     setLoginError("");
     setRegisterError("");
     setRegisterMessage("");
@@ -635,6 +638,7 @@ export default function AuthPage() {
           </button>
           <button
             onClick={() => clearMessagesForTab("register")}
+            disabled={recoveryAccess}
             className={`flex-1 py-3 text-sm sm:text-base font-semibold transition-colors ${
               activeTab === "register"
                 ? "text-primary border-b-2 border-primary bg-card"
@@ -649,7 +653,7 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={handleGoogleAuth}
-            disabled={googleLoading || !hasSupabaseConfig}
+            disabled={recoveryAccess || googleLoading || !hasSupabaseConfig}
             className="w-full flex items-center justify-center gap-3 py-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg text-base transition-colors border border-gray-300"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -820,6 +824,7 @@ export default function AuthPage() {
                   </label>
                   <button
                     type="button"
+                    disabled={recoveryAccess}
                     onClick={() =>
                       router.push(
                         `/auth/forgot-password${loginEmail ? `?email=${encodeURIComponent(loginEmail.trim())}` : ""}`,
@@ -887,6 +892,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={() => clearMessagesForTab("register")}
+                  disabled={recoveryAccess}
                   className="text-primary hover:text-primary/80 font-medium"
                 >
                   {copy.registerLink}

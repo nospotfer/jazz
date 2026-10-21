@@ -104,12 +104,14 @@ export function DashboardPaywallWrapper({ hasPaidCourse, courseId, coursePrice, 
   };
 
   const openPaymentModal = () => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     warmPaymentMethodModal();
     setPaymentError('');
     setIsMethodModalOpen(true);
   };
 
   const handlePurchase = async () => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     if (!courseId || isPurchasing) return;
     const token = capture();
     if (!token) return;

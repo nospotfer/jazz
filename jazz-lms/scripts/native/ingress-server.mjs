@@ -87,6 +87,10 @@ export function createIngressServer(options) {
     (options.allowPreviewWorkerTransport === true && !previewHash)) {
     throw new Error('Invalid native preview transport configuration');
   }
+  if ((options.policy.recoveryAccess !== undefined && typeof options.policy.recoveryAccess !== 'boolean') ||
+      (options.policy.recoveryAccess === true && !previewHash)) {
+    throw new Error('Invalid native recovery access configuration');
+  }
   const bodyLimit = bounded(options.requestBodyLimitBytes, 8 * 1024 * 1024, 8 * 1024 * 1024);
   const webhookLimit = bounded(options.webhookBodyLimitBytes, 256 * 1024, 256 * 1024);
   const bodyTimeout = bounded(options.requestBodyTimeoutMs, 10_000, 10_000);

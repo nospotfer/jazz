@@ -3,6 +3,7 @@ import { isAbsolute } from 'node:path';
 
 export const PRODUCTION_PROJECT_REF = 'feavujcllgbzlvdvkkxx';
 export const PREVIEW_PROJECT_REF = 'tvmhuacxctdgmejziaxg';
+export const RECOVERY_PROJECT_REF = 'klaiiikojgdfclzhqfgt';
 const CANONICAL_ORIGIN = 'https://www.culturadeljazz.com';
 const ALLOWED_ENV = new Set([
   'APP_URL', 'NEXT_PUBLIC_APP_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL',
@@ -58,13 +59,25 @@ function checkDatabase(value, ref, caPath) {
 /** Pure routing/environment validation, not account, CA file, code/build or
  * approval proof. The I/O entrypoint must check those before starting a process.
  * @param {unknown} value
- * @returns {{mode:'production'|'preview',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},testPayments?:{provider:'dodo',scopeId:string,expiresAt:string},env:Record<string,string>}}
+ * @returns {{mode:'production'|'preview',sourceCommit:string,projectRef:string,origin:string,ca:{path:string,sha256:string},testPayments?:{provider:'dodo',scopeId:string,expiresAt:string},recoveryAccess?:{purpose:'restored-customer-access',scopeId:string,expiresAt:string},env:Record<string,string>}}
  */
 export function validateNativeConfig(value) {
   requireCondition(record(value), 'NATIVE_CONFIG_SHAPE');
   requireCondition(value.version === 1 && ['production', 'preview'].includes(value.mode), 'NATIVE_CONFIG_MODE');
   requireCondition(typeof value.sourceCommit === 'string' && /^[a-f0-9]{40}$/.test(value.sourceCommit), 'NATIVE_CONFIG_SOURCE');
   const production = value.mode === 'production';
+  let recoveryAccess;
+  if (Object.hasOwn(value, 'recoveryAccess')) {
+    const access = value.recoveryAccess;
+    requireCondition(!production && !Object.hasOwn(value, 'testPayments') && record(access) &&
+      Object.keys(access).length === 3 && ['purpose', 'scopeId', 'expiresAt'].every(name => Object.hasOwn(access, name)) &&
+      access.purpose === 'restored-customer-access' && typeof access.scopeId === 'string' &&
+      /^[a-z0-9][a-z0-9-]{2,79}$/.test(access.scopeId) && typeof access.expiresAt === 'string', 'NATIVE_CONFIG_RECOVERY_ACCESS');
+    const deadline = Date.parse(access.expiresAt), now = Date.now();
+    requireCondition(Number.isFinite(deadline) && new Date(deadline).toISOString() === access.expiresAt &&
+      deadline > now && deadline <= now + 1_800_000, 'NATIVE_CONFIG_RECOVERY_ACCESS');
+    recoveryAccess = { purpose: 'restored-customer-access', scopeId: access.scopeId, expiresAt: access.expiresAt };
+  }
   let testPayments;
   if (Object.hasOwn(value, 'testPayments')) {
     const optIn = value.testPayments;
@@ -77,7 +90,7 @@ export function validateNativeConfig(value) {
       deadline > now && deadline <= now + 1_800_000, 'NATIVE_CONFIG_TEST_PAYMENTS');
     testPayments = { provider: 'dodo', scopeId: optIn.scopeId, expiresAt: optIn.expiresAt };
   }
-  const ref = production ? PRODUCTION_PROJECT_REF : PREVIEW_PROJECT_REF;
+  const ref = production ? PRODUCTION_PROJECT_REF : recoveryAccess ? RECOVERY_PROJECT_REF : PREVIEW_PROJECT_REF;
   requireCondition(value.projectRef === ref, 'NATIVE_CONFIG_PROJECT');
   requireCondition(record(value.ca) && typeof value.ca.path === 'string' && isAbsolute(value.ca.path) &&
     !/[\x00-\x1f\x7f]/.test(value.ca.path) && typeof value.ca.sha256 === 'string' && /^[a-f0-9]{64}$/.test(value.ca.sha256), 'NATIVE_CONFIG_CA');
@@ -133,7 +146,10 @@ export function validateNativeConfig(value) {
     NEXT_TELEMETRY_DISABLED: '1', NEXT_PUBLIC_OPENREPLAY_ENABLED: 'false',
     NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY: '', NEXT_PUBLIC_GA_MEASUREMENT_ID: '',
     ENABLE_LOCAL_TEST_CHECKOUT: '0', ENABLE_LOCAL_TEST_RESETS: '0', ENABLE_LOCAL_LEGACY_MUTATIONS: '0',
+    NEXT_PUBLIC_RECOVERY_ACCESS: recoveryAccess ? 'true' : 'false',
+    NATIVE_RECOVERY_ACCESS: recoveryAccess ? 'true' : 'false',
+    NATIVE_RECOVERY_EXPIRES_AT: recoveryAccess?.expiresAt ?? '',
   });
   return { mode: value.mode, sourceCommit: value.sourceCommit, projectRef: ref, origin, ca: { path: value.ca.path, sha256: value.ca.sha256 },
-    ...(testPayments ? { testPayments } : {}), env };
+    ...(testPayments ? { testPayments } : {}), ...(recoveryAccess ? { recoveryAccess } : {}), env };
 }

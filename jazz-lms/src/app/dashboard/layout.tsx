@@ -48,7 +48,7 @@ export default async function DashboardLayout({
       <PrivateOwnerBoundary expectedUserId={user.id}>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <DashboardLocalTestReset />
-        <CheckoutSessionGuard currentUserId={user.id} />
+        {process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== 'true' && <CheckoutSessionGuard currentUserId={user.id} />}
         <DashboardPurchaseAutoReconcile />
         <Sidebar currentUserId={user.id} />
         <div className="lg:pl-64 h-full flex flex-col">

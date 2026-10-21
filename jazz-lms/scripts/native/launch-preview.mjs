@@ -47,6 +47,10 @@ export async function inspectNativePreview(launchFile) {
     requireCondition(inspected.config.testPayments.expiresAt === access.expiresAt && expiresAt > Date.now() &&
       expiresAt <= Date.now() + 1_800_000, 'NATIVE_TEST_PAYMENTS_LEASE');
   }
+  if (inspected.config.recoveryAccess) {
+    requireCondition(inspected.config.recoveryAccess.expiresAt === access.expiresAt && expiresAt > Date.now() &&
+      expiresAt <= Date.now() + 1_800_000, 'NATIVE_RECOVERY_ACCESS_LEASE');
+  }
   const outside = path => {
     const local = relative(plan.appRoot, path);
     return local === '..' || local.startsWith('../') || isAbsolute(local);
@@ -60,6 +64,7 @@ export async function inspectNativePreview(launchFile) {
   return { plan, config: inspected.config, expiresAt, workerPath,
     summary: { ...inspected.summary, privateUnixTransport: true, previewGateRequired: true,
       ...(inspected.config.testPayments ? { testPayments: { ...inspected.config.testPayments } } : {}),
+      ...(inspected.config.recoveryAccess ? { recoveryAccess: { ...inspected.config.recoveryAccess } } : {}),
       previewWorkerTransportAllowed: true, expiresAt: access.expiresAt, inspectedOnly: true } };
 }
 
@@ -250,7 +255,8 @@ export async function startNativePreview(launchFile) {
     await robotsProbe(socketPaths.app, hostname);
     requireCondition(!closing && child.exitCode === null && child.signalCode === null && Date.now() < expiresAt, 'NATIVE_START_STOPPED');
     ingress = createIngressServer({ upstreamSocket: socketPaths.app,
-      policy: { canonicalHost: hostname }, previewAccess: plan.previewAccess, allowPreviewWorkerTransport: true });
+      policy: { canonicalHost: hostname, recoveryAccess: Boolean(config.recoveryAccess) },
+      previewAccess: plan.previewAccess, allowPreviewWorkerTransport: true });
     await recordResource(async () => {
       await new Promise((resolveListen, reject) => {
         ingress.once('error', reject); ingress.listen(socketPaths.edge, () => { ingress.off('error', reject); resolveListen(); });

@@ -2,6 +2,7 @@ import http from 'node:http';
 import { createRequire } from 'node:module';
 import { lstat, chmod } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
+import { isRecoveryRequestAllowed } from './ingress-policy.mjs';
 
 // This worker is launched through an owned IPC channel, never a public port or
 // secret-bearing command line. Next must resolve from the inspected release.
@@ -62,6 +63,7 @@ process.on('message', async message => {
   started = true;
   try {
     const { socketPath, hostname, nonce, expiresAt } = message;
+    const recoveryAccess = process.env.NATIVE_RECOVERY_ACCESS === 'true';
     if (process.versions.node.split('.')[0] !== '24' || process.env.NODE_ENV !== 'production' ||
       process.env.APP_DEPLOYMENT_ENVIRONMENT !== 'preview' || !process.connected ||
       typeof socketPath !== 'string' || !isAbsolute(socketPath) || resolve(socketPath) !== socketPath ||
@@ -71,6 +73,14 @@ process.on('message', async message => {
       !Number.isFinite(expiresAt) || expiresAt <= Date.now() || expiresAt > Date.now() + 3_600_000) {
       throw new Error('NATIVE_WORKER_INPUT');
     }
+    if (!['true', 'false'].includes(process.env.NATIVE_RECOVERY_ACCESS) ||
+        process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== process.env.NATIVE_RECOVERY_ACCESS) {
+      throw new Error('NATIVE_WORKER_RECOVERY_MODE');
+    }
+    if (recoveryAccess && (
+        Date.parse(process.env.NATIVE_RECOVERY_EXPIRES_AT ?? '') !== expiresAt || expiresAt > Date.now() + 1_800_000)) {
+      throw new Error('NATIVE_WORKER_RECOVERY_LEASE');
+    }
     process.umask(0o077);
     deadlineTimer = setTimeout(() => { void stop(); }, expiresAt - Date.now());
     const require = createRequire(join(process.cwd(), 'package.json'));
@@ -79,6 +89,9 @@ process.on('message', async message => {
     server = http.createServer({ maxHeaderSize: 16 * 1024, headersTimeout: 5_000,
       requestTimeout: 120_000, keepAliveTimeout: 5_000 }, (req, res) => {
       req.on('error', () => {});
+      if (recoveryAccess && !isRecoveryRequestAllowed({ method: req.method ?? '', target: req.url ?? '', headers: req.headers })) {
+        res.writeHead(403, { 'Cache-Control': 'no-store', Connection: 'close' }); res.end(); return;
+      }
       if (closing || !handle) {
         res.writeHead(503, { 'Cache-Control': 'no-store', Connection: 'close' }); res.end(); return;
       }

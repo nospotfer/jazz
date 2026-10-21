@@ -600,6 +600,7 @@ export function CourseViewClient({
 
   useEffect(() => {
     const purchaseStatus = searchParams.get("purchase");
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     const source = searchParams.get("source");
 
     if (purchaseStatus !== "success" || source !== "dashboard") {
@@ -778,6 +779,7 @@ export function CourseViewClient({
   }, [pinnedIndex]);
 
   const handlePurchaseClick = useCallback(async () => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     if (!courseId || catalogPrice === null) return;
     const token = capture();
     if (!token) return;
@@ -819,6 +821,7 @@ export function CourseViewClient({
   }, []);
 
   const openPaymentModal = useCallback(() => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
     if (!courseId || catalogPrice === null) return;
     warmPaymentMethodModal();
     setPaymentError("");
