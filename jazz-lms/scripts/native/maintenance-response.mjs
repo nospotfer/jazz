@@ -22,8 +22,8 @@ export async function loadMaintenanceResponse(appRoot) {
     contract.headResponseBodyBytes === 0 && contract.automaticRefresh === false &&
     JSON.stringify(contract.documentMethods) === '["GET","HEAD"]');
   const text = html.toString('utf8');
-  const styles = [...text.matchAll(/<style>([\s\S]*?)<\/style>/g)];
-  const scripts = [...text.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  const styles = [...text.matchAll(/<style>([\s\S]*?)<\/style>/gi)];
+  const scripts = [...text.matchAll(/<script>([\s\S]*?)<\/script>/gi)];
   requireCondition(styles.length === 1 && scripts.length === 1);
   const headers = {
     'content-type': 'text/html; charset=utf-8', 'retry-after': '300',

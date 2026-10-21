@@ -1,5 +1,25 @@
 # Maintenance log
 
+## Oct21 — Production build passes; CI follow-up corrects scanner findings
+
+Commit994b1e1 builds from a clean private clone with locked install and a sealed
+45,856-file production artifact. Real server credentials are not supplied to the
+builder; selected recovered-backend public settings are real, all server inputs
+are synthetic build-only values. No runtime/provider credential health is proven.
+Remote application build/lint/types/tests and persisted database checks pass.
+Initial secret-scan failure reports the same deterministic dummy key in three
+new test files; no real credential leak is found. An exact anchored secret-only
+exception yields zero full-history findings using checksum-verified Gitleaks
+8.24.2. A separate synthetic canary on the same line is still detected. No file
+or rule is broadly excluded and history is not rewritten.
+CodeQL flags lowercase-only script matching in the fallback hash extractor.
+Case-insensitive tag matching plus an uppercase-tag regression passes30 focused
+checks and lint. The actual fallback HTML/CSP bytes remain unchanged. A fresh
+source publication/remote scan and production rebuild are required after this
+code correction; retain the initial failed checks and994 artifact as history.
+The narrow Google DNS read on Behemoth finds no recorded personal owner account;
+no token/API call or configuration change follows. Domain authority stays open.
+
 ## Oct21 23:05 UTC — Runnable production startup and maintenance fallback
 
 Implemented separate production app/maintenance and named-tunnel launchers with

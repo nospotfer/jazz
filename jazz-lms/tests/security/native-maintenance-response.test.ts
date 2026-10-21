@@ -1,4 +1,5 @@
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import http, { type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
@@ -52,6 +53,19 @@ describe("production static maintenance response", () => {
     writeFileSync(join(dir, "index.html"), kind === "document" ? Buffer.concat([html, Buffer.from("changed")]) : html, { mode: 0o600 });
     writeFileSync(join(dir, "serving-contract.json"), JSON.stringify(contract), { mode: 0o600 });
     await expect(loadMaintenanceResponse(root)).rejects.toThrow("NATIVE_MAINTENANCE_CONTRACT");
+  });
+  test("HTML tag casing does not change extraction of embedded policy hashes", async () => {
+    const html = readFileSync(join(appRoot, "ops/maintenance/index.html"), "utf8")
+      .replaceAll("<style>", "<STYLE>").replaceAll("</style>", "</STYLE>")
+      .replaceAll("<script>", "<SCRIPT>").replaceAll("</script>", "</SCRIPT>");
+    const contractPath = join(appRoot, "ops/maintenance/serving-contract.json");
+    const contract = JSON.parse(readFileSync(contractPath, "utf8"));
+    contract.documentSha256 = createHash("sha256").update(html).digest("hex");
+    chmodSync(join(appRoot, "ops/maintenance/index.html"), 0o600); chmodSync(contractPath, 0o600);
+    writeFileSync(join(appRoot, "ops/maintenance/index.html"), html);
+    writeFileSync(contractPath, JSON.stringify(contract));
+    chmodSync(join(appRoot, "ops/maintenance/index.html"), 0o400); chmodSync(contractPath, 0o400);
+    expect((await loadMaintenanceResponse(appRoot)).html.toString() === html).toBe(true);
   });
   test("maintenance-only GET/HEAD use the exact document and never contact upstream", async () => {
     let calls = 0; const upstreamPort = await listen(http.createServer((_req, res) => { calls++; res.end("unexpected"); }));
