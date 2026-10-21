@@ -740,7 +740,7 @@ describe("POST /api/checkout", () => {
     expect(mocks.voucherUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test("returns 400 and increments usage from currentUses when voucher has no maxUses", async () => {
+  test("returns 400 without inventing global usage for an unspecified provider limit", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
@@ -781,10 +781,7 @@ describe("POST /api/checkout", () => {
     const res = await POST(req);
 
     expect(res.status).toBe(400);
-    expect(mocks.voucherUpdate).toHaveBeenCalledWith({
-      where: { id: "v2" },
-      data: { currentUses: 4 },
-    });
+    expect(mocks.voucherUpdate).not.toHaveBeenCalled();
   });
 
   test("returns 400 on fallback failure even when voucher is not locally validated", async () => {

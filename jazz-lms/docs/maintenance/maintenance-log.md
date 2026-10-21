@@ -1,5 +1,18 @@
 # Maintenance log
 
+## Oct21 coupon repair and limit-scope fixes
+
+Checkout repair now rejects contradictory voucher/integration tags despite a
+matching product. Personal/ambiguous provider limits preserve global usage;
+initial checkout5xx cannot trigger repair/retry or counter mutation. Managed
+reactivation, legacy untagged same-product repair, the same-code retry and
+no-full-price behavior remain. Localized customer guidance and adjacent ES/PT
+copy are corrected. Thirteen pre-fix failures become114 focused passes; types
+and touched lint pass. Independent source review and integrated file hashes
+match, with14 source/finite files retained locally. No provider or deployment
+action follows. Native coupon acceptance, legacy ownership, idempotency and paid
+concurrency remain open. [Scope and evidence](dodo.md#oct21-checkout-discount-failure-handling-repaired-locally).
+
 ## Oct21 dedicated read-only connection diagnostic completes
 
 The first diagnostic closes before SQL at the protocol-identifier admission

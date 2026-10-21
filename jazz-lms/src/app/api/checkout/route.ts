@@ -11,6 +11,7 @@ import {
   isActivePaymentProviderConfigured,
 } from "@/lib/payments/provider";
 import { isDodoWebhookConfigured } from "@/lib/payments/providers/dodo";
+import { getDodoDiscountLimitScope } from "@/lib/payments/providers/dodo-checkout-errors";
 import { DEFAULT_FULL_COURSE_PRICE_EUR, getKnownCatalogPrice } from "@/lib/pricing";
 import { isLocalTestRequest } from "@/lib/test-mode";
 import {
@@ -81,7 +82,9 @@ export async function POST(req: Request) {
     paymentsUnavailable: "Pagos temporalmente no disponibles",
     paymentMethodUnavailable: "Método de pago no disponible para esta compra",
     invalidVoucher: "Código de voucher inválido",
-    voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
+    voucherMaxUsesReached: "Este cupón ha alcanzado el límite total de usos.",
+    voucherCustomerLimit: "Has alcanzado el límite de este cupón para tu cuenta.",
+    voucherUsageUnavailable: "Este cupón no está disponible para esta compra. Vuelve a validar el código.",
     voucherNotConfigured: "Este voucher no está configurado en el checkout",
     internalError: "Error interno del servidor",
   };
@@ -122,7 +125,9 @@ export async function POST(req: Request) {
         paymentMethodUnavailable:
           "Método de pago no disponible para esta compra",
         invalidVoucher: "Código de voucher inválido",
-        voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
+        voucherMaxUsesReached: "Este cupón ha alcanzado el límite total de usos.",
+        voucherCustomerLimit: "Has alcanzado el límite de este cupón para tu cuenta.",
+        voucherUsageUnavailable: "Este cupón no está disponible para esta compra. Vuelve a validar el código.",
         voucherNotConfigured: "Este voucher no está configurado en el checkout",
         internalError: "Error interno del servidor",
       },
@@ -140,6 +145,8 @@ export async function POST(req: Request) {
         invalidVoucher: "Invalid voucher code",
         voucherMaxUsesReached:
           "This voucher has reached its maximum number of uses",
+        voucherCustomerLimit: "You have reached this voucher's limit for your account.",
+        voucherUsageUnavailable: "This voucher is unavailable for this purchase. Please check the code again.",
         voucherNotConfigured: "This voucher is not configured in checkout",
         internalError: "Internal server error",
       },
@@ -157,6 +164,8 @@ export async function POST(req: Request) {
         invalidVoucher: "Code promo invalide",
         voucherMaxUsesReached:
           "Ce code promo a atteint son nombre maximal d’utilisations",
+        voucherCustomerLimit: "Vous avez atteint la limite de ce code promo pour votre compte.",
+        voucherUsageUnavailable: "Ce code promo n’est pas disponible pour cet achat. Vérifiez de nouveau le code.",
         voucherNotConfigured:
           "Ce code promo n’est pas configuré dans le checkout",
         internalError: "Erreur interne du serveur",
@@ -174,7 +183,9 @@ export async function POST(req: Request) {
           "El método de pago no está disponible para esta compra",
         invalidVoucher: "Código de voucher inválido",
         voucherMaxUsesReached: "Este voucher atingiu o limite total de usos",
-        voucherNotConfigured: "Este cupón no está configurado en el checkout",
+        voucherCustomerLimit: "Você atingiu o limite deste cupom para a sua conta.",
+        voucherUsageUnavailable: "Este cupom não está disponível para esta compra. Valide o código novamente.",
+        voucherNotConfigured: "Este cupom não está configurado no checkout",
         internalError: "Erro interno do servidor",
       },
     }[selectedLanguage];
@@ -443,40 +454,28 @@ export async function POST(req: Request) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message.toLowerCase() : "";
-      const normalizedProviderError = errorMessage.replace(/[_-]+/g, " ");
+      const providerStatus = error instanceof Error ? (error as Error & { status?: unknown }).status : undefined;
+      const providerClientError = typeof providerStatus !== "number" || (providerStatus >= 400 && providerStatus < 500);
       const voucherRejectedByProvider =
-        errorMessage.includes("discount") &&
+        providerClientError && errorMessage.includes("discount") &&
         (errorMessage.includes("does not exist") ||
           errorMessage.includes("invalid") ||
           errorMessage.includes("not found") ||
           errorMessage.includes("not valid"));
-      const voucherMaxUsesReachedAtProvider =
-        normalizedProviderError.includes("discount") &&
-        (normalizedProviderError.includes("maximum redemptions") ||
-          normalizedProviderError.includes("max redemptions") ||
-          normalizedProviderError.includes("reached its maximum") ||
-          normalizedProviderError.includes("maximum uses") ||
-          normalizedProviderError.includes("max uses") ||
-          normalizedProviderError.includes("usage limit") ||
-          (normalizedProviderError.includes("redemption") &&
-            normalizedProviderError.includes("limit")) ||
-          (normalizedProviderError.includes("redemption") &&
-            normalizedProviderError.includes("reached")));
+      const voucherLimitScope = getDodoDiscountLimitScope(error);
 
       const providerConfigFailure =
         errorMessage.includes("missing dodo");
 
       const providerCheckoutFailure = isProviderCheckoutFailure(error);
 
-      if (voucherMaxUsesReachedAtProvider) {
-        if (voucherValidation?.valid) {
-          const nextCurrentUses =
-            voucherValidation.voucher.maxUses !== null
-              ? Math.max(
-                  voucherValidation.voucher.maxUses,
-                  voucherValidation.voucher.currentUses,
-                )
-              : Math.max(1, voucherValidation.voucher.currentUses + 1);
+      if (voucherLimitScope) {
+        if (voucherLimitScope === "global" && voucherValidation?.valid &&
+            voucherValidation.voucher.maxUses !== null) {
+          const nextCurrentUses = Math.max(
+            voucherValidation.voucher.maxUses,
+            voucherValidation.voucher.currentUses,
+          );
 
           await db.voucherCode.update({
             where: {
@@ -495,7 +494,9 @@ export async function POST(req: Request) {
           });
         }
 
-        return new NextResponse(copy.voucherMaxUsesReached, { status: 400 });
+        const message = voucherLimitScope === "customer" ? copy.voucherCustomerLimit
+          : voucherLimitScope === "global" ? copy.voucherMaxUsesReached : copy.voucherUsageUnavailable;
+        return new NextResponse(message, { status: 400 });
       }
 
       if (voucherRejectedByProvider) {

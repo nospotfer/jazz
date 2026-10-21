@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { classifyDodoDiscountLimit } from "@/lib/payments/providers/dodo-checkout-errors";
 
 export type DodoCheckoutInput = {
   productId: string;
@@ -140,6 +141,12 @@ type DodoDiscountResult = {
 
 function isManagedDodoDiscount(discount: Record<string, unknown>, voucherId: string | undefined, productIds: string[]) {
   const metadata = discount.metadata as Record<string, unknown> | undefined;
+  // A product restriction can identify legacy untagged codes, but must never
+  // override an explicit tag assigning the code to another voucher/campaign.
+  if (metadata && (
+    (Object.hasOwn(metadata, "integration") && metadata.integration !== "jazz-lms") ||
+    (Object.hasOwn(metadata, "voucherId") && metadata.voucherId !== voucherId)
+  )) return false;
   const tagged = Boolean(voucherId && metadata?.integration === "jazz-lms" && metadata.voucherId === voucherId);
   const restricted = discount.restricted_to;
   return tagged || (Array.isArray(restricted) && restricted.length > 0 &&
@@ -313,23 +320,19 @@ export async function createDodoCheckout(
     const json = await toJson(response);
 
     if (!response.ok) {
-      // Preserve the existing retry/limit decisions without carrying provider
-      // bodies, customer data or tokenized URLs into errors and diagnostics.
+      // Only client rejections carry discount decisions. A service outage is
+      // never authority to repair a discount or reconcile its global usage.
       const message = JSON.stringify(json ?? {}).toLowerCase();
-      const normalized = message.replace(/[_-]+/g, " ");
-      const limit = normalized.includes("discount") && (
-        normalized.includes("maximum redemptions") || normalized.includes("max redemptions") ||
-        normalized.includes("reached its maximum") || normalized.includes("maximum uses") ||
-        normalized.includes("max uses") || normalized.includes("usage limit") ||
-        (normalized.includes("redemption") && (normalized.includes("limit") || normalized.includes("reached")))
-      );
-      const invalid = message.includes("discount") && (
+      const clientError = response.status >= 400 && response.status < 500;
+      const discountLimitScope = clientError ? classifyDodoDiscountLimit(message) : null;
+      const invalid = clientError && message.includes("discount") && (
         message.includes("does not exist") || message.includes("invalid") ||
         message.includes("not found") || message.includes("not valid")
       );
-      const hint = limit ? ": discount usage limit" : invalid ? ": invalid discount" : "";
+      const hint = discountLimitScope ? ": discount usage limit" : invalid ? ": invalid discount" : "";
       throw Object.assign(new Error(`Dodo checkout create failed (${response.status})${hint}`), {
         status: response.status,
+        ...(discountLimitScope ? { discountLimitScope } : {}),
       });
     }
 

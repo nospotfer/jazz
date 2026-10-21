@@ -178,6 +178,22 @@ describe("checkout diagnostic confidentiality without changing payment behavior"
     expectPrivateDetailsOmitted(await response.text());
   });
 
+  test.each(["invalid discount", "discount maximum redemptions reached"])(
+    "provider503 with %s is unavailable, never discount-repair authority", async message => {
+      useVoucher();
+      fetchMock.mockResolvedValue(providerResponse({ message, email: EMAIL }, 503));
+
+      const response = await (await import("@/app/api/checkout/route")).POST(request("/api/checkout", {
+        courseId: COURSE_ID, voucherCode: VOUCHER_CODE, language: "en",
+      }));
+
+      expect(response.status).toBe(503);
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(mocks.voucherUpdate).not.toHaveBeenCalled();
+      expectPrivateDetailsOmitted(await response.text());
+    },
+  );
+
   test("invalid discount backfill persists safe failure metadata and returns 400", async () => {
     useVoucher();
     fetchMock.mockResolvedValueOnce(providerResponse({ message: `discount not found ${PRIVATE}`, email: EMAIL }, 400))
@@ -231,6 +247,58 @@ describe("checkout diagnostic confidentiality without changing payment behavior"
     expect(mocks.voucherUpdate).toHaveBeenCalledWith({ where: { id: voucher.id }, data: { currentUses: 3 } });
     expectPrivateDetailsOmitted(await response.text());
   });
+
+  test.each([
+    "discount_per_customer_usage_limit_reached",
+    "discount per-user redemption limit reached",
+    "discount maximum redemptions reached for this customer",
+  ])("customer limit %s never exhausts the global voucher", async message => {
+    useVoucher();
+    fetchMock.mockResolvedValue(providerResponse({ message, email: EMAIL }, 400));
+
+    const response = await (await import("@/app/api/checkout/route")).POST(request("/api/checkout", {
+      courseId: COURSE_ID, voucherCode: VOUCHER_CODE, language: "en",
+    }));
+
+    expect(response.status).toBe(400);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(mocks.voucherUpdate).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toBe("You have reached this voucher's limit for your account.");
+    expectPrivateDetailsOmitted(body);
+  });
+
+  test("an unspecified provider usage limit cannot establish global redemption usage", async () => {
+    useVoucher();
+    fetchMock.mockResolvedValue(providerResponse({ message: "discount_usage_limit_reached" }, 400));
+
+    const response = await (await import("@/app/api/checkout/route")).POST(request("/api/checkout", {
+      courseId: COURSE_ID, voucherCode: VOUCHER_CODE, language: "en",
+    }));
+
+    expect(response.status).toBe(400);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(mocks.voucherUpdate).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toBe("This voucher is unavailable for this purchase. Please check the code again.");
+    expectPrivateDetailsOmitted(body);
+  });
+
+  test.each(["customer", "user", "account"])(
+    "%s-qualified maximum uses cannot establish a global limit", async subject => {
+      useVoucher();
+      fetchMock.mockResolvedValue(providerResponse({ message: `discount: ${subject} reached maximum uses` }, 400));
+
+      const response = await (await import("@/app/api/checkout/route")).POST(request("/api/checkout", {
+        courseId: COURSE_ID, voucherCode: VOUCHER_CODE, language: "en",
+      }));
+
+      expect(response.status).toBe(400);
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(mocks.voucherUpdate).not.toHaveBeenCalled();
+      expect(await response.text()).toBe("This voucher is unavailable for this purchase. Please check the code again.");
+    },
+  );
 });
 
 describe("reconciliation and webhook diagnostic confidentiality", () => {

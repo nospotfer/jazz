@@ -65,6 +65,18 @@ describe("Dodo voucher provider contract", () => {
     expect(JSON.parse(String(fetch.mock.calls[2][1]?.body)).expires_at).toBeNull();
   });
 
+  test("preserves legacy same-product repair when no ownership tags contradict it", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(json({ message: "Code already exists" }, 409))
+      .mockResolvedValueOnce(json({ ...providerDiscount, metadata: {} }))
+      .mockResolvedValueOnce(json(providerDiscount));
+
+    const result = await ensureVoucherDiscountSynced(voucher);
+
+    expect(result.ok).toBe(true);
+    expect(fetch.mock.calls[2][1]?.method).toBe("PATCH");
+  });
+
   test("refuses to change shared or unowned existing discount", async () => {
     const fetch = vi.spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(json({ message: "Code already exists" }, 409))
@@ -73,6 +85,23 @@ describe("Dodo voucher provider contract", () => {
     expect(result.ok).toBe(false);
     expect(result.reason).toMatch(/ownership review/);
     expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  test.each([
+    { integration: "jazz-lms", voucherId: "another-voucher" },
+    { integration: "another-campaign", voucherId: "voucher-contract" },
+    { voucherId: "another-voucher" },
+  ])("same-product restriction cannot override conflicting ownership tags %j", async metadata => {
+    const fetch = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(json({ message: "Code already exists" }, 409))
+      .mockResolvedValueOnce(json({ ...providerDiscount, metadata }))
+      .mockResolvedValueOnce(json(providerDiscount));
+
+    const result = await ensureVoucherDiscountSynced(voucher);
+
+    expect(result.ok).toBe(false);
+    expect(result.reason).toMatch(/ownership review/);
+    expect(fetch.mock.calls.map(([, init]) => init?.method ?? "GET")).toEqual(["POST", "GET"]);
   });
 
   test("deactivation expires provider discount and preserves ID/code for reactivation", async () => {

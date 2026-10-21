@@ -1,5 +1,18 @@
 # Production review and rollback checklist
 
+## Oct21 checkout discount source follow-up
+
+- [x] Verify contradictory ownership denial, personal/unknown global-counter
+  preservation and initial checkout5xx denial of repair/retry/mutation; retain
+  13 pre-fix failures and114 focused passes, types/scoped lint and source review.
+- [x] Preserve managed/legacy reactivation, same-code retry and no-full-price
+  behavior; record remaining legacy ownership/idempotency/paid concurrency limits.
+- [ ] Verify the actual coupon journey with a newly built current-source native
+  artifact and fresh isolated actor/provider/origin/gate bindings. These source
+  checks neither deploy the changes nor authorize replaying closed transactions.
+
+[Evidence and limits](dodo.md#oct21-checkout-discount-failure-handling-repaired-locally).
+
 ## Oct21 dedicated connection diagnostic and remaining release gates
 
 - [x] Preserve original R1 zero-SQL identifier-guard failure/closure; its actual

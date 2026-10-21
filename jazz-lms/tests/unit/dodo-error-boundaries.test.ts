@@ -63,6 +63,23 @@ describe("Dodo diagnostic boundaries", () => {
     expect(fetch).toHaveBeenCalledOnce();
   });
 
+  test.each([
+    ["discount_per_customer_usage_limit_reached", "customer"],
+    ["discount maximum redemptions reached for this customer", "customer"],
+    ["discount maximum redemptions reached", "global"],
+    ["discount_usage_limit_reached", "unknown"],
+  ])("retains only the finite usage-limit scope for %s", async (message, scope) => {
+    vi.mocked(fetch).mockResolvedValueOnce(response(message, 400));
+
+    const error = await createDodoCheckout(checkout).catch(value => value);
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toBe("Dodo checkout create failed (400): discount usage limit");
+    expect(error.discountLimitScope).toBe(scope);
+    expect(JSON.stringify(safeErrorDiagnostic(error))).not.toContain(marker);
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
   test("discount failure reasons are safe to persist in voucher metadata", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(response("invalid product", 400));
     const result = await createDodoDiscount(discount);

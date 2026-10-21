@@ -1,5 +1,16 @@
 # Goal verification matrix
 
+## Oct21 coupon failure decisions
+
+Seven integrated source/test files match the independently reviewed patch;
+13 pre-fix failures are retained and114 focused cases/types/scoped lint pass.
+Contradictory campaign tags deny repair; customer/unknown limits preserve global
+usage; initial checkout5xx returns503 without repair/retry/mutation. Managed and
+legacy repair, same-code retry and no-full-price controls remain. This is local
+source evidence. Actual current-source native coupon/fulfillment, legacy untagged
+ownership, idempotency and paid concurrency remain open.
+[Evidence and limits](dodo.md#oct21-checkout-discount-failure-handling-repaired-locally).
+
 ## Oct21 dedicated read-only connection diagnostic
 
 | Requirement | Actual evidence and remaining limit |

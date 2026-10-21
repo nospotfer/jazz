@@ -1,5 +1,42 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct21 checkout discount failure handling repaired locally
+
+Customer checkout repair now rejects an existing discount carrying a conflicting
+voucher or integration tag, even when its product restriction matches. Matching
+managed discounts and the legacy untagged same-product repair remain supported.
+This is a narrow ownership correction, not universal campaign ownership proof.
+
+Provider checkout errors preserve only a finite customer/global/unknown usage
+scope. Personal and ambiguous rejections leave global `currentUses` unchanged;
+only classified global exhaustion with a configured local cap reconciles it.
+An unlimited local voucher no longer invents a redemption from a rejection.
+Initial checkout 5xx responses return503 without discount repair, a second
+checkout or local usage mutation. The existing same-code repair retry and
+no-full-price fallback remain. Personal/unknown guidance is localized in ES/EN/
+FR/PT; adjacent Spanish/Portuguese copy is corrected.
+
+Thirteen pre-fix failures are retained separately (11 initial, two503 cases).
+The repaired source passes114 targeted tests across six files, types and scoped
+lint with zero errors/warnings. Independent source review reports no material
+finding. Source/test hashes match the reviewed patch after integration; these
+are synthetic checks, not a new provider checkout or deployed coupon journey.
+
+The14-file source/finite review packet is retained locally under
+`review-checkpoint-checkout-discount-guards-20261021`, manifest
+`fa1fcd8ab4b7836cbe9c81238a0d3c89bc9fe1f602c0e7d3d9708b7563f92cae`.
+It excludes credentials, customer/provider bodies and active inputs; permissions
+and copy hashes pass. Retention is unencrypted and off-site recovery is unknown.
+The independent source receipt is
+`f5bcdbfd5f70bc232e4bcca93a888c4d052ccdc5376cc08e29315b4bc05ea038`.
+
+Legacy untagged ownership fallback, heuristic error classification, durable
+checkout idempotency, snapshot-based global-counter updates, paid voucher-term
+races and remote/local partial success remain explicit follow-ups. The current
+native coupon test needs a fresh artifact and bindings for this code. The
+retained succeeded TEST payment and both spent refund attempts are unchanged;
+no new provider, SQL, customer, payment/refund or email action occurred here.
+
 ## Latest Oct20 checkpoint: captured sandbox wallet denial
 
 The separate fixed18:32:19.896–19:02:19.896 UTC recovery runs on the unchanged
