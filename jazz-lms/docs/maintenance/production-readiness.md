@@ -38,6 +38,50 @@ controls. It is newer recovery-preparation source, not the selected production
 artifact or an actual recovered-media result. Fresh protected recovery build,
 bounded Auth/backend action review and browser integration remain pending.
 
+**Oct22 07:24UTC update:** recovery-only source9da4370 is pushed and all10 remote
+checks pass; pre-push integration778/29skip and lint pass. At00:28:57UTC, one
+actual signed master GET for the selected recovered nonfree video returns200,
+4,523 bytes/five variants. No segment, application authorization, decoded video,
+SQL, Auth or backend resume is exercised. Exact observed master hosts do not
+establish the unseen segment-host set.
+
+The separate browser-owned display helper verifies the selected playback ID,
+source duration, PDF bytes/hash and native renderer state without opening the
+progress-writing lesson page. Its43 pure/closed-page controls pass. An actual
+offline Chrome fixture verifies pinned-bundle registration under the local
+hash CSP, same-origin synthetic-cookie fetch, write denial and external CSP
+denial before dispatch; browser closure passes. Initial default-binary launch
+failure is retained, followed by success using existing Google Chrome. This is
+not recovered-provider or actual media decoder evidence. A fresh recovery build,
+caller guard/coordinator integration and approved <=30min backend/Auth window
+are still required. Review scope lists one controlled admin, one selected video/
+PDF, full preservation, owned cleanup/setting restoration and bounded re-pause.
+Public production stays paused.
+
+Thirteen credential-free source/finite/scope files are retained in
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-recovered-media-preparation-20261022/`;
+the private selected tuple, credentials and active inputs are excluded. The
+local unencrypted package has no established off-site recovery. The existing
+owner-preview's3 actual handles are revalidated live at07:22UTC; do not restart
+them or replay closed recovery because an observation timed out.
+
+At07:32UTC, a separate clean recovery-only9da4370 build seals45,858 files with
+fresh locked install, webpack, public fingerprint, CA and cache inspection
+passing. It uses synthetic server inputs and starts no application or backend.
+Manifest SHA `cf0a1328afb6a0cb7b72567121a598da8615a4e570aa068eee612b36de0e12e1`.
+Its temporary unbound transport remains available until Oct23 06:28:59UTC,
+independently of the still-unstarted <=30min recovered-customer lease. An owned
+private Unix alias points to the absent future runtime edge; no ingress/auth
+gate is bypassed and exact owned-alias cleanup remains required. A fresh
+approved runtime configuration/lease and controller/guard binding must precede
+any customer access; an expired build-only lease must never be reused.
+
+Ten actual Mux playlist GETs200 (master+nine descendants,1,049,387bytes) identify
+the three referenced stream/manifest/chunk hosts. No segment is fetched, signed
+URL retained, SQL/Auth call made or provider configuration changed. This pins
+the selected video's observed host set, not arbitrary future CDN hosts or
+decoded playback. Unknown runtime hosts remain denied.
+
 The owner confirms they only use the administrator. Existing-student password
 continuity stays unverified, not a new demand for customer credentials. Remaining
 recovered-media inspection can use that controlled admin with ordinary-student

@@ -1,6 +1,6 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 02:25 Madrid
+## Current status — Oct22 09:32 Madrid
 
 **The public website remains paused/503. The release candidate is verified
 locally; application and UI improvements are not deployed to production.**
@@ -35,8 +35,17 @@ locally; application and UI improvements are not deployed to production.**
   credentials are required from the owner.
 - **Recovered-media preparation:** narrow read-only video/PDF dispatch now passes
   390 local checks, types and lint, including the actual private worker. This
-  needs its own fresh recovery build/window; it has not been run on customer
+  needs its own fresh recovery window; it has not been run on customer
   data and does not replace the selected production artifact.
+  Source `9da4370` is published with all10 remote checks passing. One direct
+  signed recovered-video master GET returns200/five variants without segments,
+  SQL or backend resume. The media display helper passes43 local controls and
+  an actual offline Chrome CSP/cookie-fetch check; recovered decoding/rendering
+  remains pending the fresh bounded backend/Auth scope.
+  Its separate clean recovery build now seals45,858 files with public/CA/cache
+  inspection passing. Ten Mux playlist GETs200 pin three referenced hosts;
+  segment access is untested. Controller/guard integration remains pending.
+  The new temporary transport has no application attached or customer access.
 - **Current owner action:** sign into Squarespace using Google account
   `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google
   nameservers can be Squarespace defaults; another gcloud login is not yet needed.

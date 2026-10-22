@@ -1,14 +1,21 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 02:25 Madrid
+## Current priorities — Oct22 09:32 Madrid
 
 1. Verify remaining recovered media through the controlled administrator under
    a fresh bounded review; preserve separate isolated ordinary-student evidence.
    The owner has no separate student account. Do not demand other customers'
    passwords or repeat accepted recovery/administrator verification.
-   Narrow media-GET dispatch passes390 local checks/types/lint; prepare a fresh
+   Narrow media-GET dispatch passes390 local checks/types/lint; bind the fresh
    recovery build and bounded browser/backend scope. Production509 remains
    immutable and is not a recovery-profile artifact.
+   Published9da4370 passes all10 remote checks;43 browser-helper controls and
+   actual offline Chrome harness pass. One actual signed Mux master read passes;
+   protected recovered video/PDF rendering and caller integration remain open.
+   The45,858-file recovery build is now ready; playlist-only inspection pins
+   three referenced Mux hosts. Unbound transport4475 is confirmed live and expires
+   Oct23 06:28:59UTC. Finish controller/guard integration before requesting the
+   exact <=30min backend/Auth action window; no customer lease/app has started.
 2. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
    [release review](hosting.md). Squarespace Google sign-in/domain listing is
    requested using the owner's Gmail; Google nameservers alone do not establish

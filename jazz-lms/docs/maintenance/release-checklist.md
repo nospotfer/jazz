@@ -27,6 +27,9 @@
       selected artifact/public settings/CA/cache; no provider/SQL/runtime action.
 - [x] Prepare narrow recovery-only media GET admission;390 policy/transport/
       private-worker checks/types/lint pass. Production509 remains unchanged.
+- [x] Build separate recovery9da4370 artifact/45,858 files; verify43 helper
+      controls, actual offline browser hash-CSP/cookie guards and metadata-only
+      Mux host set. No customer application/runtime has started.
 - [ ] Verify remaining recovered media with controlled admin; record unavailable
       real student password continuity and decide remaining RPO/integration gaps.
       Use a fresh recovery-only build and approved <=30min scope; no closed

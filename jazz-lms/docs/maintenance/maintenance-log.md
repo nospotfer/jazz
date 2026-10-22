@@ -1,5 +1,35 @@
 # Maintenance log
 
+## Oct22 09:32 Madrid — Recovery source/build and media helper/browser gates pass
+
+Recovery-only9da4370 is pushed with all10 remote checks successful. Pre-push
+integration778/29skip and lint pass; selected production509 is unchanged. One
+actual Mux master GET at00:28:57UTC returns200/4,523bytes/five variants for the
+selected recovered nonfree lesson. No segments, decoded video, app access,
+backend resume, SQL or configuration change is performed; signed URLs are not
+retained. The exact private tuple binds original PDF bytes/hash and real video
+duration, with fresh target readback still required.
+
+The separate display helper passes43 pure/closed-page controls, including a
+pending play promise and exact harness fulfillment/cleanup. Root verifies its
+actual offline Google Chrome hash-CSP bundle registration, cookie-backed browser
+fetch, blocked writes/external dispatch and normal closure. The earlier default
+Playwright binary launch failure remains retained. No actual customer/Auth or
+provider access occurs in this fixture, and it is not decoder/PDF acceptance.
+Thirteen selected source/finite/scope files are retained locally with exact
+hashes/600/700; private tuple/credentials/active inputs are excluded. Fresh
+recovery build, caller integration and bounded backend/Auth scope remain open.
+All3 specific owner-preview handles are verified running at07:22UTC.
+
+Fresh recovery-only9da4370 locked build/webpack/public/CA/cache inspection pass
+on45,858 sealed files; synthetic server inputs only, no app/backend start.
+Manifest cf0a1328afb6a0cb7b72567121a598da8615a4e570aa068eee612b36de0e12e1.
+Separate unbound transport expires Oct23 06:28:59UTC; its private owned alias
+targets the absent future native edge and needs exact cleanup. No customer
+lease has started. Ten metadata-only Mux master/descendant GETs200 identify
+three referenced hosts; no segments/signed URLs retained. Fresh controller/
+guard binding, runtime config/deadline and bounded approval remain pending.
+
 ## Oct22 02:25 Madrid — Production inputs bound; recovered-media reads prepared
 
 A new owner700/600 private production proposal passes full local509fa06 release
