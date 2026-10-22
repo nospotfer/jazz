@@ -1,9 +1,9 @@
 # Initial maintenance and stabilization
 
 Latest Oct22 checkpoint: database backup/all 68 PDFs recovered and recovered admin
-login/dashboard/logout verified. Selected release `749c4e7` passes its fresh 45,858-file
+login/dashboard/logout verified. Selected release `476bc7a` passes its fresh 45,858-file
 build, all 10 remote checks and actual synthetic service restart/fallback rehearsal.
-Its protected isolated preview passes 24 certificate layouts/four normal A4 downloads
+Its protected isolated preview passes 32 certificate layouts/zero privacy overlap/a normal A4 download
 and final session/data preservation. **Public Vercel still returns 503; changes are
 unreleased and the maintenance goal remains incomplete.** Recovered-media access,
 provider/recovery-point decisions, domain and concrete free-hosting release review

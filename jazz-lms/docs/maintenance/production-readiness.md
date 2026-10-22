@@ -2,6 +2,87 @@
 
 <a id="latest-certificate-release"></a>
 
+## Latest checkpoint — Oct22 source476bc7a closes mobile privacy overlap
+
+**Selected production candidate: `476bc7a8c0a85cfa15ac0e9e75b6d4162a21ddf8`. Public
+Vercel remains paused/503; no production operation or UI deployment occurs.**
+Only certificate bottom clearance changes after the749 source:64px below1024px,
+zero at desktop. The actual component/current source-compiled CSS fixture passes
+all16 after cases, reproduces eight mobile before failures and retains eight
+passing desktop controls. No network/page errors; browser closes. Two selected
+before/after screenshots are visually inspected. This local evidence alone does
+not replace the actual hosted result below.
+
+Fresh production build seals45,858 files, manifest
+`9d344bafdadae84e0f64ce371fd6c9b480a5c410aa032c9fd1e654e76368e814`.
+All ten exact-source remote checks pass. Full native inspection and158-file client
+secret-boundary scan pass. One22.7sec actual synthetic/network-none service run
+verifies four-language checkout503/voucher503, native Prisma/OpenSSL loading
+without SQL, worker SIGTERM/restart, removal and exact maintenance503/HEAD/webhook.
+Independent owned cleanup and post-run full seal pass. Persistent cache, boot
+recovery, load and actual provider health remain unverified.
+
+The isolated protected app is live at
+https://gibson-flashing-trade-portraits.trycloudflare.com until
+**2026-10-23T09:38:45.485Z** (Oct23 11:38 Madrid). Manifest
+`13819da3fe4b10e8e21e002efcbbe8512df00d6dace50c1338474c2a084a54b0`
+and actual worker source/config/TVM/no-payment-mail-cron admission pass. Hosted
+certificate checks pass32 cases: ES/EN/FR/PT ×320/390/1024/1440 ×light/dark. All
+text/signature stay within paper; download is below it, clear of privacy control,
+and three button hit-test points are unobscured after scrolling to the end.
+Mobile clearance64/desktop0 and no horizontal overflow are measured. Selected
+320-dark/390-light bottom images are visually inspected. One ordinary ES A4 PDF
+is862,206bytes with corrected instructor; earlier749 four-language downloads and
+unchanged PDF-generator/translation source remain separate evidence.
+
+Password2001/sync2001/user2006/localLogout2041,247 app reads/0 guard blocks are
+observed. Browser/context close; final read-only comparison preserves22 protected
+groups except two explicitly permitted in-window Auth sign-in timestamps, all ten
+prior sessions, other-actor/business/prior-transient state, selected non-sign-in
+Auth fields and complete Auth settings. No cleanup mutation is needed.
+
+Passive CDP joins all28 network-error entries by exact request ID:23 optional
+nested-prefetch403s, locally fulfilled by the browser guard, and five actual
+absent-provider auto-reconcile503s. Independent Playwright console total is28;
+these are distinct channels, not a claimed one-to-one console-message join.
+All31 CDP loading failures are canceled ERR_ABORTED with route/resource/phase
+classification. Their initiating causes remain unproven. Page errors, event/
+request drops, observer failures and ambiguous/unmatched joins are zero. These
+current observations do not retrospectively classify the older30 console errors.
+Initial131,072-byte driver output cap rejects the first richer result before
+retention. A fresh exact process scan proves browser/child absent, and three
+read-only API operations prove full state/ten prior sessions preserved. That
+attempt's function/logout HTTP outcome stays unretained; a distinct scope adopts
+the54.9sec-old closure baseline and succeeds with a bounded2MiB output cap.
+
+The latest launcher is installed and byte/mode/Node/Playwright verified on Behemoth:
+`/home/gabriel/.local/share/culturadeljazz-maintenance/review-476bc7a-20261022/open-preview.sh`.
+Exactly one encrypted-stdin SSH transfer creates a new owner-only directory;
+no browser/profile is opened, fixture/server credentials transferred, account
+login attempted or existing file/process changed. Owner invocation handles the
+Basic gate only; account login is manual. Its dedicated inactive profile is
+reusable; an active review browser is refused without terminating it.
+
+Hosted finite SHA `9d7ac5d258f1f2a17cd0303c2fef48813cf0259c5f64a9728795c516f4f18978`;
+passive diagnostic SHA `644e5f2c29d27885e436aa2bada837408c1adc6b35e5fa29134802e54b2df794`.
+Sixty-three build/service/finite/source/synthetic-image files,10,001,799bytes,
+are retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-release-476bc7a-20261022/`,
+manifest `6fe7654e10e9080bccdd33dffb0809ff93ad36e023cfc25fe31175e8612dbcb9`.
+Twenty-five local before/after files are separately retained in
+`review-checkpoint-certificate-privacy-clearance-20261022`, manifest
+`e7187ef96888d42362e3f08c728ef7227e1a552e666de00ed619553ddd39ca84`.
+Private configuration/gate/account credentials, raw Auth/provider bodies, private
+baselines/session IDs and account headers are excluded. Owner-only local retention
+is unencrypted; no off-site recovery is established. Real production inputs are
+separately retained under
+`/home/gabriel/.config/culturadeljazz-maintenance/production-candidate-476bc7a/`,
+changed only in sourceCommit from749 and not activated or loaded automatically.
+
+Recovered-media approval/domain access/production cutover remain open. Existing
+preview resources are preserved. Earlier selected-source/preview statements below
+are dated history, not current instructions or proof of a production release.
+
 ## Latest checkpoint — Oct22 source `749c4e7` built and hosted certificate verified
 
 **Public Vercel remains paused/503; the application and UI are unreleased.**

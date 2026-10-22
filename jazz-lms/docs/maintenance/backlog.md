@@ -1,6 +1,6 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 source `749c4e7` verified
+## Current priorities — Oct22 source `476bc7a` verified
 
 1. Verify selected recovered video/PDF through the controlled administrator under
    the prepared, specifically approved <=30min backend/Auth scope. Approval is
@@ -11,18 +11,18 @@
    webhook/recovery-point decisions for the concrete free-hosting release review.
    Squarespace Google sign-in/domain listing is requested with the owner's Gmail;
    nameservers alone do not establish Cloud DNS ownership. No DNS change occurred.
-3. Preserve selected candidate `749c4e7`: fresh 45,858-file locked build, all 10 remote
+3. Preserve selected candidate `476bc7a`: fresh 45,858-file locked build, all 10 remote
    checks and actual synthetic container startup/restart/stop/maintenance pass.
    Private real-input proposal is separately retained; no activation/provider-health
-   proof. Keep checkout disabled for staged reopening. Older509fa06 stays intact.
-4. Hand off the new protected source 749 preview, expiring Oct23 09:12UTC, without
-   silently redirecting the owner's old Behemoth launcher. Its certificate journey
-   passes 24 actual localized width/theme cases and4 normal A4 downloads, owned
-   local logout and full final preservation. Oldace0804 expires Oct22 22:17UTC.
-5. Fix the lower-priority floating privacy-control overlap with the certificate
-   download button at narrow widths; the actual paper/text/signature containment
-   correction is verified. Record30 unclassified console errors and29 ERR_ABORTED
-   failures; do not call the browser runtime wholly healthy.
+   proof. Keep checkout disabled for staged reopening. Older749c4e7/509fa06 stay intact.
+4. Preserve latest476 protected preview until Oct23 09:38UTC. Its owner-only
+   Behemoth launcher is now installed under review-476bc7a-20261022; no browser
+   or login was started. Hosted32 layout/overlap cases, normal A4 download, local
+   logout and final preservation pass. Earlier ACE/749 resources stay intact.
+5. Preserve qualified diagnostics: all28 CDP network errors join23 local403
+   prefetches/five actual absent-provider503s;31 loading failures are canceled
+   ERR_ABORTED without inferred causes. The mobile privacy/download overlap is
+   fixed and hosted-verified; earlier unclassified counts are not rewritten.
 6. Keep further coupon/refund launches deferred pending the retained SDK/wallet
    failures and eligible-actor/provider decisions. Real student-password continuity
    remains unverified; the owner only has the administrator. Do not request other

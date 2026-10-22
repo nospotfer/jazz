@@ -1,5 +1,48 @@
 # Maintenance log
 
+## Oct22 — Mobile privacy overlap fixed, exact diagnostics and owner launcher delivered
+
+- Commit476bc7a adds64px certificate bottom clearance below1024px, zero at desktop.
+  Actual component/current compiled CSS before-after32 cases:16 fixed pass/eight
+  mobile before overlap failures/eight desktop controls pass,0 network/page errors,
+  browser closed. Scoped lint and pre-push778/29skip/0errors22warnings pass. All ten
+  remote checks pass for exact476. Local evidence25files/4,688,443bytes retained,
+  manifeste7187ef9. Initial fixture absolute package-directory imports fail before
+  explicit sealed compiler entrypoint succeeds; no dependency defect inferred.
+- Fresh production476 build/full45,858-file inspection/client secret scan pass.
+  Exactly one synthetic network-none22.7sec service run verifies localized denial,
+  native loading/noSQL, one worker restart, normal removal and maintenance fallback;
+  independent exact owned closure and full final seal pass. Previous candidates
+  stay unchanged; private real-input proposal is separately retained, not activated.
+- New isolated preview476 is source/config/actual-worker admitted, expiring
+  Oct23 09:38:45UTC. Actual passive CDP API/closed privacy controls precede browser
+  use. First richer result exceeds131,072-byte driver capture before retention;
+  its functional/local-logout HTTP result remains unretained. Fresh process scan
+  finds no owned browser/child; full read-only closure preserves protected data,
+  all ten old sessions/Auth settings and only permitted sign-in timestamps.
+  No cleanup mutation. Distinct scope adopts that54.9sec-old baseline and raises
+  bounded output capture to2MiB; prior failure is preserved.
+- New scope verifies32 hosted language/width/theme cases, zero privacy/download
+  overlap and unobscured hit tests, normal862,206-byte A4 download, localLogout204,
+  context/browser closure and final full preservation of all ten prior sessions.
+  Selected mobile bottom screenshots visually pass. Protected22 groups differ
+  only in the two permitted in-window selected-user sign-in timestamps.
+- Current CDP has28 exact request-ID network joins:23 locally fulfilled optional
+  prefetch403s/five actual absent-provider reconciliation503s. Independent console
+  count28; page errors/drops/unmatched/ambiguous/observer failures/guard blocks0.
+  All31 loading failures are canceled ERR_ABORTED; record phases/types/routes,
+  not inferred initiating causes or retrospective attribution of older counts.
+- One encrypted-stdin SSH installs only launcher/wrapper/Basic gate into a new
+  Behemoth review-476bc7a-20261022 directory, verifying source/modes/Node/Playwright.
+  No actor/server credentials transferred, browser/profile opened or existing
+  resource changed. Owner can reopen the dedicated inactive profile after use.
+- Retain63 noncredential source/finite/build/service/synthetic-image files,
+  10,001,799bytes, manifest6fe7654e. Credentials/config/baselines/session IDs/raw
+  Auth/provider bodies/account headers excluded; owner-only local unencrypted,
+  off-site recovery unestablished. New production proposal stays separate.
+- Public production stays503/unreleased. Recovered-media approval, authenticated
+  domain access, provider/recovery-point decisions and exact cutover remain open.
+
 ## Oct22 — Fresh749 release, service rehearsal and hosted certificate checks pass
 
 - Selected `749c4e7` includes both certificate product fixes. Clean locked production

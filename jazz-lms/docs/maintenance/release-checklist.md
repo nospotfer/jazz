@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current gate — Oct22 source `749c4e7` build/hosted result
+## Current gate — Oct22 source `476bc7a` build/hosted result
 
 - [x] Verify eligible isolated certificate download through the ordinary button,
       A4 output, owned local logout and final preservation of ten prior sessions.
@@ -8,17 +8,20 @@
       zero configured-product items Oct13→Oct22 08:18UTC; retain full-RPO limits.
 - [x] Correct certificate instructor name in four languages; four actual PDF
       tests and local corrected-PDF visual inspection pass.
-- [x] Build source `749c4e7` containing `faf421c`/`766a3a7`; actual isolated hosted
-      certificate passes 24 localized width/theme cases and four ordinary A4 PDF
-      downloads with the corrected instructor. Local logout/final preservation
+- [x] Build source `476bc7a` containing all certificate fixes; actual isolated hosted
+      certificate passes 32 localized width/theme/overlap cases and a normal A4 PDF
+      download. Earlier749 four-language PDFs remain separate. Local logout/preservation
       retain all ten prior sessions and protected state.
-- [x] Select749c4e7/45,858 sealed files; actual synthetic container service startup,
+- [x] Select476bc7a/45,858 sealed files; actual synthetic container service startup,
       native loading, worker-loss restart, stop and maintenance fallback pass.
       Older509fa06 remains intact; real-input proposal stays separate/inactive.
-- [ ] Hand off new preview to the owner; existing Behemoth launcher still targets
-      older `ace0804`. New fixed expiry is Oct23 09:12UTC.
-- [ ] Resolve minor floating privacy-button overlap on narrow certificate screens;
-      classify remaining console diagnostics before blanket runtime acceptance.
+- [x] Install latest476 owner launcher in a new Behemoth directory; verify private
+      modes/source/gate/Node/Playwright without launching browser or logging in.
+      New preview fixed expiry is Oct23 09:38UTC; older launchers stay intact.
+- [x] Fix narrow certificate privacy overlap; actual hosted32 cases verify zero
+      overlap/unobscured download. Attribute28 current CDP network errors exactly
+      to23 local403 prefetches/five absent-provider503s; qualify31 canceled loads
+      and historical unclassified counts without blanket runtime acceptance.
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
 - [x] Verify current student login, signed Mux, certificate denial, local logout

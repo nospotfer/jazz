@@ -1,19 +1,19 @@
 # Service inventory
 
-## Latest service state — Oct22 source `749c4e7`
+## Latest service state — Oct22 source `476bc7a`
 
 Public Vercel 503 and customer backends remain paused; no production change.
-Selected `749c4e7` seals 45,858 files; all 10 remote checks/Vercel status pass. Actual
+Selected `476bc7a` seals 45,858 files; all 10 remote checks/Vercel status pass. Actual
 synthetic network-none container rehearsal verifies startup/native loading,
 one worker restart, removal and maintenance fallback; independent closure/full
 seal pass. This does not establish actual production provider health.
 
-New isolated protected preview at https://fever-hits-cottage-pgp.trycloudflare.com
-expires Oct23 09:12:22UTC. Actual worker inspection confirms749 source/TVM target
-and payment/mail/cron absent. Hosted certificate24 layouts/four A4 downloads,
-local logout/full preservation pass. Older owner launcher still points toace0804,
-expiring Oct22 22:17UTC. No existing resource restart or launcher switch occurs.
-Private production 749 inputs are retained separately; no automatic loading or
+New isolated protected preview at https://gibson-flashing-trade-portraits.trycloudflare.com
+expires Oct23 09:38:45UTC. Actual worker inspection confirms476 source/TVM target
+and payment/mail/cron absent. Hosted certificate32 layouts/zero privacy overlap/one normal A4 download,
+local logout/full preservation pass. New Behemoth review-476bc7a-20261022 launcher is installed, without browser/login.
+Older launchers/previews remain unchanged.
+Private production476 inputs are retained separately; no automatic loading or
 activation. Recovered-media approval/domain/free-hosting release remain open.
 [Latest evidence and runtime limits](production-readiness.md#latest-certificate-release).
 

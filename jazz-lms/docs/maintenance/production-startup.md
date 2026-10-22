@@ -9,11 +9,11 @@ See [hosting](hosting.md) for account/domain and cutover prerequisites.
 
 ## Current reviewed artifact — Oct22
 
-Selected candidate `749c4e7` contains the certificate fixes and seals 45,858 files;
-previous509fa06 remains preserved. Actual synthetic container startup, native
+Selected candidate `476bc7a` contains the certificate fixes and seals 45,858 files;
+previous749c4e7/509fa06 remains preserved. Actual synthetic container startup, native
 loading, one worker-loss restart, shutdown and maintenance fallback pass. The
 real-input proposal is separately retained under
-`/home/gabriel/.config/culturadeljazz-maintenance/production-candidate-749c4e7/`.
+`/home/gabriel/.config/culturadeljazz-maintenance/production-candidate-476bc7a/`.
 It is not active and does not establish current provider health. Do not reuse
 older source/path bindings for this candidate. Concrete production tunnel/domain/
 Auth/backend/startup changes still require their final reviewed release scope.

@@ -1,53 +1,51 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 latest release and hosted certificate checks
+## Current status — Oct22 source476bc7a and owner preview
 
-**The public site still returns 503 from paused Vercel. All application/UI repairs
-remain unreleased in production. The maintenance goal is incomplete.**
+**Public Vercel remains paused/503. Application/UI repairs are unreleased in
+production, and the maintenance goal is incomplete.**
 
-- **Verified improvements:** responsive landing/mobile navigation, authentication,
-  payment and access-control repairs; accepted database backup and all 68 PDFs
-  recovered; recovered administrator login/dashboard/logout verified. Isolated
-  student login, signed video and PDF rendering retain their recorded evidence.
-- **Latest product result:** source `749c4e7` includes the corrected instructor in
-  all four languages and the mobile certificate height fix. The actual protected
-  app passes 24 cases: ES/EN/FR/PT ×320/390/1440 ×light/dark. All text/signature
-  stay within the paper and the download control is below it. Four normal-button
-  downloads produce A4 PDFs with the correct instructor. Local logout/browser
-  closure and final read-only preservation pass, including all ten prior sessions.
-- **Selected production candidate: `749c4e7`.** Fresh locked build seals 45,858 files;
-  all 10 remote checks and Vercel status pass. The built container service passes
-  startup, native module loading without SQL, one worker-loss restart, shutdown
-  and maintenance fallback. Synthetic server inputs/network-none limit this to
-  packaging evidence; current production provider health remains unverified.
-  The previous509fa06 artifact is preserved. Real-input configuration is prepared
-  separately and has not been activated.
-- **New protected preview:** https://fever-hits-cottage-pgp.trycloudflare.com,
-  fixed expiry **Oct23 11:12 Madrid**. It uses synthetic data and excludes payment,
-  application-mail and cron credentials. Behemoth's existing launcher still opens
-  the older `ace0804` preview, expiring Oct23 00:17 Madrid; no launcher handoff is
-  claimed for the new origin.
-- **Remaining:** controlled recovered-video/PDF check, provider/recovery-point
-  decisions, authenticated domain access and exact free-hosting cutover/rollback
-  review. The prepared <=30min backend/Auth scope remains pending approval.
-  Squarespace Google sign-in/domain listing is requested using the owner's Gmail.
-  No paid plan or production change has occurred.
-- **Known limits:**30 console errors remain unclassified;29 failed requests report
-  ERR_ABORTED,28 before closure and1 at closure. Twenty-five optional prefetches
-  are locally refused403; five real auto-reconcile503 responses exercise the
-  absent-provider branch. These are not blanket runtime/provider health proof.
-  Visual review also finds the floating privacy button partially overlapping the
-  mobile download control; this smaller UX issue remains in the backlog.
+- **Recovered and repaired:** accepted database backup/all68 PDFs, recovered admin
+  login/dashboard/logout, authentication/payment/access-control fixes and
+  responsive landing/student UI work. Earlier isolated video/PDF journeys retain
+  their own source-bound evidence.
+- **Selected release: `476bc7a`.** Its fresh locked build seals45,858 files and all
+  ten remote checks pass. Actual synthetic container startup, native loading,
+  one worker-loss restart, shutdown and maintenance fallback pass. Real provider
+  inputs are separately prepared, with no production activation or health claim.
+- **Latest UI verification:**32 actual hosted certificate cases across four
+  languages,320/390/1024/1440 and both themes. Paper/text/signature containment and
+  the mobile privacy/download overlap fix pass. A normal A4 download, owned local
+  logout/browser closure and final protected-state comparison pass, preserving
+  all ten earlier sessions. Earlier749 four-language PDF proof stays separate.
+- **Diagnostics:**28 CDP network-error entries match exact request IDs:23 local
+  optional-prefetch403s and five actual absent-provider reconciliation503s.
+  Playwright independently counts28 console errors. All31 loading failures are
+  canceled ERR_ABORTED; their initiating causes are not inferred. Page errors,
+  observer drops, ambiguous/unmatched network entries and guard blocks are zero.
+  This explains this scope without relabeling older unclassified counts.
+- **Owner access installed on Behemoth:**
+  `/home/gabriel/.local/share/culturadeljazz-maintenance/review-476bc7a-20261022/open-preview.sh`.
+  It opens the protected latest landing/auth pages without entering account
+  credentials. Browser has not been launched by the installation. The dedicated
+  profile can be reopened after closure; existing browsers/launchers are untouched.
+  Fixed expiry: **Oct23 11:38 Madrid**. Payment/application-mail/cron stay disabled.
+- **Still required:** controlled recovered-video/PDF verification under the
+  pending bounded backend/Auth approval, provider/recovery-point decisions,
+  authenticated domain access and concrete free-hosting cutover/rollback review.
+  Squarespace Google login/domain listing is requested using the owner's Gmail.
+  Real existing-student password continuity remains unverified; no customer's
+  credentials are requested. Coupon/refund limits remain explicit.
 
-The first current-source certificate attempt inspected the streamed card too
-soon. It logged out and passed final preservation before a distinct scope added
-an explicit visibility wait; the actual successful result above preserves that
-failure. Real existing-student password continuity remains unverified; the owner
-only uses the administrator and no customer credentials are requested.
+The first476 diagnostic result exceeded the test runner's131,072-byte cap before
+retention. Independent browser/process closure and full read-only preservation
+pass; its function outcome remains unretained. A distinct scope with a bounded
+2MiB capture produces the successful result above. No cleanup SQL mutation or
+customer/provider configuration change occurs.
 
-[Full evidence](production-readiness.md#latest-certificate-release),
-[startup and rollback](production-startup.md), [remaining work](backlog.md).
-Earlier dated sections below retain their original source/result limits.
+[Actual evidence](production-readiness.md#latest-certificate-release),
+[release checklist](release-checklist.md), [startup and rollback](production-startup.md).
+Earlier dated sections retain their original source/result limits.
 
 ## Oct21 R5 verifies both existing files; continuation remains stopped
 
