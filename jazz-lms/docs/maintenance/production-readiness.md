@@ -16,6 +16,28 @@ resume, provider call or DNS change occurs. Source pins/final inactive units and
 removed owned runtime are independently checked. This closes final candidate
 build/local service packaging, not actual production credentials or release.
 
+**Oct22 00:22UTC update:** a new owner-only proposed production configuration
+passes full inspection against that45,857-file release, its public settings,
+durable CA and writable cache. It selects the accepted Storage key/exact literal
+bucket, playback-verified Mux signer and inspected LIVE Dodo inputs; the closed
+admin diagnostic's media placeholders are not reused. New checkout stays off,
+application-mail inputs are absent and a new local proposed cron secret is not
+configured or scheduled. This makes zero provider/SQL calls and starts no child
+or listener; current credential health remains unverified. Its credential-free
+local review is retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-production-inputs-20261022/`,
+manifest `239bded8984fcb4436277d59f7560bf09415052333d109ad15cc7b2e1eea7de1`.
+Private inputs remain separate; this unencrypted local review has no established
+off-site recovery.
+
+The recovery-only ingress extension now locally admits the two narrow media GET
+contracts, retaining application identity/access guards and denying writes and
+lesson-page navigation.390 focused policy/transport/private-worker checks,
+types and scoped lint pass; six positive cases fail before repair with37 passing
+controls. It is newer recovery-preparation source, not the selected production
+artifact or an actual recovered-media result. Fresh protected recovery build,
+bounded Auth/backend action review and browser integration remain pending.
+
 The owner confirms they only use the administrator. Existing-student password
 continuity stays unverified, not a new demand for customer credentials. Remaining
 recovered-media inspection can use that controlled admin with ordinary-student

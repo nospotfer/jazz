@@ -77,6 +77,9 @@ const RECOVERY_READ_PATHS = new Set([
   '/api/dashboard/course-completion-recognition',
 ]);
 const LOCAL_IMAGE = /^\/(?:images|avatars)\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:png|jpe?g|webp|svg)$/;
+const RECOVERY_MEDIA_UUID = '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}';
+const RECOVERY_VIDEO = new RegExp(`^/api/lessons/${RECOVERY_MEDIA_UUID}/mux-playback$`);
+const RECOVERY_PDF = new RegExp(`^/api/lessons/${RECOVERY_MEDIA_UUID}/attachments/${RECOVERY_MEDIA_UUID}$`);
 
 /** Small recovery surface, shared by the edge and private worker. Auth sessions
  * still change at Supabase; this only bounds application request dispatch.
@@ -87,6 +90,18 @@ export function isRecoveryRequestAllowed({ method, target, headers }) {
       Object.keys(headers).some(name => /^(?:next-action|x-matched-path|x-now-route-matches)$|^x-(?:middleware|invoke|nextjs)-/.test(name.toLowerCase()))) return false;
   if (method === 'POST') return path === '/api/auth/session';
   if (!['GET', 'HEAD'].includes(method)) return false;
+  // These handlers still verify identity and lesson access. Admit only their
+  // read-only playback/inline-proxy contracts, never the lesson UI (which saves
+  // progress), arbitrary API reads, downloads or additional route controls.
+  if (method === 'GET' && RECOVERY_VIDEO.test(path)) return target === path;
+  if (method === 'GET' && RECOVERY_PDF.test(path)) {
+    const query = new URLSearchParams(target.includes('?') ? target.slice(target.indexOf('?') + 1) : '');
+    const keys = [...query.keys()];
+    return keys.length === 3 && new Set(keys).size === 3 &&
+      ['language', 'download', 'proxy'].every(key => query.has(key)) &&
+      ['es', 'en', 'fr', 'pt'].includes(query.get('language') ?? '') &&
+      query.get('download') === '0' && query.get('proxy') === '1';
+  }
   if (RECOVERY_READ_PATHS.has(path) || LOCAL_IMAGE.test(path)) return true;
   if (/^\/_next\/static\/(?:[A-Za-z0-9_@().-]+\/)*[A-Za-z0-9_@().-]+\.(?:js|css|woff2?|ttf)$/.test(path)) return true;
   if (path !== '/_next/image') return false;

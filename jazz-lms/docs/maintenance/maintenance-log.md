@@ -1,5 +1,34 @@
 # Maintenance log
 
+## Oct22 02:25 Madrid — Production inputs bound; recovered-media reads prepared
+
+A new owner700/600 private production proposal passes full local509fa06 release
+inspection:45,857 files, public settings, durable CA and writable cache. The old
+closed administrator runtime contains placeholder media inputs, and its service
+key differs from the accepted Storage selection. Select the successful recovery's
+Storage key through its executed plan/hash,
+the exact68-file literal bucket and actual-playback Mux signer. Retain inspected
+LIVE Dodo inputs, disable new checkout, omit application-mail credentials and
+generate only an unconfigured local proposed cron secret. No provider request,
+SQL, child, listener, configuration change or production startup occurs.
+Finite review SHA `f8b3d959d120f54d1f5f4a609fd810b1c8901dc7fa861668fae4aed1191f5607`;
+retained review-checkpoint-production-inputs-20261022 manifest
+`239bded8984fcb4436277d59f7560bf09415052333d109ad15cc7b2e1eea7de1`.
+Copies are local/unencrypted; no off-site recovery of this packet is established.
+
+The owner has only the administrator. Prepare a separate recovery-only media
+scope instead of requesting other customers' credentials. Narrow GET admission
+allows only UUID signed-video and exact language/inline-proxy PDF contracts;
+Auth/entitlement checks remain in the actual handlers. Writes, downloads,
+lesson-page navigation and routing overrides stay blocked. Six positive cases
+fail before the change/37 controls pass; final390 focused source/real private
+worker/Unix transport cases, types and scoped lint pass. These use synthetic
+fixtures, not recovered-provider requests. A fresh protected recovery artifact,
+browser display integration and bounded backend/Auth review remain pending.
+Production509 and the active synthetic owner preview are unchanged; all3 preview
+handles are confirmed running. The completed43-case baseline and original failed
+results are retained. No accepted recovery is replayed.
+
 ## Oct22 02:05 Madrid — Final candidate and actual built service pass
 
 Source509fa06 has a fresh45,857-file locked build and10 remote checks/Vercel

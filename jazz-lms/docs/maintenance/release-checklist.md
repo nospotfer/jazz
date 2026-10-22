@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current gate — Oct22 02:05 Madrid
+## Current gate — Oct22 02:25 Madrid
 
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
@@ -23,8 +23,14 @@
       stop/maintenance rehearsal passes with synthetic inputs/network-none.
 - [x] Add staged CHECKOUT_DISABLED=true and verify actual four-language checkout
       and voucher denial; retain existing access/fulfillment source.
+- [x] Prepare private real-input production proposal and inspect against exact
+      selected artifact/public settings/CA/cache; no provider/SQL/runtime action.
+- [x] Prepare narrow recovery-only media GET admission;390 policy/transport/
+      private-worker checks/types/lint pass. Production509 remains unchanged.
 - [ ] Verify remaining recovered media with controlled admin; record unavailable
       real student password continuity and decide remaining RPO/integration gaps.
+      Use a fresh recovery-only build and approved <=30min scope; no closed
+      diagnostic plan or production-mode credentials may become test inputs.
 - [ ] Verify account/domain, callbacks/SMTP/LIVE webhooks and prepare exact cutover
       for review. Public production remains503; preview is not production hosting.
 

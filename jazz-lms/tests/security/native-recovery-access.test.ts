@@ -148,6 +148,22 @@ test('the actual private worker rejects mutations and ambiguous paths before inv
   expect(JSON.parse((await request(value.socket, '/admin')).body).requests).toBe(2);
 });
 
+test('the actual recovery worker dispatches only the read-only media contracts', async () => {
+  const value = await worker(); expect(value.ready).toBe('ready');
+  const lesson = 'a1111111-b111-4111-8111-111111111111';
+  const video = `/api/lessons/${lesson}/mux-playback`;
+  const pdf = `/api/lessons/${lesson}/attachments/22222222-2222-4222-8222-222222222222?language=es&download=0&proxy=1`;
+  expect(JSON.parse((await request(value.socket, video)).body).requests).toBe(1);
+  expect(JSON.parse((await request(value.socket, pdf)).body).requests).toBe(2);
+  for (const method of ['HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']) {
+    expect((await request(value.socket, video, method)).status).toBe(403);
+    expect((await request(value.socket, pdf, method)).status).toBe(403);
+  }
+  expect((await request(value.socket, `${video}?proxy=1`)).status).toBe(403);
+  expect((await request(value.socket, pdf, 'GET', { 'x-invoke-path': '/api/checkout' })).status).toBe(403);
+  expect(JSON.parse((await request(value.socket, '/dashboard')).body).requests).toBe(3);
+});
+
 test.each([{ wrongLease: true }, { wrongBrowserFlag: true }])('the worker denies inconsistent recovery input %j before listening', async options => {
   expect((await worker(options)).ready).toBe('failed');
 });

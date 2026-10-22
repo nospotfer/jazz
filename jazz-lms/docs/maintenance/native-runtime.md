@@ -177,15 +177,31 @@ Both the authenticated edge and private worker enforce a literal route
 allowlist before invoking Next. The first scope permits GET/HEAD of `/`, `/auth`,
 `/dashboard`, `/admin`, `robots.txt`, the favicon, reviewed local image/avatar
 paths and ordinary Next static JS/CSS/font assets. The only allowed API reads
-are dashboard `courses-progress`, `pdf-count`, `quiz-medals`,
+include dashboard `courses-progress`, `pdf-count`, `quiz-medals`,
 `quiz-medals/profile` and `course-completion-recognition`. The only application
 POST is exact `/api/auth/session` for password-login cookie synchronization.
 Image optimization accepts only bounded local image/avatar requests. Encoded
 paths, dot segments, duplicate slashes, Next-action/internal routing headers and all other
 mutations are denied. Registration/recovery/OAuth callbacks (including aliases),
-messages, profile edits, progress/quiz writes, lesson/media access, payments,
+messages, profile edits, progress/quiz writes, lesson-page access, payments,
 vouchers, cron and webhooks are outside this initial surface. Broader student or
 admin journeys require a separately reviewed expansion.
+
+The recovered-media extension additionally admits GET only for
+`/api/lessons/{lowercase UUID}/mux-playback` with no query, and
+`/api/lessons/{lowercase UUID}/attachments/{lowercase UUID}` with exactly
+`language={es|en|fr|pt}`, `download=0`, `proxy=1`, each once. HEAD, extra query
+controls, downloads, path aliases, routing overrides and media mutations remain
+denied. Both application handlers still verify identity and lesson access; the
+PDF branch reads existing Storage bytes and the video branch signs locally.
+It admits no lesson page or progress writer. A browser-owned display harness
+must be identified as media-rendering evidence, separate from lesson-page UX.
+Six positive regressions fail before the change while37 controls pass; the
+complete focused policy/transport/private-worker set then passes390 cases,
+plus types and scoped lint. This is local source proof only: a fresh recovery
+build, exact controlled-media/browser scope and approved backend/Auth window
+remain required. The selected production509fa06 artifact is unchanged and
+cannot be used as a recovery build with its different public settings.
 
 The selected `/admin` overview and dashboard support reads use persisted-role
 guards, Prisma reads/SELECT, local formatting and caches. They do not initialize

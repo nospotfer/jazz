@@ -1,6 +1,6 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 02:05 Madrid
+## Current status — Oct22 02:25 Madrid
 
 **The public website remains paused/503. The release candidate is verified
 locally; application and UI improvements are not deployed to production.**
@@ -15,6 +15,11 @@ locally; application and UI improvements are not deployed to production.**
   restarts after its worker is terminated, stops cleanly and serves the exact
   maintenance fallback. These use synthetic server inputs with networking
   disabled; real production credentials/provider health remain unverified.
+- **Production inputs prepared:** a new private configuration passes inspection
+  against the selected release, CA and public build settings. It uses the
+  accepted file-recovery key/bucket and playback-verified video signer. No
+  provider calls, backend resume or service startup occurred; live health is
+  still unverified.
 - **Staged reopening:** `CHECKOUT_DISABLED=true` blocks new checkout and voucher
   grants while preserving existing customer access and payment fulfillment.
   Actual built responses pass in four languages. The original slim image failed
@@ -28,6 +33,10 @@ locally; application and UI improvements are not deployed to production.**
   review. The owner only uses the administrator; real student password continuity
   stays unverified, separate from ordinary-student tests. No other customer's
   credentials are required from the owner.
+- **Recovered-media preparation:** narrow read-only video/PDF dispatch now passes
+  390 local checks, types and lint, including the actual private worker. This
+  needs its own fresh recovery build/window; it has not been run on customer
+  data and does not replace the selected production artifact.
 - **Current owner action:** sign into Squarespace using Google account
   `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google
   nameservers can be Squarespace defaults; another gcloud login is not yet needed.

@@ -1,11 +1,14 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 02:05 Madrid
+## Current priorities — Oct22 02:25 Madrid
 
 1. Verify remaining recovered media through the controlled administrator under
    a fresh bounded review; preserve separate isolated ordinary-student evidence.
    The owner has no separate student account. Do not demand other customers'
    passwords or repeat accepted recovery/administrator verification.
+   Narrow media-GET dispatch passes390 local checks/types/lint; prepare a fresh
+   recovery build and bounded browser/backend scope. Production509 remains
+   immutable and is not a recovery-profile artifact.
 2. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
    [release review](hosting.md). Squarespace Google sign-in/domain listing is
    requested using the owner's Gmail; Google nameservers alone do not establish
@@ -15,6 +18,8 @@
    dependency loading, worker-loss restart, stop and maintenance fallback pass.
    Keep `CHECKOUT_DISABLED=true` for a staged release. Production provider inputs
    and activation remain separate review actions; the public site is still503.
+   Real proposed provider inputs now pass local full-release/config inspection;
+   zero provider calls or runtime starts, so current health remains unverified.
 4. Preserve the owner preview until Oct22 22:17UTC. Keep further coupon/refund
    launches deferred; the retained SDK/wallet failures remain explicit gaps.
 
