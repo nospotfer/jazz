@@ -1,5 +1,37 @@
 # Maintenance log
 
+## Oct22 — SDK helper corrected and actual local recovery preflight passes
+
+- Published documentation checkpointda56aa5 passes all10 remote checks; PR46
+  head/title/body/draft readback and the12-path documentation-only bridge from
+  application476bc7a pass. Required pre-push778/29skip and lint0errors/22warnings
+  pass. Five finite review/publication files are retained, manifest405b97ee.
+- Root reviews the new exact SDK static-GET helper. Its36 controls omit raw URL
+  dot-segment normalization: eight frozen-before wrapper/document variants are
+  admitted. Distinct R2 adds canonical raw URL checks;45 focused controls pass,
+  including normal encoded iframe queries. Original helper/identity stay intact.
+  R2 has no API/card/write authority and is not integrated into a browser driver.
+  HTTP/source-body evidence, durable bootstrap reservation and actual SDK/API
+  readiness remain necessary before a fresh financial scope. Retain28 source/
+  finite members102,827bytes, manifest1642b767; no raw SDK/customer/credential bodies.
+- With review tools idle, one neutral-cwd/exec-replaced local capture verifies
+  all14 required live observations and12 raw candidates. The additive wrapper
+  removes only six proven extras; unchanged base admission removes its six;
+  unchanged legacy verifier accepts0 remaining. No unknown-process exemption,
+  signals, backend/Auth/SQL/browser/provider action or customer window. Preserve
+  both earlier stopped scans; the transient candidate's origin remains unproven.
+- Inert coordinator derivative changes only its original absolute ROOT and
+  process-guard descriptor;17 existing plus3 source/inert controls pass. Recovery
+  APP9da/DOCS65c and all-null FINAL remain. Later476 changes two certificate runtime
+  paths, plus separate docs/test changes: do not call that a documentation bridge
+  from9da. Retain19 finite/source members99,135bytes, manifestc18a94fd, without
+  credentials or raw Auth/provider state. Customer-media approval and fresh
+  execution-time process/data/role/source/gate checks remain required.
+- Next: integrate the R2 file policy and current body pins with separately scoped
+  existing API/frame/card gates; verify offline before preparing a fresh eligible
+  TEST actor/checkout scope. Do not replay old payment/mail/recovery ledgers.
+  Public production remains503 and the maintenance goal remains incomplete.
+
 ## Oct22 — Current dependency evidence, checkout diagnosis and concise release review
 
 - Fresh exact476 locked audits report production0/full5 high entries in one

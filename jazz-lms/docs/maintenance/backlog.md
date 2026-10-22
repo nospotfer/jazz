@@ -7,6 +7,9 @@
    pending; no customer runtime/lease has started. Revalidate current process/data/
    role bindings, including the newly running isolated preview, before execution.
    Preserve accepted database/PDF imports and the already verified admin journey.
+   Local preflight now passes14 observations/12 candidates through the unchanged
+   base scanner/verifier; the inert coordinator derivative passes20 controls.
+   Execution still needs a fresh successful capture and the pending approval.
 2. Establish authenticated domain access and complete production Auth/SMTP/LIVE
    webhook/recovery-point decisions for the concrete free-hosting release review.
    Squarespace Google sign-in/domain listing is requested with the owner's Gmail;
@@ -25,8 +28,9 @@
    fixed and hosted-verified; earlier unclassified counts are not rewritten.
 6. Keep further coupon/refund launches deferred pending a fresh helper/scope:
    retained SDK host denial is identified, current public SDK graph is reviewed,
-   but exact read-only file admission/current source pins and actual bootstrap
-   remain unverified. Wallet remedy and eligible-actor/provider decisions remain.
+   and the distinct exact-file helper now passes45 offline controls after fixing
+   eight raw URL normalization gaps. Driver/API/body-pin integration and actual
+   bootstrap remain unverified. Wallet remedy and eligible-actor/provider decisions remain.
    Real student-password continuity
    remains unverified; the owner only has the administrator. Do not request other
    customers' credentials or treat isolated tests as recovered-customer proof.

@@ -14,6 +14,11 @@
       eligibility and correctly reject stale source bytes. No financial replay.
 - [ ] Integrate and verify distinct exact read-only SDK file admission/current
       pins, then use a fresh eligible-actor TEST scope for remaining coupon proof.
+- [x] Verify R2 file-policy source with45 offline controls, preserving eight
+      frozen-before URL gaps and all no-API/write/card boundaries. Not integrated.
+- [x] Verify actual local14-observation/12-candidate recovery preflight through
+      unchanged base scanner/verifier and20 inert coordinator controls. No customer
+      scope started; fresh execution-time checks and bounded approval remain.
 - [x] Verify eligible isolated certificate download through the ordinary button,
       A4 output, owned local logout and final preservation of ten prior sessions.
 - [x] Record fresh all-status LIVE payment creation-window check: two GETs200,
