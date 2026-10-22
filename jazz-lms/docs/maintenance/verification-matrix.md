@@ -1,24 +1,22 @@
 # Goal verification matrix
 
-## Current verification — Oct21 production-runtime checkpoint
+## Current verification — Oct22 02:05 Madrid
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
-| Usable protected preview | Sourceace0804, public401/authorized200, fixed Oct22 22:17UTC expiry; Behemoth review browser open | Available; isolated synthetic data only |
-| Lifetime boundaries | Plain isolated <=24h; TEST/recovery <=30min;405+1 focused checks, types/lint, fresh build/inspection | Passed; no production startup |
-| Student/video | Actual login, signed Mux decode/time advance, certificate denial2/15 | Passed in this scope |
-| PDF rendering | Actual hosted1440/390 light/dark visible text, registered native viewer/plugin/load success; guard cause reproduced locally | Passed; original failed report retained |
-| Student preservation | Local logout204, sessions0, six business hashes/prior sessions/hierarchy exact | Passed; not full database/customer proof |
-| Current public UI |1440/390, actual light/dark toggle, no overflow; public promo readyState4/error0 | Passed for these views; not all locale/device coverage |
-| Production runtime |2,976 normal passes/80 skips; 742 focused native passes; app/maintenance/named-tunnel source and actual synthetic Monster systemd startup/worker-loss restart/stop/maintenance503 | Implemented locally; no production/DNS changes, public503 |
+| Public production | Vercel remains paused/503; original/replacement customer backends paused | Unreleased; no new production change |
+| Protected owner preview | ace0804, public401/authorized200, fixed Oct22 22:17UTC expiry; all3 specific handles freshly live | Available on synthetic data |
+| Student/media/UI | Actual isolated login/signed Mux/PDF, current desktop/mobile light/dark | Passed in recorded preview scope |
+| Recovered database/files/admin | Accepted1,621rows/all68PDF; R14 admin login/dashboard/logout | Complete; do not replay |
+| Real existing-student password | Owner uses only admin, no controlled USER credential identified | Unverified limitation; separate ordinary-student tests |
+| Selected candidate |509fa06 locked build/45,857 files,10 remote checks/Vercel success | Passed with synthetic server inputs |
+| Checkout initiation switch |272 native config +126 route/UI/control cases; actual built four-language503/voucher JSON503 | Passed; staged settingtrue, not deployed |
+| Native container dependency | Old slim image fails Prisma/OpenSSL; full-image native load and API/worker liveness pass | Corrected image pinned; not DB/provider health |
+| Actual built service lifecycle | Rendered unit starts actual Next, restarts after worker SIGTERM, stops/removes; exact maintenance503/HEAD/webhook pass | Passed network-none/test overrides; no real tunnel or boot recovery |
+| Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra older known-product successes | Passed current older status; full RPO unverified |
+| Domain access | Owner names Gmail; Squarespace login/listing requested; Google NS can be Squarespace defaults | Access unestablished; no DNS change |
 
-| Production candidate | Clean0d45a33 locked build/45,856 sealed files; actual built Next/robots/sealed JS in nonroot read-only network-none Docker, clean stop/removal | Passed with synthetic server inputs; provider health unverified |
-| Host isolation | Actual user-systemd probes keep host namespaces and allow canary write | Ineffective; choose container proposal, preserve lifecycle proofs separately |
-| Container unit |39 focused cases/types/lint; actual generated-unit startup/new-invocation restart/stop/maintenance/cleanup | Passed synthetic Next, network-none/test overrides; no installed unit or tunnel |
-| Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra successes in complete older known-product list | Current older status passed; historical canonical baseline/full RPO unverified |
-| Domain account | Owner names gabriel.barra@gmail.com; no matching inspected CLI identity | Ownership indicated; registrar/DNS access unverified |
-
-[Preview and evidence](production-readiness.md#day-preview--oct21-2230-utc).
+[Source-bound outcomes and evidence](production-readiness.md#day-preview--oct21-2230-utc).
 
 ## Current verification — Oct21 22:03 UTC
 

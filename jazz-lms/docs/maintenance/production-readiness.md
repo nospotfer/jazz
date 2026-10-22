@@ -4,6 +4,33 @@
 
 ## Current checkpoint — protected preview and student media verified; production still offline
 
+**Selected production candidate: `509fa069dec1365d915838d5d98e30cc9c473b3a`.**
+Its clean locked build seals45,857 files and all10 remote checks plus Vercel
+status pass. Actual built Next runs through the proposed full-Bookworm container
+unit and verifies all4 localized checkout denials, voucher JSON denial, continued
+worker liveness after Prisma loading, restart into a new invocation/container,
+normal stop/removal and exact maintenance503/HEAD/webhook behavior. Network-none,
+synthetic server inputs, RestartSec1 and omitted absent production-tunnel dependency
+are explicit rehearsal limits; no installed/enabled unit, real tunnel, backend
+resume, provider call or DNS change occurs. Source pins/final inactive units and
+removed owned runtime are independently checked. This closes final candidate
+build/local service packaging, not actual production credentials or release.
+
+The owner confirms they only use the administrator. Existing-student password
+continuity stays unverified, not a new demand for customer credentials. Remaining
+recovered-media inspection can use that controlled admin with ordinary-student
+behavior kept as separate isolated evidence. Domain access is requested through
+Squarespace Google sign-in with the identified Gmail account. Google nameservers
+can be normal Squarespace defaults, so do not infer an owning Cloud project.
+
+Eleven finite build/API/native-library/service/failure review files are retained
+at `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-staged-reopening-20261022/`,
+manifest SHA256 `dafa984de80a3c17efd402569b398b4366f5d68e966363f1c98cae1fe8a16285`.
+No credentials/private provider inputs enter that package; local retention is
+unencrypted and its off-site recovery is unestablished. Original failed image
+and driver outcomes are preserved. The detailed earlier build/PDF/preview results
+below retain their source bindings; their pending rebuild actions are superseded.
+
 Application/native source `ace08049acec97f7f363c85160c961a5514fcff2` is running at
 https://handled-performance-pregnancy-minority.trycloudflare.com behind its
 private Basic gate, with fixed expiry **2026-10-22 22:17:23 UTC** (Oct23 00:17
@@ -102,8 +129,8 @@ The staged-release source now supports server-only `CHECKOUT_DISABLED=true`:
 new paid/free/voucher/local-test grants and direct voucher redemption stop with
 localized no-store503 before Auth/DB/provider work. Existing customer content,
 Auth and payment fulfillment/reconciliation are unchanged.272 configuration and
-126 distinct route/UI/control cases/types/lint pass. Actual sealed-runtime
-confirmation and final-source build follow; the old owner preview is unchanged.
+126 distinct route/UI/control cases/types/lint pass. Actual sealed-runtime confirmation and final-source build now pass on509fa06;
+the old owner preview is unchanged.
 The archive has13 USER/1 SUPER_ADMIN; retained credentials/control metadata
 identify only that administrator. No qualifying owned student password is found.
 The owner confirms they only use the administrator. Existing-student password
@@ -118,7 +145,7 @@ acceptance. The same untouched cedd01f artifact on the corrected pinned full
 Bookworm image passes native engine initialization, all4 localized checkout503
 responses, direct voucher JSON503 and delayed worker liveness, with clean closure.
 No provider transport is possible. Earlier failed drivers and raw results remain
-retained. The selected-image source is being rebuilt; no production activation.
+retained. The selected-image509fa06 build and actual service rehearsal now pass; no production activation.
 Domain access remains separately unestablished.
 
 The hosted PDF confirmation closes normally with one local logout204. Root's

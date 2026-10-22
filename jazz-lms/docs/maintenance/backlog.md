@@ -1,28 +1,26 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 01:35 Madrid
+## Current priorities — Oct22 02:05 Madrid
 
-1. Complete recovered student/content continuity and remaining recovery-point
-   qualification. Accepted customer/PDF recovery and recovered admin login are
-   complete; do not repeat them. The older Dodo current-paid set now matches
-   the3 archived payment references, but full RPO remains qualified.
-2. Finish account/domain/Auth/SMTP/LIVE-webhook and final release binding for the
-   [zero-cost hosting proposal](hosting.md). The clean0d45a33 build and isolated
-   actual Next startup pass. Container preparation/source checks and actual
-   generated-unit restart/stop/maintenance rehearsal pass; no activation occurs.
-   Final production selection needs the artifact rebuilt on its selected source.
-   Owner identifies personal Gmail as likely domain account; access is unverified.
-3. Preserve the owner preview until its fixed Oct22 22:17UTC expiry. Synthetic
-   student login/video/PDF, guest desktop/mobile and light/dark pass. Production
-   remains503; all UI/application changes remain unreleased.
-4. Keep further coupon launches deferred. Retained unpaid payment/SDK denial and
-   historical insufficient-wallet refund remain explicit gaps; no new financial
-   test is needed merely to repeat prior failure.
+1. Verify remaining recovered media through the controlled administrator under
+   a fresh bounded review; preserve separate isolated ordinary-student evidence.
+   The owner has no separate student account. Do not demand other customers'
+   passwords or repeat accepted recovery/administrator verification.
+2. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
+   [release review](hosting.md). Squarespace Google sign-in/domain listing is
+   requested using the owner's Gmail; Google nameservers alone do not establish
+   a Cloud DNS project. No domain/account change has occurred.
+3. Select candidate `509fa06`: final locked build and all 10 remote checks pass.
+   Actual built container service startup, checkout/voucher blocking, native
+   dependency loading, worker-loss restart, stop and maintenance fallback pass.
+   Keep `CHECKOUT_DISABLED=true` for a staged release. Production provider inputs
+   and activation remain separate review actions; the public site is still503.
+4. Preserve the owner preview until Oct22 22:17UTC. Keep further coupon/refund
+   launches deferred; the retained SDK/wallet failures remain explicit gaps.
 
-Published0d45a33 passes all10 remote checks plus Vercel status. Subsequent
-container renderer passes39 focused tests/types/lint and actual synthetic
-lifecycle. See [plain-language checkpoint](review-status.md) and
-[current evidence](production-readiness.md#day-preview--oct21-2230-utc).
+Accepted database/all68-PDF recovery and hosted admin login are complete.
+Older Dodo current successes match the3 archived paid references; full RPO is
+not established. [Plain-language checkpoint](review-status.md).
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

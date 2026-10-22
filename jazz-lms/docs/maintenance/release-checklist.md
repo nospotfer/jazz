@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current gate — Oct21 production-runtime checkpoint
+## Current gate — Oct22 02:05 Madrid
 
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
@@ -18,8 +18,13 @@
       inputs; qualify ineffective user-systemd host isolation.
 - [x] Inspect current older LIVE paid set:3 archived refs, no refunds/disputes or
       extra known-product successes; preserve4 voucher grants separately.
-- [ ] Bind artifact to final selected source; verify recovered student/media,
-      full recovery currency and remaining paid coupon/refund decisions.
+- [x] Bind candidate509fa06 to fresh45,857-file artifact; all10 remote checks/
+      Vercel pass; actual built container service/API/liveness/worker-loss restart/
+      stop/maintenance rehearsal passes with synthetic inputs/network-none.
+- [x] Add staged CHECKOUT_DISABLED=true and verify actual four-language checkout
+      and voucher denial; retain existing access/fulfillment source.
+- [ ] Verify remaining recovered media with controlled admin; record unavailable
+      real student password continuity and decide remaining RPO/integration gaps.
 - [ ] Verify account/domain, callbacks/SMTP/LIVE webhooks and prepare exact cutover
       for review. Public production remains503; preview is not production hosting.
 

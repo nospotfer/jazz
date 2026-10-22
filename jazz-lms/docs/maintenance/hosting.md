@@ -51,15 +51,23 @@ gcloud metadata. This does not disprove ownership; actual registrar/zone access
 remains unestablished. No token, project switch or domain configuration change
 follows from the email alone.
 
-If an existing project is explicitly linked to Jazz, the documented read-only
-probe is `gcloud dns managed-zones list --project=<verified-jazz-project>` with
-`--filter='dnsName=culturadeljazz.com.'` and output restricted to zone name, DNS
-name, nameservers and visibility. Capture privately. A matching zone and
-nameserver set can establish readable Cloud DNS configuration; it does not prove
-DNS-write or registrar/nameserver-change authority. Google Domains nameservers
-alone do not identify the owning Cloud project. Try this scoped existing-access
-path before asking the owner to supply access; no such API probe ran here.
-[Managed-zone read command](https://docs.cloud.google.com/sdk/gcloud/reference/dns/managed-zones/list).
+Start with Squarespace using the owner-indicated Google account. Its official
+migration guide directs Google Domains owners to Squarespace and Continue with
+Google using the original account. Its nameserver guide explicitly lists
+`.googledomains.com` among normal Squarespace defaults. Therefore the public NS
+answers do **not** establish a separately managed Cloud DNS project or a need
+for another gcloud login. Whether this exact domain uses defaults/custom DNS
+still requires its authenticated settings. A read-only login/domain-listing
+check is requested; no nameserver/DNS change is authorized by that check.
+[Migration/login guidance](https://support.squarespace.com/hc/en-us/articles/17131164996365-About-the-Google-Domains-migration-to-Squarespace),
+[nameserver guidance](https://support.squarespace.com/hc/en-us/articles/4404183898125-Review-change-or-reset-your-domain-s-nameservers).
+
+Only if authenticated settings identify a separate Cloud DNS project should a
+project-scoped `gcloud dns managed-zones list` be used, with exact
+`dnsName=culturadeljazz.com.` filtering and minimal private metadata. Readable
+zone data is not write/registrar authority. No such API probe is inferred from
+nameservers alone. Full zone preservation and DNSSEC review remain required.
+[Scoped read command](https://docs.cloud.google.com/sdk/gcloud/reference/dns/managed-zones/list).
 
 | Option | Concrete fit | Remaining condition and cost boundary |
 | --- | --- | --- |

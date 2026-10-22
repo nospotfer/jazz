@@ -1,5 +1,29 @@
 # Maintenance log
 
+## Oct22 02:05 Madrid — Final candidate and actual built service pass
+
+Source509fa06 has a fresh45,857-file locked build and10 remote checks/Vercel
+status success. The exact proposed container unit runs actual Next with
+synthetic inputs/network-none: four-language checkout denial, voucher JSON
+denial, native-import liveness, real worker SIGTERM/new invocation+container,
+normal stop/removal and maintenance503/HEAD/webhook/cleanup all pass. Test
+overrides omit the absent real tunnel dependency and shorten RestartSec5→1.
+Independent source-pin, inactive-unit and owned runtime cleanup checks pass.
+All3 existing owner-preview handles are freshly confirmed live; no restart.
+Eleven finite evidence files retain failed and corrected image/driver results
+at review-checkpoint-staged-reopening-20261022, manifest
+`dafa984de80a3c17efd402569b398b4366f5d68e966363f1c98cae1fe8a16285`.
+No credentials are copied; local unencrypted/off-site package recovery unknown.
+
+Owner confirms admin-only usage: keep existing-student password continuity
+unverified and prepare remaining recovered-media review with the controlled
+admin, preserving separate isolated student evidence. Official Squarespace
+guidance confirms googledomains.com can be its default nameservers; infer no
+Cloud DNS account from public NS alone. Ask only for Squarespace Google sign-in
+and domain listing using the owner-indicated Gmail; no DNS change.
+Production remains paused, UI unreleased, provider/cutover gates open.
+
+
 ## Oct22 — Actual API smoke catches missing container OpenSSL
 
 The cedd01f clean production build seals45,857 files; all10 remote checks and

@@ -214,3 +214,18 @@ No production network, installed/enabled unit, provider call or actual tunnel
 is created. Source pins are recorded in `/tmp/jazz-cunit-20261022/result.json`.
 The0d45 build predates the renderer change; a selected release must be rebuilt
 and inspected from its final approved source.
+
+### Accepted candidate — Oct22 02:05 Madrid
+
+Select source `509fa069dec1365d915838d5d98e30cc9c473b3a`, with a fresh45,857-file
+locked build, all10 remote checks and Vercel status passing. The exact rendered
+container unit runs the actual built Next app using synthetic inputs/network-none:
+four-language checkout503, voucher JSON503, delayed native-import liveness,
+real worker termination followed by a new systemd invocation/container, normal
+stop/removal and maintenance503/HEAD/webhook behavior all pass. Final source pins,
+inactive test units and removed runtime are independently verified. Overrides
+are network-none, RestartSec1 and omitted absent production-tunnel dependency.
+No production service/network/account/backend/tunnel/DNS activation occurs.
+The code selected for this artifact stays509fa06 even if later documentation-only
+checkpoints advance the maintenance branch; code changes need a new build.
+[Retained evidence and current release gates](production-readiness.md#day-preview--oct21-2230-utc).

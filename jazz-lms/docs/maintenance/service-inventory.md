@@ -1,26 +1,25 @@
 # Service inventory
 
-## Current service state — Oct21 23:05 UTC
+## Current service state — Oct22 02:05 Madrid
 
-Public production is paused/503. The replacement customer backend remains paused.
-A separate protected synthetic-data preview on sourceace0804 is live until
-Oct22 22:17UTC/Oct23 00:17 Madrid, with a review browser on Behemoth. Student
-login, signed video and visible native PDF rendering pass; local logout and
-selected final state preservation pass. Payment/application-mail/cron inputs
-are absent. Production app/maintenance/named-tunnel launchers are now implemented
-and locally tested, including synthetic Monster systemd restart/stop and
-maintenance503. They are not installed/deployed; account/domain and actual
-production release prerequisites remain. No DNS or production change occurred.
-[Current outcomes and limits](production-readiness.md#day-preview--oct21-2230-utc).
+Production/public503 and both customer backends remain paused. Synthetic owner
+previewace0804 remains live until Oct22 22:17UTC; three specific native/tunnel/
+Behemoth handles are freshly confirmed. Student login, signed video, PDF and
+current public layouts/themes pass; payment/application-mail/cron are absent.
 
-Latest follow-up:0d45a33 passes all10 remote checks/Vercel status, clean locked
-production build and actual isolated Next startup/static serving/cleanup. Actual
-host namespace probes show user-systemd isolation ineffective; proposed container
-units pass focused checks and actual synthetic lifecycle. No new production
-network/service/tunnel is activated. Owner indicates personal Gmail for domain
-control; registrar/DNS access is still unverified. Five read-only LIVE Dodo GETs
-match all3 archived paid references with no current refunds/disputes; full RPO
-remains qualified. [Plain-language checkpoint](review-status.md).
+Selected production source509fa06 passes fresh45,857-file build and all10 remote
+checks/Vercel status. Actual built app runs through the proposed full-Bookworm
+container service: checkout/voucher denial, native-import liveness, real worker
+restart/new invocation, stop/removal and maintenance fallback pass with synthetic
+inputs/network-none. The initial slim image's missing OpenSSL failure is retained
+and its pin replaced. No installed/enabled unit, production network/tunnel/backend
+or DNS change occurs. Real provider credentials/configuration and cutover remain.
+Owner confirms admin-only usage; real student password continuity is unverified.
+Squarespace Google login/domain listing is requested with the indicated Gmail.
+Google NS can be Squarespace defaults; no owning Cloud project is inferred.
+Latest LIVE Dodo read-only check matches3 archived paid successes with no refunds/
+disputes/extra older successes; full RPO stays qualified.
+[Plain-language checkpoint](review-status.md), [source-bound evidence](production-readiness.md).
 
 ## Earlier verified replacement state — Oct21 20:33 UTC
 

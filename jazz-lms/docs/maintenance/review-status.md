@@ -1,51 +1,43 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 01:35 Madrid
+## Current status — Oct22 02:05 Madrid
 
-**The public website is still paused/503. All code and UI improvements remain
-unreleased. The usable review preview is separate and uses synthetic data.**
+**The public website remains paused/503. The release candidate is verified
+locally; application and UI improvements are not deployed to production.**
 
-- Completed: authentication/authorization/payment fixes, responsive landing and
-  student UI work, accepted database/all 68-PDF recovery, and recovered admin
-  login/dashboard/logout. Current isolated student login, signed video and PDF
-  rendering pass, including desktop/mobile and light/dark checks.
-- Published source `0d45a33` passes all 10 remote checks and Vercel status. Its clean
-  locked production build seals 45,856 files. Actual built Next.js starts inside
-  an isolated nonroot read-only Docker container, serves canonical robots and a
-  matching JavaScript asset, then closes cleanly. Server inputs are synthetic;
-  real production provider health is not proven.
-- Current work: the free Monster container-service packaging now passes its final
-  synthetic startup/restart/stop/maintenance rehearsal. An actual
-  host probe found user-systemd namespace restrictions ineffective; direct units
-  must not be described as isolated. Container alternatives pass 39 focused cases, types and lint.
-  No production service, backend resume, tunnel or DNS change has happened.
-- Latest payment inspection: five read-only LIVE requests verify all 3 archived
-  paid references remain succeeded with no refunds/disputes; the complete older
-  known-product list has no extra successes. Four voucher grants remain separate.
-  Historical amount equality and full recovery-point currency remain unverified.
-- Source `cedd01f` adds a server-only switch to stop new purchases/voucher grants
-  while retaining existing-customer access and payment fulfillment. 272 native
-  config and 126 route/UI/control cases pass, plus types/lint. Its clean build and all 10 remote checks pass. Actual API loading exposed
-  missing OpenSSL in the initial slim container; the corrected full-image pin
-  passes the same built app's checkout/voucher responses and continued liveness.
-  The final pinned-image source is being rebuilt; production is unreleased.
-- Still required for release: recovered student/content continuity, remaining
-  integration/recovery-point decisions, domain access and exact cutover review.
-  Owner identifies `gabriel.barra@gmail.com` as likely domain/DNS account;
-  recorded CLI access does not yet establish authority. The owner confirms they only use the
-  administrator. Existing-student password continuity remains unverified; the
-  remaining recovered-media check can use the controlled administrator, while
-  ordinary-student behavior keeps its separate isolated evidence.
-- Owner review: use Behemoth's prepared separate browser, or run
+- **Completed:** security/authentication/payment repairs, responsive landing and
+  student UI work, accepted database and all 68 PDFs recovered, administrator
+  login/dashboard/logout verified. Isolated student login, signed video, PDF
+  rendering and desktop/mobile/light/dark checks pass.
+- **Selected release: `509fa06`.** Clean locked production build seals 45,857
+  files; all 10 remote checks and Vercel status pass. The actual built Next app
+  runs through the proposed container service, survives native module loading,
+  restarts after its worker is terminated, stops cleanly and serves the exact
+  maintenance fallback. These use synthetic server inputs with networking
+  disabled; real production credentials/provider health remain unverified.
+- **Staged reopening:** `CHECKOUT_DISABLED=true` blocks new checkout and voucher
+  grants while preserving existing customer access and payment fulfillment.
+  Actual built responses pass in four languages. The original slim image failed
+  Prisma native loading; the corrected full Bookworm image is pinned and tested.
+- **Owner preview:** Behemoth's separate review browser remains available until
+  Oct23 00:17 Madrid. Reopen with
   `/home/gabriel/.local/share/culturadeljazz-maintenance/review-20261022/open-preview.sh`.
-  It expires Oct23 00:17 Madrid; payment/application-mail/cron are disabled.
+  It uses synthetic data; payment/application-mail/cron are disabled.
+- **Still required:** recovered-media inspection with the controlled admin,
+  remaining provider/recovery-point decisions, domain access and exact cutover
+  review. The owner only uses the administrator; real student password continuity
+  stays unverified, separate from ordinary-student tests. No other customer's
+  credentials are required from the owner.
+- **Current owner action:** sign into Squarespace using Google account
+  `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google
+  nameservers can be Squarespace defaults; another gcloud login is not yet needed.
 
-The elapsed work has included too much test infrastructure. Next work should
-close the concrete release gaps above, without reopening completed recovery or
-optional financial tests.
-
-[Live preview, launcher and exact limits](production-readiness.md#day-preview--oct21-2230-utc).
-Everything below is dated history and may contain superseded pending actions.
+Latest read-only Dodo check matches all three archived paid references, with no
+refunds/disputes or extra successes in the complete older known-product list.
+Four voucher grants remain separate; full recovery-point currency stays qualified.
+[Full evidence](production-readiness.md#day-preview--oct21-2230-utc),
+[startup and rollback](production-startup.md), [remaining work](backlog.md).
+Everything below is dated history with superseded pending actions.
 
 ## Oct21 R5 verifies both existing files; continuation remains stopped
 
