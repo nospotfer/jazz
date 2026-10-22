@@ -1,5 +1,49 @@
 # Maintenance log
 
+## Oct22 12:05 UTC — Actual coupon attempt closed; test-helper failures corrected
+
+- Revalidated the active goal after a status-only turn (no implementation
+  progress). Public HTTPS returns503/DEPLOYMENT_PAUSED; Git is clean at8c7e2ad
+  before this documentation checkpoint. Selected application476 is unchanged.
+- Current R3 static/API driver passes82 closed controls. Actual offline Chrome
+  verifies current core/Spanish SDK graph; new short temp paths address the
+  observed Unix socket-path startup failure. Neither result proves a live payment.
+- Fresh data bridge verifies all ten current Auth rows against latest certificate
+  closure; baseline/closure verifies29 current protected groups. Original old
+  billing Auth hash mismatch is retained, other28 old fingerprints exact. Fix the
+  new fixture's stale source comparison in a distinct root-db-r2;15 controls pass.
+- One actual TEST coupon is created after product200/collision404. Its valid
+  whole-second expiry trips the helper's fractional-only parser. Factory stops,
+  no endpoint/app/browser/login/checkout/card starts, no alias write occurs.
+  A distinct reserved GET200 verifies the exact created coupon's complete terms,
+  usage0 and12:15UTC expiry; total actual provider calls4. An earlier invalid
+  capture filename stops before fetch and is explicitly retained as preparation
+  failure. No provider factory restart or mutation replay occurs.
+- Distinct provider timestamp correction passes16 tests and actual-format
+  before-fail/after-pass proof, preserving exact microseconds/invalid-date denial.
+  Root SDK review also stops requiring an untruncated bounded diagnostic list;
+  actual observer fixture/13 malformed-counter controls preserve substantive
+  correlation/body/status checks. Frozen originals remain untouched.
+- Provider holder and both owned tunnels are terminal; independent PID metadata
+  confirms both guardians/children absent. Exact unused Behemoth Node copy and
+  two owned tooling directories are removed. Final database checks preserve29
+  groups, selected core and zero sessions/purchases/new alias. Existing owner
+  previews and all prior financial/session records remain intact.
+- Handling incident: an earlier broad diagnostic search accidentally printed one
+  project service credential in tool output. The value is never copied into Git,
+  reports or retained review evidence. The search pattern stopped and redacted
+  inspection resumed. Do not erase or misdescribe the original exposure; credential
+  rotation remains with the owner under their standing instruction.
+- Retain66 selected source/finite files559,931bytes, manifest4eac37a3; independent
+  rehash and raw/base64 scan of five selected credential values find0 matches.
+  Private inputs/raw Auth/provider bodies are excluded. Local owner-only storage
+  is unencrypted; off-site recovery remains unestablished. Detailed actual outcome:
+  [Dodo checkpoint](dodo.md#oct22--current-sdk-attempt-stops-before-checkout).
+- Next: use the corrected helpers in a fresh source/origin/gate/actor/provider
+  scope for actual discounted fulfillment. Do not reuse this stopped factory or
+  spent creation marker. Recovered media/domain/cutover gates remain separate;
+  no production operation, real charge/refund or customer email occurs here.
+
 ## Oct22 — SDK helper corrected and actual local recovery preflight passes
 
 - Published documentation checkpointda56aa5 passes all10 remote checks; PR46

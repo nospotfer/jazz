@@ -1,5 +1,63 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct22 — Current SDK attempt stops before checkout
+
+Actual current-source preparation closes the previously missing static/API
+wiring:82 closed controls pass. The offline browser loads the current wrapper,
+document, checkout, app and formatter, plus Spanish only when naturally imported.
+English does not require that locale file. A short browser temp path corrects an
+observed Linux ProcessSingleton socket-path failure; the earlier browser startup
+failures are retained. Offline source loading is not provider API health.
+
+The existing controlled USER is verified eligible without creating/promoting an
+account. The old billing adoption fails only its Auth aggregate. A separate
+current proof matches all ten Auth rows to the latest certificate closure, and
+fresh baseline queries verify those rows, the old alias, selected account core
+and all29 current fingerprints; the original historical Auth failure remains.
+The new fixture source check is corrected from the old application commit to476.
+
+The bounded attempt runs product GET200, new-code GET404 and one coupon POST200.
+The response uses `expires_at: 2026-10-22T12:15:00Z`; the test helper accepts only
+three through six fractional digits and stops after reserving/creating the coupon.
+Queued follow-up commands perform no provider calls. The provider holder closes
+normally, with no endpoint, checkout, payment, account login or application
+startup. Do not restart that factory or replay its coupon POST.
+
+One distinct, reserved read-only GET200 verifies that exact created coupon:
+10%, correct product/metadata/business, global/per-customer limits1, usage0 and
+the same expiry instant. Its first capture preparation rejects an invalid filename
+before invoking fetch; the empty capture directory/source path confirms no
+request. Correcting that filename consumes the single reserved GET. The total is
+four actual provider calls, one TEST coupon creation, no local alias insert and
+no charge/refund/email. Expiry is read back; expiry enforcement is not tested.
+
+The future helper parser accepts optional one-to-six fractional digits as well
+as whole UTC seconds, with exact microsecond arithmetic. Invalid calendar dates,
+offset aliases and excess precision still reject. The actual timestamp fails the
+frozen original and passes the distinct correction;16 helper tests pass.
+Separately, the root review no longer mistakes its observer's16 diagnostic
+samples for a complete event log: a healthy seven-request fixture drops15 samples
+while keeping complete counters. Thirteen corrupted-counter controls reject;
+overflow, callback, correlation, status and body failures remain disqualifying.
+
+Final two read-only queries preserve all29 fresh protected fingerprints and
+selected core; sessions/purchases remain0 and the new local alias is absent.
+The two new tunnels are terminal, independently checked by PID metadata. The
+unused remote Node copy and exact empty tooling directories are removed.
+Existing previews are preserved. The selected native artifact is476/45,858files;
+no native application/browser starts in this attempt.
+
+Finite outcome SHA `abe1d81b7654903800c206db6186c0e425e0821f570e548e11c70291dba5dbc9`;
+timestamp regression SHA `390660dd1466b0460ee9c34d53ca7edc16b45c34f5da3d43902cbc2fa362f911`.
+Selected66-member559,931-byte source/finite retention manifest is
+`4eac37a36e4aff685fa3410946e79fe033d89f9f13e583f6f7701840914dd46d`.
+Private inputs/raw Auth/provider responses are excluded. This is a selected
+subset, not closure of every parent manifest. Retention is local/unencrypted;
+off-site recovery is unestablished. Actual current SDK bootstrap, card submission,
+discounted fulfillment and refund/access reversal remain open. A fresh scope must
+retarget the corrected helpers, authenticate current actor/provider/source data
+and keep the original spent records intact.
+
 ## Oct22 — Retained SDK denial identified; current public sources changed
 
 Review of the actual continued browser's closed result identifies one SDK

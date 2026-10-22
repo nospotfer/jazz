@@ -26,14 +26,21 @@
    prefetches/five actual absent-provider503s;31 loading failures are canceled
    ERR_ABORTED without inferred causes. The mobile privacy/download overlap is
    fixed and hosted-verified; earlier unclassified counts are not rewritten.
-6. Keep further coupon/refund launches deferred pending a fresh helper/scope:
-   retained SDK host denial is identified, current public SDK graph is reviewed,
-   and the distinct exact-file helper now passes45 offline controls after fixing
-   eight raw URL normalization gaps. Driver/API/body-pin integration and actual
-   bootstrap remain unverified. Wallet remedy and eligible-actor/provider decisions remain.
+6. Finish the actual discounted-payment journey in a fresh TEST scope. Current
+   static/API driver wiring passes82 closed controls and the offline SDK graph
+   loads. The latest attempt stops after one actual coupon creation because the
+   helper rejects valid whole-second UTC; the distinct parser correction passes16
+   tests. One corrective GET verifies coupon terms/usage0; no checkout/card occurs.
+   Full29 preservation and owned tunnel/tooling closure pass. Preserve that spent
+   attempt; do not restart it. Actual SDK/bootstrap/fulfillment and wallet/refund
+   remedy remain open. [Latest payment outcome](dodo.md#oct22--current-sdk-attempt-stops-before-checkout).
    Real student-password continuity
    remains unverified; the owner only has the administrator. Do not request other
    customers' credentials or treat isolated tests as recovered-customer proof.
+7. Preserve the documented credential-handling incident: a diagnostic search
+   printed one project service credential in tool output. It is absent from Git/
+   reports/review evidence; the unsafe search stopped. Rotation remains deferred
+   to the owner, as instructed. Do not describe credential handling as incident-free.
 
 Accepted database/all 68-PDF recovery and recovered admin login are complete.
 Older LIVE paid references match the archive; the newer two-GET creation window

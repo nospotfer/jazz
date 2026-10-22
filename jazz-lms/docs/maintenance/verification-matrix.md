@@ -4,6 +4,12 @@
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
+| Current SDK driver | Exact static/API integration82 closed controls; actual offline current graph5 core plus natural ES; no live SDK API/card | Source/offline passed; actual bootstrap unverified |
+| Latest coupon attempt | Product200/code404/coupon POST200; helper rejects valid whole-second UTC; separate corrective GET200 verifies terms/usage0/expiry | Stopped before checkout; one unused TEST coupon retained |
+| Test helper corrections | Optional0–6 fractional UTC with microsecond precision16 tests; actual observer diagnostic truncation accepted,13 malformed-counter controls deny | Verified helpers; stopped scope not replayed |
+| Current TEST preservation | Fresh all10 Auth exact latest certificate closure;29 current fingerprints/core preserved; sessions/purchases0/new alias absent | Passed; old billing Auth aggregate remains different/failed |
+| Current TEST closure | Provider holder terminal/no endpoint; both new tunnel guardians/children absent; exact remote Node/two directories removed | Passed; existing previews preserved |
+| Credential handling | One service credential printed by an earlier diagnostic search; no Git/report/evidence inclusion, unsafe search stopped | Incident recorded; owner-directed rotation deferred |
 | Public production | Vercel remains paused/503; original/replacement customer backends paused | Unreleased; no new production change |
 | Protected owner preview | ace0804, recorded public401/authorized200, fixed Oct22 22:17UTC expiry; app/tunnel handles live08:02UTC, owner SSH terminal0 | Synthetic preview retained; no restart |
 | New protected preview |476bc7a at gibson-flashing-trade-portraits.trycloudflare.com, fixed Oct23 09:38UTC expiry; actual worker source/config admission | Running isolated; new Behemoth launcher installed, browser not opened |

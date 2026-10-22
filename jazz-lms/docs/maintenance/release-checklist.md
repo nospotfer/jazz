@@ -12,10 +12,18 @@
 - [x] Identify retained SDK wrapper host denial and review current public SDK
       import graph;10 actual-function controls expose generic GET-to-write
       eligibility and correctly reject stale source bytes. No financial replay.
-- [ ] Integrate and verify distinct exact read-only SDK file admission/current
-      pins, then use a fresh eligible-actor TEST scope for remaining coupon proof.
+- [x] Integrate current exact static/API driver admission and verify82 closed
+      controls plus the actual offline SDK resource graph; no live-health claim.
+- [x] Preserve the latest stopped TEST scope: coupon creation200, corrective GET200
+      verifies terms/usage0/expiry; no checkout/card. Final29 data fingerprints and
+      owned provider/tunnel/remote-tooling closure pass.
+- [x] Correct whole-second provider timestamp parsing with16 helper tests and
+      bounded diagnostic sample handling with actual observer/13 negative controls.
+- [ ] Complete actual current SDK bootstrap and discounted fulfillment in a fresh
+      eligible-actor TEST scope; retain spent ledgers and separate refund limits.
 - [x] Verify R2 file-policy source with45 offline controls, preserving eight
-      frozen-before URL gaps and all no-API/write/card boundaries. Not integrated.
+      frozen-before URL gaps and all no-API/write/card boundaries. Integration is
+      subsequently source-verified above; live bootstrap remains open.
 - [x] Verify actual local14-observation/12-candidate recovery preflight through
       unchanged base scanner/verifier and20 inert coordinator controls. No customer
       scope started; fresh execution-time checks and bounded approval remain.

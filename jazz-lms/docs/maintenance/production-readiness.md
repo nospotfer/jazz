@@ -1,5 +1,50 @@
 # Production recovery checkpoint — 2026-10-21
 
+## Latest payment checkpoint — Oct22 12:05 UTC
+
+**Production remains paused/503; application476bc7a is unchanged and unreleased.**
+The current SDK driver now integrates exact static-file and API admission;
+82 closed controls pass. An actual offline Chrome run loads the five mandatory
+current SDK resources and the naturally requested Spanish module, with pinned
+bytes. This proves the local import graph, not live SDK/payment readiness.
+
+A fresh isolated baseline verifies the eligible existing USER, zero sessions/
+purchases, all current Auth rows against the latest certificate closure and29
+protected groups. The old billing Auth aggregate still differs; its failed
+adoption is retained. The other28 historical fingerprints remain exact.
+
+The new TEST attempt makes three provider calls: product200, code collision404,
+coupon creation200. The helper then rejects Dodo's valid expiry timestamp
+`2026-10-22T12:15:00Z`, because it expects fractional seconds. It stops before
+endpoint creation, application/browser startup, login, checkout or card use.
+One separately reserved corrective GET200 verifies that exact created coupon's
+10% product restriction, single-use limits, usage0 and12:15UTC expiry. The failed
+factory is never restarted and its mutation is never replayed. Actual expiry
+enforcement is unverified; the unused TEST coupon is retained.
+
+The distinct timestamp correction accepts zero through six fractional digits,
+preserves microsecond comparisons and rejects invalid dates/aliases;16 tests
+pass. A separate root-review correction accepts bounded diagnostic sample loss
+while preserving complete correlation/body/status checks; an actual observer
+fixture and13 malformed-counter controls verify it. Neither correction proves
+an actual SDK bootstrap or discounted payment.
+
+Final database checks preserve the fresh29 fingerprints, selected core, zero
+sessions/purchases and absence of a new local alias. Both new tunnels close;
+independent process checks find their guardians/children absent. The unused
+Behemoth Node copy and two exact owned directories are removed. Existing owner
+previews stay intact. No customer email, charge, refund or production operation
+occurs. The next payment action needs a fresh reviewed scope using the corrected
+helpers; preserve this attempt's spent coupon-creation record.
+
+Sixty-six selected source/finite files,559,931bytes, are retained locally under
+`review-checkpoint-dodo-current-sdk-20261022`, manifest
+`4eac37a36e4aff685fa3410946e79fe033d89f9f13e583f6f7701840914dd46d`.
+All retained bytes are rehashed; five explicitly selected credential values and
+their base64 forms have zero matches. Credentials/raw Auth/provider responses
+are excluded. Retention is owner-only and unencrypted; no off-site recovery is
+established. [Detailed outcome](dodo.md#oct22--current-sdk-attempt-stops-before-checkout).
+
 <a id="latest-certificate-release"></a>
 
 ## Latest checkpoint — Oct22 source476bc7a closes mobile privacy overlap
