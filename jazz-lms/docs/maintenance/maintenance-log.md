@@ -1,5 +1,40 @@
 # Maintenance log
 
+## Oct22 — Current dependency evidence, checkout diagnosis and concise release review
+
+- Fresh exact476 locked audits report production0/full5 high entries in one
+  active, unpatched development lint chain. Current braces registry/Next lint
+  dependency/advisory reads find no compatible published fix. Actual static
+  callsite requires next.rootDir, absent from maintained/base configuration;
+  development packages remain in the artifact, so no deployed safety claim.
+  No package/lock change or forced downgrade. Retain and independently rehash
+  the27-member620,905-byte packet, manifestb89abe6e, outside credentials/caches.
+- Actual continued coupon-browser evidence identifies a wrapper GET denied
+  before response/body. Ten actual-function offline controls reproduce host
+  admission and show a generic GET-host exception can confer SDK-write
+  eligibility. A read-only remedy must be separate. Eight anonymous public
+  source GETs reveal changed wrapper/current entry/normal child modules under
+  the same version URL. Old pins reject the new body; unchanged old bundles
+  returning200 do not prove the current graph. No browser/financial/Auth/SQL
+  action or old-scope replay. [Current diagnosis](dodo.md).
+- The additive recovered-media process helper preserves the original guard,
+  accepted recovery and all existing previews. First actual scan stops on12
+  candidates versus an incorrect14 assumption: two required guardians are
+  observed resources but not scanner candidates. Corrected source requires all14
+  observations/exact12 candidates and separately checks both guardians with
+  the unchanged scanner;32 closed controls pass. A second actual scan correctly
+  stops on13 candidates, including one additional transient runtime which is
+  terminal at later inspection. No unknown-process exemption, signal, backend
+  resume or customer window occurs. Fresh actual admission remains required.
+- Create the concise [release review](release-review.md) with exact artifacts,
+  source-bound customer evidence, fixed preview expiry, deferred integrations,
+  staged zero-cost hosting decisions and data-preserving maintenance rollback.
+  Correct AGENTS messaging guidance to match read-only runtime readiness and
+  separately approved setup SQL. The selected application remains476bc7a;
+  these documentation edits do not create another application build.
+- Public503/UI unreleased; pending recovered-media approval, domain authority,
+  recovery-point/provider decisions and production activation remain distinct.
+
 ## Oct22 — Mobile privacy overlap fixed, exact diagnostics and owner launcher delivered
 
 - Commit476bc7a adds64px certificate bottom clearance below1024px, zero at desktop.

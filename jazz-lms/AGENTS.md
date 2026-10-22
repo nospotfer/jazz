@@ -16,7 +16,7 @@ Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platfor
 - **Actual TEST payment**: A historical isolated run verifies payment, signed native fulfillment and canonical purchase. The retained refund returned `INSUFFICIENT_WALLET_FUNDS`; no refund or access reversal is proven. Preserve the paid purchase and all spent reservations. An already-purchased USER is ineligible for a second checkout of that course. Any further coupon/payment/refund journey needs its own eligible controlled actor, current provider readback and bounded approved TEST scope. See `docs/maintenance/dodo.md`.
 - **Free grants**: Recheck publication and the exact server-read catalog price inside the grant transaction. Voucher grants take the existing voucher advisory lock before the course `FOR NO KEY UPDATE` lock, then revalidate the server quote. Keep the course lock through entitlement/accounting writes. Paid historical fulfillment does not inherit current catalog restrictions. Administrative voucher-term edits remain a separate concurrency limitation.
 - **Media**: Mux signed playback via `src/lib/mux.ts` and lesson access checks. PDF viewing uses a same-origin attachment proxy and native iframe viewer.
-- **Messaging**: Resend outbound email and inbound webhook, with messaging tables managed outside the main Prisma models. Review runtime table-creation helpers before using a production database.
+- **Messaging**: Resend outbound email and inbound webhook, with messaging tables managed outside the main Prisma models. Runtime readiness checks only read existing tables; explicit setup SQL handles approved schema changes. See `docs/maintenance/messaging.md` before database setup or live email verification.
 
 ## Key Conventions
 

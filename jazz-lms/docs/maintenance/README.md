@@ -9,6 +9,10 @@ unreleased and the maintenance goal remains incomplete.** Recovered-media access
 provider/recovery-point decisions, domain and concrete free-hosting release review
 remain open. [Current status](review-status.md), [actual evidence](production-readiness.md#latest-certificate-release).
 
+[Release review](release-review.md) collects the selected build, preview access,
+verified journeys, remaining decisions and proposed staged reopening/rollback.
+It does not authorize production activation or declare maintenance complete.
+
 Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-22.
 [Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains maintenance changes.
 The owner requests a stable, tested project and a more usable site preserving its

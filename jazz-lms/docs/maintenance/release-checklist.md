@@ -2,6 +2,18 @@
 
 ## Current gate — Oct22 source `476bc7a` build/hosted result
 
+- [x] Assemble the concise [release review](release-review.md), preserving exact
+      source bindings, preview expiry, deferred journeys and staged rollback.
+- [x] Recheck exact476 locked dependencies: production0/full5 high entries in one
+      unpatched development lint chain. Current upstream lint16.4.2 does not remove
+      it; retain DEP-01 and deployed-reachability limits, no forced downgrade.
+- [x] Correct AGENTS messaging guidance: runtime only reads schema readiness;
+      explicit setup SQL owns approved DDL.
+- [x] Identify retained SDK wrapper host denial and review current public SDK
+      import graph;10 actual-function controls expose generic GET-to-write
+      eligibility and correctly reject stale source bytes. No financial replay.
+- [ ] Integrate and verify distinct exact read-only SDK file admission/current
+      pins, then use a fresh eligible-actor TEST scope for remaining coupon proof.
 - [x] Verify eligible isolated certificate download through the ordinary button,
       A4 output, owned local logout and final preservation of ten prior sessions.
 - [x] Record fresh all-status LIVE payment creation-window check: two GETs200,

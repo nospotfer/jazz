@@ -1,5 +1,48 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct22 — Retained SDK denial identified; current public sources changed
+
+Review of the actual continued browser's closed result identifies one SDK
+wrapper GET, denied by the test browser's provider-host policy before any
+response or SDK body was received. This is a test-helper admission failure,
+not evidence that Dodo checkout itself failed. The earlier browser result is
+not substituted for that continuation. The historical remote host-exception
+file state is unproven; absence of a root-local file cannot establish it.
+
+Ten offline controls using the actual guard functions reproduce the missing
+host admission and a separate hazard: a generic observed GET-host exception
+also confers SDK-write eligibility during armed phases. Do not use that generic
+exception as a read-only remedy. A future helper needs exact SDK-file GET paths,
+current document/frame/epoch binding and unchanged separate write/card checks.
+
+Eight anonymous public GETs, without cookies, credentials, redirects or script
+execution, inspect current provider sources. SDK URL `/1.1.0/sdk.js` has changed
+since the frozen Oct20 bytes. Current `checkout.html` selects a new checkout
+entry and new normal-branch child/format/Spanish modules; the old hashed bundles
+still returning200 does not establish the current import graph. The old observer
+correctly rejects the new wrapper body. Current-source review and a distinct
+helper are required before another bounded TEST scope; no stale pin is silently
+replaced and this source review is not runtime or financial success.
+
+The original closed scope, spent markers, coupon/alias/unpaid payment and paid
+TEST purchase remain preserved. No new browser, provider financial action,
+Auth/SQL operation or production change follows from these checks. Coupon
+fulfillment, refund/access reversal and relevant provider gates remain open.
+
+Current source comparison finds unchanged account/customer/status/session-token/
+confirm path and request-function shapes and unchanged INIT/READY/ELEMENT_READY
+call shapes. New Splitit pay-later UI/payload is identified; ordinary-card
+equivalence is not inferred. The reviewed normal Spanish graph closes the
+checkout/app/formatter cycle;19 other locales and the fullscreen alternative
+remain unreviewed. A `.css` suffix in the preload helper is not a CSS resource
+URL; HTML links only Google Fonts CSS.
+
+The29-member187,417-byte source/finite packet is independently rehashed under
+`review-checkpoint-dodo-sdk-source-review-20261022`, manifest
+`44f1f6e71ac521699d4ed50f3df6d65c6c886ddd95de00ddff8ac67187418847`.
+Raw SDK, customer/provider runtime bodies and credentials are excluded. This
+owner-only local unencrypted copy does not establish off-site recovery.
+
 ## Oct22 08:18 UTC — Current all-status LIVE creation window is empty
 
 Two LIVE GETs returned HTTP 200, verifying the known Jazz product/business/brand

@@ -47,6 +47,30 @@ customer/provider configuration change occurs.
 [release checklist](release-checklist.md), [startup and rollback](production-startup.md).
 Earlier dated sections retain their original source/result limits.
 
+## Oct22 current dependency recheck
+
+The exact476 release and documentation5545bb8 use unchanged package inputs.
+Two fresh locked Node24/npm11 audits return production0 and full5 high entries,
+all sharing the active braces stack-exhaustion advisory in the development lint
+chain. Current primary registry/advisory reads find braces3.0.3 still latest and
+unpatched; Next lint16.4.2 still pins the same fast-glob chain. The suggested
+major downgrade to lint14.2.35 is not applied.
+
+The inspected Next rule only passes an explicitly configured next.rootDir into
+the vulnerable glob callsite; neither maintained nor base configuration sets it.
+No direct app/operational import is found. Development packages are physically
+present in the release: this is static reachability evidence, not deployed
+absence or proof of safety. DEP-01 remains open; keep glob inputs trusted and
+review a compatible patch or chain replacement when available.
+
+The27-member620,905-byte evidence packet is independently rehashed and retained
+under `review-checkpoint-dependency-recheck-476bc7a-20261022`, manifest
+`b89abe6e27812e551d91c27c21f23bddf5126310d65b7d7a961482249bb0d28e`.
+It excludes credentials and registry caches; local unencrypted retention does
+not establish off-site recovery. No package/lock/runtime/provider change occurs.
+[Active advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm),
+[current Next lint dependency](https://registry.npmjs.org/@next%2feslint-plugin-next/latest).
+
 ## Oct21 R5 verifies both existing files; continuation remains stopped
 
 Exact 8ac31bd documentation publication/CI/PR readback and eight-file custody
