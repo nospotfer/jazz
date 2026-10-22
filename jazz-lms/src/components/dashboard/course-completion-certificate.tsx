@@ -93,7 +93,7 @@ export function CourseCompletionCertificate({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-16 lg:pb-0">
       <div
         className="mx-auto w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
       >
