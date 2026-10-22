@@ -95,9 +95,9 @@ export function CourseCompletionCertificate({
   return (
     <div className="space-y-6">
       <div
-        className="mx-auto aspect-[210/297] w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
+        className="mx-auto w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
       >
-        <div className="flex h-full flex-col rounded-[2px] border-2 border-[#b49a69] bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(250,245,235,0.7))] px-5 py-6 sm:px-10 sm:py-10">
+        <div className="flex flex-col rounded-[2px] border-2 border-[#b49a69] bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(250,245,235,0.7))] px-5 py-6 sm:px-10 sm:py-10">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#7a633a]/40 bg-[#f8f1df] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f5630]">
               <ScrollText className="h-3.5 w-3.5" />
