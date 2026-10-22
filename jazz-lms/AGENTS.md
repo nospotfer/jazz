@@ -66,7 +66,10 @@ See `docs/maintenance/operational-scripts.md` before using operational commands.
 Native release helpers under `scripts/native/` use an explicit owner-only JSON
 configuration and Node 24. `prepare-release.mjs --inspect` is read-only;
 `--build` creates a new private artifact from an exact clean Git checkout without
-server credentials in the builder. Neither command starts services.
+server credentials in the builder. After webpack, it prunes development-only
+dependencies using the existing lockfile, offline and without lifecycle scripts,
+then rechecks source bytes before sealing. Older artifacts retain their original
+dependency inventory. Neither command starts services.
 A runtime application change needs a newly reviewed source binding and build; a
 documentation-only bridge cannot admit it. Keep archived scopes and data-profile
 receipts bound to their original application commits.

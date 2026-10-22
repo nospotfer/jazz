@@ -12,7 +12,8 @@ import {
   PREVIEW_PROJECT_REF, PRODUCTION_PROJECT_REF, validateNativeConfig,
 } from "../../scripts/native/config-policy.mjs";
 import {
-  inspectNativePreparation, materializeNativeDependencies, nativeBuildEnvironment, verifyNativeSourceInventory,
+  inspectNativePreparation, materializeNativeDependencies, nativeBuildEnvironment,
+  pruneNativeDependencies, verifyNativeSourceInventory,
 } from "../../scripts/native/prepare-release.mjs";
 
 const producerPath = resolve("scripts/native/prepare-release.mjs");
@@ -189,6 +190,94 @@ afterEach(() => {
 afterAll(() => {
   vi.unstubAllGlobals();
   if (certificatesDirectory) rmSync(certificatesDirectory, { recursive: true, force: true });
+});
+
+describe("sealed runtime dependency pruning", () => {
+  function dependenciesFixture() {
+    const directory = mkdtempSync(join(tmpdir(), "jazz-native-prune-"));
+    chmodSync(directory, 0o700);
+    fixtureDirectories.push(directory);
+    const appRoot = makeDirectory(directory, "app");
+    const temporary = makeDirectory(directory, "tmp");
+    const cache = makeDirectory(directory, "cache");
+    for (const name of ["empty-user.npmrc", "empty-global.npmrc"]) {
+      writeFileSync(join(cache, name), "", { mode: 0o600 });
+    }
+    const lifecycle = "node -e \"require('node:fs').writeFileSync('lifecycle-ran', 'unexpected')\"";
+    const rootPackage = {
+      name: "synthetic-native-runtime", version: "1.0.0", private: true,
+      dependencies: { "runtime-fixture": "1.0.0" },
+      devDependencies: { "development-fixture": "1.0.0", "shared-fixture": "1.0.0" },
+      scripts: { prepare: lifecycle, postinstall: lifecycle },
+    };
+    privateJson(join(appRoot, "package.json"), rootPackage);
+    privateJson(join(appRoot, "package-lock.json"), {
+      name: rootPackage.name, version: "1.0.0", lockfileVersion: 3, requires: true,
+      packages: {
+        "": { name: rootPackage.name, version: "1.0.0", hasInstallScript: true,
+          dependencies: rootPackage.dependencies, devDependencies: rootPackage.devDependencies },
+        "node_modules/runtime-fixture": { version: "1.0.0", dependencies: { "shared-fixture": "1.0.0" } },
+        "node_modules/shared-fixture": { version: "1.0.0" },
+        "node_modules/development-fixture": { version: "1.0.0", dev: true },
+      },
+    });
+    // npm's stable lockfile serialization, as used by the actual committed lock.
+    const lockfile = join(appRoot, "package-lock.json");
+    writeFileSync(lockfile, `${JSON.stringify(JSON.parse(readFileSync(lockfile, "utf8")), null, 2)}\n`);
+    const modules = makeDirectory(appRoot, "node_modules");
+    for (const name of ["runtime-fixture", "shared-fixture", "development-fixture"]) {
+      const dependency = makeDirectory(modules, name);
+      privateJson(join(dependency, "package.json"), { name, version: "1.0.0",
+        ...(name === "runtime-fixture" ? { dependencies: { "shared-fixture": "1.0.0" } } : {}) });
+      writeFileSync(join(dependency, "index.js"), name === "runtime-fixture"
+        ? "module.exports = require('shared-fixture');\n" : "module.exports = 'runtime-retained';\n", { mode: 0o600 });
+    }
+    const lock = spawnSync(join(dirname(process.execPath), "npm"), [
+      "install", "--package-lock-only", "--ignore-scripts", "--offline", "--no-audit", "--no-fund",
+    ], {
+      cwd: appRoot, encoding: "utf8", timeout: 10_000,
+      env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, npm_config_cache: cache,
+        npm_config_userconfig: join(cache, "empty-user.npmrc"),
+        npm_config_globalconfig: join(cache, "empty-global.npmrc") },
+    });
+    if (lock.status !== 0) throw new Error("Disposable offline dependency fixture failed");
+    return { directory, appRoot, temporary, cache, logFile: join(directory, "prune-private.log") };
+  }
+
+  test("removes development-only packages while preserving locked runtime peers and skipping lifecycle hooks", async () => {
+    const value = dependenciesFixture();
+    const source = Object.fromEntries(["package.json", "package-lock.json"].map(name =>
+      [name, sha256(readFileSync(join(value.appRoot, name)))]));
+    vi.stubEnv("NODE_OPTIONS", "--require=/synthetic/ambient-loader-must-not-run.cjs");
+    vi.stubEnv("npm_config_userconfig", "/synthetic/ambient-private-user.npmrc");
+    vi.stubEnv("NPM_TOKEN", secretMarker);
+    await pruneNativeDependencies(value.appRoot, value.temporary, value.cache, value.logFile);
+    expect(existsSync(join(value.appRoot, "node_modules/development-fixture"))).toBe(false);
+    expect(existsSync(join(value.appRoot, "node_modules/runtime-fixture/index.js"))).toBe(true);
+    expect(existsSync(join(value.appRoot, "node_modules/shared-fixture/index.js"))).toBe(true);
+    expect(existsSync(join(value.appRoot, "lifecycle-ran"))).toBe(false);
+    for (const [name, digest] of Object.entries(source)) {
+      expect(sha256(readFileSync(join(value.appRoot, name)))).toBe(digest);
+    }
+    const result = spawnSync(process.execPath, ["-e", "process.stdout.write(require('runtime-fixture'))"], {
+      cwd: value.appRoot, encoding: "utf8", timeout: 5_000,
+      env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin` },
+    });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toBe("runtime-retained");
+    expect(readFileSync(value.logFile, "utf8").includes(secretMarker)).toBe(false);
+  }, 15_000);
+
+  test("fails closed instead of fetching an unavailable locked runtime package", async () => {
+    const value = dependenciesFixture();
+    rmSync(join(value.appRoot, "node_modules/runtime-fixture"), { recursive: true });
+    await expectDenied(pruneNativeDependencies(
+      value.appRoot, value.temporary, value.cache, value.logFile,
+    ), "NATIVE_BUILD_CHILD");
+    expect(existsSync(join(value.appRoot, "lifecycle-ran"))).toBe(false);
+    expect(existsSync(join(value.appRoot, "node_modules/runtime-fixture"))).toBe(false);
+    expect(readFileSync(value.logFile, "utf8").includes("ENOTCACHED")).toBe(true);
+  }, 15_000);
 });
 
 describe("native build public configuration and credential boundary", () => {

@@ -203,6 +203,24 @@ async function writePrivateJson(path, value) {
   try { await file.writeFile(`${JSON.stringify(value, null, 2)}\n`); } finally { await file.close(); }
 }
 
+/** Keep build tools out of the sealed runtime without resolving new versions or
+ * running package lifecycle scripts. The existing lockfile remains authoritative;
+ * the caller verifies the complete application source inventory afterward.
+ */
+export async function pruneNativeDependencies(appRoot, temporaryDirectory, cacheDirectory, logFile) {
+  await checkDirectory(appRoot, { privateDirectory: true });
+  await checkDirectory(temporaryDirectory, { privateDirectory: true });
+  await checkDirectory(cacheDirectory, { privateDirectory: true });
+  await run(join(dirname(process.execPath), 'npm'), [
+    'prune', '--omit=dev', '--ignore-scripts', '--offline', '--no-audit', '--no-fund',
+  ], {
+    cwd: appRoot,
+    env: { ...baseEnvironment, DATABASE_URL: fixtureDatabase, TMPDIR: temporaryDirectory,
+      npm_config_cache: cacheDirectory, ...npmConfiguration(cacheDirectory) },
+    logFile, timeout: 120_000,
+  });
+}
+
 /** Fresh locked install and webpack build from an exact clean committed source.
  * Creates only the explicitly new output directory; no provider mutation,
  * listener, service, DNS, migration or production activation is performed.
@@ -247,6 +265,8 @@ export async function prepareNativeRelease(input) {
   // Lifecycle/build code may not add, remove or rewrite application source.
   // Only dependency/build roots and the two declared generated files are exempt.
   await verifyNativeSourceInventory(appRoot, sourceHashes);
+  await pruneNativeDependencies(appRoot, temporary, cache, join(logs, 'prune-private.log'));
+  await verifyNativeSourceInventory(appRoot, sourceHashes);
   await mkdir(join(appRoot, '.next/cache'), { mode: 0o700, recursive: true });
   await protectCache(join(appRoot, '.next/cache'));
   const materializedDependencyFiles = await materializeNativeDependencies(appRoot);
@@ -269,7 +289,8 @@ export async function prepareNativeRelease(input) {
   await seal(appRoot);
   const inspected = await inspectNativeRelease({ configFile: input.configFile, appRoot, manifestFile });
   const summary = { ...inspected.summary, freshLockedInstall: true, webpackBuild: true,
-    serverCredentialsProvidedToBuild: false, materializedDependencyFiles, started: false };
+    serverCredentialsProvidedToBuild: false, developmentDependenciesPruned: true,
+    materializedDependencyFiles, started: false };
   await writePrivateJson(join(output, 'summary.json'), summary);
   return { appRoot, manifestFile, summary };
 }

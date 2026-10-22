@@ -1,5 +1,32 @@
 # Maintenance log
 
+## 2026-10-22 — production-only native dependency packaging
+
+Confirmed that the native producer sealed its development lint chain along with
+runtime dependencies. A disposable private copy of the476/R3 artifact is pruned
+with the existing lock, offline and without scripts: all installed instances of
+braces, eslint, eslint-config-next, @eslint/eslintrc and eslint-plugin-react are
+absent afterward. Package/lock/schema/producer hashes stay exact and Prisma's
+generated client/native engine remain. The original artifact is untouched.
+
+Updated the producer to perform this pruning after webpack, before its complete
+source recheck/materialization/seal. Added actual npm regressions for preserving
+shared runtime dependencies, omitted development packages, skipped lifecycle
+hooks, unchanged lock bytes and unavailable locked-package failure.139 focused
+native checks and scoped lint pass on Node24. A network-none/read-only/nonroot
+full-Bookworm container loads the pruned built app/native engine, serves robots200
+and correctly denies a valid checkout503. No provider inputs/network or SQL.
+This is packaging evidence; fresh committed-source build/inspection and any
+replacement candidate selection remain pending. No existing preview is changed.
+
+Preserved initial experimental failures: package-lock=false ignores the locked
+selection and needs unavailable metadata; that flag is rejected. The supported
+locked offline command succeeds. An initial ambient-Node test run fails the
+existing Node24 guard; rerunning explicitly on24 and canonicalizing the synthetic
+fixture's generated lock resolves setup failures. The first raw-server probe
+sends an empty checkout body and receives the correct400 validation response;
+the corrected valid synthetic body receives503. No gate is relaxed.
+
 ## 2026-10-22 12:59 UTC — native billing passes; SDK harness navigation failure
 
 Continued the existing maintenance work on unchanged app476bc7a. Fresh SDK-R3

@@ -12,6 +12,12 @@
   explicit.
 - REL: production remains paused; UI changes are preview-only. Checkout,
   recovered media and the concrete free hosting/domain release review stay open.
+- DEP-01 follow-up: the producer now prunes development-only dependencies offline
+  after webpack and rechecks source/lock bytes. A pruned disposable476 copy omits
+  the five selected lint-chain packages and passes the isolated native-engine/
+  robots/disabled-checkout container check;139 focused checks pass. A fresh
+  committed-source build and artifact inspection are still required before
+  selecting a replacement release. Existing sealed artifacts remain unchanged.
 
 ## Current priorities — Oct22 source `476bc7a` verified
 

@@ -1,5 +1,26 @@
 # Native runtime safeguards
 
+## Oct22 — omit development tools from new sealed releases
+
+The release producer now runs locked, offline `npm prune --omit=dev` after
+webpack, with lifecycle scripts disabled and the same clean build environment.
+It rechecks the full application source inventory, including package/lock bytes,
+before sealing. Installation still includes the tools needed to build. Pruning
+does not update dependency versions or authorize runtime package installation.
+Older sealed artifacts are unchanged; the new producer needs a fresh committed
+source build before selecting a replacement production artifact.
+
+An actual disposable copy of the476 artifact loses all installed instances of
+the five selected lint-chain packages. Package/lock/schema/producer bytes stay
+exact, and the generated Prisma client/native engine remain present. In the
+pinned full Bookworm container with network disabled/read-only files/nonroot,
+the pruned build loads the native engine, serves robots200 and returns503 for a
+valid checkout request with checkout disabled. This is a local packaging check,
+not provider or full customer-journey proof. Two actual npm fixture regressions
+verify retained shared production dependencies, skipped lifecycle hooks,
+unchanged lock bytes and failure instead of an offline package fetch;139 focused
+native checks and scoped lint pass on Node24.
+
 Source repairs and a release producer for a single Node 24 application process.
 These are not a hosting activation, provider configuration change or production
 verification. Historical application source `a207f36` passes 1,995 normal tests/47
