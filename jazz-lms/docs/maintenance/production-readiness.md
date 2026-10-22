@@ -4,6 +4,51 @@
 
 ## Current checkpoint — protected preview and student media verified; production still offline
 
+**Oct22 certificate/payment update:** the isolated `ace0804` preview now verifies
+the eligible student's 15/15 completion and medal requirements, the ordinary
+download button and an actual 862,196-byte A4 PDF. Password/session sync/user reads
+and owned local logout pass; browser/context close. Final read-only comparison
+preserves all ten older sessions, business/other-actor data, every selected Auth
+field except the two sign-in timestamps, and complete Auth settings. Both changed
+timestamps fall in the test window. Two earlier guard failures and their exact
+owned-session cleanups remain recorded; R1's original whole-row Auth hash cannot
+retrospectively identify its changed fields and is not relabeled as full proof.
+The successful run records zero guard denials, but 12 console errors and 11
+request failures remain unclassified; this is functional certificate evidence,
+not blanket runtime health.
+
+Visual inspection exposes a separate mobile defect: the fixed A4 card height
+lets certificate text spill onto the dark background. Source `faf421c` removes
+that fixed height so the card grows with its content. Earlier `766a3a7` corrects
+the instructor to Enric Vázquez Ramonich in all four languages; four actual PDF
+tests and a visually inspected corrected PDF pass. These changes are newer than
+both the running preview and selected production artifact. A fresh build and
+responsive browser verification are required before selecting the new release.
+The downloaded document remains A4; the on-screen card may grow. Six actual
+standalone component/CSS/Inter-font browser cases now pass at320/390/1440 in
+light/dark. The prior mobile cases fail vertical containment; all fixed cases
+contain text/signature and place the button below the paper. This uses synthetic
+props with no network/Auth, not a fresh hosted application build.
+
+The separate latest LIVE Dodo check uses two GETs200 and returns no payments
+created for the configured product from Oct13 through Oct22 08:18:31UTC. This
+narrows the payment recovery gap, not customer/learning currency or historical
+status transitions. [Exact evidence and limits](payment-recovery-point.md).
+No recovered-customer access or production operation occurs. Existing preview
+handles2001/98774 and unattached recovery transport4475 are revalidated running
+at09:03UTC; no restart occurs. The prepared recovered-media scope stays pending.
+
+Certificate finite summary SHA256:
+`958915e2faa3aaf202e420442990fe69bfc4245975a2d49fb4b439c04871ae1d`.
+Standalone visual receipt SHA256:
+`2156a8908ebb264481e4f5b103a90cb027d714b8db888eb98723c3bf1aa67c4b`.
+Thirty-two selected source/finite/synthetic-image files (6,188,536 bytes), including
+a before/after `index.html`, are retained under
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-certificate-20261022/`.
+Manifest SHA256 `a88595297b192a63ef84480e52a91a394829ac5a7d9ade5677a9be79030854bc`.
+Credentials, raw Auth/provider bodies and actual account screenshots are excluded;
+retention is owner-only, local and unencrypted, with no established off-site copy.
+
 **Selected production candidate: `509fa069dec1365d915838d5d98e30cc9c473b3a`.**
 Its clean locked build seals45,857 files and all10 remote checks plus Vercel
 status pass. Actual built Next runs through the proposed full-Bookworm container

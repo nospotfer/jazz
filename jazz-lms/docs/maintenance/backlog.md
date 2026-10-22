@@ -1,8 +1,16 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 10:09 Madrid
+## Current priorities — Oct22 certificate update
 
-1. Verify remaining recovered media through the controlled administrator under
+1. Build and verify certificate source `faf421c` before choosing a newer release.
+   The running `ace0804` preview passes eligible 15/15 certificate download,
+   local logout and final preservation of all ten prior sessions. Visual review
+   finds text overflowing the fixed-height mobile card; the source fix now lets
+   it grow; six standalone component/CSS/browser cases pass at320/390/1440
+   light/dark, with zero outside text rectangles. `766a3a7` also corrects the instructor name in four languages; four
+   actual PDF tests and the corrected PDF's visual review pass. Neither fix is
+   in the current preview or selected `509fa06` artifact.
+2. Verify remaining recovered media through the controlled administrator under
    a fresh bounded review; preserve separate isolated ordinary-student evidence.
    The owner has no separate student account. Do not demand other customers'
    passwords or repeat accepted recovery/administrator verification.
@@ -19,23 +27,25 @@
    password. The inactive concrete review plan is prepared; obtain the exact
    <=30min backend/Auth approval, then revalidate current processes/data/role/
    version. No customer lease/app has started.
-2. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
+3. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
    [release review](hosting.md). Squarespace Google sign-in/domain listing is
    requested using the owner's Gmail; Google nameservers alone do not establish
    a Cloud DNS project. No domain/account change has occurred.
-3. Select candidate `509fa06`: final locked build and all 10 remote checks pass.
+4. Preserve candidate `509fa06`: final locked build and all 10 remote checks pass.
    Actual built container service startup, checkout/voucher blocking, native
    dependency loading, worker-loss restart, stop and maintenance fallback pass.
    Keep `CHECKOUT_DISABLED=true` for a staged release. Production provider inputs
    and activation remain separate review actions; the public site is still503.
    Real proposed provider inputs now pass local full-release/config inspection;
    zero provider calls or runtime starts, so current health remains unverified.
-4. Preserve the owner preview until Oct22 22:17UTC. Keep further coupon/refund
+5. Preserve the owner preview until Oct22 22:17UTC. Keep further coupon/refund
    launches deferred; the retained SDK/wallet failures remain explicit gaps.
 
 Accepted database/all68-PDF recovery and hosted admin login are complete.
-Older Dodo current successes match the3 archived paid references; full RPO is
-not established. [Plain-language checkpoint](review-status.md).
+Older Dodo current successes match the3 archived paid references. A newer
+two-GET all-status creation-window check returns zero configured-product items
+from Oct13 through Oct22 08:18UTC; full RPO is not established.
+[Plain-language checkpoint](review-status.md).
 
 R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
 prior rows and protected metadata. Normal logout leaves no new transient/audit

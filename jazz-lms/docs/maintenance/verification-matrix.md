@@ -1,12 +1,14 @@
 # Goal verification matrix
 
-## Current verification — Oct22 10:09 Madrid
+## Current verification — Oct22 certificate update
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
 | Public production | Vercel remains paused/503; original/replacement customer backends paused | Unreleased; no new production change |
 | Protected owner preview | ace0804, recorded public401/authorized200, fixed Oct22 22:17UTC expiry; app/tunnel handles live08:02UTC, owner SSH terminal0 | Synthetic preview retained; no restart |
 | Student/media/UI | Actual isolated login/signed Mux/PDF, current desktop/mobile light/dark | Passed in recorded preview scope |
+| Eligible certificate | ace0804:15/15 recognition, ordinary button downloads862,196-byte A4 PDF, owned local logout204/browser closure/final preservation of prior10 | Functional download passed; mobile visual defect separately confirmed |
+| Certificate corrections |766a3a7 fixes instructor in4locales;4 actual PDF tests/corrected PDF visual review pass;faf421c mobile correction passes6 actual standalone component/CSS/font browser cases at320/390/1440 light/dark, with failing mobile before cases | Source/standalone browser verified; fresh build/hosted verification pending |
 | Recovered database/files/admin | Accepted1,621rows/all68PDF; R14 admin login/dashboard/logout | Complete; do not replay |
 | Real existing-student password | Owner uses only admin, no controlled USER credential identified | Unverified limitation; separate ordinary-student tests |
 | Selected candidate |509fa06 locked build/45,857 files,10 remote checks/Vercel success | Passed with synthetic server inputs |
@@ -14,6 +16,7 @@
 | Native container dependency | Old slim image fails Prisma/OpenSSL; full-image native load and API/worker liveness pass | Corrected image pinned; not DB/provider health |
 | Actual built service lifecycle | Rendered unit starts actual Next, restarts after worker SIGTERM, stops/removes; exact maintenance503/HEAD/webhook pass | Passed network-none/test overrides; no real tunnel or boot recovery |
 | Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra older known-product successes | Passed current older status; full RPO unverified |
+| Newer LIVE creation window |2 GETs200/exact known product identity; all-status Oct13→Oct22 08:18UTC, page0 returns0/complete | Passed fixed filters; not settlement history/full customer RPO |
 | Real production input proposal | Full509 artifact/public settings/CA/cache inspection; owner-only inputs, no provider/SQL/start | Prepared; current app/provider health unverified |
 | Recovered-media preparation |9da4370/10 remote checks;390 policy/transport/worker cases;43 helper controls and actual offline Chrome CSP/cookie/write guards;45,858-file clean recovery build | Source/build/browser harness passed; fresh recovered window pending |
 | Media controller |17 Python/22 browser/22 process controls;18 pinned module imports, Python/Node selected receipt parity, actual sealed native config inspection with synthetic DB password | Inactive concrete plan prepared; no customer app/SQL/Auth/backend resume |

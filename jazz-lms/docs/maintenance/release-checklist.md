@@ -1,7 +1,20 @@
 # Production review and rollback checklist
 
-## Current gate — Oct22 10:09 Madrid
+## Current gate — Oct22 certificate update
 
+- [x] Verify eligible isolated certificate download through the ordinary button,
+      A4 output, owned local logout and final preservation of ten prior sessions.
+- [x] Record fresh all-status LIVE payment creation-window check: two GETs200,
+      zero configured-product items Oct13→Oct22 08:18UTC; retain full-RPO limits.
+- [x] Correct certificate instructor name in four languages; four actual PDF
+      tests and local corrected-PDF visual inspection pass.
+- [ ] Build source `faf421c` and verify the mobile card now contains all text,
+      medal and signature with the download button below it. Existing hosted
+      captures confirm the overflow; horizontal-width checks alone missed it.
+      Six actual standalone component/CSS/font cases now pass, with failing
+      mobile before cases; this does not replace the fresh hosted build.
+- [ ] Select and inspect a new release containing the certificate corrections;
+      retained `509fa06` and running owner preview predate them.
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
 - [x] Verify current student login, signed Mux, certificate denial, local logout

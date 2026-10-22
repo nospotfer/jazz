@@ -1,10 +1,19 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 10:09 Madrid
+## Current status — Oct22 certificate update
 
 **The public website remains paused/503. The release candidate is verified
 locally; application and UI improvements are not deployed to production.**
 
+- **New certificate evidence:** an eligible synthetic student downloads an actual
+  A4 PDF through the normal button. Local logout, final data comparison and all
+  ten older sessions pass. Visual review finds mobile text spilling below the
+  certificate background. Source `faf421c` fixes the card height; `766a3a7` fixes
+  the instructor name in four languages. The corrected PDF and four PDF tests
+  pass locally. Six standalone component/CSS browser cases verify the layout
+  correction at320/390/1440 in light/dark; a fresh build/hosted preview remains
+  required. The
+  current owner preview still runs the earlier source.
 - **Completed:** security/authentication/payment repairs, responsive landing and
   student UI work, accepted database and all 68 PDFs recovered, administrator
   login/dashboard/logout verified. Isolated student login, signed video, PDF
@@ -55,9 +64,10 @@ locally; application and UI improvements are not deployed to production.**
   `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google
   nameservers can be Squarespace defaults; another gcloud login is not yet needed.
 
-Latest read-only Dodo check matches all three archived paid references, with no
-refunds/disputes or extra successes in the complete older known-product list.
-Four voucher grants remain separate; full recovery-point currency stays qualified.
+The newer two-GET Dodo check finds no configured-product payments created from
+Oct13 through Oct22 08:18UTC. The separate older check matches all three archived
+paid references, with no refunds/disputes or extra older successes. Four voucher
+grants remain separate; full recovery-point currency stays qualified.
 [Full evidence](production-readiness.md#day-preview--oct21-2230-utc),
 [startup and rollback](production-startup.md), [remaining work](backlog.md).
 Everything below is dated history with superseded pending actions.

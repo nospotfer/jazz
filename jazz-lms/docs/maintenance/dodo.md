@@ -1,5 +1,17 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct22 08:18 UTC — Current all-status LIVE creation window is empty
+
+Two LIVE GETs returned HTTP 200, verifying the known Jazz product/business/brand
+identity and listing all payment statuses for that product created from
+2026-10-13T00:00:00Z through 2026-10-22T08:18:31.176Z. Page 0, with a page size
+of 100, returned zero items and complete pagination for those fixed filters. This refreshes the
+earlier succeeded-only window; it does not prove settlement/transition history,
+full RPO or application integration. No provider write/backend/SQL/Auth action
+occurs. [Payment recovery-point evidence and limits](payment-recovery-point.md)
+retain the separate older-payment comparison. New finite summary SHA256:
+`70c600404ea20fc80fa6e5d0e4c57008eac54fbc24c94609fe4165f4ccc790c9`.
+
 ## Oct21 23:29 UTC — Archived paid references match current older status
 
 Exactly5 LIVE GETs/all200 inspect the current known Jazz product, one complete
@@ -12,7 +24,8 @@ no LessonPurchase rows exist. No provider/backend/application mutation occurs.
 This closes current older-created payment status for this known product at
 observation, not full RPO. The archive lacks historical canonical money/status/
 refund columns; current facts cannot invent a past baseline or transition
-history. The earlier zero-result Oct13-onward observation is not refreshed.
+history. At that observation the earlier zero-result Oct13-onward check had not
+been refreshed; the separate Oct22 result above now updates that window.
 Actual list filtering uses created_at_lte, qualifying an earlier field name
 that incorrectly said Exclusive. All original results and spent markers remain.
 Finite review (no credentials/provider IDs/customer fields):

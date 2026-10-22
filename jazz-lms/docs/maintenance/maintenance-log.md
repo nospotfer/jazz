@@ -1,5 +1,43 @@
 # Maintenance log
 
+## Oct22 — Certificate download verified; real mobile and instructor defects corrected in source
+
+- The preceding status-only turn made no release progress; this continuation
+  completed an actual isolated certificate journey and committed product fixes.
+- The controlled ordinary buyer retains its ten old sessions. R1 stops before
+  the dashboard auto-reconcile POST; R2 stops before unread-count GET. Their
+  exact newly observed session/refresh/AMR rows are conditionally removed with
+  prior/business/other-actor preservation. One SQL precedence error rolls back;
+  fresh equality is proven before a separately reserved corrected transaction.
+  R1's original stable-user hash cannot identify changed fields retrospectively;
+  the fresh fieldwise R2/R3 baselines do not erase that limitation.
+- R3/sourceace0804 verifies15/15 eligibility, ordinary certificate download,
+  862,196-byte A4 PDF, password/user/sync and local logout204. Browser/context
+  close and final read-only comparison pass: ten old sessions, all business/
+  other-actor data and every selected Auth field except two in-window sign-in
+  timestamps remain exact; full Auth config matches. Two actual absent-provider
+  auto-reconcile503 responses precede payment work; no payment health is claimed.
+  Guard denials0/page errors0, console errors12/request failures11 unclassified.
+- Hosted screenshots have no horizontal overflow at1440/390, yet visual review
+  finds certificate text below the paper on mobile/dark. Commitfaf421c removes
+  the fixed ratio/height so the card grows. Commit766a3a7 corrects all four
+  instructor labels to the existing public instructor name. Four real PDF tests,
+  scoped lint and corrected-PDF visual review pass. Six actual standalone
+  component/CSS/Inter browser cases pass at320/390/1440 light/dark, with failing
+  mobile before cases and zero network requests. Fresh build/hosted responsive
+  confirmation remains required; neither fix is deployed or in the owner preview.
+- Latest LIVE Dodo inspection is two GETs200, exact configured product identity,
+  all-status created range Oct13→Oct22 08:18:31UTC and zero complete-page items.
+  No provider/backend/SQL/Auth write. Eight finite/source files are retained with
+  manifest1d2987e8; local/unencrypted, no off-site recovery established.
+- Existing preview2001/98774 and unbound recovery4475 are freshly running09:03UTC.
+  Recovered-media approval/domain/release remain open; public503/UI unreleased.
+- Retain32 certificate/source/finite/synthetic-image files,6,188,536 bytes with
+  manifest a8859529 and a before/after HTML review. Raw Auth/provider bodies,
+  credentials and real account screenshots are excluded. Owner-only local
+  unencrypted retention has no established off-site recovery. The frozen
+  recovered-media controller/scope is unchanged.
+
 ## Oct22 10:09 Madrid — Recovered-media controller integrated; live scope not started
 
 The controller now composes the accepted R14 preservation/cleanup lifecycle
