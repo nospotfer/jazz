@@ -1,16 +1,15 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextResponse } from 'next/server';
 
 import { getUserJazzMedalProgress } from '@/lib/jazz-medal-progress';
-import { createClient } from '@/utils/supabase/server';
+import { getServerUser } from '@/lib/server-user';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getServerUser();
 
     if (!user) {
       return NextResponse.json({
@@ -22,10 +21,13 @@ export async function GET() {
       }, { status: 401 });
     }
 
-    const progress = await getUserJazzMedalProgress(user.id);
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
+
+    const progress = await getUserJazzMedalProgress(user.id, user.email);
     return NextResponse.json(progress);
   } catch (error) {
-    console.error('[dashboard:quiz-medals]', error);
+    console.error('[dashboard:quiz-medals]', safeErrorDiagnostic(error));
 
     return NextResponse.json({
       platinumMedalCount: 0,

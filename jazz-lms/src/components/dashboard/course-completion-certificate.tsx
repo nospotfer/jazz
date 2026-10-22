@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Download, Loader2, ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
+import { getLessonQuizMedalPresentation, JazzMedalIcon, JazzSupremeMedal } from '@/components/course/lesson-quiz-medal';
 import { Button } from '@/components/ui/button';
 import type { QuizMedalTierValue } from '@/lib/lesson-quiz';
 import type { SupportedLanguage } from '@/lib/language';
@@ -56,55 +56,35 @@ export function CourseCompletionCertificate({
   medal,
 }: CourseCompletionCertificateProps) {
   const [isDownloading, setIsDownloading] = useState(false);
-  const certificateRef = useRef<HTMLDivElement | null>(null);
 
   const handleDownload = async () => {
-    if (isDownloading || !certificateRef.current) {
+    if (isDownloading) {
       return;
     }
 
     setIsDownloading(true);
 
     try {
-      const html2canvasModule = await import('html2canvas');
-      const html2canvas = html2canvasModule.default;
-      const jsPdfModule = await import('jspdf');
-      const JsPdf = jsPdfModule.jsPDF ?? jsPdfModule.default;
-
-      const canvas = await html2canvas(certificateRef.current, {
-        scale: Math.max(2, window.devicePixelRatio || 2),
-        backgroundColor: '#f7f4ed',
-        useCORS: true,
-        allowTaint: false,
+      const [generator, signatureResponse, logoResponse] = await Promise.all([
+        import('@/lib/course-completion-pdf'), fetch(signatureSrc), fetch('/images/logo-mark.png'),
+      ]);
+      if (!signatureResponse.ok || !logoResponse.ok) throw new Error('Certificate assets unavailable');
+      const [signatureImage, logoImage] = await Promise.all([
+        signatureResponse.arrayBuffer(), logoResponse.arrayBuffer(),
+      ]);
+      const pdf = generator.createCourseCompletionPdf({
+        studentName, certificateTitle, certificateSubtitle, completionLabel, scoreLabel,
+        medalLabel: getLessonQuizMedalPresentation(language, medal).label,
+        gratitudeLines, teacherName, signatureImage: new Uint8Array(signatureImage), logoImage: new Uint8Array(logoImage),
       });
-
-      const pdf = new JsPdf({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4',
-        compress: true,
-      });
-
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 18;
-      const maxWidth = pageWidth - margin * 2;
-      const maxHeight = pageHeight - margin * 2;
-      const ratio = Math.min(maxWidth / canvas.width, maxHeight / canvas.height);
-      const renderWidth = canvas.width * ratio;
-      const renderHeight = canvas.height * ratio;
-      const x = (pageWidth - renderWidth) / 2;
-      const y = (pageHeight - renderHeight) / 2;
-
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, renderWidth, renderHeight, undefined, 'FAST');
-      pdf.save(`course-recognition-${sanitizeFileName(studentName || 'student')}.pdf`);
+      await pdf.save(`course-recognition-${sanitizeFileName(studentName || 'student')}.pdf`, { returnPromise: true });
     } catch {
       const errorMessage = language === 'en'
         ? 'Unable to generate the PDF right now.'
         : language === 'fr'
-          ? 'Impossible de generer le PDF pour le moment.'
+          ? 'Impossible de générer le PDF pour le moment.'
           : language === 'pt'
-            ? 'No fue posible generar el PDF ahora.'
+            ? 'Não foi possível gerar o PDF agora.'
             : 'No fue posible generar el PDF ahora.';
       toast.error(errorMessage);
     } finally {
@@ -113,12 +93,11 @@ export function CourseCompletionCertificate({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-16 lg:pb-0">
       <div
-        ref={certificateRef}
-        className="mx-auto aspect-[210/297] w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
+        className="mx-auto w-full max-w-[794px] border border-[#b49a69] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),rgba(246,240,226,0.96)_44%,rgba(236,224,197,0.95)_100%)] p-4 shadow-[0_24px_70px_rgba(30,41,59,0.24)] sm:p-6"
       >
-        <div className="flex h-full flex-col rounded-[2px] border-2 border-[#b49a69] bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(250,245,235,0.7))] px-5 py-6 sm:px-10 sm:py-10">
+        <div className="flex flex-col rounded-[2px] border-2 border-[#b49a69] bg-[linear-gradient(180deg,rgba(255,255,255,0.7),rgba(250,245,235,0.7))] px-5 py-6 sm:px-10 sm:py-10">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#7a633a]/40 bg-[#f8f1df] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f5630]">
               <ScrollText className="h-3.5 w-3.5" />
@@ -130,7 +109,7 @@ export function CourseCompletionCertificate({
             <p className="mt-3 text-sm font-medium tracking-[0.08em] text-[#5e4a2f] sm:text-base">
               {certificateSubtitle}
             </p>
-            <p className="mt-6 text-[24px] font-semibold tracking-[0.1em] text-[#2f2416] sm:text-[34px]">
+            <p className="mt-6 text-[24px] break-words font-semibold tracking-[0.1em] text-[#2f2416] sm:text-[34px]">
               {studentName}
             </p>
           </div>

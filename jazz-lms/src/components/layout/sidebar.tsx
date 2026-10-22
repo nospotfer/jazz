@@ -2,7 +2,8 @@
 
 import { useDashboardPreferences } from "@/components/providers/dashboard-preferences-provider";
 import { createClient } from "@/utils/supabase/client";
-import type { AuthChangeEvent } from "@supabase/supabase-js";
+import { useAuthOwner } from "@/hooks/use-auth-owner";
+import { useOwnerScopedResource } from "@/hooks/use-owner-scoped-resource";
 import {
     BookOpen,
     ChevronDown,
@@ -30,262 +31,21 @@ const DashboardNotesNavPanel = dynamic(
   },
 );
 
-export function Sidebar() {
+export function Sidebar({ currentUserId }: { currentUserId: string }) {
+  const { t } = useDashboardPreferences();
   const [isOpen, setIsOpen] = useState(false);
-  const [pdfCount, setPdfCount] = useState<number | null>(null);
-  const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
+  const owner = useAuthOwner(currentUserId);
+  const { value: pdfResult } = useOwnerScopedResource<{ count: number } | null>({
+    path: "/api/dashboard/pdf-count", initialValue: null, emptyValue: null, intervalMs: 60000, expectedUserId: currentUserId,
+  });
+  const { value: unreadResult } = useOwnerScopedResource<{ count: number } | null>({
+    path: "/api/messages/unread-count", initialValue: null, emptyValue: null, intervalMs: 60000, expectedUserId: currentUserId,
+    enabled: process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== 'true',
+  });
+  const pdfCount = typeof pdfResult?.count === "number" ? pdfResult.count : null;
+  const unreadMessages = typeof unreadResult?.count === "number" ? unreadResult.count : null;
   const pathname = usePathname();
   const router = useRouter();
-
-  useEffect(() => {
-    const supabase = createClient();
-    let isMounted = true;
-    let intervalId: number | null = null;
-    let requestController: AbortController | null = null;
-
-    const stopPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    const hasSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      return Boolean(session);
-    };
-
-    const loadPdfCount = async () => {
-      if (document.visibilityState === "hidden") {
-        return;
-      }
-
-      if (!(await hasSession())) {
-        stopPolling();
-        if (isMounted) setPdfCount(0);
-        return;
-      }
-
-      requestController?.abort();
-      requestController = new AbortController();
-
-      try {
-        const response = await fetch("/api/dashboard/pdf-count", {
-          signal: requestController.signal,
-        });
-
-        if (!isMounted) return;
-
-        if (response.status === 401) {
-          setPdfCount(0);
-          stopPolling();
-          return;
-        }
-
-        const data = await response.json();
-        setPdfCount(typeof data.count === "number" ? data.count : 0);
-      } catch (error) {
-        if (!isMounted) return;
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        setPdfCount(0);
-      }
-    };
-
-    const startPolling = () => {
-      stopPolling();
-
-      intervalId = window.setInterval(() => {
-        void loadPdfCount();
-      }, 60000);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        void loadPdfCount();
-      }
-    };
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (!isMounted) return;
-
-      if (event === "SIGNED_OUT") {
-        stopPolling();
-        requestController?.abort();
-        setPdfCount(0);
-      }
-
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        void loadPdfCount();
-        startPolling();
-      }
-    });
-
-    const idleCallback = window.requestIdleCallback?.(
-      () => {
-        void loadPdfCount();
-        startPolling();
-      },
-      { timeout: 1200 },
-    );
-
-    if (idleCallback !== undefined) {
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      return () => {
-        isMounted = false;
-        subscription.unsubscribe();
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-        window.cancelIdleCallback?.(idleCallback);
-        requestController?.abort();
-        stopPolling();
-      };
-    }
-
-    void loadPdfCount();
-    startPolling();
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      requestController?.abort();
-      stopPolling();
-    };
-  }, []);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let isMounted = true;
-    let intervalId: number | null = null;
-    let requestController: AbortController | null = null;
-
-    const stopPolling = () => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    const hasSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      return Boolean(session);
-    };
-
-    const loadUnreadMessages = async () => {
-      if (document.visibilityState === "hidden") {
-        return;
-      }
-
-      if (!(await hasSession())) {
-        stopPolling();
-        if (isMounted) setUnreadMessages(0);
-        return;
-      }
-
-      requestController?.abort();
-      requestController = new AbortController();
-
-      try {
-        const response = await fetch("/api/messages/unread-count", {
-          signal: requestController.signal,
-        });
-
-        if (!isMounted) return;
-
-        if (response.status === 401) {
-          setUnreadMessages(0);
-          stopPolling();
-          return;
-        }
-
-        const data = await response.json();
-        setUnreadMessages(typeof data.count === "number" ? data.count : 0);
-      } catch (error) {
-        if (!isMounted) return;
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        setUnreadMessages(0);
-      }
-    };
-
-    const startPolling = () => {
-      stopPolling();
-
-      intervalId = window.setInterval(() => {
-        void loadUnreadMessages();
-      }, 60000);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        void loadUnreadMessages();
-      }
-    };
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (!isMounted) return;
-
-      if (event === "SIGNED_OUT") {
-        stopPolling();
-        requestController?.abort();
-        setUnreadMessages(0);
-      }
-
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        void loadUnreadMessages();
-        startPolling();
-      }
-    });
-
-    const idleCallback = window.requestIdleCallback?.(
-      () => {
-        void loadUnreadMessages();
-        startPolling();
-      },
-      { timeout: 1200 },
-    );
-
-    if (idleCallback !== undefined) {
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      return () => {
-        isMounted = false;
-        subscription.unsubscribe();
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-        window.cancelIdleCallback?.(idleCallback);
-        requestController?.abort();
-        stopPolling();
-      };
-    }
-
-    void loadUnreadMessages();
-    startPolling();
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      requestController?.abort();
-      stopPolling();
-    };
-  }, []);
 
   // Close sidebar on route change
   useEffect(() => {
@@ -315,13 +75,17 @@ export function Sidebar() {
     router.refresh();
   };
 
+  if (!owner.ready) return null;
+
   return (
     <>
       {/* Hamburger Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
-        aria-label="Open menu"
+        className="fixed top-3 left-3 z-50 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-card border border-border shadow-lg hover:bg-accent transition-colors lg:hidden"
+        aria-label={t("openMenu", "Open menu")}
+        aria-expanded={isOpen}
       >
         <Menu className="h-6 w-6 text-foreground" />
       </button>
@@ -341,6 +105,7 @@ export function Sidebar() {
         }`}
       >
         <SidebarContent
+          currentUserId={currentUserId}
           pathname={pathname}
           pdfCount={pdfCount}
           unreadMessages={unreadMessages}
@@ -352,6 +117,7 @@ export function Sidebar() {
       {/* Sidebar - Desktop (always visible) */}
       <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:top-0 lg:left-0 lg:h-[100dvh] bg-card border-r border-border z-40">
         <SidebarContent
+          currentUserId={currentUserId}
           pathname={pathname}
           pdfCount={pdfCount}
           unreadMessages={unreadMessages}
@@ -363,12 +129,14 @@ export function Sidebar() {
 }
 
 function SidebarContent({
+  currentUserId,
   pathname,
   pdfCount,
   unreadMessages,
   onClose,
   onLogout,
 }: {
+  currentUserId: string;
   pathname: string;
   pdfCount: number | null;
   unreadMessages: number | null;
@@ -422,9 +190,10 @@ function SidebarContent({
         </Link>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-accent transition-colors"
-            aria-label="Close menu"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent transition-colors"
+            aria-label={t("closeMenu", "Close menu")}
           >
             <X className="h-5 w-5 text-muted-foreground" />
           </button>
@@ -464,8 +233,8 @@ function SidebarContent({
                 unreadMessages > 0 && (
                   <span
                     className="h-2.5 w-2.5 rounded-full bg-yellow-400"
-                    aria-label="Unread messages"
-                    title="New message in inbox"
+                    aria-label={t("unreadMessages", "Unread messages")}
+                    title={t("inboxNewMessageTitle", "New inbox message")}
                   />
                 )}
             </Link>
@@ -487,7 +256,7 @@ function SidebarContent({
               />
             </button>
 
-            {isNotesSectionOpen ? <DashboardNotesNavPanel /> : null}
+            {isNotesSectionOpen ? <DashboardNotesNavPanel currentUserId={currentUserId} /> : null}
           </div>
         </div>
       </nav>

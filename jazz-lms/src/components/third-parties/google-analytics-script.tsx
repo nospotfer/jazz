@@ -1,40 +1,47 @@
 'use client';
 
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
+import { useAnalyticsConsent } from '@/components/analytics/use-analytics-consent';
+import { isAnalyticsPathAllowed, isValidGaMeasurementId, readAnalyticsConsent } from '@/lib/analytics/consent';
+import { guardAnalyticsNavigation } from '@/lib/analytics/navigation';
+import { mayMeasurePublicPage, prepareGoogleAnalytics, recordGoogleAnalyticsPage, updateGoogleAnalyticsConsent } from '@/lib/analytics/google-analytics';
 
-/**
- * Google Analytics 4 (gtag.js) loader — client-side.
- *
- * Regras:
- * - Só renderiza se `NEXT_PUBLIC_GA_MEASUREMENT_ID` estiver definido (fail-safe).
- * - NUNCA carga en rutas `/admin/*` — los administradores no se rastrean como visitantes.
- * - Complementa o GA4 Data API já usado em /admin/stats (server-side, via
- *   service account). Este script é o inverso: coleta tráfego real no browser.
- */
+/** Optional GA4 measures the public homepage only after an explicit choice. */
 export function GoogleAnalyticsScript() {
   const pathname = usePathname();
+  const { analytics } = useAnalyticsConsent();
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const ready = useRef(false);
+  const recorded = useRef(false);
+  const allowed = analytics && isAnalyticsPathAllowed(pathname) && isValidGaMeasurementId(measurementId);
+  const recordPage = useCallback(() => {
+    if (!recorded.current && isValidGaMeasurementId(measurementId)) recorded.current = recordGoogleAnalyticsPage(measurementId);
+  }, [measurementId]);
 
-  if (!measurementId) return null;
-  if (pathname?.startsWith('/admin')) return null;
+  useLayoutEffect(() => {
+    if (!isValidGaMeasurementId(measurementId)) return;
+    recorded.current = false;
+    const removeGuard = guardAnalyticsNavigation(destinationAllowed => {
+      updateGoogleAnalyticsConsent(measurementId, destinationAllowed && readAnalyticsConsent().analytics);
+    });
+    if (allowed && prepareGoogleAnalytics(measurementId)) {
+      if (ready.current) recordPage();
+    } else {
+      updateGoogleAnalyticsConsent(measurementId, false);
+    }
+    return () => { removeGuard(); updateGoogleAnalyticsConsent(measurementId, false); };
+  }, [allowed, measurementId, pathname, recordPage]);
 
-  return (
-    <>
-      <Script
-        id="ga4-loader"
-        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="afterInteractive"
-      />
-      <Script id="ga4-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', '${measurementId}', { anonymize_ip: true });
-        `}
-      </Script>
-    </>
-  );
+  if (!allowed || !mayMeasurePublicPage()) return null;
+  return <Script
+    id="ga4-loader"
+    src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+    strategy="afterInteractive"
+    onReady={() => {
+      ready.current = true;
+      recordPage();
+    }}
+  />;
 }

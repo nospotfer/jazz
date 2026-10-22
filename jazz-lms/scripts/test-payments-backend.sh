@@ -10,8 +10,14 @@ npx vitest run \
   tests/integration/checkout-route.test.ts \
   tests/integration/purchases-route.test.ts \
   tests/integration/dodo-webhook-route.test.ts \
+  tests/integration/admin-voucher-provider-lifecycle.test.ts \
   tests/integration/dev-reset-purchases-route.test.ts \
   tests/unit/course-purchase-sync.test.ts \
+  tests/unit/dodo-provider.test.ts \
+  tests/unit/dodo-events.test.ts \
+  tests/unit/dodo-list-payments.test.ts \
+  tests/unit/dodo-entitlement-ledger.test.ts \
+  tests/unit/voucher-provider-sync.test.ts \
   tests/unit/checkout-helpers.test.ts \
   tests/unit/test-mode.test.ts \
   tests/contract/api-contracts.test.ts \

@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
@@ -5,6 +6,7 @@ import { db } from '@/lib/db';
 import { isAdminRole } from '@/lib/admin/permissions';
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from '@/lib/language';
 import { getCourseTranslationBundle, resolveCourseText, resolveLessonTitle } from '@/lib/course-translations';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +31,7 @@ function getLessonNumber(position: number | undefined, fallback: number) {
   return typeof position === 'number' && position > 0 ? position : fallback;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const cookieStore = await cookies();
     const language = normalizeLanguage(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
@@ -41,6 +43,9 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const consistencyFailure = expectedUserConsistencyResponse(request, user.id);
+    if (consistencyFailure) return consistencyFailure;
 
     const dbUser = user.email
       ? await db.user.findUnique({
@@ -256,7 +261,7 @@ export async function GET() {
     const courses = Array.from(coursesMap.values());
     return NextResponse.json({ courses });
   } catch (error) {
-    console.error('[courses-progress]', error);
+    console.error('[courses-progress]', safeErrorDiagnostic(error));
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

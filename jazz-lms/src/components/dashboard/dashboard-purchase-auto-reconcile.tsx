@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthOwner } from "@/hooks/use-auth-owner";
 
 /**
  * Dispara uma reconciliação automática de pagamentos pendentes
@@ -12,12 +13,17 @@ import { useRouter } from "next/navigation";
 export function DashboardPurchaseAutoReconcile() {
   const router = useRouter();
   const firedRef = useRef(false);
+  const { ready, capture, isCurrent } = useAuthOwner();
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
+    const token = capture();
+    if (!token) return;
     if (firedRef.current) return;
     firedRef.current = true;
 
     const controller = new AbortController();
+    let active = true;
 
     fetch("/api/purchases/auto-reconcile", {
       method: "POST",
@@ -25,11 +31,11 @@ export function DashboardPurchaseAutoReconcile() {
       headers: { "Content-Type": "application/json" },
     })
       .then(async (response) => {
-        if (!response.ok) return;
+        if (!active || controller.signal.aborted || !isCurrent(token) || !response.ok) return;
         const data = (await response.json().catch(() => null)) as
           | { unlocked?: number }
           | null;
-        if (data?.unlocked && data.unlocked > 0) {
+        if (active && !controller.signal.aborted && isCurrent(token) && data?.unlocked && data.unlocked > 0) {
           router.refresh();
         }
       })
@@ -37,8 +43,8 @@ export function DashboardPurchaseAutoReconcile() {
         // best-effort, sem ruído
       });
 
-    return () => controller.abort();
-  }, [router]);
+    return () => { active = false; controller.abort(); };
+  }, [router, ready, capture, isCurrent]);
 
   return null;
 }

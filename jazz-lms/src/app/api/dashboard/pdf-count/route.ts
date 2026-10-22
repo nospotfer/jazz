@@ -1,3 +1,5 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -9,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-  const language = normalizeLanguage(request.cookies.get(LANGUAGE_COOKIE_KEY)?.value);
+    const language = normalizeLanguage(request.cookies.get(LANGUAGE_COOKIE_KEY)?.value);
 
     const supabase = createClient();
     const {
@@ -19,6 +21,9 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ count: 0 }, { status: 401 });
     }
+
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
 
     const dbUser = user.email
       ? await db.user.findUnique({
@@ -111,7 +116,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ count: accessiblePdfKeys.size });
   } catch (error) {
-    console.error('[pdf-count]', error);
+    console.error('[pdf-count]', safeErrorDiagnostic(error));
     return NextResponse.json({ count: 0 }, { status: 500 });
   }
 }

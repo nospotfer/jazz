@@ -62,8 +62,10 @@ function getConfig() {
   const apiKey = (process.env.OPENREPLAY_API_KEY ?? '').trim();
   const projectId = (process.env.OPENREPLAY_PROJECT_ID ?? '').trim();
   const apiUrl = (process.env.OPENREPLAY_API_URL ?? 'https://api.openreplay.com').trim();
-  if (!apiKey || !projectId) return null;
-  return { apiKey, projectId: Number(projectId), apiUrl };
+  const numericProjectId = Number(projectId);
+  if (!apiKey || !/^\d+$/.test(projectId)
+    || !Number.isSafeInteger(numericProjectId) || numericProjectId <= 0) return null;
+  return { apiKey, projectId: numericProjectId, apiUrl };
 }
 
 export function isOpenReplayApiConfigured(): boolean {
@@ -98,8 +100,10 @@ async function getProject(): Promise<ProjectInfo | null> {
   const cfg = getConfig();
   if (!cfg) return null;
   const list = await v2<ProjectInfo[]>('/public/projects', { method: 'GET' });
-  if (!list) return null;
-  return list.find((p) => p.projectId === cfg.projectId) ?? list[0] ?? null;
+  if (!Array.isArray(list)) return null;
+  const project = list.find((p) => p?.projectId === cfg.projectId);
+  if (!project || typeof project.projectKey !== 'string' || !project.projectKey.trim()) return null;
+  return project;
 }
 
 type UsersSearchResponse = { total: number; users: UserRow[] };
@@ -108,7 +112,7 @@ async function searchUsers(
   projectKey: string,
   body: Record<string, unknown>,
 ): Promise<UsersSearchResponse | null> {
-  return v2<UsersSearchResponse>(`/public/${projectKey}/users`, {
+  return v2<UsersSearchResponse>(`/public/${encodeURIComponent(projectKey)}/users`, {
     method: 'POST',
     body: JSON.stringify(body),
   });
@@ -135,7 +139,7 @@ export async function getOpenReplayWidgetData(windowDays = 7): Promise<WidgetDat
 
   if (!main) {
     // Conexão até a API ok (project foi obtido), mas users falhou.
-    return { ...EMPTY(undefined, windowDays), project, ok: true };
+    return { ...EMPTY('fetch_failed', windowDays), project };
   }
 
   const users = main.users ?? [];
@@ -180,9 +184,10 @@ export async function getOpenReplayWidgetData(windowDays = 7): Promise<WidgetDat
       limit: 1,
       page: 1,
     });
+    if (!day) return { ...EMPTY('fetch_failed', windowDays), project };
     trend.push({
       label: `${dayStart.getMonth() + 1}/${dayStart.getDate()}`,
-      count: day?.total ?? 0,
+      count: day.total ?? 0,
     });
   }
 

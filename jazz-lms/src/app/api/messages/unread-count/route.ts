@@ -1,3 +1,5 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -12,6 +14,7 @@ const professorEmail = (
 ).toLowerCase();
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof Error && error.name === 'MessagingSchemaUnavailableError') return true;
   if (
     error instanceof Prisma.PrismaClientInitializationError
     || error instanceof Prisma.PrismaClientRustPanicError
@@ -33,7 +36,7 @@ function isDatabaseUnavailableError(error: unknown): boolean {
   );
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = createClient();
     const {
@@ -44,17 +47,20 @@ export async function GET() {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
+    const mismatch = expectedUserConsistencyResponse(request, user.id);
+    if (mismatch) return mismatch;
+
     await ensureMessagingTables();
 
     const isProfessor = user.email.toLowerCase() === professorEmail;
 
     const rows = isProfessor
-      ? await db.$queryRawUnsafe<Array<{ count: number }>>(`
+      ? await db.$queryRawUnsafe<Array<{ count: number | bigint }>>(`
           SELECT COUNT(*) as count
           FROM Message
           WHERE unreadByProfessor = 1
         `)
-      : await db.$queryRawUnsafe<Array<{ count: number }>>(`
+      : await db.$queryRawUnsafe<Array<{ count: number | bigint }>>(`
           SELECT COUNT(*) as count
           FROM Message m
           JOIN MessageThread t ON t.id = m.threadId
@@ -68,11 +74,11 @@ export async function GET() {
     return NextResponse.json({ count: Number(rows[0]?.count || 0) });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:unread-count:db-unavailable]', error);
+      console.error('[messages:unread-count:db-unavailable]', safeErrorDiagnostic(error));
       return NextResponse.json({ count: 0 }, { status: 503 });
     }
 
-    console.error('[messages:unread-count]', error);
+    console.error('[messages:unread-count]', safeErrorDiagnostic(error));
     return NextResponse.json({ count: 0 }, { status: 500 });
   }
 }

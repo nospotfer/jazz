@@ -53,7 +53,20 @@ JSON
 )
 
 SIGNED_PAYLOAD="${WEBHOOK_ID}.${WEBHOOK_TIMESTAMP}.${PAYLOAD}"
-WEBHOOK_SIGNATURE=$(printf '%s' "$SIGNED_PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -binary | base64)
+WEBHOOK_SIGNATURE=$(printf '%s' "$SIGNED_PAYLOAD" | DODO_PAYMENTS_WEBHOOK_SECRET="$WEBHOOK_SECRET" node -e '
+  const crypto = require("node:crypto");
+  const secret = process.env.DODO_PAYMENTS_WEBHOOK_SECRET.replace(/^whsec_/, "");
+  const key = Buffer.from(secret, "base64");
+  const canonical = key.toString("base64");
+  if (!key.length || (secret !== canonical && secret !== canonical.replace(/=+$/, ""))) {
+    throw new Error("DODO_PAYMENTS_WEBHOOK_SECRET must contain a valid base64 signing key");
+  }
+  const chunks = [];
+  process.stdin.on("data", (chunk) => chunks.push(chunk));
+  process.stdin.on("end", () => process.stdout.write(
+    crypto.createHmac("sha256", key).update(Buffer.concat(chunks)).digest("base64")
+  ));
+')
 
 echo "▶ POST ${ENDPOINT}"
 HTTP_STATUS=$(curl -sS -o /tmp/dodo_webhook_response.json -w "%{http_code}" \

@@ -46,7 +46,8 @@ export function LanguageProvider({
     if (!isReady) return;
 
     localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    document.cookie = `${LANGUAGE_COOKIE_KEY}=${language}; path=/; max-age=31536000; samesite=lax`;
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
+    document.cookie = `${LANGUAGE_COOKIE_KEY}=${language}; path=/; max-age=31536000; samesite=lax${secure}`;
     document.documentElement.lang = languageToHtmlLang(language);
   }, [language, isReady]);
 

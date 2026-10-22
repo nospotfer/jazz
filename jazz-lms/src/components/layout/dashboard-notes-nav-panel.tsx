@@ -1,10 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { ChevronDown, Library } from 'lucide-react';
+import { useEffect, useId, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { ChevronDown, Library, PencilLine } from 'lucide-react';
 
 import { useDashboardPreferences } from '@/components/providers/dashboard-preferences-provider';
 import { getLocalizedJazzSubtitle } from '@/lib/course-lessons';
+import { AuthOwnerContext, useAuthOwner } from '@/hooks/use-auth-owner';
+import { useOwnerScopedResource } from '@/hooks/use-owner-scoped-resource';
+import { readLessonNoteDraft, writeLessonNoteDraft } from '@/lib/lesson-note-drafts';
 
 interface CourseProgressVideo {
   lessonId: string;
@@ -20,57 +24,27 @@ interface CourseProgressItem {
   videos: CourseProgressVideo[];
 }
 
-export function DashboardNotesNavPanel() {
+export function DashboardNotesNavPanel({ currentUserId }: { currentUserId: string }) {
+  const owner = useAuthOwner(currentUserId);
+  if (!owner.ready) return null;
+  return <AuthOwnerContext.Provider key={`${currentUserId}:${owner.generation}`} value={owner}>
+    <ScopedNotesNavPanel currentUserId={currentUserId} />
+  </AuthOwnerContext.Provider>;
+}
+
+function ScopedNotesNavPanel({ currentUserId }: { currentUserId: string }) {
   const { t, language } = useDashboardPreferences();
-  const [videos, setVideos] = useState<CourseProgressVideo[]>([]);
-  const [loading, setLoading] = useState(false);
+  const draftDescriptionId = useId();
+  const { value: data, isLoading: loading } = useOwnerScopedResource<{ courses: CourseProgressItem[] } | null>({
+    path: '/api/dashboard/courses-progress', initialValue: null, emptyValue: null, intervalMs: null, initialDelayMs: 300, expectedUserId: currentUserId,
+  });
+  const videos = useMemo(() => (data?.courses ?? []).flatMap((course) =>
+    course.videos.map((video) => ({ ...video, courseId: course.id }))
+  ), [data]);
   const [selectedNote, setSelectedNote] = useState<{ courseId: string; lessonId: string } | null>(null);
-  const [noteContent, setNoteContent] = useState('');
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadCourses = () => {
-      setLoading(true);
-      fetch('/api/dashboard/courses-progress')
-        .then((response) => response.json())
-        .then((data) => {
-          if (!isMounted) return;
-
-          const nextCourses: CourseProgressItem[] = data.courses ?? [];
-          const flattened = nextCourses.flatMap((course) =>
-            course.videos.map((video) => ({ ...video, courseId: course.id }))
-          );
-
-          setVideos(flattened);
-          setLoading(false);
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setLoading(false);
-        });
-    };
-
-    const idleCallback = window.requestIdleCallback?.(() => {
-      loadCourses();
-    }, { timeout: 1000 });
-
-    if (idleCallback !== undefined) {
-      return () => {
-        isMounted = false;
-        window.cancelIdleCallback?.(idleCallback);
-      };
-    }
-
-    const timeoutId = window.setTimeout(loadCourses, 300);
-    return () => {
-      isMounted = false;
-      window.clearTimeout(timeoutId);
-    };
-  }, []);
 
   const primaryCourseId = videos[0]?.courseId;
-  const notesVideos = videos
+  const notesVideos = useMemo(() => videos
     .filter((video) => video.courseId === primaryCourseId)
     .map((video, index) => ({
       lessonId: video.lessonId,
@@ -78,13 +52,12 @@ export function DashboardNotesNavPanel() {
       classLabel: `${t('classLabel', 'Class')} ${index + 1}`,
       subtitle: getLocalizedJazzSubtitle(index + 1, language) || video.title,
       classNumber: index + 1,
-    }));
+    })), [videos, primaryCourseId, t, language]);
 
   useEffect(() => {
     if (!notesVideos.length) {
       const frame = window.requestAnimationFrame(() => {
         setSelectedNote(null);
-        setNoteContent('');
       });
 
       return () => window.cancelAnimationFrame(frame);
@@ -104,42 +77,23 @@ export function DashboardNotesNavPanel() {
     return () => window.cancelAnimationFrame(frame);
   }, [notesVideos]);
 
-  useEffect(() => {
-    if (!selectedNote) return;
-
-    const frame = window.requestAnimationFrame(() => {
-      const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
-      const saved = window.localStorage.getItem(storageKey) || '';
-      setNoteContent(saved);
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [selectedNote]);
-
-  const onChangeSidebarNotes = (value: string) => {
-    setNoteContent(value);
-    if (!selectedNote) return;
-
-    const storageKey = `lesson-notes:${selectedNote.courseId}:${selectedNote.lessonId}`;
-    window.localStorage.setItem(storageKey, value);
-  };
 
   return (
-    <div className="mt-1 flex h-full min-h-0 flex-col">
+    <div className="mt-1 flex flex-1 min-h-0 flex-col">
       <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground bg-accent/30">
         <Library className="h-5 w-5 flex-shrink-0" />
         <span className="flex-1 text-left">{t('myNotes', 'My Notes')}</span>
         <ChevronDown className="h-4 w-4 flex-shrink-0 rotate-180" />
       </div>
 
-      <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-hidden bg-card/60 flex flex-1 min-h-0 flex-col">
+      <div className="mt-1 ml-2 rounded-lg border border-primary/40 hover:border-primary/70 transition-colors overflow-y-auto bg-card/60 flex flex-1 min-h-0 flex-col">
         {loading && (
           <p className="px-2.5 py-1.5 text-[11px] text-muted-foreground">{t('loading', 'Loading…')}</p>
         )}
 
         {!loading && (
           <>
-            <div className="px-2.5 py-1.5 bg-primary/10 border-b border-primary/40">
+            <div className="shrink-0 px-2.5 py-1.5 bg-primary/10 border-b border-primary/40">
               <span className="text-xs font-semibold text-primary tracking-wide uppercase">
                 {t('introductionToJazzMusic', 'Introduction to Jazz Music')}
               </span>
@@ -149,7 +103,7 @@ export function DashboardNotesNavPanel() {
                 {t('noPurchasedCoursesYet', 'No purchased courses yet.')}
               </p>
             )}
-            <div className="courses-scroll flex-1 min-h-0 overflow-y-auto pr-1">
+            <div className="courses-scroll flex-1 min-h-24 overflow-y-auto pr-1">
               {notesVideos.map((video, index) => {
                 const isClickable = Boolean(video.courseId && video.lessonId);
                 const isSelected =
@@ -185,20 +139,63 @@ export function DashboardNotesNavPanel() {
                 );
               })}
             </div>
-            <div className="border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
+            <div className="shrink-0 border-t border-primary/30 bg-background/80 p-2.5 space-y-2">
               <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">
                 {t('lessonNotes', 'Lesson notes')}
               </p>
-              <textarea
-                value={noteContent}
-                onChange={(event) => onChangeSidebarNotes(event.target.value)}
-                placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
-                className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              {selectedNote ? (
+                <>
+                  <SidebarNoteDraft
+                    key={JSON.stringify([currentUserId, selectedNote.courseId, selectedNote.lessonId])}
+                    currentUserId={currentUserId}
+                    courseId={selectedNote.courseId}
+                    lessonId={selectedNote.lessonId}
+                    placeholder={t('writeNotesForSelectedClass', 'Write notes for selected class...')}
+                    descriptionId={draftDescriptionId}
+                  />
+                  <p id={draftDescriptionId} className="text-xs leading-5 text-foreground/80 break-words">
+                    {t('notesPanelDraftHelp', 'Draft on this device. Use the editor to save and sync notes for lessons you can access.')}
+                  </p>
+                  <Link
+                    href={`/dashboard/notes/${encodeURIComponent(selectedNote.courseId)}/${encodeURIComponent(selectedNote.lessonId)}`}
+                    prefetch={false}
+                    aria-describedby={draftDescriptionId}
+                    className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold leading-5 text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    <PencilLine className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 whitespace-normal break-words text-center">
+                      {t('openNotesEditor', 'Open notes editor')}
+                    </span>
+                  </Link>
+                </>
+              ) : null}
             </div>
           </>
         )}
       </div>
     </div>
+  );
+}
+
+function SidebarNoteDraft({ currentUserId, courseId, lessonId, placeholder, descriptionId }: {
+  currentUserId: string;
+  courseId: string;
+  lessonId: string;
+  placeholder: string;
+  descriptionId: string;
+}) {
+  const [content, setContent] = useState(() => readLessonNoteDraft(currentUserId, courseId, lessonId).content);
+  return (
+    <textarea
+      value={content}
+      onChange={(event) => {
+        setContent(event.target.value);
+        writeLessonNoteDraft(currentUserId, courseId, lessonId, event.target.value);
+      }}
+      aria-label={placeholder}
+      aria-describedby={descriptionId}
+      placeholder={placeholder}
+      className="w-full h-44 min-h-[11rem] resize-none rounded-md border border-border bg-background px-2.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+    />
   );
 }

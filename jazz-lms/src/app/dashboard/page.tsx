@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { CourseViewClient } from "@/components/course/course-view-client";
 import {
   getCourseTranslationBundle,
@@ -34,21 +35,21 @@ export default async function DashboardPage() {
   if (dbUserResult.status === "rejected") {
     console.error(
       "[dashboard] Unable to resolve admin role. Falling back to non-admin.",
-      dbUserResult.reason,
+      safeErrorDiagnostic(dbUserResult.reason),
     );
   }
 
   if (courseResult.status === "rejected") {
     console.error(
       "[dashboard] Database unavailable while loading course. Rendering fallback state.",
-      courseResult.reason,
+      safeErrorDiagnostic(courseResult.reason),
     );
   }
 
   if (purchasedResult.status === "rejected") {
     console.error(
       "[dashboard] Failed loading purchase state. Falling back to locked mode.",
-      purchasedResult.reason,
+      safeErrorDiagnostic(purchasedResult.reason),
     );
   }
 
@@ -106,11 +107,13 @@ export default async function DashboardPage() {
 
   return (
     <CourseViewClient
+      key={course?.id ?? 'unavailable-course'}
       userName={
         user.user_metadata?.full_name || user.email || "Estudiante de Jazz"
       }
       hasPurchased={hasPurchased || isAdmin}
       courseId={course?.id ?? null}
+      coursePrice={course?.price ?? null}
       lessonRoutesByTitle={lessonRoutesByTitle}
       lessonRoutesInOrder={lessonRoutesInOrder}
       lessonIdsInOrder={lessonIdsInOrder}

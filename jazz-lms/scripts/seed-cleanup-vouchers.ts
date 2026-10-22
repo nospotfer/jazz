@@ -1,5 +1,7 @@
 import { PrismaClient, VoucherType } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 
 const KEEP_CODES = ['ADMIN99TEST', 'LOU1000099'] as const;

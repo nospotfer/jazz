@@ -1,11 +1,10 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { cache } from 'react';
 
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { hasPermission, isAdminRole } from '@/lib/admin/permissions';
 import { getServerUser } from '@/lib/server-user';
-
-const OWNER_EMAIL = process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net';
 
 type AuthContext = {
   user: {
@@ -22,37 +21,20 @@ type AuthContext = {
 const getAuthContext = cache(async (): Promise<AuthContext | null> => {
   const user = await getServerUser();
 
-  if (!user?.email) {
+  if (!user?.id || !user.email) {
     return null;
   }
 
-  const isOwner = isOwnerEmail(user.email);
-  const desiredRole = isOwner ? 'SUPER_ADMIN' : 'USER';
-
   try {
-    let dbUser = await db.user.findUnique({
-      where: {
-        email: user.email,
-      },
+    const dbUser = await db.user.findUnique({
+      where: { id: user.id },
+      select: { id: true, email: true, role: true },
     });
 
-    if (!dbUser) {
-      dbUser = await db.user.create({
-        data: {
-          id: user.id,
-          email: user.email,
-          role: desiredRole,
-        },
-      });
-    } else if (isOwner && dbUser.role === 'USER') {
-      dbUser = await db.user.update({
-        where: {
-          email: user.email,
-        },
-        data: {
-          role: 'SUPER_ADMIN',
-        },
-      });
+    // Permission checks only read an existing role for this verified identity.
+    // Account provisioning and role changes belong to separate explicit flows.
+    if (!dbUser || dbUser.id !== user.id || dbUser.email.toLowerCase() !== user.email.toLowerCase()) {
+      return null;
     }
 
     return {
@@ -67,24 +49,10 @@ const getAuthContext = cache(async (): Promise<AuthContext | null> => {
       },
     };
   } catch (error) {
-    console.error('[admin:getAuthContext] Database unavailable. Falling back to Supabase-only context.', error);
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-      dbUser: {
-        id: user.id,
-        email: user.email,
-        role: desiredRole,
-      },
-    };
+    console.error('[admin:getAuthContext] Database role lookup failed. Access denied.', safeErrorDiagnostic(error));
+    return null;
   }
 });
-
-function isOwnerEmail(email: string) {
-  return email.toLowerCase() === OWNER_EMAIL.toLowerCase();
-}
 
 export async function isAdmin(): Promise<boolean> {
   const ctx = await getAuthContext();

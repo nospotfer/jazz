@@ -1,83 +1,98 @@
-# Security Hardening Guide
+# Security operations
 
-Este projeto possui proteção em três camadas:
+This document describes controls and their limits. A source fix is not a
+production fix until an approved deployment is verified.
 
-## 1) Antes de subir para o Git (local)
+## Repository checks
 
-- Hooks em `.githooks/`:
-  - `pre-commit`: escaneia conteúdo staged
-  - `pre-push`: escaneia arquivos rastreados
-- Script de scan: `scripts/precommit-secret-scan.sh`
-- Configuração automática dos hooks:
-  - `npm run hooks:install`
-  - também roda automaticamente via `prepare`
-
-### Comandos úteis
+`npm ci` installs the Git hooks under `.githooks/`. The local staged/tracked-file
+scanner detects common credential patterns and emits locations without secret
+values. It is a useful guard, not exhaustive protection; ordinary passwords and
+unrecognized provider credentials may evade patterns.
 
 ```bash
 npm run security:staged
 npm run security:secrets
 ```
 
-## 2) No GitHub (CI)
+The repository's `secret-scan.yml` workflow runs Gitleaks with redacted SARIF and
+uploads the report even when findings fail the job. Documentation and example
+environments are scanned; only specific placeholders/public test vectors are
+excluded. Keep ignored credentials out of artifacts and screenshots as well as
+Git. If reviewing Git history, keep reports private and redacted.
 
-- Workflow: `../.github/workflows/secret-scan.yml`
-- Scanner: Gitleaks
-- Configuração: `.gitleaks.toml`
+GitHub default CodeQL setup is enabled. There is **no** checked-in CodeQL workflow
+or query configuration file. At the maintenance inspection, GitHub native secret
+scanning was disabled, rulesets were empty, and `main` was unprotected. Therefore
+CI checks do not currently enforce merge policy. Enabling protection/scanning is
+a repository configuration change for owner review; do not claim it is active.
 
-- Workflow: `../.github/workflows/codeql-analysis.yml`
-- Scanner: GitHub CodeQL (JavaScript/TypeScript)
-- Objetivo: detectar vulnerabilidades de código (SAST) em `pull_request`, `push` e execução semanal.
-- Config dedicada: `../.github/codeql/codeql-config.yml` (query pack `security-and-quality` + escopo de análise)
+`quality.yml` runs supported Node installation, lint, types, tests and production
+build. Its separate disposable PostgreSQL job exercises payment reversals,
+concurrent quizzes, notes and messaging instead of silently skipping those tests.
+Check the actual CI run on the review commit before release.
 
-- Configuração de atualizações: `../.github/dependabot.yml`
-- Objetivo: abrir PRs automáticos para dependências `npm` e GitHub Actions com advisories de segurança.
+## Application controls
 
-O CI bloqueia credenciais reais em `push` e `pull_request`.
+Server identity uses Supabase `auth.getUser()`; cookie-backed session data alone
+cannot authorize access. Privileged actions and API routes check permissions
+independently of their page layout. Media, documents, progress, quizzes and notes
+check publication hierarchy and course/historical-lesson entitlement. Verify
+Supabase browser-role RLS and storage policies separately: server checks do not
+protect tables exposed directly through PostgREST.
 
-### Triage recomendado
+Payment callbacks verify Standard Webhooks signatures and timestamps. Grants and
+reversals serialize by payment reference and consult the persisted event ledger.
+Refunded/disputed payments cannot be restored by a successful-payment listing;
+full payment detail is fetched before consuming applied coupons. Free voucher
+limits are enforced atomically. Actual provider configuration remains a separate
+release gate.
 
-1. Classificar alertas do CodeQL por severidade e impacto (auth, checkout, webhooks, admin).
-2. Corrigir imediatamente alertas `high`/`critical` antes de merge em `main`.
-3. Para falso positivo, registrar justificativa no alerta e revisar em cada mudança relacionada.
-4. Revisar PRs do Dependabot semanalmente e priorizar updates com CVE conhecido.
+`CRON_SECRET` is required for the scheduled payment sweep. A client-supplied
+`x-vercel-cron` header is not authentication. Native Resend inbound signatures
+use their own `RESEND_WEBHOOK_SECRET`; professor sender authentication is also
+required. Legacy relays need a separate secret and trusted sender validation.
 
-### Conexão e enforcement no GitHub
+Credential forms use POST even before hydration. Public contact requests are
+bounded, typed and escaped in generated email. Optional analytics must require
+an explicit homepage preference and exclude account/student/admin/payment
+routes; avoid recording inputs, request bodies or URL parameters.
 
-1. Verificar em `Actions` que o workflow `CodeQL` executa com sucesso em PR para `main`.
-2. Verificar em `Security > Code scanning alerts` que os resultados do CodeQL estão visíveis.
-3. Em `Settings > Branches`, exigir o status check `Analyze (JavaScript/TypeScript)` para merge na `main`.
-4. Executar `workflow_dispatch` manual quando houver mudanças estruturais em rotas/API/auth para validação imediata.
+## Headers and browser roles
 
-### Pré-requisitos operacionais do CodeQL
+`next.config.mjs` defines CSP, HSTS, referrer/content-type/frame/permissions and
+cross-origin policies. HTTPS custom provider origins are parsed as exact origins;
+HTTP auth/ingest endpoints are permitted only in development. Existing CSP still
+allows inline styles/scripts and eval for compatibility; a future nonce-based
+policy needs its own browser validation, not a blanket tightening.
 
-1. Repositório precisa estar em plano/licença com CodeQL habilitado para code scanning.
-2. Em PRs de forks públicos, permissões do `GITHUB_TOKEN` podem limitar upload de resultados.
-3. Sempre validar o primeiro run no branch padrão (`main`) para garantir indexação inicial no Security tab.
+Review the committed schema scripts against the active database role before
+production use. Messaging schema setup and its RLS hardening are separate SQL
+operations; the application does not create tables during requests. Production
+migrations need schema evidence, a restorable backup and explicit approval.
 
-## 3) Em produção (internet)
+## Triage and release
 
-Hardening em `next.config.mjs`:
+Record reproduced security findings and evidence in the
+[maintenance backlog](docs/maintenance/backlog.md). Prioritize exposed
+critical/high issues. For a false positive, retain the exact code/configuration
+reason and a relevant regression; do not silently dismiss alerts.
 
-- `Content-Security-Policy`
-- `Strict-Transport-Security`
-- `X-Content-Type-Options`
-- `X-Frame-Options`
-- `Referrer-Policy`
-- `Permissions-Policy`
-- `Cross-Origin-Opener-Policy`
-- `Cross-Origin-Resource-Policy`
-- `poweredByHeader: false`
+Dependency upgrades must preserve working behavior. On 2026-10-13, `npm audit`
+reports five high findings through Next's development ESLint → fast-glob →
+micromatch → braces chain; `npm audit --omit=dev` reports zero findings.
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+affects braces through 3.0.3 and lists no patched version; the registry's latest
+is also 3.0.3. It requires a deeply nested attacker-controlled brace pattern.
+The inspected Next lint utility receives repository root-directory settings;
+this project does not configure custom root globs or expose that utility in an
+HTTP handler. This narrows current reachability, not the package advisory itself.
+Keep lint configuration trusted and CI jobs bounded, monitor the upstream fix,
+and review an update when available. npm's suggested framework downgrade to
+14.2.35 is not a justified repair of this Node 24/Next 16 application.
 
-## Rotação de segredos (obrigatório após exposição)
-
-1. Dodo Payments: rotacionar `DODO_PAYMENTS_API_KEY` e `DODO_PAYMENTS_WEBHOOK_SECRET`.
-2. Supabase: rotacionar `SUPABASE_SERVICE_ROLE_KEY`.
-3. Atualizar variáveis no Vercel (Production/Preview/Development).
-4. Validar app e webhooks após rotação.
-
-## Observações
-
-- Use placeholders neutros em docs (`your_*`, `YOUR_*`).
-- Não commite `.env` e `.env.local`.
-- Se um segredo já foi commitado no passado, considere comprometido e rotacione.
+Credentials previously committed remain exposed in history after removal from
+the current tree. The owner has deferred rotation; record affected credentials
+privately and coordinate rotation/provider environment updates with them.
+Deleting source files does not revoke a key. Do not rewrite shared history,
+rotate account secrets or change production settings during unattended work.

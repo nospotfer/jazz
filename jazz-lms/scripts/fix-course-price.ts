@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 const DEFAULT_FULL_COURSE_PRICE_EUR = 29.99;
 

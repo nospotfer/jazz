@@ -5,15 +5,14 @@ useDefault = true
 
 [allowlist]
 description = "Allow documentation placeholders and non-sensitive examples"
+regexTarget = "secret"
 regexes = [
   '''YOUR_[A-Z0-9_]+''',
   '''your_[a-z0-9_]+''',
   '''your-project-ref''',
   '''\[YOUR-PASSWORD\]''',
   '''header\.bm90LWpzb24\.signature''',
-]
-paths = [
-  '''(^|/)docs/.*\.md$''',
-  '''(^|/)VERCEL_SETUP\.md$''',
-  '''(^|/)\.env\.example$''',
+  # Exact deterministic dummy used by the isolated native release fixtures.
+  # Anchoring to the secret keeps other findings on the same line in scope.
+  '''^sb_secret_synthetic_private_key_123$''',
 ]

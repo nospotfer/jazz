@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
         discountPercent: true,
         discountAmount: true,
         maxUses: true,
+        maxUsesPerUser: true,
+        minOrderValue: true,
         currentUses: true,
         expiresAt: true,
         metadata: true,
@@ -57,15 +60,10 @@ export async function POST(req: Request) {
         voucher.metadata && typeof voucher.metadata === 'object' && !Array.isArray(voucher.metadata)
           ? (voucher.metadata as Record<string, unknown>)
           : {};
-      if (onlyUnsynced && meta.providerDiscountSyncStatus === 'synced') {
+      if (onlyUnsynced && voucher.isActive && meta.providerDiscountSyncStatus === 'synced') {
         skipped += 1;
         continue;
       }
-
-      const remainingUses =
-        voucher.maxUses !== null && voucher.maxUses !== undefined
-          ? Math.max(1, voucher.maxUses - voucher.currentUses)
-          : null;
 
       const result = await ensureVoucherDiscountSynced({
         id: voucher.id,
@@ -73,7 +71,10 @@ export async function POST(req: Request) {
         type: voucher.type as 'FREE_ACCESS' | 'DISCOUNT_PERCENT' | 'DISCOUNT_FIXED',
         discountPercent: voucher.discountPercent,
         discountAmount: voucher.discountAmount,
-        maxUses: remainingUses,
+        maxUses: voucher.maxUses,
+        maxUsesPerUser: voucher.maxUsesPerUser,
+        minOrderValue: voucher.minOrderValue,
+        isActive: voucher.isActive,
         expiresAt: voucher.expiresAt,
         metadata: voucher.metadata,
       });
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
       failures,
     });
   } catch (error) {
-    console.error('[VOUCHER_RESYNC_PROVIDER_ERROR]', error);
+    console.error('[VOUCHER_RESYNC_PROVIDER_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Error al re-sincronizar vouchers.' },
       { status: 500 }

@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -70,21 +71,29 @@ vi.mock('@/lib/course-translations', () => ({
 describe('API Contract: /api/purchases response shape', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  test('each purchase has required fields with correct types', async () => {
+  test('each purchase has required fields with a recorded or explicitly unknown amount', async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1' } } });
     mocks.purchaseFindMany.mockResolvedValue([
       {
         id: 'p1',
-        course: { title: 'Jazz 101', price: 29.99 },
+        finalPrice: 29.99,
+        course: { title: 'Jazz 101', price: 80 },
+        createdAt: new Date('2026-01-01T00:00:00Z'),
+      },
+      {
+        id: 'p2',
+        finalPrice: null,
+        course: { title: 'Historical Jazz', price: 80 },
         createdAt: new Date('2026-01-01T00:00:00Z'),
       },
     ]);
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     const body = await response.json();
 
     expect(Array.isArray(body)).toBe(true);
+    expect(body.map((item: { amount: number | null }) => item.amount)).toEqual([29.99, null]);
     for (const item of body) {
       expect(item).toHaveProperty('id');
       expect(item).toHaveProperty('itemType');
@@ -92,10 +101,12 @@ describe('API Contract: /api/purchases response shape', () => {
       expect(item).toHaveProperty('amount');
       expect(item).toHaveProperty('createdAt');
       expect(item).toHaveProperty('currency');
+      expect(item).toHaveProperty('amountMinor');
       expect(typeof item.id).toBe('string');
       expect(typeof item.itemTitle).toBe('string');
-      expect(typeof item.amount).toBe('number');
-      expect(item.currency).toBe('EUR');
+      expect(item.amount === null || (typeof item.amount === 'number' && Number.isFinite(item.amount))).toBe(true);
+      expect(item.currency).toBeNull();
+      expect(item.amountMinor).toBeNull();
       expect(item.itemType).toBe('Curso');
       // Validate ISO date format
       expect(new Date(item.createdAt).toISOString()).toBe(item.createdAt);
@@ -117,7 +128,7 @@ describe('API Contract: /api/dashboard/pdf-count response shape', () => {
     mocks.purchaseFindFirst.mockResolvedValue(null);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(body).toHaveProperty('count');
@@ -139,7 +150,7 @@ describe('API Contract: /api/messages/unread-count response shape', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: 3 }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     const body = await response.json();
 
     expect(body).toHaveProperty('count');

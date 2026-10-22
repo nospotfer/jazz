@@ -4,6 +4,7 @@ import {
   resolveServerAppOrigin,
 } from "@/lib/app-origin";
 import { normalizeLanguage } from "@/lib/language";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { getRandomProfileAvatar } from "@/lib/profile-avatars";
 import { syncUserWithDatabase } from "@/lib/sync-user";
 import { createClient } from "@/utils/supabase/server";
@@ -33,7 +34,7 @@ function readCookie(request: Request, cookieName: string): string | null {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const origin = resolveServerAppOrigin(requestUrl.origin);
+  const origin = resolveServerAppOrigin(requestUrl.origin, request.headers.get('host'));
   const REGISTRATION_WELCOME_VALUE = "registration-free-first-class";
   const configuredOrigin = normalizeBaseOrigin(
     process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL,
@@ -162,7 +163,7 @@ export async function GET(request: Request) {
   }
 
   if (exchangeError) {
-    console.error("Error exchanging auth code for session:", exchangeError);
+    console.error("Error exchanging auth code for session:", safeErrorDiagnostic(exchangeError));
     return authErrorRedirect(copy.exchangeFailed);
   }
 
@@ -172,7 +173,7 @@ export async function GET(request: Request) {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    console.error("Error loading authenticated user after OAuth:", userError);
+    console.error("Error loading authenticated user after OAuth:", safeErrorDiagnostic(userError));
     return authErrorRedirect(copy.userLoadFailed);
   }
 
@@ -186,7 +187,7 @@ export async function GET(request: Request) {
     });
 
     if (updateUserError) {
-      console.error("Error updating OAuth user metadata:", updateUserError);
+      console.error("Error updating OAuth user metadata:", safeErrorDiagnostic(updateUserError));
     }
   }
 
@@ -194,7 +195,7 @@ export async function GET(request: Request) {
   try {
     await syncUserWithDatabase();
   } catch (error) {
-    console.error("Error syncing user:", error);
+    console.error("Error syncing user:", safeErrorDiagnostic(error));
   }
 
   // URL to redirect to after sign in process completes

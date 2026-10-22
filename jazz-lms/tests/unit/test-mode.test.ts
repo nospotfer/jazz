@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { isLocalhostHost, isLocalTestRequest } from '@/lib/test-mode';
 
 const setNodeEnv = (value: string | undefined) => {
@@ -32,9 +32,15 @@ describe('test-mode request detection', () => {
   const originalNodeEnv = process.env.NODE_ENV;
   const originalLocalTestCheckoutFlag = process.env.ENABLE_LOCAL_TEST_CHECKOUT;
 
+  beforeEach(() => {
+    vi.stubEnv('DATABASE_URL', 'postgresql://postgres@127.0.0.1:55432/jazz_maintenance');
+    vi.stubEnv('VERCEL_ENV', '');
+  });
+
   afterEach(() => {
     setNodeEnv(originalNodeEnv);
     setLocalTestCheckoutFlag(originalLocalTestCheckoutFlag);
+    vi.unstubAllEnvs();
   });
 
   test('returns false in production', () => {
@@ -57,7 +63,7 @@ describe('test-mode request detection', () => {
   test('accepts localhost host header in non-production when local-test flag is enabled', () => {
     setNodeEnv('test');
     setLocalTestCheckoutFlag('1');
-    const req = new Request('http://example.com', {
+    const req = new Request('http://localhost:3000', {
       headers: { host: 'localhost:3000' },
     });
     expect(isLocalTestRequest(req)).toBe(true);
@@ -66,7 +72,7 @@ describe('test-mode request detection', () => {
   test('accepts localhost origin in non-production when local-test flag is enabled', () => {
     setNodeEnv('test');
     setLocalTestCheckoutFlag('1');
-    const req = new Request('http://example.com', {
+    const req = new Request('http://127.0.0.1:3000', {
       headers: { origin: 'http://127.0.0.1:3000' },
     });
     expect(isLocalTestRequest(req)).toBe(true);
@@ -97,6 +103,6 @@ describe('test-mode request detection', () => {
         origin: 'http://localhost:3000 invalid',
       },
     });
-    expect(isLocalTestRequest(fallbackLocalOriginReq)).toBe(true);
+    expect(isLocalTestRequest(fallbackLocalOriginReq)).toBe(false);
   });
 });

@@ -8,7 +8,9 @@ import {
   isRangeKey,
   resolveRange,
   type RangeKey,
+  type CurrencyMetric,
 } from '@/lib/admin/metrics-db';
+import { formatPaymentAmount } from '@/lib/payment-money';
 import { getTrafficOverview } from '@/lib/admin/metrics-ga';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { PeriodFilter } from '@/components/admin/analytics/period-filter';
@@ -29,12 +31,13 @@ const RANGE_LABELS: Record<RangeKey, string> = {
   '12m': 'últimos 12 meses',
 };
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  });
+function CurrencyMetricCards({ label, metric, icon }: { label: string; metric: CurrencyMetric; icon: string }) {
+  if (metric.byCurrency.length === 0) return <KpiCard label={label} value={0} format="number" delta={null} icon={icon}
+    unavailable={{ reason: 'Sin importes con moneda verificada en este período.' }} />;
+  return metric.byCurrency.map((total) => <KpiCard key={total.currency} label={`${label} (${total.currency})`}
+    value={0} format="number" delta={total.delta} icon={icon}
+    comparisonUnavailable={total.comparisonUnavailable}
+    formattedValue={formatPaymentAmount(total.amountMinor, total.currency, 'es-ES') ?? 'No disponible'} />);
 }
 
 export default async function AdminStatsPage({
@@ -56,12 +59,11 @@ export default async function AdminStatsPage({
     getTrafficOverview(range),
   ]);
 
-  const hasAnyRevenue = revenue.some((r) => r.value > 0);
   const hasAnyEnrollments = enrollments.some((e) => e.total > 0);
   const hasAnyCompletion = completion.length > 0;
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-[28px] font-bold leading-[40px] text-jazz-dark dark:text-white">
@@ -81,13 +83,7 @@ export default async function AdminStatsPage({
         aria-label="Indicadores principales"
         className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4"
       >
-        <KpiCard
-          label="Ingresos totales"
-          value={overview.revenue.value}
-          format="currency"
-          delta={overview.revenue.delta}
-          icon="💰"
-        />
+        <CurrencyMetricCards label="Cobros registrados" metric={overview.revenue} icon="💰" />
         <KpiCard
           label="Inscripciones"
           value={overview.enrollments.value}
@@ -95,13 +91,7 @@ export default async function AdminStatsPage({
           delta={overview.enrollments.delta}
           icon="🎟️"
         />
-        <KpiCard
-          label="Ticket promedio"
-          value={overview.averageTicket.value}
-          format="currency"
-          delta={overview.averageTicket.delta}
-          icon="💳"
-        />
+        <CurrencyMetricCards label="Ticket promedio" metric={overview.averageTicket} icon="💳" />
         <KpiCard
           label="Nuevos estudiantes"
           value={overview.newStudents.value}
@@ -165,18 +155,22 @@ export default async function AdminStatsPage({
           id="grafico-ingresos"
           className="mb-3 text-[22px] font-semibold leading-[32px] text-jazz-dark dark:text-white"
         >
-          Ingresos por{' '}
+          Cobros registrados por{' '}
           {range.granularity === 'day' ? 'día' : range.granularity === 'week' ? 'semana' : 'mes'}
         </h2>
-        {hasAnyRevenue ? (
-          <RevenueChart
-            data={revenue.map((r) => ({ bucket: r.bucket, revenue: r.value }))}
-            ariaLabel={`Ingresos a lo largo de los ${RANGE_LABELS[rangeKey]}`}
-          />
+        {revenue.series.length > 0 ? (
+          revenue.series.map((series) => <div key={series.currency} className="mt-5 min-w-0">
+            <h3 className="font-semibold">{series.currency}</h3>
+            {series.points.every((point) => point.value !== null) ? <RevenueChart
+              currency={series.currency}
+              data={series.points.map((point) => ({ bucket: point.bucket, revenue: point.value! }))}
+              ariaLabel={`Cobros en ${series.currency} a lo largo de los ${RANGE_LABELS[rangeKey]}`}
+            /> : <p className="text-muted-foreground">Gráfico no disponible: el importe supera la precisión numérica del gráfico. El total exacto se muestra arriba.</p>}
+          </div>)
         ) : (
           <EmptyState
-            title="Sin ingresos en el período"
-            description="Selecciona un período mayor o vuelve tras nuevas inscripciones."
+            title="Sin cobros con moneda verificada en el período"
+            description="Los registros sin importe o moneda verificados se excluyen de los totales."
           />
         )}
       </section>
@@ -281,9 +275,10 @@ export default async function AdminStatsPage({
       </section>
 
       <footer className="pt-4 text-[14px] text-muted-foreground">
-        Ingresos en EUR. El ticket promedio excluye inscripciones gratuitas (cupones 100%). Datos
-        actualizados cada 5 minutos. Ingresos totales del período:{' '}
-        <strong>{formatCurrency(overview.revenue.value)}</strong>.
+        Totales separados por moneda, sin conversión. {overview.revenue.unavailableCount} registros excluidos
+        por falta de importe o moneda verificados. Son importes cobrados, sin desglose de impuestos o reembolsos.
+        El ticket promedio excluye importes cero y se redondea a la unidad mínima de cada moneda.
+        Datos actualizados cada 5 minutos.
       </footer>
     </div>
   );

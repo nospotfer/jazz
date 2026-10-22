@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -85,6 +86,7 @@ vi.mock('@/lib/course-translations', () => ({
 
 vi.mock('@/lib/test-mode', () => ({
   isLocalTestRequest: mocks.isLocalTestRequest,
+  isIsolatedLocalTestRequest: mocks.isLocalTestRequest,
 }));
 
 describe('Security: Authentication enforcement', () => {
@@ -99,7 +101,7 @@ describe('Security: Authentication enforcement', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     expect(response.status).toBe(401);
   });
 
@@ -107,7 +109,7 @@ describe('Security: Authentication enforcement', () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     expect(response.status).toBe(401);
   });
 
@@ -115,7 +117,7 @@ describe('Security: Authentication enforcement', () => {
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: null } } });
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
     expect(response.status).toBe(401);
   });
 
@@ -184,7 +186,7 @@ describe('Security: SQL injection protection in unread-count', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: 0 }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
 
     // Verify it didn't crash and the SQL was called with escaped values
     expect(response.status).toBe(200);
@@ -201,7 +203,7 @@ describe('Security: SQL injection protection in unread-count', () => {
     mocks.queryRawUnsafe.mockResolvedValue([{ count: 0 }]);
 
     const { GET } = await import('@/app/api/messages/unread-count/route');
-    const response = await GET();
+    const response = await GET(new Request('https://app.example.test/api/messages/unread-count'));
 
     expect(response.status).toBe(200);
     const call = mocks.queryRawUnsafe.mock.calls[0][0] as string;

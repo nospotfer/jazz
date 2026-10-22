@@ -6,7 +6,9 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from '../scripts/lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 
 async function main() {

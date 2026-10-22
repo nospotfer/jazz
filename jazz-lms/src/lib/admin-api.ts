@@ -1,17 +1,13 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
 import { hasPermission, type Permission } from '@/lib/admin/permissions';
-
-const OWNER_EMAIL = process.env.ADMIN_OWNER_EMAIL || 'admin@neurofactory.net';
+import { getServerUser } from '@/lib/server-user';
 
 export async function ensureAdminApiPermission(permission: Permission) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerUser();
 
-  if (!user?.email) {
+  if (!user?.id || !user.email) {
     return {
       ok: false as const,
       response: NextResponse.json(
@@ -22,22 +18,22 @@ export async function ensureAdminApiPermission(permission: Permission) {
     };
   }
 
-  const isOwner = user.email.toLowerCase() === OWNER_EMAIL.toLowerCase();
-  let role = 'USER';
+  let role: string | null = null;
 
   try {
     const dbUser = await db.user.findUnique({
-      where: { email: user.email },
-      select: { role: true },
+      where: { id: user.id },
+      select: { id: true, email: true, role: true },
     });
 
-    role = dbUser?.role || role;
+    if (dbUser?.id === user.id && dbUser.email.toLowerCase() === user.email.toLowerCase()) {
+      role = dbUser.role;
+    }
   } catch (error) {
-    console.error('[admin-api] Database role lookup failed.', error);
+    console.error('[admin-api] Database role lookup failed.', safeErrorDiagnostic(error));
   }
 
-  const effectiveRole = isOwner && role === 'USER' ? 'SUPER_ADMIN' : role;
-  if (!hasPermission(effectiveRole, permission)) {
+  if (!hasPermission(role, permission)) {
     return {
       ok: false as const,
       response: NextResponse.json(

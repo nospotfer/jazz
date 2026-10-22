@@ -1,21 +1,21 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   VoucherInput,
   type AppliedVoucher,
 } from "@/components/vouchers/voucher-input";
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { DEFAULT_FULL_COURSE_PRICE_EUR, getKnownCatalogPrice } from "@/lib/pricing";
 
 interface PaymentMethodModalProps {
   isOpen: boolean;
   isLoading?: boolean;
   language: "es" | "en" | "fr" | "pt";
   courseId: string;
-  basePrice?: number;
+  basePrice?: number | null;
   errorMessage?: string;
   onClose: () => void;
   onVoucherApplied: (voucher: AppliedVoucher | null) => void;
@@ -32,6 +32,9 @@ const copyByLanguage = {
     basePrice: "Precio base",
     discount: "Descuento",
     total: "Total a pagar",
+    priceUnavailable: "Precio no disponible",
+    priceUnavailableHint: "No pudimos obtener el precio del curso. Actualiza la página para continuar.",
+    checkoutAmountHint: "El importe final se confirmará en el checkout.",
     cancel: "Cancelar",
     continue: "Ir al checkout",
   },
@@ -45,6 +48,9 @@ const copyByLanguage = {
     basePrice: "Base price",
     discount: "Discount",
     total: "Total to pay",
+    priceUnavailable: "Price unavailable",
+    priceUnavailableHint: "We could not get the course price. Refresh the page to continue.",
+    checkoutAmountHint: "The final amount will be confirmed in checkout.",
     cancel: "Cancel",
     continue: "Go to checkout",
   },
@@ -57,6 +63,9 @@ const copyByLanguage = {
     basePrice: "Prix de base",
     discount: "Remise",
     total: "Total a payer",
+    priceUnavailable: "Prix indisponible",
+    priceUnavailableHint: "Impossible d’obtenir le prix du cours. Actualisez la page pour continuer.",
+    checkoutAmountHint: "Le montant final sera confirmé lors du paiement.",
     cancel: "Annuler",
     continue: "Aller au checkout",
   },
@@ -69,6 +78,9 @@ const copyByLanguage = {
     basePrice: "Preco base",
     discount: "Desconto",
     total: "Total a pagar",
+    priceUnavailable: "Preço indisponível",
+    priceUnavailableHint: "Não foi possível obter o preço do curso. Atualize a página para continuar.",
+    checkoutAmountHint: "O valor final será confirmado no checkout.",
     cancel: "Cancelar",
     continue: "Ir para checkout",
   },
@@ -85,32 +97,45 @@ export function PaymentMethodModal({
   onVoucherApplied,
   onConfirm,
 }: PaymentMethodModalProps) {
-  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(
-    null,
-  );
+  const [voucherSnapshot, setVoucherSnapshot] = useState<{
+    courseId: string; epoch: number; voucher: AppliedVoucher;
+  } | null>(null);
+  const [validationEpoch, setValidationEpoch] = useState(0);
+  const lifecycle = useRef({ courseId, isOpen, epoch: 0, active: false });
+  const onApplied = useRef(onVoucherApplied);
+  useLayoutEffect(() => { onApplied.current = onVoucherApplied; }, [onVoucherApplied]);
+  useLayoutEffect(() => {
+    const epoch = lifecycle.current.epoch + 1;
+    lifecycle.current = { courseId, isOpen, epoch, active: true };
+    setValidationEpoch(epoch);
+    setVoucherSnapshot(null);
+    // The displayed quote and parent checkout intent must reset together.
+    onApplied.current(null);
+    return () => {
+      lifecycle.current.active = false;
+      lifecycle.current.epoch += 1;
+    };
+  }, [courseId, isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      const frame = window.requestAnimationFrame(() => {
-        setAppliedVoucher(null);
-      });
-
-      return () => window.cancelAnimationFrame(frame);
-    }
-  }, [isOpen]);
+  const appliedVoucher = voucherSnapshot?.courseId === courseId && voucherSnapshot.epoch === validationEpoch
+    ? voucherSnapshot.voucher : null;
 
   if (!isOpen) {
     return null;
   }
 
   const copy = copyByLanguage[language];
-  const fullPrice =
-    Number.isFinite(basePrice) && Number(basePrice) > 0
-      ? Number(basePrice)
-      : DEFAULT_FULL_COURSE_PRICE_EUR;
-  const discountValue = appliedVoucher?.discount ?? 0;
-  const finalValue = appliedVoucher ? appliedVoucher.finalPrice : fullPrice;
-  const formatMoney = (value: number) => `EUR ${value.toFixed(2)}`;
+  const knownAmount = getKnownCatalogPrice;
+  // Only omitted legacy callers retain the default. Explicit missing prices
+  // must not be turned into a quote, and a real zero is a known amount.
+  const catalogPrice = knownAmount(basePrice === undefined ? DEFAULT_FULL_COURSE_PRICE_EUR : basePrice);
+  const fullPrice = catalogPrice === null ? null
+    : appliedVoucher ? knownAmount(appliedVoucher.originalPrice) : catalogPrice;
+  const discountValue = fullPrice === null ? null : appliedVoucher ? knownAmount(appliedVoucher.discount) : 0;
+  const finalValue = fullPrice === null ? null
+    : appliedVoucher ? knownAmount(appliedVoucher.finalPrice) : fullPrice;
+  const isPriceAvailable = fullPrice !== null && discountValue !== null && finalValue !== null;
+  const formatMoney = (value: number | null) => value === null ? copy.priceUnavailable : `EUR ${value.toFixed(2)}`;
 
   return (
     <div
@@ -149,14 +174,23 @@ export function PaymentMethodModal({
             {copy.voucherHint}
           </p>
           <VoucherInput
+            key={`${courseId}:${validationEpoch}`}
             courseId={courseId}
-            disabled={isLoading}
+            disabled={isLoading || !isPriceAvailable}
             onApplied={(voucher) => {
-              setAppliedVoucher(voucher);
-              onVoucherApplied(voucher);
+              const current = lifecycle.current;
+              if (!current.active || !current.isOpen || current.courseId !== courseId || current.epoch !== validationEpoch) return;
+              setVoucherSnapshot(voucher ? { courseId, epoch: validationEpoch, voucher } : null);
+              onApplied.current(voucher);
             }}
           />
         </div>
+
+        {!isPriceAvailable ? (
+          <p role="status" className="mt-4 text-sm text-muted-foreground text-center">
+            {copy.priceUnavailableHint}
+          </p>
+        ) : null}
 
         <div className="rounded-xl border border-primary/25 bg-gradient-to-br from-primary/10 via-background to-background p-4">
           <p className="text-sm font-semibold text-foreground">
@@ -169,7 +203,7 @@ export function PaymentMethodModal({
             </div>
             <div className="flex items-center justify-between text-emerald-600">
               <span>{copy.discount}</span>
-              <span>-{formatMoney(discountValue)}</span>
+              <span>{discountValue === null ? copy.priceUnavailable : `-${formatMoney(discountValue)}`}</span>
             </div>
             <div className="h-px bg-border" />
             <div className="flex items-center justify-between text-base font-semibold text-foreground">
@@ -178,6 +212,12 @@ export function PaymentMethodModal({
             </div>
           </div>
         </div>
+
+        {isPriceAvailable ? (
+          <p className="mt-3 text-xs text-muted-foreground text-center">
+            {copy.checkoutAmountHint}
+          </p>
+        ) : null}
 
         {errorMessage ? (
           <p className="mt-4 text-sm text-destructive text-center">
@@ -199,7 +239,7 @@ export function PaymentMethodModal({
             type="button"
             data-testid="payment-method-modal-continue"
             onClick={onConfirm}
-            disabled={isLoading}
+            disabled={isLoading || !isPriceAvailable}
           >
             {copy.continue}
           </Button>

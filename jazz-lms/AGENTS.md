@@ -2,26 +2,37 @@
 
 ## Project Overview
 
-Jazz LMS ("La Cultura del Jazz") — a video course platform built with Next.js 14 (App Router), Supabase Auth, Prisma (SQLite), Dodo Payments payments, and Tailwind CSS. Single-course sales model with chapter/lesson hierarchy.
+Jazz LMS ("La Cultura del Jazz") is a Next.js 16 App Router video course platform with Supabase Auth, Prisma/PostgreSQL, Mux, Dodo Payments, Resend, and Tailwind CSS. It sells the complete course; new individual lesson checkout intentionally returns HTTP 410. Historical lesson purchases still exist in the schema/access policy. The first lesson is free after registration. ES is the default language, with EN/FR/PT available in the public/student experience.
 
 ## Architecture
 
 - **Auth**: Supabase handles authentication. Two client factories exist: `src/utils/supabase/server.ts` (Server Components/API routes) and `src/utils/supabase/client.ts` (Client Components). Both return safe stubs when env vars are missing so local dev doesn't crash.
-- **Database**: Prisma with SQLite. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models: `User`, `Course → Chapter → Lesson → Attachment`, `Purchase`, `UserProgress`.
+- **Database**: Prisma with PostgreSQL. Singleton in `src/lib/db.ts` (`db` export). Schema at `prisma/schema.prisma`. Models include `User`, `Course → Chapter → Lesson → Attachment`, course/lesson purchases, vouchers, progress, quiz attempts and a payment webhook event ledger. SQLite instructions and old Stripe environment variables are legacy.
 - **Admin system**: Role-based via `User.role` field (string: `"USER" | "SUPER_ADMIN" | "COURSE_ADMIN" | "CONTENT_CREATOR" | "MODERATOR"`). Guard helpers in `src/lib/admin.ts` (`requireAdmin()`/`requirePermission()`). Admin pages under `src/app/admin/` are layout-protected.
 - **User sync**: On auth callback (`src/app/auth/callback/route.ts`), `syncUserWithDatabase()` from `src/lib/sync-user.ts` creates a Prisma `User` record matching the Supabase user.
-- **Payments**: Dodo Payments checkout in `src/app/api/checkout/route.ts`. Webhook at `src/app/api/webhooks/dodo-jazzlms/route.ts` creates and reverts `Purchase` records for paid/refunded orders.
+- **Payments**: Dodo checkout in `src/app/api/checkout/route.ts` and `src/app/api/lesson-checkout/route.ts`. Standard signed webhooks at `src/app/api/webhooks/dodo-jazzlms/route.ts`; reconciliation in the purchases route and cron. Provider helpers are under `src/lib/payments/providers/`. Do not assume a mocked payload matches the documented provider contract.
+- **Payment facts**: Checkout metadata records catalog quotes, not charged amounts. Missing provider original/discount facts stay nullable; do not infer them from merchant metadata or a gross total. `Purchase.paymentCurrency` and `paymentAmountMinor` store a nullable canonical provider snapshot; currency and total must come from the same payment object. Use `payment-money.ts` for explicit ISO scales and exact display. Never assign its currency to retained legacy floats. Preserve coupon identity and complete pairs on partial same-reference retries; replacements inherit neither. The additive columns must exist before starting a new generated client. Production migration needs separate approval; see `docs/maintenance/payment-currency.md`.
+- **Discount failures**: Contradictory voucher/integration tags deny repair even with a matching product; the untagged legacy fallback remains. Keep finite customer/global/unknown error scope: personal/ambiguous failures never change global usage, and initial checkout5xx never triggers discount repair/retry. Preserve managed reactivation, same-code retry and no-full-price behavior. Source regressions are not actual native coupon proof; see `docs/maintenance/dodo.md` for remaining ownership/idempotency/concurrency limits.
+- **Actual TEST payment**: A historical isolated run verifies payment, signed native fulfillment and canonical purchase. The retained refund returned `INSUFFICIENT_WALLET_FUNDS`; no refund or access reversal is proven. Preserve the paid purchase and all spent reservations. An already-purchased USER is ineligible for a second checkout of that course. Any further coupon/payment/refund journey needs its own eligible controlled actor, current provider readback and bounded approved TEST scope. See `docs/maintenance/dodo.md`.
+- **Free grants**: Recheck publication and the exact server-read catalog price inside the grant transaction. Voucher grants take the existing voucher advisory lock before the course `FOR NO KEY UPDATE` lock, then revalidate the server quote. Keep the course lock through entitlement/accounting writes. Paid historical fulfillment does not inherit current catalog restrictions. Administrative voucher-term edits remain a separate concurrency limitation.
+- **Media**: Mux signed playback via `src/lib/mux.ts` and lesson access checks. PDF viewing uses a same-origin attachment proxy and native iframe viewer.
+- **Messaging**: Resend outbound email and inbound webhook, with messaging tables managed outside the main Prisma models. Runtime readiness checks only read existing tables; explicit setup SQL handles approved schema changes. See `docs/maintenance/messaging.md` before database setup or live email verification.
 
 ## Key Conventions
 
 - **Server Components by default**. Only add `'use client'` when needed (interactivity, browser APIs). See `src/app/auth/page.tsx` for client example.
 - **Import alias**: `@/*` maps to `./src/*`. Always use `@/` imports.
 - **Auth pattern in pages**: Call `createClient()` → `supabase.auth.getUser()` → redirect to `/auth` if null. See `src/app/dashboard/page.tsx`.
-- **Release flow policy**: All fixes/config changes are developed and deployed as preview from `jazz-lms-dev-vercel`; `main` is reserved for reviewed merges and production deploys only.
+- **Release flow policy**: Use the user-authorized maintenance branch for this goal and previews. Deployment scripts require a clean exact `VERCEL_DEPLOY_COMMIT`, explicit project/team/token configuration and a matching local Vercel project link. Validate remote provider isolation separately. `main` and production changes require the review/approval described in the root instructions; passing a scope guard is not approval.
 - **Supabase stubs**: Both Supabase client factories return minimal stubs when `NEXT_PUBLIC_SUPABASE_URL` is unset, allowing the app to render without Supabase configured.
+- **Google sign-in operations**: The owner-controlled replacement client has historical isolated first/returning-login evidence. Follow `docs/maintenance/google-oauth.md` for current callback/account/source requirements. Preserve credentials and actors; use a fresh target/source/origin/gate window, never a closed scope or spent ledger. Historical proof does not establish production customer continuity.
+- **Auth email operations**: With public signup disabled, use signup-confirmation resend for pending accounts, preserving pending credentials. Isolated registration/verification and password recovery have historical provider evidence in `docs/maintenance/cloud-auth-mail.md`. Use the existing specifically approved controlled recipients/actions and current owner-only fixtures; do not replay email sends, expired links or closed scopes. Provider email proof and public HTTPS proof are separate.
 - **Component organization**: `src/components/landing/` (homepage sections), `src/components/course/` (player/sidebar), `src/components/layout/` (header, nav), `src/components/ui/` (shadcn primitives).
 - **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) loaded in root layout.
-- **Theme**: Dark theme, black/gray backgrounds, yellow-500 accent color throughout.
+- **Theme**: Dark and light themes with jazz gold accents. Verify contrast and mobile layouts in both; do not use dark-only text colors on shared surfaces.
+- **Server identity**: Verify cookie-backed identity through `supabase.auth.getUser()` before authorization. `getSession().user` is not trusted server-side identity.
+- **Auth form startup**: Keep credential fields and submit controls disabled in server HTML until React owns their handlers. Preserve POST method and autocomplete, with localized no-JavaScript guidance. Verify both no-JavaScript and delayed-hydration behavior; a native form POST is not a supported sign-in fallback.
+- **Session synchronization**: `/api/auth/session` requires the exact origin resolved by the existing application-origin helper and `application/json` before parsing or Supabase work. Keep browser-equivalent Origin in route fixtures; do not add forwarded-host trust or a missing-Origin bypass. The configured native public origin must match. Source regressions do not prove deployed login.
 
 ## Commands
 
@@ -33,12 +44,95 @@ npm run seed:sample  # Sample data (npx tsx prisma/seed-sample.ts)
 npm run admin:create # Create admin user (needs ADMIN_EMAIL env var)
 npm run admin:studio # Open Prisma Studio
 npm run check:integrations # Validate Mux + Supabase storage + env
+npm run audit:pdfs -- --config /private/pdf-audit.json --project-ref PROJECT_REF --course-id COURSE_ID # Bounded read-only PDF audit; see maintenance runbook
 npm run test:payments:backend # Targeted backend payment validation
 npm run test:payments:frontend:real # Real Dodo checkout frontend E2E
 npm run test:payments:all # Backend + frontend real + build
-npx prisma migrate dev --name <name>  # Apply migrations
 npx prisma generate  # Regenerate Prisma Client after schema changes
 ```
+
+The legacy migration chain has no complete initial PostgreSQL baseline. Follow
+the README's `db push` setup only for a new disposable database; do not treat
+`migrate dev` or `migrate deploy` as a verified bootstrap or recovery command.
+Existing databases need individually reviewed SQL and migration-history handling
+from `docs/maintenance/payment-currency.md`, with separate production approval.
+
+The inventoried legacy seeds/admin/media mutators require a separate literal
+`ENABLE_LOCAL_LEGACY_MUTATIONS=1`, development/test runtime and the dedicated
+disposable loopback target. They cannot run in production. Voucher reset requires
+explicit user/course scope and defaults to a plan; writes need `--apply`.
+See `docs/maintenance/operational-scripts.md` before using operational commands.
+
+Native release helpers under `scripts/native/` use an explicit owner-only JSON
+configuration and Node 24. `prepare-release.mjs --inspect` is read-only;
+`--build` creates a new private artifact from an exact clean Git checkout without
+server credentials in the builder. After webpack, it prunes development-only
+dependencies using the existing lockfile, offline and without lifecycle scripts,
+then rechecks source bytes before sealing. Older artifacts retain their original
+dependency inventory. Neither command starts services.
+A runtime application change needs a newly reviewed source binding and build; a
+documentation-only bridge cannot admit it. Keep archived scopes and data-profile
+receipts bound to their original application commits.
+`launch-preview.mjs` starts only a bounded Linux preview after release inspection,
+using owner-only Unix sockets and a fixed-expiry Basic gate. That command denies
+production startup. Separate `launch-production.mjs` and
+`launch-production-tunnel.mjs` implement explicit production/maintenance and
+named-tunnel startup after full release inspection. Their default is inspection;
+real production execution still requires the approved concrete release. See
+`docs/maintenance/production-startup.md`. Monster user-systemd namespace
+directives are ineffective; select the proposed app/maintenance container units,
+not direct host units, for the release review. Preparation never creates the
+production Docker network or installs/starts units. Its explicit Quick Tunnel Worker exception is preview-only; general
+ingress continues to deny Worker browsing. `reconcile-runner.mjs` has a
+preparation-only CLI and no activation flag. A separately verified tunnel boundary
+is still required; plain `npm start` does not establish it. See
+`docs/maintenance/native-runtime.md` before startup or hosting changes.
+
+Default native previews reject payment credentials. TEST payments and
+restored-customer access remain capped at 30 minutes; only a
+payment-disabled preview on the isolated project may run for up to 24 hours,
+with a fixed Basic gate and worker expiry. The explicit `testPayments` profile
+permits only Dodo TEST inputs on the pinned isolated backend, with a
+canonical deadline of at most30 minutes exactly matching the Basic gate. Keep
+the profile in the validated configuration; do not inject credentials after
+validating a payment-disabled config. Verify actual TEST provider resources,
+controlled USER/recipients, source and delivery separately, with bounded actions
+under the owner's continuing authorization. Cron/mail/tracking/local mutators
+stay disabled; preview profiles cannot start production.
+
+## Recovery and current work
+
+The October13 archive has been restored into the replacement backend:26 tables,
+1,621 rows/14,270 typed cells and all68 PDFs/6,423,774 bytes. The accepted import
+and file uploads are complete. Never repeat them, recreate the bucket or overwrite
+restored objects. Archive recovery does not establish recovery-point currency.
+
+The original production backend remains paused because its browser permissions
+are unsafe. The replacement has the reviewed strict permission structure; keep
+its public database API closed. Before each fresh access scope, verify current
+customer/protected state, persisted actor role, exact source/origin and cleanup
+prerequisites. Restore temporary Auth settings, close owned browser/application
+resources and independently verify pause and original project settings afterward.
+
+Current outcomes and next actions live in `docs/maintenance/production-readiness.md`.
+Closed diagnostic scopes are historical evidence; never replay spent plans or
+repeat accepted recovery operations. A public login-page check is not proof of
+a hosted login, customer continuity or production readiness.
+
+Admin authorization requires verified Supabase identity and the matching existing
+application row's persisted role. Permission lookup must not create/promote an
+account or invent authority after a database failure. The native `recoveryAccess`
+profile permits a <=30-minute protected read-only access check; source tests and
+offline password matches are not proof of a hosted login. Load private recovery
+inputs explicitly, verify current roles, and use a fresh source/origin/lease.
+Real customer data is not an isolated test environment.
+
+Application changes remain unreleased in production. Public Vercel is paused;
+R14 recovered administrator access is verified. Broader student/media journeys,
+recovery point, stable free hosting and release review remain open. Use the current summaries in
+`docs/maintenance/backlog.md` and `docs/maintenance/production-readiness.md`.
+Dated diagnostic sections are historical evidence, not instructions to repeat
+completed recovery or old failed attempts.
 
 ## File Patterns
 
@@ -47,7 +141,7 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 | Pages (server) | `src/app/**/page.tsx` |
 | API routes | `src/app/api/**/route.ts` |
 | Server actions | `src/actions/*.ts` |
-| Shared libs | `src/lib/*.ts` (db, dodo-jazzlms, admin, sync-user, utils) |
+| Shared libs | `src/lib/**` (db, admin, sync-user, payments/provider, payments/providers/dodo) |
 | Auth utilities | `src/utils/supabase/{client,server,middleware}.ts` |
 | UI primitives | `src/components/ui/*.tsx` (shadcn/radix-based) |
 
@@ -55,7 +149,9 @@ npx prisma generate  # Regenerate Prisma Client after schema changes
 
 - **Role field is string-based**: `User.role` is a `String` with `@default("USER")`, not a Prisma enum. Use constants from `src/lib/admin/permissions.ts`.
 - **Prisma Client must be regenerated** after any `schema.prisma` change: run `npx prisma generate`.
-- **Middleware runs on all routes** (except static/image/favicon). Session refresh happens via `src/utils/supabase/middleware.ts`.
+- **Applied migration SQL is immutable**: keep the bytes of recorded migrations unchanged; put later changes in a new migration. The four historically recorded checksums are protected by `tests/security/historical-migration-integrity.test.ts`. Source restoration does not update a database ledger; see `docs/maintenance/payment-currency.md` before reconciliation or replay.
+- **Next.js proxy**: `src/proxy.ts` handles language cookies and root/dashboard/admin session processing. API routes must enforce their own authentication and authorization.
 - **Test framework is configured**: Vitest for unit/integration/contract/security/system and Playwright for E2E.
 - **Real Dodo frontend E2E requires env preconditions** (`PAYMENTS_E2E_REAL_ENABLED=1`, `PAYMENTS_E2E_STORAGE_STATE`, `PAYMENTS_E2E_COURSE_ID`).
-- **Admin pages are layout-protected** — the `src/app/admin/layout.tsx` calls `requireAdmin()` which redirects non-admins. Individual admin pages don't need their own auth checks.
+- **Admin pages are layout-protected**, but privileged data reads, API routes and actions must also enforce the permission relevant to their operation. Do not rely on a layout to authorize an API/action.
+- **Maintenance evidence**: See `docs/maintenance/` for inventory, verified issues, checks and remaining work. Use synthetic environment values for mocked tests; never run seeds, test purchase resets, migrations or payment scripts against production during unattended work.

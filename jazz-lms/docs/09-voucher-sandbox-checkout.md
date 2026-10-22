@@ -10,7 +10,7 @@ Preencha no `.env.local`:
 - `DODO_PAYMENTS_API_KEY=...`
 - `DODO_PAYMENTS_WEBHOOK_SECRET=...`
 - `DODO_BUSINESS_ID=bus_xxx`
-- `DODO_PRODUCT_ID=896872`
+- `DODO_PRODUCT_ID=<ID do produto deste curso em test_mode>`
 - `DODO_ENVIRONMENT=test_mode`
 
 Opcional (quando usar Supabase local/externo):
@@ -29,8 +29,10 @@ Terminal 1:
 
 No Dodo Payments Webhooks:
 
-- Endpoint: `https://culturadeljazz.com/api/webhooks/dodo-jazzlms`
-- Eventos: `order_created`, `order_refunded`
+- Use um endpoint em **test_mode** apontando para o app local ou preview com banco isolado.
+- Eventos: `payment.succeeded`, `refund.succeeded`, `refund.failed` e os eventos
+  `dispute.*` usados pelo app. A lista e o contrato de assinatura estão em
+  [Dodo local setup](./10-dodo-local-setup.md).
 
 Para teste local com webhook real, use um túnel e aponte o endpoint para `https://<tunnel>/api/webhooks/dodo-jazzlms`.
 
@@ -46,7 +48,8 @@ No checkout hospedado da Dodo Payments:
 Tela admin vouchers:
 
 - Use botões de atalho `10%`, `20%`, `30%`, `50%`, `100%`.
-- Cada clique cria 5 vouchers com código determinístico no padrão `CDJLMS1001`, `CDJLMS2001`, `CDJLMS5001`, etc.
+- Copie os códigos que a tela realmente gerar; cada voucher deve ter um código
+  único, e cupons antigos com esses prefixos podem não corresponder à geração atual.
 
 ## 5.1) Apagar vouchers errados
 
@@ -56,7 +59,9 @@ No admin de vouchers:
 - **Eliminar seleccionados**: marca vários e remove em uma ação.
 - **Eliminar lote**: remove todos os vouchers do lote (somente os que ainda não foram usados).
 
-Observação: vouchers já usados/resgatados não são apagados por segurança.
+Observação: a exclusão normal bloqueia vouchers usados; a exclusão forçada remove
+também seu histórico local. Cupons pagos precisam ser desativados no provedor antes
+da exclusão local. Faça testes de exclusão apenas com dados isolados.
 
 ## 6) Testar checkout com desconto
 
@@ -64,7 +69,7 @@ Fluxo recomendado:
 
 1. Copie um código criado.
 2. Abra compra do curso (dashboard ou página do curso).
-3. No modal de método de pagamento, selecione cartão ou PayPal.
+3. Abra o modal de compra; o checkout hospedado determinará os métodos disponíveis.
 4. Preencha o campo opcional de voucher.
 5. Continue para o checkout da Dodo Payments.
 

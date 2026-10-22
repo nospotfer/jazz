@@ -1,5 +1,6 @@
 "use client";
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { useEffect } from "react";
 
 export default function GlobalError({
@@ -10,7 +11,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("[GLOBAL_ERROR_BOUNDARY]", error);
+    console.error("[GLOBAL_ERROR_BOUNDARY]", safeErrorDiagnostic(error));
   }, [error]);
 
   return (

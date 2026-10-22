@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const APP_URL = "https://app.example.com";
 
@@ -29,6 +29,7 @@ const mocks = vi.hoisted(() => ({
   validateVoucherForCourse: vi.fn(),
   isLocalTestRequest: vi.fn(),
   voucherUpdate: vi.fn(),
+  ensureVoucherDiscountSynced: vi.fn(),
 }));
 
 vi.mock("@/utils/supabase/server", () => ({
@@ -90,11 +91,12 @@ vi.mock("@/lib/payments/providers/dodo", () => ({
 }));
 
 vi.mock("@/lib/voucher-provider-sync", () => ({
-  ensureVoucherDiscountSynced: vi.fn(async () => ({ ok: false, reason: "skipped_no_provider", metadata: null })),
+  ensureVoucherDiscountSynced: mocks.ensureVoucherDiscountSynced,
 }));
 
 vi.mock("@/lib/vouchers", () => ({
   validateVoucherForCourse: mocks.validateVoucherForCourse,
+  lockPublishedCourseForGrant: vi.fn(async () => undefined),
 }));
 
 vi.mock("@/lib/test-mode", () => ({
@@ -102,8 +104,10 @@ vi.mock("@/lib/test-mode", () => ({
 }));
 
 describe("POST /api/checkout", () => {
+  afterEach(() => vi.unstubAllEnvs());
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.createProviderCheckout.mockReset();
 
     mocks.cookies.mockResolvedValue({ get: vi.fn(() => undefined) });
     mocks.userFindUnique.mockResolvedValue(null);
@@ -124,6 +128,7 @@ describe("POST /api/checkout", () => {
     mocks.validateVoucherForCourse.mockResolvedValue(null);
     mocks.isLocalTestRequest.mockReturnValue(false);
     mocks.voucherUpdate.mockResolvedValue(undefined);
+    mocks.ensureVoucherDiscountSynced.mockResolvedValue({ ok: false, reason: "skipped_no_provider", metadata: null });
   });
 
   test("returns 400 for missing courseId", async () => {
@@ -172,6 +177,7 @@ describe("POST /api/checkout", () => {
     });
     mocks.userFindUnique.mockRejectedValue(new Error("relation User missing"));
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -205,6 +211,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -225,6 +232,7 @@ describe("POST /api/checkout", () => {
     });
     mocks.userFindUnique.mockResolvedValue({ role: "SUPER_ADMIN" });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -245,6 +253,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -269,6 +278,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -290,6 +300,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -327,6 +338,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Curso",
       description: "",
@@ -354,6 +366,7 @@ describe("POST /api/checkout", () => {
         data: { user: { id: "u1", email: "student@example.com" } },
       });
       mocks.courseFindUnique.mockResolvedValue({
+        isPublished: true,
         id: "c1",
         title: "Curso",
         description: "",
@@ -398,11 +411,17 @@ describe("POST /api/checkout", () => {
   });
 
   test("creates a local test checkout on localhost requests", async () => {
-    mocks.isLocalTestRequest.mockReturnValue(true);
+    vi.stubEnv("NODE_ENV", "test");
+    vi.stubEnv("VERCEL_ENV", "");
+    vi.stubEnv("DATABASE_URL", "postgresql://postgres@127.0.0.1:56122/postgres");
+    vi.stubEnv("ENABLE_LOCAL_TEST_CHECKOUT", "1");
+    const actual = await vi.importActual<typeof import("@/lib/test-mode")>("@/lib/test-mode");
+    mocks.isLocalTestRequest.mockImplementation(actual.isLocalTestRequest);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -430,11 +449,39 @@ describe("POST /api/checkout", () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
   });
 
+  test.each(["production", "external database", "remote URL with localhost headers"])(
+    "keeps provider checkout and never grants synthetic access for %s", async condition => {
+      vi.stubEnv("NODE_ENV", condition === "production" ? "production" : "test");
+      vi.stubEnv("VERCEL_ENV", "");
+      vi.stubEnv("ENABLE_LOCAL_TEST_CHECKOUT", "1");
+      vi.stubEnv("DATABASE_URL", condition === "external database"
+        ? "postgresql://fixture@production.example.test:5432/postgres"
+        : "postgresql://postgres@127.0.0.1:55432/jazz_maintenance");
+      const actual = await vi.importActual<typeof import("@/lib/test-mode")>("@/lib/test-mode");
+      mocks.isLocalTestRequest.mockImplementation(actual.isLocalTestRequest);
+      mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.test" } } });
+      mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
+      mocks.purchaseFindUnique.mockResolvedValue(null);
+      mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+      const url = condition === "remote URL with localhost headers"
+        ? "https://remote.example.test/api/checkout" : "http://localhost:3000/api/checkout";
+      const request = new Request(url, {
+        method: "POST", headers: { "content-type": "application/json", host: "localhost:3000", origin: "http://localhost:3000" },
+        body: JSON.stringify({ courseId: "c1" }),
+      });
+      const response = await (await import("@/app/api/checkout/route")).POST(request);
+      expect(response.status).toBe(200);
+      expect(mocks.createProviderCheckout).toHaveBeenCalledOnce();
+      expect(mocks.upsertCoursePurchaseFromProvider).not.toHaveBeenCalled();
+    },
+  );
+
   test("returns 400 when voucher validation fails", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -461,6 +508,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -494,12 +542,13 @@ describe("POST /api/checkout", () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
   });
 
-  test("falls back to checkout without voucher when provider rejects discount", async () => {
+  test("does not silently create full-price checkout when requested voucher is rejected", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -534,19 +583,18 @@ describe("POST /api/checkout", () => {
     });
 
     const res = await POST(req);
-    const body = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(body.url).toContain("cks_full_price");
-    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(2);
+    expect(res.status).toBe(400);
+    expect(await res.text()).toContain("voucher");
+    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(1);
   });
 
-  test("returns 400 when voucher fallback checkout also fails", async () => {
+  test("returns 400 when provider voucher synchronization fails", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -585,12 +633,13 @@ describe("POST /api/checkout", () => {
     expect(text).toContain("voucher");
   });
 
-  test("falls back without voucher context when provider rejects discount", async () => {
+  test("does not retry an unexpected provider discount failure at full price", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -608,10 +657,43 @@ describe("POST /api/checkout", () => {
     const req = createCheckoutRequest({ courseId: "c1" });
 
     const res = await POST(req);
-    const body = await res.json();
+    expect(res.status).toBe(400);
+    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(1);
+  });
 
-    expect(res.status).toBe(200);
-    expect(body.url).toContain("cks_no_voucher");
+  test("returns 409 if concurrently consumed free voucher fails atomic redemption", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.com" } } });
+    mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({ valid: true, isFree: true, originalPrice: 29.99, discount: 29.99, finalPrice: 0,
+      voucher: { id: "v1", code: "FREE100", providerDiscountCode: "FREE100" } });
+    const error = new Error("Este voucher atingiu o limite total de usos");
+    error.name = "VoucherRedemptionRejectedError";
+    mocks.upsertCoursePurchaseFromProvider.mockRejectedValue(error);
+    const { POST } = await import("@/app/api/checkout/route");
+    const response = await POST(createCheckoutRequest({ courseId: "c1", voucherCode: "FREE100" }));
+    expect(response.status).toBe(409);
+    expect(mocks.createProviderCheckout).not.toHaveBeenCalled();
+  });
+
+  test("backfill preserves provider mapping, local total limit and per-user rule", async () => {
+    mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1", email: "student@example.com" } } });
+    mocks.courseFindUnique.mockResolvedValue({ isPublished: true, id: "c1", title: "Jazz", price: 29.99 });
+    mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.validateVoucherForCourse.mockResolvedValue({ valid: true, isFree: false, originalPrice: 29.99, discount: 5, finalPrice: 24.99,
+      voucher: { id: "v1", code: "JAZZ5", providerDiscountCode: "DODO5", type: "DISCOUNT_FIXED", discountAmount: 5,
+        maxUses: 10, currentUses: 9, maxUsesPerUser: 2, minOrderValue: 10, metadata: { providerDiscountCode: "DODO5" } } });
+    mocks.ensureVoucherDiscountSynced.mockResolvedValue({ ok: true, metadata: { providerDiscountCode: "DODO5" } });
+    mocks.createProviderCheckout.mockRejectedValueOnce(new Error("discount does not exist"));
+    const { POST } = await import("@/app/api/checkout/route");
+    const response = await POST(createCheckoutRequest({ courseId: "c1", voucherCode: "JAZZ5" }));
+    expect(response.status).toBe(200);
+    expect(mocks.ensureVoucherDiscountSynced).toHaveBeenCalledWith(expect.objectContaining({
+      maxUses: 10, maxUsesPerUser: 2, minOrderValue: 10, metadata: { providerDiscountCode: "DODO5" },
+    }));
+    expect(mocks.createProviderCheckout).toHaveBeenCalledTimes(2);
+    for (const [checkout] of mocks.createProviderCheckout.mock.calls) expect(checkout.providerDiscountCode).toBe("DODO5");
   });
 
   test("returns 400 and syncs voucher usage when provider reports max redemptions", async () => {
@@ -620,6 +702,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -657,12 +740,13 @@ describe("POST /api/checkout", () => {
     expect(mocks.voucherUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test("returns 400 and increments usage from currentUses when voucher has no maxUses", async () => {
+  test("returns 400 without inventing global usage for an unspecified provider limit", async () => {
     mocks.isActivePaymentProviderConfigured.mockReturnValue(true);
     mocks.getUser.mockResolvedValue({
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -697,10 +781,7 @@ describe("POST /api/checkout", () => {
     const res = await POST(req);
 
     expect(res.status).toBe(400);
-    expect(mocks.voucherUpdate).toHaveBeenCalledWith({
-      where: { id: "v2" },
-      data: { currentUses: 4 },
-    });
+    expect(mocks.voucherUpdate).not.toHaveBeenCalled();
   });
 
   test("returns 400 on fallback failure even when voucher is not locally validated", async () => {
@@ -709,6 +790,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -735,6 +817,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -759,6 +842,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",
@@ -781,6 +865,7 @@ describe("POST /api/checkout", () => {
       data: { user: { id: "u1", email: "student@example.com" } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: "c1",
       title: "Jazz",
       description: "Desc",

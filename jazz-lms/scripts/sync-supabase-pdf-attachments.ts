@@ -1,7 +1,9 @@
 import { AttachmentKind, LanguageCode, PrismaClient } from '@prisma/client';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
-const db = new PrismaClient();
+const localTarget = assertLegacyLocalMutationAllowed({ supabase: true });
+const db = new PrismaClient({ datasources: { db: { url: localTarget.databaseUrl } } });
 
 const SUPPORTED_LANGUAGES: LanguageCode[] = ['es', 'en', 'fr', 'pt'];
 const EXPECTED_CLASS_COUNT = 15;
@@ -180,7 +182,7 @@ async function main() {
   const courseId = getArgValue('--course-id');
   const storagePrefix = getArgValue('--storage-prefix');
   const bucket = (process.env.SUPABASE_STORAGE_BUCKET || '').trim();
-  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+  const supabaseUrl = localTarget.supabaseUrl!;
   const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
   if (!bucket || !supabaseUrl || !serviceRoleKey) {

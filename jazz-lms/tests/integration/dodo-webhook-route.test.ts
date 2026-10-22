@@ -76,6 +76,33 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     expect(mocks.webhookCreate).not.toHaveBeenCalled();
   });
 
+  test.each(["refund.failed", "dispute.won", "dispute.cancelled"])(
+    "does not revoke access for %s", async (type) => {
+      const { POST } = await import("@/app/api/webhooks/dodo-jazzlms/route");
+      const response = await POST(new Request("http://localhost/api/webhooks/dodo-jazzlms", {
+        method: "POST", body: JSON.stringify({ type, data: { payment_id: "pay_contract" } }),
+      }));
+      expect(response.status).toBe(200);
+      expect(mocks.revertCoursePurchaseByProviderReferenceId).not.toHaveBeenCalled();
+      expect(mocks.upsertCoursePurchaseFromProvider).not.toHaveBeenCalled();
+    },
+  );
+
+  test("acknowledges out-of-order paid event blocked by refund ledger without regrant", async () => {
+    const revoked = new Error("already refunded");
+    revoked.name = "DodoPaymentRevokedError";
+    mocks.upsertCoursePurchaseFromProvider.mockRejectedValue(revoked);
+    const { POST } = await import("@/app/api/webhooks/dodo-jazzlms/route");
+    const response = await POST(new Request("http://localhost/api/webhooks/dodo-jazzlms", {
+      method: "POST", body: JSON.stringify({ type: "payment.succeeded", data: {
+        payment_id: "pay_refunded", status: "succeeded", total_amount: 2999,
+        metadata: { userId: "buyer", courseId: "course-1" },
+      } }),
+    }));
+    expect(response.status).toBe(200);
+    expect(mocks.webhookUpdate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "IGNORED" }) }));
+  });
+
   test("returns 401 for invalid signature", async () => {
     mocks.verifyDodoWebhookSignature.mockReturnValue(false);
 
@@ -111,6 +138,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -137,11 +165,14 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       userId: "user-1",
       courseId: "course-1",
       providerReferenceId: "dodo-pay:pay_123",
-      originalPrice: 29.9,
+      paymentCurrency: "EUR",
+      paymentAmountMinor: "2990",
+      originalPrice: null,
       finalPrice: 29.9,
-      discountAmount: 0,
-      localVoucherCode: "JAZZ20",
-      providerDiscountCode: "DODO20",
+      discountAmount: null,
+      localVoucherCode: null,
+      providerDiscountCode: null,
+      providerDiscountId: null,
     });
   });
 
@@ -152,6 +183,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_124",
+          currency: "EUR",
           amount: 990,
         },
         metadata: {
@@ -173,11 +205,30 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(
       expect.objectContaining({
         providerReferenceId: "dodo-pay:pay_124",
-        originalPrice: 9.9,
+        paymentCurrency: "EUR",
+        paymentAmountMinor: "990",
+        originalPrice: null,
         finalPrice: 9.9,
-        discountAmount: 0,
+        discountAmount: null,
       }),
     );
+  });
+
+  test("accounts the provider-applied discount instead of obsolete checkout voucher metadata", async () => {
+    const { POST } = await import("@/app/api/webhooks/dodo-jazzlms/route");
+    const response = await POST(new Request("http://localhost/api/webhooks/dodo-jazzlms", {
+      method: "POST", body: JSON.stringify({
+        type: "payment.succeeded", data: {
+          payload_type: "Payment", payment_id: "pay_actual", status: "succeeded", total_amount: 2399, currency: "EUR",
+          discounts: [{ discount_id: "dsc_actual", code: "ACTUAL20" }],
+          metadata: { userId: "buyer", courseId: "course", originalPrice: "29.99", voucherCode: "OLDLOCAL", providerDiscountCode: "OLD20" },
+        },
+      }),
+    }));
+    expect(response.status).toBe(200);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({
+      localVoucherCode: null, providerDiscountCode: "ACTUAL20", providerDiscountId: "dsc_actual", paymentCurrency: "EUR", paymentAmountMinor: "2399", originalPrice: null, finalPrice: 23.99, discountAmount: null,
+    }));
   });
 
   test("marks event ignored when provider reference id is missing", async () => {
@@ -211,6 +262,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {},
@@ -233,9 +285,9 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
     );
   });
 
-  test("processes refund-like event and reverts purchase", async () => {
+  test("processes successful refund event and reverts purchase", async () => {
     const payload = {
-      type: "refund.created",
+      type: "refund.succeeded",
       data: {
         payment: {
           id: "pay_refund_1",
@@ -300,6 +352,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -366,6 +419,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
@@ -404,6 +458,7 @@ describe("POST /api/webhooks/dodo-jazzlms", () => {
       data: {
         payment: {
           id: "pay_123",
+          currency: "EUR",
           amount: 2990,
         },
         metadata: {
