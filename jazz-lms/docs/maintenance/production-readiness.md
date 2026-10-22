@@ -89,6 +89,25 @@ behavior kept as separate isolated evidence. Domain access is requested through
 Squarespace Google sign-in with the identified Gmail account. Google nameservers
 can be normal Squarespace defaults, so do not infer an owning Cloud project.
 
+**Oct22 08:09UTC controller update:** caller integration now passes17 closed
+Python controls, with22 browser and22 process-admission controls separately.
+All18 pinned modules import in the existing maintenance venv. Local actual R14
+history adoption and selected-media Python/Node receipt parity pass. Accepted
+Storage key/literal bucket and verified video signer pass explicit local admission.
+Actual45,858-file sealed native inspection accepts these media inputs/synthetic
+DB password. Initial noncanonical expiry rejection is retained before success.
+No application/backend, SQL/Auth or provider operation occurs.
+
+Fresh full baseline/actor/selected tuple precedes Auth enable; conditional owned
+cleanup/full preservation precede media success. Six exact existing processes
+pass the unchanged legacy verifier; unknown/changed candidates stay denied and
+exited owner SSH is omitted. Future scope requires a fresh scan. Concrete
+inactive one-admin/video/PDF review is prepared under
+`/tmp/jazz-maintenance/recovered-media-controller-20261022/`, capped at30min
+access plus8min closure. Explicit approval, current preflight and fresh runtime
+deadline/gate remain required. Public503/UI unreleased and production509 remain
+unchanged; no recovered-media acceptance or reopening is claimed.
+
 Eleven finite build/API/native-library/service/failure review files are retained
 at `/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-staged-reopening-20261022/`,
 manifest SHA256 `dafa984de80a3c17efd402569b398b4366f5d68e966363f1c98cae1fe8a16285`.

@@ -1,6 +1,6 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 09:32 Madrid
+## Current status — Oct22 10:09 Madrid
 
 **The public website remains paused/503. The release candidate is verified
 locally; application and UI improvements are not deployed to production.**
@@ -44,7 +44,12 @@ locally; application and UI improvements are not deployed to production.**
   remains pending the fresh bounded backend/Auth scope.
   Its separate clean recovery build now seals45,858 files with public/CA/cache
   inspection passing. Ten Mux playlist GETs200 pin three referenced hosts;
-  segment access is untested. Controller/guard integration remains pending.
+  segment access is untested. Controller integration is now prepared:17 Python,
+  22 browser and22 process controls pass separately;18 pinned modules import in
+  the existing maintenance venv. Actual sealed native inspection accepts media
+  inputs/synthetic DB password. The inactive one-admin/video/PDF plan needs
+  explicit approval and a fresh <=30min window, full preservation and restoration/
+  re-pause. No recovered app/customer lease, SQL/Auth or backend resume occurs.
   The new temporary transport has no application attached or customer access.
 - **Current owner action:** sign into Squarespace using Google account
   `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google

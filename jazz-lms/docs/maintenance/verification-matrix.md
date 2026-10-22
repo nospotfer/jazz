@@ -1,11 +1,11 @@
 # Goal verification matrix
 
-## Current verification — Oct22 09:32 Madrid
+## Current verification — Oct22 10:09 Madrid
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
 | Public production | Vercel remains paused/503; original/replacement customer backends paused | Unreleased; no new production change |
-| Protected owner preview | ace0804, public401/authorized200, fixed Oct22 22:17UTC expiry; all3 specific handles freshly live | Available on synthetic data |
+| Protected owner preview | ace0804, recorded public401/authorized200, fixed Oct22 22:17UTC expiry; app/tunnel handles live08:02UTC, owner SSH terminal0 | Synthetic preview retained; no restart |
 | Student/media/UI | Actual isolated login/signed Mux/PDF, current desktop/mobile light/dark | Passed in recorded preview scope |
 | Recovered database/files/admin | Accepted1,621rows/all68PDF; R14 admin login/dashboard/logout | Complete; do not replay |
 | Real existing-student password | Owner uses only admin, no controlled USER credential identified | Unverified limitation; separate ordinary-student tests |
@@ -15,7 +15,9 @@
 | Actual built service lifecycle | Rendered unit starts actual Next, restarts after worker SIGTERM, stops/removes; exact maintenance503/HEAD/webhook pass | Passed network-none/test overrides; no real tunnel or boot recovery |
 | Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra older known-product successes | Passed current older status; full RPO unverified |
 | Real production input proposal | Full509 artifact/public settings/CA/cache inspection; owner-only inputs, no provider/SQL/start | Prepared; current app/provider health unverified |
-| Recovered-media preparation |9da4370/10 remote checks;390 policy/transport/worker cases;43 helper controls and actual offline Chrome CSP/cookie/write guards;45,858-file clean recovery build | Source/build/browser harness passed; fresh recovered window/controller integration pending |
+| Recovered-media preparation |9da4370/10 remote checks;390 policy/transport/worker cases;43 helper controls and actual offline Chrome CSP/cookie/write guards;45,858-file clean recovery build | Source/build/browser harness passed; fresh recovered window pending |
+| Media controller |17 Python/22 browser/22 process controls;18 pinned module imports, Python/Node selected receipt parity, actual sealed native config inspection with synthetic DB password | Inactive concrete plan prepared; no customer app/SQL/Auth/backend resume |
+| Current process admission | Six exact existing preview/recovery-transport roles re-observed; real filtered scan passes unchanged legacy verifier | Preparation proof; fresh in-window scan still mandatory |
 | Selected recovered Mux manifest | One signed master GET200/five variants; no segments or backend resume | Signer/master access verified; actual protected playback unverified |
 | Selected Mux host set | Ten master/descendant playlist GETs200 identify stream/manifest/chunk hosts; zero segments | Referenced host set pinned; runtime unknown hosts still denied |
 | Domain access | Owner names Gmail; Squarespace login/listing requested; Google NS can be Squarespace defaults | Access unestablished; no DNS change |

@@ -1,5 +1,39 @@
 # Maintenance log
 
+## Oct22 10:09 Madrid — Recovered-media controller integrated; live scope not started
+
+The controller now composes the accepted R14 preservation/cleanup lifecycle
+with the selected-video/PDF helper.17 closed Python controls pass;22 browser
+and22 process-admission controls pass separately. Media-result fields pass the
+actual Python bridge; false media/logout/runtime closure cannot promote success.
+Fresh full typed baseline, persisted role and selected lesson/PDF relation and
+publication precede temporary Auth enable. Owned cleanup and full preservation
+still precede success. Independent source reviews find no blocking issue.
+
+Local actual R14 history adoption passes with its3 verified user reads; it
+changes only the historical context window, not current SQL proof. Python/Node
+selected-media receipts match. Accepted Storage key, literal bucket and verified
+Mux signer pass explicit local admission. Actual45,858-file sealed native
+inspection passes with those media inputs/synthetic DB password, without any
+app/backend/provider operation. Initial expiry formatting is rejected before
+startup and retained; canonical UTC passes. Shell Python lacks psycopg; existing
+hardening-parser venv imports all18 pinned modules with psycopg3.3.6.
+
+Actual process inspection preserves six exact existing preview/unbound-tunnel
+roles and passes the unchanged legacy verifier. Unknown/changed processes stay
+denied. Exited owner SSH is omitted, not restarted. Exact existing Python and
+cloudflared group-write exceptions bind path/mode/hash/inode, without changing
+shared permissions. Earlier classification/asset guard stops are retained.
+App2001/tunnel98774 and unbound4475 are live08:02UTC; SSH98397 is terminal0.
+
+Concrete inactive scope/plan is prepared under
+`/tmp/jazz-maintenance/recovered-media-controller-20261022/`: one controlled
+admin login/video/PDF/logout, <=30min access plus<=8min closure, full preservation,
+exact conditional owned cleanup, Auth restoration and re-pause. Owner approval,
+fresh deadline/gate and current preflight remain required. No customer lease,
+app, SQL/Auth or backend resume occurs. Public503/UI unreleased, production509,
+domain/provider/recovery-point and broader payment gaps remain unchanged/open.
+
 ## Oct22 09:32 Madrid — Recovery source/build and media helper/browser gates pass
 
 Recovery-only9da4370 is pushed with all10 remote checks successful. Pre-push

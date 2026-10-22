@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current gate — Oct22 02:25 Madrid
+## Current gate — Oct22 10:09 Madrid
 
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
@@ -30,6 +30,14 @@
 - [x] Build separate recovery9da4370 artifact/45,858 files; verify43 helper
       controls, actual offline browser hash-CSP/cookie guards and metadata-only
       Mux host set. No customer application/runtime has started.
+- [x] Integrate controller/bridge/current selected tuple and process admission;
+      17 Python/22 browser/22 process controls pass separately. Import18 pinned
+      modules in maintenance venv; inspect actual sealed media config with a
+      synthetic DB password, without app/start/API operations.
+- [x] Prepare inactive one-admin/video/PDF scope with full preservation,
+      exact owned cleanup, Auth restoration and re-pause.
+- [ ] Obtain bounded backend/Auth approval, bind fresh deadline/gate and
+      revalidate current processes, data, role and hosted Auth version.
 - [ ] Verify remaining recovered media with controlled admin; record unavailable
       real student password continuity and decide remaining RPO/integration gaps.
       Use a fresh recovery-only build and approved <=30min scope; no closed
