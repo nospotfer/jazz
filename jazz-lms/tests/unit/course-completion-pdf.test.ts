@@ -14,7 +14,7 @@ describe('course certificate export', () => {
       completionLabel: 'Programa completo: 15 de 15 clases', scoreLabel: '100%',
       medalLabel: 'Platino',
       gratitudeLines: ['El estudiante completó las clases y evaluaciones.', 'Reconocimiento de su aprendizaje y dedicación.'],
-      teacherName: 'Enric Vieira',
+      teacherName: 'Enric Vázquez Ramonich',
       signatureImage: new Uint8Array(readFileSync('public/images/enric_signature.png')),
       logoImage: new Uint8Array(readFileSync('public/images/logo-mark.png')),
     });

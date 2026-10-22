@@ -31,7 +31,7 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
       certificateSubtitle: 'This document certifies that',
       completionLabel: (completed, total) => `Program completed in full: ${completed} of ${total} classes`,
       scoreLabel: (score) => `Personal learning milestone validated at ${score}%`,
-      teacherName: 'Enric Vieira',
+      teacherName: 'Enric Vázquez Ramonich',
       buttonLabel: 'Download PDF Certificate',
       gratitudeLines: (name) => [
         `${name} has successfully fulfilled the academic and practical requirements of this training program.`,
@@ -46,7 +46,7 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
       certificateSubtitle: 'Por medio del presente se certifica que',
       completionLabel: (completed, total) => `Programa completado integralmente: ${completed} de ${total} clases`,
       scoreLabel: (score) => `Conquista personal de aprendizaje validada en ${score}%`,
-      teacherName: 'Enric Vieira',
+      teacherName: 'Enric Vázquez Ramonich',
       buttonLabel: 'Descargar Certificado en PDF',
       gratitudeLines: (name) => [
         `${name} ha cumplido satisfactoriamente los requisitos académicos y prácticos establecidos para este programa de formación.`,
@@ -61,7 +61,7 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
       certificateSubtitle: 'Par le présent document, il est certifié que',
       completionLabel: (completed, total) => `Programme intégralement complété : ${completed} sur ${total} cours`,
       scoreLabel: (score) => `Accomplissement personnel validé à ${score}%`,
-      teacherName: 'Enric Vieira',
+      teacherName: 'Enric Vázquez Ramonich',
       buttonLabel: 'Télécharger le Certificat PDF',
       gratitudeLines: (name) => [
         `${name} a rempli avec succès les exigences académiques et pratiques de ce programme de formation.`,
@@ -76,7 +76,7 @@ function getCompletionCopy(language: SupportedLanguage): CompletionCopy {
       certificateSubtitle: 'Certificamos, para os devidos fins, que',
       completionLabel: (completed, total) => `Programa concluído integralmente: ${completed} de ${total} aulas`,
       scoreLabel: (score) => `Conquista individual de aprendizagem validada em ${score}%`,
-      teacherName: 'Enric Vieira',
+      teacherName: 'Enric Vázquez Ramonich',
       buttonLabel: 'Baixar Certificado em PDF',
       gratitudeLines: (name) => [
         `${name} cumpriu com êxito os requisitos acadêmicos e práticos estabelecidos para este programa de formação.`,
