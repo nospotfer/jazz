@@ -19,6 +19,11 @@ and correctly denies a valid checkout503. No provider inputs/network or SQL.
 This is packaging evidence; fresh committed-source build/inspection and any
 replacement candidate selection remain pending. No existing preview is changed.
 
+The first fresh cedf3ff build stops with TS2769 before webpack: two new fixture
+subprocess environments omit the required NODE_ENV type field. Their explicit
+test value is added; full types and all52 preparation checks pass. The failed
+build remains retained and a fresh output is required. No payment lease starts.
+
 Preserved initial experimental failures: package-lock=false ignores the locked
 selection and needs unavailable metadata; that flag is rejected. The supported
 locked offline command succeeds. An initial ambient-Node test run fails the

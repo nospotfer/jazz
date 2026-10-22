@@ -236,7 +236,7 @@ describe("sealed runtime dependency pruning", () => {
       "install", "--package-lock-only", "--ignore-scripts", "--offline", "--no-audit", "--no-fund",
     ], {
       cwd: appRoot, encoding: "utf8", timeout: 10_000,
-      env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, npm_config_cache: cache,
+      env: { NODE_ENV: "test", PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, npm_config_cache: cache,
         npm_config_userconfig: join(cache, "empty-user.npmrc"),
         npm_config_globalconfig: join(cache, "empty-global.npmrc") },
     });
@@ -261,7 +261,7 @@ describe("sealed runtime dependency pruning", () => {
     }
     const result = spawnSync(process.execPath, ["-e", "process.stdout.write(require('runtime-fixture'))"], {
       cwd: value.appRoot, encoding: "utf8", timeout: 5_000,
-      env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin` },
+      env: { NODE_ENV: "test", PATH: `${dirname(process.execPath)}:/usr/bin:/bin` },
     });
     expect(result.status).toBe(0);
     expect(result.stdout).toBe("runtime-retained");
