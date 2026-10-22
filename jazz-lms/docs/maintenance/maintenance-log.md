@@ -1,5 +1,39 @@
 # Maintenance log
 
+## Oct22 — Fresh749 release, service rehearsal and hosted certificate checks pass
+
+- Selected `749c4e7` includes both certificate product fixes. Clean locked production
+  build seals 45,858 files; independent inspection/public/CA/cache pass. All10
+  remote checks/Vercel status pass. The previous509 artifact is not modified.
+- Actual 22.4sec synthetic/network-none container rehearsal verifies four-language
+  checkout/voucher denial, native Prisma/OpenSSL loading without SQL, worker
+  SIGTERM/restart, normal removal and exact maintenance503/HEAD/webhook. Fresh
+  independent closure and post-run full seal pass. No production service/provider/
+  network/tunnel operation occurs; persistent cache/boot/load remain unproven.
+- A fresh source 749 isolated preview starts under its fixed owner-only gate and
+  Oct23 09:12UTC expiry. Actual process admission proves exact source/config and
+  no payment/mail/cron. First certificate attempt counts the streamed card before
+  visibility; normal owned logout/browser closure/full preservation pass. No
+  cleanup SQL mutation occurs. Preserve the failure; a distinct scope adds only
+  a visibility wait, not an application change.
+- Second scope verifies 24 actual certificate layouts across ES/EN/FR/PT,
+  320/390/1440 and light/dark; four normal downloads produce A4 PDFs with correct
+  instructor text. Local logout204/context/browser closure pass. Final read-only
+  comparison preserves22 groups, all ten prior sessions, business/other-actor state,
+  full Auth settings and selected Auth fields except two in-window sign-in times.
+- Guard blocks0/page errors0;25 optional prefetches locally403, five real absent-
+  provider reconcile503. Console errors30 remain unclassified;29 request failures
+  are ERR_ABORTED (28 before/1 at closure). Selected mobile screenshots verify
+  contained paper text/signature but show floating privacy/download overlap,
+  recorded as a minor separate UX issue. No blanket health claim.
+- Retain51 selected noncredential build/service/source/finite/synthetic-image
+  files,8,791,835bytes, manifest773bb558, owner-only/local/unencrypted with no
+  established off-site copy. Private production config is retained separately
+  under production-candidate-749c4e7, without activation or automatic loading.
+- New preview is not yet handed off through Behemoth's old launcher. Recovered-
+  media approval/domain/cutover remain open. Fresh public check still returns 503;
+  no UI/application production deployment occurs.
+
 ## Oct22 — Certificate download verified; real mobile and instructor defects corrected in source
 
 - The preceding status-only turn made no release progress; this continuation
@@ -74,7 +108,7 @@ domain/provider/recovery-point and broader payment gaps remain unchanged/open.
 
 ## Oct22 09:32 Madrid — Recovery source/build and media helper/browser gates pass
 
-Recovery-only9da4370 is pushed with all10 remote checks successful. Pre-push
+Recovery-only9da4370 is pushed with all 10 remote checks successful. Pre-push
 integration778/29skip and lint pass; selected production509 is unchanged. One
 actual Mux master GET at00:28:57UTC returns200/4,523bytes/five variants for the
 selected recovered nonfree lesson. No segments, decoded video, app access,
@@ -157,7 +191,7 @@ Production remains paused, UI unreleased, provider/cutover gates open.
 
 ## Oct22 — Actual API smoke catches missing container OpenSSL
 
-The cedd01f clean production build seals45,857 files; all10 remote checks and
+The cedd01f clean production build seals45,857 files; all 10 remote checks and
 Vercel status pass, and pre-push integration778/29skip passes. Actual built API
 checks uncover a real container dependency failure missed by robots/static probes:
 the selected slim image has no libssl3/libcrypto3. Constructing PrismaClient
@@ -352,7 +386,7 @@ actual restoration delivery and defer further optional payment launches.
 ## Oct21 20:33 UTC — R14 admin recovery journey verified and closed
 
 - Actual10396 exits0 with `RESTORED_ADMIN_ACCESS_VERIFIED_AND_CLOSED` on app
-  `4b320b1`/checkpoint `3ecf93` (all10 remote checks pass): public HTTPS auth200,
+  `4b320b1`/checkpoint `3ecf93` (all 10 remote checks pass): public HTTPS auth200,
   password/dashboard/admin panel, normal global logout204 and subsequent admin
   denial→auth all pass. Password2001/user2003/sync2001;172 app reads/0 blocked/
   0 unexpected denials. This satisfies the exact-source admin recovery flow.
@@ -571,7 +605,7 @@ are historical, not new instructions to repeat accepted work.
 - Retain34 finite/source files privately in review-checkpoint-admin-browser-interface-20261021,
   manifest9a48adc64cdc76514aae1b95af5306eae41a4a7cbe51ad6dd2f53a151b7af6a9.
   Enabled plans/credentials/process tuples/raw customer/provider values excluded;
-  local unencrypted custody only. PR46's stale missing66-files report is replaced
+  local unencrypted custody only. PR #46's stale missing66-files report is replaced
   with accepted recovery, actual page proof and remaining release gates.
 
 ## Oct21 — Actual protected login page passes; hosted login remains pending
@@ -617,7 +651,7 @@ are historical, not new instructions to repeat accepted work.
   credential/private inputs. Local unencrypted custody; no off-site claim.
   [Evidence and next action](production-readiness.md#oct21-admin-check-closes-before-login).
 
-## Oct21 database and all68 PDFs accepted; preview next
+## Oct21 database and all 68 PDFs accepted; preview next
 
 At14:46:02 UTC actual root89467 exits0 after fresh read-only adoption of the two
 existing PDFs and66 new uploads. All68 files/6,423,774 bytes pass verification.
@@ -662,7 +696,7 @@ source only, not hosted login/runtime proof.
 
 ## Oct21 session diagnostic and closed zero-upload connection failure
 
-31ad6ba exact-head publication/CI and independent draft PR46 readback pass;
+31ad6ba exact-head publication/CI and independent draft PR #46 readback pass;
 the application fixes remain undeployed. A separately admitted documented5432
 session-route diagnostic completes seven metadata SQL calls/30.030s same-session
 idle/READ ONLY rollback/close at12:16:23 UTC; independent12:17:21 closure passes.
@@ -727,7 +761,7 @@ Auth/native preview/coupon/refund and production-readiness goals remain open.
 
 Documentation checkpoint 8ac31bd is published: all five workflows/four Quality
 jobs pass, both CodeQL analyses have zero results/errors, open PR-head alerts 0
-and PR46 head/title/body readback passes. Application source remains 105f8b9 and
+and PR #46 head/title/body readback passes. Application source remains 105f8b9 and
 undeployed. Publication 03c0916f and its eight-file custody are complete.
 
 R5 freshly adopts both existing PDFs read-only: 98,661 and 73,085 bytes, totaling
@@ -755,7 +789,7 @@ zero-cost hosting/release and the full goal remain open. [R5 evidence and limits
 
 Source105f8b9 is pushed and exact-head publication passes: five workflows/four
 Quality jobs, both CodeQL analyses zero results/errors, zero open PR-head alerts
-and independent PR46 readback. Publication74ce7cef does not deploy the UI.
+and independent PR #46 readback. Publication74ce7cef does not deploy the UI.
 
 R4 adopts the original first PDF read-only under reviewed metadata semantics and
 passes both fresh selected-policy checks. Frozen fully verified objects1/98,661

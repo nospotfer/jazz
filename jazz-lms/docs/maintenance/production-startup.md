@@ -7,6 +7,18 @@ require the owner's approval of the concrete production release. No service
 installation, backend resume, provider configuration or DNS change has occurred.
 See [hosting](hosting.md) for account/domain and cutover prerequisites.
 
+## Current reviewed artifact — Oct22
+
+Selected candidate `749c4e7` contains the certificate fixes and seals 45,858 files;
+previous509fa06 remains preserved. Actual synthetic container startup, native
+loading, one worker-loss restart, shutdown and maintenance fallback pass. The
+real-input proposal is separately retained under
+`/home/gabriel/.config/culturadeljazz-maintenance/production-candidate-749c4e7/`.
+It is not active and does not establish current provider health. Do not reuse
+older source/path bindings for this candidate. Concrete production tunnel/domain/
+Auth/backend/startup changes still require their final reviewed release scope.
+[Build, hosted certificate, preservation and limits](production-readiness.md#latest-certificate-release).
+
 ## Configuration and release
 
 Use Node24 and an explicit owner-only production JSON configuration. Select
@@ -195,7 +207,7 @@ not actual Cloudflare connectivity. [Retained checkpoint](production-readiness.m
 
 ### Oct22 actual build and container follow-up
 
-Published `0d45a33` passes all10 remote checks plus Vercel status and a clean
+Published `0d45a33` passes all 10 remote checks plus Vercel status and a clean
 45,856-file locked production build. Actual built Next starts in a nonroot,
 read-only, network-none Docker container, serves canonical robots metadata and
 an exact sealed JavaScript asset, then stops/removes its owned resources.
@@ -218,9 +230,9 @@ and inspected from its final approved source.
 ### Accepted candidate — Oct22 02:05 Madrid
 
 Select source `509fa069dec1365d915838d5d98e30cc9c473b3a`, with a fresh45,857-file
-locked build, all10 remote checks and Vercel status passing. The exact rendered
+locked build, all 10 remote checks and Vercel status passing. The exact rendered
 container unit runs the actual built Next app using synthetic inputs/network-none:
-four-language checkout503, voucher JSON503, delayed native-import liveness,
+four-language checkout 503, voucher JSON503, delayed native-import liveness,
 real worker termination followed by a new systemd invocation/container, normal
 stop/removal and maintenance503/HEAD/webhook behavior all pass. Final source pins,
 inactive test units and removed runtime are independently verified. Overrides

@@ -1,23 +1,24 @@
 # Goal verification matrix
 
-## Current verification — Oct22 certificate update
+## Current verification — Oct22 source `749c4e7`
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
 | Public production | Vercel remains paused/503; original/replacement customer backends paused | Unreleased; no new production change |
 | Protected owner preview | ace0804, recorded public401/authorized200, fixed Oct22 22:17UTC expiry; app/tunnel handles live08:02UTC, owner SSH terminal0 | Synthetic preview retained; no restart |
+| New protected preview |749c4e7 at fever-hits-cottage-pgp.trycloudflare.com, fixed Oct23 09:12UTC expiry; actual worker source/config admission | Running isolated; old owner launcher not switched |
 | Student/media/UI | Actual isolated login/signed Mux/PDF, current desktop/mobile light/dark | Passed in recorded preview scope |
 | Eligible certificate | ace0804:15/15 recognition, ordinary button downloads862,196-byte A4 PDF, owned local logout204/browser closure/final preservation of prior10 | Functional download passed; mobile visual defect separately confirmed |
-| Certificate corrections |766a3a7 fixes instructor in4locales;4 actual PDF tests/corrected PDF visual review pass;faf421c mobile correction passes6 actual standalone component/CSS/font browser cases at320/390/1440 light/dark, with failing mobile before cases | Source/standalone browser verified; fresh build/hosted verification pending |
+| Certificate corrections |749c4e7 actual hosted:24 cases/4locales/320,390,1440/light,dark; text/signature contained;4 normal A4 downloads/correct instructor; localLogout204 and final prior10/protected preservation | Passed synthetic scope; minor privacy-button overlap remains |
 | Recovered database/files/admin | Accepted1,621rows/all68PDF; R14 admin login/dashboard/logout | Complete; do not replay |
 | Real existing-student password | Owner uses only admin, no controlled USER credential identified | Unverified limitation; separate ordinary-student tests |
-| Selected candidate |509fa06 locked build/45,857 files,10 remote checks/Vercel success | Passed with synthetic server inputs |
+| Selected candidate |749c4e7 locked build/45,858 files,10 remote checks/Vercel success;509fa06 preserved | Passed with synthetic server inputs |
 | Checkout initiation switch |272 native config +126 route/UI/control cases; actual built four-language503/voucher JSON503 | Passed; staged settingtrue, not deployed |
 | Native container dependency | Old slim image fails Prisma/OpenSSL; full-image native load and API/worker liveness pass | Corrected image pinned; not DB/provider health |
-| Actual built service lifecycle | Rendered unit starts actual Next, restarts after worker SIGTERM, stops/removes; exact maintenance503/HEAD/webhook pass | Passed network-none/test overrides; no real tunnel or boot recovery |
+| Actual built service lifecycle |749 actual 22.4sec rendered-unit Next start/native load,1 worker SIGTERM/restart, stop/removal, maintenance503/HEAD/webhook; independent cleanup/full seal pass | Passed synthetic/network-none/test overrides; no production/tunnel/boot/load proof |
 | Older LIVE payments |5 GETs200;3 paid successes match archive, no refunds/disputes/extra older known-product successes | Passed current older status; full RPO unverified |
 | Newer LIVE creation window |2 GETs200/exact known product identity; all-status Oct13→Oct22 08:18UTC, page0 returns0/complete | Passed fixed filters; not settlement history/full customer RPO |
-| Real production input proposal | Full509 artifact/public settings/CA/cache inspection; owner-only inputs, no provider/SQL/start | Prepared; current app/provider health unverified |
+| Real production input proposal | Full749 artifact/public settings/CA/cache inspection; private durable copy separate from evidence; no provider/SQL/production start | Prepared; current app/provider health unverified |
 | Recovered-media preparation |9da4370/10 remote checks;390 policy/transport/worker cases;43 helper controls and actual offline Chrome CSP/cookie/write guards;45,858-file clean recovery build | Source/build/browser harness passed; fresh recovered window pending |
 | Media controller |17 Python/22 browser/22 process controls;18 pinned module imports, Python/Node selected receipt parity, actual sealed native config inspection with synthetic DB password | Inactive concrete plan prepared; no customer app/SQL/Auth/backend resume |
 | Current process admission | Six exact existing preview/recovery-transport roles re-observed; real filtered scan passes unchanged legacy verifier | Preparation proof; fresh in-window scan still mandatory |
@@ -66,7 +67,7 @@ The matrix below describes the earlier closed attempt.
 | Current preservation | Two DB phases/151 SQL;1,621rows/14,270cells with only2 new sign-in timestamps, prior/protected exact | Passed; global logout leaves session/refresh/AMR/audit0, cleanupCOMMIT0 |
 | Auth/config/resource closure | Full Auth restored, active desired/original equal; both frontends/native/browser closed, independent9GET paused closure; builder/tunnel terminal | Closed; paused desired404 qualified by separate active-parent equality |
 | Diagnostics | Page errors/DNS/TLS/connection0;other28 | Other counter unclassified; no blanket runtime-health claim |
-| Source publication | `3ecf93`: all10 remote checks pass; app `4b320b1` | Source/closed-preview proof, no production deployment or live preview |
+| Source publication | `3ecf93`: all 10 remote checks pass; app `4b320b1` | Source/closed-preview proof, no production deployment or live preview |
 | Remaining goal | Broader customer/content/media, current coupon TEST/refund/currency, recovery currency, free hosting and release/rollback | Incomplete; public503/paused, UI unreleased |
 
 [R14 exact outcome and limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
@@ -159,7 +160,7 @@ connection checks are superseded for this recovery window. [Receipts and custody
 
 | Check | Actual result and limit |
 | --- | --- |
-| Published31ad6ba | Five workflows/four Quality jobs pass; each app2,885/80skip plus lint/types/build, each PostgreSQL80/1skip; two zero-result CodeQL analyses/alerts0; independent draft PR46 readback. Not deployed. |
+| Published31ad6ba | Five workflows/four Quality jobs pass; each app2,885/80skip plus lint/types/build, each PostgreSQL80/1skip; two zero-result CodeQL analyses/alerts0; independent draft PR #46 readback. Not deployed. |
 | Session5432 diagnostic | Seven metadata SQL calls/30.030s same SQL session, READ ONLY rollback/close pass; independent12:17:21 paused/settings closure. Earlier local process guard stops with zero provider calls. Documented derivation, not provider-returned route or automatic fallback. |
 | Subsequent Storage scope | Actual29019exit1 at12:45:01: TLS-only passes; sole native connect fails OperationalError/no SQLSTATE, cause unknown. SQL0/Storage HTTP0/new POST0/COMMIT0. Current preservation/adoption/rollback not performed. |
 | Independent closure | Actual77990exit0 at12:47:25; sevenGET0POST0SQL, exact replacement/production INACTIVE, preview healthy, old observed settings equal. No customer/file health proof. |
@@ -172,7 +173,7 @@ connection checks are superseded for this recovery window. [Receipts and custody
 Seven integrated source/test files match the independently reviewed patch;
 13 pre-fix failures are retained and114 focused cases/types/scoped lint pass.
 Contradictory campaign tags deny repair; customer/unknown limits preserve global
-usage; initial checkout5xx returns503 without repair/retry/mutation. Managed and
+usage; initial checkout5xx returns 503 without repair/retry/mutation. Managed and
 legacy repair, same-code retry and no-full-price controls remain. This is local
 source evidence. Actual current-source native coupon/fulfillment, legacy untagged
 ownership, idempotency and paid concurrency remain open.
@@ -195,7 +196,7 @@ ownership, idempotency and paid concurrency remain open.
 
 | Requirement | Actual evidence and remaining limit |
 | --- | --- |
-| Publication | Exact 8ac31bd documentation checkpoint passes five workflows/four Quality jobs, two zero-result/error CodeQL analyses, alerts 0 and PR46 readback; eight-file custody complete. App code stays 105f8b9, undeployed. |
+| Publication | Exact 8ac31bd documentation checkpoint passes five workflows/four Quality jobs, two zero-result/error CodeQL analyses, alerts 0 and PR #46 readback; eight-file custody complete. App code stays 105f8b9, undeployed. |
 | Existing objects | Both current PDFs pass read-only identity/version/path, byte and API/SQL metadata adoption: 98,661+73,085=171,746 bytes. Frozen verifiedObjects2; new uploads0, no object POST replay/bucket creation. |
 | Diagnostic stability | One recorded stability SELECT returns; source-derived second request048 fails AdminShutdown57P01. The three-observation sequence does not complete; no cause or proven remedy follows. |
 | Data and cleanup | Initial 1,621 rows/14,270 cells match. Closed/UNKNOWN connection; final customer/protected preservation and explicit rollback remain unverified, with both cleanup skips CONNECTION_CLOSED. |
@@ -208,7 +209,7 @@ ownership, idempotency and paid concurrency remain open.
 
 | Requirement | Actual evidence and remaining limit |
 | --- | --- |
-| Publication | Exact105f8b9/five workflows/four Quality jobs pass; two zero-result/error CodeQL analyses, open alerts0 and PR46 readback. Source publication is not deployment/login proof. |
+| Publication | Exact105f8b9/five workflows/four Quality jobs pass; two zero-result/error CodeQL analyses, open alerts0 and PR #46 readback. Source publication is not deployment/login proof. |
 | First-object adoption | Fresh read-only bytes/ID/version/path/API+SQL acceptance and both empty selected-policy checks pass. Frozen verifiedObjects1/98,661 bytes; no first-object POST or bucket recreation. R3 verifiedObjects0 stays unchanged. |
 | New upload | One POST/download/info200 and source-bound byte verification, then SQL014 AdminShutdown57P01. New-object SQL metadata is unverified; two fully restored objects or accepted remaining66 are not established. |
 | Preservation and closure | Initial1,621 rows/14,270 cells pass; final customer/protected preservation and explicit READ ONLY rollback are unverified. Frontend closes/child1. Parent pause and independent10:01:33 sevenGET closure verify replacement/production INACTIVE, preview healthy and old settings equal. |
@@ -572,7 +573,7 @@ with synthetic read mocks, separately from the authenticated5f native journey.
 | Registration / verification | Fresh sealed3e5b2c1/45,831 registration200→one fresh Resend email/one metadata GET/one body GET→verification200→password login/dashboard→normal204→home passes in one uninterrupted protected browser. Actual transport requires a provider GET within five seconds and a live PID-bound permit. Independent closure preserves eight prior accounts/1,513 public rows/28 projections/23 sessions; the pinned new USER is confirmed/app-verified with one identity/sessions0; Auth/resources/full seal pass. | Browser7 blocks/7 console errors/0 page errors are not fully attributed. Latest totals are seven closed scopes/nine actions/seven observed Resend emails; earlier built-in delivery remains unverified. No public HTTPS, production continuity or later-ba105 journey claim. Current-source recovery passes in its separate scope. [Registration](cloud-auth-mail.md#oct20-fresh-registration-on-sealed-source-3e5b2c1). |
 | Password recovery / Google | Oct20 uninterrupted sealed3e5b2c1 recovery passes one reset200/metadata GET/body GET/provider303/callback307/reset200/getUser/form/PUT200, automatic204, old400/new200/dashboard and final normal204→home. Fresh form-ready/current-provider permit is enforced within five seconds; no controller repair/restart/profile continuation or provider URL replay. Independent closure preserves all nine accounts/1,514 public rows/23 original sessions and every other eight actors' rows; same confirmed/app-verified USER, one identity/sessions0, changed password fingerprint, exact Auth restoration/resources/full45,831 seal pass. Oct19 fc8d813 first/returning Google retains its exact identity/preservation/closure scope. | Browser9 blocks/11 console errors/0 page errors/0 command failures remain incompletely attributed; native0/0 is separate. Historical30d848a recovery retains its controller-repair/same-profile-continuation qualification. Google's two earlier runtime errors, public HTTPS, later-ba105 journeys and production/customer continuity remain separate. [Current recovery](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1), [Google](google-oauth.md). |
 | Private redirect continuation preparation | The protocol module passes60 synthetic guards,16 copied-ledger/marker cases and27 inherited assertions plus actual loopback303-bypass/307/200/cookie/form/replay checks. Its current3e5b2c1 hosted use reaches provider303, app307 and reset200 once each without verification replay, in one fresh uninterrupted browser through password update/login/logout. Scope/source/history bindings change; the redirect algorithm is preserved. | The loopback proof uses synthetic providers/backends, and private SSH establishes no public DNS/TLS. The older30d848a repair/continued-profile result remains historical; the separate current-source recovery closes that journey gap without establishing production continuity or general integration health. [Current scope](cloud-auth-mail.md#oct20-uninterrupted-recovery-on-sealed-source-3e5b2c1). |
-| Unconfigured automatic reconciliation | Source33dd19f: actual provider helper with no/blank key reproduces route500 before the fix; desired503 regression fails2/7. Authenticated guard now returns503 provider_unavailable without provider/fetch/DB/upsert/log work; unauthenticated401 and configured historical fulfillment without product ID remain.164 focused tests/types/scoped lint pass. | Auth/DB/upsert are synthetic and fetch intercepted. This is source behavior proof, not Dodo health or identification of the two earlier Google-window diagnostic errors. |
+| Unconfigured automatic reconciliation | Source33dd19f: actual provider helper with no/blank key reproduces route500 before the fix; desired503 regression fails2/7. Authenticated guard now returns 503 provider_unavailable without provider/fetch/DB/upsert/log work; unauthenticated401 and configured historical fulfillment without product ID remain.164 focused tests/types/scoped lint pass. | Auth/DB/upsert are synthetic and fetch intercepted. This is source behavior proof, not Dodo health or identification of the two earlier Google-window diagnostic errors. |
 | Free / paid / legacy access | Four persisted roles: free first lesson only; course buyer all lessons; legacy lesson 2 plus free first; admin preview. Free paid-media/progress/quiz denied. Synthetic checkout grants course access; repeat purchase denied. Four native roles/access denials also pass on the production-built HTTPS frontend. | This earlier four-role scope did not exercise the complete provider flow. Later TEST payment/fulfillment is recorded below; refund remains open. New individual lesson sales remain intentionally410. |
 | Vouchers | Actual local actor: invalid denied/no purchase; FREE_ACCESS → paid access; one purchase/redemption/use; retry denied/cleanup verified. Four-language feedback and 19 component/atomic-error cases pass. Current helper created and retrieved scoped TEST percentage10% / flat EUR5 coupons in seven bounded provider requests. | Provider coupon acceptance is not redemption or native voucher binding. Actual checkout and tax/FX/settlement/account settings remain unverified. |
 | Video / PDFs | Source-e32 actual Mux decode and four-language private PDF bytes pass. Fresh viewport-before-navigation320/390 PDF text is visibly confirmed in both themes, separate visual 7/7; completion 7/7 is narrower. Mux inventory16 and archived 15 lesson mappings plus promo match;68 original PDF hashes/structures and60 class labels verified. | Earlier sad-document screenshots and incomplete primary response remain preserved. Structure/labels do not establish video semantics or translation accuracy. Restricted preview excludes Spotify/Cast. No remapping/deletion justified. |
@@ -591,7 +592,7 @@ with synthetic read mocks, separately from the authenticated5f native journey.
 | Separate cloud backend | Free tvm25 hardened tables/five synthetic actors/60 private PDFs. Native9bd fresh UI2notes/2completedlessons/2attempts24answers and100PLATINUM/92GOLD independently verified. 57 drawer320/390 picker96/link225×44 hit/keyboard/route entry, FB hydrated editors and BC35/35 real language controls pass. All-five12-model preservation passes at02:42:36; apps/tunnel/browser state closed. | Historical correction12/9/3, FB10/9/1 clipping and purpose preflight1/0/1 remain separate. Older two buyer errors remain unclassified. Auth budgets remain distinct: earlier11, fresh-learning3, later-nominal3, focused-editor1; correction state reuse adds0. Dodo/SMTP/stable hosting/production and production Google continuity remain gates; Oct19 isolated OAuth is verified separately. |
 | Real persisted checks | Five guarded PostgreSQL suites pass46/one REST skip on exact a207 and3cc CI, including seven nullable-accounting regressions and earlier real3-second acquisition cases. Dedicated local Supabase security mode separately5/5 passes. | Fixtures cannot prove production grant repair; actual production remains paused and unsafe until reviewed hardening. |
 | Privacy / SEO | 72 focused cases, 15 public browser cases, actual promo playback at 320/390/1440 both themes without optional cookies; on/off/withdrawal works, language retained. Private routes excluded; preview noindex. | HTTPS replay/provider settings and GA Enhanced Measurement review before enabling ID; historic recordings/retention/account recovery unknown. |
-| Release / rollback / preview | DraftPR46, exact a207 CI/native payment-history proof and distinct FB/BC editor/language artifacts. Supabase approved preservation/rollback and offline hardening25 checks verified. Disabled reconciliation runner and free stable-host/quarantine proposal prepared. [Checkpoint](review-status.md#payment-history-recovery-and-account-isolation). | Continuous-host/account/DNS/durable configuration, actual old deployment quarantine/compatibility, unfinished provider journeys and exact SQL/config/code/resume technical readiness under continuing authorization. Existing Vercel preview is not isolated; no production release. |
+| Release / rollback / preview | DraftPR #46, exact a207 CI/native payment-history proof and distinct FB/BC editor/language artifacts. Supabase approved preservation/rollback and offline hardening25 checks verified. Disabled reconciliation runner and free stable-host/quarantine proposal prepared. [Checkpoint](review-status.md#payment-history-recovery-and-account-isolation). | Continuous-host/account/DNS/durable configuration, actual old deployment quarantine/compatibility, unfinished provider journeys and exact SQL/config/code/resume technical readiness under continuing authorization. Existing Vercel preview is not isolated; no production release. |
 
 A zero scanner result does not revoke or remove the known historical test
 passwords. Private credential/environment/provider-session files are intentionally
@@ -661,7 +662,7 @@ independent18-file review binds to committed blobs. Fresh root/CI2,130/47 normal
 46/1 PostgreSQL, types/build/lint0/23 and570-file secret scan0 pass. Actual native
 cross-tab sign-out/sign-in, B empty payment history/current-owner controls and
 stale-hint409 pass. A separate foreground4f observation confirms the paywall
-physically intercepts B's logout; final414 repairs the stacking and passes24/24
+physically intercepts B's logout; final414 repairs the stacking and passes 24/24
 actual owner/account/menu/modal checks with both normal logouts. The earlier
 19/20 report and unclassified timeouts remain retained, and actual delayed-reply
 privacy remains a separate unproved scope.
@@ -682,7 +683,7 @@ new cases cover paired prices, unknown free-grant rejection, voucher/course/open
 lifetime, removed-frame cleanup and finite duplicate diagnostics. Fresh locked
 artifact572/45,792/158, Unix19/HTTPS11 and577-file secret scan0 pass. Native
 owner reports retain separate21/22 and20/21 helper timing diagnostics; an additional
-B-only browser32/32 verifies24 catalog/dialog cases across four languages and
+B-only browser32/32 verifies 24 catalog/dialog cases across four languages and
 1440/390, real paid-class2 denial/details80 and normal sign-out. All-five/12-model
 preservation, clean owned closure and sealed reinspection pass;15 total observed
 owner/catalog password/session pairs remain explicit. Prior41424/24 stays separate;

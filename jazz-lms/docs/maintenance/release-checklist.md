@@ -1,6 +1,6 @@
 # Production review and rollback checklist
 
-## Current gate — Oct22 certificate update
+## Current gate — Oct22 source `749c4e7` build/hosted result
 
 - [x] Verify eligible isolated certificate download through the ordinary button,
       A4 output, owned local logout and final preservation of ten prior sessions.
@@ -8,13 +8,17 @@
       zero configured-product items Oct13→Oct22 08:18UTC; retain full-RPO limits.
 - [x] Correct certificate instructor name in four languages; four actual PDF
       tests and local corrected-PDF visual inspection pass.
-- [ ] Build source `faf421c` and verify the mobile card now contains all text,
-      medal and signature with the download button below it. Existing hosted
-      captures confirm the overflow; horizontal-width checks alone missed it.
-      Six actual standalone component/CSS/font cases now pass, with failing
-      mobile before cases; this does not replace the fresh hosted build.
-- [ ] Select and inspect a new release containing the certificate corrections;
-      retained `509fa06` and running owner preview predate them.
+- [x] Build source `749c4e7` containing `faf421c`/`766a3a7`; actual isolated hosted
+      certificate passes 24 localized width/theme cases and four ordinary A4 PDF
+      downloads with the corrected instructor. Local logout/final preservation
+      retain all ten prior sessions and protected state.
+- [x] Select749c4e7/45,858 sealed files; actual synthetic container service startup,
+      native loading, worker-loss restart, stop and maintenance fallback pass.
+      Older509fa06 remains intact; real-input proposal stays separate/inactive.
+- [ ] Hand off new preview to the owner; existing Behemoth launcher still targets
+      older `ace0804`. New fixed expiry is Oct23 09:12UTC.
+- [ ] Resolve minor floating privacy-button overlap on narrow certificate screens;
+      classify remaining console diagnostics before blanket runtime acceptance.
 - [x] Deliver protected day preview and Behemoth review launcher, default payments/
       mail/cron disabled; preserve TEST/recovery30min limits.
 - [x] Verify current student login, signed Mux, certificate denial, local logout
@@ -31,7 +35,7 @@
       inputs; qualify ineffective user-systemd host isolation.
 - [x] Inspect current older LIVE paid set:3 archived refs, no refunds/disputes or
       extra known-product successes; preserve4 voucher grants separately.
-- [x] Bind candidate509fa06 to fresh45,857-file artifact; all10 remote checks/
+- [x] Bind candidate509fa06 to fresh45,857-file artifact; all 10 remote checks/
       Vercel pass; actual built container service/API/liveness/worker-loss restart/
       stop/maintenance rehearsal passes with synthetic inputs/network-none.
 - [x] Add staged CHECKOUT_DISABLED=true and verify actual four-language checkout
@@ -105,7 +109,7 @@ Production remains paused/503 and all application/UI changes are unreleased.
       browser, pause the replacement and independently verify nine-GET closure;
       qualify desired404 by active-parent
       equality. R8 builder50097 exits0 and owned tunnel is terminal.
-- [x] Record checkpoint `3ecf93`, all10 remote checks successful, and the closed
+- [x] Record checkpoint `3ecf93`, all 10 remote checks successful, and the closed
       exact-source result. No production deployment or preview remains.
 - [ ] Verify broader customer/content/media and current-source coupon TEST,
       refund/access reversal and currency behavior under their scoped limits.
@@ -187,7 +191,7 @@ PDFs/import remain accepted; production is paused and UI unreleased.
 
 ## Current release gates — Oct21 14:48 UTC
 
-- [x] Restore and verify the October13 database and all68 PDFs/6,423,774 bytes.
+- [x] Restore and verify the October13 database and all 68 PDFs/6,423,774 bytes.
   Adopt both existing files read-only; upload only the missing66. No import or
   upload replay, bucket recreation, overwrite or deletion.
 - [x] Verify initial/final1,621 rows/14,270 typed cells, protected metadata,
@@ -221,7 +225,7 @@ to repeat those operations. [Evidence](production-readiness.md#oct21-all68-files
 
 ## Oct21 session route and current Storage stop
 
-- [x] Verify31ad6ba exact-head CI/publication/independent draft PR46 readback.
+- [x] Verify31ad6ba exact-head CI/publication/independent draft PR #46 readback.
 - [x] Preserve the zero-provider process-admission stop and separate successful
   documented5432 diagnostic: seven SQL/30.030s/rollback/close and paused closure.
 - [x] Preserve actual29019exit1 at CONNECT_ATTEMPTED, no SQL/Storage HTTP/new POST;
@@ -278,7 +282,7 @@ to repeat those operations. [Evidence](production-readiness.md#oct21-all68-files
 ## Oct21 R5 stop and current release limits
 
 - [x] Verify exact 8ac31bd documentation publication: five workflows/four Quality
-  jobs, two zero-result/error CodeQL analyses, alerts 0 and independent PR46 readback;
+  jobs, two zero-result/error CodeQL analyses, alerts 0 and independent PR #46 readback;
   retain its eight-file finite/source custody. App code remains 105f8b9.
 - [x] Freshly adopt both existing PDFs read-only with current identity/version/
   path, bytes and API/SQL metadata: 171,746 bytes; new uploads0, no prior POST replay.
@@ -306,7 +310,7 @@ to repeat those operations. [Evidence](production-readiness.md#oct21-all68-files
 ## Oct21 R4 stop and next read-only admission
 
 - [x] Verify exact105f8b9 publication: all five workflows/four Quality jobs pass,
-  both CodeQL analyses zero results/errors, alerts0 and PR46 readback.
+  both CodeQL analyses zero results/errors, alerts0 and PR #46 readback.
 - [x] Freshly adopt original first-object bytes/identity/metadata read-only; pass
   both selected-policy checks. Preserve original R3 result and first POST.
 - [x] Record one new POST/download/info200 with source-bound bytes, followed by

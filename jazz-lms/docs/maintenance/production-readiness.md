@@ -1,8 +1,74 @@
 # Production recovery checkpoint — 2026-10-21
 
+<a id="latest-certificate-release"></a>
+
+## Latest checkpoint — Oct22 source `749c4e7` built and hosted certificate verified
+
+**Public Vercel remains paused/503; the application and UI are unreleased.**
+The selected production candidate is now `749c4e7398a556af618bc67c2f699e178c7afb65`,
+containing the instructor correction `766a3a7` and mobile certificate correction
+`faf421c`. The older509fa06 candidate/configuration are preserved unchanged.
+
+The fresh locked production build seals 45,858 files, manifest
+`6566475f0f70af222f47dbaa8722a8f55d1e7123aba4f5be754d8ea6a0283888`.
+Full independent reinspection passes;158 client files have zero matches for the
+seven supplied server-secret values. Server inputs are excluded from the builder.
+All10 exact-source remote checks and Vercel status pass. Its actual 22.4-second
+container-service rehearsal verifies four-language checkout 503, voucher503,
+native Prisma/OpenSSL loading without SQL, one owned-worker SIGTERM/restart,
+normal removal and maintenance503/HEAD/webhook. Independent closure finds no
+owned units/containers/sockets; post-rehearsal full seal still passes. Network-none,
+synthetic server inputs and shortened restart/runtime limits do not prove actual
+provider health, persistent cache, boot recovery or load behavior.
+
+The source 749 isolated preview is running at
+https://fever-hits-cottage-pgp.trycloudflare.com behind its owner-only Basic gate,
+expiring **2026-10-23T09:12:22.496Z** (Oct23 11:12 Madrid). Actual process admission
+verifies the exact source/config and absence of payment/mail/cron inputs. A fresh
+read-only baseline verifies the controlled buyer's USER role,15/15 eligibility
+and ten prior sessions before one password login. Twenty-four actual page cases
+pass: four languages ×320/390/1440 ×light/dark. DOM text/signature stay inside the
+paper, the button is below it and horizontal overflow is absent. Four ordinary
+button downloads produce A4 PDFs,862,180–862,211bytes; text extraction verifies
+Enric Vázquez Ramonich in all four. Three selected mobile images are visually
+inspected. The floating privacy button partly overlaps the mobile download
+control; this separate minor UX issue remains open.
+
+Password2001/sync2001/user2006/localLogout2041,266 application reads and0 guard
+blocks are observed. Browser/context close; final read-only comparison preserves
+22 protected groups, all ten prior sessions, business/other-actor state and every
+selected Auth field except updated_at/last_sign_in_at, both changed inside scope.
+Full Auth settings match. Twenty-five optional prefetches are locally403; five
+real auto-reconcile503 responses occur before financial work because Dodo inputs
+are absent. Diagnostics count0 page errors,30 unclassified console errors and29
+ERR_ABORTED failures (28 before/1 at closure); no blanket health claim follows.
+The earlier current-source attempt counted the streamed card too soon; it also
+closed/logged out and passed full preservation before the distinct successful
+scope. No application-source change was needed for that test timing repair.
+
+Hosted finite summary SHA256
+`cbb2d80c7b9eb9c18151e3a8c6714d4b625c1d69db573c2971a57c6e364e9df4`.
+Fifty-one selected build/service/source/finite/synthetic-image files,8,791,835bytes,
+are retained at
+`/home/gabriel/backups/culturadeljazz-maintenance/review-checkpoint-release-749c4e7-20261022/`;
+manifest `773bb5584a3d398251ba3ae9c7da83e5d3fd6e5069e638b7abfc00627b765d75`.
+Credentials, private runtime configuration, raw Auth/provider responses, private
+baselines/session IDs and account headers are excluded. Owner-only local retention
+is unencrypted, with no off-site recovery established. Proposed real-input config
+is retained separately at
+`/home/gabriel/.config/culturadeljazz-maintenance/production-candidate-749c4e7/runtime-private.json`;
+inspection/startup inputs are not loaded automatically and no production activation
+occurs. Its source-only change from the older proposal preserves checkout disabled
+and mail absent; current credential/provider health remains unverified.
+
+Behemoth's existing launcher still opens `ace0804`, not this new origin. Existing
+resources are not restarted. Recovered-media approval/domain access and concrete
+production cutover remain open. Earlier candidate/current-preview references below
+are dated history, superseded only where this checkpoint says so.
+
 <a id="day-preview--oct21-2230-utc"></a>
 
-## Current checkpoint — protected preview and student media verified; production still offline
+## Earlier checkpoint — protected preview and student media verified; production still offline
 
 **Oct22 certificate/payment update:** the isolated `ace0804` preview now verifies
 the eligible student's 15/15 completion and medal requirements, the ordinary
@@ -50,7 +116,7 @@ Credentials, raw Auth/provider bodies and actual account screenshots are exclude
 retention is owner-only, local and unencrypted, with no established off-site copy.
 
 **Selected production candidate: `509fa069dec1365d915838d5d98e30cc9c473b3a`.**
-Its clean locked build seals45,857 files and all10 remote checks plus Vercel
+Its clean locked build seals45,857 files and all 10 remote checks plus Vercel
 status pass. Actual built Next runs through the proposed full-Bookworm container
 unit and verifies all4 localized checkout denials, voucher JSON denial, continued
 worker liveness after Prisma loading, restart into a new invocation/container,
@@ -83,7 +149,7 @@ controls. It is newer recovery-preparation source, not the selected production
 artifact or an actual recovered-media result. Fresh protected recovery build,
 bounded Auth/backend action review and browser integration remain pending.
 
-**Oct22 07:24UTC update:** recovery-only source9da4370 is pushed and all10 remote
+**Oct22 07:24UTC update:** recovery-only source9da4370 is pushed and all 10 remote
 checks pass; pre-push integration778/29skip and lint pass. At00:28:57UTC, one
 actual signed master GET for the selected recovered nonfree video returns200,
 4,523 bytes/five variants. No segment, application authorization, decoded video,
@@ -110,7 +176,7 @@ local unencrypted package has no established off-site recovery. The existing
 owner-preview's3 actual handles are revalidated live at07:22UTC; do not restart
 them or replay closed recovery because an observation timed out.
 
-At07:32UTC, a separate clean recovery-only9da4370 build seals45,858 files with
+At07:32UTC, a separate clean recovery-only9da4370 build seals 45,858 files with
 fresh locked install, webpack, public fingerprint, CA and cache inspection
 passing. It uses synthetic server inputs and starts no application or backend.
 Manifest SHA `cf0a1328afb6a0cb7b72567121a598da8615a4e570aa068eee612b36de0e12e1`.
@@ -228,7 +294,7 @@ proposed units and data-preserving fallback. Next bind the final release source,
 and resolve account/domain/callback prerequisites for a concrete cutover review.
 Further coupon launches remain deferred.
 
-The corrected0d45a33 source is published: all10 remote checks and Vercel status
+The corrected0d45a33 source is published: all 10 remote checks and Vercel status
 pass. Its fresh clean locked build seals45,856 files; actual built Next starts
 in nonroot/read-only/network-none Docker, serves canonical robots and a sealed
 JavaScript asset, then removes its owned container/run. Real server credentials
@@ -348,7 +414,7 @@ launches are deferred while the retained SDK denial is reviewed. Next prioritize
 a usable preview, recovered student/media continuity and a concrete zero-cost
 hosting/restoration and release/rollback plan. Do not repeat accepted recovery,
 R14 admin verification or closed financial scopes. Public production still
-returns503; application/UI improvements remain unreleased. Full maintenance and
+returns 503; application/UI improvements remain unreleased. Full maintenance and
 paid coupon/refund verification remain incomplete.
 
 <a id="coupon-test--oct21-2125-utc"></a>
@@ -424,7 +490,7 @@ R14 verifies the recovered administrator journey on application
 password login, dashboard, administrative panel, normal global logout204 and
 post-logout admin→auth denial all pass. Actual10396 exits0 at20:33:36 UTC with
 `RESTORED_ADMIN_ACCESS_VERIFIED_AND_CLOSED`. Documentation/source checkpoint
-`3ecf93` passes all10 remote checks. This closes the exact-source admin recovery
+`3ecf93` passes all 10 remote checks. This closes the exact-source admin recovery
 flow requirement; it does not verify every customer journey or resolve all
 security/release gates.
 
@@ -1078,12 +1144,12 @@ Restored-admin adapters have25 Python/11 JavaScript source-only checks and root
 source review, with no hosted login; actual file/baseline/artifact/Auth-version
 receipts, lifecycle and scoped cleanup are still pending. Native build/tunnel
 and application runtime remain unstarted. c75da00's five successful workflow
-statuses and draft PR46 head readback are verified as metadata; no new test-log
+statuses and draft PR #46 head readback are verified as metadata; no new test-log
 counts or deployment are claimed. Earlier dated evidence remains intact.
 
 ## Oct21 session route passes once; Storage continuation stops at connect
 
-Application checkpoint **31ad6ba** is published in draft PR46. All five exact-head
+Application checkpoint **31ad6ba** is published in draft PR #46. All five exact-head
 workflows/four Quality jobs pass: each application job records 2,885 passes/80
 skips, lint zero errors/22 warnings, types and the 31-page webpack build; each
 PostgreSQL job records 80 passes/one skip. Both CodeQL analyses have zero results
@@ -1236,7 +1302,7 @@ not their incomplete preservation or file-acceptance results.
 
 Documentation checkpoint `8ac31bd605604c35e8c567244ff59441e7382fa5` passes all five
 exact-head workflows/four Quality jobs, both CodeQL analyses with zero results/
-errors, zero open PR-head alerts and independent PR46 head/title/body readback.
+errors, zero open PR-head alerts and independent PR #46 head/title/body readback.
 Application source remains `105f8b9`, undeployed. Publication and its eight-file
 finite/source custody are complete; this does not establish restored login.
 
@@ -1321,7 +1387,7 @@ but still stops before further uploads or final preservation/rollback proof.
 
 Published source `105f8b996fc402b92989f8ab28781a0d2cc82e29` passes all five exact-head
 workflows and all four Quality jobs. Both CodeQL analyses have zero results or
-errors, with zero open PR-head alerts; PR46 head/title/body readback passes. This
+errors, with zero open PR-head alerts; PR #46 head/title/body readback passes. This
 publishes source and its checks, not an application deployment or restored login.
 
 R4 freshly adopts the original first PDF read-only: ID/version/path, downloaded
@@ -1593,7 +1659,7 @@ zero-candidate process scans pass. Fresh active settings retain desired/effectiv
 **07:39:29 UTC** seven-GET/zero-POST/zero-SQL closure confirms the exact owned
 replacement and original production INACTIVE, isolated preview ACTIVE_HEALTHY
 and original observed settings unchanged. Independent API-config readback on
-the paused replacement is still unestablished. Public `www` returns503 on the
+the paused replacement is still unestablished. Public `www` returns 503 on the
 new Oct21 check; improved application source remains unreleased.
 
 The preceding native-RI review is resolved offline against the original private
@@ -2704,7 +2770,7 @@ every unrelated setting unchanged, the unchanged null OAuth companion, zero
 third-party/SSO providers and no custom SMTP credentials. No Auth-user/send
 operation or application launch occurs.
 
-The first live zero-row public-profile request returns503/PGRST002, failing the
+The first live zero-row public-profile request returns 503/PGRST002, failing the
 controller's expected406 profile rejection. The scope stops and pauses this same
 project. Independent19:47:59 UTC reads confirm replacement/production INACTIVE,
 preview ACTIVE_HEALTHY and identical observed original Auth/PostgREST settings
@@ -2845,7 +2911,7 @@ accepted recovery point/current-data preservation decision. The frozen original
 compiler and its later-data gate remain unchanged.
 
 Neither Monster nor Behemoth has a default IPv6 route in the actual local
-inspection. A separate session-pooler derivative passes24 focused synthetic
+inspection. A separate session-pooler derivative passes 24 focused synthetic
 controls and retains every non-transport guard. It requires the actual returned
 new-target pooler entry, verified CA/hostname and real same-session postgres
 identity; metadata alone and SQL custom GUCs do not prove transport. No paid IPv4

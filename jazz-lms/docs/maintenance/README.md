@@ -1,18 +1,20 @@
 # Initial maintenance and stabilization
 
-Latest Oct20 recovery checkpoint: one Free replacement exists and actual Auth
-readback passes all49 intended settings. It is paused after public503/PGRST002;
-runtime API containment and hosted SQL/bootstrap remain unproven. Production
-stays paused. No customer data is imported or paid upgrade requested.
-[Actual result and next action](production-readiness.md#free-replacement-auth-verified-api-readiness-unresolved).
+Latest Oct22 checkpoint: database backup/all 68 PDFs recovered and recovered admin
+login/dashboard/logout verified. Selected release `749c4e7` passes its fresh 45,858-file
+build, all 10 remote checks and actual synthetic service restart/fallback rehearsal.
+Its protected isolated preview passes 24 certificate layouts/four normal A4 downloads
+and final session/data preservation. **Public Vercel still returns 503; changes are
+unreleased and the maintenance goal remains incomplete.** Recovered-media access,
+provider/recovery-point decisions, domain and concrete free-hosting release review
+remain open. [Current status](review-status.md), [actual evidence](production-readiness.md#latest-certificate-release).
 
-Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-20.
-[Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains the maintenance
-changes. **The goal is incomplete and the changes are unreleased in production.** The owner
-requested a stable, tested project and a more attractive, usable website while
-preserving its jazz identity. The hosting budget is zero incremental spend.
+Started 2026-10-13 on `maintenance/initial-audit`; updated 2026-10-22.
+[Draft PR #46](https://github.com/nospotfer/jazz/pull/46) contains maintenance changes.
+The owner requests a stable, tested project and a more usable site preserving its
+jazz identity, with zero incremental hosting spend.
 
-## Current verified checkpoint
+## Earlier verified checkpoint — Oct20
 
 The latest same-payment TEST refund recovery closes with a captured409
 `INSUFFICIENT_WALLET_FUNDS`. No refund is created and the purchase remains;

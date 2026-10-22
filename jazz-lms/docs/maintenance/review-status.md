@@ -1,76 +1,53 @@
 # Maintenance review checkpoints
 
-## Current status — Oct22 certificate update
+## Current status — Oct22 latest release and hosted certificate checks
 
-**The public website remains paused/503. The release candidate is verified
-locally; application and UI improvements are not deployed to production.**
+**The public site still returns 503 from paused Vercel. All application/UI repairs
+remain unreleased in production. The maintenance goal is incomplete.**
 
-- **New certificate evidence:** an eligible synthetic student downloads an actual
-  A4 PDF through the normal button. Local logout, final data comparison and all
-  ten older sessions pass. Visual review finds mobile text spilling below the
-  certificate background. Source `faf421c` fixes the card height; `766a3a7` fixes
-  the instructor name in four languages. The corrected PDF and four PDF tests
-  pass locally. Six standalone component/CSS browser cases verify the layout
-  correction at320/390/1440 in light/dark; a fresh build/hosted preview remains
-  required. The
-  current owner preview still runs the earlier source.
-- **Completed:** security/authentication/payment repairs, responsive landing and
-  student UI work, accepted database and all 68 PDFs recovered, administrator
-  login/dashboard/logout verified. Isolated student login, signed video, PDF
-  rendering and desktop/mobile/light/dark checks pass.
-- **Selected release: `509fa06`.** Clean locked production build seals 45,857
-  files; all 10 remote checks and Vercel status pass. The actual built Next app
-  runs through the proposed container service, survives native module loading,
-  restarts after its worker is terminated, stops cleanly and serves the exact
-  maintenance fallback. These use synthetic server inputs with networking
-  disabled; real production credentials/provider health remain unverified.
-- **Production inputs prepared:** a new private configuration passes inspection
-  against the selected release, CA and public build settings. It uses the
-  accepted file-recovery key/bucket and playback-verified video signer. No
-  provider calls, backend resume or service startup occurred; live health is
-  still unverified.
-- **Staged reopening:** `CHECKOUT_DISABLED=true` blocks new checkout and voucher
-  grants while preserving existing customer access and payment fulfillment.
-  Actual built responses pass in four languages. The original slim image failed
-  Prisma native loading; the corrected full Bookworm image is pinned and tested.
-- **Owner preview:** Behemoth's separate review browser remains available until
-  Oct23 00:17 Madrid. Reopen with
-  `/home/gabriel/.local/share/culturadeljazz-maintenance/review-20261022/open-preview.sh`.
-  It uses synthetic data; payment/application-mail/cron are disabled.
-- **Still required:** recovered-media inspection with the controlled admin,
-  remaining provider/recovery-point decisions, domain access and exact cutover
-  review. The owner only uses the administrator; real student password continuity
-  stays unverified, separate from ordinary-student tests. No other customer's
-  credentials are required from the owner.
-- **Recovered-media preparation:** narrow read-only video/PDF dispatch now passes
-  390 local checks, types and lint, including the actual private worker. This
-  needs its own fresh recovery window; it has not been run on customer
-  data and does not replace the selected production artifact.
-  Source `9da4370` is published with all10 remote checks passing. One direct
-  signed recovered-video master GET returns200/five variants without segments,
-  SQL or backend resume. The media display helper passes43 local controls and
-  an actual offline Chrome CSP/cookie-fetch check; recovered decoding/rendering
-  remains pending the fresh bounded backend/Auth scope.
-  Its separate clean recovery build now seals45,858 files with public/CA/cache
-  inspection passing. Ten Mux playlist GETs200 pin three referenced hosts;
-  segment access is untested. Controller integration is now prepared:17 Python,
-  22 browser and22 process controls pass separately;18 pinned modules import in
-  the existing maintenance venv. Actual sealed native inspection accepts media
-  inputs/synthetic DB password. The inactive one-admin/video/PDF plan needs
-  explicit approval and a fresh <=30min window, full preservation and restoration/
-  re-pause. No recovered app/customer lease, SQL/Auth or backend resume occurs.
-  The new temporary transport has no application attached or customer access.
-- **Current owner action:** sign into Squarespace using Google account
-  `gabriel.barra@gmail.com` and confirm whether the domain is listed. Google
-  nameservers can be Squarespace defaults; another gcloud login is not yet needed.
+- **Verified improvements:** responsive landing/mobile navigation, authentication,
+  payment and access-control repairs; accepted database backup and all 68 PDFs
+  recovered; recovered administrator login/dashboard/logout verified. Isolated
+  student login, signed video and PDF rendering retain their recorded evidence.
+- **Latest product result:** source `749c4e7` includes the corrected instructor in
+  all four languages and the mobile certificate height fix. The actual protected
+  app passes 24 cases: ES/EN/FR/PT ×320/390/1440 ×light/dark. All text/signature
+  stay within the paper and the download control is below it. Four normal-button
+  downloads produce A4 PDFs with the correct instructor. Local logout/browser
+  closure and final read-only preservation pass, including all ten prior sessions.
+- **Selected production candidate: `749c4e7`.** Fresh locked build seals 45,858 files;
+  all 10 remote checks and Vercel status pass. The built container service passes
+  startup, native module loading without SQL, one worker-loss restart, shutdown
+  and maintenance fallback. Synthetic server inputs/network-none limit this to
+  packaging evidence; current production provider health remains unverified.
+  The previous509fa06 artifact is preserved. Real-input configuration is prepared
+  separately and has not been activated.
+- **New protected preview:** https://fever-hits-cottage-pgp.trycloudflare.com,
+  fixed expiry **Oct23 11:12 Madrid**. It uses synthetic data and excludes payment,
+  application-mail and cron credentials. Behemoth's existing launcher still opens
+  the older `ace0804` preview, expiring Oct23 00:17 Madrid; no launcher handoff is
+  claimed for the new origin.
+- **Remaining:** controlled recovered-video/PDF check, provider/recovery-point
+  decisions, authenticated domain access and exact free-hosting cutover/rollback
+  review. The prepared <=30min backend/Auth scope remains pending approval.
+  Squarespace Google sign-in/domain listing is requested using the owner's Gmail.
+  No paid plan or production change has occurred.
+- **Known limits:**30 console errors remain unclassified;29 failed requests report
+  ERR_ABORTED,28 before closure and1 at closure. Twenty-five optional prefetches
+  are locally refused403; five real auto-reconcile503 responses exercise the
+  absent-provider branch. These are not blanket runtime/provider health proof.
+  Visual review also finds the floating privacy button partially overlapping the
+  mobile download control; this smaller UX issue remains in the backlog.
 
-The newer two-GET Dodo check finds no configured-product payments created from
-Oct13 through Oct22 08:18UTC. The separate older check matches all three archived
-paid references, with no refunds/disputes or extra older successes. Four voucher
-grants remain separate; full recovery-point currency stays qualified.
-[Full evidence](production-readiness.md#day-preview--oct21-2230-utc),
+The first current-source certificate attempt inspected the streamed card too
+soon. It logged out and passed final preservation before a distinct scope added
+an explicit visibility wait; the actual successful result above preserves that
+failure. Real existing-student password continuity remains unverified; the owner
+only uses the administrator and no customer credentials are requested.
+
+[Full evidence](production-readiness.md#latest-certificate-release),
 [startup and rollback](production-startup.md), [remaining work](backlog.md).
-Everything below is dated history with superseded pending actions.
+Earlier dated sections below retain their original source/result limits.
 
 ## Oct21 R5 verifies both existing files; continuation remains stopped
 
@@ -97,7 +74,7 @@ Earlier dated checkpoints retain their historical results and scope limits.
 ## Oct21 published source and R4 partial continuation
 
 Exact105f8b9 publication passes all five workflows/four Quality jobs, both zero
-CodeQL results/errors and zero open PR-head alerts; PR46 head/title/body readback
+CodeQL results/errors and zero open PR-head alerts; PR #46 head/title/body readback
 passes. Session-origin and recovery-access source changes remain undeployed.
 
 R4 passes fresh first-object read-only adoption and two empty selected-policy
@@ -343,7 +320,7 @@ All five exact-head workflows pass: Quality PR39508992208/push39508986794 (all f
 jobs), Secret Scan PR39508992396/push39508986899 and CodeQL39508988830. Both matching
 CodeQL analyses1992470141/1992467422 have zero results/errors; PR-head open alerts
 are zero. Local required push checks pass secrets/lint0errors22existingwarnings/
-753integration29skips, without assigning those totals to remote logs. PR46 is
+753integration29skips, without assigning those totals to remote logs. PR #46 is
 independently verified open/draft with exact head and updated description.
 Two-file finite publication custody manifest:
 `dd3738bbc47e54ea95c51bbd7348e0e9422417268e7c2fc1d0473c56c16597f9`.
@@ -370,7 +347,7 @@ All four Quality jobs and both analysis jobs pass. The two exact-head analyses
 have zero results/errors and PR-head open CodeQL alerts are zero. Local mandatory
 push checks pass secret scanning, lint 0 errors/22 existing warnings and
 753 integration tests/29 skips; full remote logs are not reparsed and those local
-totals are not assigned to CI. PR46 remains open/draft with matching head.
+totals are not assigned to CI. PR #46 remains open/draft with matching head.
 Finite publication custody is retained separately with manifest
 `c05e2419dd90b398453d360db9228fc1147a91227006c29ab092884add681903`.
 Application browser proofs retain their earlier sources; no release occurs.
@@ -386,7 +363,7 @@ Published checkpoint `8e6b7c2` has five successful exact-head workflows: Quality
 All four Quality jobs pass; two matching CodeQL analyses have zero results/errors
 and the actual PR-head open alert count is zero. Full Quality logs were not
 reparsed for this checkpoint, so earlier suite totals are not reassigned to it.
-PR46 remains open/draft with independently matching head and description.
+PR #46 remains open/draft with independently matching head and description.
 
 A separate fresh Node24.21.0/npm11.19.0 lockfile audit reports production0 and
 full5 high entries, all in the existing development lint dependency chain from
@@ -2495,7 +2472,7 @@ The final client package passes111 cases across seven suites, including27 parent
 owner-boundary cases. Independent review's18 frozen runtime-file hashes match
 the committed blobs. Fixture/setup failures remain retained diagnostics.
 
-The exact three account-route exemptions pass22 component checks, preserving
+The exact three account-route exemptions pass 22 component checks, preserving
 paid-content restrictions. Fresh Node24 clean-source verification passes **2,130
 normal tests /47 skips**, **46 actual PostgreSQL tests /one REST skip**, types,
 and lint **0 errors /23 warnings**. There are114 files with passing assertions and

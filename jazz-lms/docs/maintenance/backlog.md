@@ -1,61 +1,38 @@
 # Prioritized maintenance backlog
 
-## Current priorities — Oct22 certificate update
+## Current priorities — Oct22 source `749c4e7` verified
 
-1. Build and verify certificate source `faf421c` before choosing a newer release.
-   The running `ace0804` preview passes eligible 15/15 certificate download,
-   local logout and final preservation of all ten prior sessions. Visual review
-   finds text overflowing the fixed-height mobile card; the source fix now lets
-   it grow; six standalone component/CSS/browser cases pass at320/390/1440
-   light/dark, with zero outside text rectangles. `766a3a7` also corrects the instructor name in four languages; four
-   actual PDF tests and the corrected PDF's visual review pass. Neither fix is
-   in the current preview or selected `509fa06` artifact.
-2. Verify remaining recovered media through the controlled administrator under
-   a fresh bounded review; preserve separate isolated ordinary-student evidence.
-   The owner has no separate student account. Do not demand other customers'
-   passwords or repeat accepted recovery/administrator verification.
-   Narrow media-GET dispatch passes390 local checks/types/lint; bind the fresh
-   recovery build and bounded browser/backend scope. Production509 remains
-   immutable and is not a recovery-profile artifact.
-   Published9da4370 passes all10 remote checks;43 browser-helper controls and
-   actual offline Chrome harness pass. One actual signed Mux master read passes;
-   protected recovered video/PDF rendering remains open.
-   The45,858-file recovery build is now ready; playlist-only inspection pins
-   three referenced Mux hosts. Unbound transport4475 is confirmed live and expires
-   Oct23 06:28:59UTC. Controller integration passes17 Python,22 browser and22
-   process controls separately, plus sealed native inspection with synthetic DB
-   password. The inactive concrete review plan is prepared; obtain the exact
-   <=30min backend/Auth approval, then revalidate current processes/data/role/
-   version. No customer lease/app has started.
-3. Finish domain and production Auth/SMTP/webhook/recovery-point decisions for
-   [release review](hosting.md). Squarespace Google sign-in/domain listing is
-   requested using the owner's Gmail; Google nameservers alone do not establish
-   a Cloud DNS project. No domain/account change has occurred.
-4. Preserve candidate `509fa06`: final locked build and all 10 remote checks pass.
-   Actual built container service startup, checkout/voucher blocking, native
-   dependency loading, worker-loss restart, stop and maintenance fallback pass.
-   Keep `CHECKOUT_DISABLED=true` for a staged release. Production provider inputs
-   and activation remain separate review actions; the public site is still503.
-   Real proposed provider inputs now pass local full-release/config inspection;
-   zero provider calls or runtime starts, so current health remains unverified.
-5. Preserve the owner preview until Oct22 22:17UTC. Keep further coupon/refund
-   launches deferred; the retained SDK/wallet failures remain explicit gaps.
+1. Verify selected recovered video/PDF through the controlled administrator under
+   the prepared, specifically approved <=30min backend/Auth scope. Approval is
+   pending; no customer runtime/lease has started. Revalidate current process/data/
+   role bindings, including the newly running isolated preview, before execution.
+   Preserve accepted database/PDF imports and the already verified admin journey.
+2. Establish authenticated domain access and complete production Auth/SMTP/LIVE
+   webhook/recovery-point decisions for the concrete free-hosting release review.
+   Squarespace Google sign-in/domain listing is requested with the owner's Gmail;
+   nameservers alone do not establish Cloud DNS ownership. No DNS change occurred.
+3. Preserve selected candidate `749c4e7`: fresh 45,858-file locked build, all 10 remote
+   checks and actual synthetic container startup/restart/stop/maintenance pass.
+   Private real-input proposal is separately retained; no activation/provider-health
+   proof. Keep checkout disabled for staged reopening. Older509fa06 stays intact.
+4. Hand off the new protected source 749 preview, expiring Oct23 09:12UTC, without
+   silently redirecting the owner's old Behemoth launcher. Its certificate journey
+   passes 24 actual localized width/theme cases and4 normal A4 downloads, owned
+   local logout and full final preservation. Oldace0804 expires Oct22 22:17UTC.
+5. Fix the lower-priority floating privacy-control overlap with the certificate
+   download button at narrow widths; the actual paper/text/signature containment
+   correction is verified. Record30 unclassified console errors and29 ERR_ABORTED
+   failures; do not call the browser runtime wholly healthy.
+6. Keep further coupon/refund launches deferred pending the retained SDK/wallet
+   failures and eligible-actor/provider decisions. Real student-password continuity
+   remains unverified; the owner only has the administrator. Do not request other
+   customers' credentials or treat isolated tests as recovered-customer proof.
 
-Accepted database/all68-PDF recovery and hosted admin login are complete.
-Older Dodo current successes match the3 archived paid references. A newer
-two-GET all-status creation-window check returns zero configured-product items
-from Oct13 through Oct22 08:18UTC; full RPO is not established.
-[Plain-language checkpoint](review-status.md).
-
-R14 preserves1,621 rows/14,270 typed cells except two new sign-in timestamps,
-prior rows and protected metadata. Normal logout leaves no new transient/audit
-rows and needs no cleanup COMMIT. Full Auth/settings, both database frontends,
-browser/native, builder/tunnel and independent pause closure are verified.
-Diagnostic `other:28` remains unclassified; disabled promotional-media handling
-is unexercised. This is not blanket customer, integration or security acceptance.
-The [landing review](landing-review.md) remains historical visual evidence.
-[R14 outcome and remaining limits](production-readiness.md#current-checkpoint--oct21-2033-utc).
-Earlier dated priorities below are historical and may be superseded.
+Accepted database/all 68-PDF recovery and recovered admin login are complete.
+Older LIVE paid references match the archive; the newer two-GET creation window
+finds no configured-product items Oct13→Oct22 08:18UTC. Full recovery currency is
+still qualified. Public503/UI unreleased; no production/config/DNS change occurs.
+[Latest evidence](production-readiness.md#latest-certificate-release).
 
 ## Earlier priorities — October21 18:41 UTC
 
@@ -68,7 +45,7 @@ Earlier dated priorities below are historical and may be superseded.
    isolated coupon/refund journeys. R9 Auth restoration and independent pause/
    original-settings closure pass; the tunnel is closed.
 3. Finish recovery-point qualification, zero-cost hosting and release/rollback
-   review. Application31ad6ba is unreleased; all10 remote checks on documentation
+   review. Application31ad6ba is unreleased; all 10 remote checks on documentation
    checkpoint68f5233 pass. The original/public site remains paused.
 
 Do not repeat the accepted customer/PDF import or committed56-cell correction.
@@ -93,7 +70,7 @@ Do not repeat the accepted customer/PDF import or committed56-cell correction.
 
 ## Accepted recovery and latest access result
 
-The October13 database and all68 PDFs/6,423,774 bytes are restored and accepted:
+The October13 database and all 68 PDFs/6,423,774 bytes are restored and accepted:
 26 tables,1,621 rows/14,270 typed cells. Do not repeat the committed import,
 recreate the bucket or replay file uploads. This does not prove data currency
 after the archive's recovery point.
@@ -181,7 +158,7 @@ additional current tasks.
 | UX-21 | Medium checkout recovery | Specific JSON409 session conflicts lacked clear recovery guidance. Actual current client handlers now show manual-refresh copy in ES/EN/FR/PT while preserving ordinary voucher conflicts and stale-frame guards. | Four actual component conflict cases plus meaningful owner/unmount controls; no automatic retry. Native12 three-surface/four-language actual-response cases pass; separate normal global logout204 for both accounts, all-five/12-model preservation and owned closure pass. |
 
 
-| PAY-19 | High entitlement correctness | Voucher validation coerced unknown/malformed prices into0 and allowed draft courses; direct redemption could persist access/coupon use. The real validator now checks explicit publication and a known numeric price before voucher discovery; unavailable price returns503. | Frozen715 backend36 cases (30 mocks/six real PostgreSQL), original23 failures/13 controls; NULL/draft/stale actual before200+four persisted counts1 each become503/400/409+all0. Global/per-user races and genuine full grants remain controls. Included in clean2,311/57 and56/1. |
+| PAY-19 | High entitlement correctness | Voucher validation coerced unknown/malformed prices into0 and allowed draft courses; direct redemption could persist access/coupon use. The real validator now checks explicit publication and a known numeric price before voucher discovery; unavailable price returns 503. | Frozen715 backend36 cases (30 mocks/six real PostgreSQL), original23 failures/13 controls; NULL/draft/stale actual before200+four persisted counts1 each become503/400/409+all0. Global/per-user races and genuine full grants remain controls. Included in clean2,311/57 and56/1. |
 | SEC-20 | High account correctness | Direct redemption lacked captured account consistency, and its active `/redeem` page accepted retired account/page replies and delayed redirects. The server checks the optional hint after verified identity; the page sends the captured hint and retires old work. | Frozen715 client24 has21 failures/three controls; final35/35 includes old11 localization cases. Independent backend/client review passes; anonymous sign-in guidance requires reopening the voucher link. Legacy omitted hints still authenticate through verified cookies. |
 | UX-22 | Medium recovery usability | Voucher availability and precise session conflicts lacked useful selected-language recovery. Both voucher entry points now show stable price-unavailable copy; redemption gives manual-refresh guidance for exact session409. | Four-language component/API cases, ordinary voucher409/Expired/401 controls, current-owner/course/timer controls and clean types/lint. Actual four-language native503/409 cases pass12; whole run PARTIAL12/13 on admin mobile overflow, preserved separately. Historical checkout matrix stays separate. |
 | PAY-20 | High amount reporting | Admin purchase rows and revenue totals used mutable catalog price instead of stored finalPrice, inventing free/paid amounts and calling access records completed sales. Rows now preserve known0/unknown stored amounts with honest number-only labels. | Original715 admin13 cases10 failures/three controls become13 passes; final19/19 includes the permission addendum. Catalog80→100 does not change recorded72; unknown values never become price/free facts. Currency/tax and a financial journal remain unverified. |
@@ -202,7 +179,7 @@ additional current tasks.
 | UX-29 | Medium accessibility | Footer back-to-top was20px tall. Initial44px repair still inherited a faint outline; source1e381a3 adds an explicit bright accent outline. | Final12 local production cases pass44px hit target, keyboard activation, painted2px focus and no overflow. Outline contrast improves2.24/1.85→7.26/8.59 in light/dark. No content/handler/provider change; all owned browsers/server closed. |
 | OPS-11 | Medium migration integrity | The historically applied March18 purchase migration had been rewritten. Restore its exact237-byte source/checksum from Git and protect all four recorded files against future edits. | Sourceac62f4a: four source regressions change3PASS/1FAIL→4PASS; clean local normal suite2,537/80 and scoped lint0/0 pass. Offline run-a5ec90a2205e also verifies exactly3 official acknowledgements, all7 checksums, original4 raw ledger records and65-table/2,239-row/two-sequence preservation. No production ledger change or fresh-bootstrap proof. [History and reconciliation](payment-currency.md#historical-sql-source-and-bookkeeping). |
 | PAY-24 | Medium availability | Dashboard automatic reconciliation treated intentionally absent/blank Dodo credentials as internal500. Source33dd19f returns authenticated503 provider_unavailable before provider/network/DB work;401 and configured historical fulfillment/failure behavior stay intact. | Original real-helper500 observation frozen; desired503 contract fails2/7 before the guard. Final164 focused cases, touched lint0/0 and types pass with intercepted networking and synthetic auth/DB. Product ID is not required for historical reconciliation. This does not identify the two historical Google-window error counters. |
-| PAY-25 | Medium coupon accounting/availability | Customer/unknown provider limits could exhaust the global voucher, and initial checkout5xx could trigger repair/retry. Finite limit scope preserves global usage on personal/ambiguous failures;5xx returns503 without repair/retry/accounting mutation. |13 retained pre-fix failures across this patch,114 focused passes/types/scoped lint0/0 and independent source review. Only classified global exhaustion with a configured cap reconciles usage; unlimited vouchers do not invent redemptions. Actual current-source native coupon remains unverified. [Scope](dodo.md#oct21-checkout-discount-failure-handling-repaired-locally). |
+| PAY-25 | Medium coupon accounting/availability | Customer/unknown provider limits could exhaust the global voucher, and initial checkout5xx could trigger repair/retry. Finite limit scope preserves global usage on personal/ambiguous failures;5xx returns 503 without repair/retry/accounting mutation. |13 retained pre-fix failures across this patch,114 focused passes/types/scoped lint0/0 and independent source review. Only classified global exhaustion with a configured cap reconciles usage; unlimited vouchers do not invent redemptions. Actual current-source native coupon remains unverified. [Scope](dodo.md#oct21-checkout-discount-failure-handling-repaired-locally). |
 | PAY-26 | Medium campaign integrity | A same-product restriction overrode explicit tags identifying another campaign during customer-triggered discount repair. Contradictory voucher/integration tags now deny PATCH. | Three conflicting-tag regressions pass; managed/legacy repair and same-code retry/no-full-price controls remain in114 focused cases. Untagged same-product fallback is retained, so strict universal ownership, paid-term races, durable idempotency and snapshot counter concurrency remain follow-ups. No actual provider mutation/deployment occurred. |
 
 ## Open verification and release gates
@@ -231,7 +208,7 @@ physical menu/modal access pass on414.
 
 | ID | Priority | Gate | Exact next action |
 | --- | --- | --- | --- |
-| LIVE-01 | Critical availability/security | Original production stays paused for unsafe browser permissions. The hardened replacement contains the accepted October13 database and all68 PDFs; current-source hosted admin/customer continuity is unfinished. | Complete protected access and recovery-point verification, then prepare exact replacement cutover/configuration and rollback for production review. Preserve both the original paused project and accepted recovery. [Current outcome](production-readiness.md). |
+| LIVE-01 | Critical availability/security | Original production stays paused for unsafe browser permissions. The hardened replacement contains the accepted October13 database and all 68 PDFs; current-source hosted admin/customer continuity is unfinished. | Complete protected access and recovery-point verification, then prepare exact replacement cutover/configuration and rollback for production review. Preserve both the original paused project and accepted recovery. [Current outcome](production-readiness.md). |
 | LIVE-02 | High | Legacy Vercel preview shares production resources; exact old Jazz project is now protected/paused with active public+bypass503 proof. Distinct isolated backend passes Auth/payment journeys at their recorded sources. | Complete explicit cron disable, historical/bypass retirement assessment, direct Supabase containment and stable free hosting. No paid upgrade. [Current evidence](production-readiness.md). |
 | LIVE-03 | Critical | Original unsafe grants remain contained by pause. The replacement strict227 structure, selected REST denials and customer/file recovery have actual hosted evidence; a production cutover is not complete. | Verify remaining authenticated native access and customer journeys against the replacement. Keep its database API closed and the original paused. Prepare production cutover and rollback; repair of the original is required only if that project is selected for reuse. [Current evidence and historical limits](production-readiness.md). |
 | LIVE-04 | High | Actual TEST payment/fulfillment verified. Latest separate same-payment recovery captures409 INSUFFICIENT_WALLET_FUNDS; no refund/full8997 refundable/purchase retained, original29/23 sessions preserved, services/endpoint/full seal/formal closure pass. Historical own-payment credit8997/fee535/after8462 is verified separately, not current account totals. Earlier409 body remains unknown. | Establish a free merchant-sandbox balance/settlement remedy and dashboard ownership before another financial scope. Preserve both spent markers; no checkout/card replay, blind refund retry, customer-wallet substitution or real funding. Refund/reversal, reconciliation, coupon/provider and account/production gates remain open. [Actual evidence](dodo.md#latest-oct20-checkpoint-captured-sandbox-wallet-denial). |

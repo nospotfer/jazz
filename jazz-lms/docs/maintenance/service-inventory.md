@@ -1,13 +1,30 @@
 # Service inventory
 
-## Current service state — Oct22 02:05 Madrid
+## Latest service state — Oct22 source `749c4e7`
+
+Public Vercel 503 and customer backends remain paused; no production change.
+Selected `749c4e7` seals 45,858 files; all 10 remote checks/Vercel status pass. Actual
+synthetic network-none container rehearsal verifies startup/native loading,
+one worker restart, removal and maintenance fallback; independent closure/full
+seal pass. This does not establish actual production provider health.
+
+New isolated protected preview at https://fever-hits-cottage-pgp.trycloudflare.com
+expires Oct23 09:12:22UTC. Actual worker inspection confirms749 source/TVM target
+and payment/mail/cron absent. Hosted certificate24 layouts/four A4 downloads,
+local logout/full preservation pass. Older owner launcher still points toace0804,
+expiring Oct22 22:17UTC. No existing resource restart or launcher switch occurs.
+Private production 749 inputs are retained separately; no automatic loading or
+activation. Recovered-media approval/domain/free-hosting release remain open.
+[Latest evidence and runtime limits](production-readiness.md#latest-certificate-release).
+
+## Earlier service state — Oct22 02:05 Madrid
 
 Production/public503 and both customer backends remain paused. Synthetic owner
-previewace0804 remains live until Oct22 22:17UTC; three specific native/tunnel/
+preview `ace0804` remains live until Oct22 22:17UTC; three specific native/tunnel/
 Behemoth handles are freshly confirmed. Student login, signed video, PDF and
 current public layouts/themes pass; payment/application-mail/cron are absent.
 
-Selected production source509fa06 passes fresh45,857-file build and all10 remote
+Selected production source509fa06 passes fresh45,857-file build and all 10 remote
 checks/Vercel status. Actual built app runs through the proposed full-Bookworm
 container service: checkout/voucher denial, native-import liveness, real worker
 restart/new invocation, stop/removal and maintenance fallback pass with synthetic
@@ -41,7 +58,7 @@ timestamps, exact prior rows/protected metadata, and no new session/refresh/AMR
 or audit rows after normal logout. No cleanup COMMIT is required. Accepted data,
 68 PDFs and the committed56-cell correction must not be repeated.
 
-Checkpoint `3ecf93` passes all10 remote checks. This closes the exact-source admin
+Checkpoint `3ecf93` passes all 10 remote checks. This closes the exact-source admin
 recovery flow, not all customer/content/media/payment or security checks. Public
 Vercel remains503/paused and application/UI unreleased. Broader journeys, current
 coupon TEST/refund/currency, recovery-point currency, stable free hosting and
@@ -106,7 +123,7 @@ All68 PDFs remain accepted. Public Vercel stays paused and UI unreleased.
 ## Current replacement state — Oct21 14:48:17 UTC
 
 - Supabase replacement `klaiiikojgdfclzhqfgt`: INACTIVE after verified database
-  and all68-PDF recovery. Fresh initial/final1,621 rows/14,270 typed cells and
+  and all 68-PDF recovery. Fresh initial/final1,621 rows/14,270 typed cells and
   6,423,774 file bytes match; explicit rollback/frontend/worker closure pass.
 - Independent checks preserve full target Auth and original project states/
   settings. Paused target PostgREST settings GET404 prevents independent desired
@@ -140,7 +157,7 @@ connection: zero SQL/Storage HTTP/new uploads, no current preservation readback.
 The earlier documented5432 session diagnostic passes seven metadata SQL calls,
 30.030s same-session idle and rollback/close; it does not explain this subsequent
 connection failure or establish long-run stability. Both outcomes are retained.
-31ad6ba publication/CI/PR46 readback passes, with no application deployment.
+31ad6ba publication/CI/PR #46 readback passes, with no application deployment.
 Public Vercel remains paused. Native build/Auth plans remain preparation only;
 customer/files/login/HTTPS, recovery point, free hosting and release remain open.
 [Evidence and next action](production-readiness.md#oct21-session-route-passes-once-storage-continuation-stops-at-connect).
