@@ -1,5 +1,74 @@
 # Maintenance log
 
+## 2026-10-22 12:59 UTC — native billing passes; SDK harness navigation failure
+
+Continued the existing maintenance work on unchanged app476bc7a. Fresh SDK-R3
+baseline/adoption and controller correction allow one actual coupon checkout,
+manual-address billing, six fixed synthetic fields and one Continue. Native
+quote80/8/72 and provider session binding pass. Actual unpaid Dodo payment is
+requires_payment_method, EUR8712 minor including1512 tax, exact discount.
+Authenticated original captures bind the observed Document, worker ownership
+and the three SDK inputs. One adoption/reload then fails static/current-frame
+readiness before card entry: STATIC_MAIN_DOCUMENT_CHANGED, identity invalid,
+wrapper1 admitted/body0, support2 denied, SDK API0. Source identifies an
+ambiguous main-frame-navigation predicate; the failing event's Document identity
+was not retained, so the exact transition remains unknown. No gate bypass,
+card reservation, confirmation, completed purchase, refund or production change.
+
+Normal global logout/browser stop/profile removal pass. Final two reads preserve
+all29 current fingerprint groups, selected identity core and23 prior sessions;
+selected sessions/purchases0, retained alias usage0. Provider endpoint is freshly
+read/disabled/deleted/404. Native reports clean shutdown; listener/two tunnels/
+bridge terminate; independent local process/socket check passes. Current bridge controller0 differs from its
+recorded SSH child255. One exact guardian receives one PID-bound SIGTERM, removes
+its socket in finally and is observed as a terminal zombie. Conditional remote
+cleanup removes37 matched files/the Node copy/two namespaces, live references0;
+four SSH operations exit0/stderr0. The first no-deletion cleanup diagnostic has a
+copied label, retained separately from the exact final CP25 result.
+Factory16+reserved extra customerGET1+native
+checkout1=18/35 actual calls; locally refused couponUsage adds no HTTP. Browser
+88 blocked requests/98 console errors stay unclassified. The separately scoped
+owner UI preview remains intact. Full details live in the latest Dodo checkpoint.
+Selected62 source/finite files616,115bytes retained; manifest
+58c638a033a83bd49f294ca523c73a7408a20f62243615c4edb49f5d3bacd0b7.
+Explicit six-value raw/base64 scan has0 matches; private inputs/raw logs/bodies
+are excluded. Owner-only local storage is unencrypted; no off-site recovery.
+
+## Oct22 12:38 UTC — Actual native checkout passes; parent command failure closes scope
+
+- Previous turn is progress: actual TEST coupon/readback, timestamp correction,
+  preserved data/resources and pushedbf1a26a. All11 listed remote checks now pass;
+  selected application476 is unchanged and production remains paused.
+- Fresh SDK-R2 build/guard/profile, current baseline and private HTTPS/Unix
+  boundaries pass. Create/read back one new TEST coupon and insert one owned
+  local alias. Initial customer ownership becomes stale during startup; a distinct
+  single GET200 confirms the same IDs and refreshes only canonical evidence.
+  Reserve the unused second line-item slot to retain22 root/21 factory/35 aggregate.
+- Actual controlled login/native quote80/8/72/one checkout POST200 and provider
+  session verification pass. Billing fills name/country but needs its visible
+  manual-address control. Root sends a command absent from the parent whitelist;
+  parent cleanup logs out/stops the browser. This is an avoidable maintenance
+  controller error. No manual click, Continue, SDK/bootstrap or card occurs;
+  final provider checkout GET confirms no payment ID.
+- Future correction adds only the driver's existing guarded manual command and
+  rejects invalid parent inputs locally. Four actual-loop groups verify valid
+  routing, rejected-input continuity and preserved IO-error cleanup. Closed sources,
+  coupon/alias/unpaid checkout and spent markers remain unchanged.
+- Actual final checks preserve29 protected groups/selected core/23 prior sessions;
+  selected sessions/purchases0, new alias usage0. Endpoint404/native clean/local
+  process/socket closure pass. Bridge255 leaves one orphan lease guardian: full
+  source/UID/starttime/socket checks precede one PID-bound SIGTERM; its finally
+  unlinks the socket. Terminal Z/PPID1 remains qualified. Conditional cleanup
+  removes29 exact flat files, Node copy and both owned remote namespaces.
+- Calls16 root/one app;34 blocked requests/45 console errors remain unclassified.
+  Retain59 selected source/finite files606,750bytes, manifest9a03f53e; rehash and
+  five-value raw/base64 secret scan0. No private inputs/raw Auth/provider bodies;
+  owner-only local storage is unencrypted and off-site recovery unestablished.
+- Next scope must adopt this latest closed state/retained alias and use the
+  corrected command route. Complete control preparation before the ownership
+  receipt ages. [Actual Dodo outcome](dodo.md#oct22-1238-utc--native-coupon-checkout-passes-controller-stops-at-billing).
+  No production operation or real charge/refund occurs; the full goal stays open.
+
 ## Oct22 12:05 UTC — Actual coupon attempt closed; test-helper failures corrected
 
 - Revalidated the active goal after a status-only turn (no implementation

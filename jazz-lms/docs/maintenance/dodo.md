@@ -1,5 +1,113 @@
 # Dodo product, webhook and sandbox audit
 
+## Oct22 12:59 UTC — billing passes; SDK document guard stops before card
+
+A distinct SDK-R3 scope uses unchanged application476bc7a and a fresh protected
+native build. Its eligible existing USER, persisted role, current29-group
+baseline, zero sessions/purchases and previous closed-scope state are verified.
+One local single-use10% alias is inserted. Source/input transport and the public
+401/403/503 boundaries pass. The current six public SDK asset bytes match their
+reviewed pins; this separate read check does not prove a functioning SDK.
+
+One explicitly reserved precheckout customer GET refreshes unchanged ownership
+from its actual capture. The unused second line-item slot is reserved, retaining
+22 root actual calls/21 factory and35 aggregate. Native voucher quote80/8/72 and
+one checkout POST200 pass; an actual provider GET authenticates the session.
+The corrected controller exposes the driver's manual-address command. Manual
+entry, six fixed synthetic billing fields and one Continue click pass.
+
+A subsequent checkout GET and exact payment GET bind the observed payment
+Document. Actual provider state is `requires_payment_method`, EUR8,712 minor
+units including1,512 tax, exact selected discount. No charge has occurred; a
+catalog quote alone does not settle currency/tax/product pricing approval.
+Root worker/webhook ownership is updated only from those authenticated captures.
+The three bounded SDK inputs are admitted, the observed Document is adopted
+without navigation and exactly one SDK initialization reload is attempted.
+
+The actual observation is `NO_GO`: `STATIC_MAIN_DOCUMENT_CHANGED`, invalidated
+SDK identity, one wrapper admitted/zero verified body reads, two support requests
+denied, no SDK API calls. Source inspection identifies the only failure setter
+in `sdk-static-bootstrap-session.cjs`: it treats a main-frame navigation after
+any static request/previous navigation as a changed Document. The controller
+arms it before the intentional reload. Playwright main-frame navigation events
+can also represent same-document history changes. The actual failing event's
+Document identity/count was not retained; neither a same-document explanation
+nor an extra provider navigation is established. A future correction must
+measure current Document identity and retain the failed event, without relaxing
+provider ownership or card-readiness checks. Original sources/ledgers stay fixed.
+
+`sealSDK` fails readiness and creates no snapshot/card reservation. A coupon-usage
+command is refused locally because the payment has not succeeded; it makes no
+HTTP call. The normal logout and browser stop complete with profile removal.
+A two-query final read preserves all29 current fingerprints, selected identity
+core,23 prior sessions and alias usage0; selected sessions/purchases0. Fresh
+endpoint read/disable/delete/404 pass. Native shutdown is clean; listener, both
+tunnels and the bridge terminate. Independent local inspection finds zero owned
+service processes, no native run directory or webhook socket. Bridge controller0
+is distinct from its recorded SSH child255. One exact source/UID/start-time/socket
+matched remote guardian receives one PID-bound SIGTERM; its finally removes the
+socket, with a terminal zombie observed. Conditional cleanup removes37
+hash/owner/mode/single-link matched files, the pinned Node copy and two owned
+namespaces; live references0. The first stopped/no-deletion receipt retains a
+copied CP24 diagnostic label; the distinct final CP25 receipt corrects it. All
+four cleanup SSH operations exit0/stderr0. Factory16+extra customer1+native checkout1=18 actual
+provider calls. Browser88 blocked requests/98 console errors are unclassified.
+No card charge, refund, customer message or production operation occurs.
+
+Final closure receipt `d8395ccefb7b393b3aaff066ab6184e18b079e9a5e94ed4fb8a5593cef19d72d`
+truthfully records CLOSED_BEFORE_CARD; it does not claim Continue was unattempted.
+Selected62 source/finite files,616,115bytes, are retained locally under
+`review-checkpoint-dodo-checkout-sdk-r3-20261022`; manifest
+`58c638a033a83bd49f294ca523c73a7408a20f62243615c4edb49f5d3bacd0b7`.
+Six explicitly selected current credentials/raw/base64 have0 matches; this
+selection is not inferred from the prior five-value scan. All retained files are
+owner-only, hash-readback verified, without private inputs/raw logs/Auth/provider
+bodies. Local retention is unencrypted; off-site recovery is not established.
+
+## Oct22 12:38 UTC — Native coupon checkout passes; controller stops at billing
+
+Fresh SDK-R2 uses a separate476 artifact/45,858files, manifest18ca8f0f, new
+origins/coupon/alias/ledgers and current eligible USER baseline. Exact static/API
+source, protected inputs and actual worker guard inspect successfully. Native
+startup, public401, webhook GET403/unsignedPOST503 and listener readiness pass;
+endpoint enable follows those checks. The owned browser logs in normally.
+
+Startup consumes the initial provider ownership receipt's120sec freshness.
+One separately reserved exact-email customer GET200 confirms identical IDs and
+refreshes only the canonical worker binding/evidence timestamps. Its allocation
+reserves the unused second line-item slot:22 root/21 factory+one external GET,
+13 app/35 aggregate remain. No factory restart or provider mutation replay.
+Actual native Apply verifies80/8/72; one native checkout POST200 and exact provider
+session verification pass. These quote amounts are not charged-money facts.
+
+Billing fills name/country, then cannot find address inputs. Retained metadata
+shows the visible `Enter address manually` button. Root sends `enterManualBilling`,
+which the driver implements but the parent controller's whitelist omits. Parent
+cleanup normally logs out/stops the child; holder exits1/child0. Manual control,
+Continue, SDK bootstrap and card submission never execute. Final provider checkout
+GET200 still has no payment ID. A distinct correction adds only that exact guarded
+command and rejects malformed/unknown input locally without closing the child;
+four actual-loop closed control groups, syntax and inert checks pass.
+
+Final read-only checks preserve29 fresh fingerprints/selected core and23 prior
+sessions, with selected sessions/purchases0 and owned alias usage0. Endpoint is
+disabled/deleted/404; native shutdown reports cleantrue; local processes/sockets
+are absent. Bridge exit255 remains. One orphaned exact remote lease guardian is
+verified by full source/UID/starttime/socket identity, then receives one PID-bound
+SIGTERM. Its finally unlinks the socket; terminal Z/PPID1 is observed. Conditional
+cleanup verifies/removes29 flat files by hash/mode/owner, the pinned Node copy
+and both exact namespaces. No unknown path or unrelated process is removed.
+Actual provider calls are16 root/one app;34 blocked requests/45 console errors
+remain unclassified. No paid result, refund or customer payment email is proven.
+
+Finite closure SHA `077d1a6a75a3b034ae73e27ed8e8803a169a51012f39a786a629556b38d33ad9`.
+Selected59-member606,750-byte source/finite retention manifest is
+`9a03f53e33c2527704ed220f2b86d5f3bbb6522469c811b4364421892140f98b`.
+Private inputs/raw Auth/provider bodies are excluded; retention is local,
+owner-only/unencrypted, with no off-site recovery. Preserve the spent checkout
+and all failures. A fresh scope must adopt the latest closed data/retained alias,
+use the corrected command map and current provider/source/origin/role bindings.
+
 ## Oct22 — Current SDK attempt stops before checkout
 
 Actual current-source preparation closes the previously missing static/API

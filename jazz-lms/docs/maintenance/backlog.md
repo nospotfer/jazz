@@ -1,5 +1,18 @@
 # Prioritized maintenance backlog
 
+## Oct22 12:59 UTC checkpoint
+
+- PAY: SDK-R3 now verifies native quote/checkout, manual billing and Continue;
+  unpaid provider payment is EUR87.12 including15.12 tax with the selected
+  discount. Card/SDK/fulfillment remain unverified. The maintenance guard rejects
+  a main-frame transition before graph verification; actual Document identity
+  at failure was not retained. Correct and instrument that predicate in a fresh
+  helper; do not replay this closed scope or bypass readiness. Current data and
+  owned resources close; the SSH child255 and exact guardian cleanup remain
+  explicit.
+- REL: production remains paused; UI changes are preview-only. Checkout,
+  recovered media and the concrete free hosting/domain release review stay open.
+
 ## Current priorities — Oct22 source `476bc7a` verified
 
 1. Verify selected recovered video/PDF through the controlled administrator under
@@ -26,17 +39,21 @@
    prefetches/five actual absent-provider503s;31 loading failures are canceled
    ERR_ABORTED without inferred causes. The mobile privacy/download overlap is
    fixed and hosted-verified; earlier unclassified counts are not rewritten.
-6. Finish the actual discounted-payment journey in a fresh TEST scope. Current
-   static/API driver wiring passes82 closed controls and the offline SDK graph
-   loads. The latest attempt stops after one actual coupon creation because the
-   helper rejects valid whole-second UTC; the distinct parser correction passes16
-   tests. One corrective GET verifies coupon terms/usage0; no checkout/card occurs.
-   Full29 preservation and owned tunnel/tooling closure pass. Preserve that spent
-   attempt; do not restart it. Actual SDK/bootstrap/fulfillment and wallet/refund
-   remedy remain open. [Latest payment outcome](dodo.md#oct22--current-sdk-attempt-stops-before-checkout).
-   Real student-password continuity
-   remains unverified; the owner only has the administrator. Do not request other
-   customers' credentials or treat isolated tests as recovered-customer proof.
+6. Correct and instrument the SDK harness Document-change check, then finish
+   the actual discounted-payment journey in a fresh TEST scope. SDK-R3 verifies
+   native quote80/8/72, checkout POST200, exact provider session/payment binding,
+   manual billing and Continue. One SDK reload fails before card entry; the
+   failed navigation event's Document identity was not retained. All29 protected
+   groups/core/23 prior sessions are preserved; selected sessions/purchases0,
+   alias uses0. Endpoint/native/local/remote resources close; SSH child255 and one
+   exact guardian SIGTERM remain explicit. Adopt this latest closed state and
+   retained aliases, with its truthful CLOSED_BEFORE_CARD status; never replay
+   the checkout or relax readiness. SDK/card/discounted fulfillment and the
+   separately scoped wallet/refund remedy remain open.
+   [Latest payment outcome](dodo.md#oct22-1259-utc--billing-passes-sdk-document-guard-stops-before-card).
+   Real student-password continuity remains unverified; the owner only has the
+   administrator. Do not request other customers' credentials or treat isolated
+   tests as recovered-customer proof.
 7. Preserve the documented credential-handling incident: a diagnostic search
    printed one project service credential in tool output. It is absent from Git/
    reports/review evidence; the unsafe search stopped. Rotation remains deferred

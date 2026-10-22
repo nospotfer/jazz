@@ -1,4 +1,77 @@
-# Production recovery checkpoint — 2026-10-21
+# Production recovery checkpoint — 2026-10-22
+
+## Latest payment checkpoint — Oct22 12:59 UTC
+
+**Native coupon checkout and billing pass; the payment form fails a maintenance
+harness navigation check before card entry. Production remains paused and
+application476bc7a is unchanged.** The fresh SDK-R3 run verifies quote80/8/72,
+one native checkout POST200, exact provider session, manual address entry, six
+fixed billing fields and one Continue click. Dodo creates a payment in
+`requires_payment_method`: EUR8,712 minor units including1,512 tax, with the exact
+selected discount. This is an unpaid provider total, not a completed charge;
+the application quote does not establish currency conversion or tax acceptance.
+
+After one observed-document adoption and one SDK reload, the static guard
+reports `STATIC_MAIN_DOCUMENT_CHANGED`; identity is invalidated, one wrapper
+request is admitted without verified body, two support requests are denied and
+no SDK API request is admitted. Source inspection identifies an overbroad
+main-frame navigation predicate, but the failed event's Document identity was
+not captured. A same-document transition is a possible explanation, not an
+established cause. No card reservation, confirmation, fulfillment or refund
+occurs. The guard is not bypassed and the closed scope is not retried.
+
+Normal logout/profile removal,29 protected groups, selected identity core and23
+prior sessions are verified; selected sessions/purchases0 and alias usage0.
+Endpoint deletion/404 and clean local application/listener/tunnel/transport
+shutdown pass. The bridge controller exits0 while its recorded SSH child exits255.
+One source/UID/start-time/socket-matched remote guardian receives a single
+PID-bound SIGTERM; its finally removes the socket and a terminal zombie is
+observed. Conditional cleanup removes37 matching files/the Node copy and both
+owned namespaces; live path references0. The first no-deletion cleanup receipt
+has a copied diagnostic label; it is preserved and the final CP25 receipt is exact.
+Selected62 source/finite files (616,115 bytes) are retained locally; manifest
+`58c638a033a83bd49f294ca523c73a7408a20f62243615c4edb49f5d3bacd0b7`.
+Six explicitly selected current credential values/raw/base64 have0 matches.
+Private inputs/raw logs/Auth/provider bodies are excluded. Owner-only storage is
+local and unencrypted; off-site recovery remains unestablished.
+
+Actual provider calls are16 factory+one reserved customer-freshness GET+one native
+checkout=18/35. A coupon-usage command fails its succeeded-payment precondition
+without HTTP. Browser counts88 blocked requests/98 console errors remain
+unclassified. Full outcome: [Dodo checkpoint](dodo.md#oct22-1259-utc--billing-passes-sdk-document-guard-stops-before-card).
+
+## Latest payment checkpoint — Oct22 12:38 UTC
+
+**Native discounted quote and checkout now pass; Continue/card/fulfillment remain
+unverified. Production is still paused and application476bc7a is unchanged.**
+The fresh SDK-R2 scope verifies quote80/8/72 and one native checkout POST200,
+then authenticates its provider session. Billing fills name/country but address
+fields require the visible manual-address control. Root sends that driver's
+command through a controller that does not expose it; the controller closes and
+normally logs out. This is a maintenance-controller failure, not a Dodo decline.
+No Continue, SDK bootstrap or card reservation occurs. A final checkout GET
+confirms no payment ID. The exact command mapping and local input rejection are
+corrected in a distinct future helper; closed sources/ledgers stay unchanged.
+
+Final checks preserve29 current protected groups, selected account core and23
+prior sessions; selected sessions/purchases0, retained local alias usage0.
+Endpoint deletion/404, native clean shutdown, local process/socket closure and
+remote cleanup pass. SSH bridge255 is retained. One exact orphaned remote lease
+guardian requires a PID-bound SIGTERM; its finally removes the socket, with a
+terminal zombie observed afterward. All29 hash-matched remote files, the Node
+copy and two owned namespaces are removed, with no live path references.
+Thirty-four blocked requests/45 console errors remain unclassified.
+
+Actual calls:15 factory+one separately reserved customer-freshness GET+one native
+checkout=17, below the35 aggregate cap. The extra read reserves the unused second
+line-item slot, retaining22 total root/21 factory caps. The next run should finish
+startup/control preparation before the initial ownership read becomes stale.
+Selected59 source/finite files606,750bytes are retained locally, manifest
+`9a03f53e33c2527704ed220f2b86d5f3bbb6522469c811b4364421892140f98b`;
+five selected credential values/raw/base64 have0 matches. Private inputs and raw
+Auth/provider responses are excluded; local owner-only storage is unencrypted
+and off-site recovery remains unestablished. Full outcome:
+[Dodo checkpoint](dodo.md#oct22-1238-utc--native-coupon-checkout-passes-controller-stops-at-billing).
 
 ## Latest payment checkpoint — Oct22 12:05 UTC
 

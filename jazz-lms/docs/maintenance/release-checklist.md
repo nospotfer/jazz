@@ -1,7 +1,30 @@
 # Production review and rollback checklist
 
+## Oct22 12:59 UTC checkpoint
+
+- [x] Fresh native coupon quote/checkout, exact session/payment binding, manual
+  address entry, fixed billing and one Continue verified on application476bc7a.
+- [x] Unpaid provider money retained canonically: EUR8712 minor including1512 tax;
+  exact discount verified. No inference of a completed charge.
+- [ ] Correct and instrument the harness Document-change predicate; actual SDK-R3
+  bootstrap fails before card entry. Do not bypass the readiness gate or replay
+  the closed scope. Card, discounted fulfillment and signed delivery stay open.
+- [x] Final29-group/core/prior-session preservation and normal logout/profile,
+  endpoint deletion/404 and independent local service/socket closure verified.
+- [x] Independently verify remote cleanup:37 matched files/Node/two namespaces
+  removed and live references0. Record controller0/SSH child255, one exact
+  guardian signal/terminal zombie and the retained first receipt label error.
+- [ ] Production release, recovered media and free hosting/domain approval remain.
+
 ## Current gate — Oct22 source `476bc7a` build/hosted result
 
+- [x] Verify fresh actual native discounted quote/checkout and close SDK-R2 before
+      Continue/card; retain parent command failure, all29/23 preservation and exact
+      endpoint/native/local/remote closure with bridge255/guardian qualification.
+- [x] Correct exact manual-address command mapping and reject invalid parent input
+      without closing the active browser; actual-loop closed controls pass.
+- [ ] Complete actual SDK/bootstrap/card and discounted fulfillment under
+      a fresh current source/provider/role scope; refund verification stays separate.
 - [x] Assemble the concise [release review](release-review.md), preserving exact
       source bindings, preview expiry, deferred journeys and staged rollback.
 - [x] Recheck exact476 locked dependencies: production0/full5 high entries in one

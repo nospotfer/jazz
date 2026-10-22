@@ -1,9 +1,25 @@
 # Goal verification matrix
 
-## Current verification — Oct22 source `476bc7a`
+## Oct22 12:59 UTC actual SDK-R3 outcome
+
+| Check | Actual result | Limit |
+|---|---|---|
+| Native coupon and checkout | Quote80/8/72; POST200; provider session authenticated | Quote is not charged money |
+| Billing | Manual address, six fixed fields and Continue pass | One bounded Continue only |
+| Payment readback | requires_payment_method; EUR8712 minor incl1512 tax; exact discount | Unpaid; commercial tax/currency acceptance open |
+| Current SDK bootstrap | NO_GO: STATIC_MAIN_DOCUMENT_CHANGED; identity invalidated; wrapper1 admitted/body0; support2 denied; API0 | Failed navigation event Document identity not captured; possible same-document predicate issue remains unproven |
+| Card and fulfillment | No card reservation/confirmation or purchase | No discounted success/webhook claim |
+| Preservation |29 fingerprints/core/prior23 sessions preserved; selected sessions/purchases0; alias uses0 | Historical Auth gap stays recorded |
+| Local closure | Normal logout/profile removal; endpoint deleted/404; native clean stop; listener/tunnels/bridge terminal; zero owned local services/sockets | SSH child255/controller0 distinct; one exact guardian signal;37 matched files removed, both namespaces absent/live references0 |
+| Diagnostics |88 blocked requests,98 console errors, one command failure at sealSDK; couponUsage precondition failure makes0HTTP | Unclassified counts are not service health proof |
+
+## Earlier checkpoint verification — Oct22 source `476bc7a`
 
 | Requirement | Actual result | Status |
 | --- | --- | --- |
+| Fresh native coupon checkout | SDK-R2 actual quote80/8/72, native checkout POST200/exact session; no Continue/SDK/card, final provider payment ID absent | Passed through checkout; parent manual-command omission stops billing |
+| Parent command correction | Exact manual-address action admitted; malformed/unknown input rejected without child termination;4 actual-loop groups pass | Future helper verified; stopped financial scope not replayed |
+| SDK-R2 closure |29 groups/23 prior sessions/core preserved; selected sessions/purchases0/alias usage0; endpoint404/native clean/local absent/29 remote files removed | Passed; bridge255/orphan guardian SIGTERM/terminal Z and unclassified34/45 diagnostics retained |
 | Current SDK driver | Exact static/API integration82 closed controls; actual offline current graph5 core plus natural ES; no live SDK API/card | Source/offline passed; actual bootstrap unverified |
 | Latest coupon attempt | Product200/code404/coupon POST200; helper rejects valid whole-second UTC; separate corrective GET200 verifies terms/usage0/expiry | Stopped before checkout; one unused TEST coupon retained |
 | Test helper corrections | Optional0–6 fractional UTC with microsecond precision16 tests; actual observer diagnostic truncation accepted,13 malformed-counter controls deny | Verified helpers; stopped scope not replayed |
