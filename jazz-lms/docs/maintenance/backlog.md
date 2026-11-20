@@ -1,5 +1,39 @@
 # Prioritized maintenance backlog
 
+## Production cutover — Nov19–20 (owner-approved)
+
+**Production is live again on Monster.** The owner approved the staged
+cutover on Nov19 and later approved re-enabling purchases. Times are UTC.
+
+| Step | Result |
+| --- | --- |
+| Backend | `klaiiikojgdfclzhqfgt` resumed Nov19 16:08 (ACTIVE_HEALTHY). Read-only count: 26 public tables/1,591 rows + 14 auth.users + 16 identities = the accepted 1,621. |
+| Auth | Site URL `https://www.culturadeljazz.com`; allow list = `/auth/callback` and `/auth/reset-password/callback`; email provider on; public signup stays disabled (registration uses the server route); Resend SMTP (`no-reply@culturadeljazz.com`, 30/h); the six original production mail templates copied from `feavujcllgbzlvdvkkxx` (confirmation/magic-link carry `{{ .Token }}`). Nov20: Google provider enabled with the replacement client (`culturadeljazz-auth-bf40f8`), nonce check kept. Snapshot: `~/backups/culturadeljazz-maintenance/production-cutover-20261119/`. |
+| Release | The sealed 476 artifact lived in `/tmp` and was lost in the Nov01 host reboot. Rebuilt from the same commit at `~/.local/share/culturadeljazz-maintenance/production-builds/release-476bc7a-20261119` (45,858 files, manifest sha256 `dd32934b…`, not byte-identical to the Oct22 build). Full plan inspection passes. |
+| Tunnel | Cloudflare account of the owner; named tunnel `culturadeljazz-production` `a5cc96b0-171c-4726-9c4b-717c15e7c8e6`; private cloudflared copy pinned in the plan. The 2026.7 credentials file carried an empty `Endpoint` key that the reviewed validator rejects; it was dropped (three-key file). |
+| Units | `jazz-production.service` (container variant) and `jazz-production-tunnel.service` installed as user units, enabled. `~/.config/user-tmpfiles.d/culturadeljazz-production.conf` recreates the run parent at boot. Docker network `culturadeljazz-production` (bridge, ICC off). |
+| Tunnel sandbox override | Since the Nov01 reboot, user-manager namespace directives are applied on Monster (`apparmor_restrict_unprivileged_userns=1`); inside them `connect()` to `edge.sock` fails with EACCES. Owner-approved drop-in `jazz-production-tunnel.service.d/10-monster-userns.conf` resets PrivateTmp/ProtectSystem/ProtectHome/ReadWritePaths; NoNewPrivileges and cgroup limits remain. |
+| DNS | Zone `culturadeljazz.com` added to Cloudflare Free (6 records, verified equal to Squarespace); `www` and apex routed to the tunnel. Nameservers changed at Squarespace Nov20 11:07 to `malavika`/`yahir.ns.cloudflare.com`; `.com` registry showed them within a minute. DNSSEC was off. |
+| Public checks | Nov20 11:14: `www` 200, `/auth` 200, apex 308 → `www`, Let's Encrypt certificate, CSP/HSTS intact, no Cloudflare HTML injection, Dodo webhook POST on apex reaches the app (unsigned → 401). |
+| Purchases | Nov20: LIVE webhook secret matches config; LIVE product price changed 2990 → **2999 EUR** (tax-exclusive, BIZ-01 resolved in favour of the catalog €29.99; before-state saved). `CHECKOUT_DISABLED=false`; service restarted 11:28. |
+
+Open after cutover:
+
+1. Google sign-in works only for test users: publishing the consent screen needs
+   a privacy-policy URL and the site has none. Adding customers as test users
+   through the console failed silently. Google-only customers can use password
+   recovery meanwhile.
+2. Old Vercel cron still configured (project paused; Vercel CLI token expired).
+3. Owner should log in once as admin to confirm the hosted journey; a real LIVE
+   purchase has not been observed since reopening.
+4. Domain consolidation requested by the owner: modelchefs.net, neurofactory.net,
+   oliveira-barra.com and pajaysiesta.com are staged as pending Cloudflare zones
+   (61 record sets equal). Their nameservers are still Squarespace because all
+   four rely on Squarespace email forwarding (admin@neurofactory.net is a
+   provider-account address) and pajaysiesta.com on Squarespace forwarding.
+   Next: Cloudflare Email Routing with verified destinations, nameserver switch,
+   redirect rule, then registrar transfers (owner payment).
+
 ## Oct22 12:59 UTC checkpoint
 
 - PAY: SDK-R3 now verifies native quote/checkout, manual billing and Continue;

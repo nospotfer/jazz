@@ -1,6 +1,19 @@
 # Maintenance log
 
-## 2026-10-22 — production-only native dependency packaging
+## 2026-11-20 — production reopened on Monster
+
+Owner-approved cutover: recovered backend resumed and given production Auth/SMTP
+settings and the original mail templates; the lost sealed 476 artifact was rebuilt
+from the same commit; named Cloudflare tunnel and container/tunnel user units
+installed and enabled; culturadeljazz.com nameservers moved from Squarespace to
+Cloudflare. Public HTTPS, apex redirect and apex webhook routing verified. A
+tunnel-unit drop-in resets namespace directives that now break edge-socket access
+on Monster. Purchases re-enabled after setting the LIVE Dodo price to EUR 29.99.
+Google sign-in enabled on the backend; consent-screen publication blocked on a
+missing privacy policy. Other owner domains staged in Cloudflare without
+nameserver changes. Details: [backlog](backlog.md#production-cutover--nov1920-owner-approved).
+
+# 2026-10-22 — production-only native dependency packaging
 
 Confirmed that the native producer sealed its development lint chain along with
 runtime dependencies. A disposable private copy of the476/R3 artifact is pruned
