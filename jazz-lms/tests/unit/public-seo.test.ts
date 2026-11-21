@@ -20,8 +20,8 @@ describe('public indexing boundaries', () => {
     expect(publicRobots(false)).toEqual({ rules: { userAgent: '*', disallow: '/' } });
     expect(publicSitemap(false)).toEqual([]);
   });
-  test('production sitemap contains only canonical public homepage, not accounts or courses', () => {
-    expect(publicSitemap(true).map(entry => entry.url)).toEqual(['https://www.culturadeljazz.com/']);
+  test('production sitemap contains only the public homepage and privacy policy, not accounts or courses', () => {
+    expect(publicSitemap(true).map(entry => entry.url)).toEqual(['https://www.culturadeljazz.com/', 'https://www.culturadeljazz.com/privacy']);
     expect(publicRobots(true)).toMatchObject({ rules: { disallow: expect.arrayContaining(['/auth', '/dashboard', '/admin', '/api', '/*?*']) } });
   });
   test('homepage metadata is shareable without inventing price, refund or credentials', () => {

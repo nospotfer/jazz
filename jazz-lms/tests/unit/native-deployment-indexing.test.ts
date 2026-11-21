@@ -49,7 +49,10 @@ describe("native deployment indexing uses an explicit provider-neutral environme
       rules: { userAgent: "*", allow: "/", disallow: expect.arrayContaining(["/auth", "/admin", "/dashboard", "/api", "/*?*"]) },
       sitemap: `${CANONICAL}/sitemap.xml`,
     });
-    expect(actual.sitemap).toEqual([{ url: `${CANONICAL}/`, changeFrequency: "monthly", priority: 1 }]);
+    expect(actual.sitemap).toEqual([
+      { url: `${CANONICAL}/`, changeFrequency: "monthly", priority: 1 },
+      { url: `${CANONICAL}/privacy`, changeFrequency: "yearly", priority: 0.3 },
+    ]);
   });
 
   test("explicit native production takes precedence over a legacy preview marker", async () => {
@@ -75,7 +78,7 @@ describe("native deployment indexing uses an explicit provider-neutral environme
     const seo = await import("@/lib/seo");
     vi.stubEnv("APP_DEPLOYMENT_ENVIRONMENT", "production");
     expect(seo.publicHomeMetadata().robots).toEqual({ index: true, follow: true });
-    expect(seo.publicSitemap()).toHaveLength(1);
+    expect(seo.publicSitemap()).toHaveLength(2);
     vi.stubEnv("APP_DEPLOYMENT_ENVIRONMENT", "preview");
     vi.stubEnv("VERCEL_ENV", "production");
     expect(seo.isPublicIndexingEnabled()).toBe(false);
@@ -122,7 +125,7 @@ describe("existing Vercel deployments retain their legacy behavior when the new 
     vi.stubEnv("APP_URL", "https://culturadeljazz.com");
     expect((await import("@/lib/seo")).isPublicIndexingEnabled()).toBe(true);
     expect((await metadata()).robots).toEqual({ index: true, follow: true });
-    expect((await routes()).sitemap.map(entry => entry.url)).toEqual([`${CANONICAL}/`]);
+    expect((await routes()).sitemap.map(entry => entry.url)).toEqual([`${CANONICAL}/`, `${CANONICAL}/privacy`]);
   });
 
   test.each([undefined, "preview", "development", ""])("legacy marker %s without a new production declaration stays private", async flag => {

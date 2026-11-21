@@ -58,5 +58,8 @@ export function publicRobots(indexable = isPublicIndexingEnabled()): MetadataRou
 }
 
 export function publicSitemap(indexable = isPublicIndexingEnabled()): MetadataRoute.Sitemap {
-  return indexable ? [{ url: `${PUBLIC_SITE_ORIGIN}/`, changeFrequency: 'monthly', priority: 1 }] : [];
+  return indexable ? [
+    { url: `${PUBLIC_SITE_ORIGIN}/`, changeFrequency: 'monthly', priority: 1 },
+    { url: `${PUBLIC_SITE_ORIGIN}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
+  ] : [];
 }

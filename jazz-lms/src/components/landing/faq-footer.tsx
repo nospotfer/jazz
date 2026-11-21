@@ -75,6 +75,7 @@ export function FAQFooter() {
       ],
       topLabel: "Top",
       topAria: "Volver arriba",
+      privacy: "Política de privacidad",
     },
     en: {
       faqTitle: "Frequently asked questions",
@@ -103,6 +104,7 @@ export function FAQFooter() {
       ],
       topLabel: "Top",
       topAria: "Back to top",
+      privacy: "Privacy policy",
     },
     fr: {
       faqTitle: "Questions fréquentes",
@@ -132,6 +134,7 @@ export function FAQFooter() {
       ],
       topLabel: "Top",
       topAria: "Retour en haut",
+      privacy: "Politique de confidentialité",
     },
     pt: {
       faqTitle: "Perguntas frequentes",
@@ -161,6 +164,7 @@ export function FAQFooter() {
       ],
       topLabel: "Top",
       topAria: "Voltar ao início",
+      privacy: "Política de privacidade",
     },
   }[language];
 
@@ -337,7 +341,7 @@ export function FAQFooter() {
         </div>
 
         {/* Footer */}
-        <footer className="w-full bg-gray-900 dark:bg-black border-t border-gray-700 py-8 [--color-jazz-title-accent:#d79b1a]">
+        <footer className="w-full bg-gray-900 dark:bg-black border-t border-gray-700 pt-8 pb-20 sm:pb-8 [--color-jazz-title-accent:#d79b1a]">
           <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               {/* Logo + Contact */}
@@ -385,7 +389,13 @@ export function FAQFooter() {
 
             <div className="mt-6 pt-4 border-t border-gray-700 text-center">
               <p className="text-gray-400 text-xs">
-                © {new Date().getFullYear()} La Cultura del Jazz
+                © {new Date().getFullYear()} La Cultura del Jazz ·{" "}
+                <a
+                  href="/privacy"
+                  className="inline-flex min-h-11 items-center underline-offset-2 hover:text-[var(--color-jazz-title-accent)] hover:underline"
+                >
+                  {copy.privacy}
+                </a>
               </p>
             </div>
           </div>
