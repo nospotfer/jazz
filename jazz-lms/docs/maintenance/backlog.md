@@ -1,5 +1,17 @@
 # Prioritized maintenance backlog
 
+## Release b5e21ff — Nov22 (owner-approved)
+
+| Step | Result |
+| --- | --- |
+| Change | `/privacy` policy page (ES/EN/FR/PT; controller Neurofactory (Gabriel Oliveira-Barra), contact info@neurofactory.net), linked from footer, privacy banner and sitemap. Next.js 16.4.0 → 16.4.6 (critical RCE advisories GHSA-2464-fhr4-w9xw, GHSA-673q-mjm6-r5xr) and follow-redirects 1.16.3. First release built with development dependencies pruned (31,309 sealed files). |
+| Deploy | Release `~/.local/share/culturadeljazz-maintenance/production-builds/release-b5e21ff-20261121`, plan `production-candidate-b5e21ff`. Units replaced by its `proposal-20261121` container/tunnel units (only paths differ); restart Nov22 11:39:57 UTC, `/privacy` 200 at 11:40:10. Rollback: reinstall `production-candidate-476bc7a/installed-units-backup-20261122/*`, daemon-reload, restart `jazz-production.service`. |
+| Checks | `/`, `/auth`, `/privacy`, robots, sitemap (2 URLs) 200; anonymous `/dashboard` 307; unsigned Dodo webhook 401; apex 308; HSTS/CSP intact. Cloudflare email obfuscation rewrites the policy's address in HTML, but the hydrated page shows working mailto links with no console errors. |
+| Google | Consent screen privacy URL set; app published to **In production** (no logo, basic scopes, no verification required). Live `/auth` Google button reaches Google sign-in without error. Branding (app name on Google's screen) is not verified; Google shows the Supabase domain. |
+| Domains | neurofactory.net transfer to Cloudflare Registrar paid ($11.86, order 81b0533b…); culturadeljazz.com, modelchefs.net, pajaysiesta.com pending transfer since Nov20. |
+
+Open: contact form returns 500 because production has no `RESEND_API_KEY`/`RESEND_FROM_EMAIL`; old Vercel cron; optional Google brand verification.
+
 ## Production cutover — Nov19–20 (owner-approved)
 
 **Production is live again on Monster.** The owner approved the staged
