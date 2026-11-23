@@ -98,7 +98,7 @@ Exact IDs, states and evidence are in `jazz-lms/docs/maintenance/service-invento
 
 | Piece | What it is |
 | --- | --- |
-| Monster (this host) | Development machine and, since 2026-11-20, the production host: user units `jazz-production.service` (container) + `jazz-production-tunnel.service` (named tunnel `culturadeljazz-production`). It also runs unrelated Neurofactory/"doneness" containers and tunnels; leave them alone. |
+| Monster (this host) | Development machine and, since 2026-11-20, the production host: user units `jazz-production.service` (container) + `jazz-production-tunnel.service` (named tunnel `culturadeljazz-production`), plus `jazz-db-backup.timer` (nightly DB dump to `~/backups/culturadeljazz-production/db/` and Behemoth; its unit names the current candidate's runtime config, so update it on each release). It also runs unrelated Neurofactory/"doneness" containers and tunnels; leave them alone. |
 | Behemoth | Second owner host. Holds preview launchers for the owner and the encrypted second-host backup copy. |
 | Vercel `jazz-lms` (Neurofactory team, Hobby) | Former production host. Paused since 2026-10-20 and no longer in DNS. Hobby forbids commercial use, so it is not the long-term host. Its payment cron is still configured. |
 | Supabase `feavujcllgbzlvdvkkxx` | Original production backend, INACTIVE. Browser roles had read/write on every table, and users could change their own role. Never resume it without hardening. |

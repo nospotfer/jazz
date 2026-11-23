@@ -10,7 +10,13 @@
 | Google | Consent screen privacy URL set; app published to **In production** (no logo, basic scopes, no verification required). Live `/auth` Google button reaches Google sign-in without error. Branding (app name on Google's screen) is not verified; Google shows the Supabase domain. |
 | Domains | neurofactory.net transfer to Cloudflare Registrar paid ($11.86, order 81b0533b…); culturadeljazz.com, modelchefs.net, pajaysiesta.com pending transfer since Nov20. |
 
-Open: contact form returns 500 because production has no `RESEND_API_KEY`/`RESEND_FROM_EMAIL`; old Vercel cron; optional Google brand verification.
+Nov23 (owner-approved):
+
+- **Contact form fixed.** `RESEND_API_KEY` (the single Resend key in the credential CSV; domain `culturadeljazz.com` verified, eu-west-1) and `RESEND_FROM_EMAIL=La Cultura del Jazz <no-reply@culturadeljazz.com>` added to `production-candidate-b5e21ff/runtime-private.json` (previous file kept as `runtime-private.json.before-resend-20261123`); service restarted 09:28:54 UTC. A live test message was delivered to admin@neurofactory.net. Professor notifications for student messages are enabled by the same key; inbound reply handling stays off.
+- **Nightly database backup + keep-alive.** `scripts/ops/backup-production-database.sh` (installed copy in `~/.local/share/culturadeljazz-maintenance/bin/`) runs from user units `jazz-db-backup.service`/`.timer` (03:40 local, Persistent). It pings Supabase Auth health (keeps the Free project active), dumps the `public`, `auth` and `storage` schemas with pg_dump 17 (`postgres:17-alpine`) through the session pooler with `verify-full` TLS, checks the archive, stores it in `~/backups/culturadeljazz-production/db/` and copies it to Behemoth with checksum verification, keeping 30 days on each host. On any failure it emails admin@neurofactory.net. Verified: manual and systemd runs succeed (474 KB, 63 table-data entries); a restore into a disposable PostgreSQL 17 returns all 26 public tables / 1,591 rows; a forced copy failure delivered the alert email. Storage objects (the 68 PDFs) are not part of this dump.
+- When production moves to a new candidate directory, update the config path in `jazz-db-backup.service`.
+
+Open: old Vercel cron; optional Google brand verification.
 
 ## Production cutover — Nov19–20 (owner-approved)
 
