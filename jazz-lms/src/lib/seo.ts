@@ -61,5 +61,6 @@ export function publicSitemap(indexable = isPublicIndexingEnabled()): MetadataRo
   return indexable ? [
     { url: `${PUBLIC_SITE_ORIGIN}/`, changeFrequency: 'monthly', priority: 1 },
     { url: `${PUBLIC_SITE_ORIGIN}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${PUBLIC_SITE_ORIGIN}/terms`, changeFrequency: 'yearly', priority: 0.3 },
   ] : [];
 }

@@ -37,6 +37,9 @@ const copyByLanguage = {
     checkoutAmountHint: "El importe final se confirmará en el checkout.",
     cancel: "Cancelar",
     continue: "Ir al checkout",
+    termsPrefix: "Al continuar aceptas las ",
+    termsLink: "condiciones de venta",
+    termsSuffix: ", con garantía de devolución de 30 días.",
   },
   en: {
     title: "Apply your discount",
@@ -53,6 +56,9 @@ const copyByLanguage = {
     checkoutAmountHint: "The final amount will be confirmed in checkout.",
     cancel: "Cancel",
     continue: "Go to checkout",
+    termsPrefix: "By continuing you accept the ",
+    termsLink: "terms of sale",
+    termsSuffix: ", including the 30-day money-back guarantee.",
   },
   fr: {
     title: "Activez votre remise",
@@ -68,6 +74,9 @@ const copyByLanguage = {
     checkoutAmountHint: "Le montant final sera confirmé lors du paiement.",
     cancel: "Annuler",
     continue: "Aller au checkout",
+    termsPrefix: "En continuant, vous acceptez les ",
+    termsLink: "conditions de vente",
+    termsSuffix: ", avec garantie de remboursement de 30 jours.",
   },
   pt: {
     title: "Ative seu desconto",
@@ -83,6 +92,9 @@ const copyByLanguage = {
     checkoutAmountHint: "O valor final será confirmado no checkout.",
     cancel: "Cancelar",
     continue: "Ir para checkout",
+    termsPrefix: "Ao continuar, você aceita as ",
+    termsLink: "condições de venda",
+    termsSuffix: ", com garantia de reembolso de 30 dias.",
   },
 } as const;
 
@@ -225,7 +237,15 @@ export function PaymentMethodModal({
           </p>
         ) : null}
 
-        <div className="mt-6 flex items-center justify-end gap-2">
+        <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
+          {copy.termsPrefix}
+          <a href="/terms" target="_blank" rel="noopener" className="font-semibold underline underline-offset-2">
+            {copy.termsLink}
+          </a>
+          {copy.termsSuffix}
+        </p>
+
+        <div className="mt-4 flex items-center justify-end gap-2">
           <Button
             type="button"
             variant="ghost"

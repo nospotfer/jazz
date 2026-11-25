@@ -76,6 +76,7 @@ export function FAQFooter() {
       topLabel: "Top",
       topAria: "Volver arriba",
       privacy: "Política de privacidad",
+      terms: "Condiciones de venta",
     },
     en: {
       faqTitle: "Frequently asked questions",
@@ -105,6 +106,7 @@ export function FAQFooter() {
       topLabel: "Top",
       topAria: "Back to top",
       privacy: "Privacy policy",
+      terms: "Terms of sale",
     },
     fr: {
       faqTitle: "Questions fréquentes",
@@ -135,6 +137,7 @@ export function FAQFooter() {
       topLabel: "Top",
       topAria: "Retour en haut",
       privacy: "Politique de confidentialité",
+      terms: "Conditions de vente",
     },
     pt: {
       faqTitle: "Perguntas frequentes",
@@ -165,6 +168,7 @@ export function FAQFooter() {
       topLabel: "Top",
       topAria: "Voltar ao início",
       privacy: "Política de privacidade",
+      terms: "Condições de venda",
     },
   }[language];
 
@@ -395,6 +399,12 @@ export function FAQFooter() {
                   className="inline-flex min-h-11 items-center underline-offset-2 hover:text-[var(--color-jazz-title-accent)] hover:underline"
                 >
                   {copy.privacy}
+                </a>{" "}·{" "}
+                <a
+                  href="/terms"
+                  className="inline-flex min-h-11 items-center underline-offset-2 hover:text-[var(--color-jazz-title-accent)] hover:underline"
+                >
+                  {copy.terms}
                 </a>
               </p>
             </div>
