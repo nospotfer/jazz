@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -145,7 +146,7 @@ export async function GET(req: Request) {
       vouchers,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHERS_LIST_ERROR]', error);
+    console.error('[ADMIN_VOUCHERS_LIST_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao listar vouchers.' },
       { status: 500 }

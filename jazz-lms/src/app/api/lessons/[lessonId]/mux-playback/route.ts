@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/admin/permissions";
 import { createMuxPlaybackTokens } from "@/lib/mux";
@@ -14,9 +15,10 @@ export async function GET(
     const supabase = createClient();
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -29,20 +31,28 @@ export async function GET(
         chapter: {
           select: {
             courseId: true,
+            isPublished: true,
+            course: { select: { isPublished: true } },
           },
         },
       },
     });
 
-    if (!lesson || !lesson.isPublished) {
+    if (!lesson) {
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
     }
 
     const courseId = lesson.chapter.courseId;
-    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
-    const isAdminOwner = (user.email ?? "").toLowerCase() === adminOwnerEmail;
+    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").trim().toLowerCase();
+    const userEmail = (user.email ?? "").trim().toLowerCase();
+    const isAdminOwner = Boolean(adminOwnerEmail && userEmail && userEmail === adminOwnerEmail);
+    const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { role: true } });
+    const isAdmin = isAdminRole(dbUser?.role ?? null);
+    if (!isAdminOwner && !isAdmin && (!lesson.isPublished || !lesson.chapter.isPublished || !lesson.chapter.course.isPublished)) {
+      return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
+    }
 
-    const [hasCoursePurchase, hasLessonPurchase, firstLessonInCourse, dbUser] =
+    const [hasCoursePurchase, hasLessonPurchase, firstLessonInCourse] =
       await Promise.all([
         db.purchase.findUnique({
           where: {
@@ -66,6 +76,7 @@ export async function GET(
             chapter: {
               courseId,
               isPublished: true,
+              course: { isPublished: true },
             },
           },
           orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
@@ -73,15 +84,8 @@ export async function GET(
             id: true,
           },
         }),
-        user.email
-          ? db.user.findUnique({
-              where: { email: user.email },
-              select: { role: true },
-            })
-          : Promise.resolve(null),
       ]);
 
-    const isAdmin = isAdminRole(dbUser?.role ?? null);
     const isFreePreview = firstLessonInCourse?.id === lesson.id;
     const canAccess = Boolean(
       isAdminOwner ||
@@ -116,17 +120,12 @@ export async function GET(
     try {
       tokens = createMuxPlaybackTokens(playbackId);
     } catch (tokenError) {
-      const tokenErrorMessage =
-        tokenError instanceof Error
-          ? tokenError.message
-          : "Unable to create Mux playback token.";
-
-      console.error("[MUX_PLAYBACK_TOKEN_ERROR]", tokenErrorMessage);
+      console.error("[MUX_PLAYBACK_TOKEN_ERROR]", safeErrorDiagnostic(tokenError));
 
       return NextResponse.json(
         {
           error:
-            "Mux playback signing is not configured correctly. Provide valid MUX_SIGNING_KEY_ID and MUX_SIGNING_PRIVATE_KEY (PEM or base64 PEM) and restart the server.",
+            "Video playback is temporarily unavailable. Please try again later.",
         },
         { status: 500 },
       );
@@ -147,7 +146,7 @@ export async function GET(
       },
     );
   } catch (error) {
-    console.error("[MUX_PLAYBACK_ROUTE_ERROR]", error);
+    console.error("[MUX_PLAYBACK_ROUTE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "Failed to generate playback token" },
       { status: 500 },

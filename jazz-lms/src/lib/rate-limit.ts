@@ -1,10 +1,12 @@
+import { createHash } from "node:crypto";
+
 type RateLimitEntry = {
   count: number;
   resetAt: number;
 };
 
 type RateLimitOptions = {
-  bucket: string;
+  bucket: 'voucher-validate-ip' | 'voucher-validate-code' | 'webhook-email';
   maxRequests: number;
   windowMs: number;
   identifier?: string;
@@ -18,13 +20,34 @@ export type RateLimitResult = {
   resetAt: number;
 };
 
-const globalStore = globalThis as typeof globalThis & {
-  __jazzRateLimitStore?: Map<string, RateLimitEntry>;
+// These three application-owned buckets reserve independent capacity. A public
+// voucher request cannot consume the authenticated email webhook's storage.
+const BUCKET_NAMES = ['voucher-validate-ip', 'voucher-validate-code', 'webhook-email'] as const;
+const MAX_IDENTIFIERS_PER_BUCKET = 4096;
+const PRUNE_INTERVAL_MS = 30_000;
+type BucketStore = {
+  entries: Map<string, RateLimitEntry>;
+  nextPruneAt: number;
+  earliestResetAt: number;
 };
+const globalStore = globalThis as typeof globalThis & {
+  __jazzRateLimitBucketsV2?: Map<RateLimitOptions['bucket'], BucketStore>;
+};
+const buckets = globalStore.__jazzRateLimitBucketsV2 ?? new Map(
+  BUCKET_NAMES.map(name => [name, {
+    entries: new Map<string, RateLimitEntry>(), nextPruneAt: 0, earliestResetAt: Infinity,
+  }]),
+);
+globalStore.__jazzRateLimitBucketsV2 = buckets;
 
-const store = globalStore.__jazzRateLimitStore ?? new Map<string, RateLimitEntry>();
-if (!globalStore.__jazzRateLimitStore) {
-  globalStore.__jazzRateLimitStore = store;
+function prune(bucket: BucketStore, now: number) {
+  let earliestResetAt = Infinity;
+  for (const [key, entry] of bucket.entries) {
+    if (entry.resetAt <= now) bucket.entries.delete(key);
+    else earliestResetAt = Math.min(earliestResetAt, entry.resetAt);
+  }
+  bucket.earliestResetAt = earliestResetAt;
+  bucket.nextPruneAt = now + PRUNE_INTERVAL_MS;
 }
 
 function getRequestIp(req: Request) {
@@ -43,51 +66,55 @@ function getRequestIp(req: Request) {
 
 function buildKey(req: Request, options: RateLimitOptions) {
   const identifier = options.identifier?.trim() || getRequestIp(req);
-  return `${options.bucket}:${identifier}`;
+  // Retain a fixed-size key rather than arbitrary header/voucher strings.
+  return createHash("sha256").update(identifier).digest("hex");
 }
 
 export function checkRateLimit(req: Request, options: RateLimitOptions): RateLimitResult {
+  const bucket = buckets.get(options.bucket);
+  if (!bucket || !Number.isSafeInteger(options.maxRequests) || options.maxRequests < 1 ||
+      !Number.isSafeInteger(options.windowMs) || options.windowMs < 1) {
+    throw new Error('Invalid rate limit configuration');
+  }
   const now = Date.now();
+  if (now >= bucket.nextPruneAt ||
+      (bucket.entries.size >= MAX_IDENTIFIERS_PER_BUCKET && now >= bucket.earliestResetAt)) {
+    prune(bucket, now);
+  }
   const key = buildKey(req, options);
-  const existing = store.get(key);
+  const existing = bucket.entries.get(key);
 
   if (!existing || existing.resetAt <= now) {
+    if (existing) bucket.entries.delete(key);
+    if (bucket.entries.size >= MAX_IDENTIFIERS_PER_BUCKET) {
+      // Never evict live counters: rotating identifiers would reset their quota.
+      return {
+        allowed: false, limit: options.maxRequests, remaining: 0,
+        retryAfterSeconds: Math.max(Math.ceil((bucket.earliestResetAt - now) / 1000), 1),
+        resetAt: bucket.earliestResetAt,
+      };
+    }
     const resetAt = now + options.windowMs;
-    store.set(key, {
-      count: 1,
-      resetAt,
-    });
-
+    bucket.entries.set(key, { count: 1, resetAt });
+    bucket.earliestResetAt = Math.min(bucket.earliestResetAt, resetAt);
     return {
-      allowed: true,
-      limit: options.maxRequests,
-      remaining: Math.max(options.maxRequests - 1, 0),
-      retryAfterSeconds: 0,
-      resetAt,
+      allowed: true, limit: options.maxRequests,
+      remaining: options.maxRequests - 1, retryAfterSeconds: 0, resetAt,
     };
   }
 
-  const nextCount = existing.count + 1;
-  existing.count = nextCount;
-
-  if (nextCount > options.maxRequests) {
-    const retryAfterSeconds = Math.max(Math.ceil((existing.resetAt - now) / 1000), 1);
-
+  if (existing.count >= options.maxRequests) {
     return {
-      allowed: false,
-      limit: options.maxRequests,
-      remaining: 0,
-      retryAfterSeconds,
+      allowed: false, limit: options.maxRequests, remaining: 0,
+      retryAfterSeconds: Math.max(Math.ceil((existing.resetAt - now) / 1000), 1),
       resetAt: existing.resetAt,
     };
   }
-
+  existing.count += 1;
   return {
-    allowed: true,
-    limit: options.maxRequests,
-    remaining: Math.max(options.maxRequests - nextCount, 0),
-    retryAfterSeconds: 0,
-    resetAt: existing.resetAt,
+    allowed: true, limit: options.maxRequests,
+    remaining: options.maxRequests - existing.count,
+    retryAfterSeconds: 0, resetAt: existing.resetAt,
   };
 }
 

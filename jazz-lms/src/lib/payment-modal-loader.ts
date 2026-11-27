@@ -9,5 +9,6 @@ export function loadPaymentMethodModal() {
 }
 
 export function warmPaymentMethodModal() {
+  if (process.env.NEXT_PUBLIC_RECOVERY_ACCESS === 'true') return;
   void loadPaymentMethodModal();
 }

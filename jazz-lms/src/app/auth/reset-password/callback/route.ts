@@ -1,4 +1,5 @@
 import { resolveServerAppOrigin } from "@/lib/app-origin";
+import { safeErrorDiagnostic } from "@/lib/error-diagnostics";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -21,7 +22,7 @@ function redirectToReset(origin: string, params?: Record<string, string>) {
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
-  const origin = resolveServerAppOrigin(requestUrl.origin);
+  const origin = resolveServerAppOrigin(requestUrl.origin, request.headers.get('host'));
   const code = requestUrl.searchParams.get("code");
 
   console.info("[auth/reset-password/callback] received request", {
@@ -30,8 +31,10 @@ export async function GET(request: Request) {
   });
 
   if (!code) {
-    console.warn("[auth/reset-password/callback] missing code parameter");
-    return redirectToReset(origin, { reset_error: "missing_code" });
+    // Legacy implicit recovery links can reach this URL with fragment tokens.
+    // Fragments never reach the server; redirect without an error so the browser
+    // retains them and the reset page can validate the actual recovery session.
+    return redirectToReset(origin);
   }
 
   const supabase = createClient();
@@ -40,11 +43,8 @@ export async function GET(request: Request) {
     console.info("[auth/reset-password/callback] attempting code exchange");
     const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (error) {
-      console.error("[auth/reset-password/callback] exchange failed", {
-        errorCode: error.code,
-        errorMessage: error.message,
-      });
+    if (error || !data.session) {
+      console.error("[auth/reset-password/callback] exchange failed", safeErrorDiagnostic(error));
       return redirectToReset(origin, { reset_error: "exchange_failed" });
     }
 
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error(
       "[auth/reset-password/callback] unexpected exchange error",
-      error instanceof Error ? error.message : String(error),
+      safeErrorDiagnostic(error),
     );
     return redirectToReset(origin, { reset_error: "exchange_exception" });
   }

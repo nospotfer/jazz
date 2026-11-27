@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { buildLessonQuizSeedData, introLessonQuizSeed } from './quiz-seed-data';
+import { assertLegacyLocalMutationAllowed } from '../scripts/lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const database = new PrismaClient();
 
 async function main() {

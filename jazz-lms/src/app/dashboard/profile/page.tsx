@@ -454,10 +454,10 @@ export default function ProfilePage() {
                 <div className="w-full rounded-[28px] border border-primary/15 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.16),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.12),_transparent_24%),linear-gradient(145deg,rgba(15,23,42,0.96),rgba(24,24,27,0.92),rgba(30,41,59,0.96))] p-4 shadow-[0_22px_44px_rgba(15,23,42,0.26)]">
                   <div className="mb-4 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.28em] text-primary/80">
+                      <p className="text-[11px] uppercase tracking-[0.28em] text-amber-200/90">
                         {copy.medalShowcaseTitle}
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 text-xs text-slate-300">
                         {medalProgress
                           ? `${medalProgress.platinumMedalCount}/${medalProgress.totalRequiredPlatinumMedals}`
                           : "0/15"}{" "}
@@ -466,7 +466,7 @@ export default function ProfilePage() {
                     </div>
                     {activeProfileMedal !== "NONE" ? (
                       <div
-                        className="shrink-0 rounded-full border border-white/15 bg-card/90 p-2 shadow-lg"
+                        className="shrink-0 rounded-full border border-white/15 bg-slate-950/80 p-2 shadow-lg"
                         data-testid="profile-active-medal"
                       >
                         {activeProfileMedal === "SUPREME" ? (
@@ -609,7 +609,7 @@ export default function ProfilePage() {
                     </div>
                   )}
 
-                  <div className="mt-4 text-center text-xs text-muted-foreground">
+                  <div className="mt-4 text-center text-xs text-slate-300">
                     <span>
                       {medalProgress?.hasSupremeMedal
                         ? copy.supremeUnlocked

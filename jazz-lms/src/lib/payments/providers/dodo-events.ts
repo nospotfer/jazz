@@ -1,3 +1,5 @@
+import { getPaymentCurrencyExponent, minorUnitsToMajor, normalizePaymentAmountMinor, normalizePaymentCurrency } from "@/lib/payment-money";
+
 export type LooseObject = Record<string, unknown>;
 
 export function asObject(value: unknown): LooseObject {
@@ -40,21 +42,22 @@ export function toMoney(value: unknown): number {
   return Number(parsed.toFixed(2));
 }
 
-function toProviderMoney(value: unknown): number {
+function toProviderMoney(value: unknown, currency: string | null): number | null {
   const parsed = toNumber(value);
-  if (parsed === null) {
-    return 0;
+  if (parsed === null || parsed < 0) {
+    return null;
   }
 
   const hasDecimalSeparator =
     typeof value === "string" && (value.includes(".") || value.includes(","));
 
-  // Dodo webhook/payment API integer amounts are minor units (e.g. cents).
+  // Legacy integer aliases use explicit provider currency units, never cents by default.
   if (!hasDecimalSeparator && Number.isInteger(parsed)) {
-    return Number((parsed / 100).toFixed(2));
+    return minorUnitsToMajor(normalizePaymentAmountMinor(value), currency);
   }
 
-  return Number(parsed.toFixed(2));
+  // Recognized legacy decimal-major facts stay independent of canonical units.
+  return parsed <= Number.MAX_SAFE_INTEGER ? parsed : null;
 }
 
 export function readCustomString(
@@ -121,6 +124,7 @@ export function resolveDodoProviderReferenceId(
   const data = asObject(payload.data);
   const payment = asObject(data.payment);
   const paymentId =
+    asString(payment.payment_id) ??
     asString(payment.id) ??
     asString(data.payment_id) ??
     asString(data.id) ??
@@ -138,56 +142,125 @@ export function normalizeDodoEventKind(
 ): "paid" | "refunded" | "disputed" | "ignored" {
   const normalized = eventType.toLowerCase();
 
-  if (
-    normalized.includes("payment.succeeded") ||
-    normalized.includes("payment.paid") ||
-    normalized.includes("payment.completed") ||
-    normalized.includes("payment.captured") ||
-    normalized.includes("subscription.renewed") ||
-    normalized.includes("subscription.created") ||
-    normalized.includes("subscription.activated")
-  ) {
+  if (normalized === "payment.succeeded") {
     return "paid";
   }
 
-  if (normalized.includes("refund")) {
+  if (normalized === "refund.succeeded") {
     return "refunded";
   }
 
-  if (normalized.includes("dispute")) {
+  if (DODO_REVOKING_DISPUTE_EVENTS.includes(normalized)) {
     return "disputed";
   }
 
   return "ignored";
 }
 
-export function extractDodoPricing(payload: LooseObject): {
-  subtotalAmount: number;
-  totalAmount: number;
-  discountAmount: number;
+export const DODO_REVOKING_DISPUTE_EVENTS = [
+  "dispute.opened",
+  "dispute.expired",
+  "dispute.accepted",
+  "dispute.challenged",
+  "dispute.lost",
+];
+
+export const DODO_ENTITLEMENT_EVENTS = [
+  "refund.succeeded",
+  ...DODO_REVOKING_DISPUTE_EVENTS,
+  "dispute.won",
+  "dispute.cancelled",
+];
+
+/** A successful payment remains succeeded after a refund; inspect both states. */
+export function isDodoPaymentGrantable(payment: LooseObject): boolean {
+  if (asString(payment.status)?.toLowerCase() !== "succeeded") return false;
+  if (asString(payment.refund_status)) return false;
+  if (Array.isArray(payment.refunds) && payment.refunds.some((refund) =>
+    asString(asObject(refund).status)?.toLowerCase() === "succeeded"
+  )) return false;
+  if (Array.isArray(payment.disputes) && payment.disputes.some((dispute) => {
+    const status = asString(asObject(dispute).status)?.toLowerCase();
+    return !status || !["dispute_won", "dispute_cancelled"].includes(status);
+  })) return false;
+  const disputeStatus = asString(payment.dispute_status)?.toLowerCase();
+  return !disputeStatus || ["dispute_won", "dispute_cancelled"].includes(disputeStatus);
+}
+
+/** Require an owner in metadata or, for legacy payments, a matching email. */
+export function doesDodoPaymentBelongToUser(
+  payload: LooseObject,
+  userId: string,
+  userEmail: string | null,
+): boolean {
+  const metadataUserId = readCustomString(resolveDodoMetadata(payload), "userId", "user_id");
+  if (metadataUserId) return metadataUserId === userId;
+  return Boolean(userEmail && resolveDodoCustomerEmail(payload) === userEmail.trim().toLowerCase());
+}
+
+/** Checkout metadata is only a hint; Dodo's applied discount snapshot is proof. */
+export function resolveDodoVoucherAccounting(payload: LooseObject): {
+  localVoucherCode: string | null;
+  providerDiscountCode: string | null;
+  providerDiscountId: string | null;
 } {
   const metadata = resolveDodoMetadata(payload);
   const data = asObject(payload.data);
-  const payment = asObject(data.payment);
+  const payment = Object.keys(asObject(data.payment)).length ? asObject(data.payment) : data;
+  const metadataProviderCode = readCustomString(metadata, "providerDiscountCode", "provider_discount_code", "discountCode", "discount_code")?.toUpperCase();
+  const discounts = Array.isArray(payment.discounts) ? payment.discounts.map(asObject) : [];
+  const applied = discounts.find((discount) => asString(discount.code)?.toUpperCase() === metadataProviderCode) ?? discounts[0];
+  const providerDiscountCode = asString(applied?.code)?.toUpperCase() ?? null;
+  const providerDiscountId = asString(applied?.discount_id) ?? asString(payment.discount_id);
+  return {
+    localVoucherCode: providerDiscountCode && providerDiscountCode === metadataProviderCode
+      ? readCustomString(metadata, "voucherCode", "voucher_code")
+      : null,
+    providerDiscountCode,
+    providerDiscountId,
+  };
+}
 
-  const totalAmount =
-    toProviderMoney(payment.amount) ||
-    toProviderMoney(data.amount) ||
-    toProviderMoney(payment.total_amount) ||
-    toProviderMoney(data.total_amount);
-  const subtotalAmount =
-    toProviderMoney(payment.subtotal_amount) ||
-    toProviderMoney(data.subtotal_amount) ||
-    toMoney(metadata.originalPrice) ||
-    totalAmount;
-  const discountAmount = Number(
-    Math.max(0, subtotalAmount - totalAmount).toFixed(2),
-  );
+export function extractDodoPricing(payload: LooseObject): {
+  subtotalAmount: number | null;
+  totalAmount: number | null;
+  discountAmount: number | null;
+  paymentCurrency: string | null;
+  paymentAmountMinor: string | null;
+} {
+  const data = asObject(payload.data);
+  const payment = asObject(data.payment);
+  // Currency, raw total, aliases, subtotal and tax must describe one snapshot.
+  // An incomplete nested legacy payment cannot borrow outer financial facts.
+  const money = Object.keys(payment).length ? payment : data;
+  const paymentCurrency = normalizePaymentCurrency(money.currency);
+
+  // The documented total is integer minor units, including tax. A present
+  // malformed total is unknown; a legacy alias must not replace it or real zero.
+  const documentedTotal = money.total_amount;
+  const legacyTotal = money.amount;
+  const paymentAmountMinor = normalizePaymentAmountMinor(documentedTotal !== undefined ? documentedTotal : legacyTotal);
+  const totalAmount = documentedTotal !== undefined
+    ? minorUnitsToMajor(paymentAmountMinor, paymentCurrency)
+    : toProviderMoney(legacyTotal, paymentCurrency);
+  const providerSubtotal = money.subtotal_amount;
+  // A merchant/catalog quote (including legacy originalPrice metadata) is not
+  // a provider subtotal. Nor does a charged total prove an undiscounted base.
+  // Retain the explicit legacy subtotal alias, without inventing absent facts.
+  const subtotalAmount = providerSubtotal !== undefined
+    ? toProviderMoney(providerSubtotal, paymentCurrency) : null;
+  const tax = money.tax;
+  const digits = getPaymentCurrencyExponent(paymentCurrency);
+  // Both legacy provider amounts need the same explicit unit and zero-tax basis.
+  const discountAmount = digits !== null && tax === 0 && subtotalAmount !== null && totalAmount !== null && subtotalAmount >= totalAmount
+    ? Number((subtotalAmount - totalAmount).toFixed(digits)) : null;
 
   return {
     subtotalAmount,
     totalAmount,
     discountAmount,
+    paymentCurrency,
+    paymentAmountMinor,
   };
 }
 

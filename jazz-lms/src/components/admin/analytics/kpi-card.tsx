@@ -9,6 +9,9 @@ export type KpiCardProps = {
   format: KpiFormat;
   delta: number | null;
   currency?: 'EUR' | 'USD' | 'BRL';
+  /** An exact, already formatted amount; avoids projecting integer payment facts through a float. */
+  formattedValue?: string;
+  comparisonUnavailable?: boolean;
   icon?: ReactNode;
   /** Se muestra en lugar del valor cuando el KPI no está disponible (p. ej.: GA4 offline). */
   unavailable?: { reason: string };
@@ -58,13 +61,15 @@ export function KpiCard({
   format,
   delta,
   currency = 'EUR',
+  formattedValue,
+  comparisonUnavailable = false,
   icon,
   unavailable,
 }: KpiCardProps) {
   if (unavailable) {
     return (
       <div
-        className="rounded-xl border border-border bg-white p-5 shadow-sm dark:bg-card"
+        className="min-w-0 rounded-xl border border-border bg-white p-5 shadow-sm dark:bg-card"
         aria-label={`${label}: no disponible`}
       >
         <div className="flex items-start justify-between">
@@ -83,11 +88,13 @@ export function KpiCard({
     );
   }
 
-  const formatted = formatValue(value, format, currency);
-  const deltaInfo = formatDelta(delta);
+  const formatted = formattedValue ?? formatValue(value, format, currency);
+  const deltaInfo = comparisonUnavailable
+    ? { label: 'Variación no disponible', tone: 'neutral' as const, symbol: '•' }
+    : formatDelta(delta);
 
   return (
-    <div className="rounded-xl border border-border bg-white p-5 shadow-sm dark:bg-card">
+    <div className="min-w-0 rounded-xl border border-border bg-white p-5 shadow-sm dark:bg-card">
       <div className="flex items-start justify-between">
         <p className="text-[17px] font-medium text-muted-foreground">{label}</p>
         {icon ? (
@@ -96,7 +103,7 @@ export function KpiCard({
           </span>
         ) : null}
       </div>
-      <p className="mt-2 text-[40px] font-bold leading-[48px] text-jazz-dark dark:text-white">
+      <p className="mt-2 break-all text-[40px] font-bold leading-[48px] text-jazz-dark dark:text-white">
         {formatted}
       </p>
       <p className={`mt-1 text-[17px] font-semibold ${toneClasses[deltaInfo.tone]}`}>

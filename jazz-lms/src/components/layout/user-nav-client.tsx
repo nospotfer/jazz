@@ -26,20 +26,20 @@ export function UserNavClient({ user }: UserNavClientProps) {
   if (!user) {
     return (
       <>
-        <Link href="/auth">
-          <Button 
-            className="mr-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900 text-gray-900 dark:text-white font-semibold"
+          <Button asChild
+            className="min-h-11 bg-gray-200 px-3 font-semibold text-gray-900 hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-900"
           >
+            <Link href="/auth">
             {copy.signIn}
+            </Link>
           </Button>
-        </Link>
-        <Link href="/auth?tab=register">
-          <Button 
-            className="cta-highlight"
+          <Button asChild
+            className="cta-highlight min-h-11 px-3 text-black hover:text-black"
           >
+            <Link href="/auth?tab=register">
             {copy.signUp}
+            </Link>
           </Button>
-        </Link>
       </>
     );
   }

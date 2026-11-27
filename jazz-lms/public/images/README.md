@@ -1,33 +1,26 @@
-# Images Folder
+# Public landing images
 
-Esta pasta contém todas as imagens do projeto Jazz LMS.
+Files here are served publicly at `/images/<filename>`. Keep credentials,
+customer files and other private material outside `public/`.
 
-## Como adicionar uma imagem:
+The homepage imports its sections from `src/app/page.tsx`. Current image uses:
 
-1. Coloque sua imagem nesta pasta: `/public/images/`
-2. No código, referencie como: `/images/nome-da-sua-imagem.jpg`
+| Image | Component | Purpose |
+| --- | --- | --- |
+| `clase1.jpg` | `src/components/landing/promo-video.tsx` | Initial and unavailable-video fallback in the hero. |
+| `clase1.jpg` through `clase15.jpg` | `src/components/landing/classes.tsx` | Lesson previews. |
+| `Conoce a tu Profesor.png` | `src/components/landing/professor.tsx` | Professor portrait, with its existing credit. |
+| `logo-mark.png` | `src/components/layout/header.tsx` | Header logo. |
 
-## Imagem principal do Hero:
+When promo playback is available, `PromoVideo` obtains its poster from Mux using
+the playback response. Replacing a local fallback does not change the Mux asset
+or signing configuration. Do not save signed playback or thumbnail URLs here.
 
-A imagem central do hero está configurada em:
-- **Arquivo**: `src/components/landing/hero.tsx`
-- **Linha**: Procure por `src="/images/jazz-placeholder.jpg"`
-- **Para trocar**: Substitua `jazz-placeholder.jpg` pelo nome da sua imagem
+`clase1.jpg` is only 191×107 pixels. Enlarging it in CSS or requesting a larger
+Next.js image output cannot restore missing detail. A sharper replacement needs
+a larger original; retain the intended lesson image and verify its crop on
+desktop and mobile before replacing it.
 
-Exemplo:
-```tsx
-<Image
-  src="/images/sua-imagem.jpg"
-  alt="Jazz Course Image"
-  fill
-  className="object-cover"
-  priority
-/>
-```
-
-## Formatos suportados:
-- JPG/JPEG
-- PNG
-- WebP
-- GIF
-- SVG
+Use `next/image` with appropriate dimensions or `fill`, a correctly positioned
+container and responsive `sizes`. Preserve existing image descriptions and
+credits when changing an asset.

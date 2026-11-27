@@ -3,6 +3,7 @@ import { PromoVideo } from "@/components/landing/promo-video";
 import { Header } from "@/components/layout/header";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
+import { isPublicIndexingEnabled, publicHomeMetadata } from "@/lib/seo";
 
 function SectionLoadingFallback() {
   return (
@@ -56,6 +57,11 @@ type HomePageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+export async function generateMetadata({ searchParams }: HomePageProps) {
+  const parameters = await searchParams;
+  return publicHomeMetadata(isPublicIndexingEnabled() && Object.keys(parameters).length === 0);
+}
+
 export default async function Home({ searchParams }: HomePageProps) {
   const resolvedSearchParams = await searchParams;
   const oauthCode =
@@ -85,26 +91,26 @@ export default async function Home({ searchParams }: HomePageProps) {
   return (
     <>
       <Header authMode="guest" />
-      <main className="w-full snap-y snap-mandatory">
-        <section id="board-hero" className="snap-start scroll-mt-14">
+      <main className="w-full">
+        <section id="board-hero" className="scroll-mt-32 xl:scroll-mt-20">
           <PromoVideo />
         </section>
-        <section id="board-professor" className="snap-start scroll-mt-14">
+        <section id="board-professor" className="scroll-mt-32 xl:scroll-mt-20">
           <Professor />
         </section>
-        <section id="board-learn" className="snap-start scroll-mt-14">
+        <section id="board-learn" className="scroll-mt-32 xl:scroll-mt-20">
           <WhatYouLearn />
         </section>
-        <section id="board-courses" className="snap-start scroll-mt-14">
+        <section id="board-courses" className="scroll-mt-32 xl:scroll-mt-20">
           <Classes />
         </section>
-        <section id="board-press" className="snap-start scroll-mt-14">
+        <section id="board-press" className="scroll-mt-32 xl:scroll-mt-20">
           <Press />
         </section>
-        <section id="board-jazzcats" className="snap-start scroll-mt-14">
+        <section id="board-jazzcats" className="scroll-mt-32 xl:scroll-mt-20">
           <JazzCats />
         </section>
-        <section id="board-faq" className="snap-start scroll-mt-14">
+        <section id="board-faq" className="scroll-mt-32 xl:scroll-mt-20">
           <FAQFooter />
         </section>
       </main>

@@ -5,11 +5,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("resend", () => ({
-  Resend: vi.fn(() => ({
+  Resend: vi.fn(function () { return {
     emails: {
       send: mocks.resendSend,
     },
-  })),
+  }; }),
 }));
 
 const originalEnv = {
@@ -49,6 +49,57 @@ afterAll(() => {
 });
 
 describe("POST /api/contact", () => {
+  test.each([null, [], { messageType: "question", message: 42, email: "student@example.com" },
+    { messageType: "unknown", message: "Hello", email: "student@example.com" },
+    { messageType: "question", message: "   ", email: "student@example.com" }])(
+    "rejects invalid contact field types and unsupported message types", async (body) => {
+      const { POST } = await import("@/app/api/contact/route");
+      const response = await POST(new Request("http://localhost/api/contact", {
+        method: "POST", body: JSON.stringify(body),
+      }));
+      expect(response.status).toBe(400);
+      expect(mocks.resendSend).not.toHaveBeenCalled();
+    },
+  );
+
+  test("rejects malformed JSON without reporting a server failure", async () => {
+    const { POST } = await import("@/app/api/contact/route");
+    expect((await POST(new Request("http://localhost/api/contact", {
+      method: "POST", body: "{",
+    }))).status).toBe(400);
+  });
+
+  test("bounds streamed input without a Content-Length header", async () => {
+    const { POST } = await import("@/app/api/contact/route");
+    const response = await POST(requestJson({
+      messageType: "question", message: "Hello", email: `!@${"!.".repeat(5000)}`,
+    }));
+    expect(response.status).toBe(413);
+    expect(mocks.resendSend).not.toHaveBeenCalled();
+  });
+
+  test.each([`!@${"!.".repeat(100)}`, "student@example..com", "student@example.com\r\nBcc: victim@example.com",
+    "a@@example.com", "student@-example.com", `${"a".repeat(65)}@example.com`])(
+    "rejects malformed or oversized email components", async (email) => {
+      const { POST } = await import("@/app/api/contact/route");
+      const response = await POST(requestJson({ messageType: "question", message: "Hello", email }));
+      expect(response.status).toBe(400);
+      expect(mocks.resendSend).not.toHaveBeenCalled();
+    },
+  );
+
+  test("renders visitor text as text rather than email HTML", async () => {
+    const { POST } = await import("@/app/api/contact/route");
+    const response = await POST(requestJson({
+      messageType: "question", email: "student@example.com",
+      message: '<a href="https://attacker.example">Pay & unlock</a>',
+    }));
+    expect(response.status).toBe(200);
+    const sent = mocks.resendSend.mock.calls[0][0];
+    expect(sent.html).toContain('&lt;a href=&quot;https://attacker.example&quot;&gt;Pay &amp; unlock&lt;/a&gt;');
+    expect(sent.html).not.toContain('<a href="https://attacker.example">');
+  });
+
   test("returns 400 when required fields are missing", async () => {
     const { POST } = await import("@/app/api/contact/route");
     const response = await POST(

@@ -1,71 +1,21 @@
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
+import { parseResetUserVoucherArgs } from './lib/reset-user-voucher-args';
 
-type ResetArgs = {
-  userId: string;
-  courseId?: string;
-  codes: string[];
-  dryRun: boolean;
-};
-
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
-
-function parseArgs(argv: string[]): ResetArgs {
-  let userId = '';
-  let courseId: string | undefined;
-  let dryRun = false;
-  let codes: string[] = [];
-
-  for (const rawArg of argv) {
-    if (rawArg === '--dry-run') {
-      dryRun = true;
-      continue;
-    }
-
-    if (rawArg.startsWith('--user-id=')) {
-      userId = rawArg.slice('--user-id='.length).trim();
-      continue;
-    }
-
-    if (rawArg.startsWith('--course-id=')) {
-      courseId = rawArg.slice('--course-id='.length).trim();
-      continue;
-    }
-
-    if (rawArg.startsWith('--codes=')) {
-      const value = rawArg.slice('--codes='.length).trim();
-      codes = value
-        .split(',')
-        .map((code) => code.trim())
-        .filter((code) => code.length > 0);
-      continue;
-    }
-
-    throw new Error(`Unknown argument: ${rawArg}`);
-  }
-
-  if (!userId) {
-    throw new Error('Missing required argument: --user-id=<id>');
-  }
-
-  return {
-    userId,
-    courseId,
-    codes,
-    dryRun,
-  };
-}
 
 function uniqueValues(values: string[]) {
   return Array.from(new Set(values));
 }
 
 async function main() {
-  const args = parseArgs(process.argv.slice(2));
+  const args = parseResetUserVoucherArgs(process.argv.slice(2));
 
   const purchases = await prisma.purchase.findMany({
     where: {
       userId: args.userId,
-      ...(args.courseId ? { courseId: args.courseId } : {}),
+      courseId: args.courseId,
     },
     select: {
       id: true,
@@ -200,6 +150,7 @@ async function main() {
   const selectedCodeVouchers = args.codes.length
     ? await prisma.voucherCode.findMany({
         where: {
+          id: { in: affectedVoucherIds },
           code: {
             in: args.codes,
           },
@@ -415,11 +366,15 @@ async function main() {
   console.log(JSON.stringify(summary, null, 2));
 }
 
-main()
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : error);
-    process.exit(1);
+export const voucherReset = main()
+  .catch(() => {
+    console.error('Voucher reset failed; private provider details omitted. Check the explicit user/course arguments.');
+    process.exitCode = 1;
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    try { await prisma.$disconnect(); }
+    catch {
+      console.error('Voucher reset cleanup failed; private provider details omitted.');
+      process.exitCode = 1;
+    }
   });

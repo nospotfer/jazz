@@ -1,7 +1,23 @@
 import { requirePermission } from "@/lib/admin";
+import { formatLegacyRecordedAmount, formatRecordedPayment } from "@/lib/admin/payment-totals";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+function RecordedAmount({ value }: { value: string }) {
+  const separator = " · ";
+  const separatorIndex = value.indexOf(separator);
+
+  return separatorIndex === -1 ? (
+    <span className="whitespace-nowrap">{value}</span>
+  ) : (
+    <>
+      <span className="whitespace-nowrap">{value.slice(0, separatorIndex)}</span>
+      {separator}
+      <span className="whitespace-normal">{value.slice(separatorIndex + separator.length)}</span>
+    </>
+  );
+}
 
 export default async function AdminVoucherDetailPage({
   params,
@@ -29,6 +45,8 @@ export default async function AdminVoucherDetailPage({
               originalPrice: true,
               finalPrice: true,
               discountAmount: true,
+              paymentCurrency: true,
+              paymentAmountMinor: true,
               createdAt: true,
             },
           },
@@ -58,7 +76,7 @@ export default async function AdminVoucherDetailPage({
   const usersMap = new Map(users.map((user) => [user.id, user]));
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs text-muted-foreground">Voucher</p>
@@ -114,14 +132,18 @@ export default async function AdminVoucherDetailPage({
         </p>
       </div>
 
-      <div className="card">
+      <div className="card min-w-0">
         <h2 className="text-xl font-semibold mb-4">Uso por alumno</h2>
+        <p className="mb-4 text-xs text-muted-foreground">
+          Precio original y descuento: importes históricos sin moneda verificada.
+          El precio final muestra la moneda registrada cuando está disponible.
+        </p>
         {voucher.redemptions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Aún no hay usos registrados.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="max-w-full overflow-x-auto">
             <table className="w-full min-w-[920px]">
               <thead>
                 <tr>
@@ -152,22 +174,13 @@ export default async function AdminVoucherDetailPage({
                         {redemption.purchase?.id || "-"}
                       </td>
                       <td className="px-3 py-2 text-sm">
-                        {redemption.purchase?.originalPrice !== null &&
-                        redemption.purchase?.originalPrice !== undefined
-                          ? `€ ${redemption.purchase.originalPrice.toFixed(2)}`
-                          : "-"}
+                        <RecordedAmount value={formatLegacyRecordedAmount(redemption.purchase?.originalPrice)} />
                       </td>
                       <td className="px-3 py-2 text-sm">
-                        {redemption.purchase?.discountAmount !== null &&
-                        redemption.purchase?.discountAmount !== undefined
-                          ? `€ ${redemption.purchase.discountAmount.toFixed(2)}`
-                          : "-"}
+                        <RecordedAmount value={formatLegacyRecordedAmount(redemption.purchase?.discountAmount)} />
                       </td>
                       <td className="px-3 py-2 text-sm">
-                        {redemption.purchase?.finalPrice !== null &&
-                        redemption.purchase?.finalPrice !== undefined
-                          ? `€ ${redemption.purchase.finalPrice.toFixed(2)}`
-                          : "-"}
+                        <RecordedAmount value={formatRecordedPayment(redemption.purchase ?? {})} />
                       </td>
                     </tr>
                   );

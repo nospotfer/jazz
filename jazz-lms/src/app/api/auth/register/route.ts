@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La URL de Supabase no está configurada en el entorno del servidor.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La clave pública de Supabase no está configurada en el entorno del servidor.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "SUPABASE_SERVICE_ROLE_KEY es obligatoria para el flujo de registro.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
@@ -66,13 +67,13 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "La autenticación no está configurada. Define NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY válidas en las variables de entorno.",
+            "El registro no está disponible temporalmente. Inténtalo más tarde.",
         },
         { status: 500 },
       );
     }
 
-    if (!normalizedEmail || !password || !fullName) {
+    if (!normalizedEmail || typeof password !== "string" || typeof fullName !== "string" || !fullName.trim()) {
       return NextResponse.json(
         { error: "Correo, contraseña y nombre completo son obligatorios." },
         { status: 400 },
@@ -93,18 +94,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if already verified in Prisma
-    let existingUser = null;
-    try {
-      existingUser = await db.user.findUnique({
-        where: { email: normalizedEmail },
-      });
-    } catch (err) {
-      console.warn(
-        "Prisma user lookup failed, continuing with Supabase-only checks:",
-        err,
-      );
-    }
+    // Resolve local identity before doing any provider mutation. If the
+    // database is unavailable, fail closed instead of creating an orphan.
+    const existingUser = await db.user.findUnique({
+      where: { email: normalizedEmail },
+    });
     if (existingUser && existingUser.emailVerified) {
       return NextResponse.json(
         { error: "Este correo ya está registrado. Inicia sesión en su lugar." },
@@ -112,16 +106,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use Supabase Admin to update password on the OTP-created user
+    // The service-role client must never change an existing account's password
+    // or profile before the requester proves ownership of its email address.
     const supabase = createClient(url!, serviceRoleKey!, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Find user by email in Supabase Auth
-    const { data: userData } = await supabase.auth.admin.listUsers();
-    const supaUser = userData?.users?.find(
-      (u) => u.email?.toLowerCase() === normalizedEmail,
-    );
+    // Resolve a known account directly. Scanning the first page of listUsers
+    // misses accounts after the first 50 and exposes unnecessary directory data.
+    let supaUser = null;
+    if (existingUser) {
+      const { data, error } = await supabase.auth.admin.getUserById(existingUser.id);
+      if (error || !data.user || data.user.email?.toLowerCase() !== normalizedEmail) {
+        return NextResponse.json(
+          { error: "No se pudo comprobar la cuenta. Inténtalo de nuevo más tarde." },
+          { status: 503 },
+        );
+      }
+      supaUser = data.user;
+    }
 
     if (supaUser?.email_confirmed_at) {
       return NextResponse.json(
@@ -131,6 +134,7 @@ export async function POST(request: Request) {
     }
 
     let userId = supaUser?.id;
+    let pendingRegistration = Boolean(supaUser);
 
     if (!supaUser) {
       const { data: createdUser, error: createError } =
@@ -141,82 +145,66 @@ export async function POST(request: Request) {
           email_confirm: false,
         });
 
-      if (createError || !createdUser.user) {
+      if (createError?.code === "email_exists" || createError?.code === "user_already_exists") {
+        // An auth-only account can exist after an interrupted registration.
+        // Resume by email verification without replacing its initial password.
+        pendingRegistration = true;
+      } else if (createError || !createdUser.user) {
+        console.error("[AUTH_REGISTER_CREATE_FAILED]", safeErrorDiagnostic(createError));
         return NextResponse.json(
           {
-            error:
-              createError?.message ||
-              "No se pudo crear el usuario de autenticación.",
+            error: "No se pudo crear la cuenta. Inténtalo de nuevo más tarde.",
           },
           { status: 400 },
         );
+      } else {
+        userId = createdUser.user.id;
       }
-
-      userId = createdUser.user.id;
-    } else {
-      const { error: updateError } = await supabase.auth.admin.updateUserById(
-        supaUser.id,
-        {
-          password,
-          user_metadata: { full_name: fullName.trim() },
-        },
-      );
-
-      if (updateError) {
-        return NextResponse.json(
-          { error: updateError.message },
-          { status: 400 },
-        );
-      }
-
-      userId = supaUser.id;
     }
 
-    // Send verification code after account creation/update
-    const { error: otpError } = await supabase.auth.signInWithOtp({
+    // Persist only new accounts. Retried registration must not replace an
+    // existing pending user's profile, verification state or role.
+    if (!pendingRegistration && userId) {
+      const isOwner = normalizedEmail === OWNER_EMAIL;
+      await db.user.upsert({
+        where: { email: normalizedEmail },
+        create: {
+          id: userId,
+          email: normalizedEmail,
+          name: fullName.trim(),
+          emailVerified: false,
+          role: isOwner ? "SUPER_ADMIN" : "USER",
+        },
+        update: {},
+      });
+    }
+
+    // Confirm the admin-created pending account without entering public signup.
+    // OTP magic-link sign-in can re-enter Signup for an unconfirmed account.
+    const { error: otpError } = await supabase.auth.resend({
+      type: "signup",
       email: normalizedEmail,
-      options: {
-        shouldCreateUser: false,
-      },
     });
 
     if (otpError) {
+      console.error("[AUTH_REGISTER_OTP_FAILED]", safeErrorDiagnostic(otpError));
       return NextResponse.json(
         {
-          error:
-            otpError.message || "No se pudo enviar el código de verificación.",
+          error: "No se pudo enviar el código de verificación. Inténtalo de nuevo más tarde.",
         },
         { status: 400 },
       );
     }
 
-    // Create/update user in Prisma DB as unverified
-    const isOwner = normalizedEmail === OWNER_EMAIL;
-    const role = isOwner ? "SUPER_ADMIN" : "USER";
-
-    await db.user.upsert({
-      where: { email: normalizedEmail },
-      create: {
-        id: userId!,
-        email: normalizedEmail,
-        name: fullName.trim(),
-        emailVerified: false,
-        role,
-      },
-      update: {
-        name: fullName.trim(),
-        emailVerified: false,
-        ...(isOwner && { role: "SUPER_ADMIN" }),
-      },
-    });
-
     return NextResponse.json({
       success: true,
-      message:
-        "Cuenta creada. Introduce el código de verificación enviado a tu correo.",
+      pendingRegistration,
+      message: pendingRegistration
+        ? "Verifica tu correo y usa la contraseña de tu registro inicial. Si no la recuerdas, restablécela desde el inicio de sesión."
+        : "Cuenta creada. Introduce el código de verificación enviado a tu correo.",
     });
   } catch (error) {
-    console.error("Error registering user:", error);
+    console.error("Error registering user:", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "No se pudo crear la cuenta" },
       { status: 500 },

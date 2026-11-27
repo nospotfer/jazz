@@ -1,31 +1,12 @@
 // Remap DB attachments to the new bucket filenames after bulk upload.
-import { readFileSync } from "fs";
-import { resolve } from "path";
 import { PrismaClient } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
-try {
-  const content = readFileSync(resolve(process.cwd(), ".env.local"), "utf8");
-  for (const rawLine of content.split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const eq = line.indexOf("=");
-    if (eq < 0) continue;
-    const key = line.slice(0, eq).trim();
-    let value = line.slice(eq + 1).trim();
-    if (
-      (value.startsWith("'") && value.endsWith("'")) ||
-      (value.startsWith('"') && value.endsWith('"'))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (!process.env[key]) process.env[key] = value;
-  }
-} catch {}
-
-const prisma = new PrismaClient();
+const localTarget = assertLegacyLocalMutationAllowed({ supabase: true });
+const prisma = new PrismaClient({ datasources: { db: { url: localTarget.databaseUrl } } });
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  localTarget.supabaseUrl!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 const BUCKET = process.env.SUPABASE_STORAGE_BUCKET!;
@@ -109,22 +90,23 @@ async function main() {
   if (listError) throw listError;
 
   const bucketMap = new Map<Key, string>();
+  let unclassifiedFiles = 0;
+  let duplicateMappings = 0;
   for (const obj of bucketObjs ?? []) {
     if (!obj.name.toLowerCase().endsWith(".pdf")) continue;
     const c = classifyBucketName(obj.name);
     if (!c) {
-      console.warn("Unclassified bucket file:", obj.name);
+      unclassifiedFiles++;
       continue;
     }
     const key: Key = `${c.lang}|${c.kind}|${c.num}`;
     if (bucketMap.has(key)) {
-      console.warn(
-        `Duplicate bucket key ${key}: have "${bucketMap.get(key)}", got "${obj.name}"`,
-      );
+      duplicateMappings++;
     }
     bucketMap.set(key, obj.name);
   }
   console.log(`Indexed ${bucketMap.size} bucket files.`);
+  console.log(`Unclassified files: ${unclassifiedFiles}; duplicate mappings: ${duplicateMappings}.`);
 
   // 2. Read DB attachments
   const attachments = await prisma.attachment.findMany({
@@ -140,9 +122,7 @@ async function main() {
 
   const updates: Array<{
     id: string;
-    oldName: string;
     newName: string;
-    oldUrl: string;
     newUrl: string;
   }> = [];
   const unmatched: Array<{ id: string; name: string; reason: string }> = [];
@@ -165,13 +145,11 @@ async function main() {
       });
       continue;
     }
-    const newName = bucketFile.replace(/\.pdf$/i, "");
+    const newName = bucketFile.replace(/(?:\.docx)?\.pdf$/i, "");
     if (att.name !== newName || att.url !== bucketFile) {
       updates.push({
         id: att.id,
-        oldName: att.name,
         newName,
-        oldUrl: att.url,
         newUrl: bucketFile,
       });
     }
@@ -183,16 +161,12 @@ async function main() {
 
   if (unmatched.length) {
     console.log("\nUnmatched attachments:");
-    for (const u of unmatched) console.log(" -", JSON.stringify(u));
+    for (const u of unmatched) console.log(` - attachmentId=${u.id}`);
   }
 
   console.log("\nUpdates (first 80):");
   for (const u of updates.slice(0, 80)) {
-    console.log(`  [${u.id}]`);
-    console.log(`    name: "${u.oldName}"`);
-    console.log(`       -> "${u.newName}"`);
-    console.log(`    url:  "${u.oldUrl}"`);
-    console.log(`       -> "${u.newUrl}"`);
+    console.log(`  attachmentId=${u.id}`);
   }
 
   if (!APPLY) {
@@ -212,4 +186,15 @@ async function main() {
   console.log(`\nApplied ${ok}/${updates.length} updates.`);
 }
 
-main().finally(() => prisma.$disconnect());
+export const attachmentRemap = main()
+  .catch(() => {
+    console.error('Attachment remap failed; private provider details omitted.');
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    try { await prisma.$disconnect(); }
+    catch {
+      console.error('Attachment remap cleanup failed; private provider details omitted.');
+      process.exitCode = 1;
+    }
+  });

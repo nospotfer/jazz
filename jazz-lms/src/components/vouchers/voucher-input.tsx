@@ -2,6 +2,8 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
+import { languageToHtmlLang } from "@/lib/language";
+import { getVoucherFailureMessage, getVoucherFailureReason, type VoucherFailureReason } from "@/lib/voucher-feedback";
 import axios from "axios";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
@@ -37,7 +39,7 @@ export function VoucherInput({
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
+  const [failureReason, setFailureReason] = useState<VoucherFailureReason | 'Missing code' | 'Missing course'>('Failed');
   const [voucherData, setVoucherData] = useState<AppliedVoucher | null>(null);
 
   const copy = {
@@ -46,7 +48,9 @@ export function VoucherInput({
       placeholder: "Ingresa tu código",
       apply: "Aplicar",
       validating: "Validando...",
-      invalid: "Código inválido o expirado.",
+      applied: "Código aplicado correctamente.",
+      free: "Acceso 100% gratuito",
+      newPrice: "Nuevo precio",
       missingCode: "Ingresa un código antes de aplicar.",
       missingCourse: "No se encontró el curso para validar el voucher.",
       remove: "Quitar",
@@ -56,7 +60,9 @@ export function VoucherInput({
       placeholder: "Enter your code",
       apply: "Apply",
       validating: "Validating...",
-      invalid: "Invalid or expired code.",
+      applied: "Code applied successfully.",
+      free: "100% free access",
+      newPrice: "New price",
       missingCode: "Enter a code before applying.",
       missingCourse: "Course was not found to validate this voucher.",
       remove: "Remove",
@@ -66,7 +72,9 @@ export function VoucherInput({
       placeholder: "Entrez votre code",
       apply: "Appliquer",
       validating: "Validation...",
-      invalid: "Code invalide ou expiré.",
+      applied: "Code appliqué avec succès.",
+      free: "Accès 100 % gratuit",
+      newPrice: "Nouveau prix",
       missingCode: "Saisissez un code avant d’appliquer.",
       missingCourse: "Le cours est introuvable pour valider ce code.",
       remove: "Supprimer",
@@ -76,25 +84,30 @@ export function VoucherInput({
       placeholder: "Digite seu código",
       apply: "Aplicar",
       validating: "Validando...",
-      invalid: "Código inválido ou expirado.",
+      applied: "Código aplicado com sucesso.",
+      free: "Acesso 100% gratuito",
+      newPrice: "Novo preço",
       missingCode: "Digite um código antes de aplicar.",
-      missingCourse: "Curso no encontrado para validar este voucher.",
+      missingCourse: "Curso não encontrado para validar este voucher.",
       remove: "Remover",
     },
   }[language];
+  const message = failureReason === 'Missing code' ? copy.missingCode
+    : failureReason === 'Missing course' ? copy.missingCourse
+      : getVoucherFailureMessage(failureReason, language);
 
   const handleApply = async () => {
     const normalizedCode = code.trim().toUpperCase();
     if (!normalizedCode) {
       setStatus("error");
-      setMessage(copy.missingCode);
+      setFailureReason('Missing code');
       onApplied(null);
       return;
     }
 
     if (!courseId) {
       setStatus("error");
-      setMessage(copy.missingCourse);
+      setFailureReason('Missing course');
       onApplied(null);
       return;
     }
@@ -111,28 +124,20 @@ export function VoucherInput({
       if (response.data?.valid) {
         setVoucherData(response.data as AppliedVoucher);
         setStatus("success");
-        const successMessage = response.data.message || "Voucher aplicado.";
-        setMessage(successMessage);
         onApplied(response.data as AppliedVoucher);
       } else {
         setVoucherData(null);
         setStatus("error");
-        const invalidMessage = response.data?.message || copy.invalid;
-        setMessage(invalidMessage);
+        setFailureReason(getVoucherFailureReason(response.data, response.status));
         onApplied(null);
       }
     } catch (error) {
-      const apiMessage =
-        axios.isAxiosError(error) &&
-        typeof error.response?.data?.message === "string"
-          ? String(error.response.data.message)
-          : axios.isAxiosError(error) &&
-              typeof error.response?.data === "string"
-            ? String(error.response.data)
-            : copy.invalid;
       setVoucherData(null);
       setStatus("error");
-      setMessage(apiMessage);
+      setFailureReason(getVoucherFailureReason(
+        axios.isAxiosError(error) ? error.response?.data : undefined,
+        axios.isAxiosError(error) ? error.response?.status : undefined,
+      ));
       onApplied(null);
     } finally {
       setIsLoading(false);
@@ -141,7 +146,7 @@ export function VoucherInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-foreground">
+      <label htmlFor="voucher-code" className="text-sm font-medium text-foreground">
         {copy.label}
       </label>
       <div className="flex gap-2">
@@ -176,7 +181,6 @@ export function VoucherInput({
             onClick={() => {
               setVoucherData(null);
               setCode("");
-              setMessage("");
               setStatus("idle");
               onApplied(null);
             }}
@@ -202,15 +206,15 @@ export function VoucherInput({
       </div>
 
       {status === "success" ? (
-        <div className="flex items-start gap-2 rounded-md border border-green-200 bg-green-50 px-3 py-2">
+        <div role="status" className="flex items-start gap-2 rounded-md border border-green-200 bg-green-50 px-3 py-2">
           <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
           <div className="text-sm text-green-800">
-            <p>{message}</p>
+            <p>{copy.applied}</p>
             {voucherData && (
               <p className="text-green-700 font-medium mt-1">
                 {voucherData.isFree
-                  ? "Acesso 100% gratuito"
-                  : `Novo preço: € ${voucherData.finalPrice.toFixed(2)}`}
+                  ? copy.free
+                  : `${copy.newPrice}: ${new Intl.NumberFormat(languageToHtmlLang(language), { style: 'currency', currency: 'EUR' }).format(voucherData.finalPrice)}`}
               </p>
             )}
           </div>
@@ -218,7 +222,7 @@ export function VoucherInput({
       ) : null}
 
       {status === "error" ? (
-        <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2">
+        <div role="alert" className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2">
           <AlertCircle className="h-4 w-4 text-red-600 mt-0.5" />
           <p className="text-sm text-red-800">{message}</p>
         </div>

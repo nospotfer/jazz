@@ -1,5 +1,6 @@
 'use client';
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -173,7 +174,7 @@ export function VouchersAdminClient({ courses }: Props) {
       });
       return true;
     } catch (error) {
-      console.error(error);
+      console.error('[VOUCHER_ADMIN_LOAD_ERROR]', safeErrorDiagnostic(error));
       toast.error('Error al cargar vouchers.');
       setVouchers([]);
       setStats({
@@ -309,7 +310,7 @@ export function VouchersAdminClient({ courses }: Props) {
       }
       toast.success(`Re-sync: ${data.synced}/${data.total} ok, ${data.failed} fallos.`);
       if (Array.isArray(data.failures) && data.failures.length > 0) {
-        console.warn('[VOUCHER_RESYNC_FAILURES]', data.failures);
+        console.warn('[VOUCHER_RESYNC_FAILURES]', { count: data.failures.length });
       }
       await loadVouchers();
     } catch (error) {
@@ -609,8 +610,7 @@ export function VouchersAdminClient({ courses }: Props) {
     return `Generados: ${stats.generated} · Disponibles: ${stats.available} · Usados: ${stats.used} · Expirados: ${stats.expired}`;
   }, [stats]);
 
-  const sortedVouchers = useMemo(() => {
-    return [...vouchers].sort((a, b) => {
+  const sortedVouchers = [...vouchers].sort((a, b) => {
       const aPercent =
         a.type === 'DISCOUNT_PERCENT' ? (a.discountPercent ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
       const bPercent =
@@ -621,8 +621,7 @@ export function VouchersAdminClient({ courses }: Props) {
       }
 
       return a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' });
-    });
-  }, [vouchers]);
+  });
 
   const allVisibleSelected =
     sortedVouchers.length > 0 && sortedVouchers.every((voucher) => selectedVoucherIds.includes(voucher.id));

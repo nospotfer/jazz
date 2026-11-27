@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 
 const ADMIN_ROLES = new Set([

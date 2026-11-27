@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from '@/lib/db';
 
 export const getProgress = async (
@@ -41,7 +42,7 @@ export const getProgress = async (
 
     return progressPercentage;
   } catch (error) {
-    console.log('[GET_PROGRESS]', error);
+    console.log('[GET_PROGRESS]', safeErrorDiagnostic(error));
     return 0;
   }
 };

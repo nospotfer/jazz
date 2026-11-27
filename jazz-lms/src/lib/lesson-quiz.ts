@@ -54,7 +54,9 @@ export interface LessonQuizOptionPayload {
 }
 
 export interface LessonQuizQuestionPayload {
-  answerId: string;
+  // Correct answers are available only after an immutable answer is accepted.
+  correctOptionId: string | null;
+  isCorrect: boolean | null;
   orderIndex: number;
   questionId: string;
   prompt: string;
@@ -90,6 +92,7 @@ export interface LessonQuizAnswerResponse {
   attemptId: string;
   questionId: string;
   isCorrect: boolean;
+  correctOptionId: string;
   answeredCount: number;
   isComplete: boolean;
   result: LessonQuizResultPayload | null;

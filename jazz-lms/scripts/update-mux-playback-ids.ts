@@ -7,7 +7,9 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const prisma = new PrismaClient();
 
 interface MuxAssetUpdate {
@@ -97,7 +99,7 @@ async function main() {
     });
 
     if (!lesson) {
-      console.error(`MISSING | ${u.classeLabel} | lessonId=${u.lessonId}`);
+      console.error(`MISSING | lessonId=${u.lessonId}`);
       missing += 1;
       continue;
     }
@@ -106,7 +108,7 @@ async function main() {
       !lesson.title.toLowerCase().includes(u.expectedTitleFragment.toLowerCase())
     ) {
       console.error(
-        `MISMATCH | ${u.classeLabel} | esperava titulo c/ "${u.expectedTitleFragment}" mas encontrei "${lesson.title}"`,
+        `MISMATCH | lessonId=${u.lessonId}`,
       );
       mismatched += 1;
       continue;
@@ -114,7 +116,7 @@ async function main() {
 
     if (lesson.videoUrl === u.newPlaybackId) {
       console.log(
-        `SKIP    | ${u.classeLabel} | ja esta com playback ${u.newPlaybackId} (asset ${u.newAssetId})`,
+        `SKIP | lessonId=${u.lessonId}`,
       );
       skipped += 1;
       continue;
@@ -125,7 +127,7 @@ async function main() {
       data: { videoUrl: u.newPlaybackId },
     });
     console.log(
-      `UPDATE  | ${u.classeLabel} | ${lesson.videoUrl ?? "(vazio)"} -> ${u.newPlaybackId} (asset ${u.newAssetId})`,
+      `UPDATE | lessonId=${u.lessonId}`,
     );
     changed += 1;
   }
@@ -139,11 +141,15 @@ async function main() {
   }
 }
 
-main()
-  .catch((err) => {
-    console.error(err);
+export const muxPlaybackUpdate = main()
+  .catch(() => {
+    console.error('Mux mapping update failed; private provider details omitted.');
     process.exitCode = 1;
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    try { await prisma.$disconnect(); }
+    catch {
+      console.error('Mux mapping cleanup failed; private provider details omitted.');
+      process.exitCode = 1;
+    }
   });

@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { CANONICAL_JAZZ_CLASSES } from '../src/lib/course-lessons';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
+assertLegacyLocalMutationAllowed();
 const database = new PrismaClient();
 
 function getArgValue(flag: string) {

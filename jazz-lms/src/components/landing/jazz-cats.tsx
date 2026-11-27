@@ -32,9 +32,9 @@ export function JazzCats() {
 
   return (
     <>
-      <div className="min-h-screen w-full bg-gray-50 dark:bg-background flex items-center">
+      <div className="w-full bg-gray-50 dark:bg-background">
         <div className="w-full max-w-4xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-          <h2 className="text-gray-900 dark:text-white text-4xl font-bold text-center mb-8">
+          <h2 className="font-serif text-gray-900 dark:text-white text-3xl sm:text-4xl font-semibold text-center mb-6">
             {copy.title}
           </h2>
 
@@ -42,15 +42,16 @@ export function JazzCats() {
             {copy.body}
           </p>
 
-          <div className="relative w-full h-96 mb-8 flex items-center justify-center">
+          <div className="relative mb-3 aspect-[15/8] w-full overflow-hidden rounded-xl">
             <Image
               src="/images/jazzcats.jpg"
-              alt=" Made by pattesdeveloursandco.blogspot.com "
+              alt={copy.title}
               fill
               sizes="(max-width: 1024px) 100vw, 896px"
-              className="object-contain"
+              className="object-cover"
             />
           </div>
+          <p className="mb-8 text-center text-xs text-muted-foreground">pattesdeveloursandco.blogspot.com</p>
 
           <button
             onClick={() => router.push("/auth?tab=register")}

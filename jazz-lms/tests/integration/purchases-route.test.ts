@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   upsertCoursePurchaseFromProvider: vi.fn(),
   getPaymentProvider: vi.fn(),
   retrieveDodoPayment: vi.fn(),
+  listDodoPaymentsForCustomer: vi.fn(),
 }));
 
 vi.mock("@/utils/supabase/server", () => ({
@@ -38,7 +39,7 @@ vi.mock("@/lib/payments/provider", () => ({
 
 vi.mock("@/lib/payments/providers/dodo", () => ({
   retrieveDodoPayment: mocks.retrieveDodoPayment,
-  listDodoPaymentsForCustomer: vi.fn(async () => []),
+  listDodoPaymentsForCustomer: mocks.listDodoPaymentsForCustomer,
 }));
 
 describe("GET /api/purchases", () => {
@@ -52,9 +53,50 @@ describe("GET /api/purchases", () => {
     mocks.getUser.mockResolvedValue({ data: { user: null } });
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
 
     expect(response.status).toBe(401);
+  });
+
+  test.each([
+    ["u1", "u2"],
+    ["u2", "u1"],
+    ["u1", ""],
+  ])("rejects a stale client owner %s/%s before reading payment history", async (serverOwner, expectedOwner) => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: serverOwner } } });
+    mocks.purchaseFindMany.mockResolvedValue([
+      { id: "owner-private-purchase", finalPrice: 24.9, course: { title: "Owner private course" }, createdAt: new Date("2026-01-15T10:00:00Z") },
+    ]);
+
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request(`http://localhost/api/purchases?expectedUserId=${expectedOwner}`));
+
+    expect(response.status).toBe(409);
+    expect(mocks.purchaseFindMany).not.toHaveBeenCalled();
+    expect(await response.text()).not.toContain("Owner private course");
+  });
+
+  test("uses verified cookie identity for a matching client owner and a genuine empty history", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mocks.purchaseFindMany.mockResolvedValue([]);
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request("http://localhost/api/purchases?expectedUserId=u1"));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+    expect(mocks.purchaseFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "u1" } }));
+  });
+
+  test("a client owner hint cannot authorize an unauthenticated request", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: null } });
+    const { GET } = await import("@/app/api/purchases/route");
+    const run = GET as (request: Request) => ReturnType<typeof GET>;
+    const response = await run(new Request("http://localhost/api/purchases?expectedUserId=u1"));
+
+    expect(response.status).toBe(401);
+    expect(mocks.purchaseFindMany).not.toHaveBeenCalled();
   });
 
   test("returns formatted purchase list", async () => {
@@ -62,13 +104,14 @@ describe("GET /api/purchases", () => {
     mocks.purchaseFindMany.mockResolvedValue([
       {
         id: "p1",
+        finalPrice: 29.99,
         course: { title: "Jazz Basics", price: 29.99 },
         createdAt: new Date("2026-01-15T10:00:00Z"),
       },
     ]);
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -77,9 +120,55 @@ describe("GET /api/purchases", () => {
       itemType: "Curso",
       itemTitle: "Jazz Basics",
       amount: 29.99,
+      amountMinor: null,
       createdAt: "2026-01-15T10:00:00.000Z",
-      currency: "EUR",
+      currency: null,
     });
+  });
+
+  test("keeps an unknown historical amount unknown when the catalog price changes", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    const { GET } = await import("@/app/api/purchases/route");
+    const responses = [];
+
+    for (const price of [29.99, 80, null]) {
+      mocks.purchaseFindMany.mockResolvedValue([
+        {
+          id: "historical-unrecorded",
+          finalPrice: null,
+          course: { title: "Jazz Basics", price },
+          createdAt: new Date("2026-01-15T10:00:00Z"),
+        },
+      ]);
+      const response = await GET(new Request("http://localhost/api/purchases"));
+      expect(response.status).toBe(200);
+      responses.push(await response.json());
+    }
+
+    expect(responses.map((records) => records[0].amount)).toEqual([null, null, null]);
+    expect(responses.map((records) => records[0].currency)).toEqual([null, null, null]);
+    expect(responses[0]).toEqual(responses[1]);
+    expect(responses[1]).toEqual(responses[2]);
+  });
+
+  test("preserves recorded zero and positive amounts instead of current catalog prices", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mocks.purchaseFindMany.mockResolvedValue(
+      [0, 24.9].map((finalPrice, index) => ({
+        id: `recorded-${index}`,
+        finalPrice,
+        course: { title: "Jazz Basics", price: 80 },
+        createdAt: new Date("2026-01-15T10:00:00Z"),
+      })),
+    );
+
+    const { GET } = await import("@/app/api/purchases/route");
+    const response = await GET(new Request("http://localhost/api/purchases"));
+    const records = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(records.map((record: { amount: number | null }) => record.amount)).toEqual([0, 24.9]);
+    expect(records.every((record: { currency: string | null; amountMinor: string | null }) => record.currency === null && record.amountMinor === null)).toBe(true);
   });
 
   test("returns 500 on internal errors", async () => {
@@ -87,7 +176,7 @@ describe("GET /api/purchases", () => {
     mocks.purchaseFindMany.mockRejectedValue(new Error("db down"));
 
     const { GET } = await import("@/app/api/purchases/route");
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/purchases"));
 
     expect(response.status).toBe(500);
   });
@@ -101,6 +190,7 @@ describe("POST /api/purchases", () => {
     mocks.paymentWebhookEventFindMany.mockResolvedValue([]);
     mocks.upsertCoursePurchaseFromProvider.mockResolvedValue(undefined);
     mocks.retrieveDodoPayment.mockResolvedValue(null);
+    mocks.listDodoPaymentsForCustomer.mockResolvedValue([]);
   });
 
   test("returns 400 when action is invalid", async () => {
@@ -117,6 +207,55 @@ describe("POST /api/purchases", () => {
     );
 
     expect(response.status).toBe(400);
+  });
+
+  test("rejects cross-account legacy payment from email listing", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.listDodoPaymentsForCustomer.mockResolvedValue([{
+      payment_id: "pay_other", status: "succeeded", total_amount: 2999,
+      customer: { email: "other@example.test" }, metadata: { courseId: "course-1" },
+    }]);
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1" }),
+    }));
+    expect(response.status).toBe(202);
+    expect(mocks.upsertCoursePurchaseFromProvider).not.toHaveBeenCalled();
+  });
+
+  test("reconciles provider-shaped payment detail using payment_id", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      payment_id: "pay_contract", status: "succeeded", total_amount: 2999,
+      customer: { email: "buyer@example.test" }, metadata: { userId: "buyer", courseId: "course-1" },
+    });
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1", paymentId: "pay_contract" }),
+    }));
+    expect(response.status).toBe(200);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledWith(expect.objectContaining({ providerReferenceId: "dodo-pay:pay_contract" }));
+  });
+
+  test("cannot restore refunded payment through stored paid event or provider fallback", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { id: "buyer", email: "buyer@example.test" } } });
+    mocks.paymentWebhookEventFindMany.mockResolvedValue([{
+      payload: { type: "payment.succeeded", data: { payment_id: "pay_refunded", metadata: { userId: "buyer", courseId: "course-1" } } },
+    }]);
+    const revoked = new Error("revoked");
+    revoked.name = "DodoPaymentRevokedError";
+    mocks.upsertCoursePurchaseFromProvider.mockRejectedValue(revoked);
+    mocks.retrieveDodoPayment.mockResolvedValue({
+      payment_id: "pay_refunded", status: "succeeded", refund_status: "full",
+      metadata: { userId: "buyer", courseId: "course-1" },
+    });
+    const { POST } = await import("@/app/api/purchases/route");
+    const response = await POST(new Request("http://localhost/api/purchases", {
+      method: "POST", body: JSON.stringify({ action: "reconcile", courseId: "course-1", paymentId: "pay_refunded" }),
+    }));
+    expect(response.status).toBe(202);
+    expect((await response.json()).purchased).toBe(false);
+    expect(mocks.upsertCoursePurchaseFromProvider).toHaveBeenCalledTimes(1);
   });
 
   test("returns 401 when unauthenticated", async () => {
@@ -200,6 +339,7 @@ describe("POST /api/purchases", () => {
             payment: {
               id: "pay_1",
               amount: 2990,
+              currency: "EUR",
               customer: {
                 email: "admin@neurofactory.net",
               },
@@ -240,11 +380,14 @@ describe("POST /api/purchases", () => {
       userId: "u1",
       courseId: "course-1",
       providerReferenceId: "dodo-pay:pay_1",
-      originalPrice: 29.9,
-      discountAmount: 0,
+      originalPrice: null,
+      discountAmount: null,
       finalPrice: 29.9,
-      localVoucherCode: "JAZZ10",
-      providerDiscountCode: "DODO10",
+      paymentCurrency: "EUR",
+      paymentAmountMinor: "2990",
+      localVoucherCode: null,
+      providerDiscountCode: null,
+      providerDiscountId: null,
     });
   });
 

@@ -3,16 +3,21 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 describe('POST /api/admin/vouchers/revert-test-use', () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.stubEnv('NODE_ENV', 'test');
+    vi.stubEnv('VERCEL_ENV', '');
+    vi.stubEnv('ENABLE_LOCAL_TEST_RESETS', '1');
+    vi.stubEnv('DATABASE_URL', 'postgresql://postgres@127.0.0.1:55432/jazz_maintenance');
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   function makeReq(body?: Record<string, unknown>) {
     return new Request('http://localhost:3000/api/admin/vouchers/revert-test-use', {
       method: 'POST',
-      body: JSON.stringify(body || {}),
+      body: JSON.stringify({ userId: 'admin-1', courseId: 'c1', voucherCode: 'LOUISARMSTRONG100', ...body }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -108,7 +113,7 @@ describe('POST /api/admin/vouchers/revert-test-use', () => {
     }));
 
     const { POST } = await import('@/app/api/admin/vouchers/revert-test-use/route');
-    const response = await POST(makeReq({ voucherCode: 'louisarmstrong100' }));
+    const response = await POST(makeReq({ voucherCode: 'louisarmstrong100', dryRun: false }));
     const body = await response.json();
 
     expect(response.status).toBe(200);

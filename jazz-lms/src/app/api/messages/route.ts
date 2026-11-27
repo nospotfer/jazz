@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
@@ -16,7 +17,7 @@ type ThreadRow = {
   updatedAt: string;
   lastMessage: string | null;
   lastMessageAt: string | null;
-  unreadCount: number;
+  unreadCount: number | bigint;
 };
 
 type ExistingThreadRow = {
@@ -37,6 +38,7 @@ const professorEmail = (
 ).toLowerCase();
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof Error && error.name === 'MessagingSchemaUnavailableError') return true;
   if (
     error instanceof Prisma.PrismaClientInitializationError
     || error instanceof Prisma.PrismaClientRustPanicError
@@ -78,11 +80,12 @@ async function notifyProfessor(params: {
     await resend.emails.send({
       from,
       to: professorEmail,
+      replyTo: process.env.MESSAGES_REPLY_TO_EMAIL?.trim() || undefined,
       subject: `${params.subject} [Thread:${params.threadId}]`,
       text: `From: ${params.fromEmail}\nStudent Name: ${params.studentName}\nStudent ID: ${params.studentId}\nThread ID: ${params.threadId}\n\n${params.body}\n\nIMPORTANT: Keep [Thread:${params.threadId}] in the subject when replying so the message is attached to the correct conversation.`,
     });
   } catch (error) {
-    console.error('[messages:notifyProfessor] Email delivery failed', error);
+    console.error('[messages:notifyProfessor] Email delivery failed', safeErrorDiagnostic(error));
   }
 }
 
@@ -143,64 +146,64 @@ export async function GET() {
       ? await db.$queryRawUnsafe<ThreadRow[]>(`
           SELECT
             t.id,
-            t.studentId,
-            t.studentEmail,
-            t.studentName,
+            t.studentId AS "studentId",
+            t.studentEmail AS "studentEmail",
+            t.studentName AS "studentName",
             t.subject,
-            t.createdAt,
-            t.updatedAt,
+            t.createdAt AS "createdAt",
+            t.updatedAt AS "updatedAt",
             (
               SELECT m.body
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessage,
+            ) AS "lastMessage",
             (
               SELECT m.createdAt
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessageAt,
+            ) AS "lastMessageAt",
             (
               SELECT COUNT(*)
               FROM Message m
               WHERE m.threadId = t.id
                 AND m.unreadByProfessor = 1
-            ) AS unreadCount
+            ) AS "unreadCount"
           FROM MessageThread t
           ORDER BY t.updatedAt DESC
         `)
       : await db.$queryRawUnsafe<ThreadRow[]>(`
           SELECT
             t.id,
-            t.studentId,
-            t.studentEmail,
-            t.studentName,
+            t.studentId AS "studentId",
+            t.studentEmail AS "studentEmail",
+            t.studentName AS "studentName",
             t.subject,
-            t.createdAt,
-            t.updatedAt,
+            t.createdAt AS "createdAt",
+            t.updatedAt AS "updatedAt",
             (
               SELECT m.body
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessage,
+            ) AS "lastMessage",
             (
               SELECT m.createdAt
               FROM Message m
               WHERE m.threadId = t.id
               ORDER BY m.createdAt DESC
               LIMIT 1
-            ) AS lastMessageAt,
+            ) AS "lastMessageAt",
             (
               SELECT COUNT(*)
               FROM Message m
               WHERE m.threadId = t.id
                 AND m.unreadByStudent = 1
-            ) AS unreadCount
+            ) AS "unreadCount"
           FROM MessageThread t
            WHERE t.studentId = '${user.id.replace(/'/g, "''")}'
              OR LOWER(t.studentEmail) = LOWER('${user.email.replace(/'/g, "''")}')
@@ -210,15 +213,15 @@ export async function GET() {
     return NextResponse.json({
       isProfessor,
       professorEmail,
-      threads: rows,
+      threads: rows.map(row => ({ ...row, unreadCount: Number(row.unreadCount || 0) })),
     });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:get:db-unavailable]', error);
+      console.error('[messages:get:db-unavailable]', safeErrorDiagnostic(error));
       return new NextResponse('Messaging temporarily unavailable', { status: 503 });
     }
 
-    console.error('[messages:get]', error);
+    console.error('[messages:get]', safeErrorDiagnostic(error));
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
@@ -307,7 +310,7 @@ export async function POST(req: Request) {
     `);
 
     const recentMessages = await db.$queryRawUnsafe<LastMessageRow[]>(`
-      SELECT id, senderId, body, createdAt
+      SELECT id, senderId AS "senderId", body, createdAt AS "createdAt"
       FROM Message
       WHERE threadId = '${threadId}'
       ORDER BY createdAt DESC
@@ -371,11 +374,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: threadId, createdAt: now, createdNewThread: !matchedThread });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error('[messages:create:db-unavailable]', error);
+      console.error('[messages:create:db-unavailable]', safeErrorDiagnostic(error));
       return new NextResponse('Messaging temporarily unavailable', { status: 503 });
     }
 
-    console.error('[messages:create]', error);
+    console.error('[messages:create]', safeErrorDiagnostic(error));
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

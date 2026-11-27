@@ -1,5 +1,6 @@
 'use client';
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { ActionPendingIndicator } from '@/components/admin/analytics/action-pending-indicator';
@@ -17,7 +18,7 @@ export function RefreshMetricsButton() {
     try {
       const res = await fetch('/api/admin/metrics/revalidate', { method: 'POST' });
       if (!res.ok) {
-        console.error('revalidate metrics failed', await res.text());
+        console.error('revalidate metrics failed', safeErrorDiagnostic({ status: res.status }));
       }
 
       const next = new URLSearchParams(params.toString());
@@ -29,7 +30,7 @@ export function RefreshMetricsButton() {
         router.refresh();
       });
     } catch (err) {
-      console.error('revalidate metrics error', err);
+      console.error('revalidate metrics error', safeErrorDiagnostic(err));
       startTransition(() => {
         router.refresh();
       });

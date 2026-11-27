@@ -1,7 +1,9 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
 import { Prisma } from '@prisma/client';
+import { isIsolatedLocalTestRequest } from '@/lib/test-mode';
 
 export const runtime = 'nodejs';
 
@@ -9,23 +11,26 @@ type RevertPayload = {
   voucherCode?: string;
   courseId?: string;
   userId?: string;
+  dryRun?: boolean;
 };
 
 export async function POST(req: Request) {
   try {
+    if (!isIsolatedLocalTestRequest(req)) return new NextResponse('Not Found', { status: 404 });
     const auth = await ensureAdminApiPermission('vouchers.update');
     if (!auth.ok) {
       return auth.response;
     }
 
-    const payload = (await req.json().catch(() => ({}))) as RevertPayload;
-    const voucherCode = payload.voucherCode?.trim().toUpperCase() || null;
-    const courseId = payload.courseId?.trim() || null;
-    const targetUserId = payload.userId?.trim() || auth.userId;
+    const payload = (await req.json().catch(() => null)) as RevertPayload | null;
+    const voucherCode = typeof payload?.voucherCode === 'string' ? payload.voucherCode.trim().toUpperCase() : null;
+    const courseId = typeof payload?.courseId === 'string' ? payload.courseId.trim() : null;
+    const targetUserId = typeof payload?.userId === 'string' ? payload.userId.trim() : null;
+    const dryRun = payload?.dryRun !== false;
 
-    if (!targetUserId) {
+    if (!targetUserId || !courseId || !voucherCode) {
       return NextResponse.json(
-        { success: false, error: 'Bad request', message: 'Usuário inválido para reversão.' },
+        { success: false, error: 'Bad request', message: 'Informe usuário, curso e voucher explícitos para a reversão local.' },
         { status: 400 }
       );
     }
@@ -72,6 +77,14 @@ export async function POST(req: Request) {
         },
         { status: 404 }
       );
+    }
+
+    if (dryRun) {
+      return NextResponse.json({
+        success: true,
+        dryRun: true,
+        reversalPlan: { purchaseId: purchase.id, voucherCode, userId: targetUserId, courseId },
+      });
     }
 
     const reverted = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -134,11 +147,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
+      dryRun: false,
       message: 'Uso de voucher revertido com sucesso.',
       reverted,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHER_REVERT_TEST_USE_ERROR]', error);
+    console.error('[ADMIN_VOUCHER_REVERT_TEST_USE_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

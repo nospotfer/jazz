@@ -1,4 +1,6 @@
 import { CourseEnrollButton } from "@/components/course/course-enroll-button";
+import { PrivateOwnerBoundary } from "@/components/auth/private-owner-boundary";
+import { DashboardPreferencesProvider } from "@/components/providers/dashboard-preferences-provider";
 import { CheckoutSessionGuard } from "@/components/dashboard/checkout-session-guard";
 import {
   getCourseTranslationBundle,
@@ -8,7 +10,7 @@ import {
 import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/admin/permissions";
 import { LANGUAGE_COOKIE_KEY, normalizeLanguage } from "@/lib/language";
-import { DEFAULT_FULL_COURSE_PRICE_EUR } from "@/lib/pricing";
+import { getKnownCatalogPrice } from "@/lib/pricing";
 import { getServerUser } from "@/lib/server-user";
 import { BookOpen, CheckCircle, Clock } from "lucide-react";
 import { cookies } from "next/headers";
@@ -34,6 +36,7 @@ export default async function CourseDetailPage({
       chapterLabel: "Capítulo",
       fullAccess: "Acceso completo a las 15 clases",
       securePayment: "Pago seguro gestionado por Dodo Payments",
+      priceUnavailable: "Precio no disponible",
     },
     en: {
       chapter: "chapter",
@@ -44,6 +47,7 @@ export default async function CourseDetailPage({
       chapterLabel: "Chapter",
       fullAccess: "Full access to all 15 classes",
       securePayment: "Secure payment handled by Dodo Payments",
+      priceUnavailable: "Price unavailable",
     },
     fr: {
       chapter: "chapitre",
@@ -54,6 +58,7 @@ export default async function CourseDetailPage({
       chapterLabel: "Chapitre",
       fullAccess: "Accès complet aux 15 cours",
       securePayment: "Paiement sécurisé géré par Dodo Payments",
+      priceUnavailable: "Prix indisponible",
     },
     pt: {
       chapter: "capítulo",
@@ -64,6 +69,7 @@ export default async function CourseDetailPage({
       chapterLabel: "Capítulo",
       fullAccess: "Acesso completo às 15 aulas",
       securePayment: "Pagamento seguro processado pelo Dodo Payments",
+      priceUnavailable: "Preço indisponível",
     },
   }[language];
 
@@ -105,8 +111,7 @@ export default async function CourseDetailPage({
     .then((u) => u?.role ?? null)
     .catch(() => null);
   const isAdmin = isAdminRole(dbUserRole);
-  const displayPrice =
-    course.price && course.price > 0 ? DEFAULT_FULL_COURSE_PRICE_EUR : 0;
+  const displayPrice = getKnownCatalogPrice(course.price);
   const totalLessons = course.chapters.reduce(
     (acc, chapter) => acc + chapter.lessons.length,
     0,
@@ -139,6 +144,8 @@ export default async function CourseDetailPage({
   }
 
   return (
+    <DashboardPreferencesProvider>
+    <PrivateOwnerBoundary expectedUserId={user.id}>
     <div className="min-h-screen bg-background">
       <CheckoutSessionGuard currentUserId={user.id} />
       {/* Hero */}
@@ -231,13 +238,13 @@ export default async function CourseDetailPage({
           <div className="sticky top-8 bg-card border border-border rounded-xl p-6 space-y-4">
             <div className="text-center">
               <p className="text-3xl font-bold text-primary">
-                €{displayPrice.toFixed(2)}
+                {displayPrice === null ? copy.priceUnavailable : `€${displayPrice.toFixed(2)}`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 {copy.fullAccess}
               </p>
             </div>
-            <CourseEnrollButton courseId={course.id} price={displayPrice} />
+            <CourseEnrollButton key={course.id} courseId={course.id} price={displayPrice} />
             <div className="text-xs text-center text-muted-foreground">
               {copy.securePayment}
             </div>
@@ -245,5 +252,7 @@ export default async function CourseDetailPage({
         </div>
       </div>
     </div>
+    </PrivateOwnerBoundary>
+    </DashboardPreferencesProvider>
   );
 }

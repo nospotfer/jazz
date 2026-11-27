@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import {
   createMuxPlaybackTokens,
   hasMuxSigningConfig,
@@ -104,7 +105,7 @@ export async function GET() {
       },
     );
   } catch (error) {
-    console.error("[MUX_PROMO_PLAYBACK_ROUTE_ERROR]", error);
+    console.error("[MUX_PROMO_PLAYBACK_ROUTE_ERROR]", safeErrorDiagnostic(error));
     // Keep the landing promo available even if Mux signing key rotation is temporarily inconsistent.
     return NextResponse.json(
       {

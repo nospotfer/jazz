@@ -10,12 +10,13 @@ describe('POST /api/dev/reset-test-purchases', () => {
   });
 
   function makeReq(url = 'http://localhost:3000/api/dev/reset-test-purchases') {
-    return new Request(url, { method: 'POST' });
+    return new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ courseId: 'c1', dryRun: false }) });
   }
 
   test('returns 404 for non-local requests', async () => {
     vi.doMock('@/lib/test-mode', () => ({
-      isLocalTestRequest: vi.fn().mockReturnValue(false),
+      isIsolatedLocalTestRequest: vi.fn().mockReturnValue(false),
     }));
     vi.doMock('@/utils/supabase/server', () => ({
       createClient: () => ({ auth: { getUser: vi.fn() } }),
@@ -29,7 +30,7 @@ describe('POST /api/dev/reset-test-purchases', () => {
 
   test('returns 401 when user is not authenticated', async () => {
     vi.doMock('@/lib/test-mode', () => ({
-      isLocalTestRequest: vi.fn().mockReturnValue(true),
+      isIsolatedLocalTestRequest: vi.fn().mockReturnValue(true),
     }));
     vi.doMock('@/utils/supabase/server', () => ({
       createClient: () => ({
@@ -45,7 +46,7 @@ describe('POST /api/dev/reset-test-purchases', () => {
 
   test('deletes all user test data and returns counts', async () => {
     vi.doMock('@/lib/test-mode', () => ({
-      isLocalTestRequest: vi.fn().mockReturnValue(true),
+      isIsolatedLocalTestRequest: vi.fn().mockReturnValue(true),
     }));
     vi.doMock('@/utils/supabase/server', () => ({
       createClient: () => ({
@@ -92,7 +93,7 @@ describe('POST /api/dev/reset-test-purchases', () => {
 
   test('skips null or missing vouchers while rolling back usage counters', async () => {
     vi.doMock('@/lib/test-mode', () => ({
-      isLocalTestRequest: vi.fn().mockReturnValue(true),
+      isIsolatedLocalTestRequest: vi.fn().mockReturnValue(true),
     }));
     vi.doMock('@/utils/supabase/server', () => ({
       createClient: () => ({
@@ -141,7 +142,7 @@ describe('POST /api/dev/reset-test-purchases', () => {
 
   test('returns 500 on internal error', async () => {
     vi.doMock('@/lib/test-mode', () => ({
-      isLocalTestRequest: vi.fn().mockReturnValue(true),
+      isIsolatedLocalTestRequest: vi.fn().mockReturnValue(true),
     }));
     vi.doMock('@/utils/supabase/server', () => ({
       createClient: () => ({

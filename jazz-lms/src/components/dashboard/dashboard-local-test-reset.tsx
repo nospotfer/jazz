@@ -21,6 +21,7 @@ export function DashboardLocalTestReset() {
     if (!isLocalTestHost()) return;
 
     const shouldRunReset = searchParams.get('resetTestPurchases') === '1';
+    const courseId = searchParams.get('resetTestCourseId')?.trim();
 
     if (!shouldRunReset || hasAttemptedResetRef.current) {
       return;
@@ -31,9 +32,15 @@ export function DashboardLocalTestReset() {
     const clearResetTrigger = () => {
       const nextParams = new URLSearchParams(searchParams.toString());
       nextParams.delete('resetTestPurchases');
+      nextParams.delete('resetTestCourseId');
       const query = nextParams.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     };
+
+    if (!courseId) {
+      clearResetTrigger();
+      return;
+    }
 
     const runReset = async () => {
       try {
@@ -42,9 +49,11 @@ export function DashboardLocalTestReset() {
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ courseId, dryRun: false }),
         });
 
         if (!response.ok) {
+          clearResetTrigger();
           return;
         }
 

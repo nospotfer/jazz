@@ -1,8 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@react-pdf-viewer/core/lib/styles/index.css";
-@import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-@import "@react-pdf-viewer/highlight/lib/styles/index.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -87,7 +84,7 @@
   --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: oklch(0.65 0.16 85);
   --jazz-cta: #f2b705;
-  --jazz-title-accent: #d79b1a;
+  --jazz-title-accent: #8a5b0a;
 }
 
 .dark {
@@ -184,14 +181,6 @@
     transform: translateY(-1px);
   }
 
-  .pdf-workspace-viewer .rpv-core__inner-pages {
-    align-items: center;
-  }
-
-  .pdf-workspace-viewer .rpv-core__inner-page {
-    margin-left: auto;
-    margin-right: auto;
-  }
 
   .lesson-mux-player {
     display: block;

@@ -1,0 +1,101 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main, maintenance/initial-audit, jazz-lms-dev-vercel]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    name: Build, lint, types and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: jazz-lms
+    env:
+      # Checks use fixtures/mocks and never connect to a production provider.
+      DATABASE_URL: postgresql://jazz_test:jazz_test@127.0.0.1:5432/jazz_test
+      NEXT_PUBLIC_SUPABASE_URL: ""
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+      APP_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_OPENREPLAY_ENABLED: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: jazz-lms/.nvmrc
+          cache: npm
+          cache-dependency-path: jazz-lms/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:webpack
+
+  postgres:
+    name: Persisted security and payment checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: jazz-lms
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: jazz_maintenance
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d jazz_maintenance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres@127.0.0.1:55432/jazz_maintenance
+      PAYMENTS_TEST_DATABASE_URL: postgresql://postgres@127.0.0.1:55432/jazz_maintenance
+      MAINTENANCE_DATABASE_URL: postgresql://postgres@127.0.0.1:55432/jazz_maintenance
+      MESSAGING_TEST_DATABASE_URL: postgresql://postgres@127.0.0.1:55432/jazz_maintenance
+      LMS_DATABASE_SECURITY_DATABASE_URL: postgresql://postgres@127.0.0.1:55432/jazz_maintenance
+      NEXT_PUBLIC_SUPABASE_URL: ""
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: jazz-lms/.nvmrc
+          cache: npm
+          cache-dependency-path: jazz-lms/package-lock.json
+      - run: npm ci
+      - name: Create disposable database schema
+        run: |
+          npx prisma db push --skip-generate
+          npx prisma db execute --schema prisma/schema.prisma --file prisma/setup-messaging.sql
+      - name: Check checkout and voucher authorization, reversals, quizzes, notes and messaging
+        # These files share schema/ACL fixtures. Keep files serial; concurrency
+        # inside the checkout/voucher tests still exercises real racing requests.
+        run: >-
+          npx vitest run --no-file-parallelism
+          tests/integration/dodo-entitlement-postgres.test.ts
+          tests/security/lesson-quiz-postgres.test.ts
+          tests/security/lesson-notes-postgres.test.ts
+          tests/integration/messages-postgres.test.ts
+          tests/security/lms-database-postgres.test.ts
+          tests/security/checkout-authorization-postgres.test.ts
+          tests/security/voucher-course-authority-postgres.test.ts
+          tests/security/checkout-course-concurrency-postgres.test.ts
+          tests/security/payment-currency-schema-postgres.test.ts
+          tests/integration/dodo-currency-postgres.test.ts

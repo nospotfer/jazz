@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/admin/permissions";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/lib/language";
@@ -11,7 +12,7 @@ export const runtime = "nodejs";
 // The value is mixed into the signed URL as `?v=...` so the Supabase Storage
 // CDN treats the object as a fresh cache entry. Can be overridden at runtime
 // with PDF_CACHE_VERSION.
-const DEFAULT_PDF_CACHE_VERSION = "2026-05-21-bucket-refresh";
+const DEFAULT_PDF_CACHE_VERSION = "2026-06-04-bucket-refresh";
 
 const extractStoragePath = (value: string, bucketName: string) => {
   const rawValue = value.trim();
@@ -83,7 +84,7 @@ export async function GET(
     const { lessonId, attachmentId } = await params;
     const bucket = process.env.SUPABASE_STORAGE_BUCKET;
     const ttlSeconds = Number(process.env.SIGNED_URL_TTL_SECONDS ?? 900);
-    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").toLowerCase();
+    const adminOwnerEmail = (process.env.ADMIN_OWNER_EMAIL ?? "").trim().toLowerCase();
 
     if (!bucket) {
       return NextResponse.json(
@@ -95,9 +96,10 @@ export async function GET(
     const supabase = createClient();
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -116,6 +118,8 @@ export async function GET(
             chapter: {
               select: {
                 courseId: true,
+                isPublished: true,
+                course: { select: { isPublished: true } },
               },
             },
           },
@@ -145,6 +149,8 @@ export async function GET(
                 chapter: {
                   select: {
                     courseId: true,
+                    isPublished: true,
+                    course: { select: { isPublished: true } },
                   },
                 },
               },
@@ -155,16 +161,15 @@ export async function GET(
 
     const attachment = translatedAttachment ?? baseAttachment;
 
-    const isAdminOwner = (user.email ?? "").toLowerCase() === adminOwnerEmail;
+    const userEmail = (user.email ?? "").trim().toLowerCase();
+    const isAdminOwner = Boolean(adminOwnerEmail && userEmail && userEmail === adminOwnerEmail);
     const courseId = attachment.lesson.chapter.courseId;
 
-    const dbUser = user.email
-      ? await db.user.findUnique({
-          where: { email: user.email },
-          select: { role: true },
-        })
-      : null;
+    const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { role: true } });
     const isAdmin = isAdminRole(dbUser?.role ?? null);
+    if (!isAdminOwner && !isAdmin && (!attachment.lesson.isPublished || !attachment.lesson.chapter.isPublished || !attachment.lesson.chapter.course.isPublished)) {
+      return NextResponse.json({ error: "Attachment not found" }, { status: 404 });
+    }
 
     const [hasFullCoursePurchase, hasLessonPurchase, courseWithLessons] =
       await Promise.all([
@@ -185,7 +190,7 @@ export async function GET(
           },
         }),
         db.course.findUnique({
-          where: { id: courseId },
+          where: { id: courseId, isPublished: true },
           include: {
             chapters: {
               where: { isPublished: true },
@@ -330,7 +335,7 @@ export async function GET(
       },
     );
   } catch (error) {
-    console.error("[ATTACHMENT_SIGNED_URL_ROUTE_ERROR]", error);
+    console.error("[ATTACHMENT_SIGNED_URL_ROUTE_ERROR]", safeErrorDiagnostic(error));
     return NextResponse.json(
       { error: "Failed to load attachment" },
       { status: 500 },

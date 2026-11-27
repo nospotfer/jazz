@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { db } from "@/lib/db";
 import { ensureMessagingTables } from "@/lib/messages-db";
 import { createClient } from "@/utils/supabase/server";
@@ -39,6 +40,7 @@ const professorEmail = (
 ).toLowerCase();
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof Error && error.name === 'MessagingSchemaUnavailableError') return true;
   if (
     error instanceof Prisma.PrismaClientInitializationError
     || error instanceof Prisma.PrismaClientRustPanicError
@@ -75,13 +77,14 @@ async function notifyByEmail(to: string, subject: string, body: string) {
     await resend.emails.send({
       from,
       to,
+      replyTo: to.toLowerCase() === professorEmail ? process.env.MESSAGES_REPLY_TO_EMAIL?.trim() || undefined : undefined,
       subject,
       text: body,
     });
   } catch (error) {
     console.error(
       "[messages:thread:notifyByEmail] Email delivery failed",
-      error,
+      safeErrorDiagnostic(error),
     );
   }
 }
@@ -108,7 +111,8 @@ export async function GET(
     const threadId = rawThreadId.replace(/'/g, "''");
 
     const threads = await db.$queryRawUnsafe<ThreadRow[]>(`
-      SELECT *
+      SELECT id, studentId AS "studentId", studentEmail AS "studentEmail",
+             studentName AS "studentName", subject, createdAt AS "createdAt", updatedAt AS "updatedAt"
       FROM MessageThread
       WHERE id = '${threadId}'
       LIMIT 1
@@ -128,7 +132,8 @@ export async function GET(
     }
 
     const messages = await db.$queryRawUnsafe<MessageRow[]>(`
-      SELECT *
+      SELECT id, threadId AS "threadId", senderId AS "senderId", senderEmail AS "senderEmail",
+             senderName AS "senderName", senderRole AS "senderRole", body, createdAt AS "createdAt"
       FROM Message
       WHERE threadId = '${threadId}'
       ORDER BY createdAt ASC
@@ -148,11 +153,11 @@ export async function GET(
     });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error("[messages:thread:get:db-unavailable]", error);
+      console.error("[messages:thread:get:db-unavailable]", safeErrorDiagnostic(error));
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }
 
-    console.error("[messages:thread:get]", error);
+    console.error("[messages:thread:get]", safeErrorDiagnostic(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -179,7 +184,8 @@ export async function POST(
     const threadId = rawThreadId.replace(/'/g, "''");
 
     const threads = await db.$queryRawUnsafe<ThreadRow[]>(`
-      SELECT *
+      SELECT id, studentId AS "studentId", studentEmail AS "studentEmail",
+             studentName AS "studentName", subject, createdAt AS "createdAt", updatedAt AS "updatedAt"
       FROM MessageThread
       WHERE id = '${threadId}'
       LIMIT 1
@@ -209,7 +215,7 @@ export async function POST(
     const messageId = randomUUID();
 
     const recentMessages = await db.$queryRawUnsafe<LastMessageRow[]>(`
-      SELECT id, senderId, body, createdAt
+      SELECT id, senderId AS "senderId", body, createdAt AS "createdAt"
       FROM Message
       WHERE threadId = '${threadId}'
       ORDER BY createdAt DESC
@@ -280,11 +286,11 @@ export async function POST(
     return NextResponse.json({ ok: true, createdAt: now });
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
-      console.error("[messages:thread:post:db-unavailable]", error);
+      console.error("[messages:thread:post:db-unavailable]", safeErrorDiagnostic(error));
       return new NextResponse("Messaging temporarily unavailable", { status: 503 });
     }
 
-    console.error("[messages:thread:post]", error);
+    console.error("[messages:thread:post]", safeErrorDiagnostic(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

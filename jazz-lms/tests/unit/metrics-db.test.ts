@@ -1,7 +1,25 @@
-import { describe, expect, test } from 'vitest';
-import { bucketize, computeDelta, isRangeKey, resolveRange } from '@/lib/admin/metrics-db';
+import { describe, expect, test, vi } from 'vitest';
+import { bucketize, computeDelta, getEnrollmentsTimeseries, isRangeKey, resolveRange } from '@/lib/admin/metrics-db';
+
+const mocks = vi.hoisted(() => ({ findPurchases: vi.fn() }));
+vi.mock('@/lib/db', () => ({ db: { purchase: { findMany: mocks.findPurchases } } }));
+vi.mock('next/cache', () => ({ unstable_cache: (callback: () => unknown) => callback }));
 
 describe('metrics-db helpers', () => {
+  test('does not classify unknown voucher amounts as verified free enrollments', async () => {
+    const range = resolveRange('7d', new Date('2026-04-17T12:00:00Z'));
+    mocks.findPurchases.mockResolvedValue([
+      { createdAt: new Date('2026-04-15T03:00:00Z'), finalPrice: null, voucherId: 'voucher-unknown' },
+      { createdAt: new Date('2026-04-15T04:00:00Z'), finalPrice: 0, voucherId: 'voucher-free' },
+      { createdAt: new Date('2026-04-15T05:00:00Z'), finalPrice: 12, voucherId: 'voucher-paid' },
+    ]);
+
+    const buckets = await getEnrollmentsTimeseries(range);
+    expect(buckets.find((bucket) => bucket.bucket === '2026-04-15')).toEqual({
+      bucket: '2026-04-15', paid: 1, voucher: 1, total: 2,
+    });
+  });
+
   test('isRangeKey accepts canonical keys and rejects others', () => {
     expect(isRangeKey('7d')).toBe(true);
     expect(isRangeKey('30d')).toBe(true);

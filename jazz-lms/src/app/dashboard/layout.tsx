@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/layout/sidebar';
+import { PrivateOwnerBoundary } from '@/components/auth/private-owner-boundary';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
 import { getCurrentUser } from '@/lib/admin';
 import { isAdminRole } from '@/lib/admin/permissions';
@@ -9,7 +10,7 @@ import { DashboardLocalTestReset } from '@/components/dashboard/dashboard-local-
 import { DashboardPurchaseAutoReconcile } from '@/components/dashboard/dashboard-purchase-auto-reconcile';
 import { CheckoutSessionGuard } from '@/components/dashboard/checkout-session-guard';
 import { getServerUser } from '@/lib/server-user';
-import { getFirstPublishedCourseId, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
+import { getFirstPublishedCourseSummary, hasAnyCoursePurchase } from '@/lib/dashboard-server-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,9 +25,9 @@ export default async function DashboardLayout({
     redirect('/auth');
   }
 
-  const [dbUser, firstCourseId, hasPaidCourse] = await Promise.all([
+  const [dbUser, firstCourse, hasPaidCourse] = await Promise.all([
     getCurrentUser(),
-    getFirstPublishedCourseId(),
+    getFirstPublishedCourseSummary(),
     hasAnyCoursePurchase(user.id),
   ]);
   const role = dbUser?.role ?? null;
@@ -44,23 +45,27 @@ export default async function DashboardLayout({
 
   return (
     <DashboardPreferencesProvider>
+      <PrivateOwnerBoundary expectedUserId={user.id}>
       <div className="h-[100dvh] overflow-hidden bg-background">
         <DashboardLocalTestReset />
-        <CheckoutSessionGuard currentUserId={user.id} />
+        {process.env.NEXT_PUBLIC_RECOVERY_ACCESS !== 'true' && <CheckoutSessionGuard currentUserId={user.id} />}
         <DashboardPurchaseAutoReconcile />
-        <Sidebar />
+        <Sidebar currentUserId={user.id} />
         <div className="lg:pl-64 h-full flex flex-col">
           <DashboardHeader user={dashboardHeaderUser} role={role} isAdmin={isAdmin} />
           <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 lg:p-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <DashboardPaywallWrapper
+              key={firstCourse?.id ?? 'unavailable-course'}
               hasPaidCourse={hasPaidCourseOrAdmin}
-              courseId={firstCourseId}
+              courseId={firstCourse?.id ?? null}
+              coursePrice={firstCourse?.price ?? null}
             >
               {children}
             </DashboardPaywallWrapper>
           </main>
         </div>
       </div>
+      </PrivateOwnerBoundary>
     </DashboardPreferencesProvider>
   );
 }

@@ -28,13 +28,8 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
 
   const visibleItems = MENU_ITEMS.filter((item) => hasPermission(role, item.permission));
 
-  return (
-    <aside className="w-72 shrink-0 border-r border-border bg-white dark:bg-card min-h-screen">
-      <div className="px-6 py-6 border-b border-border">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Jazz LMS</p>
-        <h1 className="mt-2 text-xl font-bold text-jazz-dark dark:text-white">Panel de administración</h1>
-      </div>
-      <nav className="p-4 space-y-2">
+  const navigation = (className: string) => (
+      <nav aria-label="Navegación administrativa" className={className}>
         {visibleItems.map((item) => {
           const active =
             item.href === '/admin'
@@ -44,9 +39,10 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+              aria-current={active ? 'page' : undefined}
+              className={`flex min-h-11 min-w-0 items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${
                 active
-                  ? 'bg-jazz-accent text-white'
+                  ? 'bg-jazz-accent text-jazz-dark'
                   : 'text-jazz-dark hover:bg-muted dark:text-white dark:hover:bg-muted/70'
               }`}
             >
@@ -55,14 +51,33 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
           );
         })}
       </nav>
-      <div className="px-4 mt-auto pb-6">
+  );
+  const returnLink = (
         <Link
           href="/dashboard"
-          className="block rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
+          className="flex min-h-11 min-w-0 items-center rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
         >
           ← Volver a la plataforma
         </Link>
+  );
+
+  return (
+    <aside className="flex w-full min-w-0 shrink-0 flex-col border-b border-border bg-white dark:bg-card lg:min-h-screen lg:w-72 lg:border-b-0 lg:border-r">
+      <div className="border-b border-border px-4 py-4 lg:px-6 lg:py-6">
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Jazz LMS</p>
+        <h2 className="mt-2 break-words text-lg font-bold text-jazz-dark dark:text-white lg:text-xl">Panel de administración</h2>
       </div>
+      <details className="p-2 lg:hidden">
+        <summary className="min-h-11 cursor-pointer rounded-lg px-4 py-3 text-sm font-medium text-jazz-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:text-white">
+          Navegación administrativa
+        </summary>
+        {navigation('grid grid-cols-2 gap-2 p-2')}
+        <div className="p-2">{returnLink}</div>
+      </details>
+      <div className="hidden lg:block">
+        {navigation('space-y-2 p-4')}
+      </div>
+      <div className="mt-auto hidden px-4 pb-6 lg:block">{returnLink}</div>
     </aside>
   );
 }

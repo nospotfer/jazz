@@ -28,9 +28,18 @@ yarn-error.log*
 .env*.local
 .env
 .env.local.bak*
+.payments-e2e.env
+
+# Browser auth state and generated E2E artifacts can contain sessions.
+/.auth/
+/playwright-report/
+/test-results/
 
 # vercel
 .vercel
+
+# Supabase CLI version/cache metadata is machine-local.
+supabase/.temp/
 
 # typescript
 *.tsbuildinfo

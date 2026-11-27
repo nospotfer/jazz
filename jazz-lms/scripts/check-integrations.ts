@@ -2,7 +2,20 @@ import { PrismaClient } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { createSign } from "crypto";
 
-const prisma = new PrismaClient();
+let prisma: PrismaClient | undefined;
+
+// Only messages constructed by this check may reach shared build/CI logs.
+// Provider/Prisma/fetch exceptions can contain connection strings, signed URLs
+// or arbitrary response details, so their messages and payloads stay private.
+class IntegrationCheckError extends Error {}
+
+function reportFailure(error: unknown) {
+  console.error("CHECKUP_FAILED");
+  console.error(error instanceof IntegrationCheckError
+    ? error.message
+    : "Unexpected integration error; private provider details omitted.");
+  process.exitCode = 1;
+}
 
 const REQUIRED_ENV = [
   "DATABASE_URL",
@@ -33,7 +46,7 @@ function toBase64Url(input: string) {
 function getMuxPrivateKey() {
   const raw = process.env.MUX_SIGNING_PRIVATE_KEY?.trim() || "";
 
-  if (!raw) throw new Error("MUX_SIGNING_PRIVATE_KEY is missing");
+  if (!raw) throw new IntegrationCheckError("MUX_SIGNING_PRIVATE_KEY is missing");
 
   if (
     raw.includes("BEGIN PRIVATE KEY") ||
@@ -50,7 +63,7 @@ function getMuxPrivateKey() {
     return decoded;
   }
 
-  throw new Error("MUX_SIGNING_PRIVATE_KEY format is invalid");
+  throw new IntegrationCheckError("MUX_SIGNING_PRIVATE_KEY format is invalid");
 }
 
 function isPlaceholder(value: string) {
@@ -118,7 +131,7 @@ function extractStoragePath(value: string, bucketName: string) {
 
 function createMuxPlaybackToken(playbackId: string) {
   const keyId = process.env.MUX_SIGNING_KEY_ID;
-  if (!keyId) throw new Error("MUX_SIGNING_KEY_ID is missing");
+  if (!keyId) throw new IntegrationCheckError("MUX_SIGNING_KEY_ID is missing");
 
   const header = {
     alg: "RS256",
@@ -147,18 +160,19 @@ function createMuxPlaybackToken(playbackId: string) {
 async function main() {
   const missing = REQUIRED_ENV.filter((key) => !process.env[key]);
   if (missing.length > 0) {
-    throw new Error(`Missing env vars: ${missing.join(", ")}`);
+    throw new IntegrationCheckError(`Missing env vars: ${missing.join(", ")}`);
   }
 
   const placeholders = REQUIRED_ENV.filter((key) =>
     isPlaceholder(process.env[key] || ""),
   );
   if (placeholders.length > 0) {
-    throw new Error(
+    throw new IntegrationCheckError(
       `Placeholder env vars detected: ${placeholders.join(", ")}`,
     );
   }
 
+  prisma = new PrismaClient();
   const lessons = await prisma.lesson.findMany({
     include: { attachments: true },
     orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
@@ -172,18 +186,18 @@ async function main() {
   );
 
   if (lessonCount < 1) {
-    throw new Error("No published lessons found");
+    throw new IntegrationCheckError("No published lessons found");
   }
 
   if (attachmentCount < 1) {
-    throw new Error("No attachments found");
+    throw new IntegrationCheckError("No attachments found");
   }
 
   const lessonsWithVideo = publishedLessons.filter((lesson) =>
     Boolean(extractMuxPlaybackId(lesson.videoUrl)),
   );
   if (lessonsWithVideo.length < 1) {
-    throw new Error("No published lessons with valid Mux playback IDs found");
+    throw new IntegrationCheckError("No published lessons with valid Mux playback IDs found");
   }
 
   const sampleSize = Math.min(15, lessonsWithVideo.length);
@@ -192,7 +206,7 @@ async function main() {
   for (const lesson of lessonsWithVideo.slice(0, sampleSize)) {
     const playbackId = extractMuxPlaybackId(lesson.videoUrl);
     if (!playbackId) {
-      throw new Error(`Mux playback ID is invalid for lesson ${lesson.title}`);
+      throw new IntegrationCheckError("Mux playback ID is invalid");
     }
 
     const token = createMuxPlaybackToken(playbackId);
@@ -200,8 +214,8 @@ async function main() {
 
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(
-        `Mux failed for lesson ${lesson.title}: HTTP ${response.status}`,
+      throw new IntegrationCheckError(
+        `Mux manifest request failed: HTTP ${response.status}`,
       );
     }
 
@@ -218,8 +232,8 @@ async function main() {
     );
 
     if (!hasResolution && !hasVideoCodec) {
-      throw new Error(
-        `Mux failed for lesson ${lesson.title}: no video variant in manifest`,
+      throw new IntegrationCheckError(
+        "Mux manifest contains no video variant",
       );
     }
 
@@ -235,7 +249,7 @@ async function main() {
   const allAttachments = lessons.flatMap((lesson) => lesson.attachments);
 
   if (allAttachments.length === 0) {
-    throw new Error("No attachment found to validate Supabase storage");
+    throw new IntegrationCheckError("No attachment found to validate Supabase storage");
   }
   let supabaseStorageOk = false;
   let lastSupabaseError = "Unknown Supabase storage validation error";
@@ -252,13 +266,13 @@ async function main() {
       .createSignedUrl(storagePath, 300);
 
     if (signedError || !signedData?.signedUrl) {
-      lastSupabaseError = `Supabase signed URL failed for ${storagePath}: ${signedError?.message || "no URL returned"}`;
+      lastSupabaseError = "Supabase signed URL could not be created";
       continue;
     }
 
     const fileResponse = await fetch(signedData.signedUrl, { method: "HEAD" });
     if (!fileResponse.ok) {
-      lastSupabaseError = `Supabase file HEAD failed for ${storagePath}: HTTP ${fileResponse.status}`;
+      lastSupabaseError = `Supabase file HEAD request failed: HTTP ${fileResponse.status}`;
       continue;
     }
 
@@ -267,7 +281,7 @@ async function main() {
   }
 
   if (!supabaseStorageOk) {
-    throw new Error(lastSupabaseError);
+    throw new IntegrationCheckError(lastSupabaseError);
   }
 
   console.log("CHECKUP_OK");
@@ -275,15 +289,17 @@ async function main() {
   console.log(`Attachments: ${attachmentCount}`);
   console.log(`Mux streams validated: ${muxOk}/${sampleSize}`);
   console.log("Supabase signed URL: OK");
-  console.log("Dodo checkout config: OK");
+  console.log("Dodo checkout env vars: present (provider not verified)");
 }
 
-main()
-  .catch((error) => {
-    console.error("CHECKUP_FAILED");
-    console.error(error instanceof Error ? error.message : error);
-    process.exit(1);
-  })
+export const integrationCheck = main()
+  .catch(reportFailure)
   .finally(async () => {
-    await prisma.$disconnect();
+    if (prisma) {
+      try {
+        await prisma.$disconnect();
+      } catch {
+        reportFailure(new IntegrationCheckError("Database cleanup failed; private provider details omitted."));
+      }
+    }
   });

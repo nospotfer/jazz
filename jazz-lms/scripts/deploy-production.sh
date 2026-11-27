@@ -4,67 +4,24 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-if [[ "$current_branch" != "main" ]]; then
-  echo "❌ Production deploy is only allowed from branch 'main'."
-  echo "   Current branch: '${current_branch:-unknown}'"
-  echo "   Switch with: git checkout main"
-  exit 1
-fi
-
-if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
-  echo "❌ Tracked local changes detected. Commit/stash before production deploy."
-  git status --short
-  exit 1
-fi
-
-required_envs=(
-  NEXT_PUBLIC_SUPABASE_URL
-  NEXT_PUBLIC_SUPABASE_ANON_KEY
-  NEXT_PUBLIC_APP_URL
-  DATABASE_URL
-  SUPABASE_SERVICE_ROLE_KEY
-  DODO_PAYMENTS_API_KEY
-  DODO_PAYMENTS_WEBHOOK_SECRET
-  DODO_BUSINESS_ID
-  DODO_PRODUCT_ID
-  SUPABASE_STORAGE_BUCKET
-  MUX_SIGNING_KEY_ID
-  MUX_SIGNING_PRIVATE_KEY
-  SIGNED_URL_TTL_SECONDS
-  PROFESSOR_EMAIL
-  RESEND_API_KEY
-  RESEND_FROM_EMAIL
-  INBOUND_EMAIL_WEBHOOK_SECRET
-  ADMIN_OWNER_EMAIL
-)
-
-missing=()
-for key in "${required_envs[@]}"; do
-  if [[ -z "${!key:-}" ]]; then
-    missing+=("$key")
-  fi
-done
-
-if (( ${#missing[@]} > 0 )); then
-  echo "❌ Missing required env vars: ${missing[*]}"
-  echo "   Load production envs first, then rerun."
-  exit 1
-fi
+# Explicit owner approval for this exact production operation remains required.
+# This guard establishes scope; an environment variable is not that approval.
+node scripts/check-deploy-target.mjs production
 
 echo "▶ Lint preflight"
 npm run lint
 
-echo "▶ Integration tests"
-npm run test:integration
+echo "▶ Types and automated tests"
+npm run typecheck
+npm test
 
 echo "▶ Build production"
-npm run build
+npm run build:webpack
 
-echo "▶ Integration preflight"
-npm run check:integrations
+# Recheck after preflights, including newly generated untracked source.
+node scripts/check-deploy-target.mjs production
 
 echo "▶ Deploy to Vercel production"
-vercel --prod --yes
+vercel --prod --yes --non-interactive
 
 echo "✅ Deployment finished"

@@ -31,6 +31,7 @@ function getPaymentModal(page: Page) {
 async function tryResetLocalTestPurchases(page: Page) {
   const response = await page.request.post("/api/dev/reset-test-purchases", {
     failOnStatusCode: false,
+    data: { courseId: getPaymentsE2EConfig().courseId, dryRun: false },
   });
 
   return response.status() === 200;

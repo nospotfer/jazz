@@ -1,4 +1,6 @@
 import { CoursePlayer } from "@/components/course/course-player";
+import { PrivateOwnerBoundary } from "@/components/auth/private-owner-boundary";
+import { DashboardPreferencesProvider } from "@/components/providers/dashboard-preferences-provider";
 import {
   getCourseTranslationBundle,
   resolveCourseText,
@@ -162,8 +164,10 @@ const LessonPage = async ({
   }
 
   return (
-    <div>
+    <DashboardPreferencesProvider>
+    <PrivateOwnerBoundary expectedUserId={user.id}>
       <CoursePlayer
+        currentUserId={user.id}
         course={localizedCourse}
         lesson={lesson}
         lessonId={lessonId}
@@ -175,7 +179,8 @@ const LessonPage = async ({
         canAccessLesson={accessPolicy.canAccessLesson}
         canAccessAttachments={accessPolicy.canAccessAttachments}
       />
-    </div>
+    </PrivateOwnerBoundary>
+    </DashboardPreferencesProvider>
   );
 };
 

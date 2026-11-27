@@ -19,7 +19,7 @@ scan_staged() {
   if [[ -n "$matches" ]]; then
     echo "❌ Segredo potencial detectado no conteúdo staged. Commit bloqueado."
     echo ""
-    echo "$matches"
+    printf '%s\n' "$matches" | cut -d: -f1 | sed 's/^/Added patch line: /'
     echo ""
     echo "Se for falso positivo, revise o conteúdo ou use placeholders neutros."
     exit 1
@@ -46,7 +46,7 @@ scan_all() {
 
     if [[ -n "$file_matches" ]]; then
       matches+=$'\n'
-      matches+="$file:$file_matches"
+      matches+="$file: lines $(printf '%s\n' "$file_matches" | cut -d: -f1 | tr '\n' ' ')"
     fi
   done < <(git ls-files -z)
 

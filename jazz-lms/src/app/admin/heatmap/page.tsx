@@ -172,7 +172,12 @@ export default async function AdminHeatmapPage() {
             Heatmap & Analytics
           </h1>
           <p className="mt-1 text-[16px] text-muted-foreground">
-            Datos en tiempo real de OpenReplay (últimos {WINDOW_DAYS} días).
+            Actividad de OpenReplay (últimos {WINDOW_DAYS} días).
+          </p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            La nueva configuración registra solo el inicio público cuando el visitante lo permite.
+            No registra cuentas, cursos, mensajes ni pagos. Los datos históricos pueden incluir otras rutas;
+            estas cifras no representan todas las visitas al sitio.
           </p>
         </div>
         {dashboardUrl ? (

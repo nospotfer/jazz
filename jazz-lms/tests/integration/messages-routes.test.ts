@@ -107,6 +107,9 @@ describe("/api/messages", () => {
     const response = await GET();
 
     expect(response.status).toBe(401);
+    expect(mocks.ensureTables).not.toHaveBeenCalled();
+    expect(mocks.queryRawUnsafe).not.toHaveBeenCalled();
+    expect(mocks.executeRawUnsafe).not.toHaveBeenCalled();
   });
 
   test("GET returns threads for professor", async () => {
@@ -136,6 +139,20 @@ describe("/api/messages", () => {
     expect(response.status).toBe(200);
     expect(body.isProfessor).toBe(true);
     expect(body.threads).toHaveLength(1);
+  });
+
+  test("GET serializes PostgreSQL bigint unread counts with stable camelCase fields", async () => {
+    mocks.queryRawUnsafe.mockResolvedValueOnce([{
+      id: "thread-1", studentId: "u1", studentEmail: "student@example.com", studentName: "Student",
+      subject: "Need help", createdAt: "2026-10-13T00:00:00Z", updatedAt: "2026-10-13T00:01:00Z",
+      lastMessage: "Reply", lastMessageAt: "2026-10-13T00:01:00Z", unreadCount: BigInt(2),
+    }]);
+    const { GET } = await import("@/app/api/messages/route");
+    const response = await GET();
+    expect(response.status).toBe(200);
+    expect((await response.json()).threads[0]).toMatchObject({ studentId: "u1", studentEmail: "student@example.com", unreadCount: 2 });
+    expect(mocks.queryRawUnsafe.mock.calls[0][0]).toContain('AS "studentEmail"');
+    expect(mocks.queryRawUnsafe.mock.calls[0][0]).toContain('AS "unreadCount"');
   });
 
   test("POST returns 403 when professor tries creating student thread", async () => {

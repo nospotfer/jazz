@@ -9,6 +9,10 @@ import axios from 'axios';
 import { useLanguage } from '@/components/providers/language-provider';
 import { loadPaymentMethodModal, warmPaymentMethodModal } from '@/lib/payment-modal-loader';
 import type { AppliedVoucher } from '@/components/vouchers/voucher-input';
+import { useOwnerAction } from '@/hooks/use-owner-action';
+import { withExpectedUserId } from '@/hooks/use-auth-owner';
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from '@/lib/checkout-helpers';
+import { getKnownCatalogPrice } from '@/lib/pricing';
 
 const PaymentMethodModal = dynamic(
   () => loadPaymentMethodModal().then((mod) => mod.PaymentMethodModal),
@@ -17,7 +21,7 @@ const PaymentMethodModal = dynamic(
 
 interface CourseEnrollButtonProps {
   courseId: string;
-  price: number;
+  price: number | null;
 }
 
 export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps) {
@@ -26,6 +30,8 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
+  const { capture, isCurrent } = useOwnerAction();
+  const catalogPrice = getKnownCatalogPrice(price);
 
   useEffect(() => {
     const idleCallback = window.requestIdleCallback?.(() => {
@@ -53,6 +59,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       enrollFree: 'Inscribirse gratis',
       buyCourse: 'Comprar curso',
       chooseMethod: 'Aplicar voucher y continuar',
+      priceUnavailable: 'Precio no disponible',
       methodLabel: 'Método de pago',
       methodCard: 'Tarjeta',
       methodPaypal: 'PayPal',
@@ -63,48 +70,61 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
       enrollFree: 'Enroll for free',
       buyCourse: 'Buy course',
       chooseMethod: 'Apply voucher and continue',
+      priceUnavailable: 'Price unavailable',
     },
     fr: {
       somethingWrong: 'Une erreur est survenue. Réessayez.',
       enrollFree: 'S’inscrire gratuitement',
       buyCourse: 'Acheter le cours',
       chooseMethod: 'Appliquer un code et continuer',
+      priceUnavailable: 'Prix indisponible',
     },
     pt: {
       somethingWrong: 'Algo deu errado. Tente novamente.',
       enrollFree: 'Inscrever-se grátis',
       buyCourse: 'Comprar curso',
       chooseMethod: 'Aplicar voucher e continuar',
+      priceUnavailable: 'Preço indisponível',
     },
   }[language];
 
   const checkoutCourse = async () => {
+    if (catalogPrice === null || !courseId) return;
+    const token = capture();
+    if (!token) return;
     try {
       setIsLoading(true);
       setPaymentError('');
 
-      const response = await axios.post('/api/checkout', {
+      const response = await axios.post(withExpectedUserId('/api/checkout', token.ownerId), {
         courseId,
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
+      if (!isCurrent(token)) return;
 
       // Redirect to the hosted provider checkout URL
       window.location.assign(response.data.url);
     } catch (error) {
-      if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
+      if (!isCurrent(token)) return;
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        const message = getCheckoutSessionChangedMessage(language);
+        setPaymentError(message);
+        toast.error(message);
+      } else if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
         setPaymentError(error.response.data);
         toast.error(error.response.data);
       } else {
         toast.error(copy.somethingWrong);
       }
     } finally {
-      setIsLoading(false);
+      if (isCurrent(token)) setIsLoading(false);
     }
   };
 
   const onClick = () => {
-    if (price === 0) {
+    if (catalogPrice === null || !courseId) return;
+    if (catalogPrice === 0) {
       void checkoutCourse();
       return;
     }
@@ -126,7 +146,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         onMouseEnter={primePaymentModal}
         onFocus={primePaymentModal}
         onTouchStart={primePaymentModal}
-        disabled={isLoading}
+        disabled={isLoading || catalogPrice === null || !courseId}
         className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 text-base font-semibold"
         size="lg"
       >
@@ -135,7 +155,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         ) : (
           <>
             <ShoppingCart className="h-5 w-5 mr-2" />
-            {price === 0 ? copy.enrollFree : copy.chooseMethod}
+            {catalogPrice === null ? copy.priceUnavailable : catalogPrice === 0 ? copy.enrollFree : copy.chooseMethod}
           </>
         )}
       </Button>
@@ -145,7 +165,7 @@ export function CourseEnrollButton({ courseId, price }: CourseEnrollButtonProps)
         isLoading={isLoading}
         language={language}
         courseId={courseId}
-        basePrice={price}
+        basePrice={catalogPrice}
         errorMessage={paymentError}
         onClose={() => {
           if (!isLoading) {

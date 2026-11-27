@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
+import { AccessibleDialog } from "@/components/ui/accessible-dialog";
 import {
     getLocalizedJazzDescription,
     getLocalizedJazzSubtitle,
@@ -152,28 +153,21 @@ function ExpandedCard({
   learnBullets: string[];
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label={closeLabel}
-        onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-      />
-      <div
-        className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
-          <div className="p-8 lg:p-10 flex flex-col justify-center overflow-y-auto max-h-[85vh]">
+    <AccessibleDialog label={classItem.subtitle} onClose={onClose} className="max-w-5xl bg-white dark:bg-gray-900">
+        <div className="sticky top-0 z-10 border-b border-border bg-card/95 p-3 backdrop-blur">
             <Button
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="w-fit mb-6 px-4 py-2 text-base font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+              aria-label={closeLabel}
+              className="min-h-11 w-fit max-w-full whitespace-normal px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
             >
               <ArrowLeft className="h-5 w-5 mr-2.5" />
               {backLabel}
             </Button>
+        </div>
+        <div className="grid min-w-0 grid-cols-1 lg:grid-cols-2">
+          <div className="flex min-w-0 flex-col justify-center p-5 sm:p-8 lg:p-10">
 
             <div className="mb-4">
               <span className="text-yellow-600 text-sm font-bold uppercase tracking-widest">
@@ -181,7 +175,7 @@ function ExpandedCard({
               </span>
             </div>
 
-            <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="mb-6 break-words text-2xl font-bold text-gray-900 dark:text-white lg:text-3xl">
               {classItem.subtitle}
             </h3>
 
@@ -207,7 +201,7 @@ function ExpandedCard({
             </div>
           </div>
 
-          <div className="relative bg-black min-h-[300px] lg:min-h-0">
+          <div className="relative min-h-[300px] overflow-hidden bg-black lg:min-h-0">
             <Image
               src={classItem.image}
               alt={classItem.subtitle}
@@ -230,18 +224,17 @@ function ExpandedCard({
               </p>
 
               <div className="w-full max-w-xs space-y-3">
-                <Button asChild className="w-full">
+                <Button asChild className="cta-highlight min-h-11 w-full text-black hover:text-black">
                   <Link href="/auth?tab=register">{createAccountLabel}</Link>
                 </Button>
-                <Button asChild variant="secondary" className="w-full">
+                <Button asChild variant="secondary" className="min-h-11 w-full">
                   <Link href="/auth?tab=login">{loginLabel}</Link>
                 </Button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </AccessibleDialog>
   );
 }
 
@@ -275,15 +268,16 @@ export function Classes() {
   const copy = {
     es: {
       title: "El curso",
+      courseSummary: "15 clases · Primera clase gratis al registrarte",
       subtitle:
-        "Haz clic en cualquier clase para ver la descripción completa y una vista previa",
+        "Explora el programa y selecciona una clase para ver su descripción completa.",
       previewLabel: "Vista previa de clase",
       closeLabel: "Cerrar",
       backLabel: "Volver a las clases",
       classWord: "Clase",
       lockTitle: "Clase bloqueada",
       lockDescription:
-        "Crea una cuenta o inicia sesión para acceder a la lección completa.",
+        "Prueba la primera clase gratis al crear tu cuenta. Para acceder a las demás clases, podrás comprar el curso completo.",
       createAccountLabel: "Crear cuenta",
       loginLabel: "Iniciar sesión",
       learnListTitle: "En esta clase aprenderás",
@@ -295,13 +289,14 @@ export function Classes() {
     },
     en: {
       title: "The course",
-      subtitle: "Click any lesson to see the full description and preview",
+      courseSummary: "15 lessons · First lesson free when you register",
+      subtitle: "Explore the program and select a lesson to read its full description.",
       previewLabel: "Lesson preview",
       closeLabel: "Close",
       backLabel: "Back to lessons",
       classWord: "Lesson",
       lockTitle: "Lesson locked",
-      lockDescription: "Create an account or log in to unlock the full lesson.",
+      lockDescription: "Create your account to try the first lesson free. Purchase the full course to access the remaining lessons.",
       createAccountLabel: "Create account",
       loginLabel: "Log in",
       learnListTitle: "In this lesson you will learn",
@@ -313,15 +308,16 @@ export function Classes() {
     },
     fr: {
       title: "Le cours",
+      courseSummary: "15 leçons · Première leçon offerte à l’inscription",
       subtitle:
-        "Cliquez sur une leçon pour voir la description complète et un aperçu",
+        "Découvrez le programme et sélectionnez une leçon pour lire sa description complète.",
       previewLabel: "Aperçu de la leçon",
       closeLabel: "Fermer",
       backLabel: "Retour aux leçons",
       classWord: "Leçon",
       lockTitle: "Leçon verrouillée",
       lockDescription:
-        "Créez un compte ou connectez-vous pour débloquer la leçon complète.",
+        "Créez votre compte pour essayer la première leçon gratuitement. Achetez ensuite le cours complet pour accéder aux autres leçons.",
       createAccountLabel: "Créer un compte",
       loginLabel: "Se connecter",
       learnListTitle: "Dans cette leçon, vous apprendrez",
@@ -332,29 +328,30 @@ export function Classes() {
       ],
     },
     pt: {
-      title: "El curso",
+      title: "O curso",
+      courseSummary: "15 aulas · Primeira aula grátis ao se cadastrar",
       subtitle:
-        "Haz clic en cualquier clase para ver la descripción completa y una vista previa",
-      previewLabel: "Vista previa de clase",
-      closeLabel: "Cerrar",
-      backLabel: "Volver a las clases",
-      classWord: "Clase",
-      lockTitle: "Clase bloqueada",
+        "Selecione uma aula para ver a descrição completa",
+      previewLabel: "Prévia da aula",
+      closeLabel: "Fechar",
+      backLabel: "Voltar às aulas",
+      classWord: "Aula",
+      lockTitle: "Aula bloqueada",
       lockDescription:
-        "Crea una cuenta o inicia sesión para acceder a la lección completa.",
-      createAccountLabel: "Crear cuenta",
-      loginLabel: "Iniciar sesión",
-      learnListTitle: "En esta clase aprenderás",
+        "Crie sua conta para experimentar a primeira aula grátis. Compre o curso completo para acessar as demais aulas.",
+      createAccountLabel: "Criar conta",
+      loginLabel: "Entrar",
+      learnListTitle: "Nesta aula você aprenderá",
       lessonIncludes: [
-        "Contexto histórico y cultural del tema principal.",
-        "Conceptos clave explicados con ejemplos musicales.",
-        "Cómo aplicar esta escucha al resto del curso.",
+        "Contexto histórico e cultural do tema principal.",
+        "Conceitos fundamentais explicados com exemplos musicais.",
+        "Como aplicar essa escuta ao restante do curso.",
       ],
     },
   }[language];
 
   const localizedClasses = classes.map((classItem, index) => {
-    if (language === "es") return classItem;
+    if (language === "es") return { ...classItem, description: detailedDescriptions?.[index] || classItem.description };
 
     const lessonNumber = index + 1;
     const localizedSubtitle = getLocalizedJazzSubtitle(lessonNumber, language);
@@ -376,25 +373,17 @@ export function Classes() {
 
   const handleCloseExpandedCard = () => {
     setExpandedIndex(null);
-
-    if (typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
-        const coursesSection = document.getElementById("board-courses");
-        if (coursesSection) {
-          coursesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-    }
   };
 
   return (
     <>
-      <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-          <h2 className="text-4xl sm:text-5xl font-bold text-center mb-4 text-gray-900 dark:text-white">
+      <div className="w-full border-y border-border bg-white dark:bg-background">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12 lg:py-16">
+          <h2 className="font-serif text-3xl sm:text-4xl font-semibold text-center mb-3 text-gray-900 dark:text-white">
             {copy.title}
           </h2>
-          <p className="text-center text-gray-500 dark:text-gray-400 mb-12 text-sm">
+          <p className="mb-3 text-center text-sm font-semibold title-accent">{copy.courseSummary}</p>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8 text-sm">
             {copy.subtitle}
           </p>
 
@@ -402,7 +391,7 @@ export function Classes() {
             {localizedClasses.map((classItem, index) => (
               <button
                 key={index}
-                className={`group relative bg-amber-500 rounded-xl overflow-hidden shadow-md transition-all duration-300 ease-out text-left ${
+                className={`group relative border border-border bg-card rounded-xl overflow-hidden shadow-sm transition-all duration-300 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   hoveredIndex === index
                     ? "shadow-2xl scale-105 ring-2 ring-yellow-400 z-10"
                     : "hover:shadow-lg"
@@ -424,10 +413,10 @@ export function Classes() {
                 </div>
 
                 <div className="p-3">
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                  <h3 className="text-xs font-bold title-accent uppercase tracking-wide leading-tight">
                     {classItem.title}
                   </h3>
-                  <p className="text-xs text-black/70 mt-0.5 line-clamp-2 leading-snug">
+                  <p className="mt-2 min-h-[3.75rem] text-sm text-foreground line-clamp-3 leading-snug">
                     {classItem.subtitle}
                   </p>
                 </div>

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "purpose": "review-only HTTP serving contract; activation requires production approval",
+  "document": "index.html",
+  "documentSha256": "9dd0b14b1e06cf0ff002197c028bf798abbcd860996ab61e5c56f6d423587830",
+  "documentMethods": [
+    "GET",
+    "HEAD"
+  ],
+  "status": 503,
+  "headers": {
+    "Content-Type": "text/html; charset=utf-8",
+    "Retry-After": "300",
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow, noarchive",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "default-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'none'; object-src 'none'; frame-src 'none'; font-src 'none'; img-src data:; style-src 'sha256-g9myOza/XvSGcKDdUEk171ZN5I3K0k8Sm3maHTnaQ3c='; script-src 'sha256-HXcAHSrdQSARxGQs/MA0bLvuZf0xQU5yyQAzWPBscuc='; frame-ancestors 'none'"
+  },
+  "headResponseBodyBytes": 0,
+  "unavailableApiAuthCheckoutWebhookOrMutatingRequests": {
+    "status": 503,
+    "contentType": "text/plain; charset=utf-8",
+    "forwardToApplicationOrProvider": false
+  },
+  "setCookie": false,
+  "automaticRefresh": false
+}

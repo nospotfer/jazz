@@ -20,31 +20,11 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { assertLegacyLocalMutationAllowed } from './lib/legacy-local-guard';
 
-// Minimal .env loader (no dotenv dep) — merges into process.env without clobber.
-function loadEnvFile(path: string) {
-  if (!existsSync(path)) return;
-  const raw = readFileSync(path, 'utf8');
-  for (const line of raw.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq < 0) continue;
-    const key = trimmed.slice(0, eq).trim();
-    let value = trimmed.slice(eq + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (process.env[key] === undefined) process.env[key] = value;
-  }
-}
-loadEnvFile(resolve(process.cwd(), '.env'));
-loadEnvFile(resolve(process.cwd(), '.env.local'));
+// Supply the disposable local configuration explicitly; never auto-load an
+// ambient project .env in this destructive Auth tool.
+const localTarget = assertLegacyLocalMutationAllowed({ supabase: true });
 
 async function main() {
   if (process.env.CONFIRM !== 'WIPE-AUTH-USERS') {
@@ -53,7 +33,7 @@ async function main() {
     return;
   }
 
-  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+  const supabaseUrl = localTarget.supabaseUrl!;
   const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
   if (!supabaseUrl || !serviceRoleKey) {

@@ -1,77 +1,91 @@
-# OpenReplay Implementation
+# Optional analytics and OpenReplay
 
-## Why Clarity Mirror Was Removed
+The browser starts optional measurement only after an explicit choice in the
+privacy controls. Statistics/video quality and session replay have separate
+checkboxes, initially off. “Solo necesarias” is as accessible as accepting
+optional measurement. The visitor can reopen “Privacidad” to change the choice.
+The versioned preference is stored locally for at most 180 days; blocked storage
+keeps the choice only in that page. Do Not Track and Global Privacy Control
+override an affirmative preference.
+Declining a category clears its known, JavaScript-accessible browser identifiers
+without changing language or authentication storage. The app also clears legacy
+optional identifiers for visitors with no affirmative choice.
 
-The previous `/admin/heatmap` mirrored Microsoft Clarity Data Export API data
-using `CLARITY_DATA_EXPORT_TOKEN`. That integration depended on:
+## Eligible content
 
-- A short data window (3 days max per call).
-- Aggressive daily quota (10 calls/day).
-- An external server-issued JWT that had to be rotated.
+Only the public homepage `/` is eligible. Known homepage section anchors are
+allowed, but their values are removed from recorded URLs. A query-bearing or
+unknown-anchor homepage URL is excluded as well, including OAuth callbacks.
+Replay also skips visits with an incoming private-path or query-bearing referrer:
+the installed SDK does not apply its URL sanitizer to that field.
+All auth, account, student, course, notes, quizzes, PDF, message, payment, redeem,
+admin and API routes are excluded, even after opt-in. Private lesson players
+always have Mux Data tracking and its cookies disabled.
 
-So it was not a sustainable long-term heatmap/session replay solution. Clarity
-was removed completely (script tag, Data Export API client, env vars and docs).
+OpenReplay hides entire forms, all inputs, media/iframes and explicitly private
+DOM elements. It also obscures incidental email/number text. Network capture,
+headers, request/response payloads, console capture, exception capture and
+resource timings are disabled. No user ID or metadata identification helper is
+exposed. URL sanitization retains only the public origin and `/`; the title is
+fixed to the site brand. Navigation guards stop measurement before application
+history updates, and cancellation checks prevent a late SDK start from resuming
+on a private page.
 
-## What OpenReplay Handles
+These are technical collection limits, not a claim that replays are anonymous.
+Provider retention, processing location, historic data, account access and any
+legal/privacy notice still require owner review. Existing provider data is not
+deleted by changing a browser preference.
 
-- Session replay.
-- UX friction analysis.
-- Frontend debugging.
-- Heatmap-like behavior insights.
+## Configuration and release gates
 
-## What OpenReplay Does NOT Handle
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_OPENREPLAY_ENABLED` | Exactly `true` permits loading after replay opt-in. Otherwise disabled. |
+| `NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY` | Browser project key; never a server API credential. |
+| `NEXT_PUBLIC_OPENREPLAY_INGEST_URL` | Optional HTTPS ingest endpoint; empty uses OpenReplay Cloud. |
+| `NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL` | Link shown to an authorized admin. |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional GA4 ID, strictly `G-` plus uppercase letters/numbers. |
+| `OPENREPLAY_API_KEY`, `OPENREPLAY_PROJECT_ID`, `OPENREPLAY_API_URL` | Server-only admin API configuration. |
 
-- Revenue KPIs (`/admin/stats`, business DB).
-- Course progress metrics (`/admin/stats`, business DB).
-- Student counts (`/admin/stats`, business DB).
-- Aggregate traffic (still served by GA4 via `metrics-ga.ts`).
+GA4 loads only after statistics opt-in, queues denied defaults before loading,
+keeps advertising storage/signals denied, and sends a manual homepage pageview
+with a sanitized URL, title and referrer. `send_page_view: false` disables the
+configuration pageview. **Before enabling GA4, disable Enhanced Measurement's
+automatic history pageviews, form interactions, outbound clicks, downloads and
+video events in the provider account.** Those provider features could otherwise
+collect private paths or form/link metadata independently of manual events.
+Leave the measurement ID unset until verified in an isolated preview.
 
-## Environment Variables
+Configured SDK origins must also be allowed by the CSP. Permission in the CSP
+does not start collection; visitor consent and route checks still apply. Check
+the deployed headers and network behavior with providers mocked before enabling
+either integration. No maintenance change authorizes a production provider
+configuration write or historic-data deletion.
 
-All four are `NEXT_PUBLIC_*` because OpenReplay runs in the browser.
+## Admin reports and failure behavior
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `NEXT_PUBLIC_OPENREPLAY_ENABLED` | yes | `true` to load the tracker; anything else disables it. |
-| `NEXT_PUBLIC_OPENREPLAY_PROJECT_KEY` | yes | Project key issued by OpenReplay (e.g. `aUW0mM7uSurSFlu9yfIp`). |
-| `NEXT_PUBLIC_OPENREPLAY_INGEST_URL` | optional | Custom ingest endpoint (self-hosted). Empty for OpenReplay Cloud default. |
-| `NEXT_PUBLIC_OPENREPLAY_DASHBOARD_URL` | optional | Used by `/admin/heatmap` to show a deep link to the dashboard. |
+`/admin/heatmap` shows OpenReplay API activity over seven days, rather than a
+complete visitor count. New recordings include only consenting homepage
+visitors; historical provider data may include previously recorded private
+routes. Revenue, student counts and course progress come from the business DB,
+not replay. GA4 aggregate traffic is also consent-limited.
 
-The CSP in `next.config.mjs` automatically allows the origin parsed from
-`NEXT_PUBLIC_OPENREPLAY_INGEST_URL` (no wildcards). When that env is unset, no
-extra origin is added to the policy.
+The tracker is imported lazily and failures stay out of the public UI. Admin
+reports distinguish unconfigured and failed provider requests. The client never
+loads the replay SDK just to stop an unconfigured/unconsented tracker.
+HTTP local previews leave replay disabled because the SDK requires HTTPS;
+SDK regression tests use an HTTPS browser origin and a mocked provider.
 
-## Tracked Routes
+## Sources and implementation
 
-OpenReplay only loads in the public/student journey:
-
-- `/` (landing).
-- `/auth/*` (sensitive inputs masked).
-- `/courses`, `/courses/[id]`.
-- `/dashboard`, `/dashboard/courses/[id]`.
-- `/dashboard/pdf-view`, `/dashboard/notes`, quiz pages.
-
-## Excluded Routes
-
-The provider explicitly skips:
-
-- `/admin/*` — operator/admin activity is never recorded.
-- `/api/*` — server endpoints.
-- Password fields (`<input type="password">` are masked by the tracker).
-- Payment fields (we use redirected hosted checkouts; payment data never
-  enters our DOM).
-
-## Failure Mode
-
-Tracker initialization is wrapped in `try/catch` and uses dynamic import. If
-the tracker module fails to load or `start()` throws, the app continues
-working normally — no error bubbles to React.
-
-## Source Files
-
-- `src/lib/analytics/openreplay.ts` — lazy singleton with start/stop/identify
-  helpers.
-- `src/components/analytics/openreplay-provider.tsx` — client provider that
-  listens to `usePathname()` and starts/stops the tracker per route.
-- `src/app/admin/heatmap/page.tsx` — admin status page (no Clarity API calls).
-- `next.config.mjs` — CSP entries for OpenReplay origin (only when configured).
+- [Google consent mode](https://developers.google.com/tag-platform/security/guides/consent)
+- [GA4 pageviews and automatic history events](https://developers.google.com/analytics/devguides/collection/ga4/views)
+- [OpenReplay constructor options](https://docs.openreplay.com/en/sdk/constructor/)
+- [OpenReplay network capture](https://docs.openreplay.com/en/sdk/network-options/)
+- [Mux Player tracking and cookie controls](https://www.mux.com/docs/guides/player-api-reference)
+- `src/lib/analytics/consent.ts` and `navigation.ts`: preference, privacy signals, URL eligibility, navigation guard.
+- `src/components/analytics/privacy-controls.tsx`: localized public controls and accessible settings dialog.
+- `src/lib/analytics/openreplay.ts` and its provider: lazy, masked, cancel-safe public replay.
+- `src/lib/analytics/google-analytics.ts` and its loader: sanitized optional public pageviews.
+- `src/components/landing/promo-video.tsx`: public Mux Data and cookie consent.
+- `src/app/admin/heatmap/page.tsx`: authorized, consent-limited reports.

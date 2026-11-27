@@ -3,6 +3,7 @@ import {
   upsertCoursePurchaseFromProvider,
 } from "@/lib/course-purchase-sync";
 import { db } from "@/lib/db";
+import { safeErrorDiagnostic, safeErrorReason } from "@/lib/error-diagnostics";
 import {
   isDodoWebhookTimestampFresh,
   verifyDodoWebhookSignature,
@@ -11,12 +12,14 @@ import {
   asObject,
   asString,
   extractDodoPricing,
+  isDodoPaymentGrantable,
   normalizeDodoEventKind,
   readCustomString,
   resolveDodoEventId,
   resolveDodoEventType,
   resolveDodoMetadata,
   resolveDodoProviderReferenceId,
+  resolveDodoVoucherAccounting,
   type LooseObject,
 } from "@/lib/payments/providers/dodo-events";
 import { Prisma } from "@prisma/client";
@@ -214,6 +217,13 @@ export async function POST(req: Request) {
       return new NextResponse(null, { status: 200 });
     }
 
+    const data = asObject(payload.data);
+    const payment = Object.keys(asObject(data.payment)).length ? asObject(data.payment) : data;
+    if (!isDodoPaymentGrantable({ ...payment, status: payment.status ?? "succeeded" })) {
+      await markWebhookEventStatus(eventKey, "IGNORED");
+      return new NextResponse(null, { status: 200 });
+    }
+
     const metadata = resolveDodoMetadata(payload);
     const userId = readCustomString(metadata, "userId", "user_id");
     const courseId = readCustomString(metadata, "courseId", "course_id");
@@ -236,7 +246,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { subtotalAmount, totalAmount, discountAmount } =
+    const { subtotalAmount, totalAmount, discountAmount, paymentCurrency, paymentAmountMinor } =
       extractDodoPricing(payload);
 
     await upsertCoursePurchaseFromProvider({
@@ -246,34 +256,29 @@ export async function POST(req: Request) {
       originalPrice: subtotalAmount,
       finalPrice: totalAmount,
       discountAmount,
-      localVoucherCode: readCustomString(
-        metadata,
-        "voucherCode",
-        "voucher_code",
-      ),
-      providerDiscountCode: readCustomString(
-        metadata,
-        "providerDiscountCode",
-        "provider_discount_code",
-        "discountCode",
-        "discount_code",
-      ),
+      paymentCurrency,
+      paymentAmountMinor,
+      ...resolveDodoVoucherAccounting(payload),
     });
 
     await markWebhookEventStatus(eventKey, "PROCESSED");
     return new NextResponse(null, { status: 200 });
   } catch (error) {
+    if (error instanceof Error && error.name === "DodoPaymentRevokedError") {
+      await markWebhookEventStatus(eventKey, "IGNORED");
+      return new NextResponse(null, { status: 200 });
+    }
     console.error("[DODO_WEBHOOK_PROCESSING_ERROR]", {
       eventType,
       eventId,
-      error,
+      diagnostic: safeErrorDiagnostic(error),
     });
 
     try {
       await markWebhookEventStatus(
         eventKey,
         "FAILED",
-        error instanceof Error ? error.message : String(error ?? ""),
+        safeErrorReason(error),
       );
     } catch {
       // noop: keep original error handling response

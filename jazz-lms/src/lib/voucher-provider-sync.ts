@@ -1,4 +1,4 @@
-import { createDodoDiscount, isDodoConfigured } from '@/lib/payments/providers/dodo';
+import { createDodoDiscount, disableDodoDiscount, isDodoConfigured } from '@/lib/payments/providers/dodo';
 
 type VoucherMetadata = Record<string, unknown>;
 
@@ -9,6 +9,9 @@ export type VoucherSyncRecord = {
   discountPercent: number | null;
   discountAmount: number | null;
   maxUses: number | null;
+  maxUsesPerUser?: number;
+  minOrderValue?: number | null;
+  isActive?: boolean;
   expiresAt: Date | null;
   metadata?: unknown;
 };
@@ -51,6 +54,8 @@ export async function ensureVoucherDiscountSynced(voucher: VoucherSyncRecord): P
   const baseMetadata = normalizeMetadata(voucher.metadata);
   const providerDiscountCode = readProviderDiscountCode(baseMetadata) || toUpperCode(voucher.code);
 
+  if (voucher.isActive === false) return removeVoucherDiscountSync(voucher);
+
   // FREE_ACCESS é resolvido inteiramente pelo app (sem cobrança).
   // Sem Dodo configurado, mantém o stamp local.
   if (voucher.type === 'FREE_ACCESS' || !isDodoConfigured()) {
@@ -78,17 +83,25 @@ export async function ensureVoucherDiscountSynced(voucher: VoucherSyncRecord): P
       type: 'percentage',
       amount: basisPoints,
       usageLimit: voucher.maxUses ?? null,
+      perCustomerUsageLimit: Math.min(voucher.maxUsesPerUser ?? 1, voucher.maxUses ?? Infinity),
+      minimumSubtotal: Math.round((voucher.minOrderValue ?? 0) * 100),
       expiresAt: voucher.expiresAt ?? null,
+      voucherId: voucher.id,
+      discountId: typeof baseMetadata.providerDiscountId === 'string' ? baseMetadata.providerDiscountId : null,
     });
   } else if (voucher.type === 'DISCOUNT_FIXED' && voucher.discountAmount && voucher.discountAmount > 0) {
-    // Dodo flat usa USD cents.
+    // The course and fixed discounts are priced in EUR.
     const cents = Math.round(voucher.discountAmount * 100);
     dodoResult = await createDodoDiscount({
       code: providerDiscountCode,
       type: 'flat',
       amount: cents,
       usageLimit: voucher.maxUses ?? null,
+      perCustomerUsageLimit: Math.min(voucher.maxUsesPerUser ?? 1, voucher.maxUses ?? Infinity),
+      minimumSubtotal: Math.round((voucher.minOrderValue ?? 0) * 100),
       expiresAt: voucher.expiresAt ?? null,
+      voucherId: voucher.id,
+      discountId: typeof baseMetadata.providerDiscountId === 'string' ? baseMetadata.providerDiscountId : null,
     });
   }
 
@@ -114,7 +127,7 @@ export async function ensureVoucherDiscountSynced(voucher: VoucherSyncRecord): P
       ...baseMetadata,
       providerDiscountCode,
       dodoDiscountCode: providerDiscountCode,
-      providerDiscountId: dodoResult.discountId ?? null,
+      providerDiscountId: dodoResult.discountId ?? baseMetadata.providerDiscountId ?? null,
       providerDiscountSyncedAt: new Date().toISOString(),
       providerDiscountSyncStatus: dodoResult.ok ? 'synced' : 'failed',
       providerDiscountSyncProvider: 'dodo',
@@ -129,17 +142,27 @@ export async function removeVoucherDiscountSync(voucher: VoucherSyncRecord): Pro
   reason?: string;
 }> {
   const baseMetadata = normalizeMetadata(voucher.metadata);
+  const providerDiscountCode = readProviderDiscountCode(baseMetadata) || toUpperCode(voucher.code);
+  const result: Awaited<ReturnType<typeof disableDodoDiscount>> = voucher.type === 'FREE_ACCESS'
+    ? { ok: true, reason: 'not_required' }
+    : await disableDodoDiscount({
+        code: providerDiscountCode,
+        voucherId: voucher.id,
+        discountId: typeof baseMetadata.providerDiscountId === 'string' ? baseMetadata.providerDiscountId : null,
+      });
 
   return {
-    ok: true,
+    ok: result.ok,
+    reason: result.reason,
     metadata: {
       ...baseMetadata,
-      providerDiscountCode: null,
-      dodoDiscountCode: null,
+      providerDiscountCode,
+      dodoDiscountCode: providerDiscountCode,
+      providerDiscountId: result.discountId ?? baseMetadata.providerDiscountId ?? null,
       providerDiscountSyncedAt: new Date().toISOString(),
-      providerDiscountSyncStatus: 'deleted',
+      providerDiscountSyncStatus: result.ok ? 'disabled' : 'failed',
       providerDiscountSyncProvider: 'dodo',
-      providerDiscountSyncError: null,
+      providerDiscountSyncError: result.ok ? null : result.reason ?? 'unknown',
     },
   };
 }

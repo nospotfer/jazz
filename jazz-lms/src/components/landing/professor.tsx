@@ -35,17 +35,17 @@ export function Professor() {
       title: "Conheça seu professor",
       p1: "Poucas pessoas podem dizer que viveram o jazz por dentro durante mais de 60 anos. Enric Vázquez Ramonich é cofundador do lendário Jamboree Jazz Club e do Jubilee Jazz Club, e já dividiu palco e conversas com lendas como Bill Evans, Chet Baker e Art Blakey.",
       p2: "Ele apresentou programas de rádio e televisão, escreveu em veículos especializados e participou de obras de referência como o Guia Universal do Jazz Moderno. Também é autor dos primeiros capítulos da História do Jazz para a Generalitat da Catalunha.",
-      p3: 'Ahora, toda esa experiencia y pasión se concentran en "Cultura del Jazz", un curso diseñado para que, incluso si nunca has tocado un instrumento, puedas entender, sentir y disfrutar el jazz como si siempre hubieras formado parte de él.',
+      p3: 'Agora, toda essa experiência e paixão se unem em "Cultura do Jazz", um curso criado para que, mesmo sem nunca ter tocado um instrumento, você possa entender, sentir e apreciar o jazz como se sempre tivesse feito parte dele.',
       badge: "Mais de 60 anos de experiência em jazz",
     },
   }[language];
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-background flex items-center">
-      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch min-h-[75vh]">
+    <div className="w-full bg-white dark:bg-background">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch overflow-hidden rounded-2xl border border-border shadow-xl">
           {/* Left side - Photo */}
-          <div className="relative w-full min-h-[400px] lg:min-h-0 rounded-l-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full min-h-[340px] sm:min-h-[400px] lg:min-h-0 overflow-hidden">
             <Image
               src="/images/Conoce a tu Profesor.png"
               alt="Enric Vázquez Ramonich"
@@ -63,9 +63,9 @@ export function Professor() {
           </div>
 
           {/* Right side - Text */}
-          <div className="bg-gray-900 dark:bg-gray-900 rounded-r-2xl p-8 lg:p-12 flex flex-col justify-center shadow-2xl">
+          <div className="bg-gray-900 p-6 sm:p-8 lg:p-10 flex flex-col justify-center [--color-jazz-title-accent:#d79b1a]">
             <div className="border-b-2 title-accent-border pb-6 mb-8">
-              <h2 className="title-accent text-4xl lg:text-5xl font-bold">
+              <h2 className="title-accent font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold">
                 {copy.title}
               </h2>
             </div>

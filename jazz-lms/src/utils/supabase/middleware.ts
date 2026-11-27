@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 import { hasValidSupabasePublicConfig } from '@/lib/supabase-config'
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request })
@@ -14,6 +15,9 @@ export async function updateSession(request: NextRequest) {
   }
 
   const supabase = createServerClient(url!, key!, {
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production' || request.nextUrl.protocol === 'https:',
+    },
     cookies: {
       getAll() {
         return request.cookies.getAll()
@@ -42,7 +46,7 @@ export async function updateSession(request: NextRequest) {
     return { response, user }
   } catch (err) {
     // If Supabase request fails, ignore in dev so page can render
-    console.warn('Supabase auth.getUser failed:', err)
+    console.warn('Supabase auth.getUser failed:', safeErrorDiagnostic(err))
   }
 
   return { response, user: null }

@@ -81,52 +81,52 @@ export function WhatYouLearn() {
       cta: 'S’inscrire',
     },
     pt: {
-      title: 'Lo que aprenderás',
+      title: 'O que você aprenderá',
       intro:
-        'Este curso está diseñado para que no solo escuches jazz, sino que lo vivas y lo sientas. Descubrirás su verdadera esencia, su historia y los elementos que lo hacen único y emocionante.',
+        'Este curso foi criado para que você não apenas ouça jazz, mas o viva e sinta. Descubra sua essência, sua história e os elementos que o tornam único e emocionante.',
       points: [
         {
-          title: 'El jazz como cultura independiente',
-          desc: 'Comprende que el jazz es una cultura musical propia que ha influido profundamente en toda la música popular moderna.',
+          title: 'O jazz como cultura independente',
+          desc: 'Entenda como o jazz desenvolveu uma cultura musical própria e influenciou profundamente a música popular moderna.',
         },
         {
-          title: 'Improvisación como creación original',
-          desc: 'Aprende cómo la improvisación se convierte en autoría musical en cada interpretación de jazz.',
+          title: 'Improvisação como criação original',
+          desc: 'Descubra como a improvisação se transforma em autoria musical em cada interpretação de jazz.',
         },
         {
-          title: 'El “sonido” personal del músico',
-          desc: 'Descubre cómo identificar a un músico por su sonido único, timbre, color y personalidad artística.',
+          title: 'O “som” pessoal do músico',
+          desc: 'Aprenda a reconhecer um músico por seu som, timbre, cor e personalidade artística.',
         },
         {
-          title: 'Libertad creativa y composición colaborativa',
-          desc: 'Entiende cómo el jazz integra sonoridades diversas y combina composición con improvisación.',
+          title: 'Liberdade criativa e composição colaborativa',
+          desc: 'Entenda como o jazz reúne diferentes sonoridades e combina composição com improvisação.',
         },
       ],
-      cta: 'Regístrate',
+      cta: 'Cadastre-se',
     },
   }[language];
 
   return (
     <>
-      <div className="min-h-screen w-full bg-gray-50 dark:bg-background flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12">
-          <div className="min-h-[80vh] flex items-center">
-            <div className="flex flex-col justify-center max-w-3xl">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-8 title-accent">
+      <div className="w-full bg-gray-50 dark:bg-background">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-12 lg:py-16">
+          <div>
+            <div className="flex flex-col justify-center">
+              <h2 className="font-serif text-3xl sm:text-4xl font-semibold mb-6 title-accent">
                 {copy.title}
               </h2>
 
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+              <p className="max-w-3xl text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 {copy.intro}
               </p>
 
-              <div className="space-y-6 mb-8">
+              <div className="grid gap-4 sm:grid-cols-2 mb-8">
                 {copy.points.map((point) => (
-                  <div key={point.title} className="flex items-start gap-4">
+                  <div key={point.title} className="flex items-start gap-4 rounded-xl border border-border bg-card p-5">
                     <div className="w-2 h-2 rounded-full bg-[var(--color-jazz-title-accent)] mt-2.5 flex-shrink-0" />
                     <div>
                       <h3 className="text-lg font-bold title-accent mb-1">{point.title}</h3>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                      <p className="text-muted-foreground text-base leading-relaxed">
                         {point.desc}
                       </p>
                     </div>

@@ -31,6 +31,9 @@ export function createClient(): ServerSupabaseClient {
     normalizedUrl!,
     key!,
     {
+      cookieOptions: {
+        secure: process.env.NODE_ENV === 'production',
+      },
       cookies: {
         async getAll() {
           const cookieStore = await cookies()

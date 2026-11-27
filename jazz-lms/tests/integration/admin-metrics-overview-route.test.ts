@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
+// Keep the actual range helpers while preventing Prisma initialization or queries.
+vi.mock('@/lib/db', () => ({
+  db: new Proxy({}, {
+    get() {
+      throw new Error('Unexpected database access in isolated metrics route tests');
+    },
+  }),
+}));
+
 function makeReq(range = '30d') {
   return new Request(`http://localhost:3000/api/admin/metrics/overview?range=${range}`, {
     method: 'GET',
@@ -9,10 +18,12 @@ function makeReq(range = '30d') {
 describe('GET /api/admin/metrics/overview', () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.stubEnv('DATABASE_URL', undefined);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   test('returns 403 when admin permission check fails', async () => {
@@ -47,9 +58,9 @@ describe('GET /api/admin/metrics/overview', () => {
       return {
         ...actual,
         getOverview: vi.fn().mockResolvedValue({
-          revenue: { value: 1200, delta: 0.25 },
+          revenue: { byCurrency: [{ currency: 'EUR', amountMinor: '120000', value: 1200, delta: 0.25 }], unavailableCount: 0 },
           enrollments: { value: 12, delta: null },
-          averageTicket: { value: 100, delta: 0 },
+          averageTicket: { byCurrency: [{ currency: 'EUR', amountMinor: '10000', value: 100, delta: 0 }], unavailableCount: 0 },
           newStudents: { value: 5, delta: 1 },
           completionRate: { value: 0.42, delta: 0.05 },
           vouchersRedeemed: { value: 3, delta: null },
@@ -75,7 +86,7 @@ describe('GET /api/admin/metrics/overview', () => {
     const body = await res.json();
     expect(body.ok).toBe(true);
     expect(body.range.key).toBe('30d');
-    expect(body.data.revenue.value).toBe(1200);
+    expect(body.data.revenue.byCurrency).toEqual([{ currency: 'EUR', amountMinor: '120000', value: 1200, delta: 0.25 }]);
     expect(body.data.traffic).toEqual({ value: 420, users: 250 });
   });
 
@@ -90,9 +101,9 @@ describe('GET /api/admin/metrics/overview', () => {
       return {
         ...actual,
         getOverview: vi.fn().mockResolvedValue({
-          revenue: { value: 0, delta: null },
+          revenue: { byCurrency: [], unavailableCount: 0 },
           enrollments: { value: 0, delta: null },
-          averageTicket: { value: 0, delta: null },
+          averageTicket: { byCurrency: [], unavailableCount: 0 },
           newStudents: { value: 0, delta: null },
           completionRate: { value: 0, delta: null },
           vouchersRedeemed: { value: 0, delta: null },

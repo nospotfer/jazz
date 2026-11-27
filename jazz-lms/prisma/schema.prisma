@@ -186,6 +186,8 @@ model Purchase {
   finalPrice          Float?
   discountAmount      Float?
   providerReferenceId String?
+  paymentCurrency     String?
+  paymentAmountMinor  String?
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
   course              Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)

@@ -6,6 +6,8 @@ import { DashboardPreferencesProvider } from "@/components/providers/dashboard-p
 import { useLanguage } from "@/components/providers/language-provider";
 import type { AppliedVoucher } from "@/components/vouchers/voucher-input";
 import { useConfettiStore } from "@/hooks/use-confetti-store";
+import { useAuthOwner, withExpectedUserId, type AuthOwnerToken } from "@/hooks/use-auth-owner";
+import { getCheckoutSessionChangedMessage, isCheckoutSessionChanged } from "@/lib/checkout-helpers";
 import { getCanonicalJazzClass } from "@/lib/course-lessons";
 import { languageToHtmlLang } from "@/lib/language";
 import {
@@ -19,7 +21,7 @@ import {
     loadPaymentMethodModal,
     warmPaymentMethodModal,
 } from "@/lib/payment-modal-loader";
-import { DEFAULT_LESSON_DURATION_MINUTES } from "@/lib/pricing";
+import { DEFAULT_LESSON_DURATION_MINUTES, getKnownCatalogPrice } from "@/lib/pricing";
 import type MuxPlayerElement from "@mux/mux-player";
 import { Attachment, Chapter, Course, Lesson } from "@prisma/client";
 import axios from "axios";
@@ -35,7 +37,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
@@ -104,6 +106,7 @@ const COMPLETE_BUTTON_UNLOCK_PERCENT = 80;
 const DASHBOARD_VIDEO_COVER_IMAGE = "/icon.jpg";
 
 interface CoursePlayerProps {
+  currentUserId: string;
   course: Course & {
     chapters: (Chapter & {
       lessons: (Lesson & {
@@ -134,7 +137,20 @@ function isPdfAttachment(attachment: Attachment) {
   return name.endsWith(".pdf") || url.includes(".pdf");
 }
 
+function disableSubtitleTracks(textTracks: TextTrackList) {
+  let hasSubtitleTrack = false;
+  for (const track of Array.from(textTracks)) {
+    if (track.kind === "subtitles" || track.kind === "captions") {
+      // TextTrack.mode is an imperative browser API, not React render state.
+      track.mode = "disabled";
+      hasSubtitleTrack = true;
+    }
+  }
+  return hasSubtitleTrack;
+}
+
 export const CoursePlayer = ({
+  currentUserId,
   course,
   lesson,
   lessonId,
@@ -147,6 +163,7 @@ export const CoursePlayer = ({
   canAccessAttachments,
 }: CoursePlayerProps) => {
   const { language } = useLanguage();
+  const catalogPrice = getKnownCatalogPrice(course.price);
   const copy = {
     es: {
       lessonFallback: "Lección",
@@ -483,6 +500,22 @@ export const CoursePlayer = ({
   >("idle");
   const router = useRouter();
   const confetti = useConfettiStore();
+  const owner = useAuthOwner(currentUserId);
+  const { capture: captureOwner, isCurrent: isOwnerCurrent } = owner;
+  const mountedRef = useRef(false);
+  const activeLessonRef = useRef(lesson.id);
+  useLayoutEffect(() => { activeLessonRef.current = lesson.id; }, [lesson.id]);
+  useLayoutEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
+  const captureWork = useCallback(() => {
+    const token = captureOwner();
+    return mountedRef.current && token ? { ...token, lessonId: activeLessonRef.current } : null;
+  }, [captureOwner]);
+  const isWorkCurrent = useCallback((token: AuthOwnerToken & { lessonId: string }) => (
+    mountedRef.current && activeLessonRef.current === token.lessonId && isOwnerCurrent(token)
+  ), [isOwnerCurrent]);
 
   const enforceNoRemotePlayback = useCallback(() => {
     const playerElement = muxPlayerRef.current as
@@ -528,23 +561,7 @@ export const CoursePlayer = ({
       return;
     }
 
-    let hasSubtitleTrack = false;
-
-    for (let index = 0; index < textTracks.length; index += 1) {
-      const track = textTracks[index];
-      if (!track) {
-        continue;
-      }
-
-      const isSubtitleTrack =
-        track.kind === "subtitles" || track.kind === "captions";
-      if (!isSubtitleTrack) {
-        continue;
-      }
-
-      hasSubtitleTrack = true;
-      track.mode = "disabled";
-    }
+    const hasSubtitleTrack = disableSubtitleTracks(textTracks);
 
     if (!hasSubtitleTrack) {
       return;
@@ -805,6 +822,8 @@ export const CoursePlayer = ({
     let cancelled = false;
 
     const loadPlayback = async () => {
+      const token = captureWork();
+      if (!token) return;
       if (!canAccessLesson || !shouldLoadPlayback) {
         setPlaybackId("");
         setPlaybackToken("");
@@ -822,14 +841,14 @@ export const CoursePlayer = ({
         const response = await axios.get(
           `/api/lessons/${lesson.id}/mux-playback`,
         );
-        if (cancelled) return;
+        if (cancelled || !isWorkCurrent(token)) return;
 
         setPlaybackId(response.data.playbackId || "");
         setPlaybackToken(response.data.playbackToken || "");
         setThumbnailToken(response.data.thumbnailToken || "");
         setStoryboardToken(response.data.storyboardToken || "");
       } catch (error: unknown) {
-        if (cancelled) return;
+        if (cancelled || !isWorkCurrent(token)) return;
 
         const isAxiosErrorFn =
           typeof axios.isAxiosError === "function" ? axios.isAxiosError : null;
@@ -860,7 +879,7 @@ export const CoursePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [canAccessLesson, lesson.id, shouldLoadPlayback]);
+  }, [canAccessLesson, lesson.id, shouldLoadPlayback, captureWork, isWorkCurrent, owner.ready, owner.generation]);
 
   // Reset retry state whenever the active lesson changes.
   useEffect(() => {
@@ -886,6 +905,8 @@ export const CoursePlayer = ({
   const RETRY_BASE_DELAY_MS = 250;
 
   const retryPlayback = useCallback(async () => {
+    const token = captureWork();
+    if (!token) return;
     if (muxRetryInFlightRef.current) return;
     muxRetryInFlightRef.current = true;
 
@@ -901,11 +922,13 @@ export const CoursePlayer = ({
       await new Promise<void>((resolve) => {
         window.setTimeout(() => resolve(), retryDelayMs);
       });
+      if (!isWorkCurrent(token)) return;
 
       const response = await axios.get(
         `/api/lessons/${lesson.id}/mux-playback`,
         { params: { _retry: Date.now() } },
       );
+      if (!isWorkCurrent(token)) return;
       setPlaybackId(response.data.playbackId || "");
       setPlaybackToken(response.data.playbackToken || "");
       setThumbnailToken(response.data.thumbnailToken || "");
@@ -913,6 +936,7 @@ export const CoursePlayer = ({
 
       // Defer reload to next tick so Mux player picks up new tokens.
       window.setTimeout(() => {
+        if (!isWorkCurrent(token)) return;
         const current = muxPlayerRef.current;
         if (!current) return;
         try {
@@ -930,13 +954,16 @@ export const CoursePlayer = ({
         }
       }, 50);
     } catch {
+      if (!isWorkCurrent(token)) return;
       setMuxRetryState("exhausted");
       setMuxRuntimeError(copy.muxRetryExhausted);
     } finally {
-      muxRetryInFlightRef.current = false;
+      if (isWorkCurrent(token)) muxRetryInFlightRef.current = false;
     }
   }, [
     copy.muxRetryExhausted,
+    captureWork,
+    isWorkCurrent,
     lesson.id,
     RETRY_BASE_DELAY_MS,
     setPlaybackId,
@@ -1002,12 +1029,15 @@ export const CoursePlayer = ({
   const openPdfPreview = useCallback(
     async (attachmentId: string) => {
       if (!canAccessAttachments) return;
+      const token = captureWork();
+      if (!token) return;
 
       setIsLoadingPdf(true);
       setPdfError("");
 
       try {
         await getAttachmentSignedUrl(attachmentId, false);
+        if (!isWorkCurrent(token)) return;
 
         setSelectedAttachmentId(attachmentId);
         setPreviewUrl((currentUrl) => {
@@ -1017,6 +1047,7 @@ export const CoursePlayer = ({
           return buildInlineProxyUrl(attachmentId);
         });
       } catch (error: unknown) {
+        if (!isWorkCurrent(token)) return;
         const message = axios.isAxiosError(error)
           ? error.response?.data?.error || copy.unableLoadPdf
           : copy.unableLoadPdf;
@@ -1038,11 +1069,13 @@ export const CoursePlayer = ({
           toast.error(message);
         }
       } finally {
-        setIsLoadingPdf(false);
+        if (isWorkCurrent(token)) setIsLoadingPdf(false);
       }
     },
     [
       canAccessAttachments,
+      captureWork,
+      isWorkCurrent,
       copy.loadedLegacyPdf,
       copy.unableLoadPdf,
       buildInlineProxyUrl,
@@ -1053,11 +1086,15 @@ export const CoursePlayer = ({
 
   const downloadPdf = async (attachmentId: string) => {
     if (!canAccessAttachments) return;
+    const token = captureWork();
+    if (!token) return;
 
     try {
       const data = await getAttachmentSignedUrl(attachmentId, true);
+      if (!isWorkCurrent(token)) return;
       window.open(data.signedUrl, "_blank", "noopener,noreferrer");
     } catch (error: unknown) {
+      if (!isWorkCurrent(token)) return;
       const fallbackAttachment = visibleAttachments.find(
         (item) => item.id === attachmentId,
       );
@@ -1075,24 +1112,32 @@ export const CoursePlayer = ({
   };
 
   const handlePurchaseClick = async () => {
-    if (isPurchasing) return;
+    if (isPurchasing || catalogPrice === null) return;
+    const token = captureWork();
+    if (!token) return;
 
     setIsPurchasing(true);
     setPaymentError("");
     try {
-      const response = await axios.post("/api/checkout", {
+      const response = await axios.post(withExpectedUserId("/api/checkout", token.ownerId), {
         courseId: course.id,
         source: "dashboard",
         language,
         voucherCode: appliedVoucher?.voucher.code,
       });
+      if (!isWorkCurrent(token)) return;
 
       if (response.data?.url) {
         window.location.assign(response.data.url);
         return;
       }
     } catch (error) {
-      if (
+      if (!isWorkCurrent(token)) return;
+      if (axios.isAxiosError(error) && isCheckoutSessionChanged(error.response?.status, error.response?.data)) {
+        const message = getCheckoutSessionChangedMessage(language);
+        setPaymentError(message);
+        toast.error(message);
+      } else if (
         axios.isAxiosError(error) &&
         typeof error.response?.data === "string"
       ) {
@@ -1102,7 +1147,7 @@ export const CoursePlayer = ({
         toast.error(copy.unableCheckout);
       }
     } finally {
-      setIsPurchasing(false);
+      if (isWorkCurrent(token)) setIsPurchasing(false);
     }
   };
 
@@ -1161,6 +1206,8 @@ export const CoursePlayer = ({
 
   const onTimeUpdate = async (event: Event) => {
     if (isCompleted || !canAccessLesson) return;
+    const token = captureWork();
+    if (!token) return;
 
     const { duration, current, percent } = getPlaybackMetrics(event);
     if (!shouldPersistLessonProgress(percent, lastSavedPercent)) {
@@ -1176,7 +1223,7 @@ export const CoursePlayer = ({
       );
 
       await axios.put(
-        `/api/courses/${course.id}/lessons/${lesson.id}/progress`,
+        withExpectedUserId(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, token.ownerId),
         {
           isCompleted: false,
           progressPercent: percent,
@@ -1193,17 +1240,20 @@ export const CoursePlayer = ({
 
   const completeLesson = async () => {
     if (isCompleting || !canAccessLesson) return false;
+    const token = captureWork();
+    if (!token) return false;
 
     setIsCompleting(true);
     try {
       await axios.put(
-        `/api/courses/${course.id}/lessons/${lesson.id}/progress`,
+        withExpectedUserId(`/api/courses/${course.id}/lessons/${lesson.id}/progress`, token.ownerId),
         {
           isCompleted: true,
           progressPercent: 100,
           minutesRemaining: 0,
         },
       );
+      if (!isWorkCurrent(token)) return false;
 
       setIsCompleted(true);
       confetti.onOpen();
@@ -1211,10 +1261,10 @@ export const CoursePlayer = ({
       router.refresh();
       return true;
     } catch {
-      toast.error(copy.somethingWrong);
+      if (isWorkCurrent(token)) toast.error(copy.somethingWrong);
       return false;
     } finally {
-      setIsCompleting(false);
+      if (isWorkCurrent(token)) setIsCompleting(false);
     }
   };
 
@@ -1227,10 +1277,12 @@ export const CoursePlayer = ({
   };
 
   const onConfirmCompleteLesson = async () => {
+    const token = captureWork();
+    if (!token) return;
     setIsConfirmCompleteOpen(false);
 
     const didCompleteLesson = await completeLesson();
-    if (!didCompleteLesson) {
+    if (!didCompleteLesson || !isWorkCurrent(token)) {
       return;
     }
 
@@ -1239,6 +1291,7 @@ export const CoursePlayer = ({
   };
 
   const handleQuizClose = () => {
+    if (!captureWork()) return;
     setIsQuizOpen(false);
 
     if (shouldRefreshAfterQuizClose) {
@@ -1246,6 +1299,10 @@ export const CoursePlayer = ({
       router.refresh();
     }
   };
+  const handleQuizSummaryChange = useCallback((summary: LessonQuizSummarySnapshot | null) => {
+    const token = captureWork();
+    if (token?.lessonId === lesson.id) setQuizSummary(summary);
+  }, [captureWork, lesson.id]);
 
   const hasCompletedQuiz = (quizSummary?.totalAttempts ?? 0) > 0;
   const isLessonAndQuizCompleted =
@@ -1299,12 +1356,15 @@ export const CoursePlayer = ({
     firstAttachmentId,
     shouldLoadPdfPreview,
     openPdfPreview,
+    owner.ready,
   ]);
+
+  if (!owner.ready) return null;
 
   return (
     <DashboardPreferencesProvider>
       <div className="h-[100dvh] overflow-hidden bg-background">
-        <Sidebar />
+        <Sidebar currentUserId={currentUserId} />
 
         <div className="lg:pl-56 h-full overflow-hidden p-2 pb-[168px] sm:p-3 sm:pb-[168px] lg:p-4 lg:pb-[168px]">
           <div
@@ -1314,7 +1374,7 @@ export const CoursePlayer = ({
               <div className="bg-card border-2 border-primary/50 rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(212,175,55,0.18)] h-full flex flex-col">
                 <div className="p-3 sm:p-4 border-b-2 border-primary/45 bg-gradient-to-r from-primary/10 to-transparent">
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
+                    <h2 className="pl-11 lg:pl-0 text-2xl sm:text-3xl font-bold font-serif text-primary break-words leading-tight">
                       {classLabel}
                     </h2>
                     <div className="flex items-center gap-2 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -1368,7 +1428,7 @@ export const CoursePlayer = ({
                         onClick={onMarkAsComplete}
                         disabled={isCompleteButtonDisabled}
                         title={completeButtonTooltip}
-                        aria-label={completeButtonTooltip}
+                        aria-label={copy.completeAction}
                         className={`relative group inline-flex shrink-0 items-center gap-1.5 h-8 rounded-md border px-2.5 text-[11px] font-semibold transition-colors disabled:opacity-60 ${
                           isLessonAndQuizCompleted
                             ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/20"
@@ -1459,6 +1519,7 @@ export const CoursePlayer = ({
                       playsInline
                       castReceiver=""
                       disableTracking
+                      disableCookies
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
@@ -1720,7 +1781,7 @@ export const CoursePlayer = ({
         isOpen={isQuizOpen}
         initialSummary={quizSummary}
         onClose={handleQuizClose}
-        onSummaryChange={setQuizSummary}
+        onSummaryChange={handleQuizSummaryChange}
       />
 
       <PaymentMethodModal
@@ -1728,6 +1789,7 @@ export const CoursePlayer = ({
         isLoading={isPurchasing}
         language={language}
         courseId={course.id}
+        basePrice={catalogPrice}
         errorMessage={paymentError}
         onClose={() => {
           if (!isPurchasing) {

@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 /**
@@ -8,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   courseFindUnique: vi.fn(),
+  courseGrantRead: vi.fn(),
   purchaseFindUnique: vi.fn(),
   purchaseUpsert: vi.fn(),
   purchaseFindMany: vi.fn(),
@@ -41,6 +43,7 @@ vi.mock('@/lib/db', () => ({
     user: { findUnique: mocks.findUser },
     lessonPurchase: { findMany: mocks.findLessonPurchases },
     $transaction: async (callback: (tx: any) => Promise<any>) => callback({
+      $queryRaw: mocks.courseGrantRead,
       purchase: {
         upsert: mocks.purchaseUpsert,
       },
@@ -92,6 +95,7 @@ describe('Functional: Free course purchase flow', () => {
       isPublished: true,
     });
     mocks.purchaseFindUnique.mockResolvedValue(null);
+    mocks.courseGrantRead.mockResolvedValue([{ id: courseId, price: 0, isPublished: true }]);
     mocks.purchaseUpsert.mockResolvedValue({ id: 'p-new' });
 
     const { POST } = await import('@/app/api/checkout/route');
@@ -117,6 +121,7 @@ describe('Functional: Free course purchase flow', () => {
       data: { user: { id: 'u1', email: 'student@example.com' } },
     });
     mocks.courseFindUnique.mockResolvedValue({
+      isPublished: true,
       id: 'c1', title: 'Jazz', description: '', price: 0,
     });
     mocks.purchaseFindUnique.mockResolvedValue({ id: 'existing-purchase' });
@@ -171,7 +176,7 @@ describe('Functional: Privileged user PDF access', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -224,7 +229,7 @@ describe('Functional: Privileged user PDF access', () => {
     ]);
 
     const { GET } = await import('@/app/api/dashboard/pdf-count/route');
-    const response = await GET();
+    const response = await GET(new NextRequest('http://localhost:3000/api/dashboard/pdf-count'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -252,13 +257,13 @@ describe('Functional: Purchase history access', () => {
     ]);
 
     const { GET } = await import('@/app/api/purchases/route');
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/purchases'));
     const body = await response.json();
 
     expect(body).toHaveLength(2);
     expect(body[0].itemTitle).toBe('Advanced');
     expect(body[1].itemTitle).toBe('Basics');
-    // All have EUR
-    expect(body.every((p: Record<string, unknown>) => p.currency === 'EUR')).toBe(true);
+    // Catalog prices do not establish the currency or amount of an old purchase.
+    expect(body.every((p: Record<string, unknown>) => p.currency === null && p.amountMinor === null && p.amount === null)).toBe(true);
   });
 });

@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { resolveClientAppOrigin } from "@/lib/app-origin";
+import { isValidEmailAddress } from "@/lib/email-validation";
 import { createClient } from "@/utils/supabase/client";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const supabase = useMemo(() => createClient({ flowType: "implicit" }), []);
+  const supabase = useMemo(() => createClient(), []);
   const { language } = useLanguage();
   const copy = {
     es: {
@@ -26,7 +27,7 @@ export default function ForgotPasswordPage() {
       sending: "Enviando...",
       sendResetLink: "Enviar enlace de restablecimiento",
       backToLogin: "Volver a iniciar sesión",
-      closeAuth: "Fechar",
+      closeAuth: "Cerrar",
       inboxTitle: "¡Revisa tu bandeja de entrada!",
       inboxDesc:
         "Si existe una cuenta con ese correo, hemos enviado un enlace para restablecer la contraseña. Revisa también la carpeta de spam por si acaso.",
@@ -72,9 +73,9 @@ export default function ForgotPasswordPage() {
     pt: {
       invalidEmail: "Digite um e-mail válido",
       requestFailed:
-        "No fue posible enviar el enlace ahora. Inténtalo de nuevo en unos minutos.",
+        "Não foi possível enviar o link agora. Tente novamente em alguns minutos.",
       requestRateLimited:
-        "Has solicitado enlaces demasiado rápido. Espera un momento y vuelve a intentarlo.",
+        "Você solicitou links muito rapidamente. Aguarde um pouco e tente novamente.",
       title: "Redefina sua senha",
       subtitle:
         "Digite o e-mail associado à sua conta e enviaremos um link para redefinir sua senha.",
@@ -98,6 +99,8 @@ export default function ForgotPasswordPage() {
     if (typeof window === "undefined")
       return "/auth/reset-password/callback";
     const appOrigin = resolveClientAppOrigin(window.location.origin);
+    // Supabase SSR uses PKCE. Exchange once on the server before rendering a
+    // browser client that would otherwise consume the same code automatically.
     const callbackUrl = new URL("/auth/reset-password/callback", appOrigin);
     return callbackUrl.toString();
   }, []);
@@ -112,15 +115,14 @@ export default function ForgotPasswordPage() {
   }, []);
 
   const inputClasses =
-    "w-full px-3 py-3 bg-[#1f2937] border border-[#374151] rounded-lg text-white placeholder-[#9CA3AF] text-base focus:outline-none focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24] transition-colors";
+    "w-full px-3 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground text-base focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(normalizedEmail)) {
+    if (!isValidEmailAddress(normalizedEmail)) {
       setError(copy.invalidEmail);
       return;
     }
@@ -163,7 +165,7 @@ export default function ForgotPasswordPage() {
           <button
             type="button"
             onClick={() => router.push("/auth?tab=login")}
-            className="inline-flex items-center gap-2 text-sm text-[#FBBF24] hover:text-[#F59E0B] transition-colors"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-primary"
             aria-label={copy.closeAuth}
           >
             <X className="h-4 w-4" />
@@ -174,18 +176,18 @@ export default function ForgotPasswordPage() {
         <div className="p-5 sm:p-8">
           {!sent ? (
             <>
-              <h1 className="text-xl sm:text-2xl font-bold text-white">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 {copy.title}
               </h1>
-              <p className="text-sm text-[#9CA3AF] mt-2 mb-6">
+              <p className="text-sm text-muted-foreground mt-2 mb-6">
                 {copy.subtitle}
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form method="post" onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-[#D1D5DB] mb-1.5"
+                    className="block text-sm font-medium text-foreground mb-1.5"
                   >
                     {copy.email}
                   </label>
@@ -203,7 +205,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {error && (
-                  <p className="text-sm text-red-400 bg-red-900/20 border border-red-700/40 rounded-lg px-3 py-2">
+                  <p role="alert" className="text-sm text-red-700 dark:text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
                     {error}
                   </p>
                 )}
@@ -219,14 +221,14 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/auth?tab=login")}
-                  className="w-full py-3 border border-[#4B5563] text-[#D1D5DB] hover:text-white hover:border-[#6B7280] rounded-lg text-sm sm:text-base font-medium transition-colors"
+                  className="w-full py-3 border border-input text-foreground hover:bg-accent rounded-lg text-sm sm:text-base font-medium transition-colors"
                 >
                   {copy.backToLogin}
                 </button>
               </form>
             </>
           ) : (
-            <div className="text-center space-y-5">
+            <div role="status" className="text-center space-y-5">
               <div className="w-14 h-14 rounded-full bg-[#FBBF24]/20 border border-[#FBBF24]/40 flex items-center justify-center mx-auto">
                 <svg
                   className="w-7 h-7 text-[#FBBF24]"
@@ -241,10 +243,10 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-foreground">
                   {copy.inboxTitle}
                 </h2>
-                <p className="text-sm text-[#9CA3AF] mt-2">{copy.inboxDesc}</p>
+                <p className="text-sm text-muted-foreground mt-2">{copy.inboxDesc}</p>
               </div>
 
               <button

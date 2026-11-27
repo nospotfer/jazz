@@ -27,20 +27,52 @@ export function isLocalTestCheckoutEnabled(): boolean {
 }
 
 export function isLocalTestRequest(req: Request): boolean {
-  if (!isLocalTestCheckoutEnabled()) return false;
+  return isIsolatedLocalRequest(req, 'ENABLE_LOCAL_TEST_CHECKOUT');
+}
 
-  const hostHeader = req.headers.get('host') || req.headers.get('x-forwarded-host');
-  const origin = req.headers.get('origin');
+// Destructive fixture helpers have a separate opt-in and target guard. Do not
+// reuse the checkout flag or trust request headers to establish isolation.
+export function isIsolatedLocalTestRequest(req: Request): boolean {
+  return isIsolatedLocalRequest(req, 'ENABLE_LOCAL_TEST_RESETS');
+}
 
-  if (isLocalhostHost(hostHeader)) return true;
-  if (origin) {
-    try {
-      const originHost = new URL(origin).host;
-      if (isLocalhostHost(originHost)) return true;
-    } catch {
-      if (isLocalhostHost(origin)) return true;
+function isIsolatedLocalRequest(req: Request, flagName: string): boolean {
+  if (!['development', 'test'].includes(process.env.NODE_ENV || '') ||
+      process.env.VERCEL_ENV === 'production') return false;
+  const flag = process.env[flagName]?.trim().toLowerCase();
+  if (!['1', 'true', 'yes'].includes(flag || '')) return false;
+
+  try {
+    const database = new URL(process.env.DATABASE_URL || '');
+    const localDatabase = ['localhost', '127.0.0.1'].includes(database.hostname);
+    const isolatedTarget = (database.port === '55432' && database.pathname === '/jazz_maintenance') ||
+      (database.port === '56122' && database.pathname === '/postgres');
+    const allowedParameters = ['schema', 'connection_limit', 'pool_timeout', 'connect_timeout', 'statement_cache_size'];
+    if (!['postgres:', 'postgresql:'].includes(database.protocol) || !localDatabase || !isolatedTarget ||
+        [...database.searchParams.keys()].some(key => !allowedParameters.includes(key)) ||
+        (database.searchParams.has('schema') && database.searchParams.get('schema') !== 'public')) return false;
+
+    const requestUrl = new URL(req.url);
+    const isLoopback = (url: URL) => ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname) &&
+      ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password;
+    if (!isLoopback(requestUrl)) return false;
+
+    for (const header of ['host', 'x-forwarded-host']) {
+      const value = req.headers.get(header);
+      if (!value) continue;
+      const host = new URL(`${requestUrl.protocol}//${value}`);
+      // Next development requests can use localhost internally even when the
+      // browser uses 127.0.0.1. Both must remain loopback at the same port.
+      if (!isLoopback(host) || host.port !== requestUrl.port || host.pathname !== '/' || host.search || host.hash) return false;
     }
+    const origin = req.headers.get('origin');
+    if (origin) {
+      const url = new URL(origin);
+      if (!isLoopback(url) || url.protocol !== requestUrl.protocol || url.port !== requestUrl.port ||
+          url.pathname !== '/' || url.search || url.hash) return false;
+    }
+    return true;
+  } catch {
+    return false;
   }
-
-  return false;
 }

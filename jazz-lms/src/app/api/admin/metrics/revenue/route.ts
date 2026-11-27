@@ -25,7 +25,7 @@ export async function GET(request: Request) {
         granularity: range.granularity,
       },
       generatedAt: new Date().toISOString(),
-      data: data.map((b) => ({ bucket: b.bucket, revenue: b.value })),
+      data,
     },
     { headers: { 'Cache-Control': 'private, max-age=300' } }
   );

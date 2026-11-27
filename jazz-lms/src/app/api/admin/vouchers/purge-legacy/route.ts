@@ -1,3 +1,4 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ensureAdminApiPermission } from '@/lib/admin-api';
@@ -62,7 +63,6 @@ export async function POST(req: Request) {
       });
     }
 
-    const deletedIds = legacyVouchers.map((voucher) => voucher.id);
     const providerSyncResults = await Promise.all(
       legacyVouchers.map((voucher) =>
         removeVoucherDiscountSync({
@@ -81,6 +81,7 @@ export async function POST(req: Request) {
       .map((result, index) => ({ result, code: legacyVouchers[index]?.code }))
       .filter((entry) => !entry.result.ok)
       .map((entry) => `${entry.code}: ${entry.result.reason || 'sync remove failed'}`);
+    const deletedIds = legacyVouchers.filter((_, index) => providerSyncResults[index].ok).map((voucher) => voucher.id);
 
     const affectedBatchIds = Array.from(
       new Set(
@@ -127,13 +128,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      success: true,
+      success: providerSyncWarnings.length === 0,
       deletedCount: deletedIds.length,
       providerSyncWarnings,
       message: `Se eliminaron ${deletedIds.length} cupon(es) legado(s).`,
     });
   } catch (error) {
-    console.error('[ADMIN_VOUCHERS_PURGE_LEGACY_ERROR]', error);
+    console.error('[ADMIN_VOUCHERS_PURGE_LEGACY_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       {
         success: false,

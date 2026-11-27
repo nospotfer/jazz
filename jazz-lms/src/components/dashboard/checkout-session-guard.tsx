@@ -1,5 +1,6 @@
 "use client";
 
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
 import { useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -34,7 +35,7 @@ export function CheckoutSessionGuard({
       try {
         await supabase.auth.signOut();
       } catch (error) {
-        console.error("[CHECKOUT_SESSION_GUARD_SIGNOUT_FAILED]", error);
+        console.error("[CHECKOUT_SESSION_GUARD_SIGNOUT_FAILED]", safeErrorDiagnostic(error));
       }
 
       const courseId = searchParams.get("courseId");

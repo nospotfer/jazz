@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Repository instructions are maintained explicitly during the handover.
+  agentRules: false,
+  devIndicators: false,
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
@@ -29,7 +32,10 @@ const nextConfig = {
     const openReplayIngest = process.env.NEXT_PUBLIC_OPENREPLAY_INGEST_URL;
     if (openReplayIngest && openReplayIngest.trim().length > 0) {
       try {
-        openReplayOrigin = new URL(openReplayIngest).origin;
+        const ingestUrl = new URL(openReplayIngest);
+        if (ingestUrl.protocol === "https:" || (!isProduction && ingestUrl.protocol === "http:")) {
+          openReplayOrigin = ingestUrl.origin;
+        }
       } catch {
         openReplayOrigin = null;
       }
@@ -38,7 +44,7 @@ const nextConfig = {
       openReplayOrigin = "https://api.openreplay.com";
     }
 
-    const cspConnectSrc = [
+    const cspConnectSrc = new Set([
       "'self'",
       "https://*.supabase.co",
       "wss://*.supabase.co",
@@ -46,10 +52,23 @@ const nextConfig = {
       "https://live.dodopayments.com",
       "https://test.dodopayments.com",
       "https://api.openreplay.com",
-    ];
+    ]);
+
+    // Support the configured Auth origin (custom domains and isolated local
+    // Supabase), keeping HTTP restricted to development.
+    try {
+      const supabaseUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "");
+      if (supabaseUrl.protocol === "https:" || (!isProduction && supabaseUrl.protocol === "http:")) {
+        cspConnectSrc.add(supabaseUrl.origin);
+        cspConnectSrc.add(supabaseUrl.origin.replace(/^http/, "ws"));
+      }
+    } catch {
+      // Missing/placeholder configuration uses the existing safe auth stub.
+    }
 
     if (!isProduction) {
-      cspConnectSrc.push("ws://localhost:*", "http://localhost:*");
+      cspConnectSrc.add("ws://localhost:*");
+      cspConnectSrc.add("http://localhost:*");
     }
 
     const cspScriptSrc = [
@@ -59,36 +78,43 @@ const nextConfig = {
       "https://www.gstatic.com",
     ];
 
-    cspConnectSrc.push("https://inferred.litix.io");
+    if (/^G-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "")) {
+      cspScriptSrc.push("https://www.googletagmanager.com");
+      cspConnectSrc.add("https://www.google-analytics.com");
+      cspConnectSrc.add("https://region1.google-analytics.com");
+    }
+
+    cspConnectSrc.add("https://inferred.litix.io");
 
     const cspImgSrc = ["'self'", "data:", "blob:", "https:"];
 
     if (openReplayOrigin) {
-      if (!cspConnectSrc.includes(openReplayOrigin)) {
-        cspConnectSrc.push(openReplayOrigin);
-      }
+      cspConnectSrc.add(openReplayOrigin);
       cspScriptSrc.push(openReplayOrigin);
       cspImgSrc.push(openReplayOrigin);
     }
 
-    const contentSecurityPolicy = [
+    const buildContentSecurityPolicy = (frameAncestors) => [
       "default-src 'self'",
       "base-uri 'self'",
       "object-src 'none'",
-      "frame-ancestors 'none'",
+      `frame-ancestors ${frameAncestors}`,
       "form-action 'self'",
       `img-src ${cspImgSrc.join(" ")}`,
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       `script-src ${cspScriptSrc.join(" ")}`,
       "worker-src 'self' blob:",
-      `connect-src ${cspConnectSrc.join(" ")}`,
+      `connect-src ${Array.from(cspConnectSrc).join(" ")}`,
       "frame-src 'self' blob: https://*.supabase.co https://*.mux.com https://*.dodopayments.com https://open.spotify.com",
       "media-src 'self' blob: https:",
       isProduction ? "upgrade-insecure-requests" : "",
     ]
       .filter(Boolean)
       .join("; ");
+
+    const contentSecurityPolicy = buildContentSecurityPolicy("'none'");
+    const pdfContentSecurityPolicy = buildContentSecurityPolicy("'self'");
 
     return [
       {
@@ -127,6 +153,15 @@ const nextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
           },
+        ],
+      },
+      {
+        // The authorized attachment proxy is embedded by the same-origin
+        // lesson viewer. Keep every other page protected from framing.
+        source: "/api/lessons/:lessonId/attachments/:attachmentId",
+        headers: [
+          { key: "Content-Security-Policy", value: pdfContentSecurityPolicy },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
     ];

@@ -1,21 +1,31 @@
+import { safeErrorDiagnostic } from '@/lib/error-diagnostics';
+import { isCheckoutDisabled } from '@/lib/checkout-availability';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/lib/db';
-import { validateVoucherForCourse } from '@/lib/vouchers';
+import { validateVoucherForCourse, revalidateVoucherForGrant, VoucherGrantError, type VoucherValidationError } from '@/lib/vouchers';
 import { Prisma } from '@prisma/client';
+import { expectedUserConsistencyResponse } from '@/lib/expected-user-consistency';
 
 export const runtime = 'nodejs';
 
 class VoucherRedeemError extends Error {
   status: number;
+  reason: VoucherValidationError;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, reason: VoucherValidationError) {
     super(message);
     this.status = status;
+    this.reason = reason;
   }
 }
 
 export async function POST(req: Request) {
+  if (isCheckoutDisabled()) {
+    return NextResponse.json({ success: false, error: 'Service unavailable' }, {
+      status: 503, headers: { 'Cache-Control': 'no-store' },
+    });
+  }
   try {
     const supabase = createClient();
     const {
@@ -28,6 +38,9 @@ export async function POST(req: Request) {
         { status: 401 }
       );
     }
+
+    const ownerMismatch = expectedUserConsistencyResponse(req, user.id);
+    if (ownerMismatch) return ownerMismatch;
 
     const { voucherCode, courseId } = await req.json();
 
@@ -45,7 +58,7 @@ export async function POST(req: Request) {
           error: result.error,
           message: result.message,
         },
-        { status: 400 }
+        { status: result.error === 'Price unavailable' ? 503 : 400 }
       );
     }
 
@@ -70,6 +83,11 @@ export async function POST(req: Request) {
     }
 
     await db.$transaction(async (tx: Prisma.TransactionClient) => {
+      // Share the lock with /api/checkout's free/100%-discount redemption path.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`voucher:${result.voucher.id}`}, 0))`;
+      const grant = await revalidateVoucherForGrant(tx, {
+        code: voucherCode, courseId, userId: user.id, requiredType: 'FREE_ACCESS',
+      }, result);
       const latestVoucher = await tx.voucherCode.findUnique({
         where: { id: result.voucher.id },
         select: {
@@ -83,18 +101,18 @@ export async function POST(req: Request) {
       });
 
       if (!latestVoucher || !latestVoucher.isActive) {
-        throw new VoucherRedeemError('Voucher inválido ou inativo.', 400);
+        throw new VoucherRedeemError('Voucher inválido ou inativo.', 400, latestVoucher ? 'Inactive' : 'Invalid code');
       }
 
       if (latestVoucher.expiresAt && new Date() > latestVoucher.expiresAt) {
-        throw new VoucherRedeemError('Este voucher expirou.', 400);
+        throw new VoucherRedeemError('Este voucher expirou.', 400, 'Expired');
       }
 
       if (
         latestVoucher.maxUses !== null &&
         latestVoucher.currentUses >= latestVoucher.maxUses
       ) {
-        throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409);
+        throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409, 'Max uses reached');
       }
 
       const userRedemptions = await tx.voucherRedemption.count({
@@ -105,7 +123,7 @@ export async function POST(req: Request) {
       });
 
       if (userRedemptions >= latestVoucher.maxUsesPerUser) {
-        throw new VoucherRedeemError('Ya alcanzaste el límite de uso de este cupón.', 409);
+        throw new VoucherRedeemError('Ya alcanzaste el límite de uso de este cupón.', 409, 'Max uses per user reached');
       }
 
       const purchase = await tx.purchase.create({
@@ -113,9 +131,9 @@ export async function POST(req: Request) {
           userId: user.id,
           courseId,
           voucherId: latestVoucher.id,
-          originalPrice: result.originalPrice,
-          finalPrice: result.finalPrice,
-          discountAmount: result.discount,
+          originalPrice: grant.originalPrice,
+          finalPrice: grant.finalPrice,
+          discountAmount: grant.discount,
         },
       });
 
@@ -123,9 +141,9 @@ export async function POST(req: Request) {
         data: {
           purchaseId: purchase.id,
           voucherId: latestVoucher.id,
-          originalPrice: result.originalPrice,
-          discountAmount: result.discount,
-          finalPrice: result.finalPrice,
+          originalPrice: grant.originalPrice,
+          discountAmount: grant.discount,
+          finalPrice: grant.finalPrice,
         },
       });
 
@@ -151,7 +169,7 @@ export async function POST(req: Request) {
         });
 
         if (updated.count === 0) {
-          throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409);
+          throw new VoucherRedeemError('Este voucher atingiu o limite total de usos.', 409, 'Max uses reached');
         }
       } else {
         await tx.voucherCode.update({
@@ -170,18 +188,19 @@ export async function POST(req: Request) {
       redirectUrl: '/dashboard',
     });
   } catch (error) {
-    if (error instanceof VoucherRedeemError) {
+    if (error instanceof VoucherRedeemError || error instanceof VoucherGrantError) {
       return NextResponse.json(
         {
           success: false,
           error: 'Redeem failed',
+          reason: error.reason,
           message: error.message,
         },
         { status: error.status }
       );
     }
 
-    console.error('[VOUCHER_REDEEM_ERROR]', error);
+    console.error('[VOUCHER_REDEEM_ERROR]', safeErrorDiagnostic(error));
     return NextResponse.json(
       { success: false, error: 'Server error', message: 'Erro ao resgatar voucher.' },
       { status: 500 }

@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 while read -r local_ref local_sha remote_ref remote_sha; do
 	if [[ "$remote_ref" == "refs/heads/main" ]]; then
 		echo "❌ Direct push to main is blocked by policy."
-		echo "   Push to jazz-lms-dev-vercel and open PR for superior review/merge."
+		echo "   Push a maintenance branch and open a PR for owner review."
 		exit 1
 	fi
 done
@@ -15,8 +15,8 @@ done
 bash scripts/precommit-secret-scan.sh --all
 
 current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-if [[ "$current_branch" == "jazz-lms-dev-vercel" ]]; then
-	echo "▶ Pre-push quality gate (jazz-lms-dev-vercel)"
+if [[ "$current_branch" == "maintenance/initial-audit" || "$current_branch" == "jazz-lms-dev-vercel" ]]; then
+	echo "▶ Pre-push quality gate ($current_branch)"
 	npm run lint
 	npm run test:integration
 fi
